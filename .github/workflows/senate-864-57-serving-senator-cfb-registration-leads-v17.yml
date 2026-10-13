@@ -1,0 +1,37 @@
+name: 'Senate #864 57 additional actually serving CFB registration original source archive V17'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-57-actual-serving-candidate-registration-leads-v17.mjs'
+      - 'tests/cfb-864-57-candidate-registration-leads-v17.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-57-additional-serving-senator-original-candidate-registration-leads-v17.psv'
+      - 'docs/evaluation/cfb-2021-25-95-served-senators-official-CFB-registration-crosswalk-v17.md'
+      - '.github/workflows/senate-864-57-serving-senator-cfb-registration-leads-v17.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  authenticate-entire-268-original-source-and-reconcile-57:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify pinned 57 original CFB source labels, 95 true Senate service people and 38 separate report-PDF originals
+        run: node --test tests/cfb-864-57-candidate-registration-leads-v17.test.mjs
+      - name: Compare selected 57 original government CFB registration labels against independently certified 494 ID election segment membership
+        run: node scripts/audit-cfb-864-57-actual-serving-candidate-registration-leads-v17.mjs
+      - name: Retrieve pre-existing original 268-page official CFB source archive from one independently authenticated October 2026 capture
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts/official-268
+          gh run download 38081628130 -R "$GITHUB_REPOSITORY" --name cfb-senate-2021-25-official-district-registration-discovery --dir artifacts/official-268
+          test -f artifacts/official-268/cfb-senate-district-registrations.json
+      - name: Independently prove every selected registration/name/district/segment from full immutable original government body and SHA
+        run: node scripts/audit-cfb-864-57-actual-serving-candidate-registration-leads-v17.mjs --original-source artifacts/official-268/cfb-senate-district-registrations.json
