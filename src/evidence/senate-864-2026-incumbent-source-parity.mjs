@@ -224,3 +224,174 @@ export function compare49IncumbentSources(m,d,sqlMemberships,sqlSourceEvidence,p
   throw Error('Private source classification totals invalid');
  return classified;
 }
+
+
+/**
+ * V2: approved per-public-district read-only reconciliation. The earlier V1
+ * success receipt (25 linked URLs, 23 bounded nonobservations, 1 identity
+ * HOLD) is immutable. This adds independent current-membership campaign
+ * evidence counts and checks the selected URL's evidence context/subtype.
+ *
+ * A stored 2026 "published_at" is a database metadata year, NOT verified
+ * initial publication or predictive legal eligibility. All private identities,
+ * content and original source fingerprints stay in the protected runner.
+ */
+const PUBLISHED_FIELD=/^(?:20[0-9]{2}-\d\d-\d\d(?:\s|T)|)$/;
+const MAX_COUNT=100000;
+export const V2_MEMBER_METRICS=[
+ 'campaignIssueRowsCurrentMembership',
+ 'campaignDistinctDocumentsCurrentMembership',
+ 'campaignIssueRowsRecorded2026',
+ 'campaignIssueRowsRecordedPre2026',
+ 'campaignIssueRowsUndated',
+ 'allSourceIssueRowsRecorded2026',
+ 'allSourceIssueRowsCurrentMembership'
+];
+function suffixlessLastName(name){
+ const tokens=normalizeWords(name).replace(/[^a-z-]+/g,' ').trim().split(/\s+/)
+  .filter(Boolean);
+ while(tokens.length && ['jr','sr','ii','iii','iv','v'].includes(tokens.at(-1)))tokens.pop();
+ return tokens.at(-1)||'';
+}
+const V2_STATUS=[
+ 'matched_exact_url_with_named_senator_evidence',
+ 'matched_url_alias_with_named_senator_evidence',
+ 'source_url_present_but_no_named_senator_evidence',
+ 'source_url_not_observed_in_bounded_lookup',
+ 'senator_membership_identity_unresolved'
+];
+export function compare49IncumbentSourcesV2(
+ candidates,duckworth,sqlMemberships,sqlSourceEvidence,storedCampaignCounts,
+ originalRawReceipt
+){
+ // Run the complete prior source, district, private row boundary, original
+ // Duckworth publisher whole-byte SHA audit before computing further fields.
+ const prior=compare49IncumbentSources(candidates,duckworth,sqlMemberships,sqlSourceEvidence,originalRawReceipt);
+ if(!Array.isArray(storedCampaignCounts) || storedCampaignCounts.length>210)
+  throw Error('Unexpected private per-member stored issue aggregate row count');
+ const byDistrict=new Map(candidates.rows.map(x=>[x.district,[]]));
+ const matchingIds=new Map(candidates.rows.map(x=>[x.district,new Set()]));
+ const allPrivateIds=new Set();
+ for(const m of sqlMemberships){
+  const d=Number(m.district);
+  if(!byDistrict.has(d)||allPrivateIds.has(m.membershipId))
+   throw Error('Unexpected or duplicate stored current-senate membership identity');
+  allPrivateIds.add(m.membershipId);
+  byDistrict.get(d).push(m);
+  const person=candidates.rows.find(x=>x.district===d);
+  if(suffixlessLastName(m.senatorName)===suffixlessLastName(person.senator))
+   matchingIds.get(d).add(m.membershipId);
+ }
+ const seenAggregates=new Map();
+ for(const r of storedCampaignCounts){
+  if(!r ||typeof r!=='object' ||typeof r.membershipId!=='string'
+   ||!allPrivateIds.has(r.membershipId)||seenAggregates.has(r.membershipId))
+   throw Error('Noncohort, malformed or duplicate stored issue aggregate identity');
+  for(const key of V2_MEMBER_METRICS){
+   if(!Number.isInteger(r[key]) ||r[key]<0||r[key]>MAX_COUNT)
+    throw Error('Unbounded or malformed stored issue-position count');
+  }
+  if(r.campaignIssueRowsRecorded2026+r.campaignIssueRowsRecordedPre2026+
+     r.campaignIssueRowsUndated >r.campaignIssueRowsCurrentMembership ||
+     r.campaignDistinctDocumentsCurrentMembership>r.campaignIssueRowsCurrentMembership ||
+     r.allSourceIssueRowsRecorded2026>r.allSourceIssueRowsCurrentMembership ||
+     r.campaignIssueRowsCurrentMembership>r.allSourceIssueRowsCurrentMembership)
+    throw Error('Incoherent stored issue-position aggregate');
+  seenAggregates.set(r.membershipId,r);
+ }
+ // Each selected active stored membership must have its aggregate, even if 0.
+ for(const id of allPrivateIds){
+  if(!seenAggregates.has(id))
+   throw Error('Missing current-membership campaign aggregate is a HOLD, not zero');
+ }
+ const rows=[];
+ for(const [i,person]of candidates.rows.entries()){
+  const ms=matchingIds.get(person.district);
+  const store=byDistrict.get(person.district);
+  const expectedStatus=prior.sourceUrlStatusByDistrict[i].status;
+  if(!V2_STATUS.includes(expectedStatus))throw Error('Unexpected inherited URL status');
+  // A suffix correction can resolve one V1 name-format HOLD; do not
+  // inherit its URL status blindly, recompute from individually linked rows.
+  const personSources=sqlSourceEvidence.filter(x=>
+   urlFingerprint(x.sourceUrl)===urlFingerprint(person.researchSourceUrl));
+  const exactRows=personSources.filter(x=>x.sourceEvidenceId&&ms.has(x.membershipId));
+  let status;
+  let membershipHoldReason='none';
+  if(ms.size===0){
+   status='senator_membership_identity_unresolved';
+   membershipHoldReason=store.length===0?'no_active_membership_in_stored_2025_26_session'
+    :'active_district_membership_name_does_not_match_public_incumbent';
+  }else if(ms.size>1){
+   status='senator_membership_identity_unresolved';
+   membershipHoldReason='multiple_active_current_senate_membership_identity_candidates';
+  }else if(exactRows.some(x=>x.sourceUrl===person.researchSourceUrl)){
+   status='matched_exact_url_with_named_senator_evidence';
+  }else if(exactRows.length){
+   status='matched_url_alias_with_named_senator_evidence';
+  }else if(personSources.length){
+   status='source_url_present_but_no_named_senator_evidence';
+  }else{
+   status='source_url_not_observed_in_bounded_lookup';
+  }
+  const goodMembership=status!=='senator_membership_identity_unresolved';
+  // Only actually verified current senator IDs can be assigned source claims.
+  const linkedRows=goodMembership?exactRows:[];
+  for(const x of linkedRows){
+   if(![null,'string'].includes(x.contextType===null?null:typeof x.contextType)
+     ||![null,'string'].includes(x.sourceSubtype===null?null:typeof x.sourceSubtype)
+     ||x.publishedAt!==null&&(typeof x.publishedAt!=='string'||
+       !PUBLISHED_FIELD.test(x.publishedAt)))
+    throw Error('Unexpected bounded evidence metadata field');
+  }
+  const issueRows=linkedRows.filter(x=>x.contextType==='issue_position');
+  const currentlyDated=issueRows.filter(x=>x.publishedAt?.startsWith('2026-'));
+  const siteTypeRows=issueRows.filter(x=>x.sourceSubtype==='campaign_site_page');
+  const aggregates=goodMembership?[...ms].map(id=>seenAggregates.get(id)):[];
+  const sum=k=>aggregates.reduce((s,r)=>s+r[k],0);
+  const out={
+   district:person.district,
+   selectedSourceStatus:status,
+   membershipHoldReason,
+   selectedSourceEvidenceLinked:linkedRows.length>0,
+   selectedSourceIssuePositionLinked:issueRows.length>0,
+   selectedSourceCampaignSiteIssuePositionLinked:siteTypeRows.length>0,
+   selectedSourceIssuePositionRecorded2026:currentlyDated.length>0,
+   currentMembershipCampaignIssueRows:goodMembership?sum('campaignIssueRowsCurrentMembership'):null,
+   currentMembershipCampaignDistinctDocuments:goodMembership?sum('campaignDistinctDocumentsCurrentMembership'):null,
+   currentMembershipCampaignIssueRowsRecorded2026:goodMembership?sum('campaignIssueRowsRecorded2026'):null,
+   currentMembershipCampaignIssueRowsRecordedPre2026:goodMembership?sum('campaignIssueRowsRecordedPre2026'):null,
+   currentMembershipCampaignIssueRowsUndated:goodMembership?sum('campaignIssueRowsUndated'):null,
+   currentMembershipAllSourceIssueRowsRecorded2026:goodMembership?sum('allSourceIssueRowsRecorded2026'):null,
+  };
+  if(goodMembership){
+   for(const key of Object.keys(out).filter(k=>k.startsWith('currentMembership')))
+    if(!Number.isInteger(out[key])||out[key]<0||out[key]>MAX_COUNT)
+     throw Error('Unsafe per-public-district source count');
+  }
+  rows.push(out);
+ }
+ const byStatus={};
+ for(const row of rows){
+  byStatus[row.selectedSourceStatus]=(byStatus[row.selectedSourceStatus]||0)+1;
+ }
+ const result={
+  ...prior,
+  schema:'mn-864-2026-49-incumbent-protected-url-and-evidence-parity-v2',
+  dataWindow:'existing_2025_2026_senate_memberships_as_of_2026_10_13',
+  calendarYearIsStoredPublishedAtMetadataNotIndependentOriginalPublication:true,
+  2026ElectionEligibleStatementCompletenessProven:false,
+  candidateIssueEvidenceBeyondCurrentSenateMembershipNotEnumerated:true,
+  memberRowsAreAggregateCountsOnly:true,
+  sourceUrlStatusByDistrict:undefined,
+  groupedStatusCounts:byStatus,
+  perPublicDistrict:rows,
+  v1HistoricalReference:{successfulReport:'https://github.com/killjoy00/votepredict/issues/864#issuecomment-6140101805',
+   matchedUrlWithEvidence:25,noSelectedUrlSeen:23,identityHold:1,
+   v2ComparisonIndependentSnapshotNotNecessarilyIdentical:true}
+ };
+ delete result.sourceUrlStatusByDistrict;
+ if(result.perPublicDistrict.length!==49
+  ||Object.values(byStatus).reduce((a,b)=>a+b,0)!==49)
+  throw Error('Incorrect per-district totals');
+ return result;
+}
