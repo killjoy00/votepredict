@@ -28,6 +28,12 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Fail-closed date/status-only government PDF regressions
         run: node --import tsx --test tests/senate-864-high-gap-official-bill-log-supplement.test.ts
+      - name: Install bounded original PDF text extraction dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          pdfinfo -v 2>&1 | head -n 2
+          pdftotext -v 2>&1 | head -n 2
       - name: Authenticate exact two official LRL original committee Bill Log PDFs and published bill/status contexts
         run: |
           node --import tsx scripts/reconcile-senate-864-high-gap-original-bill-logs.ts \
