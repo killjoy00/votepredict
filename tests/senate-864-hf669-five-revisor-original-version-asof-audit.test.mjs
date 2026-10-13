@@ -42,6 +42,9 @@ test('official PDF header must independently prove HF669 and expected exact vers
  assert.equal(right.pageCount,66);
  const wrongCode=testText(codes[0]);
  assert.throws(()=>verifyOfficialPageTextExtract({text:wrongCode,pages:66},v),/code does not match/);
+ // OFFICIAL H0669-3 must not match the overlapping suffix in UEH0669-3.
+ assert.throws(()=>verifyOfficialPageTextExtract({text:testText(codes[3]),pages:83},
+   m.versionSources[0]),/code does not match/);
  const wrongBill=testText(codes[2]).replace(/HF669/g,'HF670');
  assert.throws(()=>verifyOfficialPageTextExtract({text:wrongBill,pages:66},v),/different bill/);
 });
@@ -75,7 +78,7 @@ test('run whole PDF byte SHA checks on all five versions; compare different Marc
   return new Response(pdfBytesByCode.get(codes[i]),{status:200,headers:{'content-type':'application/pdf'}});
  };
  const fakeExtract=async bytes=>{
-  const match=codes.find(c=>bytes.toString('ascii',0,80).includes(c));
+  const match=[...codes].sort((a,b)=>b.length-a.length).find(c=>bytes.toString('ascii',0,80).includes(c));
   if(!match)throw Error('unknown simulated version PDF code');
   return {pages:codes.indexOf(match)<3?66:83,text:testText(match,match.includes('UEH0669-3')?
      'road bridges capital projects public facilities authority':'University of Minnesota bond proceeds fund water infrastructure')};
