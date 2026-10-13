@@ -79,3 +79,35 @@ test('parse original PDF in memory only, pin full SHA and never claim author mea
  assert.equal(x.senatorDecisionRowsEstablished,4);
  assert.equal(x.noOriginalPdfOrPageTextCommitted,true);
 });
+
+test('unique HF670 third-reading roll certifies two printed individual choices even when two other senators are absent',()=>{
+ const t=ROLL_TARGETS[2];
+ const x=memberRollFromOriginalText(voteBlock(t,{
+   namesYes:'Abeler Bahr Bolliger Duckworth',
+   namesNo:'Johnson Wesenberg Chamberlain'}),t);
+ assert.equal(x.uniquelyIdentifiedBillSpecificThirdReadingRollCount,1);
+ assert.equal(x.certifiedUniqueDirectPersonalRollCount,0);
+ assert.equal(x.certifiedDirectMemberChoiceCount,2);
+ assert.equal(x.countOfSampledMembersWhosePersonalChoiceRemainsUnknown,2);
+ assert.deepEqual(x.independentlyCertifiedNamedMemberChoices.map(r=>[r.senator,r.choice]),[
+   ['Mark T. Johnson','NAY'],['Nathan Wesenberg','NAY']]);
+ assert.equal(x.ambiguityOrMissingRollCannotBecomeVote,undefined);
+ assert.equal(x.ambiguousOrMissingRollCannotBecomeVote,true);
+});
+test('HF670 absent senator remains UNKNOWN, not automatic NAY even when other senators individually proved',()=>{
+ const t=ROLL_TARGETS[2];
+ const x=memberRollFromOriginalText(voteBlock(t,{namesYes:'Johnson Abeler',namesNo:'Wesenberg Bahr'}),t);
+ assert.equal(x.certifiedDirectMemberChoiceCount,2);
+ assert.deepEqual(x.independentlyCertifiedNamedMemberChoices.map(r=>r.choice),['YEA','NAY']);
+ assert.ok(x.uniquelyIdentifiedBillSpecificThirdReadingRoll.members
+   .filter(m=>['Karin Housley','Bill Weber'].includes(m.senator))
+   .every(m=>m.personalRecordedThirdReadingChoice==='UNKNOWN'));
+});
+test('duplicate otherwise credible HF670 floor rolls prohibit every individual promotion',()=>{
+ const t=ROLL_TARGETS[2],b=voteBlock(t,{
+   namesYes:'Housley Weber Johnson',namesNo:'Wesenberg Bahr'});
+ const x=memberRollFromOriginalText(b+'\n'+b,t);
+ assert.equal(x.uniquelyIdentifiedBillSpecificThirdReadingRollCount,0);
+ assert.equal(x.certifiedDirectMemberChoiceCount,0);
+ assert.equal(x.countOfSampledMembersWhosePersonalChoiceRemainsUnknown,4);
+});
