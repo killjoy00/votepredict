@@ -88,6 +88,8 @@ export interface VoteTextAuditEvent {
   voteKind: 'passage' | 'amendment' | 'motion' | 'procedural' | 'other';
   motionText: string;
   amendmentRef?: string | null;
+  /** Exact journal page + motion sequence for amendments without A-numbers. */
+  officialAmendmentAnchor?: string | null;
   officialSourceUrl: string;
   officialSourceSha256: string | null;
   /** The result of this exact motion, not a provision-level stance. */
@@ -100,6 +102,8 @@ export interface AuditedLegislativeText {
   billIdentifier: string;
   kind: 'bill_version' | 'amendment_text' | 'conference_report';
   amendmentRef?: string | null;
+  /** Same primary-document locator as the vote event; no number is invented. */
+  officialAmendmentAnchor?: string | null;
   versionKey: string;
   officialSourceUrl: string;
   contentSha256: string | null;
@@ -149,17 +153,30 @@ export function auditVoteTextLinks(input: {
   cutoffAt?: string;
 }): VoteTextAuditResult[] {
   const eventIds = new Set<string>();
+  const amendmentAnchors = new Set<string>();
   for (const event of input.events) {
     if (!event.eventKey || eventIds.has(event.eventKey) || !isDate(event.occurredOn)) {
       throw new Error('Duplicate or invalid vote event identity');
     }
     eventIds.add(event.eventKey);
+    if (event.officialAmendmentAnchor) {
+      if (event.voteKind !== 'amendment'
+        || !/^journal:p\d{1,6}:action\d{1,5}$/.test(event.officialAmendmentAnchor)
+        || amendmentAnchors.has(event.officialAmendmentAnchor)) {
+        throw new Error('Unanchored or duplicate official journal amendment identity');
+      }
+      amendmentAnchors.add(event.officialAmendmentAnchor);
+    }
   }
   const texts = new Map<string, AuditedLegislativeText>();
   for (const text of input.texts) {
     if (!text.textId || texts.has(text.textId)
       || (text.postedOn !== null && !isDate(text.postedOn))) {
       throw new Error('Duplicate text identity or invalid text date');
+    }
+    if (text.officialAmendmentAnchor && (text.kind !== 'amendment_text'
+      || !/^journal:p\d{1,6}:action\d{1,5}$/.test(text.officialAmendmentAnchor))) {
+      throw new Error('Invalid original-journal amendment text locator');
     }
     texts.set(text.textId, text);
   }
@@ -194,10 +211,20 @@ export function auditVoteTextLinks(input: {
       return result('later_version_conflict', 'Official version was posted after the event; exact text cannot be assumed');
     }
     if (event.voteKind === 'amendment'
-      && !paired.some(({ text }) => text!.kind === 'amendment_text'
-        && Boolean(event.amendmentRef)
-        && text!.amendmentRef?.toUpperCase() === event.amendmentRef?.toUpperCase())) {
-      return result('missing_amendment_text', 'Amendment decision requires its exact identified amendment text');
+      && !paired.some(({ text }) => {
+        if (text!.kind !== 'amendment_text') return false;
+        const numbered = Boolean(event.amendmentRef) && Boolean(text!.amendmentRef)
+          && event.amendmentRef!.trim().toUpperCase() === text!.amendmentRef!.trim().toUpperCase();
+        const sourceAnchored = Boolean(event.officialAmendmentAnchor)
+          && event.officialAmendmentAnchor === text!.officialAmendmentAnchor;
+        // A ref disagreement always outranks a coincidental source locator.
+        const refConflict = Boolean(event.amendmentRef || text!.amendmentRef)
+          && event.amendmentRef?.trim().toUpperCase() !== text!.amendmentRef?.trim().toUpperCase();
+        const anchorConflict = Boolean(event.officialAmendmentAnchor || text!.officialAmendmentAnchor)
+          && event.officialAmendmentAnchor !== text!.officialAmendmentAnchor;
+        return !refConflict && !anchorConflict && (numbered || sourceAnchored);
+      })) {
+      return result('missing_amendment_text', 'Amendment needs matching A-number or independently located unnumbered journal text');
     }
     if (event.voteKind === 'amendment' && event.passed !== undefined && event.passed !== null
       && paired.some(({ link, text }) => text!.kind === 'amendment_text'
