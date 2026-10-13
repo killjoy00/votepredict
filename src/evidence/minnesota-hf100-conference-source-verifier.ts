@@ -36,13 +36,16 @@ export interface HF100ConferenceSourceLedger {
     url: string;
     pdfSha256: string | null;
     originalBytes: number | null;
+    extractedTextSha256?: string | null;
     embeddedConferenceReportTextSha256: string | null;
+    embeddedConferenceReportNormalizedLength?: number | null;
     independentlyVerifiedPublicBy: null;
   };
   sourceFloorLog: {
     url: string;
     pdfSha256: string | null;
     originalBytes: number | null;
+    extractedTextSha256?: string | null;
     independentlyVerifiedPublicBy: null;
   };
   sourceActions: HF100ConferenceVoteSourceRow[];
@@ -97,9 +100,19 @@ export function validateHf100ConferenceSourceLedger(ledger: HF100ConferenceSourc
       throw new Error('Invalid official original-body size');
     }
   }
+  for (const source of [ledger.sourceJournal, ledger.sourceFloorLog]) {
+    if (source.extractedTextSha256 != null && !/^[a-f0-9]{64}$/i.test(source.extractedTextSha256)) {
+      throw new Error('Invalid original-source extracted text hash');
+    }
+  }
   if (ledger.sourceJournal.embeddedConferenceReportTextSha256 !== null
     && !/^[a-f0-9]{64}$/i.test(ledger.sourceJournal.embeddedConferenceReportTextSha256)) {
     throw new Error('Invalid Senate printed-conference-report text hash');
+  }
+  if (ledger.sourceJournal.embeddedConferenceReportNormalizedLength != null
+    && (!Number.isSafeInteger(ledger.sourceJournal.embeddedConferenceReportNormalizedLength)
+      || ledger.sourceJournal.embeddedConferenceReportNormalizedLength < 100000)) {
+    throw new Error('Invalid original Senate conference report text extent');
   }
 }
 
@@ -180,6 +193,10 @@ export function verifyHf100ConferenceSenateJournal(
   if (ledger.sourceJournal.embeddedConferenceReportTextSha256 !== null
     && ledger.sourceJournal.embeddedConferenceReportTextSha256 !== digest) {
     throw new Error('Previously SHA-pinned Senate replacement-text section has changed');
+  }
+  if (ledger.sourceJournal.embeddedConferenceReportNormalizedLength != null
+    && ledger.sourceJournal.embeddedConferenceReportNormalizedLength !== replacementText.length) {
+    throw new Error('Previously pinned Senate replacement-text section length drifted');
   }
   return {
     schemaVersion: MN_HF100_CONFERENCE_SOURCE_VERIFIER_VERSION,
