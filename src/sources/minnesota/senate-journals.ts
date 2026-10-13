@@ -25,6 +25,17 @@ export interface SenateJournalDocument {
   byteLength: number;
 }
 
+/** Capture raw PDF body identity before any worker/parser can detach bytes. */
+export function snapshotSenateJournalPdfIntegrity(bytes: Uint8Array): { pdfSha256: string; byteLength: number } {
+  if (bytes.byteLength < 1000 || new TextDecoder('ascii').decode(bytes.subarray(0, 5)) !== '%PDF-') {
+    throw new Error('Expected a nonempty Minnesota Senate journal PDF body');
+  }
+  return {
+    pdfSha256: createHash('sha256').update(bytes).digest('hex'),
+    byteLength: bytes.byteLength,
+  };
+}
+
 function decodeHtml(value: string): string {
   return value
     .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
@@ -90,13 +101,16 @@ export async function fetchSenateJournal(sourceUrl: string): Promise<SenateJourn
   if (!response.ok) throw new Error(`Minnesota Senate journal returned ${response.status}: ${sourceUrl}`);
   const bytes = new Uint8Array(await response.arrayBuffer());
   if (bytes.byteLength < 1000) throw new Error(`Minnesota Senate journal PDF was unexpectedly small: ${sourceUrl}`);
+  // pdf-parse can transfer/detach its input ArrayBuffer. Capture original
+  // source-body identity BEFORE giving bytes to its PDF worker.
+  const { pdfSha256, byteLength } = snapshotSenateJournalPdfIntegrity(bytes);
   const { CanvasFactory } = await import('pdf-parse/worker');
   const { PDFParse } = await import('pdf-parse');
   const parser = new PDFParse({ data: bytes, CanvasFactory });
   try {
     const result = await parser.getText();
     if (!result.text || result.text.length < 100) throw new Error(`Senate journal text extraction returned too little text: ${sourceUrl}`);
-    return { text: result.text, pdfSha256: createHash('sha256').update(bytes).digest('hex'), byteLength: bytes.byteLength };
+    return { text: result.text, pdfSha256, byteLength };
   } finally {
     await parser.destroy();
   }
