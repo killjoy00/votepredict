@@ -126,7 +126,7 @@ export function compare49IncumbentSources(m,d,sqlMemberships,sqlSourceEvidence){
  for(const row of sqlSourceEvidence){
   if(!row||typeof row!=='object'||typeof row.sourceDocumentId!=='string'
    ||typeof row.sourceUrl!=='string'||typeof row.sourceKind!=='string'
-   ||typeof row.contentSha256!=='string'||! /^[a-f0-9]{64}$/.test(row.contentSha256)
+   ||(row.contentSha256!==null && (typeof row.contentSha256!=='string'||! /^[a-f0-9]{64}$/.test(row.contentSha256)))
    ||typeof row.sourceEvidenceId!=='string' && row.sourceEvidenceId!==null
    ||typeof row.membershipId!=='string' && row.membershipId!==null
    ||typeof row.excerpt!=='string'&&row.excerpt!==null)
