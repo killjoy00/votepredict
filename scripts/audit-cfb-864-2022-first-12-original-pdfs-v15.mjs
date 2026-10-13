@@ -18,7 +18,26 @@ export const CROSSWALK='docs/evaluation/source-proof/cfb-2021-25-95-serving-sena
 export const PDF_LEDGER='docs/evaluation/source-proof/cfb-2022-senate-24-original-ce-pdf-headers.psv';
 const sha=x=>createHash('sha256').update(x).digest('hex');
 const HEX=/^[0-9a-f]{64}$/;
-const ONLY_PERIODS=new Set(['C','E']);
+// Three independently corroborated EXACT historical CFB display-name forms.
+// Reg/district/original literal CFB label MUST ALL match. LRL actual service
+// and committee original-report first-page hashes are separate original proof.
+// Kupec & McEwen: official MN Legislative Reference Library explicitly lists
+// "Rob" and "Jen"; their 2022 state Members-Elect roster names the same.
+// Wesenberg: original CFB 2022-09-07 Board meeting materials p.32/37 names
+// "Wesenberg for Senate (18778)" and "Nathan", while CFB official candidate
+// viewer names #18778 "Nathanial L" and state 2022 Members-Elect Senate SD10
+// roster names Nathan Wesenberg. No generic Nathan↔Nathanial guess permitted.
+export const VERIFIED_REGISTRATION_NAME_FORMS=Object.freeze([
+ {reg:'18917',district:4,official:'Robert Kupec',cfbLabel:'Kupec, Rob',
+  officialIdentityUrl:'https://www.lrl.mn.gov/legdb/fulldetail?ID=15578',
+  corroboratingOriginal:'https://www.house.mn.gov/hinfo/leginfo/memelectroster.pdf'},
+ {reg:'18581',district:8,official:'Jennifer A McEwen',cfbLabel:'McEwen, Jen',
+  officialIdentityUrl:'https://www.lrl.mn.gov/legdb/fulldetail?ID=15537',
+  corroboratingOriginal:'https://www.house.mn.gov/hinfo/leginfo/memelectroster.pdf'},
+ {reg:'18778',district:10,official:'Nathan Wesenberg',cfbLabel:'Wesenberg, Nathanial L',
+  officialIdentityUrl:'https://cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/18778/2026/',
+  corroboratingOriginal:'https://cfb.mn.gov/pdf/bdinfo/agendas/2022_09_07_materials.pdf'}
+]);
 function identityKey(fullName,reverse=false){
  const raw=String(fullName).normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
   .toLowerCase().replace(/[^a-z0-9, ]/g,' ').replace(/\s+/g,' ').trim();
@@ -85,10 +104,10 @@ export function joinOfficial2022DistrictLabelsToSenateService(observations,
   const companion=targets.find(t=>t.district===district && t.period==='E');
   if(!companion||companion.reg!==target.reg)throw Error('Official C/E original parent registration drift');
   const page=pages.get(district);
-  let status='official_page_not_acquired_hold',person=null,possibleNameAliasOf=null,aliasCandidateCfbSourceLabel=null;
+  let status='official_page_not_acquired_hold',person=null,possibleNameAliasOf=null,aliasCandidateCfbSourceLabel=null,sourceAliasProof=null;
   if(page){
    if(page.status==='candidate_labels_observed'
-     &&page.candidates?.length&&HEX.test(page.htmlSha256??'')){
+     &&page.candidates?.length&&page.htmlSha256===target.districtPageSha){
     const matched=page.candidates.filter(c=>c.registrationNumber===target.reg);
     if(matched.length===1){
      const key=identityKey(matched[0].candidateDisplayName,true);
@@ -100,6 +119,15 @@ export function joinOfficial2022DistrictLabelsToSenateService(observations,
        person=serving.name;
       }else status='name_matches_senator_but_district_service_year_unconfirmed_hold';
      }else{
+      const proven=VERIFIED_REGISTRATION_NAME_FORMS.find(x=>x.reg===target.reg
+       &&x.district===district&&x.cfbLabel===matched[0].candidateDisplayName);
+      const backed=proven&&[...roster.values()].filter(r=>r.name===proven.official
+       &&(r.districts.has('2022:'+district)||r.districts.has('2023:'+district)));
+      if(proven&&backed?.length===1){
+       status='original_CFB_exact_registration_label_independently_corrob_LRL_name_form_verified';
+       person=backed[0].name;
+       sourceAliasProof=proven.officialIdentityUrl;
+      }else{
       // Diagnostic only: the original CFB display label may use a nickname,
       // but an exact shared surname and 2022/2023 district NEVER by itself
       // authenticates identity or a distinct CFB registration.
@@ -119,6 +147,7 @@ export function joinOfficial2022DistrictLabelsToSenateService(observations,
        }
       }
       status='registration_label_not_uniquely_proven_serving_senator_hold';
+      }
      }
     }else status='registration_not_uniquely_in_source_district_hold';
    }else status='official_page_or_candidate_labels_unverified_hold';
@@ -127,6 +156,7 @@ export function joinOfficial2022DistrictLabelsToSenateService(observations,
    district,registration:target.reg,observedMatchedOfficialSenator:person,
    independentlyUnverifiedNicknameIdentityLead:possibleNameAliasOf,
    sourceCandidateLabelNeedsOfficialNicknameReview:aliasCandidateCfbSourceLabel,
+   sourceAliasProofUrl:sourceAliasProof,
    sourceStatus:status,
    originalDistrict2022SourcePageSha256:page?.htmlSha256??null,
    originalDistrictSourcePageStatus:page?.status??'not_acquired',
