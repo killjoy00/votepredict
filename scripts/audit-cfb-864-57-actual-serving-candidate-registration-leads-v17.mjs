@@ -68,6 +68,8 @@ export function sourceObservedDistrictsFromService(row){
  return nums;
 }
 export function parsePermanent57RegistrationLeadPsv(s=readFileSync(SOURCE_PSV,'utf8')){
+ if(sha(s)!=='959b45dc978fc5ef962aba788d74caa76ce1ae474b69847ab21fec1934c9c0b2')
+  throw Error('Original 57 serving-senator CFB candidate registration source metadata SHA256 drift');
  if(!s.endsWith('\n'))throw Error('Source ledger must retain exact LF final newline');
  const rows=s.trimEnd().split('\n').map(x=>x.split('|'));
  if(rows.length!==57||rows.some(x=>x.length!==8))throw Error('Expected 57 source-observed Senate person leads');
