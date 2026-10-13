@@ -64,9 +64,11 @@ export function verifyOfficialPageTextExtract(x,version){
     !Number.isSafeInteger(x.pages)||x.pages<30||x.pages>300||!KEYS.includes(version.id))
   throw Error('unusable exact original legislative PDF text and pages');
  const normalized=clean(x.text);
- const compact=normalized.replace(/[^a-z0-9]/g,'');
- const code=CODES[KEYS.indexOf(version.id)].toLowerCase().replace(/[^a-z0-9]/g,'');
- if(!compact.includes(code))throw Error('revisor official PDF code does not match exact expected HF669 version');
+ const code=CODES[KEYS.indexOf(version.id)];
+ // UEH0669-3 contains H0669-3 as a substring, so substring matching could
+ // falsely certify the 2023 third UNOFFICIAL as the third OFFICIAL bill.
+ const exactCode=new RegExp('(?:^|[^a-z0-9])'+code.replace(/-/g,'\\-')+'(?:$|[^a-z0-9])','i');
+ if(!exactCode.test(x.text))throw Error('revisor official PDF code does not match exact expected HF669 version');
  if(!/(?:h\s*\.?\s*f\s*\.?\s*(?:no\s*\.?\s*)?669|hf669)/i.test(x.text))
   throw Error('different bill printed in the alleged official PDF');
  const words=(normalized.match(/[a-z0-9]+/g)||[]);
