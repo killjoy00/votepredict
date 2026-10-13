@@ -16,8 +16,13 @@ async function main(): Promise<void> {
   const ledger = JSON.parse(readFileSync(LEDGER_FILE, 'utf8')) as SenateSourceMotionLedger;
   reconstructSenateSourceMotionSequence(ledger);
   const original = await fetchSenateJournal(ledger.source.url);
-  if (original.byteLength > 45_000_000) {
-    throw new Error('Original Senate Journal is too large for the bounded audit');
+  if (original.byteLength < 1000 || original.byteLength > 45_000_000
+    || !/^[a-f0-9]{64}$/i.test(original.pdfSha256)
+    || original.pdfSha256 === createHash('sha256').update('').digest('hex')) {
+    // A previous pdf-parse worker detached the source buffer before hashing,
+    // resulting in SHA256(empty) and an apparent 0-byte "success" receipt.
+    // Never authenticate a source-body receipt under those conditions.
+    throw new Error('HOLD: original Senate Journal PDF body hash/byte integrity invalid');
   }
   const proof = verifyHf100April28JournalText(original.text, ledger);
   const receipt = {
