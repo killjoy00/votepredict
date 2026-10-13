@@ -162,14 +162,15 @@ async function main(){
     provisionalActions:[],sourceGapCategory:safeCategory(e)});
    return;
   }
-  if(calendar.exactOfficialHearingId===null){
+  const hearingId=calendar.exactOfficialHearingId??
+   calendar.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody;
+  if(hearingId===null){
    rows.push({...base,status:'calendar_hearing_id_ambiguous_or_unlisted_HOLD',
     governmentCalendarHtmlSha256:day.sha256,calendar,
     hearingId:null,senateOriginalHtmlSha256:null,provisionalActions:[],
     sourceGapCategory:'no_unique_original_calendar_senate_committee_day_id'});
    return;
   }
-  const hearingId=calendar.exactOfficialHearingId;
   try{
    const url=originalSenateClerkMinutesUrl(t,hearingId);
    const clerk=await fetchOfficialHtml(url,'minutes');
@@ -178,11 +179,15 @@ async function main(){
    if(result.originalClerkHtmlSha256!==clerk.sha256)
     throw Error('Independent public Clerk SHA content evidence mismatch');
    rows.push({...base,status:'independently_authenticated_original_senate_clerk_minutes',
-    hearingId,calendar,senateOriginalHtmlSha256:clerk.sha256,senateOriginal:result,
+    hearingId,calendar,
+    hearingIdOriginalSourceProofTier:result.hearingIdentityProofTier,
+    senateOriginalHtmlSha256:clerk.sha256,senateOriginal:result,
     sourceGapCategory:calendar.calendarMarkedCanceled?
        'calendar_canceled_but_clerk_minutes_exist_identity_review_HOLD':null});
   }catch(e){
-   rows.push({...base,status:'official_calendar_id_but_clerk_original_minutes_HOLD',
+   rows.push({...base,status:calendar.exactOfficialHearingId===null?
+    'unique_calendar_senate_anchor_but_clerk_minutes_original_HOLD':
+    'official_calendar_id_but_clerk_original_minutes_HOLD',
     governmentCalendarHtmlSha256:day.sha256,calendar,hearingId,
     senateOriginalHtmlSha256:null,provisionalActions:[],
     sourceGapCategory:safeCategory(e)});
@@ -197,6 +202,12 @@ async function main(){
   throw Error('One-to-one original 53-meeting source crosswalk dropped or duplicated');
  const authenticated=rows.filter(x=>x.status==='independently_authenticated_original_senate_clerk_minutes');
  const withId=rows.filter(x=>x.hearingId!==null);
+ const doubleCalendarProof=rows.filter(x=>(x.calendar as any)?.exactOfficialHearingId!==null&&
+    (x.calendar as any)?.exactOfficialHearingId!==undefined);
+ const anchorOnlyCandidates=rows.filter(x=>(x.calendar as any)?.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody!==null&&
+    (x.calendar as any)?.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody!==undefined);
+ const anchorOnlyClerkAuthenticated=authenticated.filter(x=>(x.senateOriginal as any)?.hearingIdentityProofTier===
+   'official_calendar_single_named_senate_anchor_plus_independently_authenticated_original_clerk_body');
  const actions=authenticated.reduce((n,x)=>n+(x.senateOriginal as any).canonicalMotionCandidates,0);
  const tally=authenticated.reduce((n,x)=>n+(x.senateOriginal as any).classificationCounts.countOnly,0);
  const voice=authenticated.reduce((n,x)=>n+(x.senateOriginal as any).classificationCounts.voiceAmendment,0);
@@ -211,7 +222,14 @@ async function main(){
   const yes=these.filter(x=>x.status==='independently_authenticated_original_senate_clerk_minutes');
   return {year:c.year,committeeName:c.committeeName,
    officialLrlIndexWithoutMinutesPdf:c.n,
-   independentCalendarHearingIdsFound:these.filter(x=>x.hearingId!==null).length,
+   independentCalendarHearingIdsFound:these.filter(x=>(x.calendar as any)?.exactOfficialHearingId!==null&&
+     (x.calendar as any)?.exactOfficialHearingId!==undefined).length,
+   uniqueOriginalCalendarSenateAnchorWithoutCardLeads:these.filter(x=>
+     (x.calendar as any)?.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody!==null&&
+     (x.calendar as any)?.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody!==undefined).length,
+   separatelyAuthenticatedClerkBodyConfirmingSoloCalendarAnchor:yes.filter(x=>
+     (x.senateOriginal as any)?.hearingIdentityProofTier===
+     'official_calendar_single_named_senate_anchor_plus_independently_authenticated_original_clerk_body').length,
    originalClerkMinutesHtmlAuthenticated:yes.length,
    originalSourceCalendarOrClerkHolds:c.n-yes.length,
    originalCalendarCanceledAndClerkBodyBothAuthenticated:yes.filter(x=>(x.senateOriginal as any).exactCalendarMarkedCanceled).length,
@@ -231,7 +249,10 @@ async function main(){
   uniqueOriginalGovernmentCalendarDates:groups.length,
   uniqueOriginalGovernmentCalendarDaysFetched:days.size,
   originalCalendarSourceTransportHolds:dayHolds,
-  originalCalendarHearingIdentitiesRecovered:withId.length,
+  originalCalendarHearingIdentitiesRecoveredByTwoCalendarLocations:doubleCalendarProof.length,
+  uniqueSoloCalendarSenateAnchorLeads:anchorOnlyCandidates.length,
+  soloCalendarAnchorPlusIndependentClerkBodyAuthenticated:anchorOnlyClerkAuthenticated.length,
+  totalCalendarSenateHearingIdLeadsIncludingProvisionalSoloAnchors:withId.length,
   independentlySourceAuthenticatedSenateOnlineClerkMinutes:authenticated.length,
   originalCalendarAndClerkGapsStillUnresolved:53-authenticated.length,
   originalCalendarCancellationVsArchivedClerkMinutesConflicts:authenticated.filter(x=>(x.senateOriginal as any).exactCalendarMarkedCanceled).length,
@@ -254,7 +275,9 @@ async function main(){
  mkdirSync(dirname(out),{recursive:true});writeFileSync(out,JSON.stringify(report,null,2)+'\n');
  console.log('SENATE864_53_LARGE_SOURCE_RESEARCH='+JSON.stringify({
   indexed53:53,uniqueCalendarDaysFetched:days.size,
-  originalOfficialCalendarIdsResolved:withId.length,
+  originalOfficialCalendarIdsResolvedByAnchorAndCard:doubleCalendarProof.length,
+  calendarSoloSenateAnchorLeads:anchorOnlyCandidates.length,
+  originalClerkBodiesAuthenticatedViaSoloCalendarAnchor:anchorOnlyClerkAuthenticated.length,
   sourceAuthenticatedClerkMinutes:authenticated.length,
   sourceHolds:53-authenticated.length,actionCandidates:actions,
   resultOnly,aggregateCountOnly:tally,voiceCues:voice,
@@ -272,6 +295,7 @@ async function main(){
   rows.map(r=>({
    year:r.year,committeeName:r.committeeName,hearingDate:r.hearingDate,
    status:r.status,originalHearingId:r.hearingId??null,
+   identityProofTier:r.hearingIdOriginalSourceProofTier??null,
    calendarSha:(r.calendar as any)?.calendarOriginalHtmlSha256??r.governmentCalendarHtmlSha256??null,
    senateClerkHtmlSha:r.senateOriginalHtmlSha256??null,
    senateClerkTextSha:(r.senateOriginal as any)?.normalizedOriginalClerkTextSha256??null,
