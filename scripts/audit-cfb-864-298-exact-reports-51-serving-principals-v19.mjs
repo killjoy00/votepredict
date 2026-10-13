@@ -68,7 +68,7 @@ export function sourceVerified43OriginalYearEndReportVersions(){
   const[id,person,district,reg,year,amend,status,pdfSha,bytes,start,end,board,due,floor,viewer,alias,candidateSha,historic]=x;
   const m=/^(\d{4,8}):(23|24):pcc:YE:0:(\d+)$/.exec(id);
   const p=sourceRegs.get(reg),api=cps.get(reg);
-  if(!m||m[1]!==reg||Number(m[2])!==Number(year)
+  if(!m||m[1]!==reg||(2000+Number(m[2]))!==Number(year)
    ||Number(m[3])!==Number(amend)||!p||p[0]!==person
    ||p[3]!=='EXACT'||p[4]!=='2022'||p[5]!==district
    ||p[6]!==candidateSha
