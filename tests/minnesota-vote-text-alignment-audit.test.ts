@@ -196,3 +196,38 @@ test('review requires the exact archived event source and flags impossible amend
   assert.equal(one(amendmentVote, amendText, proposed).status, 'disposition_conflict');
   assert.equal(one(amendmentVote, amendText, { ...proposed, textDisposition: 'rejected' }).status, 'reviewed_exact_text_link');
 });
+
+test('unnumbered Senate floor amendments can be linked ONLY through a distinct primary-journal motion anchor', () => {
+  const unnumbered: VoteTextAuditEvent = {
+    ...event, eventKey: 'hf100-local-retail-motion',
+    voteKind: 'amendment', amendmentRef: null,
+    officialAmendmentAnchor: 'journal:p6884:action2', passed: true,
+  };
+  const embeddedPaper: AuditedLegislativeText = {
+    ...text, textId: 'hf100-local-retail-proposed-paper',
+    kind: 'amendment_text', amendmentRef: null,
+    officialAmendmentAnchor: 'journal:p6884:action2',
+  };
+  const proposed: ProposedVoteTextLink = {
+    ...reviewedLink, eventKey: unnumbered.eventKey,
+    textId: embeddedPaper.textId, textDisposition: 'adopted',
+    proofLocator: 'Journal 6884-6885, action 2: official unnumbered amendment text',
+  };
+  assert.equal(one(unnumbered, embeddedPaper, proposed).status, 'reviewed_exact_text_link');
+  assert.equal(one(unnumbered, { ...embeddedPaper, officialAmendmentAnchor: 'journal:p6886:action3' }, proposed).status, 'missing_amendment_text');
+  assert.equal(one({ ...unnumbered, officialAmendmentAnchor: undefined }, embeddedPaper, proposed).status, 'missing_amendment_text');
+  assert.equal(one(unnumbered, { ...embeddedPaper, amendmentRef: 'A-7' }, proposed).status, 'missing_amendment_text');
+  assert.equal(one(unnumbered, embeddedPaper, { ...proposed, proofEventSourceSha256: undefined }).status, 'unproven_text_match');
+  assert.equal(one(unnumbered, embeddedPaper, proposed, '2023-04-28T12:00:00Z').historicalCutoffEligibility, 'not_proven_before_cutoff');
+});
+
+test('unnumbered amendment source anchors cannot be fabricated or shared by two distinct motions', () => {
+  const vote: VoteTextAuditEvent = {
+    ...event, voteKind: 'amendment', amendmentRef: null,
+    officialAmendmentAnchor: 'journal:p6884:action2',
+  };
+  const duplicate = { ...vote, eventKey: 'second-distinct-official-motion' };
+  assert.throws(() => auditVoteTextLinks({ events: [vote, duplicate], texts: [], links: [] }), /duplicate official journal/);
+  assert.throws(() => auditVoteTextLinks({ events: [{ ...vote, officialAmendmentAnchor: 'some-ad-hoc-label' }], texts: [], links: [] }), /journal amendment identity/);
+  assert.throws(() => auditVoteTextLinks({ events: [vote], texts: [{ ...text, kind: 'amendment_text', officialAmendmentAnchor: 'bad anchor' }], links: [] }), /Invalid original-journal/);
+});
