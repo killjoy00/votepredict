@@ -1,0 +1,30 @@
+name: 'Senate #864 298 exact official 2021-25 CFB report versions V19'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-298-exact-reports-51-serving-principals-v19.mjs'
+      - 'tests/cfb-864-298-version-51-senator-report-ledger-v19.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-51-actually-serving-principals-298-exact-report-version-pdfs-v19.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-serving-senators-51-source-authentic-CFB-report-principals-v19.psv'
+      - 'docs/evaluation/cfb-2021-25-298-original-amended-cfb-report-versions-51-serving-senators-v19.md'
+      - '.github/workflows/senate-864-cfb-298-official-report-version-v19.yml'
+permissions:
+  contents: read
+jobs:
+  reconstruct-original-298-report-versions:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned original 2021-25 CFB source validator dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Fail closed on original PDF report-version identity, 6 holds, 4 aliases, 51 CFB principals and historical published-by unknown
+        run: node --import tsx --test tests/cfb-864-298-version-51-senator-report-ledger-v19.test.mjs
+      - name: Independently regenerate all 298 immutable official report-version and 95 serving-member metadata rows
+        run: node --import tsx scripts/audit-cfb-864-298-exact-reports-51-serving-principals-v19.mjs
