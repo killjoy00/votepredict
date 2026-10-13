@@ -236,10 +236,15 @@ jobs:
                 ||r.currentTransactionReadOnly!==true||r.transactionRollbackCompleted!==true
                 ||r.productionMutations!==0||r.deployedProductionDbBindingProven!==false
                 ||r.currentSourceOriginalHtmlRawShaParityProven!==false
+                ||r.duckworthLiveOriginalRawShaComparedAgainstStoredSourceSha!==true
                 ||r.outputContainsPrivateSourceRows!==false||r.outputContainsPrivateUrls!==false
                 ||r.outputContainsPrivatePeopleNames!==false||r.outputContainsPrivateHashes!==false
                 ||!Array.isArray(r.sourceUrlStatusByDistrict)||r.sourceUrlStatusByDistrict.length!==49
-                ||r.duckworth?.perSource?.length!==4)throw Error('Unsafe source-level receipt');
+                ||r.duckworth?.perSource?.length!==4
+                ||!Number.isInteger(r.duckworth?.exactLiveWholePublisherHtmlShaMatches)
+                ||r.duckworth.exactLiveWholePublisherHtmlShaMatches<0
+                ||r.duckworth.exactLiveWholePublisherHtmlShaMatches>4)
+                throw Error('Unsafe source-level receipt');
               const allowed=new Set(['matched_exact_url_with_named_senator_evidence',
                 'matched_url_alias_with_named_senator_evidence',
                 'source_url_present_but_no_named_senator_evidence',
@@ -280,6 +285,7 @@ jobs:
                 '- Listed public URL observed in source_documents: '+r.duckworth.sourceUrlsObserved+'/4',
                 '- Linked to his current Senate membership evidence: '+r.duckworth.senatorEvidenceLinked+'/4',
                 '- Exact short issue cue present in associated stored excerpt: '+r.duckworth.literalShortCueObserved+'/4',
+                '- Exact entire October 13 original publisher HTML SHA-256 matches in correctly linked evidence sources: '+r.duckworth.exactLiveWholePublisherHtmlShaMatches+'/4',
                 '', 'URL/source records are not proof of byte-for-byte 2026 original published content.',
                 'Unobserved matches can reside under a different URL, archival alias, source kind or another evidence pipeline.',
                 'This is a read-only existing-default-branch snapshot, not an independently confirmed deployed production connection.',
