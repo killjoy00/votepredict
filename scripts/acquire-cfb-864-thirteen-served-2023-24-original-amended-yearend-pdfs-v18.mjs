@@ -164,6 +164,14 @@ export function auditYearEndSourcePdfHeader(t,ref,source,viewerSha,fetchError=nu
   legalAndBoardReceivedEarliestPossiblePublicDate:release,
   exactHistoricalActualPublicByOn:null,
   firstPageIdentityAndReportPeriodVerified:!!verified,
+  sourceFirstPageIdentityDiagnostic:header?{
+   principalCampaignReportTitle:header.principalCampaignReportTitle,
+   committeeRegistrationMatches:header.committeeRegistrationMatches,
+   exactPrintedSenateDistrictMatches:header.exactPrintedSenateDistrictMatches,
+   parsedPeriodStartOn:header.coverageStartOn,
+   parsedPeriodEndOn:header.coverageEndOn,
+   parsedBoardReceivedOn:header.boardReceivedOn,
+  }:null,
   candidateSourceSha256:t.originalCfb2022DistrictPageSha,
   sourceErrorKind:fetchError,
   sourceStatus:fetchError?'source_retrieval_hold':
