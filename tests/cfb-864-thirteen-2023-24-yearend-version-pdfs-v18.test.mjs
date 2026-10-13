@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {cfbReportViewerUrl}
  from '../src/evidence/cfb-current-report-acquisition.js';
@@ -134,4 +135,58 @@ test('original PDF research workflow never exports sensitive financial rows, use
  assert.match(y,/node --import tsx --test tests\/cfb-864-thirteen-2023-24-yearend-version-pdfs-v18.test.mjs/);
  assert.match(y,/node --import tsx scripts\/acquire-cfb-864-thirteen-served-2023-24-original-amended-yearend-pdfs-v18.mjs/);
  assert.doesNotMatch(y,/secrets\.|NEON|upload-artifact|issues: write|workflow_dispatch|schedule:|environment:/);
+});
+
+test('43 permanent original CFB exact YE source version identities: 39 distinct PDF binaries, 3 strict firstpage holds and one alias',()=>{
+ const p='docs/evaluation/source-proof/cfb-2023-24-thirteen-served-43-original-amended-yearend-pdfs-v18.psv';
+ const data=readFileSync(p,'utf8');
+ const rows=data.trimEnd().split('\n').map(x=>x.split('|'));
+ assert.equal(rows.length,43);
+ assert.ok(rows.every(x=>x.length===18));
+ assert.equal(new Set(rows.map(x=>x[0])).size,43);
+ assert.equal(new Set(rows.map(x=>x[3])).size,13);
+ assert.equal(rows.filter(x=>x[6]==='authenticated_original_pdf').length,25);
+ assert.equal(rows.filter(x=>x[6]==='authenticated_amendment_pdf').length,14);
+ assert.equal(rows.filter(x=>x[6]==='exact_pdf_alias').length,1);
+ assert.equal(rows.filter(x=>x[6]==='original_pdf_firstpage_committee_district_period_or_receipt_hold').length,3);
+ assert.equal(new Set(rows.filter(x=>x[6].startsWith('authenticated_')).map(x=>x[7])).size,39);
+ assert.ok(rows.every(x=>x[17]==='-'&&/^[a-f0-9]{64}$/.test(x[7])
+  &&Number(x[8])>=1000&&/^[a-f0-9]{64}$/.test(x[14])
+  &&/^[a-f0-9]{64}$/.test(x[16])));
+ const holds=new Set(rows.filter(x=>x[6].includes('hold')).map(x=>x[0]));
+ assert.deepEqual(holds,new Set([
+  '18809:23:pcc:YE:0:0','18809:23:pcc:YE:0:1','18910:23:pcc:YE:0:1'
+ ]));
+ assert.ok(rows.filter(x=>x[6].includes('hold')).every(x=>
+  x[9]==='-'&&x[10]==='-'&&x[11]==='-'&&x[13]==='-'));
+});
+test('original source metadata 43 reports second source replay and no prior 255 PDF or ID duplicates',()=>{
+ const source=readFileSync(
+  'docs/evaluation/source-proof/cfb-2023-24-thirteen-served-43-original-amended-yearend-pdfs-v18.psv','utf8');
+ const cp=JSON.parse(readFileSync(
+  'docs/evaluation/source-proof/cfb-2023-24-13-serving-original-amended-source-checkpoint-v18.json','utf8'));
+ const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0')
+  .update(source,'utf8').digest('hex');
+ assert.equal(blob,cp.sourceProofMetadata.metadataPsvGitBlobSha);
+ assert.equal(cp.sourceProofMetadata.metadataRowCount,43);
+ assert.equal(cp.sourceProofMetadata.authenticatedDistinctSourcePdfBodies,39);
+ assert.equal(cp.sourceProofMetadata.exactSourcePdfBinaryAliases,1);
+ assert.equal(cp.sourceProofMetadata.firstPageRegistrationIdentityHolds,3);
+ assert.equal(cp.sourceProofMetadata.actualHistoricalPublicationByExactPdfShaCount,0);
+ assert.equal(cp.observedCfbOriginalAcquisition.independentOriginalApiSources.length,13);
+ assert.equal(cp.observedCfbOriginalAcquisition.firstProofRun,
+  'https://github.com/killjoy00/votepredict/actions/runs/38455766999');
+ assert.equal(cp.observedCfbOriginalAcquisition.secondOriginalAll43PdfBodyReacquisitionRun,
+  'https://github.com/killjoy00/votepredict/actions/runs/38456123723');
+ assert.ok(cp.heldOriginalSourceVersionFirstPageInvestigations.every(x=>
+  x.firstPageIdentityDiagnostic.committeeRegistrationMatches===false
+  &&x.firstPageIdentityDiagnostic.principalCampaignReportTitle===true
+  &&x.firstPageIdentityDiagnostic.exactPrintedSenateDistrictMatches===true));
+ const fresh=source.trimEnd().split('\n').map(x=>x.split('|'));
+ const old=readFileSync('docs/evaluation/source-proof/cfb-2021-25-38-served-principal-255-exact-report-version-ledger-v16.psv','utf8')
+  .trimEnd().split('\n').map(x=>x.split('|'));
+ const oldIds=new Set(old.map(x=>x[0]));
+ const oldPdfHashes=new Set(old.filter(x=>x[9].startsWith('authenticated_')).map(x=>x[10]));
+ assert.ok(fresh.every(x=>!oldIds.has(x[0])));
+ assert.ok(fresh.filter(x=>x[6].startsWith('authenticated_')).every(x=>!oldPdfHashes.has(x[7])));
 });
