@@ -85,13 +85,28 @@ export function memberRollFromOriginalText(text,target){
     notInferringPersonalVoteFromSponsorshipOrProceduralMotion:true
   });
  }
- const cert=candidates.filter(c=>c.eligibleDirectPersonalVoteVerified&&
-   c.members.every(m=>m.personalRecordedThirdReadingChoice!=='UNKNOWN'));
+ const anchored=candidates.filter(c=>c.eligibleDirectPersonalVoteVerified);
+ // Prove the bill's third-reading roll independently of whether every one
+ // of our four sampled people had their name printed. Other voters' choices
+ // cannot substitute for an absent senator. If two same-bill/tally rolls
+ // appear, the event remains ambiguous rather than picking either.
+ const unique=anchored.length===1?anchored[0]:null;
+ const direct=unique?unique.members.filter(m=>m.personalRecordedThirdReadingChoice!=='UNKNOWN')
+   .map(m=>({senator:m.senator,choice:m.personalRecordedThirdReadingChoice,
+     exactPrintedBillAnchor:target.bill,originalPdfPageOneBased:unique.originalPdfPageOneBased,
+     proof:'uniquely_anchored_third_reading_printed_affirmative_or_negative_name',
+     sponsorOrPartyIsNotVoteEvidence:true})): [];
+ const complete=unique&&direct.length===MEMBERS.length?unique:null;
  return {target:{bill:target.bill,date:target.day,finalResult:target.finalResult,
      expectedYes:target.yes,expectedNo:target.no},
    aggregateRollCandidatesForThisTally:candidates,
-   certifiedUniqueDirectPersonalRoll:cert.length===1?cert[0]:null,
-   certifiedUniqueDirectPersonalRollCount:cert.length,
+   uniquelyIdentifiedBillSpecificThirdReadingRoll:unique,
+   uniquelyIdentifiedBillSpecificThirdReadingRollCount:unique?1:0,
+   independentlyCertifiedNamedMemberChoices:direct,
+   certifiedDirectMemberChoiceCount:direct.length,
+   countOfSampledMembersWhosePersonalChoiceRemainsUnknown:MEMBERS.length-direct.length,
+   certifiedUniqueDirectPersonalRoll:complete,
+   certifiedUniqueDirectPersonalRollCount:complete?1:0,
    ambiguousOrMissingRollCannotBecomeVote:true};
 }
 async function fetchBytes(url,f,cap){
@@ -148,8 +163,11 @@ export async function auditJournal(targets=ROLL_TARGETS,f=fetch,extract=extractP
  return {schema:'senate-864-2023-hf669-hf670-original-exact-member-floor-ballots-v1',
   issue:864,primaryOriginalOfficialSenateJournalPdfs:docs,
   expectedThirdReadingEvents:targets.map(x=>({bill:x.bill,date:x.day,yes:x.yes,no:x.no,result:x.finalResult})),
-  provenThirdReadingEventCount:all.filter(x=>x.certifiedUniqueDirectPersonalRollCount===1).length,
-  senatorDecisionRowsEstablished:all.filter(x=>x.certifiedUniqueDirectPersonalRollCount===1).length*MEMBERS.length,
+  provenThirdReadingEventCount:all.filter(x=>x.uniquelyIdentifiedBillSpecificThirdReadingRollCount===1).length,
+  fullyCoveredFourSenatorEventCount:all.filter(x=>x.certifiedUniqueDirectPersonalRollCount===1).length,
+  senatorDecisionRowsEstablished:all.reduce((n,x)=>n+x.certifiedDirectMemberChoiceCount,0),
+  sampledNamedMemberVoteUnknownRows:all.reduce((n,x)=>n+x.countOfSampledMembersWhosePersonalChoiceRemainsUnknown,0),
+  noAllOrNothingMemberGateOnOtherwiseAuthenticatedRoll:true,
   noOriginalPdfOrPageTextCommitted:true,
   noBillVersionIdentityAssumedFromAggregateOrSponsorship:true,
   noProductionDbModelOrServingChanges:true};
