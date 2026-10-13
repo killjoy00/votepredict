@@ -1,0 +1,45 @@
+name: Senate 864 HF669 five original Revisor text version audit
+on:
+  push:
+    branches:
+      - research/864-substantive-current-lead-audit-20261012
+    paths:
+      - data/evaluation/senate-864-2023-hf669-five-official-text-versions-asof-research-v1.json
+      - scripts/audit-senate-864-hf669-five-current-original-legislative-versions.mjs
+      - tests/senate-864-hf669-five-revisor-original-version-asof-audit.test.mjs
+      - .github/workflows/senate-864-hf669-five-revisor-original-versions.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  independent-original-Revisor-bill-version-fingerprints:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked PDF parser for exact original legislative pages
+        run: npm ci --no-fund --no-audit
+      - name: Exact bill, legislative year, version-code and point-in-time controls
+        run: |
+          node --check scripts/audit-senate-864-hf669-five-current-original-legislative-versions.mjs
+          node --test tests/senate-864-hf669-five-revisor-original-version-asof-audit.test.mjs
+      - name: Download and SHA-pin current official Revisor original PDFs; compare text without storing whole bill
+        shell: bash
+        run: |
+          mkdir -p research-output
+          node scripts/audit-senate-864-hf669-five-current-original-legislative-versions.mjs \
+            research-output/senate-864-hf669-official-revisor-original-text-five-version-comparison.json
+      - name: Retain only public official PDF digests and version-to-version difference counts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-2023-hf669-5-official-revisor-version-sha-text-diff-receipts
+          path: research-output/*.json
+          retention-days: 30
+          if-no-files-found: warn
