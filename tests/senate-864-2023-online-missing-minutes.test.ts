@@ -195,3 +195,57 @@ test('independently authenticated original 14 Senate HTML body SHA + 31/2 action
  const publicBody=JSON.stringify(proof);
  assert.doesNotMatch(publicBody,/choiceIdentitySha256|normalized_member_name|membership_id|originalSourceHtmlBody/);
 });
+
+test('independent 2023 64-meeting no-PDF -> 14 Clerk originals + 50 unverified crosswalk exactly matches official per-committee denominators',()=>{
+ const ledger=JSON.parse(readFileSync(
+  'docs/evaluation/source-proof/senate-864-2023-64-no-lrl-pdf-to-senate-clerk-original-html-crosswalk.json','utf8'));
+ assert.equal(ledger.schemaVersion,
+  'senate-864-2023-64-no-lrl-linked-pdf-alternate-clerk-html-source-status-v1');
+ assert.equal(ledger.perOfficiallyIndexedMeeting.length,64);
+ assert.equal(ledger.indexedWithoutLrlElectronicPdf,64);
+ assert.equal(ledger.authenticatedOnlineSenateClerkMinutes,14);
+ assert.equal(ledger.remainingUnverifiedViaNewSourceRoute,50);
+ assert.equal(ledger.perCommittee.length,5);
+ assert.equal(ledger.perCommittee.reduce((s:number,c:any)=>s+c.indexed2023MeetingsWithoutLrlMinutesPdf,0),64);
+ assert.equal(ledger.perCommittee.reduce((s:number,c:any)=>s+c.authenticatedOfficialSenateOnlineHtml,0),14);
+ assert.equal(ledger.perCommittee.reduce((s:number,c:any)=>s+c.remainingWithoutAuthenticatedAlternateClerkHtml,0),50);
+ assert.deepEqual(ledger.perCommittee.map((c:any)=>[c.committeeName,c.indexed2023MeetingsWithoutLrlMinutesPdf,
+  c.authenticatedOfficialSenateOnlineHtml,c.remainingWithoutAuthenticatedAlternateClerkHtml]),[
+   ['Agriculture, Broadband and Rural Development',22,5,17],
+   ['Education Finance',3,0,3],['Environment, Climate, and Legacy',1,0,1],
+   ['Jobs and Economic Development',1,0,1],['Taxes',37,9,28],
+  ]);
+ assert.equal(ledger.parserRecognizedResultOnlyActionCandidatesOnVerifiedAlternates,31);
+ assert.equal(ledger.parserRecognizedCountOnlyRollCallCandidatesOnVerifiedAlternates,2);
+ const sources=JSON.parse(readFileSync(
+  'docs/evaluation/source-proof/senate-864-2023-14-senate-online-original-html-source-receipts.json','utf8'));
+ const expected=new Map(sources.verifiedOriginals.map((x:any)=>[
+  x.committeeName+'|'+x.hearingDate,x]));
+ const seen=new Set<string>();
+ for(const meeting of ledger.perOfficiallyIndexedMeeting){
+  const key=meeting.committeeName+'|'+meeting.hearingDate;
+  assert.ok(!seen.has(key));seen.add(key);
+  assert.equal(meeting.year,2023);
+  assert.equal(meeting.originalLrlElectronicMinutesPdfLinkAvailable,false);
+  assert.equal(meeting.historicalFirstOnlinePublicationDateProven,null);
+  assert.equal(meeting.anyNamedMemberVotesInferred,false);
+  assert.equal(meeting.noSourceVerifiedDoesNotProveNoMinutesOrNoVote,true);
+  const source=expected.get(key);
+  if(source){
+   assert.equal(meeting.onlineSenateClerkMinutesSourceStatus,'independently_authenticated_original_html');
+   assert.equal(meeting.originalSenateHtmlSha256,source.sourceOriginalHtmlSha256);
+   assert.equal(meeting.originalSenateNormalizedTextSha256,source.normalizedOriginalTextSha256);
+   assert.equal(meeting.originalSenateHearingId,source.officialSenateHearingId);
+   assert.equal(meeting.parserRecognizedCountOnlyRollCallCandidates,source.parsedCountOnlyRollCallCandidates);
+  }else{
+   assert.equal(meeting.onlineSenateClerkMinutesSourceStatus,'not_yet_authenticated_by_this_alternate_source_route');
+   assert.equal(meeting.originalSenateHtmlSha256,null);
+   assert.equal(meeting.parserRecognizedCountOnlyRollCallCandidates,null);
+   assert.equal(meeting.parserRecognizedResultOnlyMotionCandidates,null);
+  }
+ }
+ assert.equal(seen.size,64);
+ assert.equal(ledger.originalMinutesUnavailabilityMustNotBeConcludedFromAbsenceOfLrlPdfOrUnverifiedAlternateHtml,true);
+ assert.equal(ledger.sourceToCurrentPrivatePersistedEventParityNotPerformed,true);
+ assert.equal(ledger.productionOrSchedulerChanges,false);
+});
