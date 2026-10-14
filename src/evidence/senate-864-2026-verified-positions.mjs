@@ -24,6 +24,7 @@ const normalize = v => String(v ?? '').normalize('NFKC')
 export const quotedPassageMatches = (text,quote) =>
   normalize(quote).length >= 20 && normalize(text).includes(normalize(quote));
 export function strictOriginalUrl(url){
+  assert.ok(!/\/(?:\.{1,2}|%2e(?:%2e)?)(?:\/|%2f)/i.test(url),'Original URL cannot contain traversal');
   const parsed = new URL(url);
   assert.equal(parsed.protocol,'https:');
   assert.equal(parsed.hostname,CERTIFIED_HOST);
