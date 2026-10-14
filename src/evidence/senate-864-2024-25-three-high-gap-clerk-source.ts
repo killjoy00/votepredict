@@ -239,7 +239,12 @@ export function inspectOriginalHighGapSenateClerkHtml(
    const sectionStart=Math.max(intervalStart,sectionHead?.at??intervalStart);
    const contextStart=Math.max(sectionStart,start-320);
    const context=text.slice(contextStart,start);
-   const amend=[...context.matchAll(amendment)].at(-1)?.[1]?.toUpperCase()??null;
+   // A prior *voice-adopted* amendment must not become the identity of
+   // a subsequent named roll that explicitly considers bill passage.
+   const namedPassageRequest=/\brequested\s+(?:a\s+)?roll\s+call\s+(?:vote\s+)?(?:for|on)\s+(?:the\s+)?(?:passage|recommendation)\b/i
+    .test(context.slice(-240));
+   const amend=namedPassageRequest?null:
+    ([...context.matchAll(amendment)].at(-1)?.[1]?.toUpperCase()??null);
    const verdict=(res[1]??res[2]??'').toLowerCase();
    const failed=/failed|did\s+not\s+prevail/.test(verdict);
    const originalContext=text.slice(contextStart,resultEnd);
