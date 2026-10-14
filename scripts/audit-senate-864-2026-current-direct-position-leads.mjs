@@ -45,7 +45,7 @@ export function verifyPositionLedgers(source,coverage){
   assert.equal(coverage.senators[c.district-1].district,c.district);
   assert.equal(c.sourceOriginalBinaryAuthenticated,false);
   assert.equal(c.originalPageRawSha256,null);
-  assert.equal(c.originalArchivedCapture,null);
+  assert.equal(c.archivedExactOriginalCapture,null);
   assert.equal(c.independentlyProvenFirstPublicAt,null);
   assert.equal(c.earliestIndependentlyProvenExactVersionPublicByUtc,null);
   assert.equal(c.historicalBacktestEligibleFromThisLedger,false);
