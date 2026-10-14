@@ -7,6 +7,8 @@ on:
       - tests/senate-864-three-high-gap-2024-25-original-clerk-source.test.ts
       - docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-53-no-pdf-official-index.json
       - docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-source-receipts.json
+      - docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-source-receipts-v2.json
+      - tests/senate-864-three-high-gap-2024-25-original-source-reparse-receipts-v2.test.ts
       - docs/evaluation/senate-864-three-high-gap-2024-25-independent-online-clerk-reconciliation.md
       - .github/workflows/senate-864-high-gap-2024-25-original-clerk-minutes.yml
 permissions:
@@ -30,7 +32,11 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
       - name: Exact 53 indexed meetings, original calendar and no inferred vote-choice regressions
-        run: node --import tsx --test tests/senate-864-three-high-gap-2024-25-original-clerk-source.test.ts
+        run: >-
+          node --import tsx --test
+          tests/senate-864-three-high-gap-2024-25-original-clerk-source.test.ts
+          tests/senate-864-three-high-gap-2024-25-original-sha-receipts.test.ts
+          tests/senate-864-three-high-gap-2024-25-original-source-reparse-receipts-v2.test.ts
       - name: Fetch SHA-pinned official original 1592 indexed meeting census
         uses: actions/download-artifact@v4
         with:
