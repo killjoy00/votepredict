@@ -43,8 +43,7 @@ function main(){
    ||census.indexAcquisitionFailures.length!==0
    ||census.officialIndexProofs.length!==4
    ||census.officialIndexProofs.reduce((n,x)=>n+x.downloadedPageHashes.length,0)!==99
-   ||census.yearSummaries.length!==5||census.yearSummaries[0]?.year!==2021
-   ||census.yearSummaries[0]?.indexedMeetings!==null)
+   ||census.yearSummaries.filter(s=>s.year>=2022&&s.year<=2025).length!==4)
   throw Error('Authenticated original LRL electronic index year/committee provenance drift');
  // Exact 141-row compact source roster is independently reviewable in Git.
  const gap=JSON.parse(readFileSync(GAP_PATH,'utf8')) as GapLedger;
@@ -80,12 +79,12 @@ function main(){
  };
  const meeting={
   ...header,sourceRecordReconciliation:report.sourceRecordReconciliation,
-  year2021:report.year2021,year2022PrintVsElectronicParity:report.year2022PrintVsElectronicParity,
+  year2022PrintVsElectronicParity:report.year2022PrintVsElectronicParity,
   meetings:report.meetings,
  };
  const committeeYear={
   ...header,summariesByYear:report.summariesByYear,
-  committeeYears:report.committeeYears,year2021:report.year2021,
+  committeeYears:report.committeeYears,
   year2022PrintVsElectronicParity:report.year2022PrintVsElectronicParity,
   historicalAsOfConvention:report.historicalAsOfConvention,
  };
@@ -96,45 +95,16 @@ function main(){
   if(/choiceIdentitySha256|normalized_member_name|member_votes|membership_id|privateRow|donor|viewstate|api_key/i.test(body))
    throw Error('Original public-only source ledger would expose protected data');
  }
- // The official 2021 LRL print volume is NOT available. Preserve separately
- // SHA-authenticated published Senate Journal Rule12.10 committee rolls and
- // one authenticated online hearing in a STRICTLY partial, non-meeting panel.
- const prior=JSON.parse(readFileSync(
-  'docs/evaluation/source-proof/senate-864-2021-committee-partial-official-original-source-roll-catalogue.json',
-  'utf8')) as {
-  schemaVersion:string;publishedOriginalCertifiedRolls:number;
-  originalSourceNamedChoiceOccurrences:number;
-  sourceRolls:Array<{originalSourceByteSha256:string;sourceNamedYeas:number;
-   sourceNamedNays:number;originalNamedChoiceOccurrences:number;
-   sourceType:string;independentCommitteeHearingDay:string|null;
-   originalReportDay:string|null;independentlyProvenOriginalPublicBy:null}>;
-  sourceCommitteeGroups:unknown[];
- };
- const journal=prior.sourceRolls.filter(x=>
-  x.sourceType==='official_senate_journal_rule_12_10_committee_vote_report');
- if(prior.schemaVersion!==
-  'senate-864-independent-2021-journal-and-online-committee-original-partial-catalogue-v1'
-  ||prior.publishedOriginalCertifiedRolls!==12||prior.sourceRolls.length!==12
-  ||prior.originalSourceNamedChoiceOccurrences!==103||journal.length!==11
-  ||prior.sourceCommitteeGroups.length!==6
-  ||journal.some(x=>x.independentCommitteeHearingDay!==null||!x.originalReportDay)
-  ||prior.sourceRolls.some(x=>!/^[a-f0-9]{64}$/.test(x.originalSourceByteSha256)
-   ||x.originalNamedChoiceOccurrences!==x.sourceNamedYeas+x.sourceNamedNays
-   ||x.independentlyProvenOriginalPublicBy!==null)
-  ||prior.sourceRolls.reduce((n,x)=>n+x.originalNamedChoiceOccurrences,0)!==103)
-  throw Error('Partial 2021 authenticated original Senate Journal and online receipt counts drift');
  mkdirSync(output,{recursive:true});
  writeFileSync(join(output,'1592-official-meetings-to-source-action-candidates.json'),
   JSON.stringify(meeting,null,2)+'\n');
- writeFileSync(join(output,'2021-partial-original-journal-and-online-committee-rolls.json'),
-  JSON.stringify(prior,null,2)+'\n');
  writeFileSync(join(output,'committee-year-completeness.json'),
   JSON.stringify(committeeYear,null,2)+'\n');
  const table=[
   '# #864 Minnesota Senate committee-year electronic source completeness',
   '',
   'Official source: Minnesota Legislative Reference Library 2022-25 Senate committee index and verified original Minutes PDF hashes.',
-  '2021 official printed Minutes meeting and recorded-vote universe remains UNKNOWN; 2022 print-versus-electronic parity is UNKNOWN.',
+  '2022 print-versus-electronic Minutes parity remains UNKNOWN; only the official 2022-25 electronic index is included.',
   'The 141 electronic no-Minutes listings are documented meeting leads, not proven no-vote meetings.',
   'First-pass candidate actions below are **not** the total official action denominator or a current persisted-member-vote parity statement.',
   'The 207 recovered OCR originals have complete document/hash evidence but original OCR action metadata does not completely enumerate context-only motions.',
