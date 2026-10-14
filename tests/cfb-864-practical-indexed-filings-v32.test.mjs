@@ -80,11 +80,11 @@ test('original official PDF source inventory is attached to legislator profile a
  const s=historicalOfficialFilingInventoryTotals();
  assert.equal(s.senators,95);
  assert.equal(s.versions,721);
- assert.equal(s.downloadedVersions,444);
- assert.equal(s.distinctDownloadedPdfBodies,440);
+ assert.equal(s.downloadedVersions,480);
+ assert.equal(s.distinctDownloadedPdfBodies,476);
  assert.equal(s.readableVersions,425);
  assert.equal(s.unresolvedDocumentDetails,15);
- assert.equal(s.indexedVersionsAwaitingPdfDownload,276);
+ assert.equal(s.indexedVersionsAwaitingPdfDownload,240);
 });
 test('historical publication and mandatory owed-report counts are NOT inferred from CFB indexed document existence',()=>{
  assert.equal(report.historicallyContemporaneousPublicationNotAssumed,true);
