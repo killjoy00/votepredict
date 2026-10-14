@@ -37,7 +37,7 @@ export interface HistoricalOfficialFilingContext {
   filings: HistoricalOfficialFiling[];
 }
 
-const inventory = source as {
+const inventory = source as unknown as {
   schemaVersion: string;
   senators: HistoricalOfficialFilingContext[];
 };
