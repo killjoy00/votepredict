@@ -119,6 +119,35 @@ test('original and amended source PDF identities and same-binary aliases require
  classifyOriginalAmended(notParent);
  assert.equal(notParent[1].sourceStatus,'amendment_original_parent_not_authenticated_hold');
 });
+test('2022 post-redistrict CFB PDF district accepted ONLY when independently recorded as actual 2023 Senate service',()=>{
+ const limmer=people.find(x=>x.officialSenator==='Warren E. Limmer');
+ assert.ok(limmer);
+ assert.deepEqual(limmer.servingDistricts2021And2022,[34]);
+ assert.deepEqual(limmer.independentlyDocumented2023ServingDistricts,[37]);
+ const mk=(person,year,district)=>{
+  const r={registrationNumber:person.reg,year:String(year).slice(2),type:'pcc',period:'YE',se:'0',amendment:0};
+  return{r,source:{sourceUrl:cfbReportViewerUrl(r),contentSha256:'a'.repeat(64),
+   bytes:400000,fetchedAt:'2026-10-13T20:00:00.000Z',
+   text:'Report of Receipts and Expenditures for Principal Campaign Committee '
+    +'Senate District '+district+' Registration Number: '+person.reg
+    +' Period Covered: 1/1/'+year+' through 12/31/'+year
+    +' Received by the Board January 20, '+(year+1)}};
+ };
+ const yy22=mk(limmer,2022,37);
+ const verified=originalHeader(limmer,yy22.r,yy22.source,'b'.repeat(64));
+ assert.equal(verified.sourceStatus,'original_or_amended_pdf_source_binary_and_firstpage_authenticated_unclassified');
+ assert.equal(verified.originalPrintedSenateDistrict,37);
+ assert.equal(verified.sourceHeaderIdentityDiagnostic.printedDistrictMatchesIndependentlyProven2023ServingTerm,true);
+ const yy21=mk(limmer,2021,37);
+ assert.equal(originalHeader(limmer,yy21.r,yy21.source,'b'.repeat(64)).sourceStatus,
+  'original_pdf_firstpage_registration_senate_district_or_period_hold');
+ const chamberlain=people.find(x=>x.officialSenator==='Roger C. Chamberlain');
+ assert.ok(chamberlain);
+ assert.deepEqual(chamberlain.independentlyDocumented2023ServingDistricts,[]);
+ const unsourced=mk(chamberlain,2022,36);
+ assert.equal(originalHeader(chamberlain,unsourced.r,unsourced.source,'b'.repeat(64)).sourceStatus,
+  'original_pdf_firstpage_registration_senate_district_or_period_hold');
+});
 test('bounded official source-only workflow is PR-only, excludes all other finance tasks and production',()=>{
  const y=readFileSync('.github/workflows/senate-864-38-served-original-amended-YE-2021-22-v20.yml','utf8');
  assert.match(y,/pull_request:/);
