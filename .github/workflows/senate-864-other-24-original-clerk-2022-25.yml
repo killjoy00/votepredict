@@ -10,6 +10,9 @@ on:
       - docs/evaluation/source-proof/senate-864-2023-fifty-government-clerk-source-receipts.json
       - tests/senate-864-2022-25-141-original-no-pdf-to-Clerk-crosswalk.test.ts
       - tests/senate-864-other-24-two-run-source-receipts.test.ts
+      - tests/senate-864-2022-25-141-original-no-pdf-to-Clerk-crosswalk.test.ts
+      - docs/evaluation/source-proof/senate-864-2022-25-141-official-no-pdf-meeting-to-Clerk-crosswalk.json
+      - docs/evaluation/source-proof/senate-864-2022-housing-unlinked-official-original-minutes-pdf-receipt.json
       - docs/evaluation/senate-864-2022-25-remaining-written-minute-recovery.md
       - .github/workflows/senate-864-other-24-original-clerk-2022-25.yml
 permissions:
@@ -37,6 +40,7 @@ jobs:
           npx tsc --noEmit
           node --import tsx --test tests/senate-864-other-24-original-clerk-probe.test.ts
           node --import tsx --test tests/senate-864-other-24-two-run-source-receipts.test.ts
+          node --import tsx --test tests/senate-864-2022-25-141-original-no-pdf-to-Clerk-crosswalk.test.ts
           node --import tsx --test tests/senate-864-2022-25-141-original-no-pdf-to-Clerk-crosswalk.test.ts
       - name: Download immutable 2022-25 official LRL committee meeting census
         uses: actions/download-artifact@v4
