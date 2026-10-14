@@ -5,7 +5,8 @@ on:
       - scripts/reconcile-senate-864-high-gap-original-bill-logs.ts
       - tests/senate-864-high-gap-official-bill-log-supplement.test.ts
       - docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-53-no-pdf-official-index.json
-      - docs/evaluation/source-proof/senate-864-high-gap-2024-25-bill-log-original-source-receipts.json
+      - docs/evaluation/source-proof/senate-864-2024-25-high-gap-official-bill-log-original-source-receipt.json
+      - tests/senate-864-high-gap-official-bill-log-original-source-receipt.test.ts
       - .github/workflows/senate-864-high-gap-original-bill-log-proof.yml
 permissions:
   contents: read
@@ -27,7 +28,10 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
       - name: Fail-closed date/status-only government PDF regressions
-        run: node --import tsx --test tests/senate-864-high-gap-official-bill-log-supplement.test.ts
+        run: >-
+          node --import tsx --test
+          tests/senate-864-high-gap-official-bill-log-supplement.test.ts
+          tests/senate-864-high-gap-official-bill-log-original-source-receipt.test.ts
       - name: Install bounded original PDF text extraction dependencies
         run: |
           sudo apt-get update -qq
