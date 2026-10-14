@@ -1,0 +1,48 @@
+name: '#864 original archived 2022 Housing orphan Senate Minutes PDF (source only)'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-2022-housing-orphan-minutes-original-pdf.ts
+      - scripts/audit-senate-864-2022-housing-orphan-official-minutes-pdf.ts
+      - tests/senate-864-2022-housing-unlinked-original-pdf.test.ts
+      - docs/evaluation/source-proof/senate-864-2022-housing-unlinked-official-original-minutes-pdf-receipt.json
+      - .github/workflows/senate-864-2022-housing-orphan-original-pdf.yml
+permissions:
+  contents: read
+jobs:
+  independent-archived-senate-housing-original:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Strict original PDF two-proposed-motions and official-date synthetic checks
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-2022-housing-unlinked-original-pdf.test.ts
+      - name: Install original-government-PDF text tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+      - name: Independently fetch exact original Minnesota LRL Housing 2022-03-24 Minutes PDF not linked from meeting index
+        run: |
+          node --import tsx scripts/audit-senate-864-2022-housing-orphan-official-minutes-pdf.ts \
+            --output artifacts/senate-864-2022-housing-original-pdf-source.json
+      - name: Publish only source checksums, original page references and no-outcome proposals
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-2022-housing-original-orphan-minutes-PDF
+          path: artifacts/senate-864-2022-housing-original-pdf-source.json
+          if-no-files-found: ignore
+          retention-days: 30
