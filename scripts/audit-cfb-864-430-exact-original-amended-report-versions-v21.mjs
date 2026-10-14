@@ -80,7 +80,8 @@ function versionRows(p){
     throw Error('Do not promote held report form/receipt/publication '+id);
   }else if(status==='exact_pdf_alias'){
    if(am==='0'||!SHA.test(pdf)||alias==='-'||!validDay(start)||!validDay(end)
-     ||!validDay(received)||!validDay(floor)\n     ||floor<[received,nextDay(due)].sort().at(-1))
+     ||!validDay(received)||!validDay(floor)
+     ||floor<[received,nextDay(due)].sort().at(-1))
     throw Error('Aliased original government PDF without an authentic parent '+id);
   }else throw Error('Unsupported government report version proof status '+id+': '+status);
   return{id,year:Number(year),person,district:Number(district),reg,period,se,am:Number(am),kind,status,pdf,bytes:bytes==='-'?null:Number(bytes),start,end,received,due,floor,viewer,alias,historic,url,proof,row:a};
