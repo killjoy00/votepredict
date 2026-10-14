@@ -1,0 +1,30 @@
+name: 'Senate #864 original 2022 first-12 candidate PDFs actual-member crosswalk V15'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-2022-first-12-original-pdfs-v15.mjs'
+      - 'tests/cfb-864-2022-first-12-original-pdfs-v15.test.mjs'
+      - 'docs/evaluation/cfb-2022-first-12-original-reports-served-person-review-v15.md'
+      - '.github/workflows/senate-864-2022-first-12-original-pdf-serving-audit-v15.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  original-cfb-pdf-service-crosswalk:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned public government HTML source parser dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Fail-closed original candidate reports and Senate-service join tests
+        run: node --import tsx --test tests/cfb-864-2022-first-12-original-pdfs-v15.test.mjs
+      - name: Independently authenticate original CFB district voter and C/E report PDF principal identity
+        run: node --import tsx scripts/audit-cfb-864-2022-first-12-original-pdfs-v15.mjs

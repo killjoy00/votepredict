@@ -1,0 +1,30 @@
+name: 'Senate #864 255 exact official original/edited PDF report versions V16'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-255-exact-report-version-ledger-v16.mjs'
+      - 'tests/cfb-864-255-exact-report-version-expansion-v16.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-38-served-principal-255-exact-report-version-ledger-v16.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-served-senator-38-report-principal-crosswalk-v16.psv'
+      - 'docs/evaluation/cfb-2021-25-source-255-official-pdf-version-and-service-proof-v16.md'
+      - '.github/workflows/senate-864-255-exact-report-version-expansion-v16.yml'
+permissions:
+  contents: read
+jobs:
+  regenerate-255-source-proven-exact-pdf-versions:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned import TS loader
+        run: npm ci --no-fund --no-audit
+      - name: Verify independent original CFB report sources, true Senate service and historical availability UNKNOWN
+        run: node --import tsx --test tests/cfb-864-255-exact-report-version-expansion-v16.test.mjs
+      - name: Repeat source-proven 255 PDF version and 95 person report-panel audit
+        run: node --import tsx scripts/audit-cfb-864-255-exact-report-version-ledger-v16.mjs

@@ -1,0 +1,32 @@
+name: 'Senate #864 13 served 2023-24 CFB yearend original/amended PDF source V18'
+on:
+  pull_request:
+    paths:
+      - 'scripts/acquire-cfb-864-thirteen-served-2023-24-original-amended-yearend-pdfs-v18.mjs'
+      - 'tests/cfb-864-thirteen-2023-24-yearend-version-pdfs-v18.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2023-24-thirteen-served-43-original-amended-yearend-pdfs-v18.psv'
+      - 'docs/evaluation/source-proof/cfb-2023-24-13-serving-original-amended-source-checkpoint-v18.json'
+      - 'docs/evaluation/cfb-2023-24-thirteen-serving-senators-yearend-version-pdf-v18.md'
+      - '.github/workflows/senate-864-13-served-2023-24-original-amended-yearend-pdfs-v18.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-cfb-original-and-amended-PDF-source-audit:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned official PDF original parser
+        run: npm ci --no-fund --no-audit
+      - name: Fail closed on source candidate person, exact original/amended PDF identity and historical legal clock
+        run: node --import tsx --test tests/cfb-864-thirteen-2023-24-yearend-version-pdfs-v18.test.mjs
+      - name: Bounded 13 actual-serving Senate CFB principals, 2023 and 2024 original + amended YE report PDF body source retrieval
+        run: node --import tsx scripts/acquire-cfb-864-thirteen-served-2023-24-original-amended-yearend-pdfs-v18.mjs

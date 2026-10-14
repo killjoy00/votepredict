@@ -1,0 +1,32 @@
+name: 'Senate #864 95 actual senator serving-person to report-version panel crosswalk V14'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-95-served-report-version-crosswalk-v14.mjs'
+      - 'tests/cfb-864-95-served-report-version-crosswalk-v14.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-serving-senator-report-version-source-crosswalk-v14.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-served-report-version-crosswalk-checkpoint-v14.json'
+      - 'docs/evaluation/cfb-2021-25-95-served-senator-report-version-panel-crosswalk-v14.md'
+      - '.github/workflows/senate-864-cfb-95-served-report-crosswalk-v14.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  original-official-serve-roster-to-cfb-report-version:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned official roster parser dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Test strict original serving-person versus CFB PDF ledger boundary
+        run: node --import tsx --test tests/cfb-864-95-served-report-version-crosswalk-v14.test.mjs
+      - name: Recheck official 2021-25 95 served Senate people against 25 CFB report principals
+        run: node --import tsx scripts/audit-cfb-864-95-served-report-version-crosswalk-v14.mjs

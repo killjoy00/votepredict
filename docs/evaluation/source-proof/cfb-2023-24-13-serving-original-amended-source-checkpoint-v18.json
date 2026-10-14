@@ -1,0 +1,206 @@
+{
+  "schema": "cfb-864-2023-24-13-served-43-exact-full-original-amended-yearend-pdf-source-checkpoint-v18",
+  "issue": 864,
+  "observedAt": "2026-10-13",
+  "sourceReadOnlySourceOnly": true,
+  "sourcePaths": {
+    "originalCFBSenatorRegistrationLeads": "docs/evaluation/source-proof/cfb-2021-25-57-additional-serving-senator-original-candidate-registration-leads-v17.psv",
+    "originalLRLActualService": "docs/evaluation/source-proof/cfb-2021-25-95-served-senator-38-report-principal-crosswalk-v16.psv",
+    "independentOriginal2023And2024YearendCalendars": "docs/evaluation/source-proof/cfb-2023-24-original-board-yearend-calendar-and-revisor-release-checkpoint.json",
+    "fullOriginalAndAmendedPdfMetadata": "docs/evaluation/source-proof/cfb-2023-24-thirteen-served-43-original-amended-yearend-pdfs-v18.psv"
+  },
+  "observedCfbOriginalAcquisition": {
+    "firstProofRun": "https://github.com/killjoy00/votepredict/actions/runs/38455766999",
+    "secondOriginalAll43PdfBodyReacquisitionRun": "https://github.com/killjoy00/votepredict/actions/runs/38456123723",
+    "independentOriginalApiSources": [
+      {
+        "senator": "Calvin K. Bahr",
+        "registration": "18864",
+        "viewerOriginalSha256": "cc13f4452e7f42719214be86ffdf55f5a976ab76969c297012e66666a41930fd",
+        "candidateOriginalPageSha256": "ea8985bd318f383064bc402103982b364e2747b91e8cf4320fe623c78e1770da",
+        "viewedAt": "2026-10-13T19:36:52.969Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 2
+      },
+      {
+        "senator": "Susan Pha",
+        "registration": "18706",
+        "viewerOriginalSha256": "4e965362d541e0581397916c4b0b831f1fee5560eadf87a13192095c1ad25f5c",
+        "candidateOriginalPageSha256": "55cf735bf3aa357b75795fa38ce292084a440b0becbe89e81ed35b66127346ec",
+        "viewedAt": "2026-10-13T19:36:52.956Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 2
+      },
+      {
+        "senator": "Judy Seeberger",
+        "registration": "18845",
+        "viewerOriginalSha256": "188e0f1cb9ed0819b15e9c2686f2bc466deb06acf182903686fe5ec6b616f477",
+        "candidateOriginalPageSha256": "3d3726542809321a6b76c4bd28b4535682dd422f7eb23124781ad8881271a9f6",
+        "viewedAt": "2026-10-13T19:36:53.118Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 4
+      },
+      {
+        "senator": "Bonnie Westlin",
+        "registration": "18021",
+        "viewerOriginalSha256": "504d89edc746165ba9c0bd42e05dfd5e981189047fc6453747c8425b1960c48d",
+        "candidateOriginalPageSha256": "e6b6a5f58dd2e9577de35fda1d2e391d7f05651b3c7be6811e1eab9bbae03878",
+        "viewedAt": "2026-10-13T19:36:58.314Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 2
+      },
+      {
+        "senator": "Tou Xiong",
+        "registration": "18715",
+        "viewerOriginalSha256": "3e2aebdf7c7f23db667a95897c08a7bf632123d9c781f1c22f0e64e0dd75a855",
+        "candidateOriginalPageSha256": "4358743df39f171a55aea71f209e48557a559875378b74d001008be102e7db11",
+        "viewedAt": "2026-10-13T19:36:58.268Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 3
+      },
+      {
+        "senator": "Kelly L. Morrison",
+        "registration": "18809",
+        "viewerOriginalSha256": "70ba885b04c0456b4dfdd7c4de47f344e61522574284641030b5d7642dfe2cbb",
+        "candidateOriginalPageSha256": "e7accb3fb6e4d4b70ba71858d4104f00f866b4cbce3a8d53ed1482258713cb0d",
+        "viewedAt": "2026-10-13T19:36:59.422Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 5
+      },
+      {
+        "senator": "Nicole Mitchell",
+        "registration": "18737",
+        "viewerOriginalSha256": "c3002033dc914fa475009baf50c8a67cfe9c9e6b4e311945ec5288451b7820e4",
+        "candidateOriginalPageSha256": "e3df0b062e5484a375a578e72d453ef80cfb52b671d50aeb3bdc9a92b56bf3fe",
+        "viewedAt": "2026-10-13T19:37:01.578Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 3
+      },
+      {
+        "senator": "Julia E. Coleman",
+        "registration": "18457",
+        "viewerOriginalSha256": "583030a358c4744aaf00d6c2c44bdaa33179702e0863124a0fcc87ab323d117b",
+        "candidateOriginalPageSha256": "6e129d68cb3ab8357aef76226906f5b77fea6c32f1d412186425de2504ff1629",
+        "viewedAt": "2026-10-13T19:37:02.472Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 2
+      },
+      {
+        "senator": "Alice Mann",
+        "registration": "18793",
+        "viewerOriginalSha256": "8673e0e3988fa3c03a78d257652bb982005af959e01fc1803388714ed3c470ec",
+        "candidateOriginalPageSha256": "563b99a4da55db0fb0909343ce87ee5ca75937830f84ae2658ef0cc30a2a4aff",
+        "viewedAt": "2026-10-13T19:37:04.842Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 3
+      },
+      {
+        "senator": "Erin K. Maye Quade",
+        "registration": "18724",
+        "viewerOriginalSha256": "636594a86c123592a077fe1c70761d521dcb54e647192e0b6b9d6d9f3d4ad348",
+        "candidateOriginalPageSha256": "ada99b6bdefcebd853f0624d5da2a841a68586c43d1a6c7799251bf08b143be8",
+        "viewedAt": "2026-10-13T19:37:04.914Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 5
+      },
+      {
+        "senator": "Bill Lieske",
+        "registration": "18910",
+        "viewerOriginalSha256": "3d5eaa1a8b4563e05e4fc56937636624f52c21dfd500c79857506f451ebdd4a6",
+        "candidateOriginalPageSha256": "65c6ea5d5f6ccc46093ab4837032ab34a9da0c5a253fcba646e344d4a32fd61e",
+        "viewedAt": "2026-10-13T19:37:05.066Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 4
+      },
+      {
+        "senator": "Zaynab Mohamed",
+        "registration": "18730",
+        "viewerOriginalSha256": "371cbb2302310271613fe1b7b5bc542500689f5ea5078a7ad3f3b005a3ae11c1",
+        "candidateOriginalPageSha256": "acc820e4407840e273519df947587a61b8f45d30393802635fec9907ab3d649e",
+        "viewedAt": "2026-10-13T19:37:08.432Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 6
+      },
+      {
+        "senator": "Clare Oumou Verbeten",
+        "registration": "18766",
+        "viewerOriginalSha256": "b00b76878a70a662ff34aef7fbc8dd1a373a81fc8701e86a639704c61833e869",
+        "candidateOriginalPageSha256": "7130d009a427f290b528753ff07d12c26db24709d634a6dae849d3f65b193791",
+        "viewedAt": "2026-10-13T19:37:08.936Z",
+        "sourceStatus": "authentic_official_CFB_candidate_viewer_API",
+        "originalYearEndSourceReferences": 2
+      }
+    ]
+  },
+  "sourceProofMetadata": {
+    "originalVersionReferences": 43,
+    "authenticatedOriginalDistinctPDFs": 25,
+    "authenticatedAmendedDistinctPDFs": 14,
+    "authenticatedDistinctSourcePdfBodies": 39,
+    "firstPageRegistrationIdentityHolds": 3,
+    "exactSourcePdfBinaryAliases": 1,
+    "all13OfficialCandidateViewersOriginalSourceObserved": true,
+    "acquiredAll43OriginalPdfBodiesInBothIndependentRuns": true,
+    "prior255ReportVersionIdAndSourceShaNotRepeated": true,
+    "ordinary2023YearEndDue": "2024-01-31",
+    "ordinary2024YearEndDue": "2025-01-31",
+    "actualHistoricalPublicationByExactPdfShaCount": 0,
+    "metadataPsvGitBlobSha": "42c99764da18c21f7e1d681380558d9441952f6e",
+    "metadataRowCount": 43
+  },
+  "heldOriginalSourceVersionFirstPageInvestigations": [
+    {
+      "exactReportVersionId": "18809:23:pcc:YE:0:0",
+      "originalFullPdfSha256": "8d18fa961d856ce28d7bfd77af5a84595585fb184fae7b530813f0e083c56e00",
+      "pdfBytes": 259132,
+      "firstPageIdentityDiagnostic": {
+        "principalCampaignReportTitle": true,
+        "committeeRegistrationMatches": false,
+        "exactPrintedSenateDistrictMatches": true,
+        "parsedPeriodStartOn": "2023-01-01",
+        "parsedPeriodEndOn": "2023-12-31",
+        "parsedBoardReceivedOn": "2024-01-30"
+      },
+      "status": "original_first_page_committee_registration_not_authenticated_HOLD"
+    },
+    {
+      "exactReportVersionId": "18809:23:pcc:YE:0:1",
+      "originalFullPdfSha256": "65ca3a9ca140c211a5448c2ebf0d2c7289a4b827db3306952461d43ba1db4813",
+      "pdfBytes": 301583,
+      "firstPageIdentityDiagnostic": {
+        "principalCampaignReportTitle": true,
+        "committeeRegistrationMatches": false,
+        "exactPrintedSenateDistrictMatches": true,
+        "parsedPeriodStartOn": "2023-01-01",
+        "parsedPeriodEndOn": "2023-12-31",
+        "parsedBoardReceivedOn": "2024-03-16"
+      },
+      "status": "original_first_page_committee_registration_not_authenticated_HOLD"
+    },
+    {
+      "exactReportVersionId": "18910:23:pcc:YE:0:1",
+      "originalFullPdfSha256": "62cd7ae1a5a131dbabd2a64cdfa9557ef228e4ef660161601061dffb10f7110d",
+      "pdfBytes": 286817,
+      "firstPageIdentityDiagnostic": {
+        "principalCampaignReportTitle": true,
+        "committeeRegistrationMatches": false,
+        "exactPrintedSenateDistrictMatches": true,
+        "parsedPeriodStartOn": "2023-01-01",
+        "parsedPeriodEndOn": "2023-12-31",
+        "parsedBoardReceivedOn": "2024-01-12"
+      },
+      "status": "original_first_page_committee_registration_not_authenticated_HOLD"
+    }
+  ],
+  "boundaries": {
+    "noFullGovernmentPdfsOrDonorRecordsSaved": true,
+    "reportPdfOriginalFullSourceHashNotTransactionContainment": true,
+    "noStatutoryFilingObligationCount": true,
+    "noBulkCsvSourceTransactionComparison": true,
+    "noLegacyAsOfEligibilityChanges": true,
+    "noProductionPrivateDbWritesOrReads": true,
+    "noForecasterServingTrainingOrSchedulerChanges": true,
+    "noOutsideContact": true,
+    "keepIssue864Open": true
+  }
+}

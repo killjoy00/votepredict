@@ -1,0 +1,52 @@
+name: '#864 original LRL 2024 dual-fetch semantic digest, public only'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-lrl-2024-service-semantic-v14.ts
+      - src/evidence/senate-864-2024-lrl-year-service-directory-semantic-v14.ts
+      - scripts/probe-senate-864-lrl-two-public-originals-v14.ts
+      - tests/senate-864-lrl-two-original-semantic-v14.test.ts
+      - .github/workflows/senate-864-lrl-two-public-originals-v14.yml
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-lrl-two-public-originals-v14.yml
+permissions:
+  contents: read
+concurrency:
+  group: senate-864-lrl-2024-semantic-v14-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  synthetic-no-database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify changed LRL service records break canonical digest, unrelated HTML does not
+        run: |
+          node --import tsx --test tests/senate-864-lrl-two-original-semantic-v14.test.ts
+          npm run typecheck
+      - run: npm audit --omit=dev --audit-level=high
+  two-original-public-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch and separately authenticate two full original official directory HTML documents, compare only 2024 service facts
+        run: node --import tsx scripts/probe-senate-864-lrl-two-public-originals-v14.ts

@@ -1,0 +1,189 @@
+{
+  "version": "track-d-hf100-2023-democratic-yes-crossparty-primary-original-receipts-v1",
+  "observedUtcDate": "2026-10-12",
+  "trackingIssue": 987,
+  "prNumber": 1263,
+  "relatedMergedRepublicanNoPr": 1254,
+  "provenance": {
+    "firstIndependentFourOriginalSourceIndexAndBodiesCI": 38310942187,
+    "firstFourExactlyBoundedPersonalStatementsAndAllFourFinalBallotsCI": 38311821251,
+    "strictVerifiedCommit": "be2cb396e63f42776d4f4662af235daecf2decde",
+    "fullRepoCIPassed": true
+  },
+  "originalOfficialSenateJournal": {
+    "url": "https://www.senate.mn/journals/2023-2024/20230428059.pdf",
+    "date": "2023-04-28",
+    "printedJournalPage": 6890,
+    "originalPdfPageOneBased": 290,
+    "totalOriginalPdfPages": 292,
+    "fullPdfOriginalSha256": "9e8160e4c78ef70cc0635226201f12e656ac84a999af8e0a8f8dc3e6737791a3",
+    "fullPdfOriginalBytes": 4472460,
+    "billInRecordedFinalPassage": "HF100",
+    "earlierCompanionNotDirectRecordedFinalPassageBill": "SF73",
+    "finalPassageYeas": 34,
+    "finalPassageNays": 33,
+    "individuallyPrintedNamedFinalBallots": [
+      {
+        "senator": "Lindsey Port",
+        "vote": "yea",
+        "inAffirmativeRoster": true,
+        "inNegativeRoster": false,
+        "notAdjacentFailedReReferralMotion": true,
+        "notRule40ProxyOnly": true
+      },
+      {
+        "senator": "Clare Oumou Verbeten",
+        "vote": "yea",
+        "inAffirmativeRoster": true,
+        "inNegativeRoster": false,
+        "notAdjacentFailedReReferralMotion": true,
+        "notRule40ProxyOnly": true
+      },
+      {
+        "senator": "Gary Dahms",
+        "vote": "nay",
+        "inAffirmativeRoster": false,
+        "inNegativeRoster": true,
+        "notAdjacentFailedReReferralMotion": true,
+        "notRule40ProxyOnly": true
+      },
+      {
+        "senator": "Glenn Gruenhagen",
+        "vote": "nay",
+        "inAffirmativeRoster": false,
+        "inNegativeRoster": true,
+        "notAdjacentFailedReReferralMotion": true,
+        "notRule40ProxyOnly": true
+      }
+    ]
+  },
+  "preVotePublisherOriginals": [
+    {
+      "id": "port-jan05-kstp-introduction",
+      "senator": "Lindsey Port",
+      "party": "DFL",
+      "url": "https://kstp.com/kstp-news/local-news/house-dfl-introduces-bill-to-legalize-recreational-marijuana/",
+      "displayedPublisherDay": "2023-01-05",
+      "scope": "January Senate SF73 cannabis legalization advocacy",
+      "sourceClass": "reporter_individually_attributed_quote",
+      "uniqueStatement": "port-jan05-introduction",
+      "earliestAuthenticatedOriginalCaptureUtc": "2023-01-05T21:17:17Z",
+      "independentlyIndexedOriginalSha1Base32": "WARMR4RJ6NELAZRBXLEVM7DBTEOZBVK7",
+      "completeOriginalPublisherHtmlSha256": "8c6df4ad994dabebb6c6dfa2ac610202b943e9155af2d30bd9b7504dd91ef579",
+      "completeOriginalHtmlBytes": 172075,
+      "boundedSpeakerAttributionProof": "closed_quote_immediately_named_sen_lindsey_port_reported_attribution",
+      "normalizedBoundedSpeakerStatementSha256": "cd88ed3de412f829426d09c177d56a8377fcd7335a4510028d3cb7d4a31a6b36",
+      "normalizedBoundedSegmentCharacters": 158,
+      "originalSpeakerQuoteAuthentic": true,
+      "firstPublisherPostingMinuteIndependentlyVerified": false,
+      "completeHumanApprovedVerbatimUtteranceOrAudio": false
+    },
+    {
+      "id": "port-jan06-redlake-reported-release",
+      "senator": "Lindsey Port",
+      "party": "DFL",
+      "url": "https://www.redlakenationnews.com/story/2023/01/06/politics/dfl-introduces-legislation-to-legalize-adult-use-cannabis/111129.html",
+      "displayedPublisherDay": "2023-01-06",
+      "scope": "republication of Port January 5 legalization quote",
+      "sourceClass": "separate_original_publisher_copy_same_press_quote_not_separate_speech",
+      "uniqueStatement": "port-jan05-introduction",
+      "earliestAuthenticatedOriginalCaptureUtc": "2023-01-09T10:33:14Z",
+      "independentlyIndexedOriginalSha1Base32": "WNWHO7FO56MCHTBQTQW5Z66CGHJNZHQZ",
+      "completeOriginalPublisherHtmlSha256": "ce685841c34e542c813ab6e6eafdff47b17bfef46eba3e5b7b28c797d7244022",
+      "completeOriginalHtmlBytes": 30662,
+      "boundedSpeakerAttributionProof": "closed_quote_immediately_named_senator_lindsey_port_attribution",
+      "normalizedBoundedSpeakerStatementSha256": "cd88ed3de412f829426d09c177d56a8377fcd7335a4510028d3cb7d4a31a6b36",
+      "normalizedBoundedSegmentCharacters": 158,
+      "originalSpeakerQuoteAuthentic": true,
+      "firstPublisherPostingMinuteIndependentlyVerified": false,
+      "completeHumanApprovedVerbatimUtteranceOrAudio": false
+    },
+    {
+      "id": "oumou-jan05-mpr-cannabis",
+      "senator": "Clare Oumou Verbeten",
+      "party": "DFL",
+      "url": "https://www.mprnews.org/story/2023/01/05/push-for-legal-marijuana-begins-at-minnesota-capitol",
+      "displayedPublisherDay": "2023-01-05",
+      "scope": "2023 legalization and expungement support; bounded first affirmative sentence",
+      "sourceClass": "reported_individually_attributed_original_article_quote_NOT_audio_transcript_speech",
+      "uniqueStatement": "oumou-jan05-mpr",
+      "earliestAuthenticatedOriginalCaptureUtc": "2023-01-05T17:56:14Z",
+      "independentlyIndexedOriginalSha1Base32": "AEWKILDAH5QTVDBB2NRVGH22IM7IL2KO",
+      "completeOriginalPublisherHtmlSha256": "3cb55b27ef4706448b89fbdc2114dbda8c34ed657d33b269e65d137112cd2404",
+      "completeOriginalHtmlBytes": 57846,
+      "boundedSpeakerAttributionProof": "full_senator_named_preceding_sentence_then_direct_she_said_quote",
+      "normalizedBoundedSpeakerStatementSha256": "dd4d64bff6e85ce23c022f47fc9c54ac7379b7449e72c78330e71ea612e37187",
+      "normalizedBoundedSegmentCharacters": 37,
+      "originalSpeakerQuoteAuthentic": true,
+      "firstPublisherPostingMinuteIndependentlyVerified": false,
+      "completeHumanApprovedVerbatimUtteranceOrAudio": false
+    },
+    {
+      "id": "port-jan30-marijuana-herald-committee",
+      "senator": "Lindsey Port",
+      "party": "DFL",
+      "url": "https://themarijuanaherald.com/2023/01/third-minnesota-senate-committee-approves-bill-to-legalize-marijuana/",
+      "displayedPublisherDay": "2023-01-30",
+      "scope": "Senate committee SF73 adult-use legalization regulatory support",
+      "sourceClass": "reporter_individually_attributed_hearing_quote",
+      "uniqueStatement": "port-jan30-committee",
+      "earliestAuthenticatedOriginalCaptureUtc": "2023-01-31T18:52:53Z",
+      "independentlyIndexedOriginalSha1Base32": "DEFGFAP3WTPSI4GCEEUAPCNCA56EM6ZU",
+      "completeOriginalPublisherHtmlSha256": "dfecffa31933b6dd8c4f5794453c2dd1c6e30f7e1e3a7e30ed4853faa5fe2794",
+      "completeOriginalHtmlBytes": 56747,
+      "boundedSpeakerAttributionProof": "closed_quote_immediately_named_senator_lindsey_port_at_hearing",
+      "normalizedBoundedSpeakerStatementSha256": "9aba3ac3757e3ff9d2635a1a05bd72b0d8bc5cfbd30e73c878db1067706a337f",
+      "normalizedBoundedSegmentCharacters": 168,
+      "originalSpeakerQuoteAuthentic": true,
+      "firstPublisherPostingMinuteIndependentlyVerified": false,
+      "completeHumanApprovedVerbatimUtteranceOrAudio": false
+    }
+  ],
+  "uniqueQuotations": {
+    "distinctOriginalPublisherArticles": 4,
+    "verifiedOriginalPreVoteHtmlBodies": 4,
+    "boundedOriginalSpeakerQuoteOccurrences": 4,
+    "distinctSenatorQuoteContentSha256Count": 3,
+    "distinctDemocraticSenatorsWithVerifiedPreVoteStatements": 2,
+    "samePortStatementReprintedKstpAndRedLakeByExactNormalizedSha256": true,
+    "sameStatementNormalizedSha256": "cd88ed3de412f829426d09c177d56a8377fcd7335a4510028d3cb7d4a31a6b36",
+    "independentSenatorAgainstOpposedMemberCrossPartyPairwiseComparisons": 4,
+    "newlyVerifiedHistoricalDemocraticSenatorStatementToNamedYesResearchPairs": 2,
+    "previouslyVerifiedRepublicanSenatorStatementToNamedNoResearchPairs": 2,
+    "distinctSingleBillFinalPassageOutcomeCount": 1
+  },
+  "unselectedArchiveIndexDigestMismatchQuarantinedUnknown": [
+    {
+      "sourceId": "oumou-jan05-mpr-cannabis",
+      "captureUtc": "2023-01-05T17:33:50Z",
+      "status": "archive_index_digest_mismatch_unknown",
+      "countAsAuthenticatedOriginal": false
+    },
+    {
+      "sourceId": "port-jan06-redlake-reported-release",
+      "captureUtc": "2023-01-09T15:00:04Z",
+      "status": "archive_index_digest_mismatch_unknown",
+      "countAsAuthenticatedOriginal": false
+    },
+    {
+      "sourceId": "port-jan30-marijuana-herald-committee",
+      "captureUtc": "2023-02-26T01:44:55Z",
+      "status": "archive_index_digest_mismatch_unknown",
+      "countAsAuthenticatedOriginal": false
+    }
+  ],
+  "holds": {
+    "historicOriginalCaptureIsLatestKnownPublicByNotFirstPostingMinute": true,
+    "reporterQuoteIsNotOriginalVerbatimAudioTranscript": true,
+    "mprAudioTranscriptSpeakersAreReportersNotQuotedSenator": true,
+    "pressQuoteSyndicationNotCountedAsIndependentStatement": true,
+    "originalJanuaryBillProposalSF73MayDifferFromFinalAmendedHF100": true,
+    "actualHistoricalVotePredictAsOfIngestionUnknown": true,
+    "noPrivateProductionDataUsed": true,
+    "noRetrospectiveForecastOrPredictionBacktestPerformed": true,
+    "noProductionTrainingLabelApproved": true,
+    "noSourceIngestionCollectorDatabaseFeatureModelOrDeploymentChange": true,
+    "noFullCopyrightPublisherBodiesOrOfficialPDFPersisted": true,
+    "trackingIssue987RemainsOpen": true
+  }
+}
