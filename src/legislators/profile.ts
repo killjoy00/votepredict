@@ -82,6 +82,8 @@ export interface LegislatorEvidenceRow {
   publishedAt?: string;
   sourceQuality: string;
   confidence?: number;
+  /** Real source_document family, not a certification of historical public-by. */
+  sourceKind?: string;
   sourceUrl: string;
 }
 
@@ -175,6 +177,7 @@ type EvidenceDbRow = {
   published_at: string | null;
   source_quality: string;
   confidence: number | null;
+  source_kind: string;
   source_url: string;
 };
 
@@ -480,6 +483,7 @@ async function loadEvidence(legislatorId: string): Promise<LegislatorEvidenceRow
            ei.published_at::text,
            ei.source_quality,
            ei.confidence,
+           sd.source_kind,
            sd.source_url
       FROM evidence_items ei
       JOIN source_documents sd ON sd.id = ei.source_document_id
@@ -502,6 +506,7 @@ async function loadEvidence(legislatorId: string): Promise<LegislatorEvidenceRow
     publishedAt: row.published_at ?? undefined,
     sourceQuality: row.source_quality,
     confidence: row.confidence ?? undefined,
+    sourceKind: row.source_kind,
     sourceUrl: row.source_url,
   }));
 }
@@ -515,6 +520,7 @@ async function loadMemberPrimaryEvidence(legislatorId: string): Promise<Legislat
            ei.published_at::text,
            ei.source_quality,
            ei.confidence,
+           sd.source_kind,
            sd.source_url
       FROM evidence_items ei
       JOIN source_documents sd ON sd.id = ei.source_document_id
@@ -537,6 +543,7 @@ async function loadMemberPrimaryEvidence(legislatorId: string): Promise<Legislat
     publishedAt: row.published_at ?? undefined,
     sourceQuality: row.source_quality,
     confidence: row.confidence ?? undefined,
+    sourceKind: row.source_kind,
     sourceUrl: row.source_url,
   }));
 }
