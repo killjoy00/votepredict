@@ -41,6 +41,7 @@ const EXISTING_SQL=[
   'sd.content_sha256 AS "sourceSha",sd.fetched_at::text AS "sourceFetchedAt",',
   'ei.id::text AS "evidenceId",ei.membership_id::text AS "membershipId",',
   'ei.bill_id::text AS "billId",ei.excerpt AS excerpt,ei.claim AS claim,',
+  'ei.evidence_kind AS "evidenceKind",ei.stance AS stance,',
   'ei.published_at::text AS "publishedAt",ei.metadata AS metadata',
   'FROM source_documents sd',
   'LEFT JOIN evidence_items ei ON ei.source_document_id=sd.id',
