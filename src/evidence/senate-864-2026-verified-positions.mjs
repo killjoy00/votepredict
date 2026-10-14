@@ -167,13 +167,19 @@ export function buildSenate864ReconciliationPlan({
     const person=match.member;
     const available=existingForClaim(claim,existingEvidence);
     const wrongAttribution=available.filter(r=>r.evidenceId &&
+      ['direct_statement','related_statement'].includes(r.evidenceKind) &&
       r.membershipId && r.membershipId!==person.membershipId &&
       quotedPassageMatches(r.excerpt,claim.quote));
     if(wrongAttribution.length){
       plan.push({claim,status:'HOLD_EXISTING_SPEAKER_CONFLICT',member:person,billId:null});
       continue;
     }
+    // An article context excerpt is not an existing PERSON-ATTRIBUTED position.
+    // Promote through a new reviewed direct statement rather than treating raw
+    // context or a reporter quote as completed personal-position integration.
     const byQuote=available.filter(r=>r.evidenceId && r.membershipId===person.membershipId &&
+      ['direct_statement','related_statement'].includes(r.evidenceKind) &&
+      r.stance===claim.stance &&
       (r.metadata?.verifiedStatementId===claim.id || quotedPassageMatches(r.excerpt,claim.quote)));
     if(byQuote.length>1){
       plan.push({claim,status:'HOLD_DUPLICATE_PRIOR_EXACT_QUOTE',member:person,billId:null});
