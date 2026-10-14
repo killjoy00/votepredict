@@ -118,7 +118,7 @@ export type SourceAction={
  originalMemberIdAttribution:null;historicalAvailableOnProvedFromPublication:false;
  sourceMotionIsOnlyParserCandidate:true;
 };
-const result=/\b(?:MOTION\s+(PREVAILED|FAILED)|the\s+motion\s+(prevailed|failed))\b/giu;
+const result=/\b(?:MOTION\s+(PREVAILED|FAILED|CARRIED|PASSED|ADOPTED)|the\s+motion\s+(prevailed|failed|carried|passed|was\s+adopted))\b/giu;
 const namedRoll=/\b(\d{1,2})\s*\/\s*(\d{1,2})\s*\(\s*Ayes?\s*:\s*([^;)]*?)\s*;\s*Nays?\s*:\s*([^)]*?)\s*\)/giu;
 const mover=/\bSenator\s+[\p{L}\p{M}.'-]+(?:\s+[\p{L}\p{M}.'-]+){0,6}\s+(?:moved|moves)\b/giu;
 const billHeading=/\bS\s*\.?\s*F\s*\.?\s*(\d{1,5})\s*:\s*Senator\b/giu;
