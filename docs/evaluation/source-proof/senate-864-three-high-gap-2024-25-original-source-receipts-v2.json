@@ -2,12 +2,12 @@
   "schemaVersion": "senate-864-2024-25-53-original-clerk-named-roll-reparse-source-receipts-v2",
   "issue": 864,
   "sourceParserProofLabel": "strict_explicit_original_named_roll_adjacent_to_parliamentary_result_v2",
-  "originalSourceRunId": 38500933608,
-  "originalSourceRunHeadSha": "60dae3db7111ded93810afeebc4cc969560eba24",
-  "originalSourceRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38500933608",
+  "originalSourceRunId": 38501257729,
+  "originalSourceRunHeadSha": "1910d2880d70b0b80a9bc9f5d4813728794ab834",
+  "originalSourceRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38501257729",
   "sourceRunConclusion": "success",
-  "artifactId": 11865711704,
-  "artifactZipSha256": "904643a34ec3e325ed23a30a802c0b70ee837f6ed3f740e0db33eb68d8e76035",
+  "artifactId": 11866375427,
+  "artifactZipSha256": "53fa9d0c13439030598151778ae38aa37aac892a09ee3d170da4a4f9d663b029",
   "originalSourceMinutesArtifactFile": "senate-864-2024-25-53-original-clerk-motions.json",
   "priorFrozenFirstPassReceiptPath": "docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-source-receipts.json",
   "originalLrlCensusSha256": "ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0",
@@ -1125,5 +1125,5 @@
       "canceledAndClerkProven": null
     }
   ],
-  "note": "This exact independently re-read source run preceded a later narrower source-grammar fix clarifying an amendment vs bill-passage label; both original and later parser versions retain explicit source-level YEA/NAY evidence but any revised motion-label mapping requires a separately verified source run."
+  "note": "This exact source-only run independently re-fetched all 38 original Clerk HTML source bodies at unchanged original SHAs and re-ran the version-2 printed named-roll extractor. It also confirms explicit SF3561 bill-passage roll is not the prior A14 voice amendment on 2024-03-14. All 27 named rolls / 343 printed choice occurrences are source observations, not historical member_id or stored database rows; full all-motions denominator remains UNKNOWN."
 }
