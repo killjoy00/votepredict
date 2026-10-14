@@ -71,7 +71,12 @@ export function chooseActual38ServingSenatorsIn2021And2022(){
    originalCfb2020CandidateLabel:p.originalCfbCandidateLabel,
    source2020District:p.originalCandidatePageDistrict,
    originalPageSha:p.originalCandidatePageSha256,
-   servingDistricts2021And2022:originalDistricts
+   servingDistricts2021And2022:originalDistricts,
+   // Independently authenticated official LRL actual 2023 service term. Only
+   // a 2022-report redistricted printed SD matching THIS official term can pass.
+   independentlyDocumented2023ServingDistricts:member[2].split(';')
+    .filter(v=>v.startsWith('2023:'))
+    .flatMap(v=>v.split(':')[1].split(',').map(Number))
   };
  }).sort((a,b)=>a.source2020District-b.source2020District);
  return result;
@@ -137,7 +142,8 @@ function diagnosticForOfficialPdfFirstPage(t,text){
   printedNumberFoundNearRegLabel:near,
   differentDirectNumberPrinted:direct!==null&&!directOk,
   printedDistricts:[...new Set(senate)].sort((a,b)=>a-b),
-  printedDistrictMatchesIndependentlyServingOriginalTerm:[...new Set(senate)].some(x=>t.servingDistricts2021And2022.includes(x))};
+  printedDistrictMatchesIndependentlyServingOriginalTerm:[...new Set(senate)].some(x=>t.servingDistricts2021And2022.includes(x)),
+  printedDistrictMatchesIndependentlyProven2023ServingTerm:[...new Set(senate)].some(x=>t.independentlyDocumented2023ServingDistricts.includes(x))};
 }
 export function originalHeader(t,ref,source,viewerSha,sourceError=null){
  const year=2000+Number(ref.year);
@@ -156,6 +162,8 @@ export function originalHeader(t,ref,source,viewerSha,sourceError=null){
   reg:t.reg,reportId:id,year,person:t.officialSenator,
   electionDistrict:t.source2020District,
   originalOfficial2021or2022SenateDistricts:t.servingDistricts2021And2022,
+  independentlyDocumentedNextTermSenateDistricts:year===2022?
+   t.independentlyDocumented2023ServingDistricts:[],
   dueOn:DUE[String(year)],
   periodStartOn:year+'-01-01',periodEndOn:year+'-12-31'
  },source.text):null;
@@ -165,6 +173,7 @@ export function originalHeader(t,ref,source,viewerSha,sourceError=null){
  return{
   id,person:t.officialSenator,sourceSenateDistrict:t.source2020District,
   source2021and2022ServingDistricts:t.servingDistricts2021And2022,
+  independentlyDocumented2023ServingDistricts:t.independentlyDocumented2023ServingDistricts,
   registration:t.reg,reportYear:year,amendmentIndex:ref.amendment,
   viewerApiSha256:viewerSha,
   originalCandidateSourcePageSha256:t.originalPageSha,
