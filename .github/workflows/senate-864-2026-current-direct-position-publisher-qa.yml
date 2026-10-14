@@ -3,8 +3,13 @@ on:
   pull_request:
     paths:
       - data/evaluation/senate-864-2026-current-legislative-statements-v1.json
+      - data/evaluation/senate-864-2026-current-nonnominee-legislative-position-leads-v1.json
+      - data/evaluation/senate-864-2026-current-publisher-whole-html-observation-receipts-v1.json
       - data/evaluation/senate-864-current-67-senator-public-position-coverage-v1.json
       - scripts/audit-senate-864-2026-current-direct-position-leads.mjs
+      - scripts/audit-senate-864-2026-nonnominee-direct-position-leads.mjs
+      - tests/senate-864-2026-nonnominee-direct-position-leads.test.mjs
+      - tests/senate-864-2026-nonnominee-direct-position-regression.test.ts
       - tests/senate-864-2026-current-direct-position-leads.test.mjs
       - tests/senate-864-2026-current-direct-position-regression.test.ts
       - .github/workflows/senate-864-2026-current-direct-position-publisher-qa.yml
@@ -34,11 +39,21 @@ jobs:
         run: |
           node scripts/audit-senate-864-2026-current-direct-position-leads.mjs \
             --out research/2026-current-speaker-publisher-source-receipts.json
+      - name: Offline nonnominee 18-person search-coverage, personally attributed quote and chronology guards
+        run: |
+          node --check scripts/audit-senate-864-2026-nonnominee-direct-position-leads.mjs
+          node --test tests/senate-864-2026-nonnominee-direct-position-leads.test.mjs
+      - name: Strict public original publisher check for 15 personally attributed nonnominee senator leads
+        run: |
+          node scripts/audit-senate-864-2026-nonnominee-direct-position-leads.mjs \
+            --out research/2026-current-nonnominee-quote-source-receipts.json
       - name: Keep only exact current source-byte hashes and categorical provenance checks
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: senate-864-current-2026-public-direct-source-qa
-          path: research/2026-current-speaker-publisher-source-receipts.json
+          path: |
+            research/2026-current-speaker-publisher-source-receipts.json
+            research/2026-current-nonnominee-quote-source-receipts.json
           if-no-files-found: warn
           retention-days: 14
