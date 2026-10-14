@@ -2,6 +2,7 @@ import { loadCurrentCampaignFinanceContext } from '@/evidence/campaign-finance-s
 import type { CampaignFinanceMemberContext } from '@/evidence/campaign-finance-snapshot';
 import { loadPriorCycleProvenFinanceContext, type PriorCycleProvenFinanceContext } from '@/evidence/prior-cycle-finance-context';
 import { pool } from '@/lib/db';
+import { historicalOfficialFilingContextForSenator, type HistoricalOfficialFilingContext } from '@/evidence/cfb-historical-official-filings';
 
 export interface LegislatorDirectoryRow {
   legislatorId: string;
@@ -101,6 +102,8 @@ export interface LegislatorProfile {
   memberPrimaryEvidence: LegislatorEvidenceRow[];
   campaignFinance?: CampaignFinanceMemberContext;
   priorCycleFinance: PriorCycleProvenFinanceContext[];
+  /** Original CFB indexed filings are retained even if a PDF is scanned or a legal name varies. */
+  historicalOfficialFilings?: HistoricalOfficialFilingContext;
 }
 
 type DirectoryDbRow = {
@@ -598,5 +601,9 @@ export async function loadLegislatorProfile(legislatorId: string): Promise<Legis
     memberPrimaryEvidence,
     campaignFinance,
     priorCycleFinance,
+    historicalOfficialFilings: historicalOfficialFilingContextForSenator(
+      identity.name,
+      memberships.some((membership) => membership.chamberSlug === 'senate') ? 'senate' : currentMembership?.chamberSlug,
+    ),
   };
 }
