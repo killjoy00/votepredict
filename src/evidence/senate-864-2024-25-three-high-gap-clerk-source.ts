@@ -24,7 +24,7 @@ export const HIGH_GAP_COHORTS=[
  {year:2024,committeeName:'State and Local Government and Veterans',expected:13},
  {year:2025,committeeName:'Energy, Utilities, Environment, and Climate',expected:17},
 ] as const;
-export const HIGH_GAP_SCHEMA='senate-864-2024-25-three-committee-original-clerk-action-v1';
+export const HIGH_GAP_SCHEMA='senate-864-2024-25-three-committee-original-clerk-action-v2';
 const sha=(v:string|Uint8Array)=>createHash('sha256').update(v).digest('hex');
 function cleanHtml(s:string){
  return s.replace(/<[^>]+>/g,' ').replace(/&nbsp;|&#160;|&#xA0;/gi,' ')
