@@ -1,0 +1,32 @@
+name: 'Senate #864 435 exact original/amended PDFs and 86 actual-serving senators V28'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-435-exact-reports-86-senators-v28.mjs'
+      - 'tests/cfb-864-435-report-version-86-senators-v28.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2025-doron-clark-full-original-ye-PDF-source-v27.psv'
+      - 'docs/evaluation/source-proof/cfb-2025-doron-clark-double-independent-2026-original-gov-PDF-checkpoint-v27.json'
+      - 'docs/evaluation/source-proof/cfb-2021-25-86-serving-senators-435-exact-original-amended-report-versions-v28.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-serving-senators-86-authentic-90-viewer-principals-v28.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-serving-senators-475-committee-year-duty-unknown-v28.psv'
+      - '.github/workflows/senate-864-435-exact-official-PDF-evidence-v28.yml'
+permissions:
+  contents: read
+jobs:
+  offline-authenticate-435-CFB-original-and-amended-report-version-PDF:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned offline source verification dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Adversarial old-plus-new CFB original PDF SHA, identity, calendar and historical availability proof tests
+        run: node --import tsx --test tests/cfb-864-435-report-version-86-senators-v28.test.mjs
+      - name: Reconstruct 435 original and amended official report version source rows and 95 senator by five year matrix
+        run: node --import tsx scripts/audit-cfb-864-435-exact-reports-86-senators-v28.mjs
