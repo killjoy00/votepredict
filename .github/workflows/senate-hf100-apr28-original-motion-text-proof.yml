@@ -1,0 +1,39 @@
+name: Senate HF100 original motion-text proof
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/senate-hf100-apr28-original-motion-text-proof.yml'
+      - 'src/sources/minnesota/senate-journals.ts'
+      - 'src/evidence/minnesota-hf100-original-source-verifier.ts'
+      - 'src/evidence/minnesota-official-motion-sequence.ts'
+      - 'data/evaluation/senate-2023-hf100-apr28-official-motion-sequence-v1.json'
+      - 'scripts/audit-hf100-apr28-original-senate-journal.ts'
+      - 'tests/senate-journal-pdf-provenance.test.ts'
+      - 'tests/minnesota-hf100-original-source-verifier.test.ts'
+      - 'tests/minnesota-official-motion-sequence.test.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-hf100-motion-original-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-original-journal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Original-source-independent synthetic guards
+        run: node --import tsx --test tests/senate-journal-pdf-provenance.test.ts tests/minnesota-official-motion-sequence.test.ts tests/minnesota-hf100-original-source-verifier.test.ts
+      - name: Fetch and check exact public Senate Journal PDF, receipt metadata only
+        run: node --import tsx scripts/audit-hf100-apr28-original-senate-journal.ts

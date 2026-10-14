@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "mn-hf100-2023-conference-three-rolls-v1",
+  "scope": "HF100 2023 May19 legislative day official Senate Journal and official floor log; three separately recorded named votes; not stored DB parity",
+  "billIdentifier": "HF100",
+  "session": "2023-2024",
+  "chamber": "senate",
+  "legislativeDay": 74,
+  "legislativeDayLabel": "2023-05-19",
+  "sourceJournal": {
+    "url": "https://www.senate.mn/journals/2023-2024/20230519074.pdf",
+    "kind": "original_senate_journal_pdf",
+    "pages": {
+      "reportBegins": 9817,
+      "reportEndsBeforeMotions": 10083,
+      "decisionsStart": 10083,
+      "decisionsEnd": 10084
+    },
+    "pdfSha256": "58d5e75bfe0a2181957e69a2f9a70f8bdfc5d88414a8234cc89f438d3c730d25",
+    "originalBytes": 10452382,
+    "embeddedConferenceReportTextSha256": "d54bdb5cfd025ed02e8809c092a1fe9ed8e9d7b26386a9d2332aa047dce422ba",
+    "independentlyVerifiedPublicBy": null,
+    "extractedTextSha256": "4612929e0aa374d8c583f8c573ceb3a410df6a279cb5bc31b7a515e21104a385",
+    "embeddedConferenceReportNormalizedLength": 726984
+  },
+  "sourceFloorLog": {
+    "url": "https://www.leg.mn.gov/archive/leg/floorlogs/senate/2023/20230519slog.pdf",
+    "kind": "official_senate_bill_log_pdf",
+    "pdfPageIndex": 1,
+    "pdfSha256": "c38ebfc43d8150742c44ee2541c596822a85757e3838de806bbdad8381e94c7e",
+    "originalBytes": 96361,
+    "independentlyVerifiedPublicBy": null,
+    "extractedTextSha256": "b1e5654d8fe7a06b381fc1c3f7414e7017d658f40f6b1cca6ac741c32b3bfdf7"
+  },
+  "conferenceVariants": [
+    {
+      "versionPath": "https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ccr/0/",
+      "postedOn": "2023-05-16",
+      "verifiedExactJournalTextEquivalent": false
+    },
+    {
+      "versionPath": "https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ccr/A/",
+      "postedOn": "2023-05-17",
+      "verifiedExactJournalTextEquivalent": false
+    }
+  ],
+  "sourceActions": [
+    {
+      "sourceOnlyKey": "hf100-may19-rasmusson-reject-cc",
+      "ordinal": 1,
+      "journalPage": 10083,
+      "motionKind": "reject_and_rerefer_conference_report",
+      "mover": "Rasmusson",
+      "yea": 32,
+      "nay": 34,
+      "passed": false,
+      "officialFloorLogLocalTime": "11:13 pm",
+      "clockSequence": "before_midnight",
+      "calendarDateInference": "2023-05-19",
+      "yesMeans": "reject_conference_report_and_return_to_conference",
+      "textUnderConsideration": "conference_report_printed_in_senate_journal",
+      "referenceId": null
+    },
+    {
+      "sourceOnlyKey": "hf100-may19-port-adopt-cc",
+      "ordinal": 2,
+      "journalPage": 10084,
+      "motionKind": "adopt_conference_report",
+      "mover": "Port",
+      "yea": 34,
+      "nay": 32,
+      "passed": true,
+      "officialFloorLogLocalTime": "12:45 am",
+      "clockSequence": "after_midnight",
+      "calendarDateInference": "2023-05-20",
+      "yesMeans": "adopt_conference_report",
+      "textUnderConsideration": "conference_report_printed_in_senate_journal",
+      "referenceId": null
+    },
+    {
+      "sourceOnlyKey": "hf100-may19-repass-conference-amended",
+      "ordinal": 3,
+      "journalPage": 10084,
+      "motionKind": "repass_as_amended_by_conference",
+      "mover": null,
+      "yea": 34,
+      "nay": 32,
+      "passed": true,
+      "officialFloorLogLocalTime": "1:19 am",
+      "clockSequence": "after_midnight",
+      "calendarDateInference": "2023-05-20",
+      "yesMeans": "repass_bill_as_amended_by_conference",
+      "textUnderConsideration": "conference_report_adopted_in_previous_action",
+      "referenceId": null
+    }
+  ],
+  "explicitInterpretationGuards": [
+    "Official Revisor status date 2023-05-19 is a legislative-day index, not an independently established wall-clock instant for each roll.",
+    "Floor-log clock is document-reported local time; civil-date interpretation follows the continuous legislative-day order and midnight crossing; exact historical first-public text timestamp is unknown.",
+    "An adopted report and a subsequently repassed bill are two distinct named rolls even where their yea/nay rosters and tallies happen to coincide.",
+    "Journal prints the complete replacement text but the particular Revisor CCR/0 versus CCR/A body is not yet compared line-for-line.",
+    "Same-day source availability and individual passage support for every provision are not inferred.",
+    "Stored vote_events and private row parity not inspected; no accepted roll calls changed."
+  ],
+  "originalSourceVerification": {
+    "runUrl": "https://github.com/killjoy00/votepredict/actions/runs/38356387990",
+    "verifiedAt": "2026-10-13T06:23:44.433Z",
+    "independentlyReproducedAllThreeMotions": true,
+    "underlyingVersionHistoricalAvailability": null,
+    "persistedDatabaseRowParity": null
+  }
+}

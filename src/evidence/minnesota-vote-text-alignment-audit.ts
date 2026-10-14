@@ -1,0 +1,375 @@
+import { createHash } from 'node:crypto';
+
+/**
+ * Offline evidence-quality tools. These deliberately do not participate in
+ * Revisor's live version selector, historical forecast replay, or DB writes.
+ * A Revisor "Posted on" calendar date is not a proved first-public timestamp.
+ */
+export const MINNESOTA_VOTE_TEXT_AUDIT_VERSION = 'mn-vote-text-alignment-audit-v1' as const;
+
+export type LegislativeTextFamily = 'engrossment' | 'unofficial_engrossment' | 'conference_report';
+export interface OfficialBillTextVersionLead {
+  versionKey: string;
+  versionPath: string;
+  family: LegislativeTextFamily;
+  postedOn: string;
+  textUrl: string;
+  /** A displayed posting date is NOT independent historical availability proof. */
+  independentlyVerifiedPublicBy: null;
+}
+
+function isDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(value + 'T00:00:00.000Z');
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+function officialRevisorStatusRoot(sourceUrl: string): URL {
+  const url = new URL(sourceUrl);
+  if (url.protocol !== 'https:' || url.hostname !== 'www.revisor.mn.gov'
+    || !/^\/bills\/\d{2,3}\/\d{4}\/0\/(?:HF|SF)\/\d+\/$/i.test(url.pathname)
+    || url.search || url.hash) {
+    throw new Error('Expected an exact official Revisor bill-status URL');
+  }
+  return url;
+}
+
+/**
+ * Shadow-discover all three official text families without broadening the
+ * production version selector, which has separate as-of behavior.
+ * Does not claim a page-wide complete inventory if markup changes.
+ */
+export function discoverRevisorBillTextVersionLeads(
+  html: string,
+  statusUrl: string,
+): OfficialBillTextVersionLead[] {
+  const base = officialRevisorStatusRoot(statusUrl);
+  const rows = new Map<string, OfficialBillTextVersionLead>();
+  const pattern = /<a\b[^>]*href=["']([^"']*versions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\/)["'][^>]*>([\s\S]*?)<\/a>[\s\S]{0,240}?Posted on\s*(\d{2})\/(\d{2})\/(\d{4})/gi;
+  for (const match of html.matchAll(pattern)) {
+    let link: URL;
+    try {
+      link = new URL(match[1], base);
+    } catch {
+      continue;
+    }
+    if (link.protocol !== 'https:' || link.hostname !== base.hostname || link.search || link.hash
+      || !link.pathname.startsWith(base.pathname)) continue;
+    const versionPath = link.pathname.slice(base.pathname.length);
+    if (!/^versions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\/$/i.test(versionPath)) continue;
+    const postedOn = match[5] + '-' + match[3] + '-' + match[4];
+    const versionKey = match[2].replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ')
+      .replace(/&amp;/gi, '&').replace(/\s+/g, ' ').trim();
+    if (!versionKey || !isDate(postedOn)) continue;
+    const family: LegislativeTextFamily = versionPath.toLowerCase().startsWith('versions/ue/')
+      ? 'unofficial_engrossment'
+      : versionPath.toLowerCase().startsWith('versions/ccr/')
+        ? 'conference_report'
+        : 'engrossment';
+    const row: OfficialBillTextVersionLead = {
+      versionKey, versionPath, family, postedOn, textUrl: link.toString(),
+      independentlyVerifiedPublicBy: null,
+    };
+    const previous = rows.get(versionPath);
+    if (previous && (previous.versionKey !== row.versionKey || previous.postedOn !== postedOn)) {
+      throw new Error('Conflicting official version-list entries for ' + versionPath);
+    }
+    rows.set(versionPath, row);
+  }
+  return [...rows.values()];
+}
+
+export interface VoteTextAuditEvent {
+  eventKey: string;
+  session: string;
+  chamber: string;
+  occurredOn: string;
+  billIdentifier: string | null;
+  voteKind: 'passage' | 'amendment' | 'motion' | 'procedural' | 'other';
+  motionText: string;
+  amendmentRef?: string | null;
+  /** Exact journal page + motion sequence for amendments without A-numbers. */
+  officialAmendmentAnchor?: string | null;
+  officialSourceUrl: string;
+  officialSourceSha256: string | null;
+  /** The result of this exact motion, not a provision-level stance. */
+  passed?: boolean | null;
+}
+
+/** Audited independent historical time proof, separate from Revisor "Posted on". */
+export interface HistoricalAvailabilityEvidence {
+  kind: 'independent_archive_capture' | 'verified_original_publication';
+  sourceUrl: string;
+  sourceSha256: string;
+  locator: string;
+}
+
+export interface AuditedLegislativeText {
+  textId: string;
+  session: string;
+  billIdentifier: string;
+  kind: 'bill_version' | 'amendment_text' | 'conference_report';
+  amendmentRef?: string | null;
+  /** Same primary-document locator as the vote event; no number is invented. */
+  officialAmendmentAnchor?: string | null;
+  versionKey: string;
+  officialSourceUrl: string;
+  contentSha256: string | null;
+  postedOn: string | null;
+  /** Null unless corroborated independently; never populated from postedOn. */
+  independentlyVerifiedPublicBy: string | null;
+  /** Only a separately source-hashed, reviewer-established time receipt qualifies. */
+  historicalAvailabilityEvidence?: HistoricalAvailabilityEvidence | null;
+  retrievedAt: string | null;
+}
+
+export type TextDispositionAtEvent = 'proposed' | 'considered' | 'adopted' | 'rejected' | 'superseded' | 'withdrawn' | 'unknown';
+
+export interface ProposedVoteTextLink {
+  eventKey: string;
+  textId: string;
+  /** Explicit status of the particular paper, never inferred from bill passage. */
+  textDisposition?: TextDispositionAtEvent;
+  /** A number match is not proof of a text-to-event link. */
+  proofKind: 'bill_number_only' | 'reviewed_official_event_text_match';
+  /** Independent primary record identifying the event and document, not a topic. */
+  proofUrl?: string;
+  proofLocator?: string;
+  proofEventSourceSha256?: string;
+  proofTextSha256?: string;
+}
+
+export type VoteTextLinkStatus =
+  'bill_only' | 'no_text_link' | 'missing_text_document' | 'bill_conflict'
+  | 'later_version_conflict' | 'missing_amendment_text' | 'ambiguous_text_links'
+  | 'disposition_conflict' | 'unproven_text_match' | 'reviewed_exact_text_link';
+
+export interface VoteTextAuditResult {
+  eventKey: string;
+  status: VoteTextLinkStatus;
+  linkedTextIds: string[];
+  /** Motions and omnibus passage votes never establish provision-level support. */
+  provisionSupportInferred: false;
+  historicalCutoffEligibility: 'unknown' | 'proven_before_cutoff' | 'not_proven_before_cutoff';
+  reasoning: string;
+}
+
+const SHA256 = /^[a-f0-9]{64}$/i;
+const ZONED_INSTANT = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(Z|[+-](\d{2}):(\d{2}))$/;
+
+/** Date-only or locally interpreted time is never a strict historical cutoff proof. */
+function parseZonedInstant(value: string): number | null {
+  const match = ZONED_INSTANT.exec(value);
+  if (!match || !isDate(match[1])) return null;
+  if (Number(match[2]) > 23 || Number(match[3]) > 59 || Number(match[4]) > 59) return null;
+  if (match[6] !== undefined && (Number(match[6]) > 14
+    || Number(match[7]) > 59 || (Number(match[6]) === 14 && Number(match[7]) !== 0))) return null;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function hasIndependentTimeReceipt(evidence: HistoricalAvailabilityEvidence | null | undefined): boolean {
+  if (!evidence || (evidence.kind !== 'independent_archive_capture'
+    && evidence.kind !== 'verified_original_publication')
+    || !SHA256.test(evidence.sourceSha256) || !evidence.locator.trim()) return false;
+  try {
+    const url = new URL(evidence.sourceUrl);
+    return url.protocol === 'https:' && Boolean(url.hostname) && !url.username && !url.password;
+  } catch {
+    return false;
+  }
+}
+
+
+export function auditVoteTextLinks(input: {
+  events: readonly VoteTextAuditEvent[];
+  texts: readonly AuditedLegislativeText[];
+  links: readonly ProposedVoteTextLink[];
+  cutoffAt?: string;
+}): VoteTextAuditResult[] {
+  const eventIds = new Set<string>();
+  const amendmentAnchors = new Set<string>();
+  for (const event of input.events) {
+    if (!event.eventKey || eventIds.has(event.eventKey) || !isDate(event.occurredOn)) {
+      throw new Error('Duplicate or invalid vote event identity');
+    }
+    eventIds.add(event.eventKey);
+    if (event.officialAmendmentAnchor) {
+      // Journal page/action numbers are only unique inside one source document.
+      const scopedAnchor = JSON.stringify([
+        event.session, event.chamber, event.officialSourceUrl, event.officialAmendmentAnchor,
+      ]);
+      if (event.voteKind !== 'amendment' || !event.officialSourceUrl
+        || !/^journal:p\d{1,6}:action\d{1,5}$/.test(event.officialAmendmentAnchor)
+        || amendmentAnchors.has(scopedAnchor)) {
+        throw new Error('Unanchored or duplicate official journal amendment identity');
+      }
+      amendmentAnchors.add(scopedAnchor);
+    }
+  }
+  const texts = new Map<string, AuditedLegislativeText>();
+  for (const text of input.texts) {
+    if (!text.textId || texts.has(text.textId)
+      || (text.postedOn !== null && !isDate(text.postedOn))) {
+      throw new Error('Duplicate text identity or invalid text date');
+    }
+    if (text.officialAmendmentAnchor && (text.kind !== 'amendment_text'
+      || !/^journal:p\d{1,6}:action\d{1,5}$/.test(text.officialAmendmentAnchor))) {
+      throw new Error('Invalid original-journal amendment text locator');
+    }
+    texts.set(text.textId, text);
+  }
+  for (const link of input.links) {
+    if (!eventIds.has(link.eventKey)) throw new Error('Orphan proposed vote-text link');
+  }
+  const cutoffTimestamp = input.cutoffAt === undefined ? null : parseZonedInstant(input.cutoffAt);
+  if (input.cutoffAt !== undefined && cutoffTimestamp === null) {
+    throw new Error('Invalid cutoff timestamp: must be a timezone-qualified ISO instant');
+  }
+
+  return input.events.map((event) => {
+    const proposals = input.links.filter((link) => link.eventKey === event.eventKey);
+    const linkedTextIds = [...new Set(proposals.map((link) => link.textId))];
+    const result = (
+      status: VoteTextLinkStatus,
+      reasoning: string,
+      eligibility: VoteTextAuditResult['historicalCutoffEligibility'] = 'unknown',
+    ): VoteTextAuditResult => ({
+      eventKey: event.eventKey, status, linkedTextIds,
+      provisionSupportInferred: false,
+      historicalCutoffEligibility: eligibility, reasoning,
+    });
+    if (!proposals.length) return result(event.billIdentifier ? 'bill_only' : 'no_text_link', 'No event-specific text proof');
+    const paired = proposals.map((link) => ({ link, text: texts.get(link.textId) }));
+    if (paired.some((pair) => !pair.text)) return result('missing_text_document', 'Proposed text ID absent from archive');
+    if (paired.some(({ text }) => text!.session !== event.session
+      || text!.billIdentifier !== event.billIdentifier)) {
+      return result('bill_conflict', 'Text session or bill does not match recorded event');
+    }
+    if (paired.some(({ text }) => text!.postedOn !== null && text!.postedOn > event.occurredOn)) {
+      return result('later_version_conflict', 'Official version was posted after the event; exact text cannot be assumed');
+    }
+    if (event.voteKind === 'amendment'
+      && !paired.some(({ text }) => {
+        if (text!.kind !== 'amendment_text') return false;
+        const numbered = Boolean(event.amendmentRef) && Boolean(text!.amendmentRef)
+          && event.amendmentRef!.trim().toUpperCase() === text!.amendmentRef!.trim().toUpperCase();
+        const sourceAnchored = Boolean(event.officialAmendmentAnchor)
+          && event.officialAmendmentAnchor === text!.officialAmendmentAnchor;
+        // A ref disagreement always outranks a coincidental source locator.
+        const refConflict = Boolean(event.amendmentRef || text!.amendmentRef)
+          && event.amendmentRef?.trim().toUpperCase() !== text!.amendmentRef?.trim().toUpperCase();
+        const anchorConflict = Boolean(event.officialAmendmentAnchor || text!.officialAmendmentAnchor)
+          && event.officialAmendmentAnchor !== text!.officialAmendmentAnchor;
+        return !refConflict && !anchorConflict && (numbered || sourceAnchored);
+      })) {
+      return result('missing_amendment_text', 'Amendment needs matching A-number or independently located unnumbered journal text');
+    }
+    if (event.voteKind === 'amendment' && event.passed !== undefined && event.passed !== null
+      && paired.some(({ link, text }) => text!.kind === 'amendment_text'
+        && (event.passed === false && link.textDisposition === 'adopted'
+          || event.passed === true && link.textDisposition === 'rejected'))) {
+      return result('disposition_conflict', 'Amendment text status contradicts its recorded motion outcome');
+    }
+    if (['bill_version', 'conference_report', 'amendment_text'].some((kind) =>
+      new Set(paired.filter(({ text }) => text!.kind === kind).map(({ text }) => text!.textId)).size > 1)) {
+      return result('ambiguous_text_links', 'Multiple competing texts of the same type; no single assumed paper');
+    }
+    if (paired.some(({ link, text }) => link.proofKind !== 'reviewed_official_event_text_match'
+      || link.proofUrl !== event.officialSourceUrl || !link.proofLocator?.trim() || !text!.contentSha256
+      || !SHA256.test(text!.contentSha256)
+      || !event.officialSourceSha256 || !SHA256.test(event.officialSourceSha256)
+      || link.proofEventSourceSha256 !== event.officialSourceSha256
+      || link.proofTextSha256 !== text!.contentSha256)) {
+      return result('unproven_text_match', 'Bill/URL similarity or incomplete original-source review is insufficient');
+    }
+    // The independent-review assertions above are inputs, not automatic text
+    // reconstruction. Proven historical availability is an orthogonal clock.
+    let eligibility: VoteTextAuditResult['historicalCutoffEligibility'] = 'unknown';
+    if (cutoffTimestamp !== null) {
+      const receipts = paired.map(({ text }) => ({
+        publicBy: text!.independentlyVerifiedPublicBy
+          ? parseZonedInstant(text!.independentlyVerifiedPublicBy) : null,
+        independentlyProven: hasIndependentTimeReceipt(text!.historicalAvailabilityEvidence),
+      }));
+      if (receipts.some(({ publicBy, independentlyProven }) =>
+        independentlyProven && publicBy !== null && publicBy >= cutoffTimestamp)) {
+        eligibility = 'not_proven_before_cutoff';
+      } else if (receipts.every(({ publicBy, independentlyProven }) =>
+        independentlyProven && publicBy !== null && publicBy < cutoffTimestamp)) {
+        eligibility = 'proven_before_cutoff';
+      }
+      // Missing or unzoned time receipts remain explicitly unknown.
+    }
+    return result('reviewed_exact_text_link', 'Consistent source-hashed, explicitly reviewed event-to-text evidence', eligibility);
+  });
+}
+
+export interface SourceBackedTextChange {
+  kind: 'added' | 'removed';
+  line: number;
+  excerpt: string;
+}
+export interface VersionTextComparison {
+  algorithm: typeof MINNESOTA_VOTE_TEXT_AUDIT_VERSION;
+  beforeSha256: string;
+  afterSha256: string;
+  status: 'compared' | 'needs_chunking';
+  changedLines: number | null;
+  changes: SourceBackedTextChange[];
+  omittedChanges: number;
+  /** No technical/substantive classifier is silently applied. */
+  policyClassification: 'unclassified';
+}
+
+/** Bounded exact line comparison with original-content hashes and excerpts.
+ * Larger omnibus texts explicitly require chunk/section-level comparison.
+ */
+export function compareLegislativeVersionTexts(
+  before: string,
+  after: string,
+  maxLines = 1200,
+  maxExcerpts = 80,
+): VersionTextComparison {
+  const beforeSha256 = createHash('sha256').update(before).digest('hex');
+  const afterSha256 = createHash('sha256').update(after).digest('hex');
+  const oldLines = before.replace(/\r\n/g, '\n').split('\n');
+  const newLines = after.replace(/\r\n/g, '\n').split('\n');
+  const baseline = {
+    algorithm: MINNESOTA_VOTE_TEXT_AUDIT_VERSION, beforeSha256, afterSha256,
+    changes: [] as SourceBackedTextChange[], omittedChanges: 0,
+    policyClassification: 'unclassified' as const,
+  };
+  if (!Number.isInteger(maxLines) || maxLines < 1 || maxLines > 2000
+    || !Number.isInteger(maxExcerpts) || maxExcerpts < 1 || maxExcerpts > 1000) {
+    throw new Error('Invalid bounded text-diff limits');
+  }
+  if (oldLines.length > maxLines || newLines.length > maxLines) {
+    return { ...baseline, status: 'needs_chunking', changedLines: null };
+  }
+  const width = newLines.length + 1;
+  const dp = new Uint16Array((oldLines.length + 1) * width);
+  for (let i = oldLines.length - 1; i >= 0; i--) {
+    for (let j = newLines.length - 1; j >= 0; j--) {
+      dp[i * width + j] = oldLines[i] === newLines[j]
+        ? 1 + dp[(i + 1) * width + j + 1]
+        : Math.max(dp[(i + 1) * width + j], dp[i * width + j + 1]);
+    }
+  }
+  let i = 0; let j = 0; let changedLines = 0;
+  while (i < oldLines.length || j < newLines.length) {
+    if (i < oldLines.length && j < newLines.length && oldLines[i] === newLines[j]) {
+      i++; j++; continue;
+    }
+    const takeAddition = j < newLines.length && (i === oldLines.length
+      || dp[i * width + j + 1] >= dp[(i + 1) * width + j]);
+    const row: SourceBackedTextChange = takeAddition
+      ? { kind: 'added', line: j + 1, excerpt: newLines[j].slice(0, 240) }
+      : { kind: 'removed', line: i + 1, excerpt: oldLines[i].slice(0, 240) };
+    changedLines++;
+    if (baseline.changes.length < maxExcerpts) baseline.changes.push(row);
+    if (takeAddition) j++; else i++;
+  }
+  return { ...baseline, status: 'compared', changedLines,
+    omittedChanges: changedLines - baseline.changes.length };
+}

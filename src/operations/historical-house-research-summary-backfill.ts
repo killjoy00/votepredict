@@ -149,6 +149,9 @@ async function fetchSummaryPdf(urlValue: string, legislature: number): Promise<{
   if (bytes.byteLength < 500 || bytes.byteLength > 8_000_000) {
     throw new Error('House Research summary PDF has unexpected byte length: ' + bytes.byteLength);
   }
+  // pdf-parse may transfer its input bytes to a worker: hash the original PDF
+  // before constructing the parser, as done for Senate Journals and CFB reports.
+  const sourcePdfSha256 = createHash('sha256').update(bytes).digest('hex');
 
   const { CanvasFactory } = await import('pdf-parse/worker');
   const { PDFParse } = await import('pdf-parse');
@@ -158,7 +161,7 @@ async function fetchSummaryPdf(urlValue: string, legislature: number): Promise<{
     if (!parsed.text || parsed.text.length < 80) throw new Error('House Research summary PDF text is empty');
     return {
       text: parsed.text,
-      sha256: createHash('sha256').update(bytes).digest('hex'),
+      sha256: sourcePdfSha256,
       fetchedAt: new Date().toISOString(),
       httpStatus: response.status,
     };

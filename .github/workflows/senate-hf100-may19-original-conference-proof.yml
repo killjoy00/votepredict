@@ -1,0 +1,36 @@
+name: Senate HF100 conference three-vote originals
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/senate-hf100-may19-original-conference-proof.yml'
+      - 'src/evidence/minnesota-hf100-conference-source-verifier.ts'
+      - 'data/evaluation/senate-hf100-2023-conference-three-rolls-v1.json'
+      - 'scripts/audit-hf100-may19-original-conference.ts'
+      - 'tests/minnesota-hf100-conference-source-verifier.test.ts'
+      - 'src/sources/minnesota/senate-journals.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-hf100-conference-original-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-two-original-sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Adversarial original report-motion and clerk-log tests
+        run: node --import tsx --test tests/minnesota-hf100-conference-source-verifier.test.ts
+      - name: Two original PDF bodies, replacement text and post-midnight floor action clock
+        run: node --import tsx scripts/audit-hf100-may19-original-conference.ts
