@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "senate-864-original-2022-03-24-housing-lrl-unlinked-official-pdf-source-proof-v1",
+  "issue": 864,
+  "activeYears": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "exclude2021": true,
+  "source": {
+    "officialGovernmentUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220324/FinHousing_20220324_Minutes032422.pdf",
+    "lrlIndexCommittee": "Housing Finance and Policy",
+    "committeeYear": 2022,
+    "hearingDate": "2022-03-24",
+    "officialIndexHasLinkedMinutesPdf": false,
+    "originalPdfRawSha256": "ef69ba019bdaf133d7f3834ae9821cd20489b41c0d4cfc2d8930fb3abf50c857",
+    "originalPdfTextSha256": "95a218b6fcf9f05e2887a8561d6e762bc01337a6c43c6dc6e42abee2f75401e5",
+    "originalPdfBytes": 34674,
+    "originalPdfPages": 2,
+    "sourceFirstHistoricalPublicBy": null,
+    "originalRetrievalDate": "2026-10-14",
+    "sourceMotionObservations": [
+      {
+        "bill": "SF4170",
+        "page": 1,
+        "action": "motion_to_lay_over",
+        "parliamentaryDisposition": null,
+        "namedYeaNayCount": 0
+      },
+      {
+        "bill": "SF3994",
+        "page": 1,
+        "action": "motion_to_lay_over",
+        "parliamentaryDisposition": null,
+        "namedYeaNayCount": 0
+      }
+    ]
+  },
+  "sourceRun": {
+    "runId": 38621595082,
+    "runUrl": "https://github.com/killjoy00/votepredict/actions/runs/38621595082",
+    "originalArtifactId": 11922750217,
+    "originalZipSha256": "47daefbfae542ca8f32f15acc53ac18f355e86f1aecd6d32cc010c71f8d28146",
+    "result": "success",
+    "syntheticRegressionTestsPassed": 2
+  },
+  "reportedDistinctParliamentaryVotesFromThisSource": 0,
+  "documentedFormalMotionProposals": 2,
+  "individualMemberPositionsResolved": 0,
+  "sourceToDatabaseEventParityVerified": false,
+  "archivedOriginalPdfHistoricalPublicationDateVerified": false,
+  "year2022PrintElectronicParityVerified": false,
+  "noProdDatabaseOperations": true,
+  "interpretation": "The archived PDF is an independent written-Minutes source absent from original linked-PDF index. It supplies committee/day and motion proposal text but no source-printed vote result; no new person choice or outcome can be inferred."
+}
