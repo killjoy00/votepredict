@@ -234,6 +234,51 @@ test('distinct explicitly named amendment rolls with identical committees and sa
  assert.equal(x.allIndividualVoterSidesUnknownInThisParser,false);
  assert.equal(x.noDirectSourceToMemberVoteImport,true);
 });
+
+test('March 14 2024 original Clerk grammar preserves five separately printed named rolls, including three without a nearby mover',()=>{
+ const originalDay=inspectOriginalGovernmentCombinedDay(calendar(state,18532,{canceled:true}),state);
+ // The real archived March 14 Clerk original prints SF3787 A11, A10 and
+ // passage, then SF3986 and SF3561, five distinct 13-choice named blocks.
+ // Use *fictional* names in synthetic tests; never publish actual choices.
+ const yes=['FictionalAtlas','FictionalBirch','FictionalCedar','FictionalDalia',
+  'FictionalEcho','FictionalFable','FictionalGrove'];
+ const no=['FictionalHawk','FictionalIris','FictionalJuniper','FictionalKilo',
+  'FictionalLotus','FictionalMaple'];
+ const roll=(a:string[],b:string[])=>a.length+'/'+b.length+
+  ' (Ayes: '+a.join(', ')+'; Nays: '+b.join(', ')+')';
+ const html=minute(state,[
+  '<p>S.F. 3787: Senator Fictional Alpha: Employment policy.</p>',
+  '<p>Senator Fictional Hawk moved the A11 amendment. Senator Fictional Birch requested a roll call vote. '+roll(yes,no)+' MOTION PREVAILED.</p>',
+  '<p>Senator Fictional Hawk moves the A10 amendment. Senator Fictional Maple requested the roll call. '+roll(no,yes)+' MOTION FAILED.</p>',
+  '<p>Senator Fictional Hawk requested a roll call vote for the passage of S.F. 3787. '+roll(yes,no)+' MOTION PREVAILED.</p>',
+  '<p>S.F. 3986: Senator Fictional Alpha: Public lands policy.</p>',
+  '<p>Senator Fictional Hawk requested a roll call vote on S.F. 3986. '+roll(yes,no)+' MOTION PREVAILED.</p>',
+  '<p>S.F. 3561: Senator Fictional Alpha: Packaging policy.</p>',
+  '<p>Senator Fictional Hawk requested a roll call vote on S.F. 3561. '+roll(yes,no)+' MOTION PREVAILED.</p>'
+ ].join(''),'Thursday, March 14, 2024');
+ const x=inspectOriginalHighGapSenateClerkHtml(html,state,18532,originalDay,'2026-10-13T06:20:00Z');
+ assert.equal(x.canonicalMotionCandidates,5);
+ assert.equal(x.classificationCounts.explicitNamedRolls,5);
+ assert.equal(x.classificationCounts.sourceExplicitNamedYeaNayEntries,65);
+ assert.deepEqual(x.actions.map(a=>[
+  a.billReference,a.amendmentReference,a.evidenceClassification,
+  a.explicitYeaCount,a.explicitNayCount,a.sourceResult
+ ]),[
+  ['SF3787','A11','explicit_named_roll',7,6,'prevailed'],
+  ['SF3787','A10','explicit_named_roll',6,7,'failed'],
+  ['SF3787',null,'explicit_named_roll',7,6,'prevailed'],
+  ['SF3986',null,'explicit_named_roll',7,6,'prevailed'],
+  ['SF3561',null,'explicit_named_roll',7,6,'prevailed']
+ ]);
+ assert.equal(new Set(x.actions.map(a=>a.sourceTextOffset)).size,5);
+ assert.ok(x.actions.every(a=>a.sourceExactNamedTallyAndUniqueNamesVerified&&
+  a.originalExplicitNamedChoiceCount===13&&a.namedMemberChoiceStatus===
+  'explicitly_named_in_original_clerk_minutes_no_historical_day_roster_or_db_join'));
+ assert.ok(x.actions.every(a=>!a.observedMotionText.includes('FictionalAtlas')&&
+  !a.observedMotionText.includes('FictionalHawk')&&a.observedMotionText.includes('redacted')));
+ assert.equal(x.noDirectSourceToMemberVoteImport,true);
+});
+
 test('named source roll with duplicate voter, side mismatch or bad tally holds without inferring senator support',()=>{
  const d=inspectOriginalGovernmentCombinedDay(calendar(state,18532),state);
  const org=minute(state,
