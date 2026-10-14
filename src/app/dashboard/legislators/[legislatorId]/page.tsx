@@ -4,6 +4,7 @@ import { requireOwner } from '@/lib/auth/guard';
 import { loadLegislatorGamblingSummary } from '@/gambling/intelligence';
 import { loadLegislatorIssueSummaries } from '@/legislators/issue-summary';
 import { loadLegislatorProfile } from '@/legislators/profile';
+import { officialFilingStatusLabel } from '@/evidence/cfb-historical-official-filings';
 import gamblingStyles from './gambling-summary.module.css';
 import issueStyles from './issue-summary.module.css';
 import styles from '../legislators.module.css';
@@ -60,6 +61,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
   const member = profile.currentMembership;
   const finance = profile.campaignFinance;
   const priorCycleFinance = profile.priorCycleFinance;
+  const historicalFilings = profile.historicalOfficialFilings;
   const financeSource = finance?.contributions?.sourceUrl
     ?? finance?.expenditures?.sourceUrl
     ?? finance?.independentExpenditures?.sourceUrl;
@@ -379,6 +381,51 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 ))}
               </div>
             ) : <p className={styles.note}>No cross-party comparison is available yet.</p>}
+          </section>
+
+          <section className={styles.panel}>
+            <header className={styles.panelHeader}>
+              <div>
+                <span className={styles.kicker}>Official campaign finance records</span>
+                <h3>Historical CFB filings (2021–25)</h3>
+              </div>
+            </header>
+            {historicalFilings ? (
+              <>
+                <p className={styles.note}>
+                  The Campaign Finance Board lists {historicalFilings.observedVersions} filing versions
+                  {' '}({historicalFilings.originalVersions} original reports and {historicalFilings.amendedVersions} amendments)
+                  for this senator's committee. {historicalFilings.downloadedVersions} have a linked PDF.
+                  {historicalFilings.officialNameLink === 'documented_official_name_variant'
+                    ? ' The CFB uses a longer or shorter version of the senator’s name.'
+                    : ''}
+                </p>
+                <div className={styles.financeList}>
+                  {[...historicalFilings.filings].reverse().slice(0, 8).map((filing) => (
+                    <div className={styles.financeItem} key={filing.id}>
+                      <strong>{filing.year} {filing.kind === 'original' ? 'original report' : `amendment ${filing.amendment}`}</strong>
+                      <span>{officialFilingStatusLabel(filing.status)}</span>
+                      <a href={filing.url} target="_blank" rel="noreferrer" className={styles.sourceLink}>Open CFB filing ↗</a>
+                    </div>
+                  ))}
+                </div>
+                {historicalFilings.observedVersions > 8 ? (
+                  <p className={styles.note}>Showing the latest eight indexed versions.</p>
+                ) : null}
+                <a href={historicalFilings.viewerUrl} target="_blank" rel="noreferrer" className={styles.sourceLink}>
+                  View this committee on the CFB website ↗
+                </a>
+                <p className={styles.note}>
+                  Scanned or hard-to-read PDFs still count as official indexed filings. Amendments are
+                  separate versions, not extra contributions to add together. The report year alone does
+                  not establish when a particular version was public, or whether every required filing is here.
+                </p>
+              </>
+            ) : (
+              <p className={styles.note}>
+                No historical Senate CFB filing is linked to this legislator in the reviewed 2021–25 inventory.
+              </p>
+            )}
           </section>
 
           <section className={styles.panel}>
