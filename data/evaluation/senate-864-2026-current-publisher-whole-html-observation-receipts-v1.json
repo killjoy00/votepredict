@@ -1,0 +1,191 @@
+{
+  "schema": "mn-senate-864-2026-current-publisher-original-html-live-observation-v1",
+  "sourceWorkflowRun": 38501897295,
+  "workflowUrl": "https://github.com/killjoy00/votepredict/actions/runs/38501897295",
+  "originalArtifactId": 11866013056,
+  "originalCommit": "cbad2058244c331c5bdd71c75e7453e342b50f7b",
+  "originalReceiptUtc": "2026-10-14T02:36:27.581Z",
+  "summary": {
+    "originalPublisherUrlsProbed": 14,
+    "individuallyAttributedClaimLeads": 15,
+    "completeLiveOriginalSHAAndQuoteAuthenticated": 5,
+    "originalPublisherHttp403Unknown": 9,
+    "original2026WaybackCDXVersionsAuthenticated": 0,
+    "independentlyProvedHistoricallyFirstPublicByDates": 0
+  },
+  "scope": "First GitHub public-source workflow attempt, exact original bytes SHA-256 and named passage on five current GOP publisher pages; nine DFL originals return HTTP403, not no statement. Live Oct14 observation is NOT original Feb-May historical publication proof. No protected source row, production DB, model or forecast change.",
+  "rawPublisherHtmlCommitted": false,
+  "rows": [
+    {
+      "url": "https://www.mnsenaterepublicans.com/senate-republicans-propose-tax-relief-that-makes-a-difference/",
+      "primaryClaimId": "sd01-20260302-tax-targets",
+      "observedAtUtc": "2026-10-14T02:36:23.699Z",
+      "httpStatus": 200,
+      "observationClass": "LIVE_ORIGINAL_HTML_WHOLE_BYTES_SHA256_AND_NAMED_PASSAGE_MATCH",
+      "liveOriginalWholeHtmlSha256": "fe1c036fb8a667989acae822ec0b35507a29138ba15ece06f515554508710d13",
+      "liveOriginalWholeHtmlBytes": 111753,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://www.mnsenaterepublicans.com/an-update-before-we-hit-the-end-of-session/",
+      "primaryClaimId": "sd02-20260501-water-funding-conditions",
+      "observedAtUtc": "2026-10-14T02:36:24.641Z",
+      "httpStatus": 200,
+      "observationClass": "LIVE_ORIGINAL_HTML_WHOLE_BYTES_SHA256_AND_NAMED_PASSAGE_MATCH",
+      "liveOriginalWholeHtmlSha256": "9e72f5f2da8af896c1080a5be189e5e68a2b39d450fd3fa0ef0c84ffa2e09886",
+      "liveOriginalWholeHtmlBytes": 106808,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://senatedfl.mn/senator-kupec-passes-his-first-bill-of-2026-legislative-session-off-the-senate-floor/",
+      "primaryClaimId": "sd04-20260317-dairy-sf3832",
+      "observedAtUtc": "2026-10-14T02:36:25.123Z",
+      "httpStatus": 403,
+      "observationClass": "ORIGINAL_PUBLISHER_HTTP403_UNAVAILABLE_UNKNOWN",
+      "liveOriginalWholeHtmlSha256": null,
+      "liveOriginalWholeHtmlBytes": null,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://senatedfl.mn/sen-jen-mcewen-presents-legislation-to-unify-statewide-atv-guidelines/",
+      "primaryClaimId": "sd08-20260327-atv-sf1245",
+      "observedAtUtc": "2026-10-14T02:36:25.382Z",
+      "httpStatus": 403,
+      "observationClass": "ORIGINAL_PUBLISHER_HTTP403_UNAVAILABLE_UNKNOWN",
+      "liveOriginalWholeHtmlSha256": null,
+      "liveOriginalWholeHtmlBytes": null,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://www.mnsenaterepublicans.com/a-productive-end-to-a-short-session/",
+      "primaryClaimId": "sd11-20260527-education-compromise",
+      "observedAtUtc": "2026-10-14T02:36:25.981Z",
+      "httpStatus": 200,
+      "observationClass": "LIVE_ORIGINAL_HTML_WHOLE_BYTES_SHA256_AND_NAMED_PASSAGE_MATCH",
+      "liveOriginalWholeHtmlSha256": "b333ee8ff5191016bae9785778d0926473b523d129596e5cf5ea0d67f6f548aa",
+      "liveOriginalWholeHtmlBytes": 108400,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://www.mnsenaterepublicans.com/capitol-update-march-24-2026/",
+      "primaryClaimId": "sd31-20260324-sf3602-nay",
+      "observedAtUtc": "2026-10-14T02:36:26.456Z",
+      "httpStatus": 200,
+      "observationClass": "LIVE_ORIGINAL_HTML_WHOLE_BYTES_SHA256_AND_NAMED_PASSAGE_MATCH",
+      "liveOriginalWholeHtmlSha256": "837734d3f370540a26384e06430e96df8bd6feb64dba21c3aaf1190e9b966026",
+      "liveOriginalWholeHtmlBytes": 109629,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://www.mnsenaterepublicans.com/senate-sends-bill-to-establish-office-of-inspector-general-to-governor/",
+      "primaryClaimId": "sd32-20260511-oig-compromise",
+      "observedAtUtc": "2026-10-14T02:36:26.901Z",
+      "httpStatus": 200,
+      "observationClass": "LIVE_ORIGINAL_HTML_WHOLE_BYTES_SHA256_AND_NAMED_PASSAGE_MATCH",
+      "liveOriginalWholeHtmlSha256": "dd14efdf038abe3d940a7419f1347b27d1b70fc8c6a4599f644cf53428243f19",
+      "liveOriginalWholeHtmlBytes": 105658,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://senatedfl.mn/senator-ron-latz-statement-on-mondays-passage-of-equal-rights-amendment-in-senate-judiciary-and-public-safety-committee/",
+      "primaryClaimId": "sd46-20260223-era-sf473",
+      "observedAtUtc": "2026-10-14T02:36:27.367Z",
+      "httpStatus": 403,
+      "observationClass": "ORIGINAL_PUBLISHER_HTTP403_UNAVAILABLE_UNKNOWN",
+      "liveOriginalWholeHtmlSha256": null,
+      "liveOriginalWholeHtmlBytes": null,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://senatedfl.mn/sen-erin-maye-quade-passes-legislation-to-daylight-data-center-deals/",
+      "primaryClaimId": "sd56-20260317-data-center-sf4296",
+      "observedAtUtc": "2026-10-14T02:36:27.393Z",
+      "httpStatus": 403,
+      "observationClass": "ORIGINAL_PUBLISHER_HTTP403_UNAVAILABLE_UNKNOWN",
+      "liveOriginalWholeHtmlSha256": null,
+      "liveOriginalWholeHtmlBytes": null,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://senatedfl.mn/senators-bobby-joe-champion-omar-fateh-present-minnesota-constitutional-remedies-act/",
+      "primaryClaimId": "sd59-20260220-constitutional-remedies",
+      "observedAtUtc": "2026-10-14T02:36:27.420Z",
+      "httpStatus": 403,
+      "observationClass": "ORIGINAL_PUBLISHER_HTTP403_UNAVAILABLE_UNKNOWN",
+      "liveOriginalWholeHtmlSha256": null,
+      "liveOriginalWholeHtmlBytes": null,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false,
+      "additionalClaimIds": [
+        "sd62-20260220-constitutional-remedies"
+      ]
+    },
+    {
+      "url": "https://senatedfl.mn/senator-scott-dibble-presents-bill-reimbursing-cities-for-costs-incurred-by-federal-enforcement-actions-from-operation-metro-surge/",
+      "primaryClaimId": "sd61-20260422-city-reimbursement-sf5038",
+      "observedAtUtc": "2026-10-14T02:36:27.446Z",
+      "httpStatus": 403,
+      "observationClass": "ORIGINAL_PUBLISHER_HTTP403_UNAVAILABLE_UNKNOWN",
+      "liveOriginalWholeHtmlSha256": null,
+      "liveOriginalWholeHtmlBytes": null,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://senatedfl.mn/senator-clare-oumou-verbeten-celebrates-passage-of-12-million-for-crime-victim-services/",
+      "primaryClaimId": "sd66-20260516-victim-funding-sf3432",
+      "observedAtUtc": "2026-10-14T02:36:27.472Z",
+      "httpStatus": 403,
+      "observationClass": "ORIGINAL_PUBLISHER_HTTP403_UNAVAILABLE_UNKNOWN",
+      "liveOriginalWholeHtmlSha256": null,
+      "liveOriginalWholeHtmlBytes": null,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://senatedfl.mn/senator-hauschild-speaks-out-against-anti-atv-proposal/",
+      "primaryClaimId": "sd03-20260327-atv-sf1245",
+      "observedAtUtc": "2026-10-14T02:36:27.497Z",
+      "httpStatus": 403,
+      "observationClass": "ORIGINAL_PUBLISHER_HTTP403_UNAVAILABLE_UNKNOWN",
+      "liveOriginalWholeHtmlSha256": null,
+      "liveOriginalWholeHtmlBytes": null,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    },
+    {
+      "url": "https://senatedfl.mn/senate-passes-sen-erin-maye-quades-grocery-store-egg-donation-bill/",
+      "primaryClaimId": "sd56-20260513-egg-sf3891-ambiguous-source-number",
+      "observedAtUtc": "2026-10-14T02:36:27.523Z",
+      "httpStatus": 403,
+      "observationClass": "ORIGINAL_PUBLISHER_HTTP403_UNAVAILABLE_UNKNOWN",
+      "liveOriginalWholeHtmlSha256": null,
+      "liveOriginalWholeHtmlBytes": null,
+      "originalArchiveCaptureAuthenticated": false,
+      "originalVersionFirstPublicationTimeAuthenticated": false,
+      "evidenceAdmittedToHistoricalBacktest": false
+    }
+  ]
+}
