@@ -9,7 +9,7 @@ const k=(x:any)=>[x.year,x.committeeName,x.hearingDate].join('|');
 const sha=(x:unknown)=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x);
 test('every 2022-25 no-PDF official committee/day exactly source-joins original 141 LRL census and retains source-level SHA or explicit hold',()=>{
  const r=read(LEDGER),index=read(INDEX);
- assert.equal(r.schemaVersion,'senate-864-2022-25-141-official-unlinked-meeting-to-authenticated-written-minutes-v2');
+ assert.equal(r.schemaVersion,'senate-864-2022-25-141-official-unlinked-meeting-to-authenticated-written-minutes-v3');
  assert.deepEqual(r.activeYears,[2022,2023,2024,2025]);
  assert.equal(r.exclude2021Completely,true);
  assert.equal(r.originalLrlIndexSourceSha256,index.originalIndexedCensus.originalJsonSha256);
@@ -48,9 +48,9 @@ test('every 2022-25 no-PDF official committee/day exactly source-joins original 
   }
  }
  assert.equal(seen.size,141);
- assert.equal(covered,110);
- assert.equal(r.combinedIndexedMeetingsWithAuthenticatedWrittenMinutes,1562);
- assert.equal(r.stillWithoutAuthenticatedWrittenMinutes,30);
+ assert.equal(covered,111);
+ assert.equal(r.combinedIndexedMeetingsWithAuthenticatedWrittenMinutes,1563);
+ assert.equal(r.stillWithoutAuthenticatedWrittenMinutes,29);
  assert.equal(r.independentlyAuthenticatedOtherUnlinkedOfficialLrlMinutesPdfMeetings,1);
 });
 test('independent 2022-25 per-year and per-committee-year alternate Clerk source conservation is not a stored-row completeness assertion',()=>{
@@ -58,13 +58,13 @@ test('independent 2022-25 per-year and per-committee-year alternate Clerk source
  assert.deepEqual(r.byYear.map((x:any)=>[
   x.year,x.indexedNoLinkedLrlMinutesPdf,x.independentlyAuthenticatedAlternativeClerkHtmlMeetings,
   x.remainingMeetingsWithoutAuthenticatedWrittenMinutes]),[
-  [2022,12,7,4],[2023,64,57,7],[2024,42,28,14],[2025,23,18,5]
+  [2022,12,7,4],[2023,64,58,6],[2024,42,28,14],[2025,23,18,5]
  ]);
  assert.equal(r.byCommitteeYearWithNoPdf.length,20);
  const sum=(k:string)=>r.byCommitteeYearWithNoPdf.reduce((n:number,x:any)=>n+x[k],0);
  assert.equal(sum('lrlIndexedNoLinkedPdfMeetings'),141);
- assert.equal(sum('authClerkWrittenMinuteMeetings'),110);
- assert.equal(sum('stillMissingAuthenticatedWrittenMinutes'),30);
+ assert.equal(sum('authClerkWrittenMinuteMeetings'),111);
+ assert.equal(sum('stillMissingAuthenticatedWrittenMinutes'),29);
  assert.ok(r.byCommitteeYearWithNoPdf.every((x:any)=>
   x.lrlIndexedNoLinkedPdfMeetings===x.totalAuthenticatedWrittenMinutesMeetings+
   x.stillMissingAuthenticatedWrittenMinutes));
@@ -102,7 +102,29 @@ test('one exact unlinked 2022 Housing government PDF adds written-minute coverag
  assert.equal(orig.documentedFormalMotionProposals,2);
  assert.equal(orig.sourceRun.result,'success');
  assert.equal(r.newlyRetrievedAndShaPinnedOriginalGovernmentPdfBodiesOutsideIndex,1);
- assert.equal(r.combinedIndexedMeetingsWithAuthenticatedWrittenMinutes,1562);
- assert.equal(r.stillWithoutAuthenticatedWrittenMinutes,30);
+ assert.equal(r.combinedIndexedMeetingsWithAuthenticatedWrittenMinutes,1563);
+ assert.equal(r.stillWithoutAuthenticatedWrittenMinutes,29);
  assert.equal(r.sourceToCurrentProtectedStoredRowParity,null);
+});
+
+test('new independently SHA-proven 2023 Agriculture January 9 Clerk HTML is counted once and joins three-run proof',()=>{
+ const r=read(LEDGER);
+ const u=read('docs/evaluation/source-proof/senate-864-2023-fifty-original-clerk-three-run-union-receipts.json');
+ const rows=r.perOriginallyIndexedNoPdfMeeting.filter((x:any)=>x.year===2023&&
+  x.committeeName==='Agriculture, Broadband and Rural Development'&&x.hearingDate==='2023-01-09');
+ assert.equal(rows.length,1);
+ const x=rows[0];
+ const proof=u.perExactGovernmentIndexedMeeting.find((y:any)=>y.hearingDate==='2023-01-09'&&
+  y.committeeName===x.committeeName);
+ assert.ok(proof);
+ assert.equal(x.originalClerkSha256,proof.originalClerkHtmlSha256);
+ assert.equal(x.originalClerkTextSha256,proof.originalClerkTextSha256);
+ assert.equal(x.originalSenateHearingId,17288);
+ assert.equal(x.sourceProofRunId,38622377355);
+ assert.equal(x.nonExhaustiveParserMotionCandidates,0);
+ assert.equal(x.explicitSourceNamedRollCandidates,0);
+ assert.equal(x.storedMemberVoteEventMatch,null);
+ assert.equal(r.separate2023ThreeRunUnionOriginalSourceProof.authenticatedOriginalDays2023,58);
+ assert.equal(r.combinedIndexedMeetingsWithAuthenticatedWrittenMinutes,1563);
+ assert.equal(r.stillWithoutAuthenticatedWrittenMinutes,29);
 });
