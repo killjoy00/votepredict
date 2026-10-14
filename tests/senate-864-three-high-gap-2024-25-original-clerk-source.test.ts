@@ -254,11 +254,13 @@ test('March 14 2024 original Clerk grammar preserves five separately printed nam
   '<p>S.F. 3986: Senator Fictional Alpha: Public lands policy.</p>',
   '<p>Senator Fictional Hawk requested a roll call vote on S.F. 3986. '+roll(yes,no)+' MOTION PREVAILED.</p>',
   '<p>S.F. 3561: Senator Fictional Alpha: Packaging policy.</p>',
-  '<p>Senator Fictional Hawk requested a roll call vote on S.F. 3561. '+roll(yes,no)+' MOTION PREVAILED.</p>'
+  '<p>Senator Fictional Alpha offered the A14 amendment, adopted by voice.</p>',
+  '<p>Senator Fictional Hawk requested a roll call vote for the passage of S.F. 3561. '+roll(yes,no)+' MOTION PREVAILED.</p>'
  ].join(''),'Thursday, March 14, 2024');
  const x=inspectOriginalHighGapSenateClerkHtml(html,state,18532,originalDay,'2026-10-13T06:20:00Z');
  assert.equal(x.canonicalMotionCandidates,5);
  assert.equal(x.classificationCounts.explicitNamedRolls,5);
+ assert.equal(x.schemaVersion,'senate-864-2024-25-three-committee-original-clerk-action-v2');
  assert.equal(x.classificationCounts.sourceExplicitNamedYeaNayEntries,65);
  assert.deepEqual(x.actions.map(a=>[
   a.billReference,a.amendmentReference,a.evidenceClassification,
