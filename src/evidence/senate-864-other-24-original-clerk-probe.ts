@@ -119,7 +119,14 @@ export function inspectOtherClerkOriginal(html:string,t:OtherOriginalTarget,
  const sourceDate=labelDate(t);
  const day=text.indexOf(sourceDate);
  const header=day>=0?text.slice(Math.max(0,day-380),day):'';
- if(day<0||!committeeNorm(header).includes(committeeNorm(t.committeeName+' Committee'))||
+ // The independently authenticated 2025 original subcommittee title uses
+ // "Rules and Administration Subcommittee on Committees" while the official
+ // LRL index calls it "Rules and Administration - Subcommittee on Committees".
+ // This one explicit Senate naming variant is not a blanket fuzzy alias.
+ const originalOfficialHeader=t.year===2025&&
+  t.committeeName==='Rules and Administration - Subcommittee on Committees'?
+   'Rules and Administration Subcommittee on Committees':t.committeeName+' Committee';
+ if(day<0||!committeeNorm(header).includes(committeeNorm(originalOfficialHeader))||
   !/\bMinutes\b/i.test(text.slice(day,day+450))||
   !/\bPresent\s*:\s*(?:Senator|No Members)/i.test(text.slice(day,day+1900)))
   throw Error('Original Clerk date and exact committee minutes header not supported');
