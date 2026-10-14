@@ -13,11 +13,21 @@ test('strict original candidate report summary parser emits only official aggreg
   '21C Total outstanding balance of all loans 5,800.00',
   'Schedule A1 Individual contributors — private donor names must not be collected'].join('\n');
  const r=findSummaryRows(text);
- assert.equal(r.status,'source_summary_amount_candidates_need_column_alignment_proof');
+ assert.equal(r.status,'receipts_total_arithmetic_verified_other_summary_fields_partly_unresolved');
  assert.deepEqual(r.fields.map(x=>x.parsedCurrencyAmountsOnLabeledLine),[3,3,1,1]);
- assert.deepEqual(r.fields.map(x=>x.candidateLastDisplayedTotalCents),[3543773,4135299,18500,580000]);
+ assert.equal(r.fields.find(x=>x.field==='totalReceipts').certifiedOriginalSourceReceiptsTotalCents,3543773);
+ assert.equal(r.fields.find(x=>x.field==='totalReceipts').status,'signed_original_receipts_summary_column_arithmetic_verified');
+ assert.equal(r.fields.find(x=>x.field==='totalDisbursements').certifiedOriginalSourceReceiptsTotalCents,null);
+ assert.deepEqual(r.fields.map(x=>x.sourceReportSummaryAmountCellsCents),[
+ [3453773,90000,3543773],[4045299,90000,4135299],[18500],[580000]]);
  assert.equal(JSON.stringify(r).includes('private donor names'),false);
  assert.equal(JSON.stringify(r).includes('Schedule A1'),false);
+});
+test('a mathematical receipt-column mismatch never becomes a certified financial value',()=>{
+ const malformed=findSummaryRows('Committee Transaction Summary\n10 Total Receipts Cash In Kind Total 100.00 50.00 999.00');
+ const r=malformed.fields.find(x=>x.field==='totalReceipts');
+ assert.equal(r.status,'official_summary_label_and_same_line_amounts_source_observed_not_reconciled');
+ assert.equal(r.certifiedOriginalSourceReceiptsTotalCents,null);
 });
 test('unknown source line or multiple summary total labels remain held not invented',()=>{
  const missing=findSummaryRows('Report of Receipts and Expenditures for Principal Campaign Committee');
