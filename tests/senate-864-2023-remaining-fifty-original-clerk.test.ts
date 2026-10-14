@@ -65,7 +65,7 @@ test('2022-25 research scope never requests 2021 and 2023 archived Clerk hearing
  assert.equal(governmentCalendarUrl(t),'https://www.leg.mn.gov/cal?d1=3%2F15%2F2023');
  assert.equal(senateClerkUrl(t,17800),
   'https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17800&ls=93&type=minutes');
- assert.throws(()=>validate2023Target({...t,year:2021} as RemainingTarget),/Unreviewed/);
+ assert.throws(()=>validate2023Target({...t,year:2021} as unknown as RemainingTarget),/Unreviewed/);
  assert.throws(()=>senateClerkUrl(t,19995),/Non-2023-range/);
  const c=inspectGovernment2023Calendar(combined(t),t);
  assert.equal(c.matchedHearingId,17800);
