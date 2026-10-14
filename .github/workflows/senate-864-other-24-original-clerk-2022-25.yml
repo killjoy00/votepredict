@@ -1,0 +1,56 @@
+name: '#864 other 24 Senate committee Clerk originals 2022/24/25 (no 2021)'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-other-24-original-clerk-probe.ts
+      - scripts/audit-senate-864-other-24-original-clerk-sources.ts
+      - tests/senate-864-other-24-original-clerk-probe.test.ts
+      - docs/evaluation/source-proof/senate-864-2022-24-25-other-24-government-original-receipts.json
+      - docs/evaluation/senate-864-2022-25-remaining-written-minute-recovery.md
+      - .github/workflows/senate-864-other-24-original-clerk-2022-25.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-twenty-four-senate-meetings:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify typed source-only 2022-25 original meeting identities and regressions
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-other-24-original-clerk-probe.test.ts
+      - name: Download immutable 2022-25 official LRL committee meeting census
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11674762938'
+          repository: killjoy00/votepredict
+          run-id: 38065594898
+          github-token: ${{ github.token }}
+          path: artifacts
+          merge-multiple: true
+      - name: Reconcile frozen 141 minus 64 2023 minus 53 large 2024-25 and independently fetch 24 official calendars / original Clerk HTML
+        run: |
+          node --import tsx scripts/audit-senate-864-other-24-original-clerk-sources.ts \
+            --source-index artifacts/senate-2021-25-official-meeting-census.json \
+            --output artifacts/senate-864-other-24-official-clerk-originals-source-only.json
+      - name: Retain exact original source receipts and all unresolved no-PDF dates
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-other-24-original-clerk-no-2021
+          path: artifacts/senate-864-other-24-official-clerk-originals-source-only.json
+          if-no-files-found: ignore
+          retention-days: 30
