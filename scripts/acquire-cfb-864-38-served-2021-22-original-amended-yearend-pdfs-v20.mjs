@@ -20,6 +20,8 @@ import{parseServedYearEnd2021to22Header,SERVED_2021_22_YE_DUE,
  SERVED_2021_22_YE_CALENDAR_PDF_SHA}
  from '../src/evidence/cfb-2021-22-served-senator-yearend-original-proof.js';
 import {verifyPinned57AgainstOriginalSourceCheckpoint,
+ replay57AgainstEntireOriginal268PageBody,
+ originalCfbCandidateLabelNameKey,originalOfficialMemberNameKey,
  parsePermanent57RegistrationLeadPsv}
  from './audit-cfb-864-57-actual-serving-candidate-registration-leads-v17.mjs';
 import {verifyPermanent298SourceLedgers}
@@ -27,6 +29,8 @@ import {verifyPermanent298SourceLedgers}
 export const SCHEMA='cfb-864-2021-22-thirtyeight-actually-served-original-yearend-report-PDF-sources-v20';
 const ORIGINAL_SERVICE='docs/evaluation/source-proof/cfb-2021-25-95-served-senator-38-report-principal-crosswalk-v16.psv';
 const ORIG_CAL='docs/evaluation/source-proof/cfb-2021-22-senate-one-filer-original-reports-and-calendars.json';
+const OFFICIAL_268_ARCHIVE='artifacts/official-268/cfb-senate-district-registrations.json';
+const OFFICIAL_268_ORIGINAL_SOURCE_SHA='83770615658f7cf47802b05257bcbd45bed0c7c41ec19dfe99c31ca91b746c04';
 const OFFICIAL='https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/';
 const HASH=/^[a-f0-9]{64}$/;
 const DUE={"2021":"2022-01-31","2022":"2023-01-31"};
@@ -81,6 +85,50 @@ export function chooseActual38ServingSenatorsIn2021And2022(){
  }).sort((a,b)=>a.source2020District-b.source2020District);
  return result;
 }
+// Caller must independently replay and SHA-validate the FULL 268-page archive
+// before passing the parsed payload. This lookup never equates an old Senate
+// incumbency district with the post-redistricting candidate filing district.
+export function attach2022GovernmentCandidateDistricts(targets,source){
+ if(!Array.isArray(source?.observations)||source.observations.length!==268)
+  throw Error('The official government 268-page original archive is required');
+ const byReg=new Map(targets.map(t=>[t.reg,t]));
+ const found=new Map(targets.map(t=>[t.reg,[]]));
+ const labelHolds=new Set();
+ for(const o of source.observations){
+  if(o.segmentEndYear!==2022||o.status!=='candidate_labels_observed')continue;
+  if(!Number.isInteger(o.district)||o.district<1||o.district>67
+    ||!HASH.test(o.htmlSha256))
+   throw Error('Official archived 2022 candidate district/source SHA invalid');
+  for(const c of o.candidates??[]){
+   const t=byReg.get(String(c.registrationNumber));if(!t)continue;
+   if(originalCfbCandidateLabelNameKey(c.candidateDisplayName)!==
+      originalOfficialMemberNameKey(t.officialSenator)){
+     labelHolds.add(t.reg);continue;
+   }
+   found.get(t.reg).push({district:o.district,originalOfficialPageSha256:o.htmlSha256});
+  }
+ }
+ return targets.map(t=>{
+  const pairs=found.get(t.reg);
+  // One changed-name observation invalidates the 2022 archived candidate proof
+  // for the registration, rather than accepting any other same-reg row.
+  const clean=labelHolds.has(t.reg)?[]:pairs;
+  const unique=[...new Map(clean.map(x=>[x.district+':'+x.originalOfficialPageSha256,x])).values()];
+  return{...t,independentlyDocumented2022CfbCandidateDistricts:
+   [...new Set(unique.map(x=>x.district))].sort((a,b)=>a-b),
+   archivedOriginal2022CfbDistrictPageHashes:unique.map(x=>x.originalOfficialPageSha256),
+   archived2022RegistrationCandidateNameDriftHold:labelHolds.has(t.reg)};
+ });
+}
+export function independentlyReplayOriginal268AndAttach2022CfbDistricts(targets){
+ const bytes=readFileSync(OFFICIAL_268_ARCHIVE);
+ const proof=replay57AgainstEntireOriginal268PageBody(bytes);
+ if(proof.sourceArchiveOriginalJsonSha256!==OFFICIAL_268_ORIGINAL_SOURCE_SHA
+   ||proof.entireOriginal268GovernmentPagesIndependentlyReplayed!==true)
+  throw Error('Archived source 2022 registration district not SHA-replayed');
+ return attach2022GovernmentCandidateDistricts(targets,JSON.parse(bytes.toString('utf8')));
+}
+
 export function verifyIndependentOriginalYearendCalendars(){
  const erin=JSON.parse(readFileSync(ORIG_CAL,'utf8'));
  if(erin.scope?.registrationNumber!=='18443'||erin.reportProofs?.length!==2)
@@ -143,7 +191,8 @@ function diagnosticForOfficialPdfFirstPage(t,text){
   differentDirectNumberPrinted:direct!==null&&!directOk,
   printedDistricts:[...new Set(senate)].sort((a,b)=>a-b),
   printedDistrictMatchesIndependentlyServingOriginalTerm:[...new Set(senate)].some(x=>t.servingDistricts2021And2022.includes(x)),
-  printedDistrictMatchesIndependentlyProven2023ServingTerm:[...new Set(senate)].some(x=>t.independentlyDocumented2023ServingDistricts.includes(x))};
+  printedDistrictMatchesIndependentlyProven2023ServingTerm:[...new Set(senate)].some(x=>t.independentlyDocumented2023ServingDistricts.includes(x)),
+  printedDistrictMatchesOriginalArchived2022CfbRegistration:[...new Set(senate)].some(x=>(t.independentlyDocumented2022CfbCandidateDistricts??[]).includes(x))};
 }
 export function originalHeader(t,ref,source,viewerSha,sourceError=null){
  const year=2000+Number(ref.year);
@@ -164,6 +213,8 @@ export function originalHeader(t,ref,source,viewerSha,sourceError=null){
   originalOfficial2021or2022SenateDistricts:t.servingDistricts2021And2022,
   independentlyDocumentedNextTermSenateDistricts:year===2022?
    t.independentlyDocumented2023ServingDistricts:[],
+  independentlyDocumented2022CfbCandidateDistricts:year===2022?
+   (t.independentlyDocumented2022CfbCandidateDistricts??[]):[],
   dueOn:DUE[String(year)],
   periodStartOn:year+'-01-01',periodEndOn:year+'-12-31'
  },source.text):null;
@@ -174,6 +225,9 @@ export function originalHeader(t,ref,source,viewerSha,sourceError=null){
   id,person:t.officialSenator,sourceSenateDistrict:t.source2020District,
   source2021and2022ServingDistricts:t.servingDistricts2021And2022,
   independentlyDocumented2023ServingDistricts:t.independentlyDocumented2023ServingDistricts,
+  independent2022OriginalCfbCandidateDistricts:t.independentlyDocumented2022CfbCandidateDistricts??[],
+  independent2022OriginalCfbDistrictSourcePageShas:t.archivedOriginal2022CfbDistrictPageHashes??[],
+  archived2022CandidateNameDriftHold:t.archived2022RegistrationCandidateNameDriftHold??false,
   registration:t.reg,reportYear:year,amendmentIndex:ref.amendment,
   viewerApiSha256:viewerSha,
   originalCandidateSourcePageSha256:t.originalPageSha,
@@ -254,7 +308,8 @@ async function acquirePerson(t){
 }
 export async function acquireThirtyEightSenateMembers2021to22YearendPDFs(){
  verifyIndependentOriginalYearendCalendars();
- const targets=chooseActual38ServingSenatorsIn2021And2022();
+ const targets=independentlyReplayOriginal268AndAttach2022CfbDistricts(
+  chooseActual38ServingSenatorsIn2021And2022());
  const results=new Array(targets.length);let at=0;
  const worker=async()=>{
   for(;;){
@@ -278,6 +333,12 @@ export async function acquireThirtyEightSenateMembers2021to22YearendPDFs(){
   schema:SCHEMA,onlyOriginalServingSenatorCandidateSource:true,
   sourceOriginalCandidateSenatePrincipals:38,
   selectedYears:[2021,2022],
+  separatelyReplayVerifiedEntireOriginal268GovernmentPages:true,
+  completeOriginal268GovernmentArchiveSha256:OFFICIAL_268_ORIGINAL_SOURCE_SHA,
+  source2022CandidateDistrictIdentitiesIndependentlyObserved:targets.filter(t=>
+   t.independentlyDocumented2022CfbCandidateDistricts.length>0).length,
+  source2022ArchivedCandidateNameIdentityHolds:targets.filter(t=>
+   t.archived2022RegistrationCandidateNameDriftHold).length,
   originalCFBIndexedYEReportReferencesObservedBySource:results.reduce(
    (n,x)=>n+(x.selectedOriginalViewerYearendRefs??0),0),
   originalYearendSignedPDFSourceVersionsSelected:rows.length,
