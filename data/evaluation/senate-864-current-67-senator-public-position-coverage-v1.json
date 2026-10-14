@@ -16,7 +16,10 @@
     "currentMembershipCampaignItemSum": 378,
     "olderOriginalExcerptsAmong49": 716,
     "newDirectClaimLeads": 15,
-    "newDistinctSenators": 14
+    "newDistinctSenators": 14,
+    "currentNonNomineeSpecificDirectQuoteLeads": 15,
+    "currentNonNomineeQuoteRemainingGap": 3,
+    "currentNonNomineeInspectedPrimaryPageOrCommitteeLead": 18
   },
   "footnotes": [
     "all 49 incumbent nominees have older authenticated original campaign-site excerpts, not necessarily 2026 statements",
@@ -24,7 +27,8 @@
     "new 2026 personally attributed source leads are original-publication page observations, not original archived full HTML byte-authenticated historic versions",
     "selected URL evidence match is not per-source issue_position admission",
     "stored publication-year 2026 metadata is not verified earliest exact source public-by",
-    "current original speech leads are not automatically in VotePredict private evidence"
+    "current original speech leads are not automatically in VotePredict private evidence",
+    "2026 nonnominee specific direct attributed positions found for 15/18 searched current senators; 3 other cases have official or broad primary evidence but NO qualified issue-specific direct quote. All 18 remain not queried against protected current-term database."
   ],
   "senators": [
     {
@@ -43,7 +47,8 @@
         "sd01-20260302-tax-targets"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 2,
@@ -61,7 +66,8 @@
         "sd02-20260501-water-funding-conditions"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 3,
@@ -79,7 +85,8 @@
         "sd03-20260327-atv-sf1245"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 4,
@@ -97,7 +104,8 @@
         "sd04-20260317-dairy-sf3832"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 5,
@@ -112,7 +120,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd05-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/the-health-of-healthcare-in-minnesota/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 6,
@@ -128,7 +141,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 7,
@@ -144,7 +158,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 8,
@@ -162,7 +177,8 @@
         "sd08-20260327-atv-sf1245"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 9,
@@ -178,7 +194,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "OLDER_ONLY_DATED_CURRENT_MEMBERSHIP_CAMPAIGN_ITEMS",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 10,
@@ -194,7 +211,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 11,
@@ -212,7 +230,8 @@
         "sd11-20260527-education-compromise"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 12,
@@ -228,7 +247,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 13,
@@ -243,7 +263,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd13-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/howe-continues-effort-to-update-window-tinting-laws-improving-accessibility-for-those-with-permanent-prescriptions/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 14,
@@ -259,7 +284,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 15,
@@ -274,7 +300,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd15-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/senator-dahms-fights-to-keep-health-care-affordable-for-minnesotans/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 16,
@@ -290,7 +321,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 17,
@@ -306,7 +338,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "OLDER_ONLY_DATED_CURRENT_MEMBERSHIP_CAMPAIGN_ITEMS",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 18,
@@ -322,7 +355,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 19,
@@ -338,7 +372,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "OLDER_ONLY_DATED_CURRENT_MEMBERSHIP_CAMPAIGN_ITEMS",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 20,
@@ -353,7 +388,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd20-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/senate-taxes-committee-approves-sen-drazkowskis-take-it-back-act-to-recover-stolen-fraud-money/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 21,
@@ -368,7 +408,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd21-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/weber-living-in-minnesota-is-taxing/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 22,
@@ -383,7 +428,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd22-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/sen-draheim-authors-bill-to-expand-financial-transparency-for-candidates-and-public-officials/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 23,
@@ -399,7 +449,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 24,
@@ -414,7 +465,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd24-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/sen-nelson-celebrates-senate-passage-of-carters-law/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 25,
@@ -430,7 +486,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 26,
@@ -445,7 +502,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd26-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/miller-presents-bill-to-help-minnesota-compete-for-major-sports-events/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 27,
@@ -461,7 +523,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "OLDER_ONLY_DATED_CURRENT_MEMBERSHIP_CAMPAIGN_ITEMS",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 28,
@@ -477,7 +540,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "OLDER_ONLY_DATED_CURRENT_MEMBERSHIP_CAMPAIGN_ITEMS",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 29,
@@ -493,7 +557,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 30,
@@ -509,7 +574,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 31,
@@ -527,7 +593,8 @@
         "sd31-20260324-sf3602-nay"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 32,
@@ -545,7 +612,8 @@
         "sd32-20260511-oig-compromise"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 33,
@@ -561,7 +629,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 34,
@@ -577,7 +646,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 35,
@@ -593,7 +663,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 36,
@@ -609,7 +680,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 37,
@@ -624,7 +696,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "NO_DIRECT_SPECIFIC_QUOTE_RECOVERED_BOUNDED_SEARCH",
+      "nonNomineeCurrentSourcePositionLeadId": null,
+      "nonNomineePublicSourceSearchLimitation": "Current 2026 original party caucus retirement statement is personally quoted but retrospective career language is not a bill-specific position. LWVMN April committee report gives paraphrased question but not exact recorded policy stance; do not promote.",
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/47587-2/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 38,
@@ -640,7 +717,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 39,
@@ -656,7 +734,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 40,
@@ -672,7 +751,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 41,
@@ -688,7 +768,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 42,
@@ -704,7 +785,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 43,
@@ -719,7 +801,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd43-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://senatedfl.mn/senator-ann-rest-says-ice-must-leave-minnesota-now/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 44,
@@ -734,7 +821,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd44-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://senatedfl.mn/senate-passes-state-and-local-government-policy-omnibus-bill/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 45,
@@ -750,7 +842,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "OLDER_ONLY_DATED_CURRENT_MEMBERSHIP_CAMPAIGN_ITEMS",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 46,
@@ -768,7 +861,8 @@
         "sd46-20260223-era-sf473"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 47,
@@ -784,7 +878,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "OLDER_ONLY_DATED_CURRENT_MEMBERSHIP_CAMPAIGN_ITEMS",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 48,
@@ -800,7 +895,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 49,
@@ -815,7 +911,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "NO_DIRECT_SPECIFIC_QUOTE_RECOVERED_BOUNDED_SEARCH",
+      "nonNomineeCurrentSourcePositionLeadId": null,
+      "nonNomineePublicSourceSearchLimitation": "March18 Education Policy official minutes show named 7-4 YEA on SF3572 and procedural motion, stronger vote evidence than generic statement but not literal speaker quotation; 2026 original October5 school-shooting press statement is broad, not a legislative choice.",
+      "nonNomineePublicOriginalSourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=19789&ls=94",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 50,
@@ -830,7 +931,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd50-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://senatedfl.mn/senate-passes-senator-manns-bill-establishing-age-restrictions-for-kratom/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 51,
@@ -845,7 +951,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd51-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://senatedfl.mn/senator-melissa-h-wiklund-advances-hhs-budget-bill-stabilizing-hcmc-modernizing-county-it/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 52,
@@ -860,7 +971,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "NO_DIRECT_SPECIFIC_QUOTE_RECOVERED_BOUNDED_SEARCH",
+      "nonNomineeCurrentSourcePositionLeadId": null,
+      "nonNomineePublicSourceSearchLimitation": "March26 Elections chair hearing lists SF4223 omnibus vehicle, does NOT contain Carlson's verbal policy support or opposition; do not infer from chairing committee.",
+      "nonNomineePublicOriginalSourceUrl": "https://www.leg.mn.gov/cal?d1=03%2F26%2F2026&mtgid=s_19808&type=single",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 53,
@@ -875,7 +991,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd53-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://senatedfl.mn/senator-matt-klein-hails-passage-of-liquor-bill-permitted-assisted-living-facilities-to-serve-alcohol-authorizing-local-licenses/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 54,
@@ -890,7 +1011,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd54-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://www.mnsenaterepublicans.com/pratt-supports-commonsense-measures-to-make-life-affordable-for-minnesota-families/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 55,
@@ -906,7 +1032,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 56,
@@ -925,7 +1052,8 @@
         "sd56-20260513-egg-sf3891-ambiguous-source-number"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 57,
@@ -941,7 +1069,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 58,
@@ -957,7 +1086,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 59,
@@ -975,7 +1105,8 @@
         "sd59-20260220-constitutional-remedies"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 60,
@@ -991,7 +1122,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 61,
@@ -1009,7 +1141,8 @@
         "sd61-20260422-city-reimbursement-sf5038"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 62,
@@ -1027,7 +1160,8 @@
         "sd62-20260220-constitutional-remedies"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 63,
@@ -1043,7 +1177,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 64,
@@ -1059,7 +1194,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 65,
@@ -1074,7 +1210,12 @@
       "selectedResearchUrlHasIssuePosition": null,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "CURRENT_SENATOR_OUTSIDE_49_NOMINEE_AUDIT_NOT_YET_CHECKED",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "SOURCE_VISIBLE_NAMED_2026_SPECIFIC_POSITION_LEAD",
+      "nonNomineeCurrentSourcePositionLeadId": "sd65-2026-nonnominee-source",
+      "nonNomineePublicSourceSearchLimitation": null,
+      "nonNomineePublicOriginalSourceUrl": "https://senatedfl.mn/senator-sandy-pappas-celebrates-2026-bonding-deal/",
+      "nonNomineePositionOriginalFullHtmlHistoricalCopyAuthenticated": false
     },
     {
       "district": 66,
@@ -1092,7 +1233,8 @@
         "sd66-20260516-victim-funding-sf3432"
       ],
       "sourceCoverageDispo": "NO_CURRENT_MEMBERSHIP_CAMPAIGN_ISSUE_ITEMS_IN_BOUNDED_READONLY_AUDIT",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     },
     {
       "district": 67,
@@ -1108,7 +1250,8 @@
       "selectedResearchUrlHasIssuePosition": false,
       "currentPublisherSpecificStatementLeads": [],
       "sourceCoverageDispo": "HAS_STORED_YEAR_2026_CAMPAIGN_ITEMS_PUBLICATION_TIME_NOT_ORIGINAL_PROOF",
-      "evidenceAbsent": false
+      "evidenceAbsent": false,
+      "nonNomineeLegislativeStatementSurvey": "outside_scope_current_nominee_source_parity_other_matrix"
     }
   ]
 }
