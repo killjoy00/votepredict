@@ -99,7 +99,7 @@ export function verifyThreeOfficialSenateReportReceiptsAmendments(){
  if(reports.length!==3||new Set(reports.map(x=>x.registration)).size!==3)
   throw Error('CFB 2022 original-to-latest receipts amendment reconciliation missing one senator');
  return{schema:SCHEMA,numberOfOriginalGovernmentSignedReportPdfs:6,
-   2022SenateCandidatePrincipalCommitteesReviewed:3,reviewedOriginalAndLatestAmendmentLineages:3,
+   senate2022CandidatePrincipalCommitteesReviewed:3,reviewedOriginalAndLatestAmendmentLineages:3,
    sourceReportedTotalReceiptsArithmeticVerifiedForSixVersions:true,
    independentlyWholePDFSHAAndReceiptSourceRepeated:true,
    actualOriginalReportVersionsHistoricalPublicByProven:0,
