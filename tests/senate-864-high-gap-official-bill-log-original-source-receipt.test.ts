@@ -25,8 +25,8 @@ test('two full original government Senate Bill Log PDF hashes and 14 exact missi
   [2024,'Taxes','ac52199cd91e87cbe243daa58334ef0e02cf3f3113696ea674a47385bf5a12e3',2516787,76,'68911d8af4852117faea491b0ad34efaf25e63145f9814e5a61116a7ee705d08',271,63,11],
   [2025,'Energy, Utilities, Environment, and Climate','8bbb79ed3583ace73ac84ef73d6c9696b5a8d34454b214776b87b22fde92f278',249428,9,'48dbca240097fa58ab8d14adaf043c20c40bcd81e562c9964357961739a53fd8',28,7,3]
  ]);
- const official=new Set(i.meetings.map((m:any)=>key(m.year,m.committeeName,m.hearingDate)));
- const held=new Set(c.everyOriginalMeeting.filter((m:any)=>m.senateClerkHtmlSha===null)
+ const official=new Set<string>(i.meetings.map((m:any)=>key(m.year,m.committeeName,m.hearingDate)));
+ const held=new Set<string>(c.everyOriginalMeeting.filter((m:any)=>m.senateClerkHtmlSha===null)
   .map((m:any)=>key(m.year,m.committeeName,m.hearingDate)));
  assert.equal(official.size,53);
  assert.equal(held.size,15);
