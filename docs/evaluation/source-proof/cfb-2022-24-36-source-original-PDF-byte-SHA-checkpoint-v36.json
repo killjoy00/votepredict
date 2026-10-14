@@ -1,0 +1,21 @@
+{
+  "schema": "cfb-864-36-source-original-government-PDF-body-SHA-2022-to-24-v36",
+  "issue": 864,
+  "sourceGovReadOnlyRunId": 38644113636,
+  "sourceGovReadOnlyJobId": 116126626082,
+  "all36OfficialPDFsSucceeded": true,
+  "completeOriginalPublicPDFsReclaimed": 36,
+  "originalSourcePeriodSelection": {
+    "original2022PreElection": 24,
+    "original2023To24YearEnd": 12
+  },
+  "allPrior721IndexedSourceIdsPreserved": true,
+  "allPreviously444DownloadedSourcePDFsRetained": true,
+  "totalDownloadedIndexedReportVersionsAfterAddition": 480,
+  "uniqueWholePDFSourceShaBodiesAfterAddition": 476,
+  "rawPdfBodiesNotExported": true,
+  "noDonorTransactionNamesOrItemRows": true,
+  "dateOf2026SourceDownloadNotEarlierPublicBy": true,
+  "statutoryOwedOriginalFilingDenominator": null,
+  "sourcePSV": "docs/evaluation/source-proof/cfb-2022-24-36-serving-priority-original-PDF-binaries-v36.psv"
+}
