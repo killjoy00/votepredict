@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "senate-864-2022-25-141-official-unlinked-meeting-to-authenticated-written-minutes-v2",
+  "schemaVersion": "senate-864-2022-25-141-official-unlinked-meeting-to-authenticated-written-minutes-v3",
   "issue": 864,
   "activeYears": [
     2022,
@@ -13,9 +13,9 @@
   "originalIndexLinkedMinuteMeetings": 1451,
   "originalIndexLinkedMinutePdfBodies": 1452,
   "originalNoLinkedMinuteMeetings": 141,
-  "independentlyAuthenticatedOriginalClerkHtmlMeetings": 110,
-  "combinedIndexedMeetingsWithAuthenticatedWrittenMinutes": 1562,
-  "stillWithoutAuthenticatedWrittenMinutes": 30,
+  "independentlyAuthenticatedOriginalClerkHtmlMeetings": 111,
+  "combinedIndexedMeetingsWithAuthenticatedWrittenMinutes": 1563,
+  "stillWithoutAuthenticatedWrittenMinutes": 29,
   "sourceStatusBeforeAdditional2022OrphanPdf": false,
   "byYear": [
     {
@@ -29,10 +29,10 @@
     {
       "year": 2023,
       "indexedNoLinkedLrlMinutesPdf": 64,
-      "independentlyAuthenticatedAlternativeClerkHtmlMeetings": 57,
-      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 7,
+      "independentlyAuthenticatedAlternativeClerkHtmlMeetings": 58,
+      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 6,
       "independentUnlinkedOriginalLrlMinutesPdfMeetings": 0,
-      "totalIndependentAlternateWrittenMinutesMeetings": 57
+      "totalIndependentAlternateWrittenMinutesMeetings": 58
     },
     {
       "year": 2024,
@@ -110,10 +110,10 @@
       "year": 2023,
       "committeeName": "Agriculture, Broadband and Rural Development",
       "lrlIndexedNoLinkedPdfMeetings": 22,
-      "authClerkWrittenMinuteMeetings": 21,
-      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "authClerkWrittenMinuteMeetings": 22,
+      "stillMissingAuthenticatedWrittenMinutes": 0,
       "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
-      "totalAuthenticatedWrittenMinutesMeetings": 21
+      "totalAuthenticatedWrittenMinutesMeetings": 22
     },
     {
       "year": 2023,
@@ -525,20 +525,21 @@
       "hearingDate": "2023-01-09",
       "committeeIndexId": "26143-0",
       "linkedLrlMinutesPdf": false,
-      "sourceClass": "no_written_minutes_authenticated_through_independent_routes",
-      "originalClerkSha256": null,
-      "originalClerkTextSha256": null,
-      "originalSenateHearingId": null,
-      "nonExhaustiveParserMotionCandidates": null,
-      "explicitSourceNamedRollCandidates": null,
-      "printedSourceNameChoiceOccurrences": null,
+      "sourceClass": "2023_third_original_source_run_Clerk_minutes",
+      "originalClerkSha256": "22223d3e82e24cc1ce6fc4bda901d04f29c14af9684efb66a0f419388e66ccad",
+      "originalClerkTextSha256": "d7b84d5de163ad720a04855dd19489a8764ccf5eed973adde106ebd003678f26",
+      "originalSenateHearingId": 17288,
+      "nonExhaustiveParserMotionCandidates": 0,
+      "explicitSourceNamedRollCandidates": 0,
+      "printedSourceNameChoiceOccurrences": 0,
       "countOnlyCandidates": null,
       "originalResultCuesNotCertifiedMotions": null,
       "underlyingOfficialMeetingIndex": true,
       "hearingDayConventionOnly": true,
       "independentlyProvenOriginalPublicationDate": null,
       "storedMemberVoteEventMatch": null,
-      "noRecordedVoteInferredFromMissingSource": false
+      "noRecordedVoteInferredFromMissingSource": false,
+      "sourceProofRunId": 38622377355
     },
     {
       "year": 2023,
@@ -3223,5 +3224,16 @@
     "originalGovernmentSourceRunId": 38621595082,
     "independentlyVerifiedDistinctWrittenMinutesSource": true,
     "distinctParliamentaryMotionProposalsWithNoPrintedOutcomes": 2
+  },
+  "separate2023ThreeRunUnionOriginalSourceProof": {
+    "sourceReceiptPath": "docs/evaluation/source-proof/senate-864-2023-fifty-original-clerk-three-run-union-receipts.json",
+    "distinctClerkBodiesNewlyRecoveredFromOriginallyUnverifiedFifty": 44,
+    "sourceRunIds": [
+      38507113452,
+      38507388355,
+      38622377355
+    ],
+    "authenticatedOriginalDays2023": 58,
+    "firstPassDifferentSubsetTransportSourceHoldDoesNotInvalidatePriorSha": true
   }
 }
