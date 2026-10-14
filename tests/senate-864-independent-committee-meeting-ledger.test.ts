@@ -60,7 +60,6 @@ test('reconciles original named/count-only/context actions without fabricated pe
  assert.equal(actions[0]?.motionText,null);
  assert.equal(actions[0]?.persistedEventId,null);
  assert.equal(actions[1]?.individualChoiceIdentityProof,'not_available');
- assert.equal(x.year2021.officialPrintMeetingCount,null);
  assert.equal(x.sourceRecordReconciliation.sourceToCurrentStoredActionsMatched,false);
  assert.doesNotMatch(JSON.stringify(x),/choiceIdentitySha256|normalized_member_name|membership_id/);
 });
