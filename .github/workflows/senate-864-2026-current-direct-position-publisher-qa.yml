@@ -3,6 +3,11 @@ on:
   pull_request:
     paths:
       - data/evaluation/senate-864-2026-current-legislative-statements-v1.json
+      - data/evidence/senate-864-2026-verified-direct-positions-v1.json
+      - src/evidence/senate-864-2026-verified-positions.mjs
+      - scripts/reconcile-senate-864-2026-verified-positions.mjs
+      - tests/senate-864-2026-verified-direct-positions.test.mjs
+      - tests/senate-864-2026-verified-direct-positions-regression.test.ts
       - data/evaluation/senate-864-2026-current-nonnominee-legislative-position-leads-v1.json
       - data/evaluation/senate-864-2026-current-publisher-whole-html-observation-receipts-v1.json
       - data/evaluation/senate-864-current-67-senator-public-position-coverage-v1.json
@@ -35,6 +40,11 @@ jobs:
         run: |
           node --check scripts/audit-senate-864-2026-current-direct-position-leads.mjs
           node --test tests/senate-864-2026-current-direct-position-leads.test.mjs
+      - name: Offline 13 first-party original verifications, Oct 14 public-by and source-to-store dry-run guards
+        run: |
+          node --check src/evidence/senate-864-2026-verified-positions.mjs
+          node --check scripts/reconcile-senate-864-2026-verified-positions.mjs
+          node --test tests/senate-864-2026-verified-direct-positions.test.mjs
       - name: Public original publisher whole-HTML bytes and individually bounded quote presence
         run: |
           node scripts/audit-senate-864-2026-current-direct-position-leads.mjs \
