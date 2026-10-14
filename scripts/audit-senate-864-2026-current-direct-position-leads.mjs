@@ -14,8 +14,8 @@ import {normalizeVisibleHtml} from './probe-senate-864-2026-duckworth-dated-orig
 const safeHosts=new Set(['senatedfl.mn','www.mnsenaterepublicans.com']);
 const ledgerPath='data/evaluation/senate-864-2026-current-legislative-statements-v1.json';
 const coveragePath='data/evaluation/senate-864-current-67-senator-public-position-coverage-v1.json';
-const canonical=s=>String(s).normalize('NFKC').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/\\s+/g,' ').trim().toLowerCase();
-const dayLabel=day=>{assert.match(day,/^2026-\\d{2}-\\d{2}$/);
+const canonical=s=>String(s).normalize('NFKC').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/\s+/g,' ').trim().toLowerCase();
+const dayLabel=day=>{assert.match(day,/^2026-\d{2}-\d{2}$/);
  const d=new Date(day+'T12:00:00Z');assert.equal(d.toISOString().slice(0,10),day);
  return new Intl.DateTimeFormat('en-US',{timeZone:'UTC',month:'long',day:'numeric',year:'numeric'}).format(d);
 };
@@ -81,7 +81,7 @@ export function verifyPositionLedgers(source,coverage){
 }
 export function inspectWholeOriginalPublisherBody(bytes,claims,observedAtUtc){
  assert.ok(Buffer.isBuffer(bytes)&&bytes.length>=500&&bytes.length<=4_000_000);
- assert.match(observedAtUtc,/^\\d{4}-\\d\\d-\\d\\dT/);
+ assert.match(observedAtUtc,/^\d{4}-\d\d-\d\dT/);
  assert.ok(Array.isArray(claims)&&claims.length>0);
  const url=new URL(claims[0].url);
  assert.ok(url.protocol==='https:'&&safeHosts.has(url.hostname));
@@ -95,9 +95,10 @@ export function inspectWholeOriginalPublisherBody(bytes,claims,observedAtUtc){
   const namedSpeakerAdjacent=quoteIdx>=0&&text.slice(Math.max(0,quoteIdx-950),Math.min(text.length,quoteIdx+c.shortExactPassage.length+500)).includes(cue);
   const attributionBounded=bylineMode?text.includes(cue)&&quoteIdx>=0:namedSpeakerAdjacent;
   const publishedDayVisible=text.includes(canonical(dayLabel(c.publisherDisplayedDate)));
+  const billTokens=text.replace(/\bsf\s+(\d+)\b/g,'sf$1');
   const bothSourceBillIds=c.requiresSourceBillNumberResolution?
-   text.includes(canonical(c.canonicalBillId).replace('sf','sf'))&&
-   text.includes(canonical(c.sourceMentionsConflictingBillId).replace('sf','sf')):false;
+   billTokens.includes(canonical(c.canonicalBillId))&&
+   billTokens.includes(canonical(c.sourceMentionsConflictingBillId)):false;
   const literalDateSpeakerAndPassage=publishedDayVisible&&quoteIdx>=0&&attributionBounded;
   return {claimId:c.id,foundExactShortPassage:quoteIdx>=0,
    publisherDisplayedDayFoundInLiveHtml:publishedDayVisible,
@@ -152,7 +153,7 @@ export async function main(){
   copyrightedFullRawPublisherHtmlWritten:false,
   researchOnlyNoAutoIngestion:true,failuresAreUnknownNotAbsent:true,batches};
  const output=resolve(outPath);mkdirSync(dirname(output),{recursive:true});
- writeFileSync(output,JSON.stringify(receipt,null,2)+'\\n',{flag:'wx',mode:0o600});
+ writeFileSync(output,JSON.stringify(receipt,null,2)+'\n',{flag:'wx',mode:0o600});
  console.log(JSON.stringify({urlsProbed:receipt.urlsProbed,
   liveBodiesWithFullSha:receipt.rawCurrentOriginalBodiesObserved,
   personallyAttributedPassagesVisible:batches.reduce((n,b)=>n+(b.results||[]).filter(x=>x.currentlyPublisherDisplayedPassageAndSpeakerObserved).length,0),
