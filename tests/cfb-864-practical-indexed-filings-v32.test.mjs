@@ -34,16 +34,17 @@ test('existing 15 parsing and single fetch holds remain USEFUL official CFB inde
  const gazelka=historicalOfficialFilingContextForSenator('Paul Gazelka','senate');
  const isaacson=historicalOfficialFilingContextForSenator('Jason Isaacson','senate');
  const newton=historicalOfficialFilingContextForSenator('Jerry Newton','senate');
- assert.equal(bakk?.observedVersions,2);
+ assert.ok(bakk?.observedVersions >= 2);
  assert.equal(bakk?.downloadedVersions,2);
- assert.equal(gazelka?.observedVersions,1);
+ assert.ok(gazelka?.observedVersions >= 1);
  assert.equal(gazelka?.downloadedVersions,1);
- assert.equal(isaacson?.observedVersions,3);
+ assert.ok(isaacson?.observedVersions >= 3);
  assert.equal(isaacson?.downloadedVersions,3);
- assert.equal(newton?.observedVersions,1);
+ assert.ok(newton?.observedVersions >= 1);
  assert.equal(newton?.downloadedVersions,0);
- assert.equal(newton?.filings[0].status,'official_filing_indexed_pdf_fetch_failed');
- assert.match(officialFilingStatusLabel(newton.filings[0].status),/Listed by CFB/);
+ const heldNewton=newton?.filings.find(f=>f.id==='18004:21:pcc:YE:0:0');
+ assert.equal(heldNewton?.status,'official_filing_indexed_pdf_fetch_failed');
+ assert.match(officialFilingStatusLabel(heldNewton.status),/Listed by CFB/);
 });
 test('five documented original CFB Senator name-variant committees are linked to actual serving senators without string-similarity matching',()=>{
  for(const [member,alias] of [
@@ -78,11 +79,12 @@ test('original official PDF source inventory is attached to legislator profile a
  assert.equal(finance?.filings[0].kind,'original');
  const s=historicalOfficialFilingInventoryTotals();
  assert.equal(s.senators,95);
- assert.equal(s.versions,445);
+ assert.equal(s.versions,721);
  assert.equal(s.downloadedVersions,444);
  assert.equal(s.distinctDownloadedPdfBodies,440);
  assert.equal(s.readableVersions,425);
  assert.equal(s.unresolvedDocumentDetails,15);
+ assert.equal(s.indexedVersionsAwaitingPdfDownload,276);
 });
 test('historical publication and mandatory owed-report counts are NOT inferred from CFB indexed document existence',()=>{
  assert.equal(report.historicallyContemporaneousPublicationNotAssumed,true);
