@@ -29,7 +29,9 @@ const blob=s=>createHash('sha1').update('blob '+Buffer.byteLength(s)+'\0').updat
 const SHA=/^[a-f0-9]{64}$/;
 function source(k,count,width){
  const raw=readFileSync(FILE[k],'utf8');
- if(!raw.endsWith('\n')||raw.includes('\r')||(PIN[k]&&blob(raw)!==PIN[k]))
+ // The 396-line original government-viewer source was committed without a final LF.
+ // Preserve its exact Git blob bytes instead of normalizing it or rejecting it.
+ if((k!=='source'&&!raw.endsWith('\n'))||raw.includes('\r')||(PIN[k]&&blob(raw)!==PIN[k]))
   throw Error('Official CFB viewer archive and derived 95-senator evidence blob drift '+k);
  const rows=raw.trimEnd().split('\n').map(x=>x.split('|'));
  if(rows.length!==count||rows.some(x=>x.length!==width||x.some(z=>z==='')))
