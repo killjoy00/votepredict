@@ -11,10 +11,10 @@ const value=(v:any,k:string)=>v[k]??0;
 test('independently rerun original 53 Clerk source receipt proves 27 distinct named roll candidates across unchanged originals',()=>{
  const b=read(BASE),v=read(V2);
  assert.equal(v.schemaVersion,'senate-864-2024-25-53-original-clerk-named-roll-reparse-source-receipts-v2');
- assert.equal(v.originalSourceRunId,38500933608);
- assert.equal(v.originalSourceRunHeadSha,'60dae3db7111ded93810afeebc4cc969560eba24');
- assert.equal(v.artifactId,11865711704);
- assert.equal(v.artifactZipSha256,'904643a34ec3e325ed23a30a802c0b70ee837f6ed3f740e0db33eb68d8e76035');
+ assert.equal(v.originalSourceRunId,38501257729);
+ assert.equal(v.originalSourceRunHeadSha,'1910d2880d70b0b80a9bc9f5d4813728794ab834');
+ assert.equal(v.artifactId,11866375427);
+ assert.equal(v.artifactZipSha256,'53fa9d0c13439030598151778ae38aa37aac892a09ee3d170da4a4f9d663b029');
  assert.equal(v.indexedNoMinutesPdfMeetings,53);
  assert.equal(v.everyOriginalMeeting.length,53);
  assert.equal(v.independentlyAuthenticatedOriginalSenateClerkBodies,38);
