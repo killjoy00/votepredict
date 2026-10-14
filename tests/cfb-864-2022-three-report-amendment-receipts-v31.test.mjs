@@ -7,7 +7,7 @@ const proof=verifyThreeOfficialSenateReportReceiptsAmendments();
 test('two independent full government 2022 Senate original PDF SHA acquisitions and six arithmetic-safe original/edited receipts summary lines',()=>{
  assert.equal(proof.schema,SCHEMA);
  assert.equal(proof.numberOfOriginalGovernmentSignedReportPdfs,6);
- assert.equal(proof.2022SenateCandidatePrincipalCommitteesReviewed,3);
+ assert.equal(proof.senate2022CandidatePrincipalCommitteesReviewed,3);
  assert.equal(proof.reviewedOriginalAndLatestAmendmentLineages,3);
  assert.equal(proof.sourceReportedTotalReceiptsArithmeticVerifiedForSixVersions,true);
  assert.equal(proof.independentlyWholePDFSHAAndReceiptSourceRepeated,true);
