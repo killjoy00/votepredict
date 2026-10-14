@@ -55,7 +55,7 @@ export function inspectOriginalOfficialSenateBillLogText(
   throw Error('Original government bill-log PDF text, title or committee source HOLD');
  const desired=new Set(selection);
  if(selection.length!==new Set(selection).size||
-  selection.some(d=>!source.targetDays.includes(d as any)))
+  selection.some(d=>!source.targetDays.some(allowed=>allowed===d)))
   throw Error('Prohibited unrelated source-day request');
  const billRx=/^\s*([SH])\s*\.\s*F\s*\.\s*(\d{3,5})\s*:/gim;
  const bills=[...text.matchAll(billRx)].filter(x=>x.index!==undefined);
