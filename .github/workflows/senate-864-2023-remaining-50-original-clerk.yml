@@ -5,7 +5,8 @@ on:
       - src/evidence/senate-864-2023-remaining-clerk-original-source.ts
       - scripts/audit-senate-864-remaining-2023-fifty-original-clerk-minutes.ts
       - tests/senate-864-2023-remaining-fifty-original-clerk.test.ts
-      - docs/evaluation/source-proof/senate-864-2023-remaining-fifty-original-source-receipts.json
+      - docs/evaluation/source-proof/senate-864-2023-fifty-government-clerk-source-receipts.json
+      - tests/senate-864-2023-fifty-original-clerk-source-receipts.test.ts
       - docs/evaluation/senate-864-2022-25-remaining-written-minute-recovery.md
       - .github/workflows/senate-864-2023-remaining-50-original-clerk.yml
 permissions:
@@ -32,6 +33,7 @@ jobs:
         run: |
           npx tsc --noEmit
           node --import tsx --test tests/senate-864-2023-remaining-fifty-original-clerk.test.ts
+          node --import tsx --test tests/senate-864-2023-fifty-original-clerk-source-receipts.test.ts
       - name: Download original immutable 2022-25 LRL meeting-index census
         uses: actions/download-artifact@v4
         with:
