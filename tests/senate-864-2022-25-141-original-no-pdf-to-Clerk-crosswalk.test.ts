@@ -1,0 +1,77 @@
+import {readFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+const INDEX='docs/evaluation/source-proof/senate-committee-141-unlinked-original-meeting-roster.json';
+const LEDGER='docs/evaluation/source-proof/senate-864-2022-25-141-official-no-pdf-meeting-to-Clerk-crosswalk.json';
+const read=(p:string)=>JSON.parse(readFileSync(p,'utf8'));
+const k=(x:any)=>[x.year,x.committeeName,x.hearingDate].join('|');
+const sha=(x:unknown)=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x);
+test('every 2022-25 no-PDF official committee/day exactly source-joins original 141 LRL census and retains source-level SHA or explicit hold',()=>{
+ const r=read(LEDGER),index=read(INDEX);
+ assert.equal(r.schemaVersion,'senate-864-2022-25-141-official-unlinked-meeting-original-Clerk-crosswalk-v1');
+ assert.deepEqual(r.activeYears,[2022,2023,2024,2025]);
+ assert.equal(r.exclude2021Completely,true);
+ assert.equal(r.originalLrlIndexSourceSha256,index.originalIndexedCensus.originalJsonSha256);
+ assert.equal(r.originalLrlIndexMeetings,1592);
+ assert.equal(r.originalIndexLinkedMinuteMeetings,1451);
+ assert.equal(r.originalIndexLinkedMinutePdfBodies,1452);
+ assert.equal(r.originalNoLinkedMinuteMeetings,141);
+ assert.equal(r.perOriginallyIndexedNoPdfMeeting.length,141);
+ const expected=new Map<string,string>(index.meetingGroups.flatMap((group:any)=>
+  group.missingMinutesMeetingDates.map((d:string)=>[
+   [group.year,group.committeeName,group.year+'-'+d].join('|'),
+   group.officialIndexCommitteeId
+  ])));
+ assert.equal(expected.size,141);
+ const seen=new Set<string>();
+ let covered=0;
+ for(const row of r.perOriginallyIndexedNoPdfMeeting){
+  const key=k(row);
+  assert.equal(expected.get(key),row.committeeIndexId);
+  assert.equal(seen.has(key),false);
+  seen.add(key);
+  assert.equal([2022,2023,2024,2025].includes(row.year),true);
+  assert.equal(row.linkedLrlMinutesPdf,false);
+  assert.equal(row.independentlyProvenOriginalPublicationDate,null);
+  assert.equal(row.storedMemberVoteEventMatch,null);
+  assert.equal(row.hearingDayConventionOnly,true);
+  if(row.originalClerkSha256!==null){
+   covered++;
+   assert.equal(sha(row.originalClerkSha256)&&sha(row.originalClerkTextSha256),true);
+   assert.ok(Number.isSafeInteger(row.originalSenateHearingId));
+   assert.notEqual(row.sourceClass,'no_written_minutes_authenticated_through_independent_routes');
+  }else{
+   assert.equal(row.originalClerkTextSha256,null);
+   assert.equal(row.nonExhaustiveParserMotionCandidates,null);
+   assert.equal(row.originalSenateHearingId,null);
+  }
+ }
+ assert.equal(seen.size,141);
+ assert.equal(covered,110);
+ assert.equal(r.combinedIndexedMeetingsWithAuthenticatedWrittenMinutes,1561);
+ assert.equal(r.stillWithoutAuthenticatedWrittenMinutes,31);
+});
+test('independent 2022-25 per-year and per-committee-year alternate Clerk source conservation is not a stored-row completeness assertion',()=>{
+ const r=read(LEDGER);
+ assert.deepEqual(r.byYear.map((x:any)=>[
+  x.year,x.indexedNoLinkedLrlMinutesPdf,x.independentlyAuthenticatedAlternativeClerkHtmlMeetings,
+  x.remainingMeetingsWithoutAuthenticatedWrittenMinutes]),[
+  [2022,12,7,5],[2023,64,57,7],[2024,42,28,14],[2025,23,18,5]
+ ]);
+ assert.equal(r.byCommitteeYearWithNoPdf.length,20);
+ const sum=(k:string)=>r.byCommitteeYearWithNoPdf.reduce((n:number,x:any)=>n+x[k],0);
+ assert.equal(sum('lrlIndexedNoLinkedPdfMeetings'),141);
+ assert.equal(sum('authClerkWrittenMinuteMeetings'),110);
+ assert.equal(sum('stillMissingAuthenticatedWrittenMinutes'),31);
+ assert.ok(r.byCommitteeYearWithNoPdf.every((x:any)=>
+  x.lrlIndexedNoLinkedPdfMeetings===x.authClerkWrittenMinuteMeetings+
+  x.stillMissingAuthenticatedWrittenMinutes));
+ assert.equal(r.year2022PrintElectronicParityUnknown,true);
+ assert.equal(r.noProductionDatabaseReadWrite,true);
+ assert.equal(r.officialAllMotionsDenominator,null);
+ assert.equal(r.sourceToCurrentProtectedStoredRowParity,null);
+ assert.equal(r.unverifiedDoesNotImplyZeroRecordedVotes,true);
+ const body=JSON.stringify(r);
+ assert.doesNotMatch(body,/privateNamedMember|memberVotesRows|sourceNameChoiceDigest|originalMemberId/);
+});
