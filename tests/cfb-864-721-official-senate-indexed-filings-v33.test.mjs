@@ -42,9 +42,9 @@ test('2022 pre-primary and pre-general previously uncounted indexed original can
  assert.equal(officialFilingStatusLabel('official_indexed_pdf_not_yet_retrieved'),'Listed by CFB; PDF not yet checked');
  const s=historicalOfficialFilingInventoryTotals();
  assert.equal(s.senators,95);assert.equal(s.versions,721);
- assert.equal(s.indexedVersionsAwaitingPdfDownload,276);
- assert.equal(s.distinctDownloadedPdfBodies,440);
- assert.equal(s.downloadedVersions,444);
+ assert.equal(s.indexedVersionsAwaitingPdfDownload,240);
+ assert.equal(s.distinctDownloadedPdfBodies,476);
+ assert.equal(s.downloadedVersions,480);
 });
 test('all source linked report versions including earlier pre-primary/E are reachable in expandable legislator profile rather than hidden by a last-eight truncation',()=>{
  const p=readFileSync('src/app/dashboard/legislators/[legislatorId]/page.tsx','utf8');
