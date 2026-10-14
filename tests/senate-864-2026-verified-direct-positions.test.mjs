@@ -6,7 +6,7 @@ import {
   buildSenate864ReconciliationPlan,safeSenate864Summary,fullBillIdentifiers,
 } from '../src/evidence/senate-864-2026-verified-positions.mjs';
 import {
-  buildStatementRecord,requireReviewedOwnerApply,
+  buildStatementRecord,requireReviewedOwnerApply,reconcileVerifiedStatements,
 } from '../scripts/reconcile-senate-864-2026-verified-positions.mjs';
 
 const claims=verifiedSenate864.claims;
@@ -163,4 +163,63 @@ test('only exact owner-approved reviewed main action permits write; plain dry-ru
   assert.throws(()=>requireReviewedOwnerApply({...env,GITHUB_RUN_ATTEMPT:'2'},true));
   assert.throws(()=>requireReviewedOwnerApply({...env,GITHUB_REF:'refs/pull/999/merge'},true));
   assert.throws(()=>requireReviewedOwnerApply({...env,VOTEPREDICT_864_13_INDEPENDENT_CI:'false'},true));
+  const manual={
+    VOTEPREDICT_864_13_MANUAL_OPERATOR_APPROVAL:APPLY_COMMENT,
+    VOTEPREDICT_864_13_REVIEWED_COMMIT_SHA:'b'.repeat(40),
+    VOTEPREDICT_864_13_INDEPENDENT_CI:'true',
+  };
+  assert.equal(requireReviewedOwnerApply(manual,true),true);
+  assert.throws(()=>requireReviewedOwnerApply({...manual,VOTEPREDICT_864_13_REVIEWED_COMMIT_SHA:''},true));
+});
+
+
+function fakeSqlClient(){
+  const calls=[];
+  return {
+    calls,
+    async query(sql,values){
+      calls.push(String(sql));
+      const statement=String(sql).trim();
+      if(statement.startsWith('SELECT m.id::text'))
+        return {rows:memberships};
+      if(statement.startsWith('SELECT sd.id::text'))
+        return {rows:[]};
+      if(statement.startsWith('SELECT b.id::text'))
+        return {rows:bills};
+      if(statement.startsWith('SELECT j.id::text'))
+        return {rows:[{jurisdictionId:'00000000-0000-4000-8000-000000000001',
+          sessionId:'00000000-0000-4000-8000-000000000002',
+          chamberId:'00000000-0000-4000-8000-000000000003'}]};
+      if(statement.startsWith('INSERT INTO source_documents'))
+        return {rows:[{id:'00000000-0000-4000-8000-000000000004'}]};
+      if(statement.startsWith('SELECT id::text FROM evidence_items'))
+        return {rows:[]};
+      if(statement.startsWith('INSERT INTO evidence_items'))
+        return {rows:[{id:'00000000-0000-4000-8000-000000000005'}]};
+      return {rows:[]};
+    }
+  };
+}
+
+test('default database reconciliation uses READ ONLY transaction and ALWAYS ROLLBACK, zero mutations',async()=>{
+  const client=fakeSqlClient();
+  const report=await reconcileVerifiedStatements(client,{apply:false});
+  assert.equal(report.plannedOrApplied.inserted,13);
+  assert.equal(report.productionEvidenceRowsActuallyUpdated,0);
+  assert.equal(report.mode,'read_only_database_reconciliation_preview');
+  assert.ok(client.calls.some(sql=>sql.includes('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY')));
+  assert.ok(client.calls.includes('ROLLBACK'));
+  assert.ok(!client.calls.some(sql=>/^\s*(INSERT|UPDATE|DELETE|COMMIT)/i.test(sql)));
+});
+
+test('explicitly authorized apply code path writes only thirteen pinned original source and quote pairs',async()=>{
+  const client=fakeSqlClient();
+  const report=await reconcileVerifiedStatements(client,{apply:true});
+  assert.equal(report.plannedOrApplied.inserted,13);
+  assert.equal(report.plannedOrApplied.held,0);
+  assert.equal(report.productionEvidenceRowsActuallyUpdated,13);
+  assert.equal(client.calls.filter(sql=>sql.startsWith('INSERT INTO source_documents')).length,13);
+  assert.equal(client.calls.filter(sql=>sql.startsWith('INSERT INTO evidence_items')).length,13);
+  assert.ok(client.calls.includes('COMMIT'));
+  assert.ok(!client.calls.some(sql=>/^\s*DELETE/i.test(sql)));
 });
