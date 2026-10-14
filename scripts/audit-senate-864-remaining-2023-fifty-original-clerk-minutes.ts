@@ -32,7 +32,7 @@ async function safeOriginalHtml(url:string,kind:'calendar'|'minutes'){
   u.pathname==='/schedule/hearing_minutes.html'&&u.searchParams.size===4&&
   u.searchParams.get('ls')==='93'&&u.searchParams.get('type')==='minutes'&&
   u.searchParams.get('always_show_minutes')==='Y'&&
-  /^17\d{3}$/.test(u.searchParams.get('hearing_id')??'');
+  /^(?:17|18)\d{3}$/.test(u.searchParams.get('hearing_id')??'');
  if(u.protocol!=='https:'||!(isCal||isMinutes))
   throw Error('Disallowed original state-host source address');
  const r=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(45000),
