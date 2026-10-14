@@ -99,8 +99,9 @@ export function inspectWholeOriginalPublisherBody(bytes,claims,observedAtUtc){
   const quoteIdx=text.indexOf(canonical(c.shortExactPassage));
   const cue=canonical(c.speakerAttributionCue);
   const bylineMode=c.attributionMode==='signed_first_person_newsletter';
+  const quoteEnd=quoteIdx+canonical(c.shortExactPassage).length;
   const rankedAttributions=quoteIdx<0?[]:namedCueLocations
-   .map(x=>({...x,distance:Math.abs(x.at-quoteIdx)}))
+   .map(x=>({...x,distance:x.at<quoteIdx?quoteIdx-x.at:x.at>quoteEnd?x.at-quoteEnd:0}))
    .sort((a,b)=>a.distance-b.distance||a.at-b.at);
   const nearest=rankedAttributions[0];
   const namedSpeakerAdjacent=Boolean(nearest&&nearest.claimId===c.id&&nearest.distance<=600);
