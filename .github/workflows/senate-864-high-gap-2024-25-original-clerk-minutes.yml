@@ -31,6 +31,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - name: TypeScript check without database containers or source publication assertions
+        run: npx tsc --noEmit
       - name: Exact 53 indexed meetings, original calendar and no inferred vote-choice regressions
         run: >-
           node --import tsx --test
