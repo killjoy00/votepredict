@@ -1,0 +1,32 @@
+name: 'Senate #864 verify 36 newly retrieved signed official CFB PDFs: 480 downloaded versions V36'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-36-new-whole-pdfs-721-inventory-v36.mjs'
+      - 'tests/cfb-864-36-recovered-full-original-pdfs-v36.test.mjs'
+      - 'data/cfb-senate-official-filings-2021-25-v36.json'
+      - 'src/evidence/cfb-historical-official-filings.ts'
+      - 'docs/evaluation/source-proof/cfb-2022-24-36-serving-priority-original-PDF-binaries-v36.psv'
+      - 'docs/evaluation/source-proof/cfb-2022-24-36-source-original-PDF-byte-SHA-checkpoint-v36.json'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-senators-721-indexed-480-PDF-bodies-v36.psv'
+      - '.github/workflows/senate-864-36-source-PDF-body-integrity-v36.yml'
+permissions:
+  contents: read
+jobs:
+  validate-all-36-original-CFB-PDF-SHAs-and-member-profiles:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned offline original PDF SHA and source record dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Exact 36 government original PDF binary status/byte SHA source recovery tests
+        run: node --import tsx --test tests/cfb-864-36-recovered-full-original-pdfs-v36.test.mjs
+      - name: Independently reconstruct 721 official indexed versions, 480 downloaded, 476 whole-PDF bodies
+        run: node --import tsx scripts/audit-cfb-864-36-new-whole-pdfs-721-inventory-v36.mjs
