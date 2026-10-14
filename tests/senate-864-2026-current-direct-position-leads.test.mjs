@@ -124,3 +124,42 @@ test('badly fabricated provenance and missing roster identities fail validation'
  const noOriginal=structuredClone(claimsDoc);noOriginal.claims[0].historicalBacktestEligibleFromThisLedger=true;
  assert.throws(()=>verifyPositionLedgers(noOriginal,coverage));
 });
+
+
+test('first live original-publisher acquisition receipts are preserved with accurate SHA and nine HTTP403 nonabsence holds',()=>{
+ const p=JSON.parse(readFileSync(new URL('../data/evaluation/senate-864-2026-current-publisher-whole-html-observation-receipts-v1.json',import.meta.url)));
+ assert.equal(p.schema,'mn-senate-864-2026-current-publisher-original-html-live-observation-v1');
+ assert.equal(p.sourceWorkflowRun,38501897295);
+ assert.equal(p.rows.length,14);
+ assert.equal(p.summary.originalPublisherUrlsProbed,14);
+ assert.equal(p.summary.individuallyAttributedClaimLeads,15);
+ assert.equal(p.summary.completeLiveOriginalSHAAndQuoteAuthenticated,5);
+ assert.equal(p.summary.originalPublisherHttp403Unknown,9);
+ assert.equal(p.summary.original2026WaybackCDXVersionsAuthenticated,0);
+ assert.equal(p.summary.independentlyProvedHistoricallyFirstPublicByDates,0);
+ assert.equal(p.rawPublisherHtmlCommitted,false);
+ assert.equal(new Set(p.rows.map(x=>x.url)).size,14);
+ const byId=new Map(claims.map(x=>[x.id,x]));
+ const covered=[];
+ for(const row of p.rows){
+  const ids=[row.primaryClaimId,...(row.additionalClaimIds||[])];
+  assert.equal(row.url,byId.get(row.primaryClaimId)?.url);
+  for(const id of ids){assert.equal(row.url,byId.get(id)?.url);covered.push(id);}
+  assert.ok(row.observedAtUtc.startsWith('2026-10-14T02:36:'));
+  assert.equal(row.originalArchiveCaptureAuthenticated,false);
+  assert.equal(row.originalVersionFirstPublicationTimeAuthenticated,false);
+  assert.equal(row.evidenceAdmittedToHistoricalBacktest,false);
+  if(row.httpStatus===200){
+   assert.match(row.liveOriginalWholeHtmlSha256,/^[a-f0-9]{64}$/);
+   assert.ok(row.liveOriginalWholeHtmlBytes>100_000);
+   assert.ok(row.url.startsWith('https://www.mnsenaterepublicans.com/'));
+  }else{
+   assert.equal(row.httpStatus,403);
+   assert.equal(row.liveOriginalWholeHtmlSha256,null);
+   assert.equal(row.liveOriginalWholeHtmlBytes,null);
+   assert.ok(row.url.startsWith('https://senatedfl.mn/'));
+  }
+ }
+ assert.equal(new Set(covered).size,15);
+ assert.deepEqual(new Set(covered),new Set(claims.map(x=>x.id)));
+});
