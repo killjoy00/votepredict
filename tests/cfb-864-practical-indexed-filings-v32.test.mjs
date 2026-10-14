@@ -61,7 +61,7 @@ test('five documented original CFB Senator name-variant committees are linked to
    assert.ok(p.filings.some(f=>f.status==='readable_official_pdf'));
  }
  const bill=historicalOfficialFilingContextForSenator('Bill Ingebrigtsen','senate');
- assert.equal(bill?.filings.find(x=>x.year===2022)?.status,'downloaded_pdf_report_date_conflict');
+ assert.equal(bill?.filings.find(x=>x.id==='16311:22:pcc:YE:0:0')?.status,'downloaded_pdf_report_date_conflict');
  assert.equal(historicalOfficialFilingContextForSenator('Bill Ingebrigtsen','house'),undefined);
  assert.equal(historicalOfficialFilingContextForSenator('Jim Carlson Senior Junior','senate'),undefined);
 });
