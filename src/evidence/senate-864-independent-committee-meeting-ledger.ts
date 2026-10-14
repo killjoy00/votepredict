@@ -1,5 +1,5 @@
 /**
- * #864 independent 2021-25 MN Senate committee source-to-action ledger.
+ * #864 independent 2022-25 MN Senate committee source-to-action ledger.
  * Offline and PUBLIC-SOURCE ONLY. The historical 2022-25 official meeting
  * index supplies the denominator; original SHA-proven PDF metadata supplies
  * candidate action records. Neither input is a complete official motion
@@ -8,7 +8,7 @@
 import type {OriginalSenateCommitteeYearAudit} from './senate-committee-source-to-db-reconciliation.js';
 
 export const SENATE_864_MEETING_LEDGER_VERSION =
- 'senate-864-independent-2021-25-committee-meeting-action-ledger-v1' as const;
+ 'senate-864-independent-2022-25-committee-meeting-action-ledger-v2' as const;
 
 type Meeting={
  year:number;committeeName:string;committeeUrl:string;meetingDate:string;
@@ -383,13 +383,11 @@ export function buildIndependentSenateCommitteeLedger(
   ||a.committee.localeCompare(b.committee));
  const ret={
   schemaVersion:SENATE_864_MEETING_LEDGER_VERSION,issue:864,
-  scope:'2021-2025 Minnesota Senate COMMITTEE meetings',
+  scope:'2022-2025 Minnesota Senate COMMITTEE meetings',
   source:'official 2022-25 electronic LRL committee index and full original SHA-pinned PDF proofs',
   knownGlobalProtectedStoredSourceShaMatchesAtEarlierSnapshot:1452,
   currentStoredSnapshotIndependentlyComparedInThisRun:false,
   independentlyProvenPdfPublicationDates:0,
-  year2021:{officialPrintMeetingCount:null,originalPrintMinutesRecovered:null,
-   committeeYearRecordedVoteDenominator:null,status:'print_collection_unenumerated'},
   year2022PrintVsElectronicParity:'unverified',
   historicalAsOfConvention:'hearing_day; exclude same-day prediction cutoffs',
   originalPublicationDateIndependentlyVerified:false,
