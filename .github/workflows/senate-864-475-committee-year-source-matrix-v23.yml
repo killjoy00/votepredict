@@ -1,0 +1,28 @@
+name: 'Senate #864 475 actual senator committee-year source/obligation UNKNOWN matrix V23'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-475-committee-year-obligation-proof-gaps-v23.mjs'
+      - 'tests/cfb-864-475-committee-year-obligation-gaps-v23.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-actual-serving-senators-475-committee-year-statutory-duty-unknown-matrix-v23.psv'
+      - '.github/workflows/senate-864-475-committee-year-source-matrix-v23.yml'
+permissions:
+  contents: read
+jobs:
+  audit-offline-475-original-CFB-committee-year-registrations:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned repository dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify original 95-senator committee-year no-duty-certification rules
+        run: node --import tsx --test tests/cfb-864-475-committee-year-obligation-gaps-v23.test.mjs
+      - name: Recompute all 475 CFB committee-year source rows from authentic original government report versions
+        run: node --import tsx scripts/audit-cfb-864-475-committee-year-obligation-proof-gaps-v23.mjs
