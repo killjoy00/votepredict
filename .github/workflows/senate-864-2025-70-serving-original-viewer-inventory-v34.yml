@@ -1,0 +1,27 @@
+name: 'Senate #864 original public 2025 indexed report viewer refs for 70 serving 2025 senators V34'
+on:
+  pull_request:
+    paths:
+      - 'scripts/acquire-cfb-864-2025-all-serving-senator-viewer-refs-v34.mjs'
+      - 'tests/cfb-864-2025-70-serving-viewer-inventory-v34.test.mjs'
+      - '.github/workflows/senate-864-2025-70-serving-original-viewer-inventory-v34.yml'
+permissions:
+  contents: read
+jobs:
+  read-only-fetch-official-2025-cfb-candidate-viewer-refs:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned official CFB viewer parser dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Test government source 2025 report index parsing and no protected data mutation
+        run: node --import tsx --test tests/cfb-864-2025-70-serving-viewer-inventory-v34.test.mjs
+      - name: Read-only public state CFB official candidate report 2026 segment for 70 2025-serving senators
+        run: node --import tsx scripts/acquire-cfb-864-2025-all-serving-senator-viewer-refs-v34.mjs
