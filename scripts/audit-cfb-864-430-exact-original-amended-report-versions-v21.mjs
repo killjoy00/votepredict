@@ -72,7 +72,9 @@ function versionRows(p){
       ||alias!=='-')
     throw Error('Source body/form/received due clock not valid '+id);
   }else if(status==='source_identity_hold'||status==='source_fetch_hold'){
-   if(floor!=='-'||alias!=='-'\n      ||(start!=='-'&&!validDay(start))||(end!=='-'&&!validDay(end))\n      ||(received!=='-'&&!validDay(received))
+   if(floor!=='-'||alias!=='-' 
+           ||(start!=='-'&&!validDay(start))||(end!=='-'&&!validDay(end)) 
+           ||(received!=='-'&&!validDay(received))
       ||status==='source_identity_hold'&&(!SHA.test(pdf)||Number(bytes)<1000)
       ||status==='source_fetch_hold'&&(pdf!=='-'||bytes!=='-'))
     throw Error('Do not promote held report form/receipt/publication '+id);
