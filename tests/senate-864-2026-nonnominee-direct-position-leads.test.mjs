@@ -69,3 +69,43 @@ test('fake attributed quote on a hidden script and 403 original must fail safely
  assert.equal(denied.status,'HTTP_UNAVAILABLE_UNKNOWN');
  assert.equal(denied.originalVerified,false);
 });
+
+
+test('first distinct original-source whole-HTML receipts preserve eight strong quotes, one literal mismatch and six 403 unknowns',()=>{
+ const p=JSON.parse(readFileSync(new URL('../data/evaluation/senate-864-2026-nonnominee-current-publisher-observation-receipts-v1.json',import.meta.url)));
+ assert.equal(p.schema,'mn-senate-864-2026-current-nonnominee-live-publisher-original-observation-receipts-v1');
+ assert.equal(p.originalGitHubActionsRun,38502764093);
+ assert.deepEqual([
+  p.summary.personallyQuotedPolicyOriginalPublisherLeadPages,
+  p.summary.unresolvedWithoutSpecificDirectQuote,
+  p.summary.rawLiveWholeHtmlDownloaded,
+  p.summary.rawHtmlNamedQuotationDateMatched,
+  p.summary.downloadedButQuoteNotMatchedHolds,
+  p.summary.originalPublisherHttp403Holds],[15,3,9,8,1,6]);
+ assert.equal(p.rows.length,15);
+ const idSet=new Set();
+ for(const r of p.rows){
+  const c=get(r.district);assert.equal(r.claimId,c.id);assert.equal(r.originalPublisherUrl,c.url);
+  assert.ok(!idSet.has(r.claimId));idSet.add(r.claimId);
+  assert.equal(r.independentlyProvenFirstPublicBy,false);
+  assert.equal(r.archived2026HistoricPublisherVersionShaAuthenticated,false);
+  assert.equal(r.claimEligibleForHistoricBacktest,false);
+  assert.match(r.observedAtUtc,/^2026-10-14T02:46:/);
+  if(r.httpStatus===200){
+   assert.match(r.liveWholeOriginalRawHtmlSha256,/^[a-f0-9]{64}$/);
+   assert.ok(r.liveWholeOriginalRawHtmlBytes>100_000);
+   assert.ok(r.originalPublisherUrl.startsWith('https://www.mnsenaterepublicans.com/'));
+  }else{
+   assert.equal(r.httpStatus,403);
+   assert.equal(r.liveWholeOriginalRawHtmlSha256,null);
+   assert.equal(r.liveWholeOriginalRawHtmlBytes,null);
+   assert.ok(r.originalPublisherUrl.startsWith('https://senatedfl.mn/'));
+  }
+ }
+ const d=p.rows.find(x=>x.district===22);
+ assert.equal(d.httpStatus,200);
+ assert.equal(d.directPhraseAndSpeakerAndDisplayedDayMatched,false);
+ assert.equal(d.qaDisposition,'HOLD_LIVE_HTML_PRESENT_DATE_MATCH_BUT_EXACT_PHRASE_NOT_FOUND');
+ assert.equal(p.summary.historicalOriginal2026EarlyCaptureVersionsAuthenticated,0);
+ assert.equal(p.summary.productionEvidenceRowsJoined,0);
+});
