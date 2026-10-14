@@ -214,8 +214,56 @@ export function inspectOriginalHighGapSenateClerkHtml(
  const headings=[...text.matchAll(billHeading)].map(m=>({at:m.index??0,bill:'SF'+Number(m[1])}));
  const actions:ClerkAction[]=[];
  const seen=new Set<number>();
+ // The archived Senate Clerk sometimes records an explicit named roll
+ // after a member *requested* a roll call, with the formal mover printed
+ // only after that result. The old mover-only pass silently lost those
+ // original YEA/NAY blocks. Require exact independent printed YEA/NAY
+ // names+counts AND immediately adjacent original MOTION disposition.
+ // Never infer a person or historical member_id from this source text.
+ const printedNamedRoll=/\b\d{1,2}\s*\/\s*\d{1,2}\s*\(\s*Ayes?\s*:\s*[^;)]*?\s*;\s*Nays?\s*:\s*[^)]*?\s*\)/giu;
+ let priorOriginalResultEnd=d;
  for(const res of text.matchAll(result)){
-  const resultAt=res.index??0,left=Math.max(0,resultAt-650);
+  const resultAt=res.index??0,resultEnd=resultAt+res[0].length;
+  const intervalStart=Math.max(d,priorOriginalResultEnd,resultAt-900);
+  const prior=text.slice(intervalStart,resultAt);
+  const rollBlocks=[...prior.matchAll(printedNamedRoll)].filter(m=>
+   /^\s*[-–:;,.]?\s*$/.test(prior.slice((m.index??0)+m[0].length)));
+  priorOriginalResultEnd=resultEnd;
+  if(rollBlocks.length===1){
+   const match=rollBlocks[0]!;
+   const start=intervalStart+(match.index??0);
+   if(start<d||seen.has(start))throw Error('Duplicate original named Clerk roll position');
+   const named=verifyExplicitNamedOriginalRoll(match[0]);
+   if(!named)throw Error('Original named Clerk roll has no independently exact printed identity proof');
+   const sectionHead=headings.filter(h=>h.at<start).at(-1);
+   const sectionStart=Math.max(intervalStart,sectionHead?.at??intervalStart);
+   const contextStart=Math.max(sectionStart,start-320);
+   const context=text.slice(contextStart,start);
+   const amend=[...context.matchAll(amendment)].at(-1)?.[1]?.toUpperCase()??null;
+   const verdict=(res[1]??res[2]??'').toLowerCase();
+   const failed=/failed|did\s+not\s+prevail/.test(verdict);
+   const originalContext=text.slice(contextStart,resultEnd);
+   const redactedContext=context+named.redactedOriginalExcerpt+' '+res[0];
+   seen.add(start);
+   actions.push({
+    sourceTextOffset:start,billReference:sectionHead&&start-sectionHead.at<=5200?
+     sectionHead.bill:null,
+    amendmentReference:amend,
+    observedMotionText:redactedContext.slice(0,510),
+    boundedOriginalMotionSha256:sha(originalContext),
+    sourceResult:failed?'failed':'prevailed',
+    evidenceClassification:'explicit_named_roll',
+    explicitYeaCount:named.yes,explicitNayCount:named.no,
+    explicitAbsentCount:null,
+    namedMemberChoiceStatus:'explicitly_named_in_original_clerk_minutes_no_historical_day_roster_or_db_join',
+    originalExplicitNamedChoiceCount:named.count,
+    sourceExactNamedTallyAndUniqueNamesVerified:true,
+    originalMotionTextContainsNamedSidesButPublishedExcerptRedacted:true,
+    isNotAnExhaustiveSourceMotionCensus:true
+   });
+   continue;
+  }
+  const left=Math.max(0,resultAt-650);
   const mov=[...text.slice(left,resultAt).matchAll(mover)].at(-1);
   if(!mov||mov.index===undefined)continue;
   const start=left+mov.index;
