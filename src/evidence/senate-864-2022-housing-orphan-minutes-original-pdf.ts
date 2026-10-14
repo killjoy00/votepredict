@@ -35,7 +35,7 @@ export function inspectMarch24HousingOfficialOriginalPdfText(
   const number=bill.slice(2);
   const billRx=new RegExp('\\bS\\s*\\.?\\s*F\\s*\\.?\\s*'+number+'\\b','giu');
   const references=[...page.matchAll(billRx)];
-  const motionRx=new RegExp('Senator\\s+[\\p{L}\\p{M}.\\x27-]+\\s+moved\\s+that\\s+S\\s*\\.?\\s*F\\s*\\.?\\s*'+number+'\\s*,?\\s*be\\s+laid\\s+over\\b','iu');
+  const motionRx=new RegExp('\\bSenator\\s+(?:[\\p{L}\\p{M}.\\x27-]+\\s+){1,6}moved\\s+that\\s+S\\s*\\.?\\s*F\\s*\\.?\\s*'+number+'\\s*,?\\s*be\\s+laid\\s+over\\b','iu');
   if(references.length<2||!motionRx.test(page))
    throw Error('Original 2022 Housing date PDF lacks separately anchored bill-specific layover motion');
   return {billReference:bill,sourcePdfPage:1,
