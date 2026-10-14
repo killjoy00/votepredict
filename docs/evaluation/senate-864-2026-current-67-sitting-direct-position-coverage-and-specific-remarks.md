@@ -56,3 +56,15 @@ The new [67-person district roster and quality classification](../../data/evalua
 5. Unresolved sources and original-versus-current timeline: 2026 publisher Wayback/CDX capture, first-publication timing, source-byte parity against VotePredict stored originals, exact bill text in force at quote time, Senate named individual votes and independently verified deployed app DB. No source claims promoted into model training/forecasts.
 
 **No production DB reads or writes, evidence backfill, training, model/forecast/serving changes, deployment, emails, outside contacts or records requests.** Parent #864 remains OPEN.
+
+
+## Actual original HTML acquisition outcome (first tested PR run)
+
+The [source-only CI run #38501897295](https://github.com/killjoy00/votepredict/actions/runs/38501897295), executing the original publisher URLs against immutable PR commit `cbad2058244c331c5bdd71c75e7453e342b50f7b`, **SUCCEEDED**. Its 10 offline adversarial/coverage/attribution tests passed, then it fetched 14 exact current publisher URLs in the first attempt, and saved source-only metadata artifact **11866013056**. [Permanent 14-source categorized and whole-live-source-SHA receipt](../../data/evaluation/senate-864-2026-current-publisher-whole-html-observation-receipts-v1.json) preserves the results after the artifact's 14-day expiry.
+
+- **5 / 14 original whole current publisher HTML responses authenticated** (HTTP 200 original source, entire live raw response SHA-256 and byte length, original displayed page day, literal personally credited quote cue in visible text): **SD1 Mark Johnson, SD2 Steve Green, SD11 Jason Rarick, SD31 Calvin Bahr and SD32 Michael Kreun**; five distinct live complete HTML SHAs permanently pinned.
+- **9 / 14 original whole current publisher HTTP responses HELD by HTTP 403**, all the exact `senatedfl.mn` URLs. These include **Kupec, McEwen, Latz, Maye Quade x2, Champion/Fateh one shared source, Dibble, Oumou Verbeten and Hauschild**. This is a concrete access limitation of the runner/origin, NOT a failed quote, invalid position, demonstration the publisher page was never public, or a senator with no opinion.
+- The five SHA-authenticated pages were independently observed **2026-10-14 02:36 UTC** (evening October 13 Central), NOT at their publisher-displayed historical dates. That is a verifiable **current original publisher copy**. **0** publisher bodies were original indexed Wayback/CDX SHA authentic **as of their displayed February–May 2026 publication day**; **0** independent true first-published time instants were proved. A whole-page hash is also not a verified audio transcription.
+- No unauthorized production data export/write occurred and no corpus/backtest evidence was promoted. Do not count nine DFL access holds as nine false statements; a future different network/provider-approved original-source route or exact archived capture is required, not a repeated identical rejected HTTP GET.
+
+**This follow-on live receipt does not change the original historic 95/92/1,285 and current 49/716 denominators, and does not increase verified historical 2021–2025 named positions.**
