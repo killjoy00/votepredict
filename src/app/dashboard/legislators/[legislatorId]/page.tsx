@@ -395,7 +395,8 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 <p className={styles.note}>
                   The Campaign Finance Board lists {historicalFilings.observedVersions} filing versions
                   {' '}({historicalFilings.originalVersions} original reports and {historicalFilings.amendedVersions} amendments)
-                  for this senator's committee. {historicalFilings.downloadedVersions} have a linked PDF.
+                  for this senator's committee. {historicalFilings.downloadedVersions} report-version PDFs have been retrieved;
+                  the others are linked to their official CFB filing pages but haven't been downloaded yet.
                   {historicalFilings.officialNameLink === 'documented_official_name_variant'
                     ? ' The CFB uses a longer or shorter version of the senator’s name.'
                     : ''}
@@ -410,7 +411,18 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                   ))}
                 </div>
                 {historicalFilings.observedVersions > 8 ? (
-                  <p className={styles.note}>Showing the latest eight indexed versions.</p>
+                  <details>
+                    <summary className={styles.note}>Show {historicalFilings.observedVersions - 8} earlier indexed versions</summary>
+                    <div className={styles.financeList}>
+                      {[...historicalFilings.filings].slice(0, -8).reverse().map((filing) => (
+                        <div className={styles.financeItem} key={filing.id}>
+                          <strong>{filing.year} {filing.kind === 'original' ? 'original report' : `amendment ${filing.amendment}`}</strong>
+                          <span>{officialFilingStatusLabel(filing.status)}</span>
+                          <a href={filing.url} target="_blank" rel="noreferrer" className={styles.sourceLink}>Open CFB filing ↗</a>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
                 ) : null}
                 <a href={historicalFilings.viewerUrl} target="_blank" rel="noreferrer" className={styles.sourceLink}>
                   View this committee on the CFB website ↗
