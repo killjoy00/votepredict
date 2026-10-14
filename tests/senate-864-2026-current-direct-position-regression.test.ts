@@ -8,7 +8,7 @@ test('the 67-person current Senate census and 15 new bounded direct-source claim
  const stdout=execFileSync(process.execPath,['--test',
   'tests/senate-864-2026-current-direct-position-leads.test.mjs'],
   {cwd:process.cwd(),env,timeout:30000,encoding:'utf8',maxBuffer:240000});
- assert.match(stdout,/# tests 10\b/);
- assert.match(stdout,/# pass 10\b/);
+ assert.match(stdout,/# tests 11\b/);
+ assert.match(stdout,/# pass 11\b/);
  assert.match(stdout,/# fail 0\b/);
 });
