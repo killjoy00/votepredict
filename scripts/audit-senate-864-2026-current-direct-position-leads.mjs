@@ -86,13 +86,24 @@ export function inspectWholeOriginalPublisherBody(bytes,claims,observedAtUtc){
  const url=new URL(claims[0].url);
  assert.ok(url.protocol==='https:'&&safeHosts.has(url.hostname));
  assert.ok(claims.every(x=>x.url===claims[0].url));
- const text=canonical(normalizeVisibleHtml(bytes.toString('utf8')));
+ const rawVisibleCandidate=bytes.toString('utf8').replace(/<(?:template|noscript|svg)\b[^>]*>[\s\S]*?<\/(?:template|noscript|svg)\s*>/gi,' ');
+ const text=canonical(normalizeVisibleHtml(rawVisibleCandidate));
  const sha=createHash('sha256').update(bytes).digest('hex');
+ const namedCueLocations=[];
+ for(const person of claims.filter(x=>x.attributionMode==='named_caucus_quote')){
+  const cue=canonical(person.speakerAttributionCue);
+  for(let offset=0;;){const at=text.indexOf(cue,offset);if(at<0)break;
+   namedCueLocations.push({claimId:person.id,at});offset=at+Math.max(1,cue.length);}
+ }
  const adjudicated=claims.map(c=>{
   const quoteIdx=text.indexOf(canonical(c.shortExactPassage));
   const cue=canonical(c.speakerAttributionCue);
   const bylineMode=c.attributionMode==='signed_first_person_newsletter';
-  const namedSpeakerAdjacent=quoteIdx>=0&&text.slice(Math.max(0,quoteIdx-950),Math.min(text.length,quoteIdx+c.shortExactPassage.length+500)).includes(cue);
+  const rankedAttributions=quoteIdx<0?[]:namedCueLocations
+   .map(x=>({...x,distance:Math.abs(x.at-quoteIdx)}))
+   .sort((a,b)=>a.distance-b.distance||a.at-b.at);
+  const nearest=rankedAttributions[0];
+  const namedSpeakerAdjacent=Boolean(nearest&&nearest.claimId===c.id&&nearest.distance<=600);
   const attributionBounded=bylineMode?text.includes(cue)&&quoteIdx>=0:namedSpeakerAdjacent;
   const publishedDayVisible=text.includes(canonical(dayLabel(c.publisherDisplayedDate)));
   const billTokens=text.replace(/\bsf\s+(\d+)\b/g,'sf$1');
