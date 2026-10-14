@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "senate-864-2022-25-141-official-unlinked-meeting-original-Clerk-crosswalk-v1",
+  "schemaVersion": "senate-864-2022-25-141-official-unlinked-meeting-to-authenticated-written-minutes-v2",
   "issue": 864,
   "activeYears": [
     2022,
@@ -14,33 +14,41 @@
   "originalIndexLinkedMinutePdfBodies": 1452,
   "originalNoLinkedMinuteMeetings": 141,
   "independentlyAuthenticatedOriginalClerkHtmlMeetings": 110,
-  "combinedIndexedMeetingsWithAuthenticatedWrittenMinutes": 1561,
-  "stillWithoutAuthenticatedWrittenMinutes": 31,
-  "sourceStatusBeforeAdditional2022OrphanPdf": true,
+  "combinedIndexedMeetingsWithAuthenticatedWrittenMinutes": 1562,
+  "stillWithoutAuthenticatedWrittenMinutes": 30,
+  "sourceStatusBeforeAdditional2022OrphanPdf": false,
   "byYear": [
     {
       "year": 2022,
       "indexedNoLinkedLrlMinutesPdf": 12,
       "independentlyAuthenticatedAlternativeClerkHtmlMeetings": 7,
-      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 5
+      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 4,
+      "independentUnlinkedOriginalLrlMinutesPdfMeetings": 1,
+      "totalIndependentAlternateWrittenMinutesMeetings": 8
     },
     {
       "year": 2023,
       "indexedNoLinkedLrlMinutesPdf": 64,
       "independentlyAuthenticatedAlternativeClerkHtmlMeetings": 57,
-      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 7
+      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 7,
+      "independentUnlinkedOriginalLrlMinutesPdfMeetings": 0,
+      "totalIndependentAlternateWrittenMinutesMeetings": 57
     },
     {
       "year": 2024,
       "indexedNoLinkedLrlMinutesPdf": 42,
       "independentlyAuthenticatedAlternativeClerkHtmlMeetings": 28,
-      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 14
+      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 14,
+      "independentUnlinkedOriginalLrlMinutesPdfMeetings": 0,
+      "totalIndependentAlternateWrittenMinutesMeetings": 28
     },
     {
       "year": 2025,
       "indexedNoLinkedLrlMinutesPdf": 23,
       "independentlyAuthenticatedAlternativeClerkHtmlMeetings": 18,
-      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 5
+      "remainingMeetingsWithoutAuthenticatedWrittenMinutes": 5,
+      "independentUnlinkedOriginalLrlMinutesPdfMeetings": 0,
+      "totalIndependentAlternateWrittenMinutesMeetings": 18
     }
   ],
   "byCommitteeYearWithNoPdf": [
@@ -49,140 +57,180 @@
       "committeeName": "Civil Law and Data Practices Policy",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 1,
-      "stillMissingAuthenticatedWrittenMinutes": 0
+      "stillMissingAuthenticatedWrittenMinutes": 0,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 1
     },
     {
       "year": 2022,
       "committeeName": "Education Finance and Policy",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 0,
-      "stillMissingAuthenticatedWrittenMinutes": 1
+      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 0
     },
     {
       "year": 2022,
       "committeeName": "Energy and Utilities Finance and Policy",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 1,
-      "stillMissingAuthenticatedWrittenMinutes": 0
+      "stillMissingAuthenticatedWrittenMinutes": 0,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 1
     },
     {
       "year": 2022,
       "committeeName": "Environment and Natural Resources Finance",
       "lrlIndexedNoLinkedPdfMeetings": 6,
       "authClerkWrittenMinuteMeetings": 4,
-      "stillMissingAuthenticatedWrittenMinutes": 2
+      "stillMissingAuthenticatedWrittenMinutes": 2,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 4
     },
     {
       "year": 2022,
       "committeeName": "Housing Finance and Policy",
       "lrlIndexedNoLinkedPdfMeetings": 2,
       "authClerkWrittenMinuteMeetings": 0,
-      "stillMissingAuthenticatedWrittenMinutes": 2
+      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 1,
+      "totalAuthenticatedWrittenMinutesMeetings": 1
     },
     {
       "year": 2022,
       "committeeName": "Jobs and Economic Growth Finance and Policy",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 1,
-      "stillMissingAuthenticatedWrittenMinutes": 0
+      "stillMissingAuthenticatedWrittenMinutes": 0,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 1
     },
     {
       "year": 2023,
       "committeeName": "Agriculture, Broadband and Rural Development",
       "lrlIndexedNoLinkedPdfMeetings": 22,
       "authClerkWrittenMinuteMeetings": 21,
-      "stillMissingAuthenticatedWrittenMinutes": 1
+      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 21
     },
     {
       "year": 2023,
       "committeeName": "Education Finance",
       "lrlIndexedNoLinkedPdfMeetings": 3,
       "authClerkWrittenMinuteMeetings": 1,
-      "stillMissingAuthenticatedWrittenMinutes": 2
+      "stillMissingAuthenticatedWrittenMinutes": 2,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 1
     },
     {
       "year": 2023,
       "committeeName": "Environment, Climate, and Legacy",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 0,
-      "stillMissingAuthenticatedWrittenMinutes": 1
+      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 0
     },
     {
       "year": 2023,
       "committeeName": "Jobs and Economic Development",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 0,
-      "stillMissingAuthenticatedWrittenMinutes": 1
+      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 0
     },
     {
       "year": 2023,
       "committeeName": "Taxes",
       "lrlIndexedNoLinkedPdfMeetings": 37,
       "authClerkWrittenMinuteMeetings": 35,
-      "stillMissingAuthenticatedWrittenMinutes": 2
+      "stillMissingAuthenticatedWrittenMinutes": 2,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 35
     },
     {
       "year": 2024,
       "committeeName": "Energy, Utilities, Environment and Climate",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 0,
-      "stillMissingAuthenticatedWrittenMinutes": 1
+      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 0
     },
     {
       "year": 2024,
       "committeeName": "Environment, Climate, and Legacy",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 0,
-      "stillMissingAuthenticatedWrittenMinutes": 1
+      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 0
     },
     {
       "year": 2024,
       "committeeName": "Health and Human Services",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 0,
-      "stillMissingAuthenticatedWrittenMinutes": 1
+      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 0
     },
     {
       "year": 2024,
       "committeeName": "Jobs and Economic Development",
       "lrlIndexedNoLinkedPdfMeetings": 3,
       "authClerkWrittenMinuteMeetings": 3,
-      "stillMissingAuthenticatedWrittenMinutes": 0
+      "stillMissingAuthenticatedWrittenMinutes": 0,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 3
     },
     {
       "year": 2024,
       "committeeName": "State and Local Government and Veterans",
       "lrlIndexedNoLinkedPdfMeetings": 13,
       "authClerkWrittenMinuteMeetings": 13,
-      "stillMissingAuthenticatedWrittenMinutes": 0
+      "stillMissingAuthenticatedWrittenMinutes": 0,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 13
     },
     {
       "year": 2024,
       "committeeName": "Taxes",
       "lrlIndexedNoLinkedPdfMeetings": 23,
       "authClerkWrittenMinuteMeetings": 12,
-      "stillMissingAuthenticatedWrittenMinutes": 11
+      "stillMissingAuthenticatedWrittenMinutes": 11,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 12
     },
     {
       "year": 2025,
       "committeeName": "Energy, Utilities, Environment, and Climate",
       "lrlIndexedNoLinkedPdfMeetings": 17,
       "authClerkWrittenMinuteMeetings": 13,
-      "stillMissingAuthenticatedWrittenMinutes": 4
+      "stillMissingAuthenticatedWrittenMinutes": 4,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 13
     },
     {
       "year": 2025,
       "committeeName": "Environment, Climate, and Legacy",
       "lrlIndexedNoLinkedPdfMeetings": 1,
       "authClerkWrittenMinuteMeetings": 1,
-      "stillMissingAuthenticatedWrittenMinutes": 0
+      "stillMissingAuthenticatedWrittenMinutes": 0,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 1
     },
     {
       "year": 2025,
       "committeeName": "Rules and Administration - Subcommittee on Committees",
       "lrlIndexedNoLinkedPdfMeetings": 5,
       "authClerkWrittenMinuteMeetings": 4,
-      "stillMissingAuthenticatedWrittenMinutes": 1
+      "stillMissingAuthenticatedWrittenMinutes": 1,
+      "independentUnlinkedLrlOriginalPdfMinutesMeetings": 0,
+      "totalAuthenticatedWrittenMinutesMeetings": 4
     }
   ],
   "perOriginallyIndexedNoPdfMeeting": [
@@ -339,7 +387,7 @@
       "hearingDate": "2022-03-24",
       "committeeIndexId": "23832-0",
       "linkedLrlMinutesPdf": false,
-      "sourceClass": "no_written_minutes_authenticated_through_independent_routes",
+      "sourceClass": "independent_original_lrl_archived_minutes_pdf_without_index_link",
       "originalClerkSha256": null,
       "originalClerkTextSha256": null,
       "originalSenateHearingId": null,
@@ -352,7 +400,19 @@
       "hearingDayConventionOnly": true,
       "independentlyProvenOriginalPublicationDate": null,
       "storedMemberVoteEventMatch": null,
-      "noRecordedVoteInferredFromMissingSource": false
+      "noRecordedVoteInferredFromMissingSource": false,
+      "independentOrphanOfficialLrlPdfSource": {
+        "originalPdfSha256": "ef69ba019bdaf133d7f3834ae9821cd20489b41c0d4cfc2d8930fb3abf50c857",
+        "originalPdfTextSha256": "95a218b6fcf9f05e2887a8561d6e762bc01337a6c43c6dc6e42abee2f75401e5",
+        "originalPdfPages": 2,
+        "originalPdfBytes": 34674,
+        "governmentOfficialSourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220324/FinHousing_20220324_Minutes032422.pdf",
+        "originalShaVerifiedRun": 38621595082,
+        "parliamentaryMotionProposalsNotCertifiedOutcomes": 2,
+        "namedIndividualVoteEvidence": false,
+        "firstPublicByIndependentlyVerified": null,
+        "indexedOriginalLrlMinutesPdfLinked": false
+      }
     },
     {
       "year": 2022,
@@ -3154,5 +3214,14 @@
   "ownerHearingDayAsOfConventionNotPublicationProof": true,
   "unverifiedDoesNotImplyZeroRecordedVotes": true,
   "year2022PrintElectronicParityUnknown": true,
-  "noProductionDatabaseReadWrite": true
+  "noProductionDatabaseReadWrite": true,
+  "independentlyAuthenticatedOtherUnlinkedOfficialLrlMinutesPdfMeetings": 1,
+  "newlyRetrievedAndShaPinnedOriginalGovernmentPdfBodiesOutsideIndex": 1,
+  "sourceProofAdditional2022HousingOrphanLrlOfficialPdf": {
+    "originalReceiptPath": "docs/evaluation/source-proof/senate-864-2022-housing-unlinked-official-original-minutes-pdf-receipt.json",
+    "originalPdfSha256": "ef69ba019bdaf133d7f3834ae9821cd20489b41c0d4cfc2d8930fb3abf50c857",
+    "originalGovernmentSourceRunId": 38621595082,
+    "independentlyVerifiedDistinctWrittenMinutesSource": true,
+    "distinctParliamentaryMotionProposalsWithNoPrintedOutcomes": 2
+  }
 }
