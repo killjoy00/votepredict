@@ -1,0 +1,27 @@
+name: 'Senate #864 2021 indexed Newton YE original raw PDF retrieval V37'
+on:
+  pull_request:
+    paths:
+      - 'scripts/retry-cfb-864-jerry-newton-2021-original-raw-PDF-v37.mjs'
+      - 'tests/cfb-864-newton-2021-original-raw-source-v37.test.mjs'
+      - '.github/workflows/senate-864-newton-2021-original-pdf-retry-v37.yml'
+permissions:
+  contents: read
+jobs:
+  retry-original-2021-gov-newton-PDF-without-OCR:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned original source proof dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify original government source URL and indexed 2021 report identity
+        run: node --import tsx --test tests/cfb-864-newton-2021-original-raw-source-v37.test.mjs
+      - name: Read-only GET then POST original CFB 2021 YE PDF and SHA256 without PDF-text gate
+        run: node --import tsx scripts/retry-cfb-864-jerry-newton-2021-original-raw-PDF-v37.mjs
