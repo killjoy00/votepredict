@@ -112,3 +112,22 @@ test('reject wrong Senate hearing ID, wrong original printed date or duplicate i
  assert.equal(noMotion.originalRecordedOutcomeTextSignals,0);
  assert.equal(noMotion.notAnOfficialRecordedMotionsDenominator,true);
 });
+
+
+test('independently documented 2025 Rules Subcommittee Clerk heading without extra Committee suffix is accepted only on exact Senate calendar identity',()=>{
+ const government=inspectOtherCalendar(calendar(rules,19100),rules);
+ const dated=new Intl.DateTimeFormat('en-US',{timeZone:'UTC',weekday:'long',month:'long',
+  day:'numeric',year:'numeric'}).format(new Date(rules.hearingDate+'T12:00:00Z'));
+ const authenticForm='<html><body><p>'+filler.slice(0,2000)+'</p>'+
+  '<h1>Rules and Administration Subcommittee on Committees</h1><p>'+dated+'</p>'+
+  '<h2>Minutes</h2><p>Present: Senator Fictional Atlas - Chair</p>'+
+  '<p>Senator Fictional Birch moved the approval of appointments. MOTION PREVAILED.</p>'+
+  '</body></html>';
+ const receipt=inspectOtherClerkOriginal(authenticForm,rules,19100,government,'2026-10-14T03:45:00Z');
+ assert.equal(receipt.originalRecordedOutcomeTextSignals,1);
+ assert.equal(receipt.originalSenateHearingId,19100);
+ assert.equal(receipt.year,2025);
+ assert.equal(receipt.noMemberVotesOrStoredRowsAsserted,true);
+ assert.throws(()=>inspectOtherClerkOriginal(authenticForm,{...rules,committeeName:'Taxes'},19100,
+  {...government,committeeName:'Taxes'},'2026-10-14T03:45:00Z'),/exact committee minutes header/);
+});
