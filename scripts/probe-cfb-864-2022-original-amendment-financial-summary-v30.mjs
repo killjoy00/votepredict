@@ -53,15 +53,22 @@ export function findSummaryRows(text){
    fields.push({field:key,status:'source_row_amount_not_co_resident_with_label_hold',
     parsedCurrencyAmountsOnLabeledLine:raw.length});continue;
   }
-  // At least one genuinely recorded currency amount; a solitary number may
-  // also be a column in a different order. Report the candidate diagnostics,
-  // not a FINAL total until all columns can be tied to an official line schema.
-  fields.push({field:key,status:'official_summary_label_and_same_line_amounts_source_observed_not_reconciled',
+  // These are ONLY the aggregate original government Committee Transaction
+  // Summary cells on the labeled official SUMMARY line, never contribution
+  // or expenditure transaction rows or names. Explicitly test the printed
+  // receipts Cash + InKind = Total formula. Other page column order remains
+  // an unknown until it has a verified independent table-layout source.
+  const cashPlusInKindIsTotal=key==='totalReceipts'&&raw.length===3&&
+    raw[0]+raw[1]===raw[2];
+  fields.push({field:key,status:cashPlusInKindIsTotal
+     ?'signed_original_receipts_summary_column_arithmetic_verified'
+     :'official_summary_label_and_same_line_amounts_source_observed_not_reconciled',
    parsedCurrencyAmountsOnLabeledLine:raw.length,
-   candidateLastDisplayedTotalCents:raw.at(-1)});
+   sourceReportSummaryAmountCellsCents:raw,
+   certifiedOriginalSourceReceiptsTotalCents:cashPlusInKindIsTotal?raw[2]:null});
  }
- return{status:fields.every(x=>x.status==='official_summary_label_and_same_line_amounts_source_observed_not_reconciled')
-  ?'source_summary_amount_candidates_need_column_alignment_proof'
+ return{status:fields.some(x=>x.status==='signed_original_receipts_summary_column_arithmetic_verified')
+  ?'receipts_total_arithmetic_verified_other_summary_fields_partly_unresolved'
   :'source_summary_not_fully_parseable_hold',
   sourceTextCharacters:normalized.length,summaryHeadingOffset:heading,
   summaryLinesInspected:lines.length,fields};
