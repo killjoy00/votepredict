@@ -140,7 +140,7 @@ export function auditPracticalCFBSourceAcceptance(){
   ||statuses.indexed_alias_of_same_pdf!==4
   ||root.sourceVerifiedCounts.distinctSha!==440||root.sourceVerifiedCounts.original!==274
   ||root.sourceVerifiedCounts.amended!==171||root.sourceVerifiedCounts.senatorsCovered!==95
-  ||JSON.stringify([2021,2022,2023,2024,2025].map(y=>yrs[y]))!==JSON.stringify([103,207,54,60,21])))
+  ||JSON.stringify([2021,2022,2023,2024,2025].map(y=>yrs[y]))!==JSON.stringify([103,207,54,60,21]))
   throw Error('Government indexed reports missing from practical acceptance');
  return{
   schema:SCHEMA,indexedOfficialReportVersions:445,originalVersionRefs:274,amendedVersionRefs:171,
