@@ -1,5 +1,7 @@
 # #864: Current sitting Minnesota Senate public legislative positions — 2026 targeted source research
 
+> **October 14 source-verification update:** Of the 29 original URL leads below, **13** first-party publisher HTML pages were SHA-pinned and matched exact named passages, with a conservative **first proven public-by timestamp of October 14, 2026 UTC**. The 15 HTTP 403 URLs are excluded by user direction; one accessible source with an unmatched selected phrase remains HOLD. No new quote is inferred for the three unresolved senators. See the [13-source integration ledger and read-only/reviewed-write reconciliation runbook](senate-864-2026-thirteen-verified-direct-statements-integration.md). **Do not confuse the new public-by receipt or repository code with a completed VotePredict production-database insertion**; live source-to-stored matching is still pending execution in the trusted environment.
+
 **Research date October 13, 2026. Research-only; no private source ingestion.** The current original publishers visibly print the named remarks below. **No 2026 archive CDX/Wayback indexed historical-version SHA, first-published instant, independently proven historical public-by or deployed VotePredict exact source-and-quote evidence join is asserted.** This is a current 2026 supplement to the older 2021–2025 historical evidence task, not a backfilled historical prediction feature.
 
 ## What had already been achieved
