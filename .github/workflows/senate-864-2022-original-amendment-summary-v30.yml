@@ -1,0 +1,27 @@
+name: 'Senate #864 bounded 2022 original/amended candidate aggregate finance PDF source V30'
+on:
+  pull_request:
+    paths:
+      - 'scripts/probe-cfb-864-2022-original-amendment-financial-summary-v30.mjs'
+      - 'tests/cfb-864-2022-financial-summary-pair-v30.test.mjs'
+      - '.github/workflows/senate-864-2022-original-amendment-summary-v30.yml'
+permissions:
+  contents: read
+jobs:
+  authentic-original-six-government-PDFs-summary-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned government PDF source reader dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Offline financial summary-label/amount parser adversarial and source/privacy tests
+        run: node --import tsx --test tests/cfb-864-2022-financial-summary-pair-v30.test.mjs
+      - name: Read original official CFB PDFs ephemeral, retain only whole-body SHA and aggregate summary diagnostics
+        run: node --import tsx scripts/probe-cfb-864-2022-original-amendment-financial-summary-v30.mjs
