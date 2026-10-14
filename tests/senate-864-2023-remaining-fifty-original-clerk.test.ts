@@ -134,3 +134,31 @@ test('wrong source committee/date, unsupported aliases and duplicate YEA/NAY nam
  assert.equal(noRoll.sourceActionCandidates,0);
  assert.equal(noRoll.fullMotionDenominatorCertified,false);
 });
+
+
+test('original January 24 Taxes confirmation Clerk MOTION CARRIED is a decision, not an inferred named roll',()=>{
+ const day={...tax,hearingDate:'2023-01-24'} as RemainingTarget;
+ const calendar=inspectGovernment2023Calendar(combined(day,17430),day);
+ const html=minute(day,[
+  '<p>Confirmation of two Tax Court appointments.</p>',
+  '<p>Senator Fictional Birch moved to confirm the appointment of Fictional Judge One. MOTION CARRIED</p>',
+  '<p>Senator Fictional Atlas moved to confirm the appointment of Fictional Judge Two. MOTION CARRIED</p>'
+ ].join(''));
+ const out=inspect2023OriginalClerk(html,day,17430,calendar,'2026-10-14T03:00:00Z');
+ assert.equal(out.sourceActionCandidates,2);
+ assert.equal(out.resultOnlyCandidates,2);
+ assert.equal(out.namedRollCandidates,0);
+ assert.deepEqual(out.sourceActions.map(a=>[a.kind,a.outcome]),[
+  ['result_only','prevailed'],['result_only','prevailed']]);
+ assert.equal(out.sourceActions.every(a=>a.originalMemberIdAttribution===null),true);
+});
+test('2023 calendar-proven late hearings with IDs 18030+ remain permitted without cross-year identity inference',()=>{
+ const late={...tax,hearingDate:'2023-04-26'} as RemainingTarget;
+ const cal=inspectGovernment2023Calendar(combined(late,18030),late);
+ assert.equal(cal.matchedHearingId,18030);
+ assert.equal(senateClerkUrl(late,18030),
+  'https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18030&ls=93&type=minutes');
+ assert.equal(inspect2023OriginalClerk(minute(late,'<p>Discussion only.</p>'),
+  late,18030,cal,'2026-10-14T03:00:00Z').originalSenateHearingId,18030);
+ assert.throws(()=>senateClerkUrl(late,19030),/Non-2023-range/);
+});
