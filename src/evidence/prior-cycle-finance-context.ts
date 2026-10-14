@@ -41,14 +41,20 @@ export function priorCycleFinanceContextFromRows(
 }
 
 /**
- * Load prior-session candidate-finance and independent-expenditure rows that were
- * independently proven public before a target cutoff for the same stable legislator.
+ * Read-only load of prior-session candidate-finance and independent-expenditure
+ * rows that have a STORED asOfEligible label and published_at earlier than the
+ * requested cutoff, for the same stable legislator.
  *
- * Important boundaries:
+ * A stored published_at/asOfEligible label is NOT independent original-version
+ * PDF public-by proof. Historical filing-derived labels remain research debt.
+ * This method preserves the previous query semantics pending a separately
+ * authorized and independently original-source-certified eligibility repair.
+ *
+ * Boundaries:
  * - evidence stays attached to its original membership/session;
- * - only asOfEligible=true rows with a non-null proven published_at are considered;
- * - date-granular replay excludes same-day availability;
- * - prior-cycle rows are returned separately and are never merged into current-cycle totals;
+ * - only existing asOfEligible=true rows with nonnull stored published_at are selected;
+ * - date-granular replay excludes same-day stored dates;
+ * - prior-cycle rows are separate from current-cycle totals;
  * - this loader is context-only and does not apply evidence/model weights.
  */
 export async function loadPriorCycleProvenFinanceContext(input: {
