@@ -34,7 +34,11 @@ function source(k,count,width){
  if((k!=='source'&&!raw.endsWith('\n'))||raw.includes('\r')||(PIN[k]&&blob(raw)!==PIN[k]))
   throw Error('Official CFB viewer archive and derived 95-senator evidence blob drift '+k);
  const rows=raw.trimEnd().split('\n').map(x=>x.split('|'));
- if(rows.length!==count||rows.some(x=>x.length!==width||x.some(z=>z==='')))
+ // An authentic CFB viewer may return zero reports for a registered candidate;
+ // the original 396-source archive contains 14 such empty final PSV cells.
+ // An empty index is NOT evidence that a report was legally owed or not filed.
+ if(rows.length!==count||rows.some(x=>x.length!==width||
+   (k==='source'?x.slice(0,3).some(z=>z===''):x.some(z=>z===''))))
   throw Error('Official CFB original source ledger count or delimiters drift '+k);
  return{raw,rows};
 }
@@ -55,6 +59,7 @@ export function audit721OfficialCFBSenateReports(){
  for(const [segment,reg,viewHash,versions]of archive.rows){
   const p=principals.get(reg);
   if(!p)continue; // original archive covers many candidates who never served, excluded
+  if(!versions)continue; // valid original empty viewer response: no observed report, not a nonfiler finding
   if(!['2022','2024'].includes(segment)||!SHA.test(viewHash))
    throw Error('Previously authenticated original CFB candidate report viewer malformed');
   for(const rawVersion of versions.split(',')){
