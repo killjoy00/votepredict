@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'scripts/acquire-cfb-864-2025-all-serving-senator-viewer-refs-v34.mjs'
+      - 'scripts/audit-cfb-864-721-official-senate-filing-refs-v33.mjs'
       - 'tests/cfb-864-2025-70-serving-viewer-inventory-v34.test.mjs'
       - '.github/workflows/senate-864-2025-70-serving-original-viewer-inventory-v34.yml'
 permissions:
