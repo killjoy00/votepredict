@@ -6,7 +6,8 @@ import{
  SCHEMA,MAX_PDF_REFERENCES_PER_MEMBER_YEAR,
  chooseActual38ServingSenatorsIn2021And2022,
  verifyIndependentOriginalYearendCalendars,
- sourceYearEndReferences,originalHeader,classifyOriginalAmended
+ sourceYearEndReferences,originalHeader,classifyOriginalAmended,
+ attach2022GovernmentCandidateDistricts
 }from '../scripts/acquire-cfb-864-38-served-2021-22-original-amended-yearend-pdfs-v20.mjs';
 const people=chooseActual38ServingSenatorsIn2021And2022(),t=people[0];
 const ref=(year,amend=0)=>({
@@ -147,6 +148,38 @@ test('2022 post-redistrict CFB PDF district accepted ONLY when independently rec
  const unsourced=mk(chamberlain,2022,36);
  assert.equal(originalHeader(chamberlain,unsourced.r,unsourced.source,'b'.repeat(64)).sourceStatus,
   'original_pdf_firstpage_registration_senate_district_or_period_hold');
+});
+test('exact government 2022 candidate registry original page can prove redistricted Senate PDF for 2022 loser, but not 2021',()=>{
+ const chamberlain=people.find(p=>p.officialSenator==='Roger C. Chamberlain');
+ assert.ok(chamberlain);
+ const originalPage={district:36,segmentEndYear:2022,status:'candidate_labels_observed',
+  htmlSha256:'f'.repeat(64),candidates:[{registrationNumber:chamberlain.reg,
+   candidateDisplayName:'Chamberlain, Roger C'}]};
+ const fixture={observations:[originalPage,...Array.from({length:267},()=>({segmentEndYear:2020,status:'not_available'}))]};
+ const mapped=attach2022GovernmentCandidateDistricts(people,fixture);
+ assert.equal(mapped.length,38);
+ const valid=mapped.find(p=>p.officialSenator===chamberlain.officialSenator);
+ assert.deepEqual(valid.independentlyDocumented2022CfbCandidateDistricts,[36]);
+ assert.deepEqual(valid.archivedOriginal2022CfbDistrictPageHashes,['f'.repeat(64)]);
+ assert.equal(valid.archived2022RegistrationCandidateNameDriftHold,false);
+ const ref22={registrationNumber:valid.reg,year:'22',type:'pcc',period:'YE',se:'0',amendment:0};
+ const mk=(r,year)=>({sourceUrl:cfbReportViewerUrl(r),contentSha256:'a'.repeat(64),bytes:200000,
+  fetchedAt:'2026-10-13T21:00:00.000Z',
+  text:'Report of Receipts and Expenditures for Principal Campaign Committee '
+   +'Senate District 36 Registration Number: '+valid.reg
+   +' Period Covered: 1/1/'+year+' through 12/31/'+year
+   +' Received by the Board January 25, '+(year+1)});
+ const accepted=originalHeader(valid,ref22,mk(ref22,2022),'b'.repeat(64));
+ assert.equal(accepted.sourceStatus,'original_or_amended_pdf_source_binary_and_firstpage_authenticated_unclassified');
+ assert.equal(accepted.sourceHeaderIdentityDiagnostic.printedDistrictMatchesOriginalArchived2022CfbRegistration,true);
+ const ref21={...ref22,year:'21'};
+ assert.equal(originalHeader(valid,ref21,mk(ref21,2021),'b'.repeat(64)).sourceStatus,
+  'original_pdf_firstpage_registration_senate_district_or_period_hold');
+ const drift={observations:[{...originalPage,candidates:[{registrationNumber:valid.reg,candidateDisplayName:'Different, Person'}]},
+  ...fixture.observations.slice(1)]};
+ const held=attach2022GovernmentCandidateDistricts(people,drift).find(p=>p.reg===valid.reg);
+ assert.equal(held.archived2022RegistrationCandidateNameDriftHold,true);
+ assert.deepEqual(held.independentlyDocumented2022CfbCandidateDistricts,[]);
 });
 test('bounded official source-only workflow is PR-only, excludes all other finance tasks and production',()=>{
  const y=readFileSync('.github/workflows/senate-864-38-served-original-amended-YE-2021-22-v20.yml','utf8');
