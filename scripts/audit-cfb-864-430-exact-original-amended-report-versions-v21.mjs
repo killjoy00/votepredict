@@ -68,17 +68,17 @@ function versionRows(p){
       ||!SHA.test(pdf)||!Number.isSafeInteger(Number(bytes))
       ||Number(bytes)<1000||Number(bytes)>30000000
       ||!validDay(start)||!validDay(end)||!validDay(received)||!validDay(floor)
-      ||received<end||floor!==[received,nextDay(due)].sort().at(-1)
+      ||received<end||floor<[received,nextDay(due)].sort().at(-1)
       ||alias!=='-')
     throw Error('Source body/form/received due clock not valid '+id);
   }else if(status==='source_identity_hold'||status==='source_fetch_hold'){
-   if(start!=='-'||end!=='-'||received!=='-'||floor!=='-'||alias!=='-'
+   if(floor!=='-'||alias!=='-'\n      ||(start!=='-'&&!validDay(start))||(end!=='-'&&!validDay(end))\n      ||(received!=='-'&&!validDay(received))
       ||status==='source_identity_hold'&&(!SHA.test(pdf)||Number(bytes)<1000)
       ||status==='source_fetch_hold'&&(pdf!=='-'||bytes!=='-'))
     throw Error('Do not promote held report form/receipt/publication '+id);
   }else if(status==='exact_pdf_alias'){
    if(am==='0'||!SHA.test(pdf)||alias==='-'||!validDay(start)||!validDay(end)
-     ||!validDay(received)||!validDay(floor))
+     ||!validDay(received)||!validDay(floor)\n     ||floor<[received,nextDay(due)].sort().at(-1))
     throw Error('Aliased original government PDF without an authentic parent '+id);
   }else throw Error('Unsupported government report version proof status '+id+': '+status);
   return{id,year:Number(year),person,district:Number(district),reg,period,se,am:Number(am),kind,status,pdf,bytes:bytes==='-'?null:Number(bytes),start,end,received,due,floor,viewer,alias,historic,url,proof,row:a};
