@@ -7,5 +7,5 @@ test('all 18 current nonnominee senators have a classified direct-source researc
  const x=execFileSync(process.execPath,['--test',
   'tests/senate-864-2026-nonnominee-direct-position-leads.test.mjs'],
   {cwd:process.cwd(),env,timeout:30000,encoding:'utf8',maxBuffer:240000});
- assert.match(x,/# tests 5\b/);assert.match(x,/# pass 5\b/);assert.match(x,/# fail 0\b/);
+ assert.match(x,/# tests 6\b/);assert.match(x,/# pass 6\b/);assert.match(x,/# fail 0\b/);
 });
