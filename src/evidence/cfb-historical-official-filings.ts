@@ -1,4 +1,4 @@
-import source from '../../data/cfb-senate-official-filings-2021-25-v33.json';
+import source from '../../data/cfb-senate-official-filings-2021-25-v36.json';
 
 /**
  * Official indexed filing versions are usable historical CONTEXT even when a
@@ -12,7 +12,8 @@ export type HistoricalOfficialFilingStatus =
   | 'downloaded_pdf_report_date_conflict'
   | 'official_filing_indexed_pdf_fetch_failed'
   | 'indexed_alias_of_same_pdf'
-  | 'official_indexed_pdf_not_yet_retrieved';
+  | 'official_indexed_pdf_not_yet_retrieved'
+  | 'official_pdf_downloaded_unparsed';
 
 export interface HistoricalOfficialFiling {
   id: string;
@@ -97,7 +98,7 @@ export function historicalOfficialFilingInventoryTotals(): {
     versions: all.length,
     downloadedVersions: inventory.senators.reduce((n, s) => n + s.downloadedVersions, 0),
     readableVersions: all.filter(f => f.status === 'readable_official_pdf').length,
-    distinctDownloadedPdfBodies: 440, // pinned by the source and offline ledger audit
+    distinctDownloadedPdfBodies: 476, // pinned by complete original government PDF byte SHA and offline V36 audit
     unresolvedDocumentDetails: all.filter(f =>
       f.status === 'downloaded_pdf_details_unreadable_or_unresolved'
       || f.status === 'downloaded_pdf_report_date_conflict').length,
@@ -114,5 +115,6 @@ export function officialFilingStatusLabel(status: HistoricalOfficialFilingStatus
     case 'official_filing_indexed_pdf_fetch_failed': return 'Listed by CFB; PDF download unavailable';
     case 'indexed_alias_of_same_pdf': return 'CFB version shares another PDF';
     case 'official_indexed_pdf_not_yet_retrieved': return 'Listed by CFB; PDF not yet checked';
+    case 'official_pdf_downloaded_unparsed': return 'PDF downloaded; contents not yet reviewed';
   }
 }
