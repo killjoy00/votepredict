@@ -5,7 +5,8 @@ on:
       - src/evidence/senate-864-other-24-original-clerk-probe.ts
       - scripts/audit-senate-864-other-24-original-clerk-sources.ts
       - tests/senate-864-other-24-original-clerk-probe.test.ts
-      - docs/evaluation/source-proof/senate-864-2022-24-25-other-24-government-original-receipts.json
+      - docs/evaluation/source-proof/senate-864-2022-24-25-other-24-original-clerk-two-run-source-receipts.json
+      - tests/senate-864-other-24-two-run-source-receipts.test.ts
       - docs/evaluation/senate-864-2022-25-remaining-written-minute-recovery.md
       - .github/workflows/senate-864-other-24-original-clerk-2022-25.yml
 permissions:
@@ -32,6 +33,7 @@ jobs:
         run: |
           npx tsc --noEmit
           node --import tsx --test tests/senate-864-other-24-original-clerk-probe.test.ts
+          node --import tsx --test tests/senate-864-other-24-two-run-source-receipts.test.ts
       - name: Download immutable 2022-25 official LRL committee meeting census
         uses: actions/download-artifact@v4
         with:
