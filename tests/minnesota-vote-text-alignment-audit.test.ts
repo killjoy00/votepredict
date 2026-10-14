@@ -99,17 +99,48 @@ test('no version link is counted as bill-only; numbered bill never becomes a ver
   assert.equal(output.provisionSupportInferred, false);
 });
 
-test('explicit reviewed event-to-text link checks both source hashes and keeps public-by unknown', () => {
+test('strict independent time proof separates historical availability from posting dates', () => {
+  const cutoff = '2023-04-28T12:00:00Z';
+  const independentReceipt = {
+    kind: 'independent_archive_capture' as const,
+    sourceUrl: 'https://web.archive.org/web/20230427200100/https://www.revisor.mn.gov/',
+    sourceSha256: 'c'.repeat(64),
+    locator: 'Synthetic verified archive capture clock, indexed response and original body digest',
+  };
+  const early = {
+    ...text, postedOn: '2023-04-27',
+    independentlyVerifiedPublicBy: '2023-04-27T20:01:00Z',
+    historicalAvailabilityEvidence: independentReceipt,
+  };
   assert.equal(one().status, 'reviewed_exact_text_link');
   assert.equal(one().historicalCutoffEligibility, 'unknown');
-  assert.equal(one(event, text, reviewedLink, '2023-04-28T12:00:00Z').historicalCutoffEligibility, 'not_proven_before_cutoff');
-  assert.equal(one(event, {
-    ...text, independentlyVerifiedPublicBy: '2023-04-27T20:01:00Z',
-  }, reviewedLink, '2023-04-28T12:00:00Z').historicalCutoffEligibility, 'proven_before_cutoff');
+  assert.equal(one(event, text, reviewedLink, cutoff).historicalCutoffEligibility, 'unknown');
+  assert.equal(one(event, early, reviewedLink, cutoff).historicalCutoffEligibility, 'proven_before_cutoff');
   assert.equal(one(event, {
     ...text, independentlyVerifiedPublicBy: '2023-04-28T15:00:00Z',
-  }, reviewedLink, '2023-04-28T12:00:00Z').historicalCutoffEligibility, 'not_proven_before_cutoff');
+    historicalAvailabilityEvidence: independentReceipt,
+  }, reviewedLink, cutoff).historicalCutoffEligibility, 'not_proven_before_cutoff');
+  assert.equal(one(event, {
+    ...early, independentlyVerifiedPublicBy: '2023-04-27T15:01:00-05:00',
+  }, reviewedLink, cutoff).historicalCutoffEligibility, 'proven_before_cutoff');
+
+  for (const unsupportedTime of ['2023-04-27', '2023-04-27T20:01:00',
+    '2023-02-30T20:01:00Z', '2023-04-27T24:01:00Z', '2023-04-27T20:01:00+15:00']) {
+    assert.equal(one(event, { ...early, independentlyVerifiedPublicBy: unsupportedTime },
+      reviewedLink, cutoff).historicalCutoffEligibility, 'unknown');
+  }
+  assert.equal(one(event, { ...early, historicalAvailabilityEvidence: null },
+    reviewedLink, cutoff).historicalCutoffEligibility, 'unknown');
+  assert.equal(one(event, { ...early, historicalAvailabilityEvidence: {
+    ...independentReceipt, sourceSha256: 'not-original-bytes',
+  } }, reviewedLink, cutoff).historicalCutoffEligibility, 'unknown');
+  assert.equal(one(event, { ...early, historicalAvailabilityEvidence: {
+    ...independentReceipt, locator: '',
+  } }, reviewedLink, cutoff).historicalCutoffEligibility, 'unknown');
+  assert.throws(() => one(event, early, reviewedLink, '2023-04-28'), /Invalid cutoff timestamp/);
+  assert.throws(() => one(event, early, reviewedLink, '2023-04-28T12:00:00'), /Invalid cutoff timestamp/);
 });
+
 
 test('date-later enacted or engrossed version is a conflict, not the earlier vote text', () => {
   assert.equal(one(event, { ...text, postedOn: '2023-05-20' }).status, 'later_version_conflict');
@@ -124,6 +155,23 @@ test('two competing conference report variants must not silently collapse', () =
     { ...reviewedLink, eventKey: vote.eventKey, textId: report0.textId },
   ] });
   assert.equal(results[0].status, 'ambiguous_text_links');
+});
+
+test('two different amendment papers using the same A-number do not pass as a unique exact link', () => {
+  const vote: VoteTextAuditEvent = {
+    ...event, voteKind: 'amendment', amendmentRef: 'A-7',
+  };
+  const first: AuditedLegislativeText = {
+    ...text, textId: 'A7-paper-v1', kind: 'amendment_text', amendmentRef: 'A-7',
+  };
+  const second: AuditedLegislativeText = {
+    ...first, textId: 'A7-paper-v2', contentSha256: 'c'.repeat(64),
+  };
+  const links: ProposedVoteTextLink[] = [first, second].map((paper) => ({
+    ...reviewedLink, textId: paper.textId, proofTextSha256: paper.contentSha256!,
+  }));
+  const response = auditVoteTextLinks({ events: [vote], texts: [first, second], links });
+  assert.equal(response[0].status, 'ambiguous_text_links');
 });
 
 test('amendment vote needs exact separate amendment text and reference, not a bill version', () => {
@@ -218,7 +266,7 @@ test('unnumbered Senate floor amendments can be linked ONLY through a distinct p
   assert.equal(one({ ...unnumbered, officialAmendmentAnchor: undefined }, embeddedPaper, proposed).status, 'missing_amendment_text');
   assert.equal(one(unnumbered, { ...embeddedPaper, amendmentRef: 'A-7' }, proposed).status, 'missing_amendment_text');
   assert.equal(one(unnumbered, embeddedPaper, { ...proposed, proofEventSourceSha256: undefined }).status, 'unproven_text_match');
-  assert.equal(one(unnumbered, embeddedPaper, proposed, '2023-04-28T12:00:00Z').historicalCutoffEligibility, 'not_proven_before_cutoff');
+  assert.equal(one(unnumbered, embeddedPaper, proposed, '2023-04-28T12:00:00Z').historicalCutoffEligibility, 'unknown');
 });
 
 test('unnumbered amendment source anchors cannot be fabricated or shared by two distinct motions', () => {
@@ -230,4 +278,21 @@ test('unnumbered amendment source anchors cannot be fabricated or shared by two 
   assert.throws(() => auditVoteTextLinks({ events: [vote, duplicate], texts: [], links: [] }), /duplicate official journal/);
   assert.throws(() => auditVoteTextLinks({ events: [{ ...vote, officialAmendmentAnchor: 'some-ad-hoc-label' }], texts: [], links: [] }), /journal amendment identity/);
   assert.throws(() => auditVoteTextLinks({ events: [vote], texts: [{ ...text, kind: 'amendment_text', officialAmendmentAnchor: 'bad anchor' }], links: [] }), /Invalid original-journal/);
+});
+
+test('journal amendment source anchors are scoped to the exact source, not globally across journals', () => {
+  const first: VoteTextAuditEvent = {
+    ...event, voteKind: 'amendment', amendmentRef: null,
+    officialAmendmentAnchor: 'journal:p6884:action2',
+  };
+  const second: VoteTextAuditEvent = {
+    ...first, eventKey: 'separate-source-same-page-and-sequence',
+    officialSourceUrl: 'https://www.senate.mn/journals/2023-2024/20230519074.pdf',
+  };
+  const outcomes = auditVoteTextLinks({ events: [first, second], texts: [], links: [] });
+  assert.deepEqual(outcomes.map((row) => row.status), ['bill_only', 'bill_only']);
+  assert.throws(() => auditVoteTextLinks({
+    events: [first, { ...second, officialSourceUrl: first.officialSourceUrl }],
+    texts: [], links: [],
+  }), /duplicate official journal amendment identity/);
 });

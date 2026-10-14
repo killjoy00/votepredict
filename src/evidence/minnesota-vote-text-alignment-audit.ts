@@ -96,6 +96,14 @@ export interface VoteTextAuditEvent {
   passed?: boolean | null;
 }
 
+/** Audited independent historical time proof, separate from Revisor "Posted on". */
+export interface HistoricalAvailabilityEvidence {
+  kind: 'independent_archive_capture' | 'verified_original_publication';
+  sourceUrl: string;
+  sourceSha256: string;
+  locator: string;
+}
+
 export interface AuditedLegislativeText {
   textId: string;
   session: string;
@@ -110,6 +118,8 @@ export interface AuditedLegislativeText {
   postedOn: string | null;
   /** Null unless corroborated independently; never populated from postedOn. */
   independentlyVerifiedPublicBy: string | null;
+  /** Only a separately source-hashed, reviewer-established time receipt qualifies. */
+  historicalAvailabilityEvidence?: HistoricalAvailabilityEvidence | null;
   retrievedAt: string | null;
 }
 
@@ -145,6 +155,31 @@ export interface VoteTextAuditResult {
 }
 
 const SHA256 = /^[a-f0-9]{64}$/i;
+const ZONED_INSTANT = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(Z|[+-](\d{2}):(\d{2}))$/;
+
+/** Date-only or locally interpreted time is never a strict historical cutoff proof. */
+function parseZonedInstant(value: string): number | null {
+  const match = ZONED_INSTANT.exec(value);
+  if (!match || !isDate(match[1])) return null;
+  if (Number(match[2]) > 23 || Number(match[3]) > 59 || Number(match[4]) > 59) return null;
+  if (match[6] !== undefined && (Number(match[6]) > 14
+    || Number(match[7]) > 59 || (Number(match[6]) === 14 && Number(match[7]) !== 0))) return null;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function hasIndependentTimeReceipt(evidence: HistoricalAvailabilityEvidence | null | undefined): boolean {
+  if (!evidence || (evidence.kind !== 'independent_archive_capture'
+    && evidence.kind !== 'verified_original_publication')
+    || !SHA256.test(evidence.sourceSha256) || !evidence.locator.trim()) return false;
+  try {
+    const url = new URL(evidence.sourceUrl);
+    return url.protocol === 'https:' && Boolean(url.hostname) && !url.username && !url.password;
+  } catch {
+    return false;
+  }
+}
+
 
 export function auditVoteTextLinks(input: {
   events: readonly VoteTextAuditEvent[];
@@ -160,12 +195,16 @@ export function auditVoteTextLinks(input: {
     }
     eventIds.add(event.eventKey);
     if (event.officialAmendmentAnchor) {
-      if (event.voteKind !== 'amendment'
+      // Journal page/action numbers are only unique inside one source document.
+      const scopedAnchor = JSON.stringify([
+        event.session, event.chamber, event.officialSourceUrl, event.officialAmendmentAnchor,
+      ]);
+      if (event.voteKind !== 'amendment' || !event.officialSourceUrl
         || !/^journal:p\d{1,6}:action\d{1,5}$/.test(event.officialAmendmentAnchor)
-        || amendmentAnchors.has(event.officialAmendmentAnchor)) {
+        || amendmentAnchors.has(scopedAnchor)) {
         throw new Error('Unanchored or duplicate official journal amendment identity');
       }
-      amendmentAnchors.add(event.officialAmendmentAnchor);
+      amendmentAnchors.add(scopedAnchor);
     }
   }
   const texts = new Map<string, AuditedLegislativeText>();
@@ -183,9 +222,9 @@ export function auditVoteTextLinks(input: {
   for (const link of input.links) {
     if (!eventIds.has(link.eventKey)) throw new Error('Orphan proposed vote-text link');
   }
-  const cutoffAt = input.cutoffAt;
-  if (cutoffAt !== undefined && Number.isNaN(Date.parse(cutoffAt))) {
-    throw new Error('Invalid cutoff timestamp');
+  const cutoffTimestamp = input.cutoffAt === undefined ? null : parseZonedInstant(input.cutoffAt);
+  if (input.cutoffAt !== undefined && cutoffTimestamp === null) {
+    throw new Error('Invalid cutoff timestamp: must be a timezone-qualified ISO instant');
   }
 
   return input.events.map((event) => {
@@ -232,9 +271,9 @@ export function auditVoteTextLinks(input: {
           || event.passed === true && link.textDisposition === 'rejected'))) {
       return result('disposition_conflict', 'Amendment text status contradicts its recorded motion outcome');
     }
-    if (paired.filter(({ text }) => text!.kind === 'bill_version').length > 1
-      || paired.filter(({ text }) => text!.kind === 'conference_report').length > 1) {
-      return result('ambiguous_text_links', 'Multiple competing bill or conference texts; no single assumed version');
+    if (['bill_version', 'conference_report', 'amendment_text'].some((kind) =>
+      new Set(paired.filter(({ text }) => text!.kind === kind).map(({ text }) => text!.textId)).size > 1)) {
+      return result('ambiguous_text_links', 'Multiple competing texts of the same type; no single assumed paper');
     }
     if (paired.some(({ link, text }) => link.proofKind !== 'reviewed_official_event_text_match'
       || link.proofUrl !== event.officialSourceUrl || !link.proofLocator?.trim() || !text!.contentSha256
@@ -247,11 +286,20 @@ export function auditVoteTextLinks(input: {
     // The independent-review assertions above are inputs, not automatic text
     // reconstruction. Proven historical availability is an orthogonal clock.
     let eligibility: VoteTextAuditResult['historicalCutoffEligibility'] = 'unknown';
-    if (cutoffAt !== undefined) {
-      const publicBy = paired.map(({ text }) => text!.independentlyVerifiedPublicBy);
-      eligibility = publicBy.every((date) => date && !Number.isNaN(Date.parse(date))
-        && Date.parse(date) < Date.parse(cutoffAt))
-        ? 'proven_before_cutoff' : 'not_proven_before_cutoff';
+    if (cutoffTimestamp !== null) {
+      const receipts = paired.map(({ text }) => ({
+        publicBy: text!.independentlyVerifiedPublicBy
+          ? parseZonedInstant(text!.independentlyVerifiedPublicBy) : null,
+        independentlyProven: hasIndependentTimeReceipt(text!.historicalAvailabilityEvidence),
+      }));
+      if (receipts.some(({ publicBy, independentlyProven }) =>
+        independentlyProven && publicBy !== null && publicBy >= cutoffTimestamp)) {
+        eligibility = 'not_proven_before_cutoff';
+      } else if (receipts.every(({ publicBy, independentlyProven }) =>
+        independentlyProven && publicBy !== null && publicBy < cutoffTimestamp)) {
+        eligibility = 'proven_before_cutoff';
+      }
+      // Missing or unzoned time receipts remain explicitly unknown.
     }
     return result('reviewed_exact_text_link', 'Consistent source-hashed, explicitly reviewed event-to-text evidence', eligibility);
   });
