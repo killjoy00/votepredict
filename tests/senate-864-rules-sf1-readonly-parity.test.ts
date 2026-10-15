@@ -160,6 +160,46 @@ test('per-choice private roster resolution distinguishes nine matched from an al
  assert.ok(!serial.includes('FictionalMember'));
  assert.ok(!serial.includes(ids[0]));
 });
+test('true source-name word-order and omitted-middle-initial hints never silently promote to stored vote identity',()=>{
+ const custom=db();
+ custom.historicalRoster=custom.historicalRoster.map((m,i)=>i===0?
+  {...m,name:'Doe, Jane Q.',normalizedName:'doe jane q'}:m);
+ const reversed:OriginalRulesSource={...source,rolls:source.rolls.map(r=>({
+  ...r,memberVotes:r.memberVotes.map((v,i)=>i===0?
+   {...v,sourceName:'Jane Q. Doe',normalizedName:'jane q doe'}:v)
+ }))};
+ const receipt=compareRulesOriginalToStored(reversed,custom);
+ assert.equal(receipt.holds,2);
+ assert.equal(receipt.alreadyStoredExactly,0);
+ assert.ok(receipt.perMotionHistoricalAliasHypotheses.every(row=>
+  row.sourceUnmatchedNameHypotheses.length===1&&
+  row.sourceUnmatchedNameHypotheses[0]!.originalSourcePosition===0&&
+  row.sourceUnmatchedNameHypotheses[0]!.sameFullTokenBagActiveCandidateCountCappedAtTwo===1&&
+  row.sourceUnmatchedNameHypotheses[0]!.onlyUnverifiedHypothesesNotAnAuthenticatedIdentity===true));
+ assert.ok(!JSON.stringify(receipt).includes('Doe'));
+ assert.ok(!JSON.stringify(receipt).includes(ids[0]));
+ assert.equal(assertSafeRulesSF1AggregateReceipt(JSON.stringify(receipt)),true);
+ const withoutInitial:OriginalRulesSource={...reversed,rolls:reversed.rolls.map(r=>({
+  ...r,memberVotes:r.memberVotes.map((v,i)=>i===0?
+   {...v,sourceName:'Jane Doe',normalizedName:'jane doe'}:v)
+ }))};
+ const lessExact=compareRulesOriginalToStored(withoutInitial,custom);
+ assert.equal(lessExact.holds,2);
+ assert.ok(lessExact.perMotionHistoricalAliasHypotheses.every(row=>
+  row.sourceUnmatchedNameHypotheses[0]!.sameFullTokenBagActiveCandidateCountCappedAtTwo===0&&
+  row.sourceUnmatchedNameHypotheses[0]!.sameNonInitialTokensActiveCandidateCountCappedAtTwo===1));
+});
+test('an inactive roster identity is diagnostic only and still cannot create member-specific votes',()=>{
+ const original=db();
+ original.historicalRoster=original.historicalRoster.map((m,i)=>i===0?
+  {...m,startsOn:'2023-02-01'}:m);
+ const receipt=compareRulesOriginalToStored(source,original);
+ assert.equal(receipt.holds,2);
+ assert.equal(receipt.alreadyStoredExactly,0);
+ assert.ok(receipt.perMotionHistoricalAliasHypotheses.every(row=>
+  row.sourceUnmatchedNameHypotheses[0]!.inactiveRosterExactNameMatch===true));
+ assert.equal(assertSafeRulesSF1AggregateReceipt(JSON.stringify(receipt)),true);
+});
 test('invalid original sides and unbounded stored rows refuse source-to-database declaration',()=>{
  assert.equal(validateOriginalRulesSF1({
   ...source,rolls:source.rolls.map((r,i)=>i===0?{...r,memberVotes:r.memberVotes.slice(1)}:r)
@@ -185,7 +225,7 @@ test('safe SF1 aggregate receipt is not rejected by sourceNamedMotions field sub
  assert.throws(()=>assertSafeRulesSF1AggregateReceipt(
   JSON.stringify({large:'x'.repeat(4100)})),/private identity gate/);
  assert.equal(ONE_SHOT_MARKER,
-  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V3');
+  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V4');
 });
 test('protected SQL has five bounded SELECTs only and gate requires reviewed main SHA',()=>{
  assert.equal(READ_ONLY_QUERIES.length,5);
