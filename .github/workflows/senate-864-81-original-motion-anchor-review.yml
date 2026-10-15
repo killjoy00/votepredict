@@ -1,0 +1,109 @@
+name: '#864 inspect all 81 SHA-verified zero-action OCR committee originals'
+on:
+  pull_request:
+    paths:
+      - scripts/audit-senate-864-81-ocr-original-motion-anchors.ts
+      - tests/senate-864-81-ocr-original-motion-anchors.test.ts
+      - docs/evaluation/source-proof/senate-864-remaining149-ocr-original-recall-v1.json
+      - .github/workflows/senate-864-81-original-motion-anchor-review.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  pinned_source_manifest:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Typecheck source-only eight-shard tests and 81/149 partition
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-81-ocr-original-motion-anchors.test.ts
+      - name: Verify original sixteen immutable GitHub artifact ZIP digests before source auditing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node -e '
+          const fs=require("fs"),cp=require("child_process");
+          const x=JSON.parse(fs.readFileSync("docs/evaluation/source-proof/senate-864-remaining149-ocr-original-recall-v1.json"));
+          if(x.originalShaProofZipArtifacts.length!==16||x.sourceAuditRunId!==38755921210)
+            process.exit(2);
+          for(const a of x.originalShaProofZipArtifacts){
+            const d=JSON.parse(cp.execFileSync("gh",["api","repos/killjoy00/votepredict/actions/artifacts/"+a.artifactId],{encoding:"utf8",timeout:12000}));
+            if(d.expired||d.digest!=="sha256:"+a.zipSha256||d.workflow_run?.id!==x.sourceAuditRunId)
+              throw Error("Verified source artifact is expired or SHA drifted");
+          }
+          console.log("SENATE864_81_VERIFIED_ARCHIVED_SHA_DIGESTS=16");
+          '
+      - name: Fetch archived source results for a complete exact-shard cohort dry run
+        uses: actions/download-artifact@v4
+        with:
+          repository: killjoy00/votepredict
+          run-id: 38755921210
+          github-token: ${{ github.token }}
+          pattern: senate-864-remaining-ocr-*
+          path: artifacts/prior-149-ocr
+          merge-multiple: true
+      - name: Require all 149 original source bytes and exact 81 flagged names/dates in manifest
+        run: node --import tsx scripts/audit-senate-864-81-ocr-original-motion-anchors.ts --cohort-preflight artifacts/prior-149-ocr
+  original_motion_context:
+    needs: [pinned_source_manifest]
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify source OCR/render helpers
+        run: |
+          if ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - name: Acquire all sixteen authenticated previous original PDF source-result files
+        uses: actions/download-artifact@v4
+        with:
+          repository: killjoy00/votepredict
+          run-id: 38755921210
+          github-token: ${{ github.token }}
+          pattern: senate-864-remaining-ocr-*
+          path: artifacts/prior-149-ocr
+          merge-multiple: true
+      - name: Independently refetch original official PDF bytes, text SHA and bounded printed motion anchors
+        run: |
+          node --import tsx scripts/audit-senate-864-81-ocr-original-motion-anchors.ts \
+            --shard ${{ matrix.shard }} \
+            --artifact-dir artifacts/prior-149-ocr \
+            --output artifacts/results/flagged-ocr-motion-anchors-${{ matrix.shard }}.json
+      - name: Preserve only source motion cue slots, date/committee and document SHA; never private row choices
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-81-original-motion-anchors-${{ matrix.shard }}
+          path: artifacts/results/flagged-ocr-motion-anchors-${{ matrix.shard }}.json
+          retention-days: 30
+          if-no-files-found: ignore

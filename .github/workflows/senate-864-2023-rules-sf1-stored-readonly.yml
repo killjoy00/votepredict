@@ -1,0 +1,104 @@
+name: '#864 2023 Rules SF1 two official named rolls: protected stored read-only'
+on:
+  pull_request:
+    paths:
+      - scripts/audit-senate-864-rules-sf1-protected-neon-readonly.ts
+      - src/evidence/senate-864-rules-sf1-source-to-db-parity.ts
+      - tests/senate-864-rules-sf1-readonly-parity.test.ts
+      - .github/workflows/senate-864-2023-rules-sf1-stored-readonly.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: senate-864-sf1-actual-stored-parity-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr_synthetic_readonly_reconciliation:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Typecheck, privacy, original motion/choice identity and fail-closed SQL tests
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-rules-sf1-readonly-parity.test.ts
+          node --import tsx scripts/audit-senate-864-rules-sf1-protected-neon-readonly.ts --preflight
+  main_exact_source_presecret_ci:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 36
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact marked reviewed main commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Presecret source/parity/policy safety
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-rules-sf1-readonly-parity.test.ts
+          node --import tsx --test tests/senate-864-81-ocr-original-motion-anchors.test.ts
+          node --import tsx scripts/audit-senate-864-rules-sf1-protected-neon-readonly.ts --preflight
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  protected_exact_sf1_source_to_stored:
+    needs: [main_exact_source_presecret_ci]
+    if: >-
+      needs.main_exact_source_presecret_ci.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V1')
+    runs-on: ubuntu-latest
+    environment: evidence-readonly-sandbox
+    timeout-minutes: 17
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_SF1_APPROVAL: HISTORIC_SF1_TWO_ROLL_READ_ONLY
+      VOTEPREDICT_864_MAIN_CI_VERIFIED: ${{ needs.main_exact_source_presecret_ci.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_SF1_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V1') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact source-authorized main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reauthenticate 2023 Rules original PDF, compare historical members and bounded existing Neon motions READ ONLY, then ROLLBACK
+        run: node --import tsx scripts/audit-senate-864-rules-sf1-protected-neon-readonly.ts --protected
