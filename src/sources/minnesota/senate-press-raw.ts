@@ -144,8 +144,8 @@ function publicationDate(root:HtmlNode):string|null {
   for(const header of all(root,node=>node.tag==='header'||classMatch(node,/entry-meta|post-meta|elementor-post-info|post-date/i))) {
     const date=isoDate(plain(text(header)).slice(0,750));if(date)return date;
   }
-  const article=all(root,node=>node.tag==='article'||node.tag==='main')[0];
-  return article?isoDate(plain(text(article)).slice(0,400)):null;
+  // Never infer a publication date from an event date mentioned in article prose.
+  return null;
 }
 export function billIds(value:string):string[] {
   const result=new Set<string>();
