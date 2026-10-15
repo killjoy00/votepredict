@@ -33,6 +33,19 @@ test('fixed public research pages uniquely map 72 authenticated originals to 34 
   assert.equal(drafts[0].metadata.originalFirstAuthoredDateKnown,false);
  }
 });
+test('archive-year attribution selects a serving session without inventing a publication date',()=>{
+ const page=original.witnesses.find(w=>w.originalArchiveCapturedAtUtc.startsWith('2025-'));
+ assert.ok(page);
+ const first=roster[page.senatorOrdinal-1];
+ const extended=[...roster,{
+  name:page.officialName,legislatorId:first.legislatorId,
+  membershipId:uuid(4000),sessionSlug:'2025-2026'
+ }];
+ const targeted=sourcePlan(manifest,original.witnesses,extended);
+ const found=targeted.find(x=>x.ordinal===page.senatorOrdinal&&x.originalSha===page.originalHtmlSha256);
+ assert.equal(found.membershipId,uuid(4000));
+ assert.equal(historicalOriginalDraft(found).drafts[0].publishedAt,undefined);
+});
 test('pinned CDX+original byte proof envelope never tolerates a single held or wrong source',()=>{
  const proof={
   schema:'senate-864-95-72-historic-original-html-cdx-verified-v1',
