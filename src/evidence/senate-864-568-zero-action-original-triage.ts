@@ -125,3 +125,64 @@ export function selectSenate864Next64UnreviewedOriginals(
   zeroParserActionsDoesNotMeanZeroActualVotes:true,
   noOriginalNamedMembershipInferred:true};
 }
+
+/**
+ * Third independent review: exhaust the 149 OCR-recovered PDFs still unaudited
+ * after the original 32 and the disjoint next64 (12 OCR per year reviewed).
+ * A reviewed zero-action PDF is not proof that no parliamentary vote occurred.
+ *
+ * The shard counts are fixed by year so CI can recover every original source
+ * once, without accidentally selecting a convenient subset or relabeling the
+ * old evidence inventory. These are OFFLINE source reviews, not DB imports.
+ */
+export function selectSenate864RemainingOcrOriginals(
+ input:FirstPassLedger,year:2022|2023|2024|2025,
+ shardIndex:number,totalShards:number,
+){
+ const shardByYear:{[year:number]:number}={2022:10,2023:1,2024:1,2025:4};
+ const initialOcrByYear:{[year:number]:number}={2022:113,2023:22,2024:13,2025:49};
+ const remainingByYear:{[year:number]:number}={2022:101,2023:10,2024:1,2025:37};
+ if(![2022,2023,2024,2025].includes(year)||
+  totalShards!==shardByYear[year]||
+  !Number.isSafeInteger(shardIndex)||shardIndex<0||shardIndex>=totalShards)
+  throw Error('Fixed 2022-25 remaining OCR cohort shard required');
+ // The two prior selectors independently re-validate the exact original
+ // 1,592 meeting / 568 zero-action / 197 OCR SHA-bound universe.
+ const first=selectSenate864FirstPassZeroActionOriginals(input,year,4);
+ const second=selectSenate864Next64UnreviewedOriginals(input,year,'ocr');
+ const reviewed=new Set([...first.selectedOriginals,...second.selectedOriginals]
+  .filter(x=>x.originallyRequiredOcr).map(x=>x.sourceUrl));
+ if(reviewed.size!==12)throw Error('Prior original OCR samples overlap or drift');
+ const originalRows=input.meetings.filter(m=>m.year===year&&m.hasOriginalPdf&&
+  m.originalMinutes.length>0&&m.originalMinutes.every(d=>d.sourceActions.length===0)&&
+  m.originalMinutes.some(d=>d.ocrRecoveredFromInitiallyLowText))
+  .sort((a,b)=>a.hearingDate.localeCompare(b.hearingDate)||
+   a.committee.localeCompare(b.committee));
+ if(originalRows.length!==initialOcrByYear[year])
+  throw Error('Original year-specific OCR zero-action denominator drift');
+ const remaining=originalRows.filter(m=>!reviewed.has(m.originalMinutes[0]!.sourceUrl));
+ if(remaining.length!==remainingByYear[year]||
+  new Set(remaining.map(m=>m.originalMinutes[0]!.sourceUrl)).size!==remaining.length)
+  throw Error('Remaining original OCR source denominator or uniqueness drift');
+ const selectedOriginals:ZeroActionTarget[]=remaining
+  .filter((_,i)=>i%totalShards===shardIndex)
+  .map(m=>{
+   const doc=m.originalMinutes[0]!;
+   if(!SHA.test(doc.originalPdfSha256??'')||
+    !doc.sourceUrl.startsWith('https://www.lrl.mn.gov/archive/minutes/senate/'+year+'/'))
+    throw Error('Remaining original OCR PDF lacks pinned source identity');
+   return {year,committee:m.committee,hearingDate:m.hearingDate,
+    sourceUrl:doc.sourceUrl,sourcePdfSha256:doc.originalPdfSha256!,
+    originallyRequiredOcr:true};
+  });
+ if(selectedOriginals.length<1||selectedOriginals.length>12||
+  selectedOriginals.some(x=>reviewed.has(x.sourceUrl)))
+  throw Error('Unbounded or previously inspected original OCR shard');
+ return {year,stratum:'ocr' as const,shardIndex,totalShards,
+  originalZeroActionMeetingDates:568,originalZeroActionOcrDates:197,
+  independentlyReviewedFirst32AndNext64:96,
+  remainingOcrAfterPriorReviewsAcrossYears:149,
+  remainingOcrOriginalsThisYear:remaining.length,
+  selectedOriginals,originalShaRequired:true,
+  no2021MeetingSources:true,notIndividualVoteOrNoVoteProof:true};
+}
