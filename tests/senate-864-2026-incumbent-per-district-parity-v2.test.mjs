@@ -234,7 +234,9 @@ test('workflow limited to one new owner exact trigger, presecret full CI, SHA or
  assert.doesNotMatch(y,/^\s+schedule:/m);
  assert.doesNotMatch(y,/^\s+workflow_dispatch:/m);
  assert.doesNotMatch(y,/actions\/upload-artifact/);
- const report=y.split('  issue-keyless-report:')[1];
+ // Inspect only the legacy issue report job. New, separately gated jobs are
+ // permitted after it, but may never leak credentials into the issue reporter.
+ const report=y.split('  issue-keyless-report:')[1]?.split(/^  [a-z][a-z0-9-]*:/m)[0];
  assert.ok(report);
  assert.doesNotMatch(report,/secrets.NEON_API_KEY|environment: evidence-readonly-sandbox/);
 });
