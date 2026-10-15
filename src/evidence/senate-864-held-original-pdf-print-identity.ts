@@ -15,7 +15,8 @@ export interface HeldMinutePdfLink {
 export interface HeldMeetingSource {
  year:number;committeeName:string;hearingDate:string;
  sourceStatus:string;originalMinutePdfCandidatesFound:number;
- originalMinutePdfsAuthenticated:number;originalPdfDocuments:HeldMinutePdfLink[];
+ originalMinutePdfsAuthenticated:number;
+ originalPdfDocuments:Array<Pick<HeldMinutePdfLink,'originalSourceUrl'|'originalPdfSha256'|'status'>>;
 }
 const MONTHS='January February March April May June July August September October November December'.split(' ');
 export const LRL_HELD_PDF_SOURCE_YEAR_COUNTS={2023:2,2024:13,2025:4} as const;
@@ -57,7 +58,9 @@ export function select19OfficialUnverifiedLrlPdfMeetingSources(
     seen.has(x.originalSourceUrl))
     throw Error('Original official government index PDF identity or hold drift');
    seen.add(x.originalSourceUrl);
-   if(m.year===year)byYear.push(x);
+   if(m.year===year)byYear.push({
+    ...x,year:m.year,committeeName:m.committeeName,hearingDate:m.hearingDate
+   });
   }
  }
  if(seen.size!==HELD_LRL_PDF_SOURCE_CANDIDATE_COUNT)
