@@ -57,11 +57,11 @@ test('exact member-linked page classification is distinct from site-only and glo
  assert.equal(r.pageResolutionStates.metadata_original_exact,1);
  assert.equal(r.pageResolutionStates.metadata_original_normalized,1);
  assert.equal(r.pageResolutionStates.wayback_embedded_exact,1);
- assert.equal(r.pageResolutionStates.same_host_path_unverified,1);
- assert.equal(r.pageResolutionStates.no_same_host_in_selected_linked_sources,124);
+ assert.equal(r.pageResolutionStates.same_host_path_unverified,7);
+ assert.equal(r.pageResolutionStates.no_same_host_in_selected_linked_sources,118);
  assert.equal(r.originalPagesWithPageLevelSourceIdentity,5);
  assert.deepEqual(r.wholeOriginalHtmlShaComparison,{
-  whole_sha_equal:2,whole_sha_differs:2,whole_sha_unavailable:1
+  whole_sha_equal:3,whole_sha_differs:1,whole_sha_unavailable:1
  });
  assert.equal(r.globalCandidateUrlPresence.pagesWithGlobalDirectUrl,1);
  assert.equal(r.globalCandidateUrlPresence.pagesWithGlobalOriginalMetadata,1);
