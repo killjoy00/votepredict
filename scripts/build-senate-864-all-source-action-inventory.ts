@@ -48,7 +48,9 @@ function main(){
  if(text.length>4_000_000||/\b(?:sourceMemberName|normalized_member_name|membership_id|choiceIdentitySha256|postgresql:\/\/)\b/i.test(text))
   throw Error('Public original-source action audit must not contain individual member values or credentials');
  mkdirSync(dirname(output),{recursive:true});writeFileSync(output,text);
- const {perIndexedMeeting,...summary}=audit;
+ // The original 568-row review queue belongs in the authenticated output
+ // artifact, never the bounded public one-line console summary.
+ const {perIndexedMeeting,missingActionReviewQueue,...summary}=audit;
  const body=JSON.stringify(summary);
  if(body.length>10_000)throw Error('Unexpected large source-only audit console summary');
  console.log('SENATE864_ALL_2022_25_ORIGINAL_ACTION_SOURCE_SUMMARY='+body);
