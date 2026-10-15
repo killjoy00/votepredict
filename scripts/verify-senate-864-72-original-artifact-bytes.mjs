@@ -108,7 +108,8 @@ export async function verify72ArtifactProvenance({token,repository,output=true}=
  if(witnesses.length!==72)throw Error('V2 original witness set changed');
  const ids=[...new Set(witnesses.filter(w=>
   w.recoveryState==='READY_FOR_INDEPENDENT_BYTE_VERIFICATION'
- ).map(w=>w.historicalSourceArtifactId))];
+ ).flatMap(w=>[w.historicalSourceArtifactId,w.independentCdxArtifactId])
+ .filter(id=>Number.isSafeInteger(id)&&id>=10000000))];
  if(ids.length>50)throw Error('Unbounded historical source artifact reads');
  const temp=mkdtempSync(join(tmpdir(),'vp-864-72-source-'));
  const cache=new Map();
@@ -133,13 +134,20 @@ export async function verify72ArtifactProvenance({token,repository,output=true}=
       try{
        const html=zipEntry(archive.zip,entry,MAX_HTML_BYTES);
        const cdx=[];
-       const files=archive.entries.filter(name=>/\.json$/i.test(name)
-        &&/cdx|index/i.test(basename(name))).slice(0,120);
-       for(const file of files){
-        try{
-         const json=zipEntry(archive.zip,file,3000000);
-         if(json)cdx.push(JSON.parse(json.toString('utf8')));
-        }catch{/* Unparseable unrelated index is never a proof. */}
+       // Some independent original CDX indexes were preserved as a separate
+       // historical GitHub artifact. Never infer that the HTML artifact itself
+       // is a sufficient independent Wayback index.
+       const indexArchives=[archive,cache.get(w.independentCdxArtifactId)]
+        .filter((a,i,arr)=>a&&arr.indexOf(a)===i);
+       for(const indexArchive of indexArchives){
+        const files=indexArchive.entries.filter(name=>/\.json$/i.test(name)
+         &&/cdx|index/i.test(basename(name))).slice(0,120);
+        for(const file of files){
+         try{
+          const json=zipEntry(indexArchive.zip,file,3000000);
+          if(json)cdx.push(JSON.parse(json.toString('utf8')));
+         }catch{/* Invalid/unrelated index never establishes a proof. */}
+        }
        }
        status=verifyWitnessBytes(w,html,cdx);
       }catch{status='HOLD_HISTORICAL_ARCHIVE_ZIP_READ_ERROR'}
@@ -152,7 +160,8 @@ export async function verify72ArtifactProvenance({token,repository,output=true}=
     originalArchiveCapturedAtUtc:w.originalArchiveCapturedAtUtc,
     originalResearchLedgerPath:w.originalResearchLedgerPath,
     originalHtmlArtifactFile:w.originalHtmlArtifactFile,
-    historicalSourceArtifactId:w.historicalSourceArtifactId,status
+    historicalSourceArtifactId:w.historicalSourceArtifactId,
+    independentCdxArtifactId:w.independentCdxArtifactId,status
    });
   }
   const statuses=Object.fromEntries([...new Set(results.map(x=>x.status))].sort()
