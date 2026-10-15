@@ -56,5 +56,5 @@ test('protected private runner must open transaction READ ONLY, explicitly roll 
  assert.match(c,/client\.query\('ROLLBACK'\)/);
  assert.doesNotMatch(c,/\b(?:INSERT INTO|UPDATE vote_events|DELETE FROM|DROP TABLE)\b/);
  assert.match(c,/discoverExistingVotePredictNeonConnection/);
- assert.match(c,/deployedProductionNeonBranchBindingNotAsserted/);
+ assert.match(c,/compareSenate864OriginalClerkDocumentsToStored/);
 });
