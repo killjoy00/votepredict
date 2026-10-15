@@ -66,7 +66,7 @@ async function main(){
    parsedSenatorBlocks:parts.length,
    blocksWithUnexpectedNonNameCharacters:parts.filter(p=>!valid.test(p)).length,
    unexpectedCodePoints:[...new Set(parts.flatMap(p=>[...p].filter(ch=>
-    !/[\p{L}\p{M} .'-]/u.test(ch)).map(ch=>ch.codePointAt(0)!.toString(16))))],
+    !/[\p{L}\p{M} .,'-]/u.test(ch)).map(ch=>ch.codePointAt(0)!.toString(16))))],
   };
  };
  const narrativeCandidates=[...flat.matchAll(
@@ -86,7 +86,9 @@ async function main(){
   matchedSideStructuralCounts:narrativeCandidates,
   unredactedSenatorNamesInOutput:false,
  };
- const passed=rolls.length===2&&rolls.every((r,i)=>{
+ const passed=rolls.length===2&&
+  new Set(rolls.map(row=>sha(row.motionText))).size===2&&
+  rolls.every((r,i)=>{
   const expectedMotion=expected[i]!;
   return r.individualVotesAvailable===true&&r.billIdentifier==='SF1'&&
    r.voteKind===expectedMotion.kind&&r.passed===expectedMotion.passed&&
