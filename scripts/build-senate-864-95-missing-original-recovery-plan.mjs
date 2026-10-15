@@ -117,6 +117,20 @@ function candidateArtifacts(doc,record,captureUtc){
  return ids.length===1?{artifactId:ids[0],reason:'unique_pinned_original_html_artifact'}:
   {artifactId:null,reason:ids.length?'ambiguous_source_artifact':'source_artifact_not_pinned'};
 }
+function indexedCdxArtifact(doc){
+ const ids=[];
+ for(const group of [doc.scope,doc.provenance,doc.sourceProvenance,doc.sources,doc.source]){
+  if(!group||typeof group!=='object'||Array.isArray(group))continue;
+  for(const [k,v] of Object.entries(group)){
+   const n=Number(v);
+   if(Number.isSafeInteger(n)&&n>=10000000&&n<99999999999999
+    &&/cdx.*artifact|artifact.*cdx/i.test(k)
+    &&!/gov|government|official|sos|lrl/i.test(k))ids.push(n);
+  }
+ }
+ const unique=[...new Set(ids)];
+ return unique.length===1?unique[0]:null;
+}
 function possibleDetails(doc,obj){
  const captureUtc=date(value(obj,DATE_KEYS));
  const digest=value(obj,CDX_KEYS);
@@ -125,7 +139,8 @@ function possibleDetails(doc,obj){
  const cdxFile=simpleName(value(obj,CDX_FILE_KEYS));
  const artifact=candidateArtifacts(doc,obj,captureUtc);
  return {captureUtc,archiveIndexedSha1,sourceFile,cdxFile,
-  sourceArtifactId:artifact.artifactId,sourceArtifactResolution:artifact.reason};
+  sourceArtifactId:artifact.artifactId,sourceArtifactResolution:artifact.reason,
+  independentCdxArtifactId:indexedCdxArtifact(doc)};
 }
 function planState(w){
  if(!w.captureUtc)return 'HOLD_CAPTURE_DATE';
@@ -188,6 +203,7 @@ export function buildRecoveryPlan(read=readFileSync){
     originalHtmlArtifactFile:chosen.sourceFile,
     originalCdxIndexArtifactFile:chosen.cdxFile,
     historicalSourceArtifactId:chosen.sourceArtifactId,
+    independentCdxArtifactId:chosen.independentCdxArtifactId,
     originalResearchLedgerPath:chosen.ledgerPath,
     recoveryState
    });
