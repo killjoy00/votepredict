@@ -184,7 +184,19 @@ async function main(){
  if(report.heldOriginals>0)process.exitCode=1;
 }
 if(process.argv[1]?.replace(/\\/g,'/').endsWith('/audit-senate-864-81-ocr-original-motion-anchors.ts'))
- void main().catch(()=>{
-  console.error('SENATE864_81_ORIGINAL_MOTION_HOLD=source_integrity_or_shard_validation');
+ void main().catch(error=>{
+  const allowed=[
+   'Exactly sixteen independently authenticated OCR artifacts required',
+   'Original independent ZIP, PDF hash or source-recall cohort drift',
+   '149 original document denominator, URL uniqueness or source registry drift',
+   '81 unique independently verified original flagged date/SHA identity drift',
+   'Need 16 unmodified source artifact JSON files',
+   'Bounded original artifact size',
+   'Fixed distinct document shard size',
+   'Fixed --shard 0..7 --artifact-dir --output required'];
+  const msg=error instanceof Error?error.message:'';
+  console.error('SENATE864_81_ORIGINAL_MOTION_HOLD='+(
+   allowed.includes(msg)?msg.replace(/\s+/g,'_'):
+   'source_integrity_or_shard_validation'));
   process.exitCode=1;
  });
