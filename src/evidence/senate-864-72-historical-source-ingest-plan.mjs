@@ -28,7 +28,7 @@ export function sourcePlan(manifest,witnesses,roster){
    ||new Set(hits.map(r=>r.membershipId)).size!==hits.length)
    throw Error('Serving legislator identity ambiguity');
   hits.sort((a,b)=>a.sessionSlug.localeCompare(b.sessionSlug)||a.membershipId.localeCompare(b.membershipId));
-  members.set(i+1,hits[0].membershipId);
+  members.set(i+1,hits);
  }
  const seen=new Set(),people=new Set(),rows=[];
  for(const w of witnesses){
@@ -46,7 +46,15 @@ export function sourcePlan(manifest,witnesses,roster){
   const identity=w.senatorOrdinal+'|'+w.originalUrl+'|'+w.originalHtmlSha256;
   if(seen.has(identity))throw Error('Duplicate historic page proof');
   seen.add(identity);people.add(w.senatorOrdinal);
-  const membershipId=members.get(w.senatorOrdinal);
+  const memberships=members.get(w.senatorOrdinal);
+  const year=Number(w.originalArchiveCapturedAtUtc.slice(0,4));
+  const capturedSession=year>=2021&&year<=2022?'2021-2022':
+   year>=2023&&year<=2024?'2023-2024':
+   year>=2025&&year<=2026?'2025-2026':null;
+  // Link to observed service session where possible. Archive capture date is
+  // NOT asserted to be first publication, and older captures remain context only.
+  const membershipId=(memberships.find(r=>r.sessionSlug===capturedSession)
+   ||memberships[0]).membershipId;
   const key=createHash('sha256').update(VERSION+'|'+identity+'|'+membershipId).digest('hex');
   const stamp=w.originalArchiveCapturedAtUtc.replace(/\D/g,'').slice(0,14);
   const originalSha=w.originalHtmlSha256.toLowerCase();
