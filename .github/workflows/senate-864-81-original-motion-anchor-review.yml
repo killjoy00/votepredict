@@ -46,6 +46,17 @@ jobs:
           }
           console.log("SENATE864_81_VERIFIED_ARCHIVED_SHA_DIGESTS=16");
           '
+      - name: Fetch archived source results for a complete exact-shard cohort dry run
+        uses: actions/download-artifact@v4
+        with:
+          repository: killjoy00/votepredict
+          run-id: 38755921210
+          github-token: ${{ github.token }}
+          pattern: senate-864-remaining-ocr-*
+          path: artifacts/prior-149-ocr
+          merge-multiple: true
+      - name: Require all 149 original source bytes and exact 81 flagged names/dates in manifest
+        run: node --import tsx scripts/audit-senate-864-81-ocr-original-motion-anchors.ts --cohort-preflight artifacts/prior-149-ocr
   original_motion_context:
     needs: [pinned_source_manifest]
     strategy:
