@@ -91,8 +91,9 @@ export async function verifyConnectionIdentity(client,target,{write=false}={}){
 /** Designed for test doubles as well as a real protected Neon primary. */
 export async function reconcileWithVerification(client,{apply=false}={}){
   const pre=await reconcileVerifiedStatements(client,{apply:false});
-  assertAllThirteenSafeToApply(pre);
   if(!apply)return {mode:'read_only_verified',preview:pre,productionEvidenceRowsActuallyUpdated:0};
+  // Report HOLD statuses in the dry run, but do not allow ANY partial production write.
+  assertAllThirteenSafeToApply(pre);
   const committed=await reconcileVerifiedStatements(client,{apply:true});
   assert.equal(committed.plannedOrApplied.held,0);
   const post=await reconcileVerifiedStatements(client,{apply:false});
