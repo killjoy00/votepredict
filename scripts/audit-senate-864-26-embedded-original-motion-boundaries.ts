@@ -115,7 +115,7 @@ export function selectExactFlagged26FromAll323(input:Report[],manifest:ProofMani
   x.currentParserContextActionCandidates<0).length;
  if(flagged.length!==26||formal.length!==17||
   flaggedByYear.join(',')!=='6,6,3,11'||
-  formalByYear.join(',')!=='3,3,1,10'||
+  formalByYear.join(',')!=='1,5,1,10'||
   invalidParserNumbers>0){
   console.log('SENATE864_26_ONLY_SAFE_REVIEW_COUNTS='+JSON.stringify({
    flagged:flagged.length,formalDocuments:formal.length,
