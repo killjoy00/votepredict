@@ -95,7 +95,8 @@ test('simulate four SQL census statements inside READ ONLY with ROLLBACK and no 
    if(sql==='ROLLBACK')return {rows:[]};
    const key=Object.keys(QUERIES).find(name=>QUERIES[name]===sql);
    assert.ok(key,'Only four fixed queries may enter the database');
-   assert.equal(JSON.parse(params?.[0]??'null').length,830);
+   if(sql.includes('$1::jsonb'))assert.equal(JSON.parse(params?.[0]??'null').length,830);
+   else assert.deepEqual(params,[]);
    return {rows:expected[key]};
   },
   release(force){released=force===true;}
