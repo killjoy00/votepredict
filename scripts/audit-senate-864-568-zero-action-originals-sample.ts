@@ -13,7 +13,7 @@ import {dirname,resolve} from 'node:path';
 import {fetchSenateCommitteeMinutePdf} from '../src/evidence/minnesota-senate-committee-source.js';
 import {parseSenateCommitteeMinuteVotes,parseSenateCommitteeMinuteContextActions} from
  '../src/evidence/minnesota-senate-committee-minutes.js';
-import {selectSenate864FirstPassZeroActionOriginals,classifySourceMinuteMotionSignals}
+import {selectSenate864FirstPassZeroActionOriginals,selectSenate864Next64UnreviewedOriginals,classifySourceMinuteMotionSignals}
  from '../src/evidence/senate-864-568-zero-action-original-triage.js';
 const sha=(v:Uint8Array|string)=>createHash('sha256').update(v).digest('hex');
 const SOURCE_LRL='https://www.lrl.mn.gov/archive/minutes/senate/';
@@ -45,7 +45,8 @@ async function verifiedOriginalPdf(url:string,originalSha:string){
 }
 async function main(){
  const args=process.argv.slice(2);
- if(args.length!==6||args[0]!=='--year'||args[2]!=='--index-ledger'||args[4]!=='--output')
+ if(![6,8].includes(args.length)||args[0]!=='--year'||args[2]!=='--index-ledger'||args[4]!=='--output'||
+  (args.length===8&&(args[6]!=='--mode'||!['ocr','embedded'].includes(args[7]??''))))
   throw Error('Fixed --year --index-ledger --output required');
  const year=Number(args[1]) as 2022|2023|2024|2025;
  if(![2022,2023,2024,2025].includes(year)||!args[3]||!args[5])
@@ -56,7 +57,9 @@ async function main(){
  if(bytes.length<1000||bytes.length>11_000_000)
   throw Error('Original fixed source action ledger byte bounds');
  const ledger=JSON.parse(bytes.toString('utf8'));
- const cohort=selectSenate864FirstPassZeroActionOriginals(ledger,year,4);
+ const phase=args.length===8?args[7] as 'ocr'|'embedded':null;
+ const cohort=phase?selectSenate864Next64UnreviewedOriginals(ledger,year,phase):
+  selectSenate864FirstPassZeroActionOriginals(ledger,year,4);
  if(cohort.selectedOriginals.length!==8)throw Error('Eight original stratified source proofs per year required');
  const rows:Array<{
   year:number;committeeName:string;hearingDate:string;originalSourceUrl:string;
@@ -104,7 +107,10 @@ async function main(){
  const verified=rows.filter(r=>r.status==='original_pdf_sha_reverified_parser_rechecked');
  const flagged=verified.filter(r=>r.priority!=='zero_detected_still_not_a_certified_no_vote');
  const report={
-  schemaVersion:'senate-864-568-original-zero-parser-action-stratified-source-recall-v1',
+  schemaVersion:phase?'senate-864-568-original-zero-action-next64-source-recall-v1':
+   'senate-864-568-original-zero-parser-action-stratified-source-recall-v1',
+  sourceRecallPhase:phase??'first32',
+  previousFirst32OriginalsExcluded:phase!==null,
   issue:864,year,originalWrittenMinuteMeetingZeroActionCohort:568,
   originalZeroActionOcrRecoveryCohort:197,originalZeroActionEmbeddedTextCohort:371,
   selectedOriginals:8,originalShaReverified:verified.length,
@@ -124,7 +130,7 @@ async function main(){
  mkdirSync(dirname(output),{recursive:true});
  writeFileSync(output,JSON.stringify(report,null,2)+'\n');
  console.log('SENATE864_ZERO_ACTION_ORIGINAL_AUDIT='+JSON.stringify({
-  year,selected:8,verified:verified.length,held:8-verified.length,
+  year,sourceRecallPhase:phase??'first32',selected:8,verified:verified.length,held:8-verified.length,
   flaggedSourceReview:flagged.length,originalExplicitResults:
    report.originalExplicitRollMotionResultsRequiringReview,
   flaggedDates:flagged.map(r=>({day:r.hearingDate,committee:r.committeeName,
