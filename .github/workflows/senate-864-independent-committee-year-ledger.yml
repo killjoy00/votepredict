@@ -1,0 +1,113 @@
+name: '#864 independent source-to-committee-year ledger (public source only)'
+
+# Reuses SHA-verified LRL index, 1452 original PDF metadata, recovered 207
+# original OCR source proofs, and independent 2025 Judiciary source roll.
+# No original PDF re-download, private data, DB/Neon or scheduler.
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-independent-committee-meeting-ledger.ts
+      - scripts/build-senate-864-independent-committee-ledger.ts
+      - tests/senate-864-independent-committee-meeting-ledger.test.ts
+      - docs/evaluation/senate-864-independent-committee-year-reconciliation.md
+      - .github/workflows/senate-864-independent-committee-year-ledger.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  public-original-source-reconciliation:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Fail-closed named/count-only/no-Minutes and OCR source regressions
+        run: |
+          node --import tsx --test tests/senate-864-independent-committee-meeting-ledger.test.ts
+      - name: Original independently inventoried 1592-meeting LRL index
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11674762938'
+          repository: killjoy00/votepredict
+          run-id: 38065594898
+          github-token: ${{ github.token }}
+          path: artifacts
+          merge-multiple: true
+      - name: Four original 2022-25 electronic Minutes PDF source manifests
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11674729430,11674568363,11675315164,11675014092'
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+          merge-multiple: true
+      - name: First six original low-embedded-text PDF OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11676072623'
+          repository: killjoy00/votepredict
+          run-id: 38068730892
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Second 24 original OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11675539378,11676162360,11675569424,11675584270'
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Next 25 original OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11678185896,11677986160'
+          repository: killjoy00/votepredict
+          run-id: 38073521109
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Final 152 original OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11677439544,11678168763,11677629231,11677879406,11678358764,11678323861,11677409668,11678273765,11677519671'
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Original 2025 Judiciary 8-choice full source proof
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11676168658'
+          repository: killjoy00/votepredict
+          run-id: 38070395356
+          github-token: ${{ github.token }}
+          path: artifacts/judiciary
+          merge-multiple: true
+      - name: Exact source SHA-to-independent official meeting ledger
+        run: |
+          node --import tsx scripts/build-senate-864-independent-committee-ledger.ts \
+            --output-dir artifacts/senate-864-independent-committee-ledger
+      - name: Publish only public official metadata, without private rows or names
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-original-official-meeting-to-source-action-ledgers
+          path: artifacts/senate-864-independent-committee-ledger/
+          if-no-files-found: error
+          retention-days: 30
