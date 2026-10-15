@@ -1,0 +1,115 @@
+name: '#864 26 original embedded-text Senate result/roll cue minutes second-look'
+on:
+  pull_request:
+    paths:
+      - docs/evaluation/source-proof/senate-864-323-embedded-original-source-artifact-manifest.json
+      - scripts/audit-senate-864-26-embedded-original-motion-boundaries.ts
+      - tests/senate-864-26-embedded-original-motion-boundaries.test.ts
+      - src/evidence/senate-864-original-motion-action-boundaries.ts
+      - .github/workflows/senate-864-26-embedded-original-motion-boundary-review.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact_323_sha_proof_preflight:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Typecheck all fixed original government PDF SHA/26-review partitions
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-26-embedded-original-motion-boundaries.test.ts
+          node --import tsx --test tests/senate-864-81-original-action-segmentation.test.ts
+      - name: Verify 48 original government source evidence ZIP SHA and exact original successful source run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node -e '
+          const fs=require("fs"),cp=require("child_process");
+          const x=JSON.parse(fs.readFileSync("docs/evaluation/source-proof/senate-864-323-embedded-original-source-artifact-manifest.json"));
+          if(x.originalArtifactZips.length!==48||x.runId!==38783916630)
+           process.exit(2);
+          for(const a of x.originalArtifactZips){
+           const got=JSON.parse(cp.execFileSync("gh",["api","repos/killjoy00/votepredict/actions/artifacts/"+a.artifactId],{encoding:"utf8",timeout:12000}));
+           if(got.expired||got.digest!=="sha256:"+a.zipSha256||
+            got.workflow_run?.id!==x.runId||
+            got.workflow_run?.head_sha!==x.reviewedSourceCommit)
+            throw Error("Pinned original embedded source ZIP SHA hold");
+          }
+          console.log("SENATE864_ALL48_EMBEDDED_SOURCE_ZIP_SHA_VERIFIED");
+          '
+      - name: Download all 48 original source SHA review receipts
+        uses: actions/download-artifact@v4
+        with:
+          repository: killjoy00/votepredict
+          run-id: 38783916630
+          github-token: ${{ github.token }}
+          pattern: senate-864-remaining323-embedded-*
+          path: artifacts/prior323
+          merge-multiple: true
+      - name: Verify exact 323 original document rows, 26 flagged and 17 with formal results
+        run: |
+          node --import tsx scripts/audit-senate-864-26-embedded-original-motion-boundaries.ts \
+            --cohort-preflight artifacts/prior323
+  original_26_result_and_motion_boundaries:
+    needs: [exact_323_sha_proof_preflight]
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 42
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '0'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Embedded PDF extraction tools
+        run: |
+          if ! command -v pdftotext >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Download all 48 authenticated prior government original/source SHA results
+        uses: actions/download-artifact@v4
+        with:
+          repository: killjoy00/votepredict
+          run-id: 38783916630
+          github-token: ${{ github.token }}
+          pattern: senate-864-remaining323-embedded-*
+          path: artifacts/prior323
+          merge-multiple: true
+      - name: Independently refetch government original SHA and classify exact bounded motion contexts
+        run: |
+          node --import tsx scripts/audit-senate-864-26-embedded-original-motion-boundaries.ts \
+            --shard ${{ matrix.shard }} \
+            --artifact-dir artifacts/prior323 \
+            --output artifacts/results/26-embedded-original-motion-boundaries-${{ matrix.shard }}.json
+      - name: Preserve government source evidence and cue boundaries, never infer stored vote rows
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-26-embedded-original-motion-boundaries-${{ matrix.shard }}
+          path: artifacts/results/26-embedded-original-motion-boundaries-${{ matrix.shard }}.json
+          if-no-files-found: ignore
+          retention-days: 30
