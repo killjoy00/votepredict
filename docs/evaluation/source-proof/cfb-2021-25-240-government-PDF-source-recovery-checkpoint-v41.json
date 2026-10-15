@@ -1,0 +1,32 @@
+{
+  "schema": "cfb-864-830-indexed-830-government-PDF-downloads-813-distinct-v41",
+  "createdOn": "2026-10-15",
+  "earlierResearchPR1287Merged": true,
+  "originalV40Downloaded": 590,
+  "originalV40Distinct": 579,
+  "originalOfficialSourceWorkflowRunId": 38751927330,
+  "originalOfficialSourceJobId": 116480257433,
+  "source2021to24AdditionalGovPDFDownloads": 240,
+  "source2021to24AdditionalDistinctGovPDFFullBodies": 234,
+  "additionalSameRegisteredCommitteeIndexedVersionAliases": 6,
+  "governmentPDFSourceHolds": 0,
+  "sourceVersionYears": {
+    "2021": 18,
+    "2022": 115,
+    "2023": 44,
+    "2024": 63
+  },
+  "complete830IndexedVersions": 830,
+  "sourceDownloadedReportVersionRefs": 830,
+  "distinctCurrentGovernmentWholePDFSha256Binaries": 813,
+  "totalSameBinaryVersionAliases": 17,
+  "historicalIndependentExactReportPdfPublicByProven": 0,
+  "officialStatutoryOwedReportDenominator": null,
+  "originalFinancialContentsAndTransactionsReconciled": false,
+  "noRawPDFBodiesOrDonorRowsStored": true,
+  "noProtectedDBModelOrDeploymentChange": true,
+  "newSourceLedger": "docs/evaluation/source-proof/cfb-2021-25-240-new-government-PDF-source-retrieval-v41.psv",
+  "fullSourceLedger": "docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-830-downloaded-v41.psv",
+  "profileSourceJson": "data/cfb-senate-official-filings-2021-25-v41.json",
+  "originalIndependentReplayWorkflowRunId": null
+}
