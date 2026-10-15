@@ -1,0 +1,29 @@
+name: 'Senate #864 SHA-pinned nine unreconciled CFB PDF source hold audit V42'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-nine-original-report-holds-v42.mjs'
+      - 'tests/cfb-864-nine-original-report-holds-v42.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-nine-still-unverified-summary-secondary-gov-source-v42.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-nine-unresolved-PDF-review-checkpoint-v42.json'
+      - '.github/workflows/senate-864-nine-original-report-holds-audit-v42.yml'
+permissions:
+  contents: read
+jobs:
+  independently-reconstruct-held-official-report-PDF-sources:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned source proof test dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Reconstruct all nine still-unverified original government PDF receipts metadata with immutable source SHA
+        run: node --import tsx --test tests/cfb-864-nine-original-report-holds-v42.test.mjs
+      - name: Audit OCR-only uncertainty, identity provenance, no unexplained promotion
+        run: node --import tsx scripts/audit-cfb-864-nine-original-report-holds-v42.mjs
