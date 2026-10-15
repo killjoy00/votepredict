@@ -9,7 +9,14 @@ import {createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 const ORIGIN='https://register.cfb.mn.gov';
 const API=ORIGIN+'/reports-and-data/viewers/campaign-finance/candidates/api';
-const TARGETS=[{reg:'17140',segment:2022},{reg:'16311',segment:2022},{reg:'18730',segment:2022}];
+const TARGETS=[
+ {reg:'17140',segment:2022},{reg:'17929',segment:2022},
+ {reg:'18430',segment:2022},{reg:'18488',segment:2022},
+ {reg:'18004',segment:2022},{reg:'18730',segment:2022},
+ {reg:'16311',segment:2022},{reg:'16931',segment:2022},
+ {reg:'17347',segment:2022},{reg:'17994',segment:2024},
+ {reg:'17362',segment:2026}
+];
 function sha(value){return createHash('sha256').update(value).digest('hex')}
 function reason(error){const msg=error instanceof Error?error.message:String(error);if(/timeout|abort/i.test(msg))return 'timeout';if(/HTTP [45]/.test(msg))return 'government_http_hold';return 'official_tab_structural_hold';}
 function listTabs(body){
@@ -55,12 +62,27 @@ async function candidate(t){
        return {key:report?[report[1],report[3],report[4],report[5],report[6]].join(':'):null,
         rowDisplay: safe.slice(0,220).replace(/[\w.+%-]+@[\w.-]+/g,'[email removed]')};
     });
+   // Financial Summary is separate official candidate-year aggregate source.
+   // Extract only fixed public rollups, NEVER detailed contributors/payees.
+   const cells=text.replace(/&nbsp;|&#160;/gi,' ').replace(/&amp;/gi,'&')
+    .replace(/<[^>]*>/g,'\n').split(/\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);
+   const labels=new Set(['Most recent report through','Individuals contributions','Lobbyist contributions',
+    'Committee/fund contributions','Party unit contributions','Other contributions',
+    'Public subsidy payments','Loans payable income','Miscellaneous income','Total receipts',
+    'Total expenditures','Ending cash balance as of 12/31/2021','Ending cash balance as of 12/31/2022',
+    'Ending cash balance as of 12/31/2023','Ending cash balance as of 12/31/2025']);
+   const officialYears=[];let yearRecord=null;
+   for(let i=0;i<cells.length;i++){
+    const heading=cells[i].match(/^(20(?:21|22|23|25))\s*-\s*Election year$/i);
+    if(heading){yearRecord={year:Number(heading[1]),cells:{}};officialYears.push(yearRecord);continue;}
+    if(yearRecord&&labels.has(cells[i])&&cells[i+1])yearRecord.cells[cells[i]]=cells[i+1];
+   }
    const yearSummaryLines=[...text.matchAll(/<(?:tr|li|p)[^>]*>([\s\S]{0,1500}?)<\/(?:tr|li|p)>/gi)]
     .map(m=>m[1].replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim())
     .filter(x=>/cash|total receipts|total contributions|receipts|donations|contributions|financial summary/i.test(x))
     .slice(0,12).map(x=>x.slice(0,160).replace(/\b[A-Z][a-z]+ [A-Z][a-z]+\b/g,'[name removed]'));
    outcome.push({tab:tabname,http:200,hash:sha(data),bodyBytes:data.length,jsonKeys:Object.keys(json).slice(0,15),
-    headingColumns:headings,numberOfPDFReportRows:relevantRows.length,reportRows:relevantRows,
+    headingColumns:headings,officialYearSummaries:officialYears,numberOfPDFReportRows:relevantRows.length,reportRows:relevantRows,
     summaryPatternCount:yearSummaryLines.length,summaryPatternDescriptions:yearSummaryLines});
   }catch(e){outcome.push({tab:tabname,error:reason(e)})}
  }
