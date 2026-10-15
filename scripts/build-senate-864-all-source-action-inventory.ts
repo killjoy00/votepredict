@@ -12,6 +12,7 @@ import {dirname,resolve} from 'node:path';
 import {buildSenate864AllSourceActionInventory} from
  '../src/evidence/senate-864-all-source-action-inventory.js';
 const ROOT='docs/evaluation/source-proof/';
+let SOURCE_ONLY_STAGE='preflight';
 function args(){
  const a=process.argv.slice(2);
  if(a.length!==4||a[0]!=='--index-ledger'||a[2]!=='--output'||!a[1]||!a[3])
@@ -28,14 +29,21 @@ function load(path:string,max=6_000_000){
 }
 function main(){
  const {input,output}=args();
- const audit=buildSenate864AllSourceActionInventory({
-  indexed:load(input,11_000_000),
-  gaps:load(ROOT+'senate-864-2022-25-141-official-no-pdf-meeting-to-Clerk-crosswalk.json'),
-  first2023:load(ROOT+'senate-864-2023-64-no-lrl-pdf-to-senate-clerk-original-html-crosswalk.json'),
-  later2023:load(ROOT+'senate-864-2023-fifty-original-clerk-three-run-union-receipts.json'),
-  highGap:load(ROOT+'senate-864-three-high-gap-2024-25-original-source-receipts-v2.json'),
-  other:load(ROOT+'senate-864-2022-24-25-other-24-original-clerk-two-run-source-receipts.json')
- });
+ SOURCE_ONLY_STAGE='load-original-1592-index';
+ const indexed=load(input,11_000_000);
+ SOURCE_ONLY_STAGE='load-141-clerk-crosswalk';
+ const gaps=load(ROOT+'senate-864-2022-25-141-official-no-pdf-meeting-to-Clerk-crosswalk.json');
+ SOURCE_ONLY_STAGE='load-first-2023-clerk';
+ const first2023=load(ROOT+'senate-864-2023-64-no-lrl-pdf-to-senate-clerk-original-html-crosswalk.json');
+ SOURCE_ONLY_STAGE='load-2023-clerk-44';
+ const later2023=load(ROOT+'senate-864-2023-fifty-original-clerk-three-run-union-receipts.json');
+ SOURCE_ONLY_STAGE='load-2024-25-highgap';
+ const highGap=load(ROOT+'senate-864-three-high-gap-2024-25-original-source-receipts-v2.json');
+ SOURCE_ONLY_STAGE='load-other-24-clerk';
+ const other=load(ROOT+'senate-864-2022-24-25-other-24-original-clerk-two-run-source-receipts.json');
+ SOURCE_ONLY_STAGE='original-source-ledger-join';
+ const audit=buildSenate864AllSourceActionInventory({indexed,gaps,first2023,later2023,highGap,other});
+ SOURCE_ONLY_STAGE='output-sanitization';
  const text=JSON.stringify(audit,null,2)+'\n';
  if(text.length>4_000_000||/\b(?:sourceMemberName|normalized_member_name|membership_id|choiceIdentitySha256|postgresql:\/\/)\b/i.test(text))
   throw Error('Public original-source action audit must not contain individual member values or credentials');
@@ -52,7 +60,11 @@ try{main()}catch(error){
  const source=readFileSync('src/evidence/senate-864-all-source-action-inventory.ts','utf8');
  const labels=new Set([...source.matchAll(/throw Error\('([^']+)'\)/g)].map(m=>m[1]));
  const message=error instanceof Error?error.message:'';
- const safe=labels.has(message)?message.replaceAll(' ','_'):'unclassified_source_or_cli_failure';
- console.error('SENATE864_ALL_2022_25_ORIGINAL_ACTION_SOURCE_HOLD='+safe);
+ const fieldMatch=message.match(/^Cannot read properties of (?:undefined|null) \\(reading '([a-zA-Z][a-zA-Z0-9_]*)'\\)$/);
+ const safe=labels.has(message)?message.replaceAll(' ','_'):
+  fieldMatch?'missing_source_field_'+fieldMatch[1]:
+  error instanceof Error&&error.name==='SyntaxError'?'source_json_parse_syntax':
+  'unclassified_source_or_cli_failure';
+ console.error('SENATE864_ALL_2022_25_ORIGINAL_ACTION_SOURCE_HOLD='+safe+' stage='+SOURCE_ONLY_STAGE);
  process.exitCode=1;
 }
