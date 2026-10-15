@@ -1,0 +1,40 @@
+name: 'Senate #864 bounded CFB official PDF report summary and date examination V42'
+on:
+  pull_request:
+    paths:
+      - 'scripts/inspect-cfb-864-388-official-report-summary-and-date-v42.mjs'
+      - 'tests/cfb-864-388-original-source-report-contents-v42.test.mjs'
+      - '.github/workflows/senate-864-388-original-pdf-content-and-date-v42.yml'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-830-downloaded-v41.psv'
+      - 'scripts/audit-cfb-864-830-full-pdf-source-v41.mjs'
+permissions:
+  contents: read
+jobs:
+  original-government-pdf-report-content-review:
+    if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        phase: [unparsed-0, unparsed-1, unparsed-2, unparsed-3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned offline TS source verification dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Install public PDF text/layout tools and last-resort local OCR
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr
+          command -v pdftotext
+          command -v pdftoppm
+          command -v tesseract
+      - name: Audit exact report cohort, no raw PDF or donor rows
+        run: node --import tsx --test tests/cfb-864-388-original-source-report-contents-v42.test.mjs
+      - name: Verify and inspect original official CFB report PDF bytes, aggregate summaries and dates
+        run: node --import tsx scripts/inspect-cfb-864-388-official-report-summary-and-date-v42.mjs ${{ matrix.phase }}

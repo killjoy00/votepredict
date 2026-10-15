@@ -1,0 +1,30 @@
+name: 'Senate #864 independent 388 government PDF financial summaries and date proof V42'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-388-report-content-and-dates-v42.mjs'
+      - 'tests/cfb-864-388-report-content-audit-v42.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-388-report-level-summary-and-date-review-v42.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-92-original-to-official-latest-receipts-comparisons-v42.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-388-content-review-checkpoint-v42.json'
+      - '.github/workflows/senate-864-388-original-pdf-content-audit-v42.yml'
+permissions:
+  contents: read
+jobs:
+  independent-original-content-summary-reconstruction:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned historical source auditor dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Reconstruct 388 exact government PDF report-level summary sources and 92 actual original/latest report families
+        run: node --import tsx --test tests/cfb-864-388-report-content-audit-v42.test.mjs
+      - name: Independently verify government original PDF source joins, 379 receipt totals, 5 chronology conflicts and safe unknowns
+        run: node --import tsx scripts/audit-cfb-864-388-report-content-and-dates-v42.mjs

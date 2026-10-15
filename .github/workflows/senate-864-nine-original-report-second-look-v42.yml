@@ -1,0 +1,30 @@
+name: 'Senate #864 original government PDF secondary diagnostics for nine unresolved V42 cases'
+on:
+  pull_request:
+    paths:
+      - 'scripts/probe-cfb-864-nine-residual-original-pdfs-v42.mjs'
+      - 'tests/cfb-864-nine-original-pdf-secondary-review-v42.test.mjs'
+      - '.github/workflows/senate-864-nine-original-report-second-look-v42.yml'
+permissions:
+  contents: read
+jobs:
+  bounded-original-report-pdf-nine-held-source-diagnostics:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install source test dependencies and bounded PDF page analysis tools
+        run: |
+          npm ci --no-fund --no-audit
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr
+      - name: Verify immutable nine source IDs and original report SHA references
+        run: node --import tsx --test tests/cfb-864-nine-original-pdf-secondary-review-v42.test.mjs
+      - name: Examine at most twelve pages of original reports, fallback OCR first two pages without certifying OCR numbers
+        run: node --import tsx scripts/probe-cfb-864-nine-residual-original-pdfs-v42.mjs
