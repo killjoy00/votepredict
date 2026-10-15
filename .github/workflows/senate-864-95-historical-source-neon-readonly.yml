@@ -9,8 +9,15 @@ on:
       - scripts/verify-senate-864-95-historical-neon-sql-local.mjs
       - scripts/render-senate-864-95-historical-neon-audit-issue.mjs
       - tests/senate-864-95-historical-source-neon-readonly.test.mjs
-  issue_comment:
-    types: [created]
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-95-historical-source-neon-readonly.yml
+      - data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json
+      - src/evidence/senate-864-95-historical-source-neon-parity.mjs
+      - scripts/audit-senate-864-95-historical-source-neon-readonly.mjs
+      - scripts/verify-senate-864-95-historical-neon-sql-local.mjs
+      - scripts/render-senate-864-95-historical-neon-audit-issue.mjs
 permissions:
   contents: read
 concurrency:
@@ -76,13 +83,15 @@ jobs:
       - run: node --import tsx scripts/verify-senate-864-95-historical-neon-sql-local.mjs
   independent-presecret:
     if: >-
-      github.event_name == 'issue_comment' &&
+      github.event_name == 'push' &&
       github.repository == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      github.event.issue.number == 864 &&
-      github.event.comment.user.login == 'killjoy00' &&
-      github.event.comment.body == '[senate-864-95-historical-neon-readonly-20261015-v1]'
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true
     runs-on: ubuntu-latest
     timeout-minutes: 25
     services:
@@ -125,13 +134,15 @@ jobs:
     needs: [independent-presecret]
     if: >-
       needs.independent-presecret.result == 'success' &&
-      github.event_name == 'issue_comment' &&
+      github.event_name == 'push' &&
       github.repository == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      github.event.issue.number == 864 &&
-      github.event.comment.user.login == 'killjoy00' &&
-      github.event.comment.body == '[senate-864-95-historical-neon-readonly-20261015-v1]'
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 12
@@ -142,8 +153,7 @@ jobs:
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
       VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
-      VOTEPREDICT_864_95_APPROVAL: '[senate-864-95-historical-neon-readonly-20261015-v1]'
-      VOTEPREDICT_864_95_PRECI: ${{ needs.independent-presecret.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_95_AUTO_CI: ${{ needs.independent-presecret.result == 'success' && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -165,13 +175,15 @@ jobs:
     needs: [independent-presecret, protected-sql-readonly]
     if: >-
       always() &&
-      github.event_name == 'issue_comment' &&
+      github.event_name == 'push' &&
       github.repository == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      github.event.issue.number == 864 &&
-      github.event.comment.user.login == 'killjoy00' &&
-      github.event.comment.body == '[senate-864-95-historical-neon-readonly-20261015-v1]' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
       (needs.independent-presecret.result == 'failure' ||
        (needs.independent-presecret.result == 'success' &&
        (needs.protected-sql-readonly.result == 'success' ||
