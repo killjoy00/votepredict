@@ -41,8 +41,8 @@ test('2022 pre-primary and pre-general previously uncounted indexed original can
  assert.equal(historicalOfficialFilingContextForSenator('John Marty','house'),undefined);
  assert.equal(officialFilingStatusLabel('official_indexed_pdf_not_yet_retrieved'),'Listed by CFB; PDF not yet checked');
  const s=historicalOfficialFilingInventoryTotals();
- assert.equal(s.senators,95);assert.equal(s.versions,721);
- assert.equal(s.indexedVersionsAwaitingPdfDownload,240);
+ assert.equal(s.senators,95);assert.equal(s.versions,830);
+ assert.equal(s.indexedVersionsAwaitingPdfDownload,349);
  assert.equal(s.distinctDownloadedPdfBodies,476);
  assert.equal(s.downloadedVersions,480);
 });
