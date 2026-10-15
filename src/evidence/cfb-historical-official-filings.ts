@@ -1,4 +1,4 @@
-import source from '../../data/cfb-senate-official-filings-2021-25-v40.json';
+import source from '../../data/cfb-senate-official-filings-2021-25-v41.json';
 
 /**
  * Official indexed filing versions are usable historical CONTEXT even when a
@@ -42,6 +42,7 @@ export interface HistoricalOfficialFilingContext {
 const inventory = source as unknown as {
   schemaVersion: string;
   senators: HistoricalOfficialFilingContext[];
+  sourceVerifiedCounts: { distinctDownloadedPDFBodies: number };
 };
 
 // Exact official member spelling, punctuation and middle initials can vary by
@@ -98,7 +99,7 @@ export function historicalOfficialFilingInventoryTotals(): {
     versions: all.length,
     downloadedVersions: inventory.senators.reduce((n, s) => n + s.downloadedVersions, 0),
     readableVersions: all.filter(f => f.status === 'readable_official_pdf').length,
-    distinctDownloadedPdfBodies: 579, // 590 real downloaded versions, 11 same-binary indexed aliases; V40 pinned full PDF source audit
+    distinctDownloadedPdfBodies: inventory.sourceVerifiedCounts.distinctDownloadedPDFBodies, // Pinned 830-version/813-body source reconciliation V41
     unresolvedDocumentDetails: all.filter(f =>
       f.status === 'downloaded_pdf_details_unreadable_or_unresolved'
       || f.status === 'downloaded_pdf_report_date_conflict').length,
