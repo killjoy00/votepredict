@@ -1,0 +1,25 @@
+name: 'Senate #864 public CFB PDF source acquisition for 240 indexed 2021-24 versions V41'
+on:
+  pull_request:
+    paths:
+      - 'scripts/acquire-cfb-864-240-pending-government-pdf-bodies-v41.mjs'
+      - 'tests/cfb-864-240-pending-government-PDF-bodies-v41.test.mjs'
+      - '.github/workflows/senate-864-240-pending-government-pdf-source-v41.yml'
+permissions:
+  contents: read
+jobs:
+  inspect-and-fetch-240-official-government-PDF-bodies:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Offline immutable V40 reconciliation and official 240 source selection
+        run: node --test tests/cfb-864-240-pending-government-PDF-bodies-v41.test.mjs
+      - name: GET then POST full PDF sources, record SHA256 and bytes only; no PDF text or donors
+        run: node scripts/acquire-cfb-864-240-pending-government-pdf-bodies-v41.mjs
