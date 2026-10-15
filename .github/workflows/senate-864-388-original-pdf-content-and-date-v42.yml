@@ -12,6 +12,10 @@ permissions:
 jobs:
   original-government-pdf-report-content-review:
     if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        phase: [unparsed-0, unparsed-1, unparsed-2, unparsed-3]
     runs-on: ubuntu-latest
     timeout-minutes: 32
     steps:
@@ -33,4 +37,4 @@ jobs:
       - name: Audit exact report cohort, no raw PDF or donor rows
         run: node --import tsx --test tests/cfb-864-388-original-source-report-contents-v42.test.mjs
       - name: Verify and inspect original official CFB report PDF bytes, aggregate summaries and dates
-        run: node --import tsx scripts/inspect-cfb-864-388-official-report-summary-and-date-v42.mjs pilot
+        run: node --import tsx scripts/inspect-cfb-864-388-official-report-summary-and-date-v42.mjs ${{ matrix.phase }}
