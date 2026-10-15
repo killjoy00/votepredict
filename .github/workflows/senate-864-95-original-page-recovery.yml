@@ -4,6 +4,8 @@ on:
     paths:
       - .github/workflows/senate-864-95-original-page-recovery.yml
       - scripts/build-senate-864-95-missing-original-recovery-plan.mjs
+      - scripts/verify-senate-864-72-original-artifact-bytes.mjs
+      - tests/senate-864-72-original-artifact-bytes.test.mjs
       - tests/senate-864-95-missing-original-recovery-plan.test.mjs
       - src/evidence/senate-864-95-historical-source-neon-parity.mjs
       - data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json
@@ -12,6 +14,8 @@ on:
     paths:
       - .github/workflows/senate-864-95-original-page-recovery.yml
       - scripts/build-senate-864-95-missing-original-recovery-plan.mjs
+      - scripts/verify-senate-864-72-original-artifact-bytes.mjs
+      - tests/senate-864-72-original-artifact-bytes.test.mjs
       - tests/senate-864-95-missing-original-recovery-plan.test.mjs
 permissions:
   contents: read
@@ -40,5 +44,39 @@ jobs:
         with:
           name: senate-864-72-historical-original-page-provenance-plan-v1
           path: artifacts/senate-864-95-72-original-pages-acquisition-plan-v1.json
+          if-no-files-found: error
+          retention-days: 90
+
+  original-archive-bytes:
+    needs: [source-plan]
+    if: >-
+      needs.source-plan.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      (github.event_name == 'push' ||
+       github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Test exact archived bytes, CDX SHA1, capture and false-match holds
+        run: node --test tests/senate-864-72-original-artifact-bytes.test.mjs
+      - name: Reopen and independently rehash original historical site source artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/verify-senate-864-72-original-artifact-bytes.mjs
+      - uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-72-historical-source-original-bytes-cdx-verified-v1
+          path: artifacts/senate-864-95-72-original-pages-byte-verification-v1.json
           if-no-files-found: error
           retention-days: 90
