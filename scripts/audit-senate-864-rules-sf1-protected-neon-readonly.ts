@@ -21,7 +21,7 @@ const SOURCE='https://www.lrl.mn.gov/archive/minutes/senate/2023/rules/20230124/
 const PDF_SHA='a49a0b9d2abdb716118951de8706faf313463ff43f1ab0f16408326a52fb0379';
 const TEXT_SHA='2a6eb9aced550ed193b4329fd33cc0fa8c59fd447c9be170ccc34ac36ead3544';
 const PDF_BYTES=189421,DAY='2023-01-24';
-export const ONE_SHOT_MARKER='SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V6';
+export const ONE_SHOT_MARKER='SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V7';
 export const DOC_SQL=[
  'SELECT sd.id::text AS id,sd.source_url,sd.content_sha256,',
  "sd.metadata->>'meetingDate' AS meeting_date,",
