@@ -1,0 +1,51 @@
+name: '#864 Jan 24 2023 Rules original two source-named roll votes (source only)'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-2023-rules-jan24-original-rolls.ts
+      - scripts/audit-senate-864-2023-jan24-rules-original-named-rolls.ts
+      - tests/senate-864-2023-rules-jan24-original-rolls.test.ts
+      - .github/workflows/senate-864-2023-rules-jan24-original-two-named-rolls.yml
+permissions:
+  contents: read
+jobs:
+  original_2023_rules_two_missed_rolls:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Source-only printed member-side original grammar fixtures, SHA/day/committee guards
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-2023-rules-jan24-original-rolls.test.ts
+      - name: Original PDF parser availability (embedded and OCR only if needed)
+        run: |
+          if ! command -v tesseract >/dev/null || ! command -v pdftoppm >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - name: Independently retrieve EXACT original 2023 Rules Minutes PDF, authenticate raw SHA and separate two original motions with printed named choices
+        run: |
+          node --import tsx scripts/audit-senate-864-2023-jan24-rules-original-named-rolls.ts \
+            --output artifacts/senate-864-2023-jan24-rules-two-original-named-rolls.json
+      - name: Preserve sanitized original source vote proof without senator names or database IDs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-2023-jan24-rules-original-two-distinct-named-rolls
+          path: artifacts/senate-864-2023-jan24-rules-two-original-named-rolls.json
+          if-no-files-found: ignore
+          retention-days: 30
