@@ -1,0 +1,40 @@
+name: '#864 exact 14 missing original written Minutes and 2021/2022 print source boundary'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-fourteen-written-minute-source-holds.ts
+      - tests/senate-864-fourteen-written-minute-source-holds.test.ts
+      - docs/evaluation/senate-864-fourteen-remaining-written-minute-source-dates.md
+      - docs/evaluation/source-proof/senate-864-2022-25-141-official-no-pdf-meeting-to-Clerk-crosswalk.json
+      - docs/evaluation/source-proof/senate-864-2022-25-eight-alternate-lrl-original-pdf-sha-receipts.json
+      - docs/evaluation/source-proof/senate-864-eleven-original-same-day-LRL-minutes-recovery.json
+      - .github/workflows/senate-864-exact14-written-minute-gaps.yml
+permissions:
+  contents: read
+jobs:
+  immutable_public_original_source_crosswalk:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Exact source proof denominator, printed-minute 2021/2022 UNKNOWN status and no absent-vote inference
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-fourteen-written-minute-source-holds.test.ts
+          node --import tsx --test tests/senate-864-eleven-original-printed-minutes-overlay.test.ts
+      - name: Deny database writes and action attribution from incomplete original written minute sources
+        run: |
+          if grep -Eq 'INSERT INTO|ON CONFLICT DO UPDATE|UPDATE vote_events|DATABASE_URL|NEON_API_KEY' src/evidence/senate-864-fourteen-written-minute-source-holds.ts; then
+            exit 1
+          fi
