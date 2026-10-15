@@ -101,6 +101,11 @@ test('invalid original sides and unbounded stored rows refuse source-to-database
 });
 test('protected SQL has five bounded SELECTs only and gate requires reviewed main SHA',()=>{
  assert.equal(READ_ONLY_QUERIES.length,5);
+ // Reject an accidental full-day Senate-floor choice scan: choice rows must
+ // have the same exact bounded committee-event predicate as EVENT_SQL.
+ assert.match(READ_ONLY_QUERIES[1]!,/committeeVote/);
+ assert.match(READ_ONLY_QUERIES[2]!,/committeeVote/);
+ assert.match(READ_ONLY_QUERIES[2]!,/sd\.source_url=\$2 OR sd\.content_sha256=\$3/);
  for(const s of READ_ONLY_QUERIES){
   assert.ok(s.startsWith('SELECT '));
   assert.match(s,/LIMIT [0-9]+/);
@@ -122,6 +127,7 @@ test('protected SQL has five bounded SELECTs only and gate requires reviewed mai
  }
  assert.match(ONE_SHOT_MARKER,/SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT/);
  const script=readFileSync('scripts/audit-senate-864-rules-sf1-protected-neon-readonly.ts','utf8');
+ assert.match(script,/client\.query\(CHOICE_SQL,\[DAY,SOURCE,PDF_SHA\]\)/);
  assert.match(script,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/);
  assert.match(script,/default_transaction_read_only=on/);
  assert.match(script,/await client\.query\('ROLLBACK'\)/);
