@@ -1,5 +1,6 @@
 import source from '../../data/cfb-senate-official-filings-2021-25-v41.json';
 import userReview from '../../data/cfb-2021-25-nine-five-review-dispositions-v45.json';
+import dateEstimates from '../../data/cfb-2021-25-830-estimated-availability-v46.json';
 
 /**
  * Official indexed filing versions are usable historical CONTEXT even when a
@@ -31,7 +32,22 @@ export interface HistoricalOfficialFilingReview {
   originalReportedPeriodEndOn?: string;
 }
 
+export interface HistoricalOfficialFilingDateEstimate {
+  id: string;
+  estimatedAvailableOn: string;
+  boardReceivedOnOriginal: string | null;
+  releaseFloorOn: string;
+  websiteObservedByOn: string;
+  method: 'pdf_board_stamp_with_statutory_floor'
+    | 'identical_full_pdf_sha_stamp_inferred'
+    | 'scheduled_release_assuming_filed_on_time'
+    | 'first_observed_official_site_copy';
+  confidence: string;
+  independentlyProvenHistoricalExactVersionPublicBy: false;
+}
+
 export interface HistoricalOfficialFiling {
+  availability?: HistoricalOfficialFilingDateEstimate;
   review?: HistoricalOfficialFilingReview;
   id: string;
   year: number;
@@ -89,6 +105,22 @@ for (const resolution of reviewedRows) {
 if (reviewedRows.length !== 14 || reviewByFilingId.size !== 14) {
   throw new Error('V45 owner-reviewed government source subset incomplete');
 }
+// Practical day-level estimates use the Board PDF receipt stamp, statute's
+// public-release floor, identical-file provenance, or actual website observation.
+// They DO NOT enter historical time-travel eligibility or train predictions.
+const dateRows = dateEstimates.records as unknown as HistoricalOfficialFilingDateEstimate[];
+const availableByFilingId = new Map<string, HistoricalOfficialFilingDateEstimate>();
+for (const item of dateRows) {
+  if (availableByFilingId.has(item.id) || !byFilingId.has(item.id)
+    || !/^\d{4}-\d{2}-\d{2}$/.test(item.estimatedAvailableOn)
+    || item.independentlyProvenHistoricalExactVersionPublicBy !== false) {
+    throw new Error('CFB dated version must match exactly one original indexed government document');
+  }
+  availableByFilingId.set(item.id, item);
+}
+if (dateRows.length !== 830 || availableByFilingId.size !== 830) {
+  throw new Error('Every original CFB report version must have one estimated availability date');
+}
 const reviewedInventory: HistoricalOfficialFilingContext[] = inventory.senators.map(member => ({
   ...member,
   filings: member.filings.map(filing => ({
@@ -96,6 +128,7 @@ const reviewedInventory: HistoricalOfficialFilingContext[] = inventory.senators.
     ...(reviewByFilingId.has(filing.id)
       ? { review: reviewByFilingId.get(filing.id) }
       : {}),
+    availability: availableByFilingId.get(filing.id),
   })),
 }));
 const byName = new Map(reviewedInventory.map(member => [nameKey(member.name), member]));
@@ -174,6 +207,28 @@ export function officialFilingReviewLabel(filing: HistoricalOfficialFiling): str
     case 'later_of_printed_stamp_or_period_end_used_for_review':
       return `Review date: ${review.effectiveReviewOn} (later printed date; original Board stamp ${review.originalPrintedBoardReceivedOn} retained)`;
   }
+}
+
+/**
+ * Estimated availability is not a confirmed historical publication timestamp.
+ * The label deliberately distinguishes legal/scheduled inference from a CFB
+ * date and a contemporary website observation.
+ */
+export function officialFilingEstimatedAvailabilityLabel(filing: HistoricalOfficialFiling): string | undefined {
+  const estimate = filing.availability;
+  if (!estimate) return undefined;
+  const basis: Record<HistoricalOfficialFilingDateEstimate['method'], string> = {
+    pdf_board_stamp_with_statutory_floor: 'Board receipt and release rule',
+    identical_full_pdf_sha_stamp_inferred: 'same PDF as dated version',
+    scheduled_release_assuming_filed_on_time: 'report due date; assumed on-time',
+    first_observed_official_site_copy: 'first confirmed website observation',
+  };
+  const date = new Date(estimate.estimatedAvailableOn + 'T12:00:00Z');
+  if (Number.isNaN(date.getTime())) return undefined;
+  const formatted = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC',
+  }).format(date);
+  return `Estimated available ${formatted} · ${basis[estimate.method]}`;
 }
 
 export function officialFilingStatusLabel(status: HistoricalOfficialFilingStatus): string {

@@ -1,0 +1,30 @@
+name: 'Senate #864 all 830 CFB report versions dated with practical source and release floors V46'
+on:
+  pull_request:
+    paths:
+      - 'data/cfb-2021-25-830-estimated-availability-v46.json'
+      - 'src/evidence/cfb-historical-official-filings.ts'
+      - 'src/app/dashboard/legislators/[legislatorId]/page.tsx'
+      - 'scripts/audit-cfb-864-830-dated-availability-v46.mjs'
+      - 'tests/cfb-864-830-dated-availability-v46.test.mjs'
+      - '.github/workflows/senate-864-830-dated-availability-v46.yml'
+permissions:
+  contents: read
+jobs:
+  independently-reconstruct-830-official-dated-documents:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned immutable source-test dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify all 830 dates, exact 807 printed stamps, 13 aliases, six scheduled and four website fallback sources
+        run: node --import tsx --test tests/cfb-864-830-dated-availability-v46.test.mjs
+      - name: Replay first-party PDF and 2022/2026 public legal-release calendars on every date
+        run: node --import tsx scripts/audit-cfb-864-830-dated-availability-v46.mjs

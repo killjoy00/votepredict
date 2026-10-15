@@ -4,7 +4,7 @@ import { requireOwner } from '@/lib/auth/guard';
 import { loadLegislatorGamblingSummary } from '@/gambling/intelligence';
 import { loadLegislatorIssueSummaries } from '@/legislators/issue-summary';
 import { loadLegislatorProfile } from '@/legislators/profile';
-import { officialFilingDisplayTitle, officialFilingStatusLabel, officialFilingReviewLabel } from '@/evidence/cfb-historical-official-filings';
+import { officialFilingDisplayTitle, officialFilingStatusLabel, officialFilingReviewLabel, officialFilingEstimatedAvailabilityLabel } from '@/evidence/cfb-historical-official-filings';
 import gamblingStyles from './gambling-summary.module.css';
 import issueStyles from './issue-summary.module.css';
 import styles from '../legislators.module.css';
@@ -397,7 +397,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                   {' '}({historicalFilings.originalVersions} original reports and {historicalFilings.amendedVersions} amendments)
                   for this senator's committee. {historicalFilings.downloadedVersions} report-version PDFs have been retrieved.
                   {historicalFilings.downloadedVersions === historicalFilings.observedVersions
-                    ? ' Every currently indexed version has an official PDF source; its financial contents and historical public date are not necessarily verified.'
+                    ? ' Every currently indexed version has an official PDF source and an estimated availability date. Dates use Board receipt/release rules and website evidence, not a verified exact historical publication time.'
                     : ' Other indexed versions remain linked to CFB, even when a PDF is not yet retrievable.'}
                   {historicalFilings.officialNameLink === 'documented_official_name_variant'
                     ? ' The CFB uses a longer or shorter version of the senator’s name.'
@@ -408,6 +408,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                     <div className={styles.financeItem} key={filing.id}>
                       <strong>{officialFilingDisplayTitle(filing)}</strong>
                       <span>{officialFilingReviewLabel(filing) ?? officialFilingStatusLabel(filing.status)}</span>
+                          <span>{officialFilingEstimatedAvailabilityLabel(filing)}</span>
                       <a href={filing.url} target="_blank" rel="noreferrer" className={styles.sourceLink}>Open CFB filing ↗</a>
                     </div>
                   ))}
@@ -420,6 +421,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                         <div className={styles.financeItem} key={filing.id}>
                           <strong>{officialFilingDisplayTitle(filing)}</strong>
                           <span>{officialFilingReviewLabel(filing) ?? officialFilingStatusLabel(filing.status)}</span>
+                          <span>{officialFilingEstimatedAvailabilityLabel(filing)}</span>
                           <a href={filing.url} target="_blank" rel="noreferrer" className={styles.sourceLink}>Open CFB filing ↗</a>
                         </div>
                       ))}
@@ -434,7 +436,8 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                   separate versions, not extra contributions to add together. The report year alone does
                   not establish when a particular version was public, or whether every required filing is here.
                   Where Board-stamped dates conflict, the later printed date is used only
-                  for research review; the original stamp and historical public-by remain unchanged.
+                  for research review; the original stamp and historical public-by remain unchanged. Estimated available dates are day-level context,
+                  respect report disclosure rules, and never silently rewrite existing stored prediction eligibility.
                 </p>
               </>
             ) : (
