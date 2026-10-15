@@ -299,10 +299,14 @@ test('SF1 office-role corrections reject wrong senator, wrong office, different 
   ...r,memberVotes:r.memberVotes.map((v,i)=>i===0?
    {...v,sourceName:'Dziedzic, Chair',normalizedName:'dziedzic chair'}:v)
  }))};
+ const copy={...rosterWithOffices[0]!,
+  membershipId:'dddddddd-cccc-bbbb-aaaa-000000000011',
+  legislatorId:'eeeeeeee-dddd-cccc-bbbb-000000000011'};
  const rs=compareRulesOriginalToStored(rolls,{
-  ...db(),historicalRoster:rosterWithOffices});
+  ...db(),historicalRoster:[...rosterWithOffices,copy]});
  assert.equal(rs.holds,2);
- assert.ok(rs.perMotionHistoricalNameResolution.every(x=>x.matched===9&&x.unmatched===1));
+ assert.ok(rs.perMotionHistoricalNameResolution.every(x=>
+  x.matched===9&&x.ambiguous===1));
 });
 test('invalid original sides and unbounded stored rows refuse source-to-database declaration',()=>{
  assert.equal(validateOriginalRulesSF1({
