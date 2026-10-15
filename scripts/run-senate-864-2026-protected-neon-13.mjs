@@ -9,7 +9,7 @@ import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {Pool} from 'pg';
-import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
+import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.ts';
 import {APPLY_COMMENT} from '../src/evidence/senate-864-2026-verified-positions.mjs';
 import {requireReviewedOwnerApply,reconcileVerifiedStatements} from './reconcile-senate-864-2026-verified-positions.mjs';
 
