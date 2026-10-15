@@ -45,8 +45,8 @@ test('source profile exposes original and updated 2025 amendment viewer records 
  assert.ok(c?.filings.some(f=>f.id==='16246:25:pcc:YE:0:3'&&f.kind==='amended'));
  const t=historicalOfficialFilingInventoryTotals();
  assert.equal(t.senators,95);assert.equal(t.versions,830);
- assert.equal(t.downloadedVersions,590);assert.equal(t.distinctDownloadedPdfBodies,579);
- assert.equal(t.indexedVersionsAwaitingPdfDownload,240);
+ assert.equal(t.downloadedVersions,830);assert.equal(t.distinctDownloadedPdfBodies,813);
+ assert.equal(t.indexedVersionsAwaitingPdfDownload,0);
  assert.equal(officialFilingStatusLabel('official_indexed_pdf_not_yet_retrieved'),'Listed by CFB; PDF not yet checked');
  const ui=readFileSync('src/app/dashboard/legislators/[legislatorId]/page.tsx','utf8');
  assert.match(ui,/Show \{historicalFilings\.observedVersions - 8\} earlier indexed versions/);
