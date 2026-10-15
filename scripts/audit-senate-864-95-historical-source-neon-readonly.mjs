@@ -13,6 +13,9 @@ import {
  compareHistoric95,validatePublicReport
 } from '../src/evidence/senate-864-95-historical-source-neon-parity.mjs';
 
+import {compareOriginalArchiveUrlV2,originalSiteVariants,validateV2Report}
+ from '../src/evidence/senate-864-95-original-archive-url-diagnostics.mjs';
+
 export const PUBLIC95='data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json';
 export const ROSTER_SQL=[
  'SELECT l.id::text AS "legislatorId",l.name::text AS name,',
@@ -40,6 +43,47 @@ export const CAMPAIGN_SQL=[
  "AND ei.metadata->>'sourceSubtype'='campaign_site_page'",
  'ORDER BY ei.id LIMIT 8501'
 ].join(' ');
+/** V2: selected historical member-linked sources across ALL relevant source families;
+ * subtype-filtered V1 results alone cannot locate Wayback metadata/original URLs.
+ * Never use these raw values outside the protected runner.
+ */
+export const SOURCE_CLASS_SQL=[
+ 'SELECT ei.membership_id::text AS "membershipId",',
+ 'sd.id::text AS "sourceDocumentId",',
+ 'sd.source_url::text AS "sourceUrl",sd.source_kind::text AS "sourceKind",',
+ 'sd.content_sha256::text AS "contentSha256",',
+ "sd.metadata->>'originalUrl' AS \"storedOriginalUrl\",",
+ "ei.metadata->>'originalUrl' AS \"evidenceOriginalUrl\",",
+ "ei.metadata->>'archiveUrl' AS \"evidenceArchiveUrl\",",
+ "ei.metadata->>'sourceSubtype' AS \"sourceSubtype\",",
+ "ei.metadata->>'contextType' AS \"contextType\",",
+ 'ei.published_at::text AS "publishedAt"',
+ 'FROM evidence_items ei JOIN source_documents sd ON sd.id=ei.source_document_id',
+ 'JOIN memberships m ON m.id=ei.membership_id',
+ 'JOIN chambers c ON c.id=m.chamber_id',
+ 'JOIN legislative_sessions s ON s.id=m.session_id',
+ "WHERE c.slug='senate' AND s.slug IN ('2021-2022','2023-2024','2025-2026')",
+ "AND (sd.source_kind IN ('wayback_campaign_site','campaign_site','campaign_site_registry',",
+ "'wayback_member_primary','member_primary_article','member_primary_registry',",
+ "'senate_member_primary_historical_article','public_news_article','wayback_local_trade_news')",
+ "OR ei.metadata->>'contextType'='issue_position'",
+ "OR sd.metadata ? 'originalUrl' OR ei.metadata ? 'originalUrl')",
+ 'ORDER BY ei.id LIMIT 30001'
+].join(' ');
+/** Source documents containing exact original URL aliases may have NO evidence
+ * member linkage; count them separately, never certify them as a member match.
+ */
+export const GLOBAL_SOURCE_CLASS_SQL=[
+ 'SELECT sd.id::text AS "sourceDocumentId",',
+ 'sd.source_url::text AS "sourceUrl",',
+ 'sd.source_kind::text AS "sourceKind",',
+ 'sd.content_sha256::text AS "contentSha256",',
+ "sd.metadata->>'originalUrl' AS \"storedOriginalUrl\"",
+ 'FROM source_documents sd',
+ "WHERE sd.source_url=ANY($1::text[]) OR sd.metadata->>'originalUrl'=ANY($1::text[])",
+ 'ORDER BY sd.id LIMIT 2001'
+].join(' ');
+
 export const PRIMARY_SQL=[
  'SELECT ei.membership_id::text AS "membershipId",',
  'count(*)::integer AS rows',
@@ -125,9 +169,21 @@ export async function auditHistorical95(
    onPhase('member_primary_article_counts_read_in_memory');
    const report=compareHistoric95(publicInputs.manifest,publicInputs.research,
      roster.rows,campaign.rows,primary.rows);
+   const sources=await client.query(SOURCE_CLASS_SQL);
+   if(sources.rows.length>=30001)throw Error('Bounded historical cross-family source rows truncated');
+   onPhase('cross_source_kind_archived_urls_in_memory');
+   const publicVariants=[...new Set(publicInputs.research.pages.flat()
+     .flatMap(p=>originalSiteVariants(p.url)))];
+   if(publicVariants.length<1||publicVariants.length>1100)
+    throw Error('Bounded original-page public URL variants invalid');
+   const globalDocs=await client.query(GLOBAL_SOURCE_CLASS_SQL,[publicVariants]);
+   if(globalDocs.rows.length>=2001)throw Error('Bounded independent source-document lookup truncated');
+   onPhase('independent_archived_original_metadata_checked');
+   const diag=compareOriginalArchiveUrlV2(publicInputs.manifest,publicInputs.research,
+     roster.rows,sources.rows,globalDocs.rows);
    await client.query('ROLLBACK');begun=false;
    onPhase('explicit_readonly_transaction_rollback_complete');
-   return validatePublicReport(report,publicInputs.manifest);
+   return {report:validatePublicReport(report,publicInputs.manifest),diag:validateV2Report(diag)};
   }finally{
    if(begun){try{await client.query('ROLLBACK')}catch{/*do not disclose SQL*/}}
    client.release(true);
@@ -142,16 +198,20 @@ export async function main(){
   const event=JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH||'','utf8'));
   validateMainPushEvent(process.env,event);
   phase='protected_existing_neon_sql';
-  const report=await auditHistorical95({
+  const result=await auditHistorical95({
    apiKey:process.env.NEON_API_KEY?.trim()||'',
    projectId:process.env.VOTEPREDICT_NEON_PROJECT_ID?.trim()||'',
    preferredDatabase:process.env.VOTEPREDICT_MEDIA_EXISTING_DATABASE?.trim()||undefined
   },inputs,discoverExistingVotePredictNeonConnection,options=>new Pool(options),p=>{phase=p});
-  const payload=Buffer.from(JSON.stringify(report),'utf8').toString('base64');
-  if(payload.length>115000)throw Error('Aggregate report exceeded safe output size');
-  if(process.env.GITHUB_OUTPUT)
+  const payload=Buffer.from(JSON.stringify(result.report),'utf8').toString('base64');
+  const v2=Buffer.from(JSON.stringify(result.diag),'utf8').toString('base64');
+  if(payload.length>115000||v2.length>65000)
+    throw Error('Protected ordinal-only report exceeded safe output size');
+  if(process.env.GITHUB_OUTPUT) {
    appendFileSync(process.env.GITHUB_OUTPUT,'safe_95_b64='+payload+'\n');
-  console.log('SENATE_864_95_PROTECTED_READONLY_AUDIT_ROLLBACK_SUCCESS; 95 ordinal aggregate rows only; no private details output');
+   appendFileSync(process.env.GITHUB_OUTPUT,'safe_95_v2_b64='+v2+'\n');
+  }
+  console.log('SENATE_864_95_PROTECTED_READONLY_V2_ARCHIVE_URL_CLASSIFICATION_ROLLBACK_SUCCESS; only aggregate ordinal rows, no private source metadata output');
  }catch{
   console.error('SENATE_864_95_PROTECTED_HOLD phase='+(/^[a-z_]{1,90}$/.test(phase)?phase:'safe_gate'));
   if(process.env.GITHUB_OUTPUT&&/^[a-z_]{1,90}$/.test(phase))
