@@ -1,7 +1,6 @@
 /** #864. Pure bounded public-95 / private-in-memory source parity comparison.
  * Never serialize private legislator ids, memberships, URLs, source hashes or excerpts.
  */
-export const OWNER_MARKER='[senate-864-95-historical-neon-readonly-20261015-v1]';
 export const SOURCE_LEDGER_FILES=[
  'senate-second20-15-original-serving-senators-issue-excerpts-v1',
  'senate-capture-dated-original-2020-22-campaign-issue-excerpts-v1',
