@@ -107,13 +107,22 @@ export function selectExactFlagged26FromAll323(input:Report[],manifest:ProofMani
   .sort((a,b)=>a.year-b.year||a.hearingDate.localeCompare(b.hearingDate)||
    a.committeeName.localeCompare(b.committeeName)||a.originalSourceUrl.localeCompare(b.originalSourceUrl));
  const formal=flagged.filter(x=>x.explicitRecordedMotionResultCues>0);
+ const flaggedByYear=years.map(y=>flagged.filter(v=>v.year===y).length);
+ const formalByYear=years.map(y=>formal.filter(v=>v.year===y).length);
+ const invalidParserNumbers=flagged.filter(x=>
+  x.currentParserNamedRollCandidates<0||
+  x.currentParserCountOnlyRollCandidates<0||
+  x.currentParserContextActionCandidates<0).length;
  if(flagged.length!==26||formal.length!==17||
-  years.map(y=>flagged.filter(v=>v.year===y).length).join(',')!=='6,6,3,11'||
-  years.map(y=>formal.filter(v=>v.year===y).length).join(',')!=='3,3,1,10'||
-  flagged.some(x=>x.currentParserNamedRollCandidates<0||
-   x.currentParserCountOnlyRollCandidates<0||
-   x.currentParserContextActionCandidates<0))
+  flaggedByYear.join(',')!=='6,6,3,11'||
+  formalByYear.join(',')!=='3,3,1,10'||
+  invalidParserNumbers>0){
+  console.log('SENATE864_26_ONLY_SAFE_REVIEW_COUNTS='+JSON.stringify({
+   flagged:flagged.length,formalDocuments:formal.length,
+   flaggedByYear,formalByYear,invalidParserNumbers
+  }));
   throw Error('26 flagged and 17 formal source review denominator drift');
+ }
  return flagged;
 }
 function reports(dir:string){
