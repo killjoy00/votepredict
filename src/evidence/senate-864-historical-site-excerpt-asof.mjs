@@ -175,6 +175,6 @@ export function websiteExcerptPlan(manifest,docs,knownOriginals=[]){
   sourcePagesIndexed:[...indexSha.keys()].length,ready,holds,holdCounts:status};
 }
 export function observedBeforeVote(archiveCapturedAt,voteAt){
- const a=stamp(archiveCapturedAt),v=stamp(voteAt);
- return Boolean(a&&v&&Date.parse(a)<Date.parse(v));
+ const a=stamp(archiveCapturedAt),v=Date.parse(voteAt);
+ return Boolean(a&&Number.isFinite(v)&&v<Date.UTC(2100,0,1)&&Date.parse(a)<v);
 }
