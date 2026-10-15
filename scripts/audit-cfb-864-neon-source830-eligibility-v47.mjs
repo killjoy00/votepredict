@@ -23,10 +23,10 @@ export function assertProtectedReadOnlyScope(e){
   throw Error('Only first-attempt independently verified main-commit read-only audit may access Neon');
 }
 export async function auditExistingNeonCfbFinance(
- input,{discover=discoverExistingVotePredictNeonConnection,connect=options=>new Pool(options),now='2026-10-15'}={}
+ input,{discover=discoverExistingVotePredictNeonConnection,connect=options=>new Pool(options),now='2026-10-15',onPhase=()=>{}}={}
 ){
- const source=source830();
- const target=await discover(input);
+ const source=source830();onPhase('source_830_authenticated');
+ const target=await discover(input);onPhase('existing_neon_default_branch_verified');
  const pool=connect({
   host:target.host,port:target.port,user:target.role,password:target.password,
   database:target.database,ssl:{rejectUnauthorized:true},max:1,
@@ -39,6 +39,7 @@ export async function auditExistingNeonCfbFinance(
   const client=await pool.connect();connection=true;
   try{
    await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
+   onPhase('read_only_repeatable_read_started');
    transaction=true;current='read_only_transaction_begun';
    const identity=await client.query(
     "SELECT current_database() AS db,current_user AS role,current_setting('transaction_read_only') AS ro"
@@ -46,17 +47,17 @@ export async function auditExistingNeonCfbFinance(
    if(identity.rows.length!==1||identity.rows[0].db!==target.database
     ||identity.rows[0].role!==target.role||identity.rows[0].ro!=='on')
     throw Error('Expected existing Neon database or read-only transaction identity missing');
-   current='sql_identity_verified';
+   current='sql_identity_verified';onPhase(current);
    const results={};
    for(const [name,sql] of Object.entries(QUERIES)){
-    current='query_'+name;
+    current='query_'+name;onPhase(current);
     const params=sql.includes('$1::jsonb')?[JSON.stringify(source)]:[];
     const r=await client.query(sql,params);
     results[name]=safeCounts(name,r.rows);
    }
-   current='aggregate_queries_validated';
+   current='aggregate_queries_validated';onPhase(current);
    await client.query('ROLLBACK');transaction=false;
-   current='explicit_rollback_completed';
+   current='explicit_rollback_completed';onPhase(current);
    return{
     schema:SCHEMA,issue:864,reportAsOf:now,
     sourceIndexedPdfVersions:source.length,sourceOriginalPdfBodies:813,
@@ -87,7 +88,7 @@ async function main(){
    apiKey:process.env.NEON_API_KEY?.trim()??'',
    projectId:process.env.VOTEPREDICT_NEON_PROJECT_ID?.trim()??'',
    preferredDatabase:process.env.VOTEPREDICT_MEDIA_EXISTING_DATABASE?.trim()||undefined
-  });
+  },{onPhase:value=>{status=value}});
   status='readonly_neon_census_complete';
   const safe=JSON.stringify(response);
   if(safe.length>30000)throw Error('Oversized protected sanitized aggregate');
@@ -97,6 +98,8 @@ async function main(){
  }catch{
   // Never print PostgreSQL errors, source rows, SQL parameters or project IDs.
   console.error('CFB_864_V47_READONLY_HELD_AT='+status);
+  if(process.env.GITHUB_OUTPUT&&/^[a-z_0-9]{1,70}$/.test(status))
+   appendFileSync(process.env.GITHUB_OUTPUT,'held_phase='+status+'\n');
   process.exitCode=1;
  }
 }
