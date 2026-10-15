@@ -19,7 +19,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install pinned TypeScript loader for inherited historical source checks
+        run: npm ci --no-fund --no-audit
       - name: Offline immutable V40 reconciliation and official 240 source selection
-        run: node --test tests/cfb-864-240-pending-government-PDF-bodies-v41.test.mjs
+        run: node --import tsx --test tests/cfb-864-240-pending-government-PDF-bodies-v41.test.mjs
       - name: GET then POST full PDF sources, record SHA256 and bytes only; no PDF text or donors
-        run: node scripts/acquire-cfb-864-240-pending-government-pdf-bodies-v41.mjs
+        run: node --import tsx scripts/acquire-cfb-864-240-pending-government-pdf-bodies-v41.mjs
