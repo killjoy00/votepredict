@@ -395,8 +395,10 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 <p className={styles.note}>
                   The Campaign Finance Board lists {historicalFilings.observedVersions} filing versions
                   {' '}({historicalFilings.originalVersions} original reports and {historicalFilings.amendedVersions} amendments)
-                  for this senator's committee. {historicalFilings.downloadedVersions} report-version PDFs have been retrieved;
-                  the others are linked to their official CFB filing pages but haven't been downloaded yet.
+                  for this senator's committee. {historicalFilings.downloadedVersions} report-version PDFs have been retrieved.
+                  {historicalFilings.downloadedVersions === historicalFilings.observedVersions
+                    ? ' Every currently indexed version has an official PDF source; its financial contents and historical public date are not necessarily verified.'
+                    : ' Other indexed versions remain linked to CFB, even when a PDF is not yet retrievable.'}
                   {historicalFilings.officialNameLink === 'documented_official_name_variant'
                     ? ' The CFB uses a longer or shorter version of the senator’s name.'
                     : ''}

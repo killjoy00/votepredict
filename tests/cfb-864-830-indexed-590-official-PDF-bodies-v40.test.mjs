@@ -41,9 +41,9 @@ test('2025 indexed YE 109 signed original PDFs include real body aliases and nev
  assert.equal(marty?.filings.find(x=>x.id==='11880:25:pcc:YE:0:0')?.status,'official_pdf_downloaded_unparsed');
  const totals=historicalOfficialFilingInventoryTotals();
  assert.equal(totals.senators,95);assert.equal(totals.versions,830);
- assert.equal(totals.downloadedVersions,590);
- assert.equal(totals.distinctDownloadedPdfBodies,579);
- assert.equal(totals.indexedVersionsAwaitingPdfDownload,240);
+ assert.equal(totals.downloadedVersions,830);
+ assert.equal(totals.distinctDownloadedPdfBodies,813);
+ assert.equal(totals.indexedVersionsAwaitingPdfDownload,0);
 });
 test('no novel historical publication times, legally owed filing counts, transaction parity or VotePredict production/forecast data changes',()=>{
  assert.equal(result.historicalExactlyDated2021to25PdfPublicByProven,0);

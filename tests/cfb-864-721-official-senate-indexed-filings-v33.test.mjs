@@ -36,15 +36,15 @@ test('indexed existence is counted without inventing a PDF acquisition, public-b
 });
 test('2022 pre-primary and pre-general previously uncounted indexed original candidate reports are accessible from senator source profiles',()=>{
  const marty=historicalOfficialFilingContextForSenator('John Marty','senate');
- assert.ok(marty?.filings.some(x=>x.id==='11880:22:pcc:C:0:0'&&x.status==='official_indexed_pdf_not_yet_retrieved'));
- assert.ok(marty?.filings.some(x=>x.id==='11880:22:pcc:E:0:0'&&x.status==='official_indexed_pdf_not_yet_retrieved'));
+ assert.ok(marty?.filings.some(x=>x.id==='11880:22:pcc:C:0:0'&&x.status==='official_pdf_downloaded_unparsed'));
+ assert.ok(marty?.filings.some(x=>x.id==='11880:22:pcc:E:0:0'&&x.status==='official_pdf_downloaded_unparsed'));
  assert.equal(historicalOfficialFilingContextForSenator('John Marty','house'),undefined);
  assert.equal(officialFilingStatusLabel('official_indexed_pdf_not_yet_retrieved'),'Listed by CFB; PDF not yet checked');
  const s=historicalOfficialFilingInventoryTotals();
  assert.equal(s.senators,95);assert.equal(s.versions,830);
- assert.equal(s.indexedVersionsAwaitingPdfDownload,240);
- assert.equal(s.distinctDownloadedPdfBodies,579);
- assert.equal(s.downloadedVersions,590);
+ assert.equal(s.indexedVersionsAwaitingPdfDownload,0);
+ assert.equal(s.distinctDownloadedPdfBodies,813);
+ assert.equal(s.downloadedVersions,830);
 });
 test('all source linked report versions including earlier pre-primary/E are reachable in expandable legislator profile rather than hidden by a last-eight truncation',()=>{
  const p=readFileSync('src/app/dashboard/legislators/[legislatorId]/page.tsx','utf8');
@@ -52,7 +52,7 @@ test('all source linked report versions including earlier pre-primary/E are reac
  assert.match(p,/Show \{historicalFilings\.observedVersions - 8\} earlier indexed versions/);
  assert.match(p,/slice\(0, -8\)\.reverse\(\)\.map/);
  assert.match(p,/Open CFB filing/);
- assert.match(p,/the others are linked to their official CFB filing pages but haven't been downloaded yet/);
+ assert.match(p,/Every currently indexed version has an official PDF source/);
 });
 test('government source only, read-only PR workflow, no donor/transaction content, Neon, migrations or model changes',()=>{
  const y=readFileSync('.github/workflows/senate-864-721-indexed-filing-records-v33.yml','utf8');
