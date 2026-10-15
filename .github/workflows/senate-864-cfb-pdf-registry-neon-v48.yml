@@ -1,0 +1,232 @@
+name: 'Senate #864 CFB 830 official PDF registry import + historical eligibility triage V48'
+on:
+  pull_request:
+    paths:
+      - 'migrations/0014_cfb_official_senate_pdf_versions.sql'
+      - 'src/evidence/cfb-864-pdf-registry-eligibility-v48.mjs'
+      - 'scripts/register-cfb-864-pdf-neon-and-audit-v48.mjs'
+      - 'scripts/verify-cfb-864-pdf-registry-sql-local-v48.mjs'
+      - 'tests/cfb-864-pdf-registry-neon-v48.test.mjs'
+      - '.github/workflows/senate-864-cfb-pdf-registry-neon-v48.yml'
+      - 'docs/evaluation/cfb-2021-25-pdf-registry-eligibility-triage-v48.md'
+  push:
+    branches: [main]
+    paths:
+      - 'migrations/0014_cfb_official_senate_pdf_versions.sql'
+      - 'src/evidence/cfb-864-pdf-registry-eligibility-v48.mjs'
+      - 'scripts/register-cfb-864-pdf-neon-and-audit-v48.mjs'
+      - 'scripts/verify-cfb-864-pdf-registry-sql-local-v48.mjs'
+      - 'tests/cfb-864-pdf-registry-neon-v48.test.mjs'
+      - '.github/workflows/senate-864-cfb-pdf-registry-neon-v48.yml'
+permissions:
+  contents: read
+concurrency:
+  group: 'senate-864-cfb-official-pdf-v48-${{ github.sha }}'
+  cancel-in-progress: false
+jobs:
+  no-secret-offline-and-postgres:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --no-fund --no-audit
+      - name: Verify original 830 PDF identities, immutable migration ledgers and protected transaction guards
+        run: |
+          node --check src/evidence/cfb-864-pdf-registry-eligibility-v48.mjs
+          node --check scripts/register-cfb-864-pdf-neon-and-audit-v48.mjs
+          node --check scripts/verify-cfb-864-pdf-registry-sql-local-v48.mjs
+          node --import tsx --test tests/cfb-864-pdf-registry-neon-v48.test.mjs
+      - name: Apply existing migrations to disposable Postgres only
+        run: npm run db:migrate
+      - name: Execute exact PDF registry INSERT, parity SELECT and historical diagnostics in disposable rollback
+        run: node --import tsx scripts/verify-cfb-864-pdf-registry-sql-local-v48.mjs
+  main-presecret-independent:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_PDF_LINK_REVALIDATE_V48')
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact independent main revision before secret access
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --no-fund --no-audit
+      - name: Apply local migrations, revalidate CFB source identities and exercise SQL on disposable PostgreSQL
+        run: |
+          npm run db:migrate
+          node --import tsx --test tests/cfb-864-pdf-registry-neon-v48.test.mjs
+          node --import tsx scripts/verify-cfb-864-pdf-registry-sql-local-v48.mjs
+      - name: Full VotePredict app typecheck, tests, migration/immutable baselines and build
+        run: npm run check
+      - name: Existing production dependency audit before Neon protected key
+        run: npm audit --omit=dev --audit-level=high
+  protected-existing-neon-pdf-registry:
+    needs: [main-presecret-independent]
+    if: >-
+      needs.main-presecret-independent.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_PDF_LINK_REVALIDATE_V48')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    outputs:
+      safe_cfb_v48_b64: ${{ steps.registry.outputs.safe_cfb_v48_b64 }}
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_CFB_V48_VERIFIED: ${{ needs.main-presecret-independent.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_CFB_V48_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_PDF_LINK_REVALIDATE_V48') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Independently verify expected main commit before protected key access
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --no-fund --no-audit
+      - name: One transaction, only 830 official PDF identities + migration entry; audit historical eligibility without changing finance rows
+        id: registry
+        run: node --import tsx scripts/register-cfb-864-pdf-neon-and-audit-v48.mjs
+  keyless-issue-result:
+    needs: [main-presecret-independent, protected-existing-neon-pdf-registry]
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_PDF_LINK_REVALIDATE_V48') &&
+      (needs.main-presecret-independent.result == 'failure' ||
+       (needs.main-presecret-independent.result == 'success' &&
+       (needs.protected-existing-neon-pdf-registry.result == 'success' ||
+        needs.protected-existing-neon-pdf-registry.result == 'failure')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+      issues: write
+    env:
+      PREFLIGHT: ${{ needs.main-presecret-independent.result }}
+      PROTECTED: ${{ needs.protected-existing-neon-pdf-registry.result }}
+      SAFE_COUNTS_B64: ${{ needs.protected-existing-neon-pdf-registry.outputs.safe_cfb_v48_b64 }}
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;
+            const intro=['## #864 Finance: official PDF registry and historical eligibility triage (V48)',
+              '**Main SHA:** '+process.env.GITHUB_SHA,
+              '**Protected GitHub Actions run:** '+run];
+            let body;
+            if(process.env.PREFLIGHT!=='success'){
+              body=[...intro,'**HELD before Neon access:** independent app or PDF/SQL/migration verification did not pass. Registry and historical eligibility NOT certified.'].join('\n\n');
+            }else if(process.env.PROTECTED!=='success'){
+              body=[...intro,'**Protected Neon import held:** no validated 830-row registry parity and no certified historical eligibility counts. Check the safe phase in GitHub Actions. Do not infer absence of data.'].join('\n\n');
+            }else{
+              const s=process.env.SAFE_COUNTS_B64||'';
+              if(!/^[A-Za-z0-9+/=]{100,56000}$/.test(s))throw Error('Unsafe or missing aggregate');
+              const a=JSON.parse(Buffer.from(s,'base64').toString('utf8'));
+              if(a.schema!=='cfb-864-authenticated-pdf-registry-and-eligibility-triage-v48'
+                ||a.authenticatedOfficialVersions!==830||a.authenticatedUniqueBodies!==813
+                ||a.registryExactMatches!==830||a.registryImportCommitted!==true
+                ||a.existingEvidenceItemsNotModified!==true||a.existingSourceDocumentsNotModified!==true
+                ||a.existingForecastsAndModelsNotModified!==true
+                ||a.eligibilityRevalidatedAsDiagnosticOnly!==true
+                ||a.onlyNewPdfRegistryAndMigrationLedgerWritten!==true)throw Error('Invalid protected result');
+              const t=a.totals;
+              const numbers=['eligibleCopies','hasCandidateYearPdf','candidateYearAmbiguous','uniqueCandidatePdf',
+                'noCandidatePdf','exactVersionReferences','noExactVersionReferences',
+                'beforeEveryCandidateLegalFloor','beforeEveryCandidateEstimatedDate','filingDerivedClaims','missingPublishedAt'];
+              if(!t||numbers.some(k=>!Number.isSafeInteger(t[k])||t[k]<0||t[k]>3000000)
+                ||t.eligibleCopies!==t.exactVersionReferences+t.noExactVersionReferences)
+                throw Error('Unsafe or mismatched eligibility totals');
+              body=[...intro,
+                '**Official source-to-database PDF identity registry: 830/830 exact original indexed version IDs, URLs and full-body SHA fingerprints persisted, covering 813 unique whole-PDF bodies.** This is a separate registry, not proof the existing bulk finance source_documents hold those original PDFs.',
+                '**Existing eligible finance record copies:** '+t.eligibleCopies+'; exact PDF-version references '+t.exactVersionReferences+'; unlinked '+t.noExactVersionReferences+'.',
+                '**Diagnostic possible committee-year associations:** '+t.hasCandidateYearPdf+
+                  '; ambiguous across multiple indexed PDF versions '+t.candidateYearAmbiguous+
+                  '; unique PDF in year '+t.uniqueCandidatePdf+'; no matching candidate PDF '+t.noCandidatePdf+'.',
+                '**Potential too-early dates, NOT inferred transaction content:** before the earliest legal PDF release in candidate-year '+
+                  t.beforeEveryCandidateLegalFloor+'; before earliest practical v46 estimate '+
+                  t.beforeEveryCandidateEstimatedDate+'; filing-derived claims '+t.filingDerivedClaims+'.',
+                '**No existing finance evidence rows, source_documents, eligibility flags, forecasts or models changed.** A candidate/year association never implies transaction-level inclusion or exact amendment evidence; independent expenditures are kept separate. Historical eligibility is still unproven where transaction-to-version containment or independent disclosure is missing.',
+                '**Remaining:** independently verify transaction-to-report containment before attaching version IDs or changing as-of eligibility. True original-report statutory obligation denominator remains separately unknown; #864 stays open.'
+              ].join('\n\n');
+            }
+            if(body.length>12000)throw Error('Audit receipt too long');
+            await github.rest.issues.createComment({
+              owner:'killjoy00',repo:'votepredict',issue_number:864,body
+            });
