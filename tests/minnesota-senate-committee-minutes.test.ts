@@ -362,3 +362,22 @@ test('Rules narrative does not assign names to a vote when either printed side l
  const rows=parseSenateCommitteeMinuteVotes(source);
  assert.ok(rows.every(x=>!x.individualVotesAvailable));
 });
+
+test('Rules names with printed surname comma/initial are one explicit Senator-labeled voter, not a new person',()=>{
+ const source=[
+  'S.F. 1 was before the committee.',
+  'Chair Example moved an oral amendment.',
+  'Senator Example requested a roll call.',
+  'Members voting AYE: Senator Smith, B.',
+  'Members voting NO: Senator Doe',
+  'On a vote of 1 AYE, and 1 NO, THE AMENDMENT WAS NOT ADOPTED.',
+ ].join('\n');
+ const rows=parseSenateCommitteeMinuteVotes(source);
+ assert.equal(rows.length,1);
+ assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[1,1]);
+ assert.equal(rows[0].memberVotes.length,2);
+ assert.equal(rows[0].memberVotes[0].sourceName,'Smith, B');
+ assert.equal(rows[0].memberVotes[1].sourceName,'Doe');
+ assert.equal(rows[0].individualVotesAvailable,true);
+ assert.equal(rows[0].passed,false);
+});
