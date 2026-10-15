@@ -179,7 +179,7 @@ async function getOfficialResponse(url: string): Promise<Response> {
   });
   if (!response.ok ||
       !['electionresults.sos.mn.gov', 'electionresultsfiles.sos.mn.gov'].includes(new URL(response.url).hostname)) {
-    throw new Error('Official election results request failed (' + response.status + '): ' + url);
+    throw new Error('Official election results request failed (' + response.status + ', final host ' + new URL(response.url).hostname + '): ' + url);
   }
   return response;
 }
@@ -193,12 +193,38 @@ function decodeOfficialFile(bytes: Uint8Array): string {
   }
 }
 
+/**
+ * The SOS publishes a stable mediafileid=30 district export for its older
+ * archived contests and stsenate.txt for newer contests. These URL shapes
+ * were checked against the official per-election download indexes.
+ */
+export function directSenateDistrictFileUrl(event: SenateElectionEvent): string | null {
+  // SOS 2016 statewide primary index lists only municipal/school files.
+  if (event.resultsId === 99) return null;
+  if (Number(event.date.slice(0, 4)) < 2020) {
+    return 'https://electionresults.sos.mn.gov/Results/MediaFile_Archive/Index?erselectionId='
+      + event.resultsId + '&mediafileid=30';
+  }
+  return 'https://electionresultsfiles.sos.mn.gov/' +
+    event.date.replaceAll('-', '') + '/stsenate.txt';
+}
+
 export async function fetchSenateElection(event: SenateElectionEvent): Promise<SenateElectionDownload> {
   const indexUrl = senateElectionMediaIndexUrl(event.resultsId);
-  const index = await getOfficialResponse(indexUrl);
-  const fileUrl = locateSenateDistrictDownload(await index.text(), indexUrl);
-  if (!fileUrl) throw new Error('No bulk State Senate by-district file at ' + indexUrl);
-  const file = await getOfficialResponse(fileUrl);
+  const directUrl = directSenateDistrictFileUrl(event);
+  if (!directUrl) throw new Error('No bulk State Senate by-district file listed at ' + indexUrl);
+  let fileUrl = directUrl;
+  let file: Response;
+  try {
+    file = await getOfficialResponse(fileUrl);
+  } catch (directError) {
+    // The index is discovery fallback, not a routine extra network request.
+    const index = await getOfficialResponse(indexUrl);
+    const alternative = locateSenateDistrictDownload(await index.text(), indexUrl);
+    if (!alternative || alternative === directUrl) throw directError;
+    fileUrl = alternative;
+    file = await getOfficialResponse(fileUrl);
+  }
   const bytes = new Uint8Array(await file.arrayBuffer());
   if (bytes.length > 5_000_000) throw new Error('Official State Senate bulk file exceeds 5 MB: ' + fileUrl);
   const rawContent = decodeOfficialFile(bytes);
