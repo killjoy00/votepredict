@@ -34,7 +34,7 @@ export function identifyOriginalSourceMotionCues(text:string,maxCues=160){
  for(const {kind,pattern} of CUES){
   for(const m of flat.matchAll(pattern)){
    all.push({at:m.index??0,kind,printedPhrase:m[0]});
-   if(all.length>maxCues*6)throw Error('Original government source action cue limit exceeded');
+   if(all.length>2500)throw Error('Original government source action cue limit exceeded');
   }
  }
  all.sort((a,b)=>a.at-b.at||a.kind.localeCompare(b.kind));
