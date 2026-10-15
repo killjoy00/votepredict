@@ -2,6 +2,7 @@ import { loadCurrentCampaignFinanceContext } from '@/evidence/campaign-finance-s
 import type { CampaignFinanceMemberContext } from '@/evidence/campaign-finance-snapshot';
 import { loadPriorCycleProvenFinanceContext, type PriorCycleProvenFinanceContext } from '@/evidence/prior-cycle-finance-context';
 import { pool } from '@/lib/db';
+import { historicalOfficialFilingContextForSenator, type HistoricalOfficialFilingContext } from '@/evidence/cfb-historical-official-filings';
 
 export interface LegislatorDirectoryRow {
   legislatorId: string;
@@ -82,6 +83,8 @@ export interface LegislatorEvidenceRow {
   publishedAt?: string;
   sourceQuality: string;
   confidence?: number;
+  /** Real source_document family, not a certification of historical public-by. */
+  sourceKind?: string;
   sourceUrl: string;
 }
 
@@ -99,6 +102,8 @@ export interface LegislatorProfile {
   memberPrimaryEvidence: LegislatorEvidenceRow[];
   campaignFinance?: CampaignFinanceMemberContext;
   priorCycleFinance: PriorCycleProvenFinanceContext[];
+  /** Original CFB indexed filings are retained even if a PDF is scanned or a legal name varies. */
+  historicalOfficialFilings?: HistoricalOfficialFilingContext;
 }
 
 type DirectoryDbRow = {
@@ -175,6 +180,7 @@ type EvidenceDbRow = {
   published_at: string | null;
   source_quality: string;
   confidence: number | null;
+  source_kind: string;
   source_url: string;
 };
 
@@ -480,6 +486,7 @@ async function loadEvidence(legislatorId: string): Promise<LegislatorEvidenceRow
            ei.published_at::text,
            ei.source_quality,
            ei.confidence,
+           sd.source_kind,
            sd.source_url
       FROM evidence_items ei
       JOIN source_documents sd ON sd.id = ei.source_document_id
@@ -502,6 +509,7 @@ async function loadEvidence(legislatorId: string): Promise<LegislatorEvidenceRow
     publishedAt: row.published_at ?? undefined,
     sourceQuality: row.source_quality,
     confidence: row.confidence ?? undefined,
+    sourceKind: row.source_kind,
     sourceUrl: row.source_url,
   }));
 }
@@ -515,6 +523,7 @@ async function loadMemberPrimaryEvidence(legislatorId: string): Promise<Legislat
            ei.published_at::text,
            ei.source_quality,
            ei.confidence,
+           sd.source_kind,
            sd.source_url
       FROM evidence_items ei
       JOIN source_documents sd ON sd.id = ei.source_document_id
@@ -537,6 +546,7 @@ async function loadMemberPrimaryEvidence(legislatorId: string): Promise<Legislat
     publishedAt: row.published_at ?? undefined,
     sourceQuality: row.source_quality,
     confidence: row.confidence ?? undefined,
+    sourceKind: row.source_kind,
     sourceUrl: row.source_url,
   }));
 }
@@ -591,5 +601,9 @@ export async function loadLegislatorProfile(legislatorId: string): Promise<Legis
     memberPrimaryEvidence,
     campaignFinance,
     priorCycleFinance,
+    historicalOfficialFilings: historicalOfficialFilingContextForSenator(
+      identity.name,
+      memberships.some((membership) => membership.chamberSlug === 'senate') ? 'senate' : currentMembership?.chamberSlug,
+    ),
   };
 }

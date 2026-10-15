@@ -1,0 +1,32 @@
+name: 'Senate #864 830 indexed, 590 downloaded original CFB reports, 579 distinct signed PDFs V40'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-830-590-original-pdf-source-v40.mjs'
+      - 'tests/cfb-864-830-indexed-590-official-PDF-bodies-v40.test.mjs'
+      - 'data/cfb-senate-official-filings-2021-25-v40.json'
+      - 'docs/evaluation/source-proof/cfb-2021-25-110-new-government-PDF-source-retrieval-v40.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-110-government-PDF-source-recovery-checkpoint-v40.json'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-590-downloaded-v40.psv'
+      - 'src/evidence/cfb-historical-official-filings.ts'
+      - '.github/workflows/senate-864-830-590-original-source-PDF-verification-v40.yml'
+permissions:
+  contents: read
+jobs:
+  independently-audit-original-110-new-CFB-PDF-binaries:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned offline source test dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Independently reconstruct 110 recovered source SHA files and all 830 government filing version identities
+        run: node --import tsx --test tests/cfb-864-830-indexed-590-official-PDF-bodies-v40.test.mjs
+      - name: Replay all government official report source lineages, duplicate-body status, and unchanged historical cutoff
+        run: node --import tsx scripts/audit-cfb-864-830-590-original-pdf-source-v40.mjs

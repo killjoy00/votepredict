@@ -4,6 +4,7 @@ import { requireOwner } from '@/lib/auth/guard';
 import { loadLegislatorGamblingSummary } from '@/gambling/intelligence';
 import { loadLegislatorIssueSummaries } from '@/legislators/issue-summary';
 import { loadLegislatorProfile } from '@/legislators/profile';
+import { officialFilingDisplayTitle, officialFilingStatusLabel } from '@/evidence/cfb-historical-official-filings';
 import gamblingStyles from './gambling-summary.module.css';
 import issueStyles from './issue-summary.module.css';
 import styles from '../legislators.module.css';
@@ -40,6 +41,13 @@ function sourceKind(value: string): string {
   return value.replaceAll('_', ' ');
 }
 
+// Historical filing-version publication is a distinct proof dimension from
+// whether a source PDF was downloaded and its contents parsed today.
+// This is PRESENTATION ONLY; existing stored eligibility is not recalculated.
+function isCampaignFinanceSourceKind(kind: string | undefined): boolean {
+  return typeof kind === 'string' && kind.startsWith('campaign_finance');
+}
+
 export default async function LegislatorProfilePage({ params }: PageProps) {
   await requireOwner();
   const { legislatorId } = await params;
@@ -53,6 +61,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
   const member = profile.currentMembership;
   const finance = profile.campaignFinance;
   const priorCycleFinance = profile.priorCycleFinance;
+  const historicalFilings = profile.historicalOfficialFilings;
   const financeSource = finance?.contributions?.sourceUrl
     ?? finance?.expenditures?.sourceUrl
     ?? finance?.independentExpenditures?.sourceUrl;
@@ -334,7 +343,10 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                       <span>{sourceKind(item.kind)}</span>
                       {item.stance ? <span>{item.stance}</span> : null}
                       <span>{sourceKind(item.sourceQuality)}</span>
-                      {item.publishedAt ? <span>{date(item.publishedAt)}</span> : null}
+                      {item.publishedAt ? <span>{isCampaignFinanceSourceKind(item.sourceKind)
+                        ? `Stored evidence date ${date(item.publishedAt)} (not verified exact-report publication)`
+                        : date(item.publishedAt)}</span> : null}
+                      {isCampaignFinanceSourceKind(item.sourceKind) ? <span>Financial context · historical public-by unverified</span> : null}
                     </div>
                     <strong>{item.claim}</strong>
                     {item.excerpt ? <p>“{item.excerpt}”</p> : null}
@@ -374,8 +386,65 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
           <section className={styles.panel}>
             <header className={styles.panelHeader}>
               <div>
+                <span className={styles.kicker}>Official campaign finance records</span>
+                <h3>Historical CFB filings (2021–25)</h3>
+              </div>
+            </header>
+            {historicalFilings ? (
+              <>
+                <p className={styles.note}>
+                  The Campaign Finance Board lists {historicalFilings.observedVersions} filing versions
+                  {' '}({historicalFilings.originalVersions} original reports and {historicalFilings.amendedVersions} amendments)
+                  for this senator's committee. {historicalFilings.downloadedVersions} report-version PDFs have been retrieved;
+                  the others are linked to their official CFB filing pages but haven't been downloaded yet.
+                  {historicalFilings.officialNameLink === 'documented_official_name_variant'
+                    ? ' The CFB uses a longer or shorter version of the senator’s name.'
+                    : ''}
+                </p>
+                <div className={styles.financeList}>
+                  {[...historicalFilings.filings].reverse().slice(0, 8).map((filing) => (
+                    <div className={styles.financeItem} key={filing.id}>
+                      <strong>{officialFilingDisplayTitle(filing)}</strong>
+                      <span>{officialFilingStatusLabel(filing.status)}</span>
+                      <a href={filing.url} target="_blank" rel="noreferrer" className={styles.sourceLink}>Open CFB filing ↗</a>
+                    </div>
+                  ))}
+                </div>
+                {historicalFilings.observedVersions > 8 ? (
+                  <details>
+                    <summary className={styles.note}>Show {historicalFilings.observedVersions - 8} earlier indexed versions</summary>
+                    <div className={styles.financeList}>
+                      {[...historicalFilings.filings].slice(0, -8).reverse().map((filing) => (
+                        <div className={styles.financeItem} key={filing.id}>
+                          <strong>{officialFilingDisplayTitle(filing)}</strong>
+                          <span>{officialFilingStatusLabel(filing.status)}</span>
+                          <a href={filing.url} target="_blank" rel="noreferrer" className={styles.sourceLink}>Open CFB filing ↗</a>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                ) : null}
+                <a href={historicalFilings.viewerUrl} target="_blank" rel="noreferrer" className={styles.sourceLink}>
+                  View this committee on the CFB website ↗
+                </a>
+                <p className={styles.note}>
+                  Scanned or hard-to-read PDFs still count as official indexed filings. Amendments are
+                  separate versions, not extra contributions to add together. The report year alone does
+                  not establish when a particular version was public, or whether every required filing is here.
+                </p>
+              </>
+            ) : (
+              <p className={styles.note}>
+                No historical Senate CFB filing is linked to this legislator in the reviewed 2021–25 inventory.
+              </p>
+            )}
+          </section>
+
+          <section className={styles.panel}>
+            <header className={styles.panelHeader}>
+              <div>
                 <span className={styles.kicker}>Campaign finance</span>
-                <h3>Current 2025–26 CFB disclosure</h3>
+                <h3>Recent 2025–26 CFB-derived activity</h3>
               </div>
             </header>
             {finance ? (
@@ -431,7 +500,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                     </div>
                   </>
                 ) : null}
-                <p className={styles.note}>Current records come from the persisted CFB evidence refresh. Campaign-finance relationships are context only and are not treated as evidence that a legislator supports or opposes a bill.</p>
+                <p className={styles.note}>These are CFB-derived activity aggregates, not a version-by-version audited filing balance or proof of when each underlying item became public. Independent spending is by third parties, not a contribution to the candidate committee. A listed contributor's employer does not mean that employer gave the contribution. Financial relationships are context only, not evidence of how a legislator will vote.</p>
               </>
             ) : <p className={styles.note}>No current 2025–26 campaign-finance evidence is available for this legislator.</p>}
           </section>
@@ -440,7 +509,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
             <header className={styles.panelHeader}>
               <div>
                 <span className={styles.kicker}>Prior-cycle CFB context</span>
-                <h3>Proven before the current session</h3>
+                <h3>Stored prior-cycle finance eligibility (under audit)</h3>
               </div>
             </header>
             {priorCycleFinance.length > 0 ? (
@@ -454,19 +523,20 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                       {' · '}{cycle.independentExpenditureRows} IE rows · {money(cycle.independentExpenditureAmount)}
                     </span>
                     <span>
-                      Proven public {cycle.earliestProvenAvailableOn ? 'from ' + date(cycle.earliestProvenAvailableOn) : ''}
-                      {cycle.latestProvenAvailableOn ? ' through ' + date(cycle.latestProvenAvailableOn) : ''}
+                      Stored availability labels {cycle.earliestProvenAvailableOn ? 'from ' + date(cycle.earliestProvenAvailableOn) : ''}
+                      {cycle.latestProvenAvailableOn ? ' through ' + date(cycle.latestProvenAvailableOn) : ''} · not certified PDF public-by
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className={styles.note}>No prior-cycle CFB rows have a proven pre-cutoff availability date for this current legislator.</p>
+              <p className={styles.note}>No prior-cycle CFB rows currently match the existing stored pre-cutoff eligibility selection for this legislator. This is not evidence of no historical filing.</p>
             )}
             <p className={styles.note}>
               Prior-cycle rows stay attached to their original membership and are shown separately from current-cycle totals.
-              Only rows with independently proven public availability before the cutoff are included. Transaction dates, year-end dates
-              and filing deadlines are not treated as publication dates. This context does not mechanically change forecast probabilities.
+              These amounts use existing stored pre-cutoff eligibility labels, some of which have not passed independent exact filing-version publication verification.
+              They are not a certificate that the original or amended PDF was publicly accessible at the historical cutoff. Transaction dates, report dates,
+              Board receipts and release floors cannot substitute for a dated exact-version publication proof. This label correction does not modify stored eligibility or forecasts.
             </p>
           </section>
 

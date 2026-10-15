@@ -1,0 +1,24 @@
+name: 'Senate #864 independent CFB finance source provenance and dashboard label safety V29'
+on:
+  pull_request:
+    paths:
+      - 'src/app/dashboard/legislators/[legislatorId]/page.tsx'
+      - 'src/legislators/profile.ts'
+      - 'tests/cfb-864-finance-evidence-confidence-ui-v29.test.mjs'
+      - '.github/workflows/senate-864-finance-evidence-confidence-ui-v29.yml'
+permissions:
+  contents: read
+jobs:
+  validate-unproven-original-PDF-publication-display:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify stored as-of finance evidence is not labeled independently public by without exact original source
+        run: node --test tests/cfb-864-finance-evidence-confidence-ui-v29.test.mjs

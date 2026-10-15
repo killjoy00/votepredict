@@ -1,0 +1,32 @@
+name: 'Senate #864 276 recovered viewer filings, 721 indexed original/amended versions V33'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-721-official-senate-filing-refs-v33.mjs'
+      - 'src/evidence/cfb-historical-official-filings.ts'
+      - 'src/app/dashboard/legislators/[legislatorId]/page.tsx'
+      - 'data/cfb-senate-official-filings-2021-25-v33.json'
+      - 'docs/evaluation/source-proof/cfb-2021-24-95-serving-senators-276-more-official-indexed-period-references-v33.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-senators-721-indexed-original-and-amended-reports-v33.psv'
+      - 'tests/cfb-864-721-official-senate-indexed-filings-v33.test.mjs'
+      - '.github/workflows/senate-864-721-indexed-filing-records-v33.yml'
+permissions:
+  contents: read
+jobs:
+  offline-replay-original-396-viewers-into-721-references:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned original source audit dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Source-only original-CFB viewer reconstruction and 95-member profile regression tests
+        run: node --import tsx --test tests/cfb-864-721-official-senate-indexed-filings-v33.test.mjs
+      - name: Recompute 276 newly included original government viewer references alongside all prior 445
+        run: node --import tsx scripts/audit-cfb-864-721-official-senate-filing-refs-v33.mjs

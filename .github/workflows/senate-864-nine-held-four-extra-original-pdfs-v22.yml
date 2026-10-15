@@ -1,0 +1,35 @@
+name: 'Senate #864 9 held CFB PDFs + 4 official amended-yearend indices V22'
+on:
+  pull_request:
+    paths:
+      - 'scripts/recover-cfb-864-nine-held-four-amendments-v22.mjs'
+      - 'tests/cfb-864-nine-held-four-extra-original-pdf-v22.test.mjs'
+      - '.github/workflows/senate-864-nine-held-four-extra-original-pdfs-v22.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review-original-signed-source-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned original official CFB PDF reader
+        run: npm ci --no-fund --no-audit
+      - name: Offline guarded source version selection tests
+        run: node --import tsx --test tests/cfb-864-nine-held-four-extra-original-pdf-v22.test.mjs
+      - name: Fetch preexisting independently authenticated original 268-page government candidate index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts/official-268
+          gh run download 38081628130 -R "$GITHUB_REPOSITORY" --name cfb-senate-2021-25-official-district-registration-discovery --dir artifacts/official-268
+          test -f artifacts/official-268/cfb-senate-district-registrations.json
+      - name: Read-only source metadata only; inspect nine held original and four extra 2022 report version PDF documents
+        run: node --import tsx scripts/recover-cfb-864-nine-held-four-amendments-v22.mjs

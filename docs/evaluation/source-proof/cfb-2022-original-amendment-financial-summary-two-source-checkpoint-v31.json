@@ -1,0 +1,20 @@
+{
+  "schema": "cfb-864-original-2022-Senate-receipts-summary-three-amendment-lineages-v31",
+  "firstCompletePDFSourceRun": 38508757848,
+  "firstOriginalSourceJob": 115672175664,
+  "secondIndependentSourceAttemptJob": 115672638085,
+  "originalSignedGovernmentPDFWholeSHAAndBytesSameOnBothRuns": true,
+  "allSixReportTotalReceiptsCellsMatchTwoGovernmentSourceRuns": true,
+  "allSixOriginalGovernmentSignedPDFSummaryCashPlusInKindEqualsTotal": true,
+  "distinctOfficialOriginalSignedPDFVersions": 6,
+  "candidateSenatorCommitteePrincipalCount": 3,
+  "allSixOriginalPDFIdentitySourceAuthenticatedByPriorLedger": true,
+  "sourceReceiptSummaryColumnStatus": "cash_plus_in_kind_equals_total_original_report_print",
+  "sourceOnlyOriginalReportFinancialSummaryNotBulkTransactionOrOfficialAccountParity": true,
+  "individualEmployerDonorIEFinancialRelationshipsNotInferred": true,
+  "disbursementsCashBalancesDebtsLoansAndItemizedTotalsUnverified": true,
+  "historicalExactPdfPublicByOn": null,
+  "updatedReadOnlyProductionDb": false,
+  "receiptsLedger": "docs/evaluation/source-proof/cfb-2022-three-senate-original-amended-double-authenticated-receipts-summary-v31.psv",
+  "deltaLedger": "docs/evaluation/source-proof/cfb-2022-three-senate-original-to-latest-amendment-receipts-deltas-v31.psv"
+}

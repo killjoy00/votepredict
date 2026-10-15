@@ -1,0 +1,27 @@
+name: 'Senate #864 recover 36 2022-24 original candidate PDF bodies for 2025-serving senators V35'
+on:
+  pull_request:
+    paths:
+      - 'scripts/acquire-cfb-864-36-priority-historical-official-pdf-bodies-v35.mjs'
+      - 'tests/cfb-864-36-priority-original-pdfs-v35.test.mjs'
+      - '.github/workflows/senate-864-36-original-priority-cfb-pdf-bodies-v35.yml'
+permissions:
+  contents: read
+jobs:
+  source-only-download-36-public-original-pdfs:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned government source reader dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Test actual 2025-service and 2022/23/24 uncollected original CFB PDF selection
+        run: node --import tsx --test tests/cfb-864-36-priority-original-pdfs-v35.test.mjs
+      - name: Retrieve official CFB PDF original source bytes only and log exact SHA/byte count
+        run: node --import tsx scripts/acquire-cfb-864-36-priority-historical-official-pdf-bodies-v35.mjs

@@ -1,0 +1,38 @@
+name: 'Senate #864 38 actual 2021-22 senators original/amended YE PDF source V20'
+on:
+  pull_request:
+    paths:
+      - 'scripts/acquire-cfb-864-38-served-2021-22-original-amended-yearend-pdfs-v20.mjs'
+      - 'tests/cfb-864-38-served-2021-22-yearend-pdfs-v20.test.mjs'
+      - 'docs/evaluation/cfb-2021-22-38-actual-senators-original-amended-yearend-pdfs-v20.md'
+      - '.github/workflows/senate-864-38-served-original-amended-YE-2021-22-v20.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  authenticate-38-serving-senators-2021-22-original-and-amended-yearend-PDF:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned original official PDF parser dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Reject nonserving CFB principal identities, bad PDF first pages and false actual historical public-by
+        run: node --import tsx --test tests/cfb-864-38-served-2021-22-yearend-pdfs-v20.test.mjs
+      - name: Retrieve and SHA-replay the independently original 268-page government CFB candidate registry (2022 redistricted candidate district identities)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts/official-268
+          gh run download 38081628130 -R "$GITHUB_REPOSITORY" --name cfb-senate-2021-25-official-district-registration-discovery --dir artifacts/official-268
+          test -f artifacts/official-268/cfb-senate-district-registrations.json
+      - name: Independently match archived official 2022 candidate district and registration to each year-end PDF
+        run: node scripts/audit-cfb-864-57-actual-serving-candidate-registration-leads-v17.mjs --original-source artifacts/official-268/cfb-senate-district-registrations.json
+      - name: Recover signed original and first two amended YE 2021/22 CFB report PDFs from 38 uniquely verified actual-serving senator principals
+        run: node --import tsx scripts/acquire-cfb-864-38-served-2021-22-original-amended-yearend-pdfs-v20.mjs

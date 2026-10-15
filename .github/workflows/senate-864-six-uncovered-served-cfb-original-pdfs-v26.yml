@@ -1,0 +1,27 @@
+name: 'Senate #864 six unproven-serving-person CFB report original PDFs V26'
+on:
+  pull_request:
+    paths:
+      - 'scripts/probe-cfb-864-six-serving-principal-original-pdfs-v26.mjs'
+      - 'tests/cfb-864-six-serving-original-candidate-pdfs-v26.test.mjs'
+      - '.github/workflows/senate-864-six-uncovered-served-cfb-original-pdfs-v26.yml'
+permissions:
+  contents: read
+jobs:
+  source-verified-uncovered-actual-senator-original-PDF-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned government PDF source dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify original CFB six candidate registration identity and historic scope proof guards
+        run: node --import tsx --test tests/cfb-864-six-serving-original-candidate-pdfs-v26.test.mjs
+      - name: Acquire verified exact original report versions under five unproven nickname identities and 2025 Doron Clark
+        run: node --import tsx scripts/probe-cfb-864-six-serving-principal-original-pdfs-v26.mjs

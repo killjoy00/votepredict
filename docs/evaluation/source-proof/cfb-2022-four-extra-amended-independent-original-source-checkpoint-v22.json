@@ -1,0 +1,90 @@
+{
+  "schema": "cfb-864-four-more-2022-ye-original-amendment-PDFs-full-sha-two-replays-v22",
+  "issue": 864,
+  "sourceVersionCount": 4,
+  "distinctAuthenticatedOriginalSignedPdfHashes": 4,
+  "firstLiveGovReadOnlyRunId": 38506846420,
+  "firstLiveJobId": 115666197986,
+  "secondLiveGovReadOnlyRunId": 38506867595,
+  "secondLiveJobId": 115666266305,
+  "all13ExactOfficialRequestedPdfVersionsSameSourceShaAndSizeInBothSourceRuns": true,
+  "firstpageHoldsStillUnresolved": 9,
+  "zeroHistoricalExactOriginalPDFPublicBy": true,
+  "legalObligationDenominator": null,
+  "metadataLedgerFile": "docs/evaluation/source-proof/cfb-2022-four-extra-amended-original-PDF-SHA-source-v22.psv",
+  "sourcePDFs": [
+    {
+      "versionId": "17021:22:pcc:YE:0:3",
+      "sourcePdfSHA256": "37a6b8792fbc686d510870140c91f26d511948eceeb939d561ff7085b3965e93",
+      "sourcePdfBytes": 750948,
+      "yearEndFullPeriodVerified": true,
+      "originalParentId": "17021:22:pcc:YE:0:0",
+      "immediatelyPriorKnownVersionId": "17021:22:pcc:YE:0:2",
+      "boardReceivedOn": "2024-07-08",
+      "priorBoardReceivedOn": "2023-06-28",
+      "fullOfficialViewerBodySHA256": "1f13ca9216bedcf5cd9bc2eaf2b812c2b075bdce15be2816845782e4c117e6f8",
+      "fromOriginalSignedGovernmentCFBSource": true,
+      "originalIndependentFullBodyProofRunIds": [
+        38506846420,
+        38506867595
+      ],
+      "originalSourcePriorV20VersionAbsent": true,
+      "exactHistoricalPdfPublicBy": null
+    },
+    {
+      "versionId": "17021:22:pcc:YE:0:4",
+      "sourcePdfSHA256": "47074bdaa503a31060f12f78082d163b0b95bbd26cf74dc38a136150623f61ed",
+      "sourcePdfBytes": 746425,
+      "yearEndFullPeriodVerified": true,
+      "originalParentId": "17021:22:pcc:YE:0:0",
+      "immediatelyPriorKnownVersionId": "17021:22:pcc:YE:0:3",
+      "boardReceivedOn": "2024-10-23",
+      "priorBoardReceivedOn": "2024-07-08",
+      "fullOfficialViewerBodySHA256": "1f13ca9216bedcf5cd9bc2eaf2b812c2b075bdce15be2816845782e4c117e6f8",
+      "fromOriginalSignedGovernmentCFBSource": true,
+      "originalIndependentFullBodyProofRunIds": [
+        38506846420,
+        38506867595
+      ],
+      "originalSourcePriorV20VersionAbsent": true,
+      "exactHistoricalPdfPublicBy": null
+    },
+    {
+      "versionId": "17316:22:pcc:YE:0:3",
+      "sourcePdfSHA256": "442c65198ac0170eea2e910835a4304162265222dfffea56ce7cacc6164fc877",
+      "sourcePdfBytes": 468264,
+      "yearEndFullPeriodVerified": true,
+      "originalParentId": "17316:22:pcc:YE:0:0",
+      "immediatelyPriorKnownVersionId": "17316:22:pcc:YE:0:2",
+      "boardReceivedOn": "2023-10-07",
+      "priorBoardReceivedOn": "2023-06-15",
+      "fullOfficialViewerBodySHA256": "3ced6d593bf7c115004e674a1b8fb1ffa11c05931e6c9e7e3414c3ddb69efac7",
+      "fromOriginalSignedGovernmentCFBSource": true,
+      "originalIndependentFullBodyProofRunIds": [
+        38506846420,
+        38506867595
+      ],
+      "originalSourcePriorV20VersionAbsent": true,
+      "exactHistoricalPdfPublicBy": null
+    },
+    {
+      "versionId": "18500:22:pcc:YE:0:3",
+      "sourcePdfSHA256": "8f4180dacf2f32faee3d9a9b6b318b882c184e3d34123bc8da702d8856cdb7eb",
+      "sourcePdfBytes": 688763,
+      "yearEndFullPeriodVerified": true,
+      "originalParentId": "18500:22:pcc:YE:0:0",
+      "immediatelyPriorKnownVersionId": "18500:22:pcc:YE:0:2",
+      "boardReceivedOn": "2023-06-22",
+      "priorBoardReceivedOn": "2023-04-22",
+      "fullOfficialViewerBodySHA256": "8225ac390364d4d429c0634d5c574d4deb5aececdb86a75b176ac3fe8fad6d7b",
+      "fromOriginalSignedGovernmentCFBSource": true,
+      "originalIndependentFullBodyProofRunIds": [
+        38506846420,
+        38506867595
+      ],
+      "originalSourcePriorV20VersionAbsent": true,
+      "exactHistoricalPdfPublicBy": null
+    }
+  ],
+  "noPrivateTransactionsOrDonorsExported": true
+}

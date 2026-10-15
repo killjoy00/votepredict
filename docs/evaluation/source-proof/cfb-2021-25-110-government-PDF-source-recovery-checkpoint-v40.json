@@ -1,0 +1,43 @@
+{
+  "schema": "cfb-864-full-official-source-830-indexed-590-PDF-version-579-distinct-v40",
+  "sourceIssue": 864,
+  "original109FullGovernmentPdfReadOnlyRunId": 38679551930,
+  "original109ReadOnlyJobId": 116240727412,
+  "original109SourceResultSchema": "cfb-864-109-newly-indexed-2025-senate-yearend-official-full-PDF-source-v39",
+  "sourceTotal2025NewPDFTargets": 109,
+  "source2025NewVersionPDFBinarySuccesses": 109,
+  "source2025OriginalPDFDownloadHolds": 0,
+  "source2025NewUniquePDFWholeBinaries": 102,
+  "source2025NewSameRegBinaryVersionAliases": 7,
+  "original2021NewtonSourceRunIds": [
+    38665626124,
+    38665734833
+  ],
+  "original2021NewtonSourceJobIds": [
+    116196808098,
+    116197154059
+  ],
+  "original2021NewtonEntirePdfSha256": "21537d694379020977f027e1a337c3f6d1d84d0c18cab9a708e7da73c6af6b97",
+  "original2021NewtonWholePDFBytes": 2660897,
+  "original2021NewtonOriginalDownloadSHAReproduced": true,
+  "previouslyIndexedVersionReferences": 830,
+  "preservedPriorIndexedVersions": 830,
+  "combinedVersionReferencesWithWholePdfByteSHA": 590,
+  "combinedDistinctOriginalPDFByteHashes": 579,
+  "indexedOfficialReportVersionsStillWithoutAnyDownloadedPDF": 240,
+  "originalIndexPanel2021To25Years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "originalExactHistoricalPdfPublicByVersionsProven": 0,
+  "statuteOwedReportDenominator": null,
+  "bulkTransactionAndMonetaryAmountsReconciled": false,
+  "noDonorPrivateSourceRowsOrRawPdfBodiesStored": true,
+  "noProtectedProductionDBOrModelChanges": true,
+  "evidenceProvenanceLedger": "docs/evaluation/source-proof/cfb-2021-25-110-new-government-PDF-source-retrieval-v40.psv",
+  "combinedOfficialFilingSourceLedger": "docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-590-downloaded-v40.psv",
+  "sourceProfileJson": "data/cfb-senate-official-filings-2021-25-v40.json"
+}

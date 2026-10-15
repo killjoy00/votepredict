@@ -1,0 +1,30 @@
+name: 'Senate #864 2022 three original/latest amended CFB official receipts summaries V31'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-three-senator-original-amendment-receipts-v31.mjs'
+      - 'tests/cfb-864-2022-three-report-amendment-receipts-v31.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2022-three-senate-original-amended-double-authenticated-receipts-summary-v31.psv'
+      - 'docs/evaluation/source-proof/cfb-2022-three-senate-original-to-latest-amendment-receipts-deltas-v31.psv'
+      - 'docs/evaluation/source-proof/cfb-2022-original-amendment-financial-summary-two-source-checkpoint-v31.json'
+      - '.github/workflows/senate-864-2022-original-amended-receipts-ledger-v31.yml'
+permissions:
+  contents: read
+jobs:
+  certify-reported-receipts-on-six-exact-original-government-report-versions:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned offline integrity test dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify six exact full original PDF report source SHAs/receipt arithmetic and three original-latest amendment source differences
+        run: node --import tsx --test tests/cfb-864-2022-three-report-amendment-receipts-v31.test.mjs
+      - name: Independently reconstruct 2022 CFB total receipt source summary and amendment delta certificate without donor data
+        run: node --import tsx scripts/audit-cfb-864-three-senator-original-amendment-receipts-v31.mjs

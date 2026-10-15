@@ -1,0 +1,157 @@
+{
+  "schema": "cfb-864-38-actual-senate-2021-22-132-version-two-independent-acquisition-source-proof-v20",
+  "issue": 864,
+  "sourceBranch": "research/864-38-2021-22-serving-senators-original-yearend-pdfs-v20",
+  "firstRunId": 38459030827,
+  "firstJobId": 115509090007,
+  "verifiedRunId": 38500547770,
+  "verifiedJobId": 115646204271,
+  "firstSourceRunFirstPageAuthentication": 106,
+  "verifiedSourceRunFirstPageAuthentication": 123,
+  "all132ExactPdfBytesAndHashesIdenticalBetweenOriginalSourceRuns": true,
+  "changedFirstPageAuthenticityDecisionsFromAdditionalIndependentOfficialDistrictProof": 17,
+  "allPrevious106SourceAuthenticationsRetained": true,
+  "original268GovernmentRegistryEntireSHA256": "83770615658f7cf47802b05257bcbd45bed0c7c41ec19dfe99c31ca91b746c04",
+  "original268GovernmentRegistrySHAReplayPassed": true,
+  "originalCfb2022CandidateDistrictsObservedForPrincipals": 33,
+  "originalCfb2022CandidateNameDriftHolds": 0,
+  "originalViewerCandidateRegistrations": 38,
+  "officialIndexedYearendReferencesObserved": 136,
+  "selectedOfficialExactVersionIds": 132,
+  "verifiedAuthenticDistinctFullPdfBodies": 123,
+  "verifiedOriginalPdfBodies": 66,
+  "verifiedAmendedPdfBodies": 57,
+  "documentIdentityOrRetrievalHolds": 9,
+  "additionalIndexedAmendmentsNotSelected": 4,
+  "originalReferenceAbsentFromCurrentViewerInSelected2022Year": 3,
+  "governmentViewerMissingOrUnselectedSourceReferenceGroupCount": 6,
+  "sourceOnlySenatorsWithAtLeastOneAuthenticatedPDF": 34,
+  "sourceOnlyPeopleUncovered": [
+    "Thomas M. Bakk",
+    "Paul E. Gazelka",
+    "Jerry Newton",
+    "Jason Isaacson"
+  ],
+  "historicalActualExactPdfPublicByIndependentlyDemonstrated": 0,
+  "statutoryReleaseFloorNotActualHistoricalPublicBy": true,
+  "legalOwedReportFilingDutyDenominator": null,
+  "notStatewideAllVersionOrLegalFilingCompleteness": true,
+  "sourceLedgerFile": "docs/evaluation/source-proof/cfb-2021-22-38-actually-served-132-yearend-versions-v20.psv",
+  "sourceCandidateYearObservationLedger": "docs/evaluation/source-proof/cfb-2021-22-38-actually-served-original-viewer-yearend-coverage-v20.psv",
+  "sourceOnlyNoDonorTransactionsOrPdfBodyPersisted": true,
+  "noProductionOrProtectedDbReadWrite": true,
+  "sourceHoldDetails": [
+    {
+      "id": "17140:21:pcc:YE:0:0",
+      "formIdentityOrPdfFetchHold": "original_pdf_firstpage_registration_senate_district_or_period_hold",
+      "originalCfbPrintedDistricts": [],
+      "oldActualServingDistricts": [
+        3
+      ],
+      "official2023ServingDistricts": [],
+      "archived2022OfficialCfbCandidateDistricts": [
+        3
+      ]
+    },
+    {
+      "id": "16931:21:pcc:YE:0:0",
+      "formIdentityOrPdfFetchHold": "original_pdf_firstpage_registration_senate_district_or_period_hold",
+      "originalCfbPrintedDistricts": [
+        9
+      ],
+      "oldActualServingDistricts": [
+        9
+      ],
+      "official2023ServingDistricts": [],
+      "archived2022OfficialCfbCandidateDistricts": []
+    },
+    {
+      "id": "18004:21:pcc:YE:0:0",
+      "formIdentityOrPdfFetchHold": "original_official_report_pdf_fetch_hold",
+      "originalCfbPrintedDistricts": [],
+      "oldActualServingDistricts": [
+        37
+      ],
+      "official2023ServingDistricts": [],
+      "archived2022OfficialCfbCandidateDistricts": [
+        37
+      ]
+    },
+    {
+      "id": "17929:21:pcc:YE:0:0",
+      "formIdentityOrPdfFetchHold": "original_pdf_firstpage_registration_senate_district_or_period_hold",
+      "originalCfbPrintedDistricts": [],
+      "oldActualServingDistricts": [
+        42
+      ],
+      "official2023ServingDistricts": [],
+      "archived2022OfficialCfbCandidateDistricts": [
+        40
+      ]
+    },
+    {
+      "id": "18488:21:pcc:YE:0:1",
+      "formIdentityOrPdfFetchHold": "original_pdf_firstpage_registration_senate_district_or_period_hold",
+      "originalCfbPrintedDistricts": [],
+      "oldActualServingDistricts": [
+        62
+      ],
+      "official2023ServingDistricts": [
+        62
+      ],
+      "archived2022OfficialCfbCandidateDistricts": [
+        62
+      ]
+    },
+    {
+      "id": "17140:22:pcc:YE:0:0",
+      "formIdentityOrPdfFetchHold": "original_pdf_firstpage_registration_senate_district_or_period_hold",
+      "originalCfbPrintedDistricts": [],
+      "oldActualServingDistricts": [
+        3
+      ],
+      "official2023ServingDistricts": [],
+      "archived2022OfficialCfbCandidateDistricts": [
+        3
+      ]
+    },
+    {
+      "id": "17929:22:pcc:YE:0:0",
+      "formIdentityOrPdfFetchHold": "original_pdf_firstpage_registration_senate_district_or_period_hold",
+      "originalCfbPrintedDistricts": [],
+      "oldActualServingDistricts": [
+        42
+      ],
+      "official2023ServingDistricts": [],
+      "archived2022OfficialCfbCandidateDistricts": [
+        40
+      ]
+    },
+    {
+      "id": "17929:22:pcc:YE:0:1",
+      "formIdentityOrPdfFetchHold": "original_pdf_firstpage_registration_senate_district_or_period_hold",
+      "originalCfbPrintedDistricts": [],
+      "oldActualServingDistricts": [
+        42
+      ],
+      "official2023ServingDistricts": [],
+      "archived2022OfficialCfbCandidateDistricts": [
+        40
+      ]
+    },
+    {
+      "id": "17347:22:pcc:YE:0:0",
+      "formIdentityOrPdfFetchHold": "original_pdf_firstpage_registration_senate_district_or_period_hold",
+      "originalCfbPrintedDistricts": [
+        49
+      ],
+      "oldActualServingDistricts": [
+        49
+      ],
+      "official2023ServingDistricts": [],
+      "archived2022OfficialCfbCandidateDistricts": [
+        49
+      ]
+    }
+  ]
+}

@@ -36,6 +36,12 @@ export interface ServedSenatorYearEndTarget {
   reportId:string;year:2021|2022;reg:string;
   electionDistrict:number;originalOfficial2021or2022SenateDistricts:number[];
   person:string;viewerSha:string;rosterHtmlSha:string;
+  // Separately source-proven 2023 Senate service district, never inferred from a 2022 PDF.
+  // Permitted ONLY for 2022 reports after redistricting; no assumed election outcome.
+  independentlyDocumentedNextTermSenateDistricts?:number[];
+  // Archived, independently SHA-validated original 2022 CFB district candidate
+  // page showing the SAME registration+candidate in this re-districted SD.
+  independentlyDocumented2022CfbCandidateDistricts?:number[];
   officialSenateServiceOriginalSha:string;
   dueOn:string;periodStartOn:string;periodEndOn:string;
 }
@@ -134,7 +140,9 @@ export function verifyServed2021to22YearEndCalendar(
 export function parseServedYearEnd2021to22Header(
   target:ServedSenatorYearEndTarget,text:string,
 ):{reportStartOn:string;reportEndOn:string;boardReceivedOn:string;printedSenateDistrict:number;
-  printedDistrictWasOfficiallyServedInReportYear:boolean}|null{
+  printedDistrictWasOfficiallyServedInReportYear:boolean;
+  printedDistrictWasOfficial2023NextTermService:boolean;
+  printedDistrictWasArchivedOfficial2022CfbCandidate:boolean}|null{
   const t=norm(text).slice(0,6500);
   if(!/Report of Receipts and Expenditures\s+for\s+Principal Campaign Committee/i.test(t))
     return null;
@@ -151,7 +159,15 @@ export function parseServedYearEnd2021to22Header(
   const printed=uniqueDistricts[0]!;
   const old=printed!==target.electionDistrict
     &&target.originalOfficial2021or2022SenateDistricts.includes(printed);
-  if(printed!==target.electionDistrict&&!old)return null;
+  // The ordinary 2022 YE CFB form may print the NEW 2022 election district
+  // rather than the 2021/22 incumbent service district. For members with
+  // separately proven 2023 Senate service, accept only that exact 2023 district;
+  // never infer it for 2022 losers, resignations, or the 2021 report year.
+  const nextTerm=target.year===2022&&
+    (target.independentlyDocumentedNextTermSenateDistricts??[]).includes(printed);
+  const source2022=target.year===2022&&
+    (target.independentlyDocumented2022CfbCandidateDistricts??[]).includes(printed);
+  if(printed!==target.electionDistrict&&!old&&!nextTerm&&!source2022)return null;
   const dates=t.match(/Period\s+Covered\s*:\s*(\d{1,2}\/\d{1,2}\/\d{4})\s+through\s+(\d{1,2}\/\d{1,2}\/\d{4})/i);
   const received=t.match(/Received\s+by\s+the\s+Board\s*:?\s*([A-Za-z]+\s+\d{1,2},?\s*\d{4})/i);
   const start=usDate(dates?.[1]??''),end=usDate(dates?.[2]??'');
@@ -159,7 +175,9 @@ export function parseServedYearEnd2021to22Header(
   if(!start||!end||!receipt||start!==target.periodStartOn
     ||end!==target.periodEndOn||receipt<end)return null;
   return {reportStartOn:start,reportEndOn:end,boardReceivedOn:receipt,
-    printedSenateDistrict:printed,printedDistrictWasOfficiallyServedInReportYear:old};
+    printedSenateDistrict:printed,printedDistrictWasOfficiallyServedInReportYear:old,
+    printedDistrictWasOfficial2023NextTermService:nextTerm,
+    printedDistrictWasArchivedOfficial2022CfbCandidate:source2022};
 }
 export function auditServed2021to22YearEnd(
   target:ServedSenatorYearEndTarget,pdf:YearEnd2022SourcePdf|null,

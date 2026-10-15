@@ -1,0 +1,32 @@
+name: 'Senate #864 434 exact original/amended CFB report versions, 415 original PDFs V24'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-434-exact-report-versions-475-committee-years-v24.mjs'
+      - 'tests/cfb-864-434-official-report-versions-v24.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2022-four-extra-amended-original-PDF-SHA-source-v22.psv'
+      - 'docs/evaluation/source-proof/cfb-2022-four-extra-amended-independent-original-source-checkpoint-v22.json'
+      - 'docs/evaluation/source-proof/cfb-2021-25-85-serving-senators-434-exact-original-amended-report-versions-v24.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-serving-senators-85-authentic-89-viewer-principals-v24.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-serving-senators-475-committee-year-duty-unknown-v25.psv'
+      - '.github/workflows/senate-864-434-official-cfb-original-amended-audit-v24.yml'
+permissions:
+  contents: read
+jobs:
+  offline-certify-434-original-amended-report-versions:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned offline source integrity test dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Fail-closed original government SHA/parent/receipt/95-member source reconstruction tests
+        run: node --import tsx --test tests/cfb-864-434-official-report-versions-v24.test.mjs
+      - name: Independently reconstruct 434 exact government report versions and 475 Senate committee-year source rows
+        run: node --import tsx scripts/audit-cfb-864-434-exact-report-versions-475-committee-years-v24.mjs

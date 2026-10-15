@@ -1,0 +1,32 @@
+name: 'Senate #864 430 original/amended official CFB PDF versions V21 source-only audit'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-430-exact-original-amended-report-versions-v21.mjs'
+      - 'tests/cfb-864-430-original-amended-report-versions-v21.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-22-38-actually-served-132-yearend-versions-v20.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-22-38-actually-served-original-viewer-yearend-coverage-v20.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-22-38-original-yearend-source-checkpoint-v20.json'
+      - 'docs/evaluation/source-proof/cfb-2021-25-85-serving-senators-430-exact-official-original-amended-report-versions-v21.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-serving-senators-85-authentic-89-viewer-principals-v21.psv'
+      - '.github/workflows/senate-864-430-original-amended-source-audit-v21.yml'
+permissions:
+  contents: read
+jobs:
+  validate-430-official-version-source-ledger-and-95-serving-senator-coverage:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned source-only offline dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Regression tests for original, amendment, aliases, historical publication UNKNOWN and all original source SHA
+        run: node --import tsx --test tests/cfb-864-430-original-amended-report-versions-v21.test.mjs
+      - name: Independently reconstruct 430 selected report-version IDs from the original 298 and additional 132 source-proven proofs
+        run: node --import tsx scripts/audit-cfb-864-430-exact-original-amended-report-versions-v21.mjs

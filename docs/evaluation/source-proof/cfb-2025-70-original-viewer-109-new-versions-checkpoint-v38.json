@@ -1,0 +1,21 @@
+{
+  "schema": "cfb-864-2025-70-original-2026-viewer-109-new-YE-indexed-report-versions-v38",
+  "originalGovernmentReadOnlyWorkflowRunId": 38645535219,
+  "originalGovernmentReadOnlyWorkflowJobId": 116131319722,
+  "original2025ActualServingSenatorsWithViewerResponse": 70,
+  "original2025ReportVersionReferences": 130,
+  "old2025ReportVersionReferences": 21,
+  "newlyRecognized2025ReportVersionReferences": 109,
+  "new2025OriginalReferences": 66,
+  "new2025AmendmentReferences": 43,
+  "originalGovernmentViewerResponseCaptureOn": "2026-10-14",
+  "numberOfOriginalPDFBodiesDownloadedForTheseNew109": 0,
+  "previouslyDownloaded2021to25PDFVersionReferences": 480,
+  "historicalExactPDFVersionPublicBefore2025VoteCertified": 0,
+  "statutoryRequiredReportDenominator": null,
+  "noPrivateDonorPDFTextTransactionRecords": true,
+  "noHistoricalAsOfOrModelOrProductionDatabaseChanges": true,
+  "sourceOriginal70ViewersPSV": "docs/evaluation/source-proof/cfb-2025-70-serving-senators-130-original-government-viewer-versions-v38.psv",
+  "new109SourcePSV": "docs/evaluation/source-proof/cfb-2025-70-serving-senators-109-extra-original-indexed-YE-versions-v38.psv",
+  "full830SourcePSV": "docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-480-downloaded-v38.psv"
+}

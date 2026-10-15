@@ -1,0 +1,33 @@
+name: 'Senate #864 830 original CFB report refs, including 109 new 2025 yearend versions V38'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-830-official-indexed-senate-reports-v38.mjs'
+      - 'tests/cfb-864-830-serving-senator-2025-viewers-v38.test.mjs'
+      - 'src/evidence/cfb-historical-official-filings.ts'
+      - 'data/cfb-senate-official-filings-2021-25-v38.json'
+      - 'docs/evaluation/source-proof/cfb-2025-70-serving-senators-130-original-government-viewer-versions-v38.psv'
+      - 'docs/evaluation/source-proof/cfb-2025-70-serving-senators-109-extra-original-indexed-YE-versions-v38.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-480-downloaded-v38.psv'
+      - 'docs/evaluation/source-proof/cfb-2025-70-original-viewer-109-new-versions-checkpoint-v38.json'
+      - '.github/workflows/senate-864-830-indexed-2025-yearend-v38.yml'
+permissions:
+  contents: read
+jobs:
+  read-only-reconcile-original-state-2025-government-viewers:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned source verifier dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify 70 government original viewer response SHAs, exact 109 additions and existing PDF bodies
+        run: node --import tsx --test tests/cfb-864-830-serving-senator-2025-viewers-v38.test.mjs
+      - name: Offline replay 2025 70-serving-senator viewer versions to 830 complete source inventory
+        run: node --import tsx scripts/audit-cfb-864-830-official-indexed-senate-reports-v38.mjs
