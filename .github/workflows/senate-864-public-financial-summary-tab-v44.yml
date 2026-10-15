@@ -1,0 +1,22 @@
+name: 'Senate #864 original CFB public candidate summary API shape V44'
+on:
+  pull_request:
+    paths:
+      - 'scripts/probe-cfb-864-public-summary-tab-shape-v44.mjs'
+      - '.github/workflows/senate-864-public-financial-summary-tab-v44.yml'
+permissions:
+  contents: read
+jobs:
+  public-official-candidate-summary-metadata-probe:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Retrieve only public official candidate report index and financial summary tab structure
+        run: node scripts/probe-cfb-864-public-summary-tab-shape-v44.mjs
