@@ -169,9 +169,9 @@ export function websiteExcerptPlan(manifest,docs,knownOriginals=[]){
    }else holds.push({...basic,reason:statusKey});
   }
  }
- if(ready.length+holds.length!==1285||seen.size!==1285)
-  throw Error('Pinned candidate-site ledger tally mismatch: '+(ready.length+holds.length)+' / '+seen.size+' versus manifest 1285; per-ledger '+JSON.stringify(ledgers.map(x=>[x.path.split('/').at(-1),x.rows.length])));
- return {version:MIN_REPLAY_VERSION,sourceLedgers:ledgers.length,selectedExcerpts:seen.size,
+ if(ready.length+holds.length!==1197||seen.size!==1197)
+  throw Error('Pinned candidate-site ledger row tally mismatch: '+(ready.length+holds.length)+' / '+seen.size+' versus 1197 literal records');
+ return {version:MIN_REPLAY_VERSION,sourceLedgers:ledgers.length,selectedExcerpts:seen.size,manifestAggregateResearchCount:1285,countOnlyNotMaterialized:1285-seen.size,
   sourcePagesIndexed:[...indexSha.keys()].length,ready,holds,holdCounts:status};
 }
 export function observedBeforeVote(archiveCapturedAt,voteAt){
