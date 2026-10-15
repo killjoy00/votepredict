@@ -1,0 +1,315 @@
+{
+  "schema": "cfb-864-nine-source-PDF-summary-form-review-five-confirmed-source-date-conflicts-v43",
+  "createdOn": "2026-10-15",
+  "parentV41OfficialPDFVersions": 830,
+  "originalSourceV42ReviewedPDFs": 388,
+  "sourceWorkflowRun": 38765027682,
+  "sourceJobId": 116525882895,
+  "originalIndependentSourceRun": 38763363290,
+  "originalIndependentJobId": 116520137144,
+  "fourteenOriginalGovernmentFullPDFHashesAndBytesMatched": true,
+  "nineStillUncertifiedTotalReceiptsPDFVersions": 9,
+  "sevenImageOnlyReceiptsSummaryUnverified": 7,
+  "twoDigitalTextAmendmentFormsWithoutSummary": 2,
+  "sixImageBasedVersionsWithOCRDetectedPrintedTotalReceiptsRows": 6,
+  "fateh2021AmendmentAllEightPagesOCRNoTotalReceiptsLabel": true,
+  "fiveOriginalGovernmentPDFSamePageBoardReceiptDateBeforeCoverageEndConfirmed": true,
+  "correctedOriginalBoardReceiptDatesEstablished": 0,
+  "newReportAmountsCertifiedInV43": 0,
+  "historicalExactVersionFirstPublicByProven": 0,
+  "legalOwedReportDenominator": null,
+  "noRawPDFScansDonorNamesOrTransactionRowsStored": true,
+  "noProtectedDBModelEligibilityOrForecastChanges": true,
+  "records": [
+    {
+      "versionId": "17140:21:pcc:YE:0:0",
+      "senator": "Thomas M. Bakk",
+      "sourceWholePDFSHA256": "1598bea76c67559e88f7ea5cbae9802cd58f9fa68ef7fbb5feb7fc30e084ca7a",
+      "sourceWholePDFBytes": 22328965,
+      "pages": 19,
+      "category": "source_report_receipts_summary_unverified",
+      "digitalTextLayerReadable": false,
+      "ocrSourcePagesExamined": [
+        1,
+        2,
+        3
+      ],
+      "ocrDetectedTotalReceiptsRowPages": [
+        2
+      ],
+      "safePrintedReceiptsRowCropsReviewed": 1,
+      "printedReceiptSummaryAmountCertifiedCents": null,
+      "sourcePrintedAmountCouldBeHandwritten": true,
+      "originalReportVersionStillIndexed": true,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "17140:22:pcc:YE:0:0",
+      "senator": "Thomas M. Bakk",
+      "sourceWholePDFSHA256": "4fde0cd79b3017a95af527e30f05172b8cff70c01e9614f5f07c7fd211e4a8c1",
+      "sourceWholePDFBytes": 6968094,
+      "pages": 9,
+      "category": "source_report_receipts_summary_unverified",
+      "digitalTextLayerReadable": false,
+      "ocrSourcePagesExamined": [
+        1,
+        2,
+        3
+      ],
+      "ocrDetectedTotalReceiptsRowPages": [
+        2
+      ],
+      "safePrintedReceiptsRowCropsReviewed": 1,
+      "printedReceiptSummaryAmountCertifiedCents": null,
+      "sourcePrintedAmountCouldBeHandwritten": true,
+      "originalReportVersionStillIndexed": true,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "17929:21:pcc:YE:0:0",
+      "senator": "Jason Isaacson",
+      "sourceWholePDFSHA256": "4ae5732b67e11c3dcb6f4f5263d91500d8b829ce3c20608f04a9d37776b74840",
+      "sourceWholePDFBytes": 7450668,
+      "pages": 10,
+      "category": "source_report_receipts_summary_unverified",
+      "digitalTextLayerReadable": false,
+      "ocrSourcePagesExamined": [
+        1,
+        2,
+        3
+      ],
+      "ocrDetectedTotalReceiptsRowPages": [
+        3
+      ],
+      "safePrintedReceiptsRowCropsReviewed": 1,
+      "printedReceiptSummaryAmountCertifiedCents": null,
+      "sourcePrintedAmountCouldBeHandwritten": true,
+      "originalReportVersionStillIndexed": true,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "17929:22:pcc:YE:0:0",
+      "senator": "Jason Isaacson",
+      "sourceWholePDFSHA256": "9810debad19015cb387bb319eaefa6af5590d0b24e512a54dad55c1ad6d86499",
+      "sourceWholePDFBytes": 5511784,
+      "pages": 10,
+      "category": "source_report_receipts_summary_unverified",
+      "digitalTextLayerReadable": false,
+      "ocrSourcePagesExamined": [
+        1,
+        2,
+        3
+      ],
+      "ocrDetectedTotalReceiptsRowPages": [
+        2
+      ],
+      "safePrintedReceiptsRowCropsReviewed": 1,
+      "printedReceiptSummaryAmountCertifiedCents": null,
+      "sourcePrintedAmountCouldBeHandwritten": true,
+      "originalReportVersionStillIndexed": true,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "17929:22:pcc:YE:0:1",
+      "senator": "Jason Isaacson",
+      "sourceWholePDFSHA256": "e4d9d690daebc435a7c15a90f1da8a13b401eeaac83cce06eef983129f125a68",
+      "sourceWholePDFBytes": 6467283,
+      "pages": 10,
+      "category": "source_report_receipts_summary_unverified",
+      "digitalTextLayerReadable": false,
+      "ocrSourcePagesExamined": [
+        1,
+        2,
+        3
+      ],
+      "ocrDetectedTotalReceiptsRowPages": [
+        2
+      ],
+      "safePrintedReceiptsRowCropsReviewed": 1,
+      "printedReceiptSummaryAmountCertifiedCents": null,
+      "sourcePrintedAmountCouldBeHandwritten": true,
+      "originalReportVersionStillIndexed": true,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "18430:21:pcc:YE:0:1",
+      "senator": "Aric Putnam",
+      "sourceWholePDFSHA256": "7529ad0bf417548f1617d2bb2b74e5115855844df4a979fdbb6ad3e5e6420acf",
+      "sourceWholePDFBytes": 128524,
+      "pages": 2,
+      "category": "source_report_receipts_summary_unverified",
+      "digitalTextLayerReadable": true,
+      "ocrSourcePagesExamined": [],
+      "ocrDetectedTotalReceiptsRowPages": [],
+      "safePrintedReceiptsRowCropsReviewed": 0,
+      "printedReceiptSummaryAmountCertifiedCents": null,
+      "sourcePrintedAmountCouldBeHandwritten": false,
+      "originalReportVersionStillIndexed": true,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "18488:21:pcc:YE:0:1",
+      "senator": "Omar Fateh",
+      "sourceWholePDFSHA256": "560fa6b5f8ef82f3881c0882ebbc9128b598a769c6c32976a2622d749673dba8",
+      "sourceWholePDFBytes": 2809519,
+      "pages": 8,
+      "category": "source_report_receipts_summary_unverified",
+      "digitalTextLayerReadable": false,
+      "ocrSourcePagesExamined": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "ocrDetectedTotalReceiptsRowPages": [],
+      "safePrintedReceiptsRowCropsReviewed": 0,
+      "printedReceiptSummaryAmountCertifiedCents": null,
+      "sourcePrintedAmountCouldBeHandwritten": true,
+      "originalReportVersionStillIndexed": true,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "18004:21:pcc:YE:0:0",
+      "senator": "Jerry Newton",
+      "sourceWholePDFSHA256": "21537d694379020977f027e1a337c3f6d1d84d0c18cab9a708e7da73c6af6b97",
+      "sourceWholePDFBytes": 2660897,
+      "pages": 4,
+      "category": "source_report_receipts_summary_unverified",
+      "digitalTextLayerReadable": false,
+      "ocrSourcePagesExamined": [
+        1,
+        2,
+        3
+      ],
+      "ocrDetectedTotalReceiptsRowPages": [
+        2
+      ],
+      "safePrintedReceiptsRowCropsReviewed": 1,
+      "printedReceiptSummaryAmountCertifiedCents": null,
+      "sourcePrintedAmountCouldBeHandwritten": true,
+      "originalReportVersionStillIndexed": true,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "18730:21:pcc:YE:0:1",
+      "senator": "Zaynab Mohamed",
+      "sourceWholePDFSHA256": "9471bab3b5b31911afc4aa3b22d91c15facde48fadb981f30111d59a1fca7391",
+      "sourceWholePDFBytes": 191547,
+      "pages": 2,
+      "category": "source_report_receipts_summary_unverified",
+      "digitalTextLayerReadable": true,
+      "ocrSourcePagesExamined": [],
+      "ocrDetectedTotalReceiptsRowPages": [],
+      "safePrintedReceiptsRowCropsReviewed": 0,
+      "printedReceiptSummaryAmountCertifiedCents": null,
+      "sourcePrintedAmountCouldBeHandwritten": false,
+      "originalReportVersionStillIndexed": true,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "16311:22:pcc:YE:0:0",
+      "senator": "Bill G. Ingebrigtsen",
+      "sourceWholePDFSHA256": "5313caff41cd8643b77ff19b2bdb0d96a717d0e54aac58a61b4e7c2155948fd2",
+      "sourceWholePDFBytes": 416819,
+      "pages": 9,
+      "category": "source_printed_date_chronology_conflict",
+      "printedFirstPagePeriodCovered": {
+        "from": "1/1/2022",
+        "through": "12/31/2022"
+      },
+      "printedFirstPageBoardReceived": "September 17, 2022",
+      "boardReceivedOn": "2022-09-17",
+      "reportedPeriodEndOn": "2022-12-31",
+      "visualLabelledLineCropsReviewed": 2,
+      "originalFormHeadingPresent": true,
+      "sameOriginalPDFPagePrintedDateConflictsWithPeriodEnd": true,
+      "independentlyVerifiedCorrectedBoardDate": null,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "16931:21:pcc:YE:0:0",
+      "senator": "Paul E. Gazelka",
+      "sourceWholePDFSHA256": "e3b68b62c6868256ef8f4b3970e2c890232b0afe83d6976bfc36fe70cb8d89cc",
+      "sourceWholePDFBytes": 571978,
+      "pages": 14,
+      "category": "source_printed_date_chronology_conflict",
+      "printedFirstPagePeriodCovered": {
+        "from": "1/1/2021",
+        "through": "12/31/2021"
+      },
+      "printedFirstPageBoardReceived": "September 26, 2021",
+      "boardReceivedOn": "2021-09-26",
+      "reportedPeriodEndOn": "2021-12-31",
+      "visualLabelledLineCropsReviewed": 2,
+      "originalFormHeadingPresent": true,
+      "sameOriginalPDFPagePrintedDateConflictsWithPeriodEnd": true,
+      "independentlyVerifiedCorrectedBoardDate": null,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "17347:22:pcc:YE:0:0",
+      "senator": "Melisa López Franzen",
+      "sourceWholePDFSHA256": "4500299f8091434014a862e71fa269e12a6df14bda4fd312c4cb4d690a563103",
+      "sourceWholePDFBytes": 446843,
+      "pages": 13,
+      "category": "source_printed_date_chronology_conflict",
+      "printedFirstPagePeriodCovered": {
+        "from": "1/1/2022",
+        "through": "12/31/2022"
+      },
+      "printedFirstPageBoardReceived": "November 5, 2022",
+      "boardReceivedOn": "2022-11-05",
+      "reportedPeriodEndOn": "2022-12-31",
+      "visualLabelledLineCropsReviewed": 2,
+      "originalFormHeadingPresent": true,
+      "sameOriginalPDFPagePrintedDateConflictsWithPeriodEnd": true,
+      "independentlyVerifiedCorrectedBoardDate": null,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "17994:23:pcc:YE:0:0",
+      "senator": "Andrew R. Lang",
+      "sourceWholePDFSHA256": "34022e5691aca08f318436ecbc30a1b3e2d5a32c2ad11a19ee0d64fb77443aba",
+      "sourceWholePDFBytes": 381617,
+      "pages": 9,
+      "category": "source_printed_date_chronology_conflict",
+      "printedFirstPagePeriodCovered": {
+        "from": "1/1/2023",
+        "through": "12/31/2023"
+      },
+      "printedFirstPageBoardReceived": "December 29, 2023",
+      "boardReceivedOn": "2023-12-29",
+      "reportedPeriodEndOn": "2023-12-31",
+      "visualLabelledLineCropsReviewed": 2,
+      "originalFormHeadingPresent": true,
+      "sameOriginalPDFPagePrintedDateConflictsWithPeriodEnd": true,
+      "independentlyVerifiedCorrectedBoardDate": null,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    },
+    {
+      "versionId": "17362:25:pcc:YE:0:0",
+      "senator": "Bruce Douglas Anderson",
+      "sourceWholePDFSHA256": "33ef357efe1f658d5626e91f1893dff010ea0878fdb46cc9f0b50fcd54e649a2",
+      "sourceWholePDFBytes": 19199,
+      "pages": 8,
+      "category": "source_printed_date_chronology_conflict",
+      "printedFirstPagePeriodCovered": {
+        "from": "01/01/2025",
+        "through": "12/31/2025"
+      },
+      "printedFirstPageBoardReceived": "October 09, 2025",
+      "boardReceivedOn": "2025-10-09",
+      "reportedPeriodEndOn": "2025-12-31",
+      "visualLabelledLineCropsReviewed": 2,
+      "originalFormHeadingPresent": true,
+      "sameOriginalPDFPagePrintedDateConflictsWithPeriodEnd": true,
+      "independentlyVerifiedCorrectedBoardDate": null,
+      "independentlyVerifiedExactHistoricPublicBy": null
+    }
+  ],
+  "originalCurrentSourceCertifiedSummaryTotalsUnchanged": 379
+}

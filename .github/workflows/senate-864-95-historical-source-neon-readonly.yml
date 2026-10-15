@@ -1,0 +1,223 @@
+name: One-shot 95 served 2021-25 Senate source-to-Neon read-only audit
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-95-historical-source-neon-readonly.yml
+      - data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json
+      - src/evidence/senate-864-95-historical-source-neon-parity.mjs
+      - scripts/audit-senate-864-95-historical-source-neon-readonly.mjs
+      - scripts/verify-senate-864-95-historical-neon-sql-local.mjs
+      - scripts/render-senate-864-95-historical-neon-audit-issue.mjs
+      - tests/senate-864-95-historical-source-neon-readonly.test.mjs
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-95-historical-source-neon-readonly.yml
+      - data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json
+      - src/evidence/senate-864-95-historical-source-neon-parity.mjs
+      - scripts/audit-senate-864-95-historical-source-neon-readonly.mjs
+      - scripts/verify-senate-864-95-historical-neon-sql-local.mjs
+      - scripts/render-senate-864-95-historical-neon-audit-issue.mjs
+permissions:
+  contents: read
+concurrency:
+  group: senate-864-95-historical-neon-${{ github.run_id }}
+  cancel-in-progress: false
+jobs:
+  pr-pure-no-key:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/senate-864-95-historical-source-neon-readonly.test.mjs
+      - run: node --check src/evidence/senate-864-95-historical-source-neon-parity.mjs
+      - run: node --check scripts/audit-senate-864-95-historical-source-neon-readonly.mjs
+      - run: node --check scripts/render-senate-864-95-historical-neon-audit-issue.mjs
+  pr-local-sql-plan:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: node --import tsx scripts/verify-senate-864-95-historical-neon-sql-local.mjs
+  independent-presecret:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Prove exact main commit
+        env:
+          EXACT_MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXACT_MAIN_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: node --import tsx scripts/verify-senate-864-95-historical-neon-sql-local.mjs
+      - run: node --import tsx --test tests/senate-864-95-historical-source-neon-readonly.test.mjs
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  protected-sql-readonly:
+    needs: [independent-presecret]
+    if: >-
+      needs.independent-presecret.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    outputs:
+      safe_95_b64: ${{ steps.audit.outputs.safe_95_b64 }}
+      safe_failure_phase: ${{ steps.audit.outputs.safe_failure_phase }}
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_95_AUTO_CI: ${{ needs.independent-presecret.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify original main commit before secrets
+        env:
+          EXACT_MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXACT_MAIN_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Historical 95 matched against existing Neon only in read-only SQL; ROLLBACK
+        id: audit
+        run: node --import tsx scripts/audit-senate-864-95-historical-source-neon-readonly.mjs
+  issue-keyless-safe-receipt:
+    needs: [independent-presecret, protected-sql-readonly]
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      (needs.independent-presecret.result == 'failure' ||
+       (needs.independent-presecret.result == 'success' &&
+       (needs.protected-sql-readonly.result == 'success' ||
+        needs.protected-sql-readonly.result == 'failure')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+      issues: write
+    env:
+      VERIFY_RESULT: ${{ needs.independent-presecret.result }}
+      READONLY_RESULT: ${{ needs.protected-sql-readonly.result }}
+      SAFE_95_B64: ${{ needs.protected-sql-readonly.outputs.safe_95_b64 }}
+      SAFE_FAILURE_PHASE: ${{ needs.protected-sql-readonly.outputs.safe_failure_phase }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const {pathToFileURL}=require('node:url');
+            const {resolve}=require('node:path');
+            const file=pathToFileURL(resolve('scripts/render-senate-864-95-historical-neon-audit-issue.mjs')).href;
+            const {render95Issue}=await import(file);
+            const body=render95Issue({
+              verifyResult:process.env.VERIFY_RESULT,
+              readOnlyResult:process.env.READONLY_RESULT,
+              safe95B64:process.env.SAFE_95_B64,
+              safeFailurePhase:process.env.SAFE_FAILURE_PHASE,
+              runUrl:'https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID,
+              mainSha:process.env.GITHUB_SHA
+            });
+            await github.rest.issues.createComment({
+              owner:'killjoy00',repo:'votepredict',issue_number:864,body
+            });
