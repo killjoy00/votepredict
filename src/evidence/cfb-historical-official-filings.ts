@@ -1,4 +1,4 @@
-import source from '../../data/cfb-senate-official-filings-2021-25-v36.json';
+import source from '../../data/cfb-senate-official-filings-2021-25-v38.json';
 
 /**
  * Official indexed filing versions are usable historical CONTEXT even when a
