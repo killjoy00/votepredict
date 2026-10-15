@@ -98,7 +98,7 @@ function candidateArtifacts(doc,record,captureUtc){
    const n=Number(v);
    if(!Number.isSafeInteger(n)||n<10000000||n>99999999999999)continue;
    if(!/artifact/i.test(k)||/government|official|sos|lrl|report|outcome|^gov/i.test(k))continue;
-   if(!/original|acquisit|candidate|campaign|first.?party|archive|site|html|source20\d\d|^sourceartifact$/i.test(k))continue;
+   if(!/original|acquisit|candidate|campaign|first.?party|archive|site|html|source20\d\d|legacy20\d\d|recent20\d\d|sourceartifact/i.test(k))continue;
    if(/source2020/i.test(k)&&captureUtc&&!captureUtc.startsWith('2020-'))continue;
    if(/source2022/i.test(k)&&captureUtc&&!captureUtc.startsWith('2022-'))continue;
    // A separate CDX-only artifact is not the original HTML payload.
