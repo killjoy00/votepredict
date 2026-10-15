@@ -89,18 +89,26 @@ function candidateArtifacts(doc,record,captureUtc){
   if(Number.isSafeInteger(n)&&n>=10000000)return {artifactId:n,reason:'source_page_explicit'};
  }
  const options=[];
- for(const group of [doc,doc.provenance,doc.sourceProvenance,doc.source,doc.sources,doc.scope]){
+ const name=(value(record,PERSON_KEYS)||'').toLowerCase();
+ const filename=(value(record,FILE_KEYS)||'').toLowerCase();
+ for(const group of [doc,doc.provenance,doc.sourceProvenance,doc.source,doc.sources,
+  doc.scope,doc.proof,doc.sourceAcquisition]){
   if(!group||typeof group!=='object'||Array.isArray(group))continue;
   for(const [k,v] of Object.entries(group)){
    const n=Number(v);
    if(!Number.isSafeInteger(n)||n<10000000||n>99999999999999)continue;
-   if(!/artifact/i.test(k)||/government|official|sos|lrl|report|outcome/i.test(k))continue;
-   if(!/original|acquisit|candidate|first.?party|archive|site|html|source20\d\d/i.test(k))continue;
+   if(!/artifact/i.test(k)||/government|official|sos|lrl|report|outcome|^gov/i.test(k))continue;
+   if(!/original|acquisit|candidate|campaign|first.?party|archive|site|html|source20\d\d|^sourceartifact$/i.test(k))continue;
    if(/source2020/i.test(k)&&captureUtc&&!captureUtc.startsWith('2020-'))continue;
    if(/source2022/i.test(k)&&captureUtc&&!captureUtc.startsWith('2022-'))continue;
    // A separate CDX-only artifact is not the original HTML payload.
    if(/cdx/i.test(k)&&!/html/i.test(k))continue;
-   const priority=/html/i.test(k)?4:/candidate|site|source20/i.test(k)?3:1;
+   if(/pha/i.test(k)&&!name.includes('pha'))continue;
+   if(/clark/i.test(k)&&!name.includes('clark'))continue;
+   if(/legacy2020/i.test(k)&&!/legacy|kiffmeyer|newman/.test(filename+' '+name))continue;
+   if(/recent2022/i.test(k)&&!/recent|kreun/.test(filename+' '+name))continue;
+   const priority=/pha|clark|legacy2020|recent2022/i.test(k)?8:
+     /html/i.test(k)?5:/candidate|campaign|site|source20|sourceartifact/i.test(k)?3:1;
    options.push({id:n,priority});
   }
  }
