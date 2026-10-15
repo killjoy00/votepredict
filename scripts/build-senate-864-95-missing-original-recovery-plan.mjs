@@ -30,21 +30,22 @@ const PERSON_KEYS=['officialSenateDirectoryName','officialSenatorName','person',
 const FILE_KEYS=['originalSourceFile','originalHtmlFilename','originalHtmlFile','originalFile',
  'originalRawHtmlFile','rawHtmlFile','htmlFile','file','originalRawCompleteHTMLFile',
  'originalRawHTMLFile','originalFullHTMLFile','originalHtmlFileName'];
-const CDX_KEYS=['originalCdxIndexedSha1Base32','originalCdxSHA1Base32','originalCdxSha1Base32',
+const CDX_KEYS=['independentIndexedCDXSHA1Base32','independentCdxSha1Base32',
+ 'originalCDXSHA1','archiveCdxSha1Base32','originalCdxIndexedSha1Base32','originalCdxSHA1Base32','originalCdxSha1Base32',
  'archiveOriginalCdxDigestSha1Base32','independentlyIndexedCdxPayloadSha1Base32',
  'originalArchiveCdxSha1Base32','independentOriginalCDXSHA1Base32',
  'independentIndexedCdxPayloadSha1Base32','originalIndexedSha1Base32',
  'originalHistoricalCdxIndexBase32Sha1','originalCdxDigestSha1Base32',
  'independentOriginalCdxDigestSha1Base32','cdxSha1Base32','cdxSha1','cdxSHA1',
  'sha1','digest'];
-const CDX_FILE_KEYS=['sourceIndexFile','sourceWindowCdxFile','indexFile',
+const CDX_FILE_KEYS=['sourceIndexFile','sourceWindowCdxFile','sourceWindowFile','indexFile',
  'completeOriginalCdxFilename','independentOriginalFullCDXFile',
  'originalCdxFile','sourceCdxFile','cdxFile'];
 const DATE_KEYS=['originalCampaignSiteCaptureAtUtc','originalArchiveCaptureAtUtc',
  'archiveCapturedAtUtc','actualArchiveCaptureUtc','archivedOriginalCapturedAtUtc',
  'archiveCapturePublicByUTC','archiveCaptureUTC','archiveCaptureUtc',
  'archivePublicByUtc','archivePublicByUTC','archiveCapturedAtUtc',
- 'archiveCapturedAt','archiveCapturedUTC','historicOriginalArchivedUTC',
+ 'archiveCapturedAt','archiveCapturedUTC','capturedUtc','historicOriginalArchivedUTC',
  'originalCapturedAtUtc','captureUtc','capturedAtUtc','observedUTC',
  'observedUtc','publicByUtc','capture','observed','captureTime','captureAtUtc'];
 const DIRECT_PAGE_KEYS=new Set([
@@ -88,20 +89,24 @@ function candidateArtifacts(doc,record,captureUtc){
   if(Number.isSafeInteger(n)&&n>=10000000)return {artifactId:n,reason:'source_page_explicit'};
  }
  const options=[];
- for(const group of [doc.provenance,doc.source,doc.sources,doc.scope]){
+ for(const group of [doc,doc.provenance,doc.sourceProvenance,doc.source,doc.sources,doc.scope]){
   if(!group||typeof group!=='object'||Array.isArray(group))continue;
   for(const [k,v] of Object.entries(group)){
    const n=Number(v);
-   if(!Number.isSafeInteger(n)||n<10000000||n>9999999999)continue;
+   if(!Number.isSafeInteger(n)||n<10000000||n>99999999999999)continue;
    if(!/artifact/i.test(k)||/government|official|sos|lrl|report|outcome/i.test(k))continue;
    if(!/original|acquisit|candidate|first.?party|archive|site|html|source20\d\d/i.test(k))continue;
    if(/source2020/i.test(k)&&captureUtc&&!captureUtc.startsWith('2020-'))continue;
    if(/source2022/i.test(k)&&captureUtc&&!captureUtc.startsWith('2022-'))continue;
-   options.push(n);
+   // A separate CDX-only artifact is not the original HTML payload.
+   if(/cdx/i.test(k)&&!/html/i.test(k))continue;
+   const priority=/html/i.test(k)?4:/candidate|site|source20/i.test(k)?3:1;
+   options.push({id:n,priority});
   }
  }
- const ids=[...new Set(options)];
- return ids.length===1?{artifactId:ids[0],reason:'unique_research_source_artifact'}:
+ const highest=Math.max(0,...options.map(x=>x.priority));
+ const ids=[...new Set(options.filter(x=>x.priority===highest).map(x=>x.id))];
+ return ids.length===1?{artifactId:ids[0],reason:'unique_pinned_original_html_artifact'}:
   {artifactId:null,reason:ids.length?'ambiguous_source_artifact':'source_artifact_not_pinned'};
 }
 function possibleDetails(doc,obj){
