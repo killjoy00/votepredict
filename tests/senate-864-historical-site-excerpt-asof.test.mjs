@@ -8,13 +8,15 @@ import {websiteExcerptPlan,observedBeforeVote} from '../src/evidence/senate-864-
 const manifest=JSON.parse(readFileSync('data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json'));
 const docs=new Map(SOURCE_LEDGER_FILES.map(file=>[file,JSON.parse(readFileSync(file))]));
 const originals=buildRecoveryPlan().witnesses;
-test('reuse existing 29 authenticated ledgers; distinguish pages from 1285 literal research excerpts',()=>{
+test('reuse existing 29 authenticated ledgers; distinguish pages from 1197 explicit website research rows',()=>{
  const plan=websiteExcerptPlan(manifest,docs,originals);
  assert.equal(plan.sourceLedgers,29);
- assert.equal(plan.selectedExcerpts,1285);
- assert.equal(plan.ready.length+plan.holds.length,1285);
+ assert.equal(plan.selectedExcerpts,1197);
+ assert.equal(plan.manifestAggregateResearchCount,1285);
+ assert.equal(plan.countOnlyNotMaterialized,88);
+ assert.equal(plan.ready.length+plan.holds.length,1197);
  assert.ok(plan.sourcePagesIndexed>=72);
- assert.equal(new Set([...plan.ready,...plan.holds].map(x=>x.id)).size,1285);
+ assert.equal(new Set([...plan.ready,...plan.holds].map(x=>x.id)).size,1197);
  for(const row of plan.ready){
   assert.match(row.sourceSha,/^[a-f0-9]{64}$/);
   assert.match(row.originalCdxSha1,/^[A-Z2-7]{32}$/);
