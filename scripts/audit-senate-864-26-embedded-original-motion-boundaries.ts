@@ -196,7 +196,23 @@ async function main(){
  if(result.heldOriginals>0)process.exitCode=1;
 }
 if(process.argv[1]?.replace(/\\/g,'/').endsWith('/audit-senate-864-26-embedded-original-motion-boundaries.ts'))
- void main().catch(()=>{
-  console.error('SENATE864_26_EMBEDDED_SOURCE_HOLD=archived_original_census_or_source_transport');
+ void main().catch(error=>{
+  // Expose only our fixed, public proof-stage enum to diagnose harmless
+  // archive path/shape differences. Never print an underlying URL, person,
+  // source text or untrusted thrown exception string.
+  const allowed=[
+   'Frozen exhaustive 323 original source ZIP proof missing',
+   'Archived original embedded minute proof shard drift',
+   'Raw authenticated original source identity or SHA missing',
+   'Missing original embedded year/documents/shard partition',
+   '26 flagged and 17 formal source review denominator drift',
+   'Expected 48 frozen original embedded SHA result artifact JSONs',
+   'Invalid bounded embedded source result JSON size',
+   'Exact eight bounded source motion review shards required',
+   'Use --cohort-preflight DIR or --shard N --artifact-dir DIR --output FILE',
+  ];
+  const message=error instanceof Error?error.message:'';
+  const code=allowed.indexOf(message);
+  console.error('SENATE864_26_EMBEDDED_SOURCE_HOLD=stage_'+(code<0?'unclassified':code));
   process.exitCode=1;
  });
