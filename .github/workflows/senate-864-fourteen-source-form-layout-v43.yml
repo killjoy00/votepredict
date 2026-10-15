@@ -1,0 +1,30 @@
+name: 'Senate #864 exact fourteen original report page-layout and printed-date verification V43'
+on:
+  pull_request:
+    paths:
+      - 'scripts/review-cfb-864-fourteen-original-report-form-layouts-v43.mjs'
+      - 'tests/cfb-864-fourteen-original-report-layout-v43.test.mjs'
+      - '.github/workflows/senate-864-fourteen-source-form-layout-v43.yml'
+permissions:
+  contents: read
+jobs:
+  read-only-official-14-PDF-original-form-layout:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned source audit dependencies and local PDF page renderers
+        run: |
+          npm ci --no-fund --no-audit
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr imagemagick
+      - name: Verify official current CFB SHA-pinned source identity and all fourteen exact reviewer targets
+        run: node --import tsx --test tests/cfb-864-fourteen-original-report-layout-v43.test.mjs
+      - name: Examine first-three-page original PDF source form layout, labelled dates, summary headings only
+        run: node --import tsx scripts/review-cfb-864-fourteen-original-report-form-layouts-v43.mjs
