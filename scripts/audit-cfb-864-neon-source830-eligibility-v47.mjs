@@ -50,7 +50,8 @@ export async function auditExistingNeonCfbFinance(
    const results={};
    for(const [name,sql] of Object.entries(QUERIES)){
     current='query_'+name;
-    const r=await client.query(sql,[JSON.stringify(source)]);
+    const params=sql.includes('$1::jsonb')?[JSON.stringify(source)]:[];
+    const r=await client.query(sql,params);
     results[name]=safeCounts(name,r.rows);
    }
    current='aggregate_queries_validated';
