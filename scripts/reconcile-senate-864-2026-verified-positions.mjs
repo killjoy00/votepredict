@@ -254,6 +254,10 @@ export async function reconcileVerifiedStatements(client,{apply=false}={}){
       members:membersResult.rows,existingEvidence:evidenceResult.rows,
       bills:billsResult.rows,
     });
+    // Apply is all-or-nothing for the reviewed 13 originals: never persist
+    // a partial cohort when even one senator, bill or original quote is held.
+    if(apply && plan.some(item=>item.status.startsWith('HOLD_')))
+      throw Error('An unresolved verified direct-quote HOLD aborts the entire 13-record write');
     let inserted=0,repaired=0,already=0,held=0;
     for(const item of plan){
       if(item.status==='INSERT_VERIFIED_QUOTE'){
