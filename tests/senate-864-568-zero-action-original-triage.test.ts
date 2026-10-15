@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {selectSenate864FirstPassZeroActionOriginals,selectSenate864Next64UnreviewedOriginals,classifySourceMinuteMotionSignals}
+import {selectSenate864FirstPassZeroActionOriginals,selectSenate864Next64UnreviewedOriginals,selectSenate864RemainingOcrOriginals,classifySourceMinuteMotionSignals}
  from '../src/evidence/senate-864-568-zero-action-original-triage.js';
 const S='ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0';
 function fixture(){
@@ -118,4 +118,60 @@ test('second original sample fails closed for malformed source or unsupported 20
  assert.match(c,/selectSenate864Next64UnreviewedOriginals/);
  assert.match(c,/originalPdfSha256:pdf\.contentSha256/);
  assert.doesNotMatch(c,/ON CONFLICT|INSERT INTO member_votes|UPDATE vote_events/);
+});
+
+test('third original-source wave exhausts exactly the remaining 149 OCR minutes without revisiting the first 96',()=>{
+ const source=fixture(),allNew=new Set<string>(),allPrior=new Set<string>();
+ const groups=[[2022,10,101],[2023,1,10],[2024,1,1],[2025,4,37]] as const;
+ for(const [year,shards,count] of groups){
+  const first=selectSenate864FirstPassZeroActionOriginals(source,year,4);
+  const second=selectSenate864Next64UnreviewedOriginals(source,year,'ocr');
+  for(const x of first.selectedOriginals)allPrior.add(x.sourceUrl);
+  for(const mode of ['ocr','embedded'] as const){
+   const v=selectSenate864Next64UnreviewedOriginals(source,year,mode);
+   for(const x of v.selectedOriginals)allPrior.add(x.sourceUrl);
+  }
+  const perYear=new Set<string>();
+  for(let shard=0;shard<shards;shard++){
+   const audit=selectSenate864RemainingOcrOriginals(source,year,shard,shards);
+   assert.equal(audit.remainingOcrOriginalsThisYear,count);
+   assert.equal(audit.remainingOcrAfterPriorReviewsAcrossYears,149);
+   assert.equal(audit.independentlyReviewedFirst32AndNext64,96);
+   assert.equal(audit.originalShaRequired,true);
+   assert.equal(audit.notIndividualVoteOrNoVoteProof,true);
+   assert.ok(audit.selectedOriginals.length>0&&audit.selectedOriginals.length<=12);
+   assert.ok(audit.selectedOriginals.every(x=>x.year===year&&x.originallyRequiredOcr));
+   for(const x of audit.selectedOriginals){
+    assert.match(x.sourcePdfSha256,/^[a-f0-9]{64}$/);
+    assert.equal(perYear.has(x.sourceUrl),false);
+    perYear.add(x.sourceUrl);
+    assert.equal(allNew.has(x.sourceUrl),false);
+    allNew.add(x.sourceUrl);
+   }
+   assert.deepEqual(audit,selectSenate864RemainingOcrOriginals(source,year,shard,shards));
+  }
+  assert.equal(perYear.size,count);
+  assert.equal(first.selectedOriginals.filter(x=>x.originallyRequiredOcr).length,4);
+  assert.equal(second.selectedOriginals.length,8);
+ }
+ assert.equal(allPrior.size,96);
+ assert.equal(allNew.size,149);
+ for(const u of allNew)assert.equal(allPrior.has(u),false);
+});
+test('third original OCR source wave refuses 2021, unstable shard counts, index/byte drift, and DB operations',()=>{
+ const source=fixture();
+ assert.throws(()=>selectSenate864RemainingOcrOriginals(source,2021 as 2022,0,10));
+ assert.throws(()=>selectSenate864RemainingOcrOriginals(source,2022,10,10));
+ assert.throws(()=>selectSenate864RemainingOcrOriginals(source,2022,-1,10));
+ assert.throws(()=>selectSenate864RemainingOcrOriginals(source,2023,0,4));
+ assert.throws(()=>selectSenate864RemainingOcrOriginals({
+  ...source,meetingCensusOriginalSha256:'0'.repeat(64)
+ },2024,0,1));
+ const script=readFileSync('scripts/audit-senate-864-568-zero-action-originals-sample.ts','utf8');
+ assert.match(script,/selectSenate864RemainingOcrOriginals/);
+ assert.match(script,/--remaining-ocr-shard/);
+ assert.match(script,/--total-ocr-shards/);
+ assert.match(script,/sha\(bytes\)!==originalSha/);
+ assert.match(script,/noProductionDatabaseReadWrite:true/);
+ assert.doesNotMatch(script,/\b(?:INSERT INTO|UPDATE vote_events|DELETE FROM|DROP TABLE)\b/);
 });
