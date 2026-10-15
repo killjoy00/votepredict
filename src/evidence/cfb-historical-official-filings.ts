@@ -118,3 +118,21 @@ export function officialFilingStatusLabel(status: HistoricalOfficialFilingStatus
     case 'official_pdf_downloaded_unparsed': return 'PDF downloaded; contents not yet reviewed';
   }
 }
+
+/**
+ * Show the actual report period; 2022 pre-primary (C), pre-general (E)
+ * and year-end (YE) are DIFFERENT original reports, not three identical
+ * generic "original" entries. se=1 is the CFB special-election channel.
+ * Display-only: this does not certify its first historical public date.
+ */
+export function officialFilingDisplayTitle(filing: HistoricalOfficialFiling): string {
+  const parts = filing.id.split(':');
+  const period = parts[3] === 'C'
+    ? 'pre-primary' : parts[3] === 'E'
+    ? 'pre-general' : parts[3] === 'YE'
+    ? 'year-end' : 'campaign finance';
+  const special = parts[4] === '1' ? ' (special election)' : '';
+  const version = filing.kind === 'amended'
+    ? 'amendment ' + filing.amendment : 'original';
+  return filing.year + ' ' + period + special + ' — ' + version;
+}
