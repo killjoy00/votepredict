@@ -75,8 +75,9 @@ test('original official PDF source inventory is attached to legislator profile a
  assert.match(ui,/officialFilingStatusLabel\(filing.status\)/);
  const finance=historicalOfficialFilingContextForSenator('Doron Clark','senate');
  assert.match(finance?.viewerUrl,/\/2026\/$/);
- assert.equal(finance?.filings[0].year,2025);
- assert.equal(finance?.filings[0].kind,'original');
+ const doronYearend=finance?.filings.find(f=>f.id==='19196:25:pcc:YE:0:0');
+ assert.equal(doronYearend?.year,2025);
+ assert.equal(doronYearend?.kind,'original');
  const s=historicalOfficialFilingInventoryTotals();
  assert.equal(s.senators,95);
  assert.equal(s.versions,721);
