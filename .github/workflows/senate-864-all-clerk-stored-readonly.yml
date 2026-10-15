@@ -1,0 +1,106 @@
+name: '#864 original 2022-25 Senate Clerk sources vs Neon read-only'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-clerk-written-source-db-audit.ts
+      - scripts/audit-senate-864-all-clerk-original-stored-readonly.ts
+      - tests/senate-864-clerk-written-source-db-audit.test.ts
+      - tests/senate-864-all-clerk-stored-readonly-gate.test.ts
+      - .github/workflows/senate-864-all-clerk-stored-readonly.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: senate-864-original-clerk-readonly-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr_static_audit:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Original SHA, exact URL, database snapshot and hard safety gates
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-clerk-written-source-db-audit.test.ts
+          node --import tsx --test tests/senate-864-all-clerk-stored-readonly-gate.test.ts
+          node --import tsx scripts/audit-senate-864-all-clerk-original-stored-readonly.ts --source-preflight
+  main_presecret_verify:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_ALL_CLERK_STORED_PARITY_ONESHOT_20261014_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 34
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Independent reviewed exact main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify Clerk original SHA and read-only gate before any key
+        run: |
+          node --import tsx --test tests/senate-864-clerk-written-source-db-audit.test.ts
+          node --import tsx --test tests/senate-864-all-clerk-stored-readonly-gate.test.ts
+          node --import tsx scripts/audit-senate-864-all-clerk-original-stored-readonly.ts --source-preflight
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  protected_original_clerk_readonly:
+    needs: [main_presecret_verify]
+    if: >-
+      needs.main_presecret_verify.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_ALL_CLERK_STORED_PARITY_ONESHOT_20261014_V1')
+    runs-on: ubuntu-latest
+    environment: evidence-readonly-sandbox
+    timeout-minutes: 15
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_APPROVAL: BOUNDED_CLERK_COUNTS_READ_ONLY
+      VOTEPREDICT_864_MAIN_CI_VERIFIED: ${{ needs.main_presecret_verify.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_CLERK_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_ALL_CLERK_STORED_PARITY_ONESHOT_20261014_V1') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact reviewed main SHA
+        env:
+          VERIFIED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$VERIFIED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx scripts/audit-senate-864-all-clerk-original-stored-readonly.ts --source-preflight
+      - name: Strict original-source document, vote-event and member-choice COUNT audit with READ ONLY ROLLBACK
+        run: node --import tsx scripts/audit-senate-864-all-clerk-original-stored-readonly.ts --protected

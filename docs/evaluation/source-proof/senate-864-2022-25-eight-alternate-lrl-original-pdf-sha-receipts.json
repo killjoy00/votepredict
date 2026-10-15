@@ -1,0 +1,180 @@
+{
+  "schemaVersion": "senate-864-alternate-lrl-original-8-pdf-unindexed-four-date-source-proof-v1",
+  "issue": 864,
+  "activeYears": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "exclude2021CommitteeResearch": true,
+  "baselineOriginalLrlIndexSha256": "ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0",
+  "baselineIndexedMeetingDates": 1592,
+  "baselineWrittenMinuteDays": 1563,
+  "baselineUnverifiedWrittenMinuteDays": 29,
+  "originalAcquisitionRunId": 38680515336,
+  "originalAcquisitionRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38680515336",
+  "originalActionsArtifactId": 11948425264,
+  "originalActionsArtifactZipSha256": "1e4fa7a20643e3b10d750cf991935a62af70956e03d63de18a4ba545362ca893",
+  "originalOfficialCommitteePagesAuthenticated": 13,
+  "originalIndexedMissingMinuteMeetingDatesExamined": 29,
+  "originalNewlyAuthenticatedMeetingDates": 4,
+  "originalNewlyAuthenticatedPdfBodies": 8,
+  "revisedWrittenMinuteMeetingDates": 1567,
+  "revisedWithoutOriginalWrittenMinutes": 25,
+  "revisedByYear": [
+    {
+      "year": 2022,
+      "covered": 334,
+      "missing": 3
+    },
+    {
+      "year": 2023,
+      "covered": 514,
+      "missing": 3
+    },
+    {
+      "year": 2024,
+      "covered": 286,
+      "missing": 14
+    },
+    {
+      "year": 2025,
+      "covered": 433,
+      "missing": 5
+    }
+  ],
+  "originalMemberNamedRollCandidates": 0,
+  "originalMemberNamedChoiceOccurrences": 0,
+  "parserContextActionsOccurrencesNotDeduplicatedBetweenMorningAndEvening": 14,
+  "independentOriginalPublicationTimestampProven": false,
+  "historicalAsOfDateConvention": "date_of_public_committee_hearing; no same-day forecast",
+  "exactCurrentStoredEventOrIndividualMemberParityPerformed": false,
+  "noProductionDatabaseModelOrSchedulerWrites": true,
+  "originalFourMeetingDates": [
+    {
+      "year": 2022,
+      "committeeName": "Education Finance and Policy",
+      "hearingDate": "2022-04-04",
+      "officialOriginalPdfBodies": [
+        {
+          "originalSourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fineduc/20220404/fineduc_20220404_minutes_pm1.pdf",
+          "originalRawPdfSha256": "e683b7875f9dff611fb825eb9c24ccfde840085888c250668e2aeb402d253c05",
+          "originalPdfBytes": 123965,
+          "parserContextActionOccurrences": 0,
+          "parserNamedRollCandidates": 0,
+          "parserCountOnlyRollCandidates": 0,
+          "individualNamedChoicesInferred": 0,
+          "originalPdfByteShaIndependentlyVerified": true,
+          "printedOfficialCommitteeAndHearingDateIndependentlyVerified": true,
+          "sourceToStoredPersonVoteParityPerformed": false
+        },
+        {
+          "originalSourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fineduc/20220404/fineduc_20220404_minutes_pm2.pdf",
+          "originalRawPdfSha256": "82393468b23f9b13be3e2c1ce865b3fd0986661530d6878157b4ca8841eae1fc",
+          "originalPdfBytes": 33942,
+          "parserContextActionOccurrences": 0,
+          "parserNamedRollCandidates": 0,
+          "parserCountOnlyRollCandidates": 0,
+          "individualNamedChoicesInferred": 0,
+          "originalPdfByteShaIndependentlyVerified": true,
+          "printedOfficialCommitteeAndHearingDateIndependentlyVerified": true,
+          "sourceToStoredPersonVoteParityPerformed": false
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "committeeName": "Education Finance",
+      "hearingDate": "2023-02-16",
+      "officialOriginalPdfBodies": [
+        {
+          "originalSourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/fineduc/20230216evening/fineduc_20230216_Minutes.pdf",
+          "originalRawPdfSha256": "ca256fb259e9e9e3a286bc924e33d580fc053210e7da2f51d35200226afb817a",
+          "originalPdfBytes": 71841,
+          "parserContextActionOccurrences": 2,
+          "parserNamedRollCandidates": 0,
+          "parserCountOnlyRollCandidates": 0,
+          "individualNamedChoicesInferred": 0,
+          "originalPdfByteShaIndependentlyVerified": true,
+          "printedOfficialCommitteeAndHearingDateIndependentlyVerified": true,
+          "sourceToStoredPersonVoteParityPerformed": false
+        },
+        {
+          "originalSourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/fineduc/20230216morning/fineduc_20230216_Minutes.pdf",
+          "originalRawPdfSha256": "249e6b5bc12d1eb5319408fabb0df5feda886f248282361975e2d68864020f8b",
+          "originalPdfBytes": 19356,
+          "parserContextActionOccurrences": 2,
+          "parserNamedRollCandidates": 0,
+          "parserCountOnlyRollCandidates": 0,
+          "individualNamedChoicesInferred": 0,
+          "originalPdfByteShaIndependentlyVerified": true,
+          "printedOfficialCommitteeAndHearingDateIndependentlyVerified": true,
+          "sourceToStoredPersonVoteParityPerformed": false
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "committeeName": "Education Finance",
+      "hearingDate": "2023-03-15",
+      "officialOriginalPdfBodies": [
+        {
+          "originalSourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/fineduc/20230315evening/fineduc_20230315_Minutes-evening.pdf",
+          "originalRawPdfSha256": "6ad24e5ad54b40459fb7bc1d5b507c055f67cbbd06a2c99da14c7a1ff91f5841",
+          "originalPdfBytes": 76834,
+          "parserContextActionOccurrences": 4,
+          "parserNamedRollCandidates": 0,
+          "parserCountOnlyRollCandidates": 0,
+          "individualNamedChoicesInferred": 0,
+          "originalPdfByteShaIndependentlyVerified": true,
+          "printedOfficialCommitteeAndHearingDateIndependentlyVerified": true,
+          "sourceToStoredPersonVoteParityPerformed": false
+        },
+        {
+          "originalSourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/fineduc/20230315morning/fineduc_20230315_Minutes-morning.pdf",
+          "originalRawPdfSha256": "c0cd5a331e170ecdb43ad2590e7750fe8dad6c94d7536aae2c2f3e4a5776291d",
+          "originalPdfBytes": 68736,
+          "parserContextActionOccurrences": 0,
+          "parserNamedRollCandidates": 0,
+          "parserCountOnlyRollCandidates": 0,
+          "individualNamedChoicesInferred": 0,
+          "originalPdfByteShaIndependentlyVerified": true,
+          "printedOfficialCommitteeAndHearingDateIndependentlyVerified": true,
+          "sourceToStoredPersonVoteParityPerformed": false
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "committeeName": "Jobs and Economic Development",
+      "hearingDate": "2023-03-20",
+      "officialOriginalPdfBodies": [
+        {
+          "originalSourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230320/Jobs_20230320_Minutes-(1).pdf",
+          "originalRawPdfSha256": "e7b487320feaa4bbefb1de9bf811aeb304b88c44e5144231a212395f43e8238b",
+          "originalPdfBytes": 72350,
+          "parserContextActionOccurrences": 3,
+          "parserNamedRollCandidates": 0,
+          "parserCountOnlyRollCandidates": 0,
+          "individualNamedChoicesInferred": 0,
+          "originalPdfByteShaIndependentlyVerified": true,
+          "printedOfficialCommitteeAndHearingDateIndependentlyVerified": true,
+          "sourceToStoredPersonVoteParityPerformed": false
+        },
+        {
+          "originalSourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230320/Jobs_20230320_Minutes-(2).pdf",
+          "originalRawPdfSha256": "3bd5bb0b323dbcd145e4a69d6dba47a3e12cb2041e20f9a222a2a24cf9d410f6",
+          "originalPdfBytes": 80512,
+          "parserContextActionOccurrences": 3,
+          "parserNamedRollCandidates": 0,
+          "parserCountOnlyRollCandidates": 0,
+          "individualNamedChoicesInferred": 0,
+          "originalPdfByteShaIndependentlyVerified": true,
+          "printedOfficialCommitteeAndHearingDateIndependentlyVerified": true,
+          "sourceToStoredPersonVoteParityPerformed": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "senate-864-2024-25-two-official-original-bill-logs-source-receipt-v1",
+  "issue": 864,
+  "purpose": "Supplementary government bill/date/status context for 14 original LRL-indexed no-PDF committee meetings without independently authenticated Senate Clerk HTML; not original parliamentary minutes",
+  "proof": {
+    "successfulActualSourceRunId": 38356613399,
+    "successfulActualSourceRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38356613399",
+    "sourceOnlyRunConclusion": "success",
+    "originalArtifactId": 11793330192,
+    "originalArtifactZipSha256": "758e0d0d8968018a3751fb8f254f32a04c3b7e25646f66f955334623bfb7fcb5",
+    "originalArtifactFile": "senate-864-high-gap-official-original-bill-log-contexts.json",
+    "subsequentExactHeadUnsuccessfulFetchRunId": 38500368054,
+    "subsequentUnsuccessfulRunCaveat": "Two source transport HOLDS in later replay; does not invalidate independently byte-hashed original successful source result",
+    "originalLrlMeetingCensusSource": "docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-53-no-pdf-official-index.json",
+    "authenticatedClerkAndHolds": "docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-source-receipts.json"
+  },
+  "typedOriginals": [
+    {
+      "year": 2024,
+      "committee": "Taxes",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/taxes_2024_Bill-Log.pdf",
+      "originalPdfSha256": "ac52199cd91e87cbe243daa58334ef0e02cf3f3113696ea674a47385bf5a12e3",
+      "originalPdfBytes": 2516787,
+      "originalPdfPages": 76,
+      "extractedTextSha256": "68911d8af4852117faea491b0ad34efaf25e63145f9814e5a61116a7ee705d08",
+      "observedBillSections": 271,
+      "observedSourceStatusRows": 63,
+      "sourceFetchedAt": "2026-10-13T06:26:28.548Z",
+      "dayBillStatusRows": [
+        {
+          "hearingDate": "2024-03-07",
+          "printedBillDateStatuses": 5
+        },
+        {
+          "hearingDate": "2024-04-03",
+          "printedBillDateStatuses": 16
+        },
+        {
+          "hearingDate": "2024-04-04",
+          "printedBillDateStatuses": 6
+        },
+        {
+          "hearingDate": "2024-04-09",
+          "printedBillDateStatuses": 5
+        },
+        {
+          "hearingDate": "2024-04-16",
+          "printedBillDateStatuses": 4
+        },
+        {
+          "hearingDate": "2024-04-17",
+          "printedBillDateStatuses": 11
+        },
+        {
+          "hearingDate": "2024-04-18",
+          "printedBillDateStatuses": 6
+        },
+        {
+          "hearingDate": "2024-04-25",
+          "printedBillDateStatuses": 6
+        },
+        {
+          "hearingDate": "2024-05-01",
+          "printedBillDateStatuses": 1
+        },
+        {
+          "hearingDate": "2024-05-02",
+          "printedBillDateStatuses": 1
+        },
+        {
+          "hearingDate": "2024-05-07",
+          "printedBillDateStatuses": 2
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "committee": "Energy, Utilities, Environment, and Climate",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/energy/energy_2025_Bill-Log.pdf",
+      "originalPdfSha256": "8bbb79ed3583ace73ac84ef73d6c9696b5a8d34454b214776b87b22fde92f278",
+      "originalPdfBytes": 249428,
+      "originalPdfPages": 9,
+      "extractedTextSha256": "48dbca240097fa58ab8d14adaf043c20c40bcd81e562c9964357961739a53fd8",
+      "observedBillSections": 28,
+      "observedSourceStatusRows": 7,
+      "sourceFetchedAt": "2026-10-13T06:26:29.102Z",
+      "dayBillStatusRows": [
+        {
+          "hearingDate": "2025-04-02",
+          "printedBillDateStatuses": 5
+        },
+        {
+          "hearingDate": "2025-04-07",
+          "printedBillDateStatuses": 1
+        },
+        {
+          "hearingDate": "2025-04-09",
+          "printedBillDateStatuses": 1
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "historicallyIndexedMeetingsWithoutClerkOriginalCoveredByLog": 14,
+    "originalPdfBodiesIndependentlyHashed": 2,
+    "sourceBillDateStatusEntries": 70,
+    "originalOfficialParliamentaryMotionIdentitiesVerified": 0,
+    "independentlyProvenNamedYeaNayFromBillLogs": 0,
+    "independentHistoricalExactSourceFirstPublicByCount": 0
+  },
+  "holds": [
+    "The other 2025 Energy 2025-04-28 meeting has no unambiguous independent calendar hearing ID or recovered Clerk minutes and is outside this two-PDF source-log date supplement",
+    "The 70 government bill/status lines do not establish 70 distinct motions; recommendation, layover and amendment statuses may describe bill handling rather than separate parliamentary roll calls",
+    "No exact original source hearing-day publication/first-public-by timestamp, member-day identity, stored evidence parity, or unique source-to-DB event ID proven",
+    "2021 printed minutes denominator and 2022 print/electronic parity remain unknown"
+  ],
+  "ownerConvention": {
+    "occurredOn": "actual committee hearing date if a distinct action is independently established",
+    "availableOn": "hearing date under project historical committee-action convention, not proven original PDF publication date",
+    "sameDayCutoffExcluded": true
+  },
+  "privateRowExported": false,
+  "namedSenatorChoiceInferred": false,
+  "sourceToDatabaseMatched": false,
+  "originalFullRecordedMotionDenominatorKnown": false
+}

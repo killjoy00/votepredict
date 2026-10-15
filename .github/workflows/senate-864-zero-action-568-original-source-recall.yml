@@ -1,0 +1,73 @@
+name: '#864 568 zero-action Senate Minutes: 32 original SHA-vetted OCR/embedded audits'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-568-zero-action-original-triage.ts
+      - scripts/audit-senate-864-568-zero-action-originals-sample.ts
+      - tests/senate-864-568-zero-action-original-triage.test.ts
+      - .github/workflows/senate-864-zero-action-568-original-source-recall.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-source-recall:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    strategy:
+      fail-fast: false
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Source-only 568 denominator, 197 OCR, no vote inference regressions
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-568-zero-action-original-triage.test.ts
+      - name: Verify local OCR tools available or install userland source-only poppler/tesseract
+        run: |
+          if ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - name: Verify previous government indexed original SHA artifact exactly before retrieval
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          digest=$(gh api repos/killjoy00/votepredict/actions/artifacts/11776560365 --jq '.digest')
+          test "$digest" = "sha256:f801aac6a68f6d57d12ea544548860a3f6f2e57b858035f8468068fce6007fe5"
+      - name: Download original public 1592-date Senate SHA-linked action index
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11776560365'
+          repository: killjoy00/votepredict
+          run-id: 38314080633
+          github-token: ${{ github.token }}
+          path: artifacts/original
+          merge-multiple: true
+      - name: Reacquire original 8 SHA-proven zero-v2-action PDFs (4 OCR and 4 embedded) and detect missed result/roll cues
+        run: |
+          node --import tsx scripts/audit-senate-864-568-zero-action-originals-sample.ts \
+            --year ${{ matrix.year }} \
+            --index-ledger artifacts/original/1592-official-meetings-to-source-action-candidates.json \
+            --output artifacts/zero-original-source-recall-${{ matrix.year }}.json
+      - name: Save original source hashes and aggregate cue/motion diagnostics, no voter identity or private SQL
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-zero-action-original-source-recall-${{ matrix.year }}
+          path: artifacts/zero-original-source-recall-${{ matrix.year }}.json
+          if-no-files-found: ignore
+          retention-days: 30

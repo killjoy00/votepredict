@@ -1,0 +1,53 @@
+name: '#864 original official high-gap bill logs (context only)'
+on:
+  pull_request:
+    paths:
+      - scripts/reconcile-senate-864-high-gap-original-bill-logs.ts
+      - tests/senate-864-high-gap-official-bill-log-supplement.test.ts
+      - docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-53-no-pdf-official-index.json
+      - docs/evaluation/source-proof/senate-864-2024-25-high-gap-official-bill-log-original-source-receipt.json
+      - tests/senate-864-high-gap-official-bill-log-original-source-receipt.test.ts
+      - .github/workflows/senate-864-high-gap-original-bill-log-proof.yml
+permissions:
+  contents: read
+jobs:
+  source-only-public-original-bill-log:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Fail-closed date/status-only government PDF regressions
+        run: >-
+          node --import tsx --test
+          tests/senate-864-high-gap-official-bill-log-supplement.test.ts
+          tests/senate-864-high-gap-official-bill-log-original-source-receipt.test.ts
+      - name: Install bounded original PDF text extraction dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          pdfinfo -v 2>&1 | head -n 2
+          pdftotext -v 2>&1 | head -n 2
+      - name: Authenticate exact two official LRL original committee Bill Log PDFs and published bill/status contexts
+        run: |
+          node --import tsx scripts/reconcile-senate-864-high-gap-original-bill-logs.ts \
+            --selected-53 docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-53-no-pdf-official-index.json \
+            --output artifacts/senate-864-high-gap-official-original-bill-log-contexts.json
+      - name: Preserve source-original PDF SHA+text source context and explicit holds
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-high-gap-2024-25-official-bill-log-source-only
+          path: artifacts/senate-864-high-gap-official-original-bill-log-contexts.json
+          if-no-files-found: ignore
+          retention-days: 30

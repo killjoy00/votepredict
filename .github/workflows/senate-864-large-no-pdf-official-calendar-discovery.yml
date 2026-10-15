@@ -1,0 +1,27 @@
+name: '#864 government calendar primary hearing-ID discovery (source only)'
+on:
+  pull_request:
+    paths:
+      - scripts/audit-senate-864-government-day-hearing-id-discovery.ts
+      - .github/workflows/senate-864-large-no-pdf-official-calendar-discovery.yml
+permissions:
+  contents: read
+jobs:
+  original-calendar-discovery:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Inspect original official Legislature/Senate day pages and date-bound IDs
+        run: node --import tsx scripts/audit-senate-864-government-day-hearing-id-discovery.ts

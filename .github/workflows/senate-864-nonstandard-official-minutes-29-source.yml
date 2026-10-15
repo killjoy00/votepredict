@@ -1,0 +1,47 @@
+name: '#864 discover original nonstandard Senate Minutes PDF for 29 held indexed days'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-nonstandard-lrl-minutes-source.ts
+      - scripts/recover-senate-864-nonstandard-lrl-original-minutes.ts
+      - tests/senate-864-nonstandard-lrl-original-minutes-source.test.ts
+      - docs/evaluation/source-proof/senate-864-2022-25-141-official-no-pdf-meeting-to-Clerk-crosswalk.json
+      - .github/workflows/senate-864-nonstandard-official-minutes-29-source.yml
+permissions:
+  contents: read
+concurrency:
+  group: senate-864-other-official-minutes-29-original-${{ github.event.pull_request.head.sha }}
+  cancel-in-progress: false
+jobs:
+  official_alternate_pdf_originals:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Exact 29 meeting source identity and original alternate Minutes parsing tests
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-nonstandard-lrl-original-minutes-source.test.ts
+      - name: Fetch official government LRL committee pages and original nonstandard PDF bytes, hash and parse source actions (no DB)
+        run: |
+          node --import tsx scripts/recover-senate-864-nonstandard-lrl-original-minutes.ts \
+            --output artifacts/senate-864-29-nonstandard-original-lrl-minutes-report.json
+      - name: Preserve full 29 per-meeting source SHA receipts and exact original written-minute links
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-29-nonstandard-original-pdf-source-audit
+          path: artifacts/senate-864-29-nonstandard-original-lrl-minutes-report.json
+          if-no-files-found: ignore
+          retention-days: 30
