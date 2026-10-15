@@ -1,0 +1,301 @@
+{
+  "schemaVersion": "senate-864-323-embedded-original-48-source-zip-sha-manifest-v1",
+  "issue": 864,
+  "runId": 38783916630,
+  "reviewedSourceCommit": "584d19e64c3b220c2040884c581629612778700d",
+  "verifiedEmbeddedOriginalPdfs": 323,
+  "flaggedReviewDocuments": 26,
+  "formalResultCueDocuments": 17,
+  "noOriginalPersonVoteInferred": true,
+  "noOriginalCueConsideredCertifiedDistinctMotion": true,
+  "originalArtifactZips": [
+    {
+      "year": 2022,
+      "shard": 0,
+      "artifactId": 11996908061,
+      "zipSha256": "cc1b5b635229d6b7661d9f47507b38b11f777ab283fbafa2001757cb0328bdce"
+    },
+    {
+      "year": 2022,
+      "shard": 1,
+      "artifactId": 11996564852,
+      "zipSha256": "be16e35401235806b486d7f734e0977de315713146457f5a2e3caabfe5b889a0"
+    },
+    {
+      "year": 2022,
+      "shard": 2,
+      "artifactId": 11997365654,
+      "zipSha256": "4038d137088d7371094cfadb99c039152ce9c22492901ee7307b52e6346e3db3"
+    },
+    {
+      "year": 2022,
+      "shard": 3,
+      "artifactId": 11997305804,
+      "zipSha256": "1e79abaf359959c5b71b2eeb13ba3538f4bfd6778c0b223764acebfc4e9b3b8a"
+    },
+    {
+      "year": 2022,
+      "shard": 4,
+      "artifactId": 11998005157,
+      "zipSha256": "8fd492407712e771570fdd61ae979f5f44a7c167b93aa5c3fe4c0e7648f3317c"
+    },
+    {
+      "year": 2022,
+      "shard": 5,
+      "artifactId": 11996967704,
+      "zipSha256": "c5ee7a302a575f2f66b87edae54ca9c55cc862f6d71350c9cc890184f6774167"
+    },
+    {
+      "year": 2022,
+      "shard": 6,
+      "artifactId": 11997006082,
+      "zipSha256": "b114d573bccd531c3908d658c911f83ea3d859f095a00770fa2915a98b13e2b4"
+    },
+    {
+      "year": 2022,
+      "shard": 7,
+      "artifactId": 11996689668,
+      "zipSha256": "57f26f3fceb6f1c961443c545e9f033b5c804bb58f8c48c641abde1aec99944e"
+    },
+    {
+      "year": 2022,
+      "shard": 8,
+      "artifactId": 11996883344,
+      "zipSha256": "e07ecb74ba65e378dfae4ba7fae953a73f7c79c4b67892740199e234cbf03117"
+    },
+    {
+      "year": 2022,
+      "shard": 9,
+      "artifactId": 11997036041,
+      "zipSha256": "d0ea82146481d5758dc805e56ad3a5d164876cbd9c5324b55a1fc16409a3294e"
+    },
+    {
+      "year": 2022,
+      "shard": 10,
+      "artifactId": 11996977914,
+      "zipSha256": "ace93fdb5ebdaf942822a8fa6937441e7752b14ea75c77ca03185c74e527cf2d"
+    },
+    {
+      "year": 2022,
+      "shard": 11,
+      "artifactId": 11997355834,
+      "zipSha256": "c6ca24a33f29fa3d8882bf54e21b5c66eb77cdace79fa091a392158ba455ca69"
+    },
+    {
+      "year": 2023,
+      "shard": 0,
+      "artifactId": 11997890381,
+      "zipSha256": "7fbb477cc89124f09dde38041294a964db3ec64e822e66e6bc76206873547602"
+    },
+    {
+      "year": 2023,
+      "shard": 1,
+      "artifactId": 11998140036,
+      "zipSha256": "3c2dd2926dd8bf88ff65bf796dad399549604b7959a679306aecf833610f01a2"
+    },
+    {
+      "year": 2023,
+      "shard": 2,
+      "artifactId": 11998050269,
+      "zipSha256": "bcc44881bdbe7e3c312697c94d41ab06b138e8884a363a47412087ed6dfaab9f"
+    },
+    {
+      "year": 2023,
+      "shard": 3,
+      "artifactId": 11995839889,
+      "zipSha256": "1ef013f842960a94ef5fb4b96ea4761a613ca3d4130c1b21814c9b2594f5ddab"
+    },
+    {
+      "year": 2023,
+      "shard": 4,
+      "artifactId": 11997660716,
+      "zipSha256": "ac8650aab5df51bc52f3286e7528f8383eaba64ce14da57de996df66831ec506"
+    },
+    {
+      "year": 2023,
+      "shard": 5,
+      "artifactId": 11998035302,
+      "zipSha256": "c3811d70cad6cac4b56586e5ce641db4e951baa72c193447e036026ffcb9568a"
+    },
+    {
+      "year": 2023,
+      "shard": 6,
+      "artifactId": 11998060262,
+      "zipSha256": "cc73be1b1e878d715f0b563a7c1432c9dfb1be5d2c33812bea293d246f859966"
+    },
+    {
+      "year": 2023,
+      "shard": 7,
+      "artifactId": 11997465848,
+      "zipSha256": "86c5d95837b132d969ed4e97419f49bf7a93f21f915644a4ab5f726da80f9b5b"
+    },
+    {
+      "year": 2023,
+      "shard": 8,
+      "artifactId": 11996279696,
+      "zipSha256": "14a84021d78ede81a918a9bff4ababba07de670ab789dbfc05162034ca883ef1"
+    },
+    {
+      "year": 2023,
+      "shard": 9,
+      "artifactId": 11996938583,
+      "zipSha256": "e1684474647eaff0621cb33b32b2c403e4d74c09d8cdd2108c9d130cda4a9139"
+    },
+    {
+      "year": 2023,
+      "shard": 10,
+      "artifactId": 11997800669,
+      "zipSha256": "c0ce795b10f27ff63333135357d27fc59c4c8d0960dbfeb5bfe28e58768474fc"
+    },
+    {
+      "year": 2023,
+      "shard": 11,
+      "artifactId": 11996709196,
+      "zipSha256": "d5986d35d08615691587433229b4a14305111ac65f09039ae0d029e06ed26993"
+    },
+    {
+      "year": 2024,
+      "shard": 0,
+      "artifactId": 11996709138,
+      "zipSha256": "293b10af3369e32c1307fb7466c8c22bfd14afa8e2a2366db5eaaff8c5ebf911"
+    },
+    {
+      "year": 2024,
+      "shard": 1,
+      "artifactId": 11997950545,
+      "zipSha256": "9bd7f470241854d65374ad8ffe21f34a5dcf904c2b6d1d095de96161c5a5af80"
+    },
+    {
+      "year": 2024,
+      "shard": 2,
+      "artifactId": 11996089783,
+      "zipSha256": "b668cd760b4a562d5beec4c094aa455d8ca97f9c173e7579291f17e81e145f5f"
+    },
+    {
+      "year": 2024,
+      "shard": 3,
+      "artifactId": 11997216381,
+      "zipSha256": "02b7362f905e06b7e6327feb737699810c5f91c29713b50c2dfb1d2f8df122ff"
+    },
+    {
+      "year": 2024,
+      "shard": 4,
+      "artifactId": 11996429618,
+      "zipSha256": "984d08610128b58107660a9baa18d63ff5984a5e36dd8c5530334a71eb671d88"
+    },
+    {
+      "year": 2024,
+      "shard": 5,
+      "artifactId": 11997261281,
+      "zipSha256": "5171551e2ebf6c91694120c46277484e32505619a741dc108b54a45877378ad6"
+    },
+    {
+      "year": 2024,
+      "shard": 6,
+      "artifactId": 11997326172,
+      "zipSha256": "f67f908b540d3ea327c2e58e30983467a6ac10eaec37d67bbd17aea08c26e1fe"
+    },
+    {
+      "year": 2024,
+      "shard": 7,
+      "artifactId": 11997681026,
+      "zipSha256": "058adadac0fd4210e2d3f110be036abc21ecda1b15eae133b209d42efe745ed8"
+    },
+    {
+      "year": 2024,
+      "shard": 8,
+      "artifactId": 11997980825,
+      "zipSha256": "bb3414322097782f550af73cf7b53789c3618fca1b3d4611f949902127461eae"
+    },
+    {
+      "year": 2024,
+      "shard": 9,
+      "artifactId": 11996809164,
+      "zipSha256": "0d8d882ea0a15e55ca0171728779b7afea160e947b840de8941581d7a6599748"
+    },
+    {
+      "year": 2024,
+      "shard": 10,
+      "artifactId": 11997306394,
+      "zipSha256": "f86ffcdabb4e2b3159cb6153e37ea2d07c8db18bf8e61907c655dba386fcb0fb"
+    },
+    {
+      "year": 2024,
+      "shard": 11,
+      "artifactId": 11996804053,
+      "zipSha256": "21d6d96e4ca4454461cff904142f2454998ab8b04970a567c6d761a166bac276"
+    },
+    {
+      "year": 2025,
+      "shard": 0,
+      "artifactId": 11997446321,
+      "zipSha256": "af68075931a7f92259bb59bfce9d6459d53d8eba6234eb95179ac518eeaffa3e"
+    },
+    {
+      "year": 2025,
+      "shard": 1,
+      "artifactId": 11997076557,
+      "zipSha256": "19e89f1f0b494e60583f79ecc4acb6b5dd5ac9056fe0965c78400a4b0533432c"
+    },
+    {
+      "year": 2025,
+      "shard": 2,
+      "artifactId": 11996259972,
+      "zipSha256": "956dbd1661ddee9d715380f9e0d12c172d27be78fb8ebeadeffee872570b0170"
+    },
+    {
+      "year": 2025,
+      "shard": 3,
+      "artifactId": 11997336368,
+      "zipSha256": "1d115f951dd010ae39674d844ed48d05887100459041f77bde850c7a6b14b9db"
+    },
+    {
+      "year": 2025,
+      "shard": 4,
+      "artifactId": 11997751219,
+      "zipSha256": "54fe7667dea153467de65a7eff1306be137cf18ecb31cacaaa7e616250d1c32f"
+    },
+    {
+      "year": 2025,
+      "shard": 5,
+      "artifactId": 11998085779,
+      "zipSha256": "7768587ed487dc070146f5b72a06d4b46adc24a2308da459346dabcb377517f4"
+    },
+    {
+      "year": 2025,
+      "shard": 6,
+      "artifactId": 11998350159,
+      "zipSha256": "46f35f667faffb9649562466d0bfa75faf577b851dfbb0ba6e7a0bc553d869db"
+    },
+    {
+      "year": 2025,
+      "shard": 7,
+      "artifactId": 11997371733,
+      "zipSha256": "7fa816f0c5afd3687e5c39011e7e483bdacf3ac9ad928958286f3e733870c32e"
+    },
+    {
+      "year": 2025,
+      "shard": 8,
+      "artifactId": 11998410216,
+      "zipSha256": "85786cb7deec73afb11a3a7d86a0fd819aebda892e7c4d25bbdc346e67d317fb"
+    },
+    {
+      "year": 2025,
+      "shard": 9,
+      "artifactId": 11997781382,
+      "zipSha256": "f3eb40094cb2a92f5b9717e2657c4aa77ddbc149c6441e548b53a975ba10152a"
+    },
+    {
+      "year": 2025,
+      "shard": 10,
+      "artifactId": 11998535039,
+      "zipSha256": "050cfdf3905c19860b0504cf1de21927fbaa0a76b4c6596b0fa9f5634285fb3d"
+    },
+    {
+      "year": 2025,
+      "shard": 11,
+      "artifactId": 11996829281,
+      "zipSha256": "eac96ed1d13dc53f328635981726487d6d3e1d6f018bf21f2823053f6be07070"
+    }
+  ]
+}
