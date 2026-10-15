@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {
- compareRulesOriginalToStored,validateOriginalRulesSF1,
+ compareRulesOriginalToStored,validateOriginalRulesSF1,normalize2023RulesSf1OfficePrintedName,
  type RulesSourceDoc,type RulesStoredEvent,type RulesStoredChoice,
  type OriginalRulesSource,type RulesSnapshot
 } from '../src/evidence/senate-864-rules-sf1-source-to-db-parity.js';
@@ -245,6 +245,65 @@ test('an inactive roster identity is diagnostic only and still cannot create mem
   row.sourceUnmatchedNameHypotheses[0]!.inactiveStrictMatch===true));
  assert.equal(assertSafeRulesSF1AggregateReceipt(JSON.stringify(receipt)),true);
 });
+
+test('adopted 2023 Senate SR7 officer titles are not member given names; both SF1 rolls resolve all 10 without inference',()=>{
+ const officeRoster=[
+  ['Kari Dziedzic','Dziedzic, Chair'],
+  ['Ann H. Rest','Rest, Vice Chair'],
+  ['Mark T. Johnson','Johnson, Lead'],
+  ['Bobby Joe Champion','Champion'],
+  ['Justin D. Eichorn','Eichorn'],
+  ['Nick A. Frentz','Frentz'],
+  ['Warren Limmer','Limmer'],
+  ['John Marty','Marty'],
+  ['Jeremy R. Miller','Miller'],
+  ['Erin P. Murphy','Murphy']
+ ];
+ const expected=['Dziedzic','Rest','Johnson','Champion','Eichorn','Frentz',
+  'Limmer','Marty','Miller','Murphy'];
+ const alternate=db();
+ alternate.historicalRoster=officeRoster.map(([name],i)=>({
+  ...roster[i]!,name,normalizedName:name.toLowerCase(),
+  aliases:[]
+ }));
+ const actual:OriginalRulesSource={...source,rolls:source.rolls.map(r=>({
+  ...r,memberVotes:r.memberVotes.map((v,i)=>({
+   ...v,sourceName:officeRoster[i]![1],
+   normalizedName:officeRoster[i]![1].toLowerCase()
+  }))
+ }))};
+ assert.equal(validateOriginalRulesSF1(actual),true);
+ assert.deepEqual(officeRoster.map(x=>normalize2023RulesSf1OfficePrintedName(x[1])),expected);
+ const receipt=compareRulesOriginalToStored(actual,alternate);
+ assert.equal(receipt.holds,0);
+ assert.equal(receipt.serviceDayResolvedOriginalMemberChoices,20);
+ assert.equal(receipt.addOnlyCandidatesAwaitingSeparateApproval,2);
+ assert.ok(receipt.perMotionHistoricalNameResolution.every(x=>
+  x.matched===10&&x.unmatched===0&&x.ambiguous===0&&
+  x.duplicateResolvedMemberships===0));
+ assert.equal(assertSafeRulesSF1AggregateReceipt(JSON.stringify(receipt)),true);
+ assert.ok(!JSON.stringify(receipt).includes('Champion'));
+ assert.ok(!JSON.stringify(receipt).includes(ids[0]));
+});
+
+test('SF1 office-role corrections reject wrong senator, wrong office, different committee and duplicated same-name identity',()=>{
+ for(const bad of ['Johnson, Chair','Rest, Lead','Dziedzic, Vice Chair',
+  'Someone, Chair','Johnson, Lead, Senator','Champion, Chair','Johnson, Mayor']){
+  assert.equal(normalize2023RulesSf1OfficePrintedName(bad),bad);
+ }
+ assert.equal(normalize2023RulesSf1OfficePrintedName('  Rest,  Vice Chair '),'Rest');
+ const rosterWithOffices=roster.map((x,i)=>i===0?{
+  ...x,name:'Kari Dziedzic',normalizedName:'kari dziedzic'
+ }:x);
+ const rolls={...source,rolls:source.rolls.map(r=>({
+  ...r,memberVotes:r.memberVotes.map((v,i)=>i===0?
+   {...v,sourceName:'Dziedzic, Chair',normalizedName:'dziedzic chair'}:v)
+ }))};
+ const rs=compareRulesOriginalToStored(rolls,{
+  ...db(),historicalRoster:rosterWithOffices});
+ assert.equal(rs.holds,2);
+ assert.ok(rs.perMotionHistoricalNameResolution.every(x=>x.matched===9&&x.unmatched===1));
+});
 test('invalid original sides and unbounded stored rows refuse source-to-database declaration',()=>{
  assert.equal(validateOriginalRulesSF1({
   ...source,rolls:source.rolls.map((r,i)=>i===0?{...r,memberVotes:r.memberVotes.slice(1)}:r)
@@ -270,7 +329,7 @@ test('safe SF1 aggregate receipt is not rejected by sourceNamedMotions field sub
  assert.throws(()=>assertSafeRulesSF1AggregateReceipt(
   JSON.stringify({large:'x'.repeat(4100)})),/private identity gate/);
  assert.equal(ONE_SHOT_MARKER,
-  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V6');
+  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V7');
 });
 test('protected SQL has five bounded SELECTs only and gate requires reviewed main SHA',()=>{
  assert.equal(READ_ONLY_QUERIES.length,5);
