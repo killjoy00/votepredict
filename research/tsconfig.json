@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "evidence/**/*.ts",
+    "evidence/**/*.tsx",
+    "scripts/**/*.ts",
+    "scripts/**/*.tsx",
+    "tests/**/*.ts",
+    "tests/**/*.tsx"
+  ],
+  "exclude": [
+    "../node_modules"
+  ]
+}
