@@ -79,3 +79,49 @@ export function classifySourceMinuteMotionSignals(text:string){
   silenceIsNotProofOfNoAction:true
  };
 }
+
+
+/**
+ * Next independent, disjoint review round AFTER the 32-SHA-original baseline.
+ * Eight extra original PDFs per year/stratum: 4 years x (8 OCR+8 embedded)
+ * = 64 previously UNSAMPLED dated meeting originals, 96 cumulative sampled.
+ * All identities and PDF raw SHA derive from the previously pinned full
+ * 1,592-date original source ledger, never from heuristically searched URLs.
+ */
+export function selectSenate864Next64UnreviewedOriginals(
+ input:FirstPassLedger,year:2022|2023|2024|2025,
+ stratum:'ocr'|'embedded',
+){
+ if(!['ocr','embedded'].includes(stratum))
+  throw Error('Original source parser OCR or embedded-text stratum required');
+ const prior=selectSenate864FirstPassZeroActionOriginals(input,year,4);
+ const priorOriginals=new Set(prior.selectedOriginals.map(x=>x.sourceUrl));
+ const wantsOcr=stratum==='ocr';
+ const cohort=input.meetings.filter(m=>m.year===year&&m.hasOriginalPdf&&
+  m.originalMinutes.length>0&&m.originalMinutes.every(d=>d.sourceActions.length===0)&&
+  m.originalMinutes.some(d=>d.ocrRecoveredFromInitiallyLowText)===wantsOcr&&
+  !priorOriginals.has(m.originalMinutes[0]!.sourceUrl))
+  .sort((a,b)=>a.hearingDate.localeCompare(b.hearingDate)||a.committee.localeCompare(b.committee));
+ if(cohort.length<8)throw Error('Insufficient independently SHA-proven held action originals');
+ const selected:ZeroActionTarget[]=[];
+ for(let i=0;i<8;i++){
+  const m=cohort[Math.round(i*(cohort.length-1)/7)]!;
+  const p=m.originalMinutes[0]!;
+  if(!/^[a-f0-9]{64}$/.test(p.originalPdfSha256??'')||
+   !p.sourceUrl.startsWith('https://www.lrl.mn.gov/archive/minutes/senate/'+year+'/'))
+   throw Error('Original government PDF SHA/URL missing');
+  selected.push({year,committee:m.committee,hearingDate:m.hearingDate,
+   sourceUrl:p.sourceUrl,sourcePdfSha256:p.originalPdfSha256!,
+   originallyRequiredOcr:wantsOcr});
+ }
+ if(selected.length!==8||new Set(selected.map(x=>x.sourceUrl)).size!==8||
+  selected.some(x=>priorOriginals.has(x.sourceUrl)))
+  throw Error('Second source audit overlapping previously SHA-reviewed 32 PDF originals');
+ return {year,stratum,originalZeroActionMeetingDates:568,
+  earlierShaVerifiedOriginalSample:32,additionalPreviouslyUnreviewedOriginals:8,
+  selectedOriginals:selected,
+  cumulativeUniqueOriginalsTargetWhenAllShardsComplete:96,
+  rawSourceShaRequired:true,
+  zeroParserActionsDoesNotMeanZeroActualVotes:true,
+  noOriginalNamedMembershipInferred:true};
+}

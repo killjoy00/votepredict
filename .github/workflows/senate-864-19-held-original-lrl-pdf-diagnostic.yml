@@ -1,0 +1,73 @@
+name: '#864 19 held indexed Senate dates / 30 official LRL candidate PDFs: original print-date triage'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-held-original-pdf-print-identity.ts
+      - scripts/audit-senate-864-19-held-linked-lrl-pdfs.ts
+      - tests/senate-864-held-original-pdf-print-identity.test.ts
+      - .github/workflows/senate-864-19-held-original-lrl-pdf-diagnostic.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original_indexed_held_pdf_diagnostic:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    strategy:
+      fail-fast: false
+      matrix:
+        year: [2023, 2024, 2025]
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Source-only 19/30 exact original document integrity and previous Minutes separation
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-held-original-pdf-print-identity.test.ts
+      - name: Availability of PDF text and OCR helpers
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - name: Prove existing 29-date original government LRL index source artifact digest before any PDF acquisition
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          digest=$(gh api repos/killjoy00/votepredict/actions/artifacts/11948425264 --jq '.digest')
+          test "$digest" = "sha256:1e4fa7a20643e3b10d750cf991935a62af70956e03d63de18a4ba545362ca893"
+      - name: Download exact original government LRL missing-minute date and URL evidence from successful prior run
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11948425264'
+          repository: killjoy00/votepredict
+          run-id: 38680515336
+          github-token: ${{ github.token }}
+          path: artifacts/original
+          merge-multiple: true
+      - name: Refetch original official signed/final/previous minutes PDFs and distinguish first printed day
+        run: |
+          node --import tsx scripts/audit-senate-864-19-held-linked-lrl-pdfs.ts \
+            --year ${{ matrix.year }} \
+            --prior-index-audit artifacts/original/senate-864-29-nonstandard-original-lrl-minutes-report.json \
+            --output artifacts/held-LRL-original-pdf-diagnostic-${{ matrix.year }}.json
+      - name: Preserve original SHA and printable committee-day versus agenda-attachment status; no person vote rows
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-held-LRL-original-pdf-diagnostic-${{ matrix.year }}
+          path: artifacts/held-LRL-original-pdf-diagnostic-${{ matrix.year }}.json
+          if-no-files-found: ignore
+          retention-days: 30

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {selectSenate864FirstPassZeroActionOriginals,classifySourceMinuteMotionSignals}
+import {selectSenate864FirstPassZeroActionOriginals,selectSenate864Next64UnreviewedOriginals,classifySourceMinuteMotionSignals}
  from '../src/evidence/senate-864-568-zero-action-original-triage.js';
 const S='ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0';
 function fixture(){
@@ -79,4 +79,43 @@ test('source study never infers member vote from cue, updates old ordinal events
  assert.match(c,/sampleNotAll568Sources:true/);
  assert.match(c,/noProductionDatabaseReadWrite:true/);
  assert.doesNotMatch(c,/\b(?:INSERT INTO|UPDATE vote_events|DELETE FROM|DROP TABLE)\b/);
+});
+
+
+test('second 64-original QA round never overlaps the previous 32, retains 197 OCR/371 embedded source identity',()=>{
+ const source=fixture(),allUrls=new Set<string>();
+ for(const year of [2022,2023,2024,2025] as const){
+  const first=selectSenate864FirstPassZeroActionOriginals(source,year,4);
+  const firstSet=new Set(first.selectedOriginals.map(x=>x.sourceUrl));
+  for(const x of first.selectedOriginals)allUrls.add(x.sourceUrl);
+  for(const mode of ['ocr','embedded'] as const){
+   const v=selectSenate864Next64UnreviewedOriginals(source,year,mode);
+   assert.equal(v.additionalPreviouslyUnreviewedOriginals,8);
+   assert.equal(v.cumulativeUniqueOriginalsTargetWhenAllShardsComplete,96);
+   assert.equal(v.zeroParserActionsDoesNotMeanZeroActualVotes,true);
+   assert.equal(v.rawSourceShaRequired,true);
+   assert.equal(v.selectedOriginals.length,8);
+   assert.ok(v.selectedOriginals.every(x=>x.originallyRequiredOcr===(mode==='ocr')));
+   for(const x of v.selectedOriginals){
+    assert.match(x.sourcePdfSha256,/^[0-9a-f]{64}$/);
+    assert.equal(firstSet.has(x.sourceUrl),false);
+    assert.equal(allUrls.has(x.sourceUrl),false);
+    allUrls.add(x.sourceUrl);
+   }
+   assert.deepEqual(v,selectSenate864Next64UnreviewedOriginals(source,year,mode));
+  }
+ }
+ assert.equal(allUrls.size,96);
+});
+test('second original sample fails closed for malformed source or unsupported 2021 year and mode',()=>{
+ const source=fixture();
+ assert.throws(()=>selectSenate864Next64UnreviewedOriginals(source,2022,'unknown' as 'ocr'));
+ assert.throws(()=>selectSenate864Next64UnreviewedOriginals({
+  ...source,meetingCensusOriginalSha256:'bad'
+ },2023,'embedded'));
+ assert.throws(()=>selectSenate864Next64UnreviewedOriginals(source,2021 as 2022,'embedded'));
+ const c=readFileSync('scripts/audit-senate-864-568-zero-action-originals-sample.ts','utf8');
+ assert.match(c,/selectSenate864Next64UnreviewedOriginals/);
+ assert.match(c,/originalPdfSha256:pdf\.contentSha256/);
+ assert.doesNotMatch(c,/ON CONFLICT|INSERT INTO member_votes|UPDATE vote_events/);
 });
