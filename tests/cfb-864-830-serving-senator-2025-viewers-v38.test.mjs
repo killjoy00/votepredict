@@ -3,7 +3,7 @@ import assert from'node:assert/strict';
 import{readFileSync}from'node:fs';
 import{SCHEMA,audit830SenateIndexedOfficialReports}
  from'../scripts/audit-cfb-864-830-official-indexed-senate-reports-v38.mjs';
-import{historicalOfficialFilingContextForSenator,historicalOfficialFilingInventoryTotals,officialFilingStatusLabel}
+import{historicalOfficialFilingContextForSenator,historicalOfficialFilingInventoryTotals,officialFilingStatusLabel,officialFilingDisplayTitle}
  from'../src/evidence/cfb-historical-official-filings.ts';
 
 const audit=audit830SenateIndexedOfficialReports();
@@ -51,6 +51,17 @@ test('source profile exposes original and updated 2025 amendment viewer records 
  const ui=readFileSync('src/app/dashboard/legislators/[legislatorId]/page.tsx','utf8');
  assert.match(ui,/Show \{historicalFilings\.observedVersions - 8\} earlier indexed versions/);
  assert.match(ui,/Open CFB filing/);
+});
+test('every government CFB report is labeled by its actual period and amendment, not a vague duplicate original report title',()=>{
+ const pre=historicalOfficialFilingContextForSenator('Ann H. Rest','senate');
+ assert.equal(officialFilingDisplayTitle(pre.filings.find(f=>f.id==='15163:22:pcc:C:0:0')),'2022 pre-primary — original');
+ assert.equal(officialFilingDisplayTitle(pre.filings.find(f=>f.id==='15163:22:pcc:E:0:0')),'2022 pre-general — original');
+ const chamber=historicalOfficialFilingContextForSenator('Jim Carlson','senate');
+ assert.equal(officialFilingDisplayTitle(chamber.filings.find(f=>f.id==='16246:25:pcc:YE:0:3')),'2025 year-end — amendment 3');
+ const special=historicalOfficialFilingContextForSenator('Amanda Hemmingsen-Jaeger','senate');
+ assert.equal(officialFilingDisplayTitle(special.filings.find(f=>f.id==='19233:25:pcc:C:1:0')),'2025 pre-primary (special election) — original');
+ const ui=readFileSync('src/app/dashboard/legislators/[legislatorId]/page.tsx','utf8');
+ assert.equal(ui.split('officialFilingDisplayTitle(filing)').length-1,2);
 });
 test('2025 2026-acquired filed records do not backdate to a 2025 vote and cannot prove legal reporting obligation or bulk transaction parity',()=>{
  const checkpoint=JSON.parse(readFileSync('docs/evaluation/source-proof/cfb-2025-70-original-viewer-109-new-versions-checkpoint-v38.json','utf8'));
