@@ -125,7 +125,7 @@ function integerField(value: string, label: string): number {
  */
 export function parseSenateDistrictFile(rawContent: string, type: SenateElectionType): SenateElectionCandidate[] {
   const records: SenateElectionCandidate[] = [];
-  const lines = rawContent.split(/\r?\n/);
+  const lines = rawContent.split(/\r\n|\n|\r/);
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
     if (!line.trim()) continue;
