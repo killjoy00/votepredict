@@ -31,7 +31,7 @@ test('SQL only registers original PDF metadata and never changes financial evide
  assert.match(VERIFY_SQL,/report_version_id=e.id/);
  assert.match(VERIFY_SQL,/full_original_pdf_sha256=e.sha/);
  assert.match(REVALIDATE_SQL,/committee_registration=t\.m->>'filerRegistrationNumber'/);
- assert.match(REVALIDATE_SQL,/m->>'asOfEligible'='true'/);
+ assert.match(REVALIDATE_SQL,/ei\.metadata->>'asOfEligible'='true'/);
  assert.match(REVALIDATE_SQL,/independent_expenditure/);
  assert.match(REVALIDATE_SQL,/t\.family IN \('candidate_contribution','candidate_expenditure'\)/);
  assert.match(REVALIDATE_SQL,/min\(statutory_release_floor_on\)/);
@@ -100,7 +100,7 @@ function dbFixture({badLedger=false,badProof=false}={}){
    if(sql.startsWith('SELECT filename,checksum FROM votepredict_schema_migrations'))
     return {rows:badLedger?expected.slice(0,13).map((x,i)=>i===0?
       {...x,checksum:'f'.repeat(64)}:x):expected.slice(0,13)};
-   if(sql.startsWith('CREATE TABLE IF NOT EXISTS cfb_official_senate_pdf_versions'))return {rows:[]};
+   if(sql.includes('CREATE TABLE IF NOT EXISTS cfb_official_senate_pdf_versions'))return {rows:[]};
    if(sql.startsWith('INSERT INTO votepredict_schema_migrations')){
     assert.equal(params[0],expected[13].filename);
     assert.equal(params[1],expected[13].checksum);
