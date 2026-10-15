@@ -1,4 +1,5 @@
 import source from '../../data/cfb-senate-official-filings-2021-25-v41.json';
+import userReview from '../../data/cfb-2021-25-nine-five-review-dispositions-v45.json';
 
 /**
  * Official indexed filing versions are usable historical CONTEXT even when a
@@ -15,7 +16,23 @@ export type HistoricalOfficialFilingStatus =
   | 'official_indexed_pdf_not_yet_retrieved'
   | 'official_pdf_downloaded_unparsed';
 
+export type HistoricalOfficialFilingReviewDisposition =
+  | 'annual_receipts_accepted_from_original_pdf_and_board_summary'
+  | 'handwritten_receipts_remain_unknown'
+  | 'correspondence_attachment_excluded_from_monetary_reconciliation'
+  | 'later_of_printed_stamp_or_period_end_used_for_review';
+
+export interface HistoricalOfficialFilingReview {
+  versionId: string;
+  reviewDisposition: HistoricalOfficialFilingReviewDisposition;
+  acceptedTotalReceiptsCents: number | null;
+  effectiveReviewOn: string | null;
+  originalPrintedBoardReceivedOn?: string;
+  originalReportedPeriodEndOn?: string;
+}
+
 export interface HistoricalOfficialFiling {
+  review?: HistoricalOfficialFilingReview;
   id: string;
   year: number;
   kind: 'original' | 'amended';
@@ -57,7 +74,31 @@ function nameKey(value: string): string {
     .replace(/[^a-z]+/g, '');
 }
 
-const byName = new Map(inventory.senators.map(member => [nameKey(member.name), member]));
+// V45 overlays the owner's narrowly approved money/date review choices onto
+// the source display. The V41 government filing ledger stays byte-for-byte
+// unchanged, including official index "amended" labels and original stamps.
+const reviewedRows = userReview.resolutions as unknown as HistoricalOfficialFilingReview[];
+const byFilingId = new Map(inventory.senators.flatMap(s => s.filings).map(f => [f.id, f]));
+const reviewByFilingId = new Map<string, HistoricalOfficialFilingReview>();
+for (const resolution of reviewedRows) {
+  if (reviewByFilingId.has(resolution.versionId) || !byFilingId.has(resolution.versionId)) {
+    throw new Error('V45 duplicate or unknown CFB government report-version review');
+  }
+  reviewByFilingId.set(resolution.versionId, resolution);
+}
+if (reviewedRows.length !== 14 || reviewByFilingId.size !== 14) {
+  throw new Error('V45 owner-reviewed government source subset incomplete');
+}
+const reviewedInventory: HistoricalOfficialFilingContext[] = inventory.senators.map(member => ({
+  ...member,
+  filings: member.filings.map(filing => ({
+    ...filing,
+    ...(reviewByFilingId.has(filing.id)
+      ? { review: reviewByFilingId.get(filing.id) }
+      : {}),
+  })),
+}));
+const byName = new Map(reviewedInventory.map(member => [nameKey(member.name), member]));
 if (byName.size !== inventory.senators.length) {
   throw new Error('Ambiguous historical CFB person aliases');
 }
@@ -108,6 +149,33 @@ export function historicalOfficialFilingInventoryTotals(): {
   };
 }
 
+/**
+ * Show an approved human review conclusion without rewriting the CFB's
+ * original report type/stamp or implying the report was public at a vote.
+ * Monetary figures are fixed-point integer cents. The selected review date
+ * is a sorting/display convention only, not an as-of publication gate.
+ */
+export function officialFilingReviewLabel(filing: HistoricalOfficialFiling): string | undefined {
+  const review = filing.review;
+  if (!review) return undefined;
+  switch (review.reviewDisposition) {
+    case 'annual_receipts_accepted_from_original_pdf_and_board_summary': {
+      const cents = review.acceptedTotalReceiptsCents;
+      if (cents === null || !Number.isSafeInteger(cents) || cents < 0) return undefined;
+      const money = (cents / 100).toLocaleString('en-US', {
+        style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2,
+      });
+      return `Receipts ${money} — corroborated by official CFB annual summary; review through ${review.effectiveReviewOn}`;
+    }
+    case 'correspondence_attachment_excluded_from_monetary_reconciliation':
+      return 'Correspondence attachment — excluded from monetary totals';
+    case 'handwritten_receipts_remain_unknown':
+      return 'Handwritten receipt figures unresolved — amount not used';
+    case 'later_of_printed_stamp_or_period_end_used_for_review':
+      return `Review date: ${review.effectiveReviewOn} (later printed date; original Board stamp ${review.originalPrintedBoardReceivedOn} retained)`;
+  }
+}
+
 export function officialFilingStatusLabel(status: HistoricalOfficialFilingStatus): string {
   switch (status) {
     case 'readable_official_pdf': return 'PDF available';
@@ -135,5 +203,8 @@ export function officialFilingDisplayTitle(filing: HistoricalOfficialFiling): st
   const special = parts[4] === '1' ? ' (special election)' : '';
   const version = filing.kind === 'amended'
     ? 'amendment ' + filing.amendment : 'original';
+  if (filing.review?.reviewDisposition === 'correspondence_attachment_excluded_from_monetary_reconciliation') {
+    return filing.year + ' ' + period + special + ' — correspondence (CFB-indexed amendment ' + filing.amendment + ')';
+  }
   return filing.year + ' ' + period + special + ' — ' + version;
 }
