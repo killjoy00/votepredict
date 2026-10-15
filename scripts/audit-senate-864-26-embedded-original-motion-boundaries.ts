@@ -92,10 +92,17 @@ export function selectExactFlagged26FromAll323(input:Report[],manifest:ProofMani
    sourceRows.push(row);
   }
  }
+ const byYear=years.map(y=>sourceRows.filter(v=>v.year===y).length);
+ const missingZipShards=manifest.originalArtifactZips.filter(a=>
+  !seenShards.has(a.year+'/'+a.shard)).length;
  if(seenShards.size!==48||sourceRows.length!==323||seenUrls.size!==323||
-  years.some((y,i)=>sourceRows.filter(v=>v.year===y).length!==expected[i])||
-  manifest.originalArtifactZips.some(a=>!seenShards.has(a.year+'/'+a.shard)))
+  years.some((y,i)=>byYear[i]!==expected[i])||missingZipShards>0){
+  console.log('SENATE864_EMBEDDED_ONLY_SAFE_COUNTS='+JSON.stringify({
+   shards:seenShards.size,originals:sourceRows.length,uniqueOriginalUrls:seenUrls.size,
+   byYear,missingZipShards
+  }));
   throw Error('Missing original embedded year/documents/shard partition');
+ }
  const flagged=sourceRows.filter(x=>x.priority!=='zero_detected_still_not_a_certified_no_vote')
   .sort((a,b)=>a.year-b.year||a.hearingDate.localeCompare(b.hearingDate)||
    a.committeeName.localeCompare(b.committeeName)||a.originalSourceUrl.localeCompare(b.originalSourceUrl));
