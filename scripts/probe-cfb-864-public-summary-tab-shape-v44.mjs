@@ -25,6 +25,9 @@ async function candidate(t){
  const cookies=(typeof response.headers.getSetCookie==='function'?response.headers.getSetCookie():[response.headers.get('set-cookie')??'']);
  const cookie=cookies.map(v=>v.split(';')[0]).filter(Boolean).join('; ');
  const tabs=listTabs(html);
+ const financialTabHTML=[...html.matchAll(/.{0,260}Financial\s+Summary.{0,270}/gsi)].slice(0,2).map(m=>
+  m[0].replace(/[\w.+%-]+@[\w.-]+/g,'[email removed]').replace(/\+?\d[\d ()-]{8,}/g,'[phone removed]'));
+ const scriptUrls=[...html.matchAll(/<script[^>]+src=["']([^"']{0,180})["']/gi)].map(m=>m[1]).filter(x=>!x.includes('google')&&!x.includes('cdn')).slice(-20);
  const outcome=[];
  for(const tabname of ['reports_data','financial_summary','financial_summary_data','financial_data']){
   try{
@@ -61,7 +64,7 @@ async function candidate(t){
     summaryPatternCount:yearSummaryLines.length,summaryPatternDescriptions:yearSummaryLines});
   }catch(e){outcome.push({tab:tabname,error:reason(e)})}
  }
- return {registration:t.reg,segment:t.segment,pageOriginalSHA256:sha(html),pageTabs:tabs,outcome};
+ return {registration:t.reg,segment:t.segment,pageOriginalSHA256:sha(html),pageTabs:tabs,financialTabHTML,scriptUrls,outcome};
 }
 const records=[];
 for(const t of TARGETS){try{records.push(await candidate(t))}catch(e){records.push({registration:t.reg,error:reason(e)})}}
