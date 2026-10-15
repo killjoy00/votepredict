@@ -39,9 +39,17 @@ async function download(url:string){
   return {bytes:null,hold:'http_200_not_original_pdf'};
  return {bytes,hold:null};
 }
+type DiagnosticRow={
+ year:number;committeeName:string;hearingDate:string;originalSourceUrl:string;
+ status:string;originalRawPdfSha256:string|null;
+ firstPrintedDateFromOriginalHeader?:string|null;
+ printedCommitteeHeaderFound?:boolean;printedMinutesDocumentType?:boolean;
+ exactOriginalPrintedMeetingDay?:boolean;
+ [key:string]:unknown;
+};
 async function one(x:{
  year:number;committeeName:string;hearingDate:string;originalSourceUrl:string;
-}){
+}):Promise<DiagnosticRow>{
  const base={year:x.year,committeeName:x.committeeName,hearingDate:x.hearingDate,
   originalSourceUrl:x.originalSourceUrl,fromGovernmentOriginalIndex:true};
  try{
@@ -62,12 +70,13 @@ async function one(x:{
   const rolls=parseSenateCommitteeMinuteVotes(pdf.text);
   const named=rolls.filter(r=>r.individualVotesAvailable);
   const context=parseSenateCommitteeMinuteContextActions(pdf.text);
+  const {status:printIdentityStatus,...identityFields}=classification;
   return {...base,status:'source_original_pdf_retrieved',
    originalRawPdfSha256:rawSha,originalPdfBytes:d.bytes.byteLength,
    originalExtractedTextSha256:sha(pdf.text),
    originalTextExtractionMethod:pdf.extractionMethod,
    originalPrintedMeetingDay:classification.firstPrintedDateFromOriginalHeader,
-   ...classification,
+   ...identityFields,printIdentityStatus,
    originalExplicitNamedRollParserCandidates:named.length,
    originalPrintedNamedChoiceOccurrences:named.reduce((s,r)=>s+r.memberVotes.length,0),
    originalCountOnlyParserCandidates:rolls.length-named.length,
@@ -106,13 +115,10 @@ async function main(){
  }));
  rows.sort((a,b)=>a.originalSourceUrl.localeCompare(b.originalSourceUrl));
  const matches=rows.filter(r=>r.status==='source_original_pdf_retrieved'&&
-  r.status==='source_original_pdf_retrieved'&&
-  'exactOriginalPrintedMeetingDay' in r&&r.exactOriginalPrintedMeetingDay===true&&
-  r.printedCommitteeHeaderFound===true&&r.printedMinutesDocumentType===true);
+  r.exactOriginalPrintedMeetingDay===true&&r.printedCommitteeHeaderFound===true&&
+  r.printedMinutesDocumentType===true);
  const holds=rows.filter(r=>r.status!=='source_original_pdf_retrieved');
- const different=rows.filter(r=>'status' in r&&
-  'firstPrintedDateFromOriginalHeader' in r&&
-  r.status==='source_original_pdf_retrieved'&&
+ const different=rows.filter(r=>r.status==='source_original_pdf_retrieved'&&
   r.firstPrintedDateFromOriginalHeader!==r.hearingDate);
  const audit={
   schemaVersion:'senate-864-19-held-LRL-30-pdf-original-printed-day-diagnostic-v1',
