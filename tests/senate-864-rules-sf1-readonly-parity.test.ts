@@ -6,7 +6,8 @@ import {
  type RulesSourceDoc,type RulesStoredEvent,type RulesStoredChoice,
  type OriginalRulesSource,type RulesSnapshot
 } from '../src/evidence/senate-864-rules-sf1-source-to-db-parity.js';
-import {assertProtectedRulesSF1Environment,READ_ONLY_QUERIES,ONE_SHOT_MARKER}
+import {assertProtectedRulesSF1Environment,assertSafeRulesSF1AggregateReceipt,
+ READ_ONLY_QUERIES,ONE_SHOT_MARKER}
  from '../scripts/audit-senate-864-rules-sf1-protected-neon-readonly.js';
 
 const docUrl='https://www.lrl.mn.gov/archive/minutes/senate/2023/rules/20230124/Rules_20230124_Minutes.pdf';
@@ -146,6 +147,25 @@ test('invalid original sides and unbounded stored rows refuse source-to-database
  assert.throws(()=>compareRulesOriginalToStored(source,{
   ...db(),events:Array.from({length:301},(_,i)=>({...event(0),id:String(i)}))
  }));
+});
+test('safe SF1 aggregate receipt is not rejected by sourceNamedMotions field substring',()=>{
+ const safe=JSON.stringify(compareRulesOriginalToStored(source,db([event(0),event(1)])));
+ assert.match(safe,/"sourceNamedMotions":2/);
+ assert.equal(assertSafeRulesSF1AggregateReceipt(safe),true);
+ for(const key of ['sourceName','memberVotes','source_url','external_key',
+  'normalized_member_name','membership_id']){
+  assert.throws(()=>assertSafeRulesSF1AggregateReceipt(
+   JSON.stringify({safe:true,[key]:'private-value'})),/private identity gate/);
+ }
+ for(const url of ['https://www.lrl.mn.gov/minutes/original.pdf',
+  'postgresql://redacted@example.com/votepredict']){
+  assert.throws(()=>assertSafeRulesSF1AggregateReceipt(
+   JSON.stringify({unexpected:url})),/private identity gate/);
+ }
+ assert.throws(()=>assertSafeRulesSF1AggregateReceipt(
+  JSON.stringify({large:'x'.repeat(4100)})),/private identity gate/);
+ assert.equal(ONE_SHOT_MARKER,
+  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V2');
 });
 test('protected SQL has five bounded SELECTs only and gate requires reviewed main SHA',()=>{
  assert.equal(READ_ONLY_QUERIES.length,5);
