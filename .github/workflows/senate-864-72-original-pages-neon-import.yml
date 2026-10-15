@@ -1,0 +1,140 @@
+name: One-shot 72 verified historic Senate originals into existing VotePredict Neon
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-72-original-pages-neon-import.yml
+      - src/evidence/senate-864-72-historical-source-ingest-plan.mjs
+      - src/evidence/senate-864-72-original-neon-draft.mjs
+      - src/evidence/senate-864-72-neon-readback.mjs
+      - src/evidence/senate-864-72-protected-event.mjs
+      - scripts/check-senate-864-72-neon-import-proof.mjs
+      - scripts/preflight-senate-864-72-original-pages-neon.mjs
+      - scripts/ingest-senate-864-72-original-pages-neon.mjs
+      - tests/senate-864-72-neon-ingest.test.mjs
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-72-original-pages-neon-import.yml
+      - src/evidence/senate-864-72-historical-source-ingest-plan.mjs
+      - src/evidence/senate-864-72-original-neon-draft.mjs
+      - src/evidence/senate-864-72-neon-readback.mjs
+      - src/evidence/senate-864-72-protected-event.mjs
+      - scripts/check-senate-864-72-neon-import-proof.mjs
+      - scripts/preflight-senate-864-72-original-pages-neon.mjs
+      - scripts/ingest-senate-864-72-original-pages-neon.mjs
+      - tests/senate-864-72-neon-ingest.test.mjs
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: senate-864-72-historical-neon-${{ github.run_id }}
+  cancel-in-progress: false
+jobs:
+  pr-pure-no-secret:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/senate-864-72-neon-ingest.test.mjs
+      - run: node --check scripts/ingest-senate-864-72-original-pages-neon.mjs
+      - run: node --check scripts/preflight-senate-864-72-original-pages-neon.mjs
+  independent-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact main commit
+        env:
+          EXACT_MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXACT_MAIN_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: node --import tsx --test tests/senate-864-72-neon-ingest.test.mjs
+      - run: npm run check
+      - name: Independently reverify 72 original HTML bytes and Wayback CDX before loading secrets
+        run: node --import tsx scripts/preflight-senate-864-72-original-pages-neon.mjs
+  protected-neon-import:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_72_INDEPENDENT_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm verified protected main commit
+        env:
+          EXACT_MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXACT_MAIN_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Import only 72 verified originals using existing Neon secret then exact database readback
+        run: node --import tsx scripts/ingest-senate-864-72-original-pages-neon.mjs
