@@ -8,10 +8,10 @@ export interface RawSenateStatement {
   published_on: string | null; title: string; named_senators: string[];
   bill_identifiers: string[]; raw_text: string;
 }
-export interface CollectionWindow { from: string; to: string; maxPages?: number; maxItems?: number; delayMs?: number }
+export interface CollectionWindow { from: string; to: string; maxPages?: number; maxItems?: number; delayMs?: number; dryRun?: boolean }
 export interface SourceCounts {
   source: string; source_type: string; from: string; to: string; pages: number;
-  discovered: number; matched: number; inserted: number; already_present: number;
+  discovered: number; matched: number; inserted: number; previewed: number; already_present: number;
   outside_range: number; undated: number; by_year: Record<string, number>;
   failures: Array<{ url: string; reason: string }>;
 }
@@ -277,7 +277,7 @@ export async function collectSource(
   source:SenatePressSource,window:CollectionWindow,sink:StatementSink,request:typeof fetch=fetch,
 ):Promise<SourceCounts> {
   const result:SourceCounts={source:source.id,source_type:source.source_type,from:window.from,to:window.to,
-    pages:0,discovered:0,matched:0,inserted:0,already_present:0,outside_range:0,
+    pages:0,discovered:0,matched:0,inserted:0,previewed:0,already_present:0,outside_range:0,
     undated:0,by_year:{},failures:[]};
   const failed=(url:string,error:unknown)=>result.failures.push({url,reason:error instanceof Error?error.message:String(error)});
   const fetcher=new PoliteFetcher(new URL(source.archive_url).origin,Math.max(1250,window.delayMs??1500),request);
@@ -286,7 +286,10 @@ export async function collectSource(
   for(let page=1;page<=(window.maxPages??1000);page++){
     if(window.maxItems&&result.matched>=window.maxItems)break;
     const listing=archivePageUrl(source,page);let html:string;
-    try{html=await fetcher.html(listing);}catch(error){failed(listing,error);break;}
+    try{html=await fetcher.html(listing);}catch(error){
+      if(page>1 && error instanceof Error && error.message==='HTTP 404')break;
+      failed(listing,error);break;
+    }
     result.pages++;
     const fresh=articleUrlsFromListing(html,source).filter(url=>!visited.has(url));
     if(!fresh.length)break;
@@ -309,7 +312,8 @@ export async function collectSource(
         result.matched++;
         const year=item.published_on?.slice(0,4)??'undated';
         result.by_year[year]=(result.by_year[year]??0)+1;
-        if(await sink.insert(item))result.inserted++;
+        if(window.dryRun)result.previewed++;
+        else if(await sink.insert(item))result.inserted++;
         else result.already_present++;
       }catch(error){failed(url,error);}
     }

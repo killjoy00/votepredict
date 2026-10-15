@@ -76,7 +76,7 @@ async function main():Promise<void>{
   let failed=false;
   try{
     for(const source of sources){
-      const result=await collectSource(source,{from,to,maxPages,maxItems,delayMs},sink);
+      const result=await collectSource(source,{from,to,maxPages,maxItems,delayMs,dryRun},sink);
       console.log(JSON.stringify(result));
       if(result.failures.length||!result.pages)failed=true;
     }
