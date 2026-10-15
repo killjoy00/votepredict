@@ -170,7 +170,7 @@ export function websiteExcerptPlan(manifest,docs,knownOriginals=[]){
   }
  }
  if(ready.length+holds.length!==1285||seen.size!==1285)
-  throw Error('Exactly 1285 pinned candidate-site research excerpts required');
+  throw Error('Pinned candidate-site ledger tally mismatch: '+(ready.length+holds.length)+' / '+seen.size+' versus manifest 1285; per-ledger '+JSON.stringify(ledgers.map(x=>[x.path.split('/').at(-1),x.rows.length])));
  return {version:MIN_REPLAY_VERSION,sourceLedgers:ledgers.length,selectedExcerpts:seen.size,
   sourcePagesIndexed:[...indexSha.keys()].length,ready,holds,holdCounts:status};
 }
