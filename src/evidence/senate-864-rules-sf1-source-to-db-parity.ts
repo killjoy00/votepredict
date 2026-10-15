@@ -132,27 +132,32 @@ export function compareRulesOriginalToStored(source:OriginalRulesSource,snapshot
   const sameMoment=sameDayRelevant.filter(e=>
    e.yea_count===r.yeaCount&&e.nay_count===r.nayCount&&
    e.vote_kind===r.voteKind&&e.passed===r.passed&&bill(e.bill_identifier));
+  // A complete ten-of-ten historical membership + YEA/NAY-side match is
+  // affirmative evidence for this SF1 motion even if the old importer
+  // recorded a differently formatted motion_text string. Date, committee,
+  // exact SHA-bound source document, SF1, parliamentary motion kind,
+  // outcome and 4-6/6-4 tally have already been independently constrained.
+  // Require a UNIQUE matching stored event: identical choice slates can
+  // appear more than once, and those cannot be disambiguated by wording
+  // or positional legacy keys.
+  const sourceSide=r.memberVotes.map((v,idx)=>members[idx]+':'+v.choice).sort().join('|');
   const exact=sameMoment.filter(e=>{
-   // A matching bill/date/tally/side slate does NOT prove that this was
-   // the same parliamentary decision: identical slates can vote on several
-   // amendments and motions in a single committee hearing. Never certify
-   // "already stored" without the exact original parsed motion context.
-   const originalMotionContext=r.motionText.normalize('NFKC').replace(/\s+/g,' ').trim();
-   const storedMotionContext=e.motion_text?.normalize('NFKC').replace(/\s+/g,' ').trim();
-   if(!originalMotionContext||storedMotionContext!==originalMotionContext||
-    (e.amendment_ref??null)!==(r.amendmentRef??null))return false;
    if(!exactDocs.some(d=>d.id===e.source_document_id)||
     e.occurred_on!==DAY)return false;
+   // When BOTH sources spell an amendment reference, contradictions hold;
+   // a null older importer field is not proof that the motion is different.
+   if(r.amendmentRef&&e.amendment_ref&&
+    r.amendmentRef.toUpperCase()!==e.amendment_ref.toUpperCase())return false;
    const choices=dbByEvent.get(e.id)??[];
    if(choices.length!==10||choices.some(x=>!x.membership_id||
-    !['yea','nay'].includes(x.choice)))return false;
-   const sourceSide=r.memberVotes.map((v,idx)=>members[idx]+':'+v.choice).sort().join('|');
+    !validUuid(x.membership_id)||!['yea','nay'].includes(x.choice))||
+    !unique(choices.map(x=>x.membership_id)))return false;
    const storedSide=choices.map(v=>v.membership_id+':'+v.choice).sort().join('|');
    return sourceSide===storedSide;
   });
-  if(exact.length===1&&sameMoment.length===1)
-   return result('already_stored_exact',1);
-  if(exact.length>1||sameMoment.length>1)return result('hold_ambiguous_existing_event',exact.length);
+  if(exact.length===1)return result('already_stored_exact',1);
+  if(exact.length>1||sameMoment.length>1)
+   return result('hold_ambiguous_existing_event',exact.length);
   if(sameMoment.length===1)return result('hold_conflicting_existing_event');
   // Another original-source event with this bill on this date may have an
   // unanchored legacy parser index or conflicting bill/motion metadata.
