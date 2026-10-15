@@ -1,0 +1,101 @@
+name: '#864 all remaining 323 SHA-bound embedded-text Senate committee originals'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-568-zero-action-original-triage.ts
+      - scripts/audit-senate-864-568-zero-action-originals-sample.ts
+      - tests/senate-864-568-zero-action-original-triage.test.ts
+      - .github/workflows/senate-864-remaining323-embedded-original-source-review.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  fixed_323_cohort_preflight:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Assert exact 568/371/48/323 original partition, previously unseen sources and unmodified parser
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-568-zero-action-original-triage.test.ts
+          node --import tsx --test tests/senate-864-committee-coverage-gap-gates.test.ts
+      - name: Verify independent 1592 government source census immutable artifact SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          digest=$(gh api repos/killjoy00/votepredict/actions/artifacts/11776560365 --jq '.digest')
+          test "$digest" = "sha256:f801aac6a68f6d57d12ea544548860a3f6f2e57b858035f8468068fce6007fe5"
+  original_embedded_minute_source_shards:
+    needs: [fixed_323_cohort_preflight]
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    runs-on: ubuntu-latest
+    timeout-minutes: 37
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '0'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Ensure embedded PDF extraction executable exists
+        run: |
+          if ! command -v pdftotext >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Independently re-verify pinned 1592-date original SHA artifact ZIP digest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          digest=$(gh api repos/killjoy00/votepredict/actions/artifacts/11776560365 --jq '.digest')
+          test "$digest" = "sha256:f801aac6a68f6d57d12ea544548860a3f6f2e57b858035f8468068fce6007fe5"
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11776560365'
+          repository: killjoy00/votepredict
+          run-id: 38314080633
+          github-token: ${{ github.token }}
+          path: artifacts/original
+          merge-multiple: true
+      - name: Re-fetch each previously unreviewed original PDF, assert exact raw government SHA and classify printed motion cues
+        run: |
+          node --import tsx scripts/audit-senate-864-568-zero-action-originals-sample.ts \
+            --year ${{ matrix.year }} \
+            --index-ledger artifacts/original/1592-official-meetings-to-source-action-candidates.json \
+            --output artifacts/results/remaining-embedded-${{ matrix.year }}-${{ matrix.shard }}.json \
+            --remaining-embedded-shard ${{ matrix.shard }} \
+            --total-ocr-shards 12
+      - name: Check source verification with zero holds and no inferred member votes
+        run: |
+          node -e 'const fs=require("fs");const a=JSON.parse(fs.readFileSync(process.argv[1]));if(a.schemaVersion!=="senate-864-568-original-remaining323-embedded-source-recall-v1"||a.sourceRecallPhase!=="remaining323embedded"||a.originalsHeld!==0||a.originalShaReverified!==a.selectedOriginals||a.no2021Sources!==true||a.noProductionDatabaseReadWrite!==true||a.noAutomaticallyInferredNamedVoteOrZeroAction!==true){console.error("SENATE864_EMBEDDED_ORIGINAL_HOLD");process.exit(1)}' \
+            artifacts/results/remaining-embedded-${{ matrix.year }}-${{ matrix.shard }}.json
+      - name: Save bounded source/date/SHA and motion-review metadata; no production or named person data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-remaining323-embedded-${{ matrix.year }}-${{ matrix.shard }}
+          path: artifacts/results/remaining-embedded-${{ matrix.year }}-${{ matrix.shard }}.json
+          if-no-files-found: ignore
+          retention-days: 30
