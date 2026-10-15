@@ -1,0 +1,44 @@
+name: Historical 72 original candidate pages — artifact recovery proofs
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-95-original-page-recovery.yml
+      - scripts/build-senate-864-95-missing-original-recovery-plan.mjs
+      - tests/senate-864-95-missing-original-recovery-plan.test.mjs
+      - src/evidence/senate-864-95-historical-source-neon-parity.mjs
+      - data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-95-original-page-recovery.yml
+      - scripts/build-senate-864-95-missing-original-recovery-plan.mjs
+      - tests/senate-864-95-missing-original-recovery-plan.test.mjs
+permissions:
+  contents: read
+jobs:
+  source-plan:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (github.event_name == 'push' ||
+       github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Source-provenanced 72-page plan and no-inference regression suite
+        run: node --test tests/senate-864-95-missing-original-recovery-plan.test.mjs
+      - name: Produce fixed public 34-person original-file artifact plan
+        run: node scripts/build-senate-864-95-missing-original-recovery-plan.mjs
+      - uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-72-historical-original-page-provenance-plan-v1
+          path: artifacts/senate-864-95-72-original-pages-acquisition-plan-v1.json
+          if-no-files-found: error
+          retention-days: 90
