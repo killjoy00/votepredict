@@ -201,12 +201,27 @@ function decodeOfficialFile(bytes: Uint8Array): string {
 export function directSenateDistrictFileUrl(event: SenateElectionEvent): string | null {
   // SOS 2016 statewide primary index lists only municipal/school files.
   if (event.resultsId === 99) return null;
+  // This SOS special election's publication directory includes the
+  // former (postponed) district 60 election sequence suffix.
+  if (event.resultsId === 178) {
+    return 'https://electionresultsfiles.sos.mn.gov/20250128_27/stsenate.txt';
+  }
   if (Number(event.date.slice(0, 4)) < 2020) {
     return 'https://electionresults.sos.mn.gov/Results/MediaFile_Archive/Index?erselectionId='
       + event.resultsId + '&mediafileid=30';
   }
   return 'https://electionresultsfiles.sos.mn.gov/' +
     event.date.replaceAll('-', '') + '/stsenate.txt';
+}
+
+// The older electionresults host serves automated-request challenges for
+// closely spaced requests. Pace archived reads; never use challenge pages as
+// data. The separate bulk-file host does not need this delay.
+let lastArchiveRequestAt = 0;
+async function waitForArchivedHost(): Promise<void> {
+  const delay = Math.max(0, 3000 - (Date.now() - lastArchiveRequestAt));
+  if (delay > 0) await new Promise<void>((resolve) => setTimeout(resolve, delay));
+  lastArchiveRequestAt = Date.now();
 }
 
 export async function fetchSenateElection(event: SenateElectionEvent): Promise<SenateElectionDownload> {
@@ -216,9 +231,13 @@ export async function fetchSenateElection(event: SenateElectionEvent): Promise<S
   let fileUrl = directUrl;
   let file: Response;
   try {
+    if (Number(event.date.slice(0, 4)) < 2020) await waitForArchivedHost();
     file = await getOfficialResponse(fileUrl);
   } catch (directError) {
-    // The index is discovery fallback, not a routine extra network request.
+    // Never make a second rapid request to the archived results host when
+    // its official bulk URL returns an anti-bot challenge.
+    if (Number(event.date.slice(0, 4)) < 2020) throw directError;
+    // For modern files, the index is discovery fallback, not a routine GET.
     const index = await getOfficialResponse(indexUrl);
     const alternative = locateSenateDistrictDownload(await index.text(), indexUrl);
     if (!alternative || alternative === directUrl) throw directError;
