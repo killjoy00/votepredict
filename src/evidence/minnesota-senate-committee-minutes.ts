@@ -130,7 +130,9 @@ function senatorPrefixedRollSide(value:string,choice:'yea'|'nay'):SenateCommitte
  const side:SenateCommitteeMemberVote[]=[];
  for(const part of parts){
   const sourceName=part.replace(/^[\s,;:]+|[\s,;:.]+$/g,'').trim();
-  if(!/^[\p{L}\p{M}][\p{L}\p{M} .'-]{0,80}$/u.test(sourceName)||
+  // The official Rules layout uses comma-separated surname/initial fragments
+  // inside some single senator-prefixed names; these are NOT extra voters.
+  if(!/^[\p{L}\p{M}][\p{L}\p{M} .,'-]{0,80}$/u.test(sourceName)||
    /\b(?:Senator|Member|voting|Absent|roll call)\b/i.test(sourceName))return [];
   side.push({sourceName,normalizedName:normalizeMemberName(sourceName),choice});
  }
