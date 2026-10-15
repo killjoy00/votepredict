@@ -31,7 +31,7 @@ export function selectOriginalFlagged81(input:unknown){
    originalPdfs:number;flaggedSourcePdfs:number;
   }>;
  };
- const data=input as Array<{year:number;shard:number;schemaVersion:string;
+ const data=input as Array<{year:number;remainingOcrShardIndex:number;remainingOcrTotalShards:number;schemaVersion:string;
   sourceRecallPhase:string;selectedOriginals:number;originalShaReverified:number;
   originalsHeld:number;sourceToStoredEventAndMemberParityPerformed:boolean;
   rows:Row[]}>;
@@ -40,12 +40,13 @@ export function selectOriginalFlagged81(input:unknown){
   throw Error('Exactly sixteen independently authenticated OCR artifacts required');
  const all:Row[]=[];const artifactKeys=new Set<string>();
  for(const a of data){
-  const key=a.year+'/'+a.shard,receipt=manifest.originalShaProofZipArtifacts.find(
-   x=>x.year===a.year&&x.shard===a.shard);
+  const key=a.year+'/'+a.remainingOcrShardIndex,receipt=manifest.originalShaProofZipArtifacts.find(
+   x=>x.year===a.year&&x.shard===a.remainingOcrShardIndex);
   const cause=!receipt?'missing_receipt':
    artifactKeys.has(key)?'duplicate_year_shard':
    a.schemaVersion!==SCHEMA?'schema_version':
    a.sourceRecallPhase!=='remaining149ocr'?'recall_phase':
+   a.remainingOcrTotalShards!==({2022:10,2023:1,2024:1,2025:4} as Record<number,number>)[a.year]?'shard_partition':
    !Array.isArray(a.rows)?'missing_source_rows':
    a.rows.length!==receipt.originalPdfs?'row_count':
    a.selectedOriginals!==receipt.originalPdfs?'selected_count':
