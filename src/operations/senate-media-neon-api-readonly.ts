@@ -35,6 +35,8 @@ export interface ExistingMediaNeonInput {
   projectId:string;
   /** Optional only if Neon exposes more than one plausible database. */
   preferredDatabase?:string;
+  /** Choose exactly one existing read/write primary instead of the normal read replica. */
+  requirePrimary?:boolean;
 }
 /** Fixed non-sensitive milestones. No Neon response fields may enter this reporter. */
 export type MediaNeonAccessPhase =
@@ -136,7 +138,7 @@ function chooseDatabase(
     throw Error('Existing VotePredict database is ambiguous or absent; no SQL connection attempted');
   return {database:selected[0].name as string,role:selected[0].owner_name as string};
 }
-function chooseEndpoint(body:JsonObject,branchId:string,projectId:string) {
+function chooseEndpoint(body:JsonObject,branchId:string,projectId:string,requirePrimary=false) {
   if(!Array.isArray(body.endpoints)||body.endpoints.length===0||body.endpoints.length>200)
     throw Error('No bounded compute endpoint inventory for VotePredict');
   const possible=body.endpoints.filter(v=>isRecord(v)
@@ -148,7 +150,7 @@ function chooseEndpoint(body:JsonObject,branchId:string,projectId:string) {
   const primary=possible.filter(v=>v.type==='read_write');
   // Prefer a single EXISTING read replica; otherwise use the sole primary
   // with a READ ONLY transaction. Never create a replica.
-  const selection=replicas.length===1 ?replicas:primary;
+  const selection=requirePrimary ?primary:(replicas.length===1 ?replicas:primary);
   if(selection.length!==1)throw Error('No unambiguous existing Neon compute for project and branch');
   return {endpointId:selection[0].id as string,host:selection[0].host as string};
 }
@@ -197,7 +199,7 @@ export async function discoverExistingVotePredictNeonConnection(
   onPhase('database_selected');
   const endpoints=await getNeon(base+'/endpoints',input.apiKey,request);
   onPhase('endpoint_inventory_received');
-  const {host,endpointId}=chooseEndpoint(endpoints,branchId,input.projectId);
+  const {host,endpointId}=chooseEndpoint(endpoints,branchId,input.projectId,input.requirePrimary===true);
   onPhase('endpoint_selected');
   const params=new URLSearchParams({
     branch_id:branchId,endpoint_id:endpointId,
