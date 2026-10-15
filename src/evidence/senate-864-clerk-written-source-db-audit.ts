@@ -163,7 +163,7 @@ export function compareSenate864OriginalClerkDocumentsToStored(
   storedCommitteeEventsOnExactMatchingSource:sum('storedCommitteeEventRowsOnExactSource'),
   storedMemberChoicesOnExactMatchingSource:sum('storedIndividualChoiceRowsOnExactSource'),
   storedResolvedMemberChoicesOnExactMatchingSource:sum('storedResolvedChoiceRowsOnExactSource'),
-  2021ExcludedFromAllOriginalSourceMembershipAndVotes:true as const,
+  year2021ExcludedFromAllOriginalSourceMembershipAndVotes:true as const,
   positionalBackfillNotAuthorized:true as const,
   exactOriginalActionsToStoredMemberVotesNotCompared:true as const,
   deployedProductionNeonBranchBindingNotAsserted:true as const,
