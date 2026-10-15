@@ -16,7 +16,7 @@
     "priorV40": "docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-590-downloaded-v40.psv",
     "additional240GovBinarySources": "docs/evaluation/source-proof/cfb-2021-25-240-new-government-PDF-source-retrieval-v41.psv"
   },
-  "note": "All 830 official indexed 2021-25 candidate report versions have current government PDF body source SHA and bytes; 813 distinct binaries; 17 same-committee indexed version aliases. V41 added all 240 previously index-only 2021-24 sources; no text extraction or historical vote-cutoff publication time inferred.",
+  "note": "All 830 official indexed 2021-25 candidate report versions have current government PDF body source SHA and bytes; 813 distinct binaries; 17 same-committee indexed version aliases. V41 added all 240 previously index-only 2021-24 sources; no text extraction or historical vote-cutoff publication time inferred. An independent second official government source run reproduced all 240 whole-body hashes, byte sizes and exact viewer version identities.",
   "sourceVerifiedCounts": {
     "total": 830,
     "original": 506,
@@ -44,7 +44,7 @@
     "originalV41NewPDFVersionsRetrieved": 240,
     "originalV41DistinctNewPDFBodies": 234,
     "originalV41SameBinaryAliases": 6,
-    "originalV41IndependentReplayMatched": false
+    "originalV41IndependentReplayMatched": true
   },
   "senators": [
     {
