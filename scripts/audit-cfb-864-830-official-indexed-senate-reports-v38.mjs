@@ -35,7 +35,7 @@ function psv(key,size,width){
  if(!s.endsWith('\n')||s.includes('\r')||(PIN[key]&&blob(s)!==PIN[key]))
   throw Error('Official 2025 CFB source metadata body altered '+key);
  const rows=s.trimEnd().split('\n').map(v=>v.split('|'));
- if(rows.length!==size||rows.some(x=>x.length!==width||x.some(y=>y===')))
+ if(rows.length!==size||rows.some(x=>x.length!==width||x.some(y=>y==='')))
   throw Error('2025 CFB original-index report identity rows missing or malformed '+key);
  return{raw:s,rows};
 }
