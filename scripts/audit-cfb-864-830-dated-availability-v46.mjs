@@ -159,7 +159,7 @@ export function auditEveryOfficialCFBDocumentHasPracticalDateV46(){
   if(ownStamp&&ownStamp<expectedDue.due)earlySourceStamps++;
   count[method]++;seen.add(x.id);
  }
- if(seen.size!==830||special!==25||post2025YearEnd!==115||
+ if(seen.size!==830||special!==28||post2025YearEnd!==115||
   Object.keys(count).some(k=>count[k]!==dates.methods[k]))
   throw Error('All indexed versions not covered by source-specific availability policy');
  return{schema:SCHEMA,
@@ -170,7 +170,7 @@ export function auditEveryOfficialCFBDocumentHasPracticalDateV46(){
   websiteFirstObservedFallbackOnly:4,
   statutoryFloorEnforcedOnAll:830,
   conservativeDueAdjustment2025YearEndApplied:115,
-  specialElectionCyclesHandled:25,
+  specialElectionCyclesHandled:28,
   independentExactHistoricPublicationDatesProven:0,
   existingHistoricalModelEligibilityRecomputed:false,
   originalCFBSourcePDFsUnchanged:true};
