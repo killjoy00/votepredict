@@ -1,0 +1,98 @@
+name: '#864 all 81 original printed-result cue to motion-boundary classifications'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-original-motion-action-boundaries.ts
+      - scripts/audit-senate-864-81-original-action-segmentation.ts
+      - scripts/audit-senate-864-81-ocr-original-motion-anchors.ts
+      - tests/senate-864-81-original-action-segmentation.test.ts
+      - .github/workflows/senate-864-81-original-distinct-action-segmentation.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact_81_originals_and_classifier_preflight:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Typecheck, source-only motion boundary regressions, exact original cohort
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-81-original-action-segmentation.test.ts
+          node --import tsx --test tests/senate-864-81-ocr-original-motion-anchors.test.ts
+      - name: Verify unchanged source artifact ZIP SHA digest before motion classification
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node -e '
+          const fs=require("fs"),cp=require("child_process");
+          const x=JSON.parse(fs.readFileSync("docs/evaluation/source-proof/senate-864-remaining149-ocr-original-recall-v1.json"));
+          if(x.originalShaProofZipArtifacts.length!==16||x.sourceAuditRunId!==38755921210)
+           process.exit(2);
+          for(const a of x.originalShaProofZipArtifacts){
+           const d=JSON.parse(cp.execFileSync("gh",["api","repos/killjoy00/votepredict/actions/artifacts/"+a.artifactId],{encoding:"utf8",timeout:12000}));
+           if(d.expired||d.digest!=="sha256:"+a.zipSha256||d.workflow_run?.id!==x.sourceAuditRunId)
+            throw Error("Original government source SHA artifact HOLD");
+          }
+          '
+  classify_original_cues_in_parallel:
+    needs: [exact_81_originals_and_classifier_preflight]
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Original government PDF text/OCR tooling
+        run: |
+          if ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - uses: actions/download-artifact@v4
+        with:
+          repository: killjoy00/votepredict
+          run-id: 38755921210
+          github-token: ${{ github.token }}
+          pattern: senate-864-remaining-ocr-*
+          path: artifacts/previous-149
+          merge-multiple: true
+      - name: Re-fetch original official PDFs, verify SHA and classify every printed result into source motion boundaries
+        run: |
+          node --import tsx scripts/audit-senate-864-81-original-action-segmentation.ts \
+            --shard ${{ matrix.shard }} \
+            --artifact-dir artifacts/previous-149 \
+            --output artifacts/results/81-original-actions-${{ matrix.shard }}.json
+      - name: Preserve public offset/SHA and action ambiguity; never invent roll members or use Neon
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-81-original-action-boundaries-${{ matrix.shard }}
+          path: artifacts/results/81-original-actions-${{ matrix.shard }}.json
+          if-no-files-found: ignore
+          retention-days: 30
