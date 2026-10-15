@@ -189,6 +189,38 @@ test('true source-name word-order and omitted-middle-initial hints never silentl
   row.sourceUnmatchedNameHypotheses[0]!.exactTokenBagCandidatesCapped2===0&&
   row.sourceUnmatchedNameHypotheses[0]!.withoutInitialsCandidatesCapped2===1));
 });
+test('unmatched abbreviated given initials conservatively match only unique historical surname/given and either roster order',()=>{
+ const custom=db();
+ custom.historicalRoster=custom.historicalRoster.map((x,i)=>i===0?
+  {...x,name:'Doe, Jane Q.',normalizedName:'doe jane q'}:x);
+ const printed=(v:string):OriginalRulesSource=>({...source,rolls:source.rolls.map(r=>({
+  ...r,memberVotes:r.memberVotes.map((x,i)=>i===0?
+   {...x,sourceName:v,normalizedName:v.toLowerCase()}:x)
+ }))});
+ const hint=compareRulesOriginalToStored(printed('Doe, J'),custom);
+ assert.equal(hint.holds,2);
+ assert.equal(hint.alreadyStoredExactly,0);
+ assert.ok(hint.perMotionHistoricalAliasHypotheses.every(x=>
+  x.sourceUnmatchedNameHypotheses.length===1&&
+  x.sourceUnmatchedNameHypotheses[0]!.dualOrderSurnameGivenCandidatesCapped2===1));
+ assert.equal(assertSafeRulesSF1AggregateReceipt(JSON.stringify(hint)),true);
+ // A contradictory fully printed first name must NEVER match on just its initial.
+ const wrong=compareRulesOriginalToStored(printed('Doe, John'),custom);
+ assert.equal(wrong.holds,2);
+ assert.ok(wrong.perMotionHistoricalAliasHypotheses.every(x=>
+  x.sourceUnmatchedNameHypotheses[0]!.dualOrderSurnameGivenCandidatesCapped2===0));
+ const ambiguous=db();
+ ambiguous.historicalRoster=ambiguous.historicalRoster.map((x,i)=>i===0?
+  {...x,name:'Doe, Jane Q.',normalizedName:'doe jane q'}:
+  i===1?{...x,name:'Doe, John F.',normalizedName:'doe john f'}:x);
+ const two=compareRulesOriginalToStored(printed('Doe, J'),ambiguous);
+ assert.equal(two.holds,2);
+ assert.ok(two.perMotionHistoricalAliasHypotheses.every(x=>
+  x.sourceUnmatchedNameHypotheses[0]!.dualOrderSurnameGivenCandidatesCapped2===2));
+ assert.equal(two.alreadyStoredExactly,0);
+ assert.ok(!JSON.stringify(two).includes('Doe'));
+ assert.ok(!JSON.stringify(two).includes(ids[0]));
+});
 test('six unresolved original senator instances fit in existing strict 4KB private-receipt gate',()=>{
  const receipt=compareRulesOriginalToStored(source,{
   ...db(),historicalRoster:roster.slice(0,7)
@@ -238,7 +270,7 @@ test('safe SF1 aggregate receipt is not rejected by sourceNamedMotions field sub
  assert.throws(()=>assertSafeRulesSF1AggregateReceipt(
   JSON.stringify({large:'x'.repeat(4100)})),/private identity gate/);
  assert.equal(ONE_SHOT_MARKER,
-  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V5');
+  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V6');
 });
 test('protected SQL has five bounded SELECTs only and gate requires reviewed main SHA',()=>{
  assert.equal(READ_ONLY_QUERIES.length,5);
