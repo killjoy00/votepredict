@@ -51,6 +51,8 @@ export const CHOICE_SQL=[
  'FROM member_votes mv JOIN vote_events ve ON ve.id=mv.vote_event_id',
  'JOIN chambers c ON c.id=ve.chamber_id',
  "WHERE ve.occurred_on=$1::date AND c.slug='senate'",
+ "AND (ve.metadata->>'committeeVote'='true' OR ve.source_document_id IN",
+ '(SELECT sd.id FROM source_documents sd WHERE sd.source_url=$2 OR sd.content_sha256=$3))',
  'ORDER BY mv.vote_event_id,mv.normalized_member_name,mv.choice LIMIT 3001'
 ].join(' ');
 export const ROSTER_SQL=[
@@ -142,7 +144,7 @@ export async function runProtectedRulesSF1Parity(input:{
   phase('verified_readonly_transaction_identity');
   const docs=bounded<RulesSourceDoc>((await client.query(DOC_SQL,[SOURCE,PDF_SHA,DAY])).rows,101,'docs');
   const events=bounded<RulesStoredEvent>((await client.query(EVENT_SQL,[DAY,SOURCE,PDF_SHA])).rows,301,'events');
-  const choices=bounded<RulesStoredChoice>((await client.query(CHOICE_SQL,[DAY])).rows,3001,'choices');
+  const choices=bounded<RulesStoredChoice>((await client.query(CHOICE_SQL,[DAY,SOURCE,PDF_SHA])).rows,3001,'choices');
   const roster=bounded<Array<{membership_id:string;legislator_id:string;name:string;
    normalized_name:string;starts_on:string|null;ends_on:string|null}>[number]>(
     (await client.query(ROSTER_SQL)).rows,151,'roster');
