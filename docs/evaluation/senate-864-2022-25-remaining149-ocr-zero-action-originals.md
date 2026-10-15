@@ -32,3 +32,21 @@ For every original, the report records year, indexed committee and hearing date,
 **Stopping conditions:** Keep the original PDF/date/source as HOLD if raw-byte SHA, original indexed identity or text extraction fails. Hold all individual vote rows where the source motion/result, named sides, full tally or historical member identity is ambiguous. Any change to 1,592, 568, 197, 96 or the source SHA manifest requires an explicitly reviewed baseline revision, not auto-adjustment to make a test pass.
 
 [Issue #864](https://github.com/killjoy00/votepredict/issues/864) remains open. The 14 missing written-minute dates and the other recovered named-roll candidates remain separate from this targeted original OCR recall.
+
+## Executed October 15 source result — no PDF holds, 81 review documents
+
+**The prospective source run described above has now passed:** [GitHub Actions #38755921210](https://github.com/killjoy00/votepredict/actions/runs/38755921210) succeeded on PR #1298 source commit `76c90534d4ba243c36dff28d6cc80c31f7bd1b98`. All 16 independent official PDF SHA-bound shards succeeded, alongside the exact-head general CI and previous 32/64 source regression workflows. Independently downloaded all 16 original artifact ZIPs; full ZIP SHA digests, artifact IDs, years/shards and bounded numerical results are pinned in [the permanent 16-artifact checkpoint](./source-proof/senate-864-remaining149-ocr-original-recall-v1.json).
+
+| Year | Independently whole-PDF SHA reverified | Source documents flagged for action-level review | Current parser context action **occurrences** | Printed formal motion result **text cues** | New named-roll parser observations |
+|---|---:|---:|---:|---:|---:|
+| 2022 | 101 | 54 | 179 | 162 | 0 |
+| 2023 | 10 | 4 | 7 | 7 | 0 |
+| 2024 | 1 | 1 | 4 | 4 | 0 |
+| 2025 | 37 | 22 | 45 | 34 | 0 |
+| **All** | **149** | **81** | **235** | **207** | **0** |
+
+Of the 81 flagged *documents*, 79 had candidate original roll/result/motion signals and two were flagged because the newer contextual parser recognizes actions that the frozen source parser did not. Another 68 reverified documents yielded no detected motion/roll cues, **not affirmative proof that their meeting had no votes**. All 149 full original government PDF SHA values matched; zero source transport, OCR or integrity HOLDS. Current named-roll and count-only roll parser observations in this third OCR tranche are both **zero**, so zero additional member-specific votes have been justified by this scan alone.
+
+The largest distinct-document review clusters are 2022 Finance (11), 2025 Taxes (11), 2022 Health and Human Services Finance and Policy (8), 2025 Judiciary and Public Safety (7), 2022 Property Taxes subcommittee (7), and 2022 Commerce/Human Services Reform (6 each). The first detailed-pass priorities are the largest exact original cue counts: **2022-03-22 Finance (11 original formal-result textual cues)**, **2022-02-09 Health and Human Services (10)** and **2022-05-05 Finance (9)**. Formal-result cues may contain repeated text or several references to one parliamentary action; they must be segmented against each original motion and not counted as independent stored vote events.
+
+**Now verified in this audit design:** 96 earlier + 149 newly reviewed = **245 of the original 568** parser-zero-action linked-PDF dates with independently authenticated original review, of which all original 197 OCR dates were included; **323 embedded-text dates** remain outside this particular stratified series. Earlier 28 flagged source documents plus this 81 = **109 distinct flagged review documents** (the samples are disjoint); this is not 109 missing recorded votes. All historic printed-motion/individual-choice and deployed database reconciliation blockers from #864 remain in force.
