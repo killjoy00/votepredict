@@ -103,7 +103,7 @@ const bounded=<T>(v:unknown,max:number,label:string):T[]=>{
  return v as T[];
 };
 const sha=(x:Uint8Array|string)=>createHash('sha256').update(x).digest('hex');
-async function verifiedOriginal(){
+export async function verifiedOriginal(){
  const response=await fetch(SOURCE,{redirect:'manual',signal:AbortSignal.timeout(45000),
   headers:{accept:'application/pdf'}});
  if(response.status!==200||!response.body||Number(response.headers.get('content-length')??0)>1000000)
@@ -127,7 +127,7 @@ async function verifiedOriginal(){
  const source={verifiedRawPdfSha:true,verifiedSourceTextSha:true,rolls};
  if(!validateOriginalRulesSF1(source))
   throw Error('Original has not exactly two independent 4-6 and 6-4 SF1 named rolls');
- return source;
+ return {...source,originalText:parsed.text};
 }
 export async function runProtectedRulesSF1Parity(input:{
  apiKey:string;projectId:string;database?:string;
