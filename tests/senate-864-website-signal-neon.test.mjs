@@ -5,6 +5,7 @@ import {SOURCE_LEDGER_FILES} from '../src/evidence/senate-864-95-historical-sour
 import {buildRecoveryPlan} from '../scripts/build-senate-864-95-missing-original-recovery-plan.mjs';
 import {websiteExcerptPlan,observedBeforeVote} from '../src/evidence/senate-864-historical-site-excerpt-asof.mjs';
 import {candidateSiteDrafts,websiteEvidenceDraft,WEBSITE_ASOF_QUERY} from '../src/evidence/senate-864-website-signal-neon.mjs';
+import {verifyWebsiteNeonReadback} from '../src/evidence/senate-864-website-signal-readback.mjs';
 const manifest=JSON.parse(readFileSync('data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json'));
 const docs=new Map(SOURCE_LEDGER_FILES.map(f=>[f,JSON.parse(readFileSync(f))]));
 const plan=websiteExcerptPlan(manifest,docs,buildRecoveryPlan().witnesses);
@@ -43,4 +44,19 @@ test('archived pages link later service sessions by legislator; not a prediction
  const after=rows.filter(x=>x.ordinal===2&&x.observedAt.startsWith('2025-'));
  if(after.length)assert.ok(after.every(x=>x.membershipId===uuid(800)));
  assert.throws(()=>candidateSiteDrafts(manifest,[...roster,{...roster[0],legislatorId:uuid(900),membershipId:uuid(901)}],plan));
+});
+
+test('bounded exact stored website source observations recheck every cutoff-sensitive field',()=>{
+ const rows=candidateSiteDrafts(manifest,roster,plan);
+ const stored=rows.map(row=>{
+  const {source,drafts}=websiteEvidenceDraft(row);
+  return {membershipId:row.membershipId,excerpt:row.literal,
+   publishedAt:new Date(row.observedAt),kind:'context',stance:'neutral',
+   metadata:{...drafts[0].metadata,durableIngestion:true,ingestionKey:'stable-key'},
+   sourceUrl:row.sourceUrl,sourceSha:row.sourceSha,sourceMetadata:source.metadata};
+ });
+ assert.equal(verifyWebsiteNeonReadback(stored,rows),rows.length);
+ const changed=structuredClone(stored);changed[0].metadata.asOfEligible=false;
+ assert.throws(()=>verifyWebsiteNeonReadback(changed,rows));
+ assert.throws(()=>verifyWebsiteNeonReadback(stored.slice(1),rows));
 });
