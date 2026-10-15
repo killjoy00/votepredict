@@ -56,6 +56,19 @@ async function main(){
  const flat=pdf.text.replace(/\s+/g,' ');
  const markers=[...flat.matchAll(/\b(?:Members\s+voting\s+(?:AYE|NO)|On\s+a\s+vote\s+of)\b/gi)]
   .map(x=>({at:x.index??0,label:x[0].toUpperCase().replace(/\s+/g,'_')}));
+ const anonymousSideGrammar=(value:string)=>{
+  const clean=value.replace(/--\s*\d+\s+of\s+\d+\s*--/gi,' ').replace(/\s+/g,' ').trim();
+  const parts=clean.split(/\bSenator\s+/i).slice(1)
+   .map(x=>x.replace(/^[\s,;:]+|[\s,;:.]+$/g,'').trim());
+  const valid=/^[\p{L}\p{M}][\p{L}\p{M} .'-]{0,80}$/u;
+  return {
+   startsWithSenator:/^Senator\s+/i.test(clean),
+   parsedSenatorBlocks:parts.length,
+   blocksWithUnexpectedNonNameCharacters:parts.filter(p=>!valid.test(p)).length,
+   unexpectedCodePoints:[...new Set(parts.flatMap(p=>[...p].filter(ch=>
+    !/[\p{L}\p{M} .'-]/u.test(ch)).map(ch=>ch.codePointAt(0)!.toString(16))))],
+  };
+ };
  const narrativeCandidates=[...flat.matchAll(
   /\bMembers\s+voting\s+AYE\s*:\s*([\s\S]{1,1000}?)\bMembers\s+voting\s+NO\s*:\s*([\s\S]{1,1000}?)\bOn\s+a\s+vote\s+of\s+(\d{1,2})\s+AYES?\s*,?\s*and\s+(\d{1,2})\s+NO\b([^\n]{0,180})/gi,
  )].map(x=>({ayePrefixes:(x[1].match(/\bSenator\s+/gi)??[]).length,
@@ -64,6 +77,7 @@ async function main(){
   ayeChars:x[1].length,noChars:x[2].length,
   ayePunctuation:(x[1].match(/[,:;()\r\n]/g)??[]).length,
   noPunctuation:(x[2].match(/[,:;()\r\n]/g)??[]).length,
+  ayeGrammar:anonymousSideGrammar(x[1]),noGrammar:anonymousSideGrammar(x[2]),
  }));
  const sourceShape={
   markerLabels:markers.map(x=>x.label),
