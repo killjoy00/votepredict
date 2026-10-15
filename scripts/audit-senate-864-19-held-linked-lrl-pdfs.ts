@@ -52,27 +52,36 @@ async function one(x:{
 }):Promise<DiagnosticRow>{
  const base={year:x.year,committeeName:x.committeeName,hearingDate:x.hearingDate,
   originalSourceUrl:x.originalSourceUrl,fromGovernmentOriginalIndex:true};
+ let rawSha:string|null=null;
+ let originalPdfBytes:number|null=null;
+ let phase:'transport'|'text_extraction'|'printed_date_identity'|'motion_parser'='transport';
  try{
   const d=await download(x.originalSourceUrl);
   if(!d.bytes)return {...base,status:'download_hold',holdReason:d.hold,
    originalRawPdfSha256:null,originalPrintedMeetingDay:null};
-  const rawSha=sha(d.bytes);
+  // Preserve actual government PDF byte integrity even when original scans,
+  // encrypted PDFs or damaged text parsers prevent a printed-date claim.
+  // A PDF binary retrieved from an indexed link is NOT yet same-day Minutes.
+  rawSha=sha(d.bytes);originalPdfBytes=d.bytes.byteLength;
+  phase='text_extraction';
   const pdf=await fetchSenateCommitteeMinutePdf({url:x.originalSourceUrl,
    fetchImpl:(async()=>
     new Response(d.bytes,{status:200,headers:{'content-type':'application/pdf'}})) as typeof fetch});
   if(pdf.contentSha256!==rawSha)throw Error('Original raw PDF digest drift');
+  phase='printed_date_identity';
   const classification=inspectHeldOfficialMinuteOriginalText({
    text:pdf.text,committeeName:x.committeeName,hearingDate:x.hearingDate,
    originalSourceUrl:x.originalSourceUrl
   });
   // Source interpretation holds even if a filename and later page mentions
   // the target hearing day; first printed Minutes header date is authoritative.
+  phase='motion_parser';
   const rolls=parseSenateCommitteeMinuteVotes(pdf.text);
   const named=rolls.filter(r=>r.individualVotesAvailable);
   const context=parseSenateCommitteeMinuteContextActions(pdf.text);
   const {status:printIdentityStatus,...identityFields}=classification;
   return {...base,status:'source_original_pdf_retrieved',
-   originalRawPdfSha256:rawSha,originalPdfBytes:d.bytes.byteLength,
+   originalRawPdfSha256:rawSha,originalPdfBytes,
    originalExtractedTextSha256:sha(pdf.text),
    originalTextExtractionMethod:pdf.extractionMethod,
    originalPrintedMeetingDay:classification.firstPrintedDateFromOriginalHeader,
@@ -84,9 +93,17 @@ async function one(x:{
    sourceActionCandidatesNotCertifiedFullMotionDenominator:true,
    originalSourceIsNotStoredVoteProof:true};
  }catch{
-  return {...base,status:'pdf_decode_ocr_or_printed_integrity_hold',
-   holdReason:'original_pdf_decode_or_source_text_error',
-   originalRawPdfSha256:null,originalPrintedMeetingDay:null};
+  const holdReason=phase==='text_extraction'?'original_pdf_text_parse_or_ocr_hold':
+   phase==='printed_date_identity'?'original_printed_day_committee_check_hold':
+   phase==='motion_parser'?'original_motion_parser_hold':
+   'original_transport_or_bytes_hold';
+  return {...base,
+   status:rawSha===null?'original_pdf_transport_or_bytes_hold':
+    'source_pdf_bytes_sha_verified_but_meeting_identity_held',
+   holdReason,originalRawPdfSha256:rawSha,originalPdfBytes,
+   rawOriginalPdfByteIdentityVerified:rawSha!==null,
+   originalPrintedMeetingDay:null,
+   originalMeetingDateAndRecordedMotionsNotAuthenticated:true};
  }
 }
 async function main(){
@@ -118,6 +135,9 @@ async function main(){
   r.exactOriginalPrintedMeetingDay===true&&r.printedCommitteeHeaderFound===true&&
   r.printedMinutesDocumentType===true);
  const holds=rows.filter(r=>r.status!=='source_original_pdf_retrieved');
+ const shaRetrieved=rows.filter(r=>r.originalRawPdfSha256!==null).length;
+ const textOrPrintedHolds=holds.filter(r=>
+  r.status==='source_pdf_bytes_sha_verified_but_meeting_identity_held').length;
  const different=rows.filter(r=>r.status==='source_original_pdf_retrieved'&&
   r.firstPrintedDateFromOriginalHeader!==r.hearingDate);
  const audit={
@@ -127,7 +147,9 @@ async function main(){
   originalGovernmentIndexArtifactZipSha256:'1e4fa7a20643e3b10d750cf991935a62af70956e03d63de18a4ba545362ca893',
   originalIndexedUnverifiedMinuteDates:19,originalPdfCandidateUrlsAcrossYears:30,
   auditedCandidatePdfs:rows.length,
-  originalPdfBodiesShaRetrieved:rows.length-holds.length,
+  originalPdfBodiesShaRetrieved:shaRetrieved,
+  originalPdfBodiesTextAndPrintedHeadingInspected:rows.length-holds.length,
+  originalPdfBodiesShaRetrievedButTextOrIdentityHeld:textOrPrintedHolds,
   transportDecodeOrTextHolds:holds.length,
   firstPrintedMinutesDayAndCommitteeVerified:matches.length,
   originalPdfPrintedOtherDayOrNoDay: different.length,
@@ -142,6 +164,7 @@ async function main(){
  writeFileSync(output,JSON.stringify(audit,null,2)+'\n');
  console.log('SENATE864_HELD_ORIGINAL_LRL_30_PDF_DIAGNOSTIC='+JSON.stringify({
   year,originalUrls:rows.length,byteRetrieved:audit.originalPdfBodiesShaRetrieved,
+  textOrPrintedHolds,inspectedPrintedDay:audit.originalPdfBodiesTextAndPrintedHeadingInspected,
   exactOriginalPrintedDayAndCommittee:matches.length,
   alternatePrintedDayOrNoDay:different.length,transportOrDecodeHolds:holds.length,
   perDocument:rows.map(r=>({date:r.hearingDate,
@@ -149,7 +172,7 @@ async function main(){
     ('firstPrintedDateFromOriginalHeader' in r?
      (r.firstPrintedDateFromOriginalHeader===r.hearingDate?'candidate_day_match':'different_printed_day_or_no_day'):'unclassified'):
     r.status,
-   url:r.originalSourceUrl,sha:r.originalRawPdfSha256}))
+   url:r.originalSourceUrl,sha:r.originalRawPdfSha256,holdReason:r.holdReason}))
  }));
 }
 void main().catch(()=>{
