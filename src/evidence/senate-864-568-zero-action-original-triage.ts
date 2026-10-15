@@ -186,3 +186,64 @@ export function selectSenate864RemainingOcrOriginals(
   selectedOriginals,originalShaRequired:true,
   no2021MeetingSources:true,notIndividualVoteOrNoVoteProof:true};
 }
+
+
+/**
+ * Fourth source wave: exhaust the 323 remaining embedded-text original
+ * 2022-25 committee-minute PDFs disjoint from first 32 and next 64.
+ * The 149 remaining OCR originals were audited separately, so never
+ * claim they are included in this cohort. No "zero votes" inference.
+ */
+export function selectSenate864RemainingEmbeddedOriginals(
+ input:FirstPassLedger,year:2022|2023|2024|2025,
+ shardIndex:number,totalShards:number,
+){
+ const years=[2022,2023,2024,2025] as const;
+ const counts:{[year:number]:number}={2022:77,2023:97,2024:41,2025:108};
+ if(!years.includes(year)||totalShards!==12||
+  !Number.isSafeInteger(shardIndex)||shardIndex<0||shardIndex>=totalShards)
+  throw Error('Fixed 2022-25 remaining embedded-original cohort shard required');
+ const prior=new Set<string>();
+ for(const y of years){
+  const first=selectSenate864FirstPassZeroActionOriginals(input,y,4);
+  const second=selectSenate864Next64UnreviewedOriginals(input,y,'embedded');
+  const urls=[...first.selectedOriginals.filter(v=>!v.originallyRequiredOcr),
+   ...second.selectedOriginals].map(x=>x.sourceUrl);
+  if(urls.length!==12||urls.some(url=>prior.has(url)))
+   throw Error('Prior original embedded-source samples overlap or drift');
+  for(const url of urls)prior.add(url);
+ }
+ if(prior.size!==48)throw Error('48 original embedded source samples not verified');
+ const all=input.meetings.filter(m=>m.hasOriginalPdf&&
+  m.originalMinutes.length>0&&m.originalMinutes.every(d=>d.sourceActions.length===0));
+ const embedded=all.filter(m=>!m.originalMinutes.some(d=>d.ocrRecoveredFromInitiallyLowText));
+ if(all.length!==568||embedded.length!==371)
+  throw Error('Frozen 568/371 original denominator drift');
+ const remaining=embedded.filter(m=>!prior.has(m.originalMinutes[0]!.sourceUrl))
+  .sort((a,b)=>a.year-b.year||a.hearingDate.localeCompare(b.hearingDate)||
+   a.committee.localeCompare(b.committee));
+ const urls=remaining.map(m=>m.originalMinutes[0]!.sourceUrl);
+ if(remaining.length!==323||new Set(urls).size!==323||
+  years.some(y=>remaining.filter(m=>m.year===y).length!==counts[y]))
+  throw Error('323 embedded original source identity or year partition drift');
+ const selectedOriginals=remaining.filter(m=>m.year===year)
+  .filter((_,i)=>i%totalShards===shardIndex)
+  .map(m=>{
+   const d=m.originalMinutes[0]!;
+   if(!SHA.test(d.originalPdfSha256??'')||
+    !d.sourceUrl.startsWith('https://www.lrl.mn.gov/archive/minutes/senate/'+year+'/'))
+    throw Error('Embedded Senate original source URL/SHA missing');
+   return {year,committee:m.committee,hearingDate:m.hearingDate,
+    sourceUrl:d.sourceUrl,sourcePdfSha256:d.originalPdfSha256!,
+    originallyRequiredOcr:false};
+  });
+ if(selectedOriginals.length<1||selectedOriginals.length>10)
+  throw Error('Unbounded or empty original embedded source shard');
+ return {year,stratum:'embedded' as const,shardIndex,totalShards,
+  firstPassZeroActionOriginals:568,originalEmbeddedCohort:371,
+  independentlyReviewedEmbeddedOriginals:48,
+  remainingUnreviewedEmbeddedOriginals:323,
+  remainingYearOriginals:counts[year],selectedOriginals,
+  oldParserZeroActionsNotCertifiedNoVotes:true,
+  sourceOriginalShaRequired:true,no2021:true,noDatabaseReadOrWrites:true};
+}

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {selectSenate864FirstPassZeroActionOriginals,selectSenate864Next64UnreviewedOriginals,selectSenate864RemainingOcrOriginals,classifySourceMinuteMotionSignals}
+import {selectSenate864FirstPassZeroActionOriginals,selectSenate864Next64UnreviewedOriginals,selectSenate864RemainingOcrOriginals,selectSenate864RemainingEmbeddedOriginals,classifySourceMinuteMotionSignals}
  from '../src/evidence/senate-864-568-zero-action-original-triage.js';
 const S='ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0';
 function fixture(){
@@ -173,5 +173,53 @@ test('third original OCR source wave refuses 2021, unstable shard counts, index/
  assert.match(script,/--total-ocr-shards/);
  assert.match(script,/sha\(bytes\)!==originalSha/);
  assert.match(script,/noProductionDatabaseReadWrite:true/);
+ assert.doesNotMatch(script,/\b(?:INSERT INTO|UPDATE vote_events|DELETE FROM|DROP TABLE)\b/);
+});
+
+test('fourth independent source review exhausts all 323 never-reviewed embedded originals in 48 distinct bounded shards',()=>{
+ const source=fixture();
+ const seen=new Set<string>();
+ const prior=new Set<string>();
+ const breakdown=[[2022,77],[2023,97],[2024,41],[2025,108]] as const;
+ for(const [year,count] of breakdown){
+  const first=selectSenate864FirstPassZeroActionOriginals(source,year,4);
+  const second=selectSenate864Next64UnreviewedOriginals(source,year,'embedded');
+  for(const x of [...first.selectedOriginals.filter(x=>!x.originallyRequiredOcr),...second.selectedOriginals])
+   prior.add(x.sourceUrl);
+  let n=0;
+  for(let shard=0;shard<12;shard++){
+   const v=selectSenate864RemainingEmbeddedOriginals(source,year,shard,12);
+   assert.equal(v.remainingUnreviewedEmbeddedOriginals,323);
+   assert.equal(v.remainingYearOriginals,count);
+   assert.equal(v.independentlyReviewedEmbeddedOriginals,48);
+   assert.equal(v.noDatabaseReadOrWrites,true);
+   assert.equal(v.oldParserZeroActionsNotCertifiedNoVotes,true);
+   assert.ok(v.selectedOriginals.length>0&&v.selectedOriginals.length<=10);
+   assert.ok(v.selectedOriginals.every(x=>x.year===year&&!x.originallyRequiredOcr));
+   for(const x of v.selectedOriginals){
+    assert.equal(seen.has(x.sourceUrl),false);
+    seen.add(x.sourceUrl);n++;
+   }
+   assert.deepEqual(v,selectSenate864RemainingEmbeddedOriginals(source,year,shard,12));
+  }
+  assert.equal(n,count);
+ }
+ assert.equal(prior.size,48);
+ assert.equal(seen.size,323);
+ for(const x of seen)assert.equal(prior.has(x),false);
+});
+test('fourth source-only embedded selector refuses invalid shards, 2021, corpus drift, SHA absence and production writes',()=>{
+ const source=fixture();
+ assert.throws(()=>selectSenate864RemainingEmbeddedOriginals(source,2021 as 2022,0,12));
+ assert.throws(()=>selectSenate864RemainingEmbeddedOriginals(source,2023,12,12));
+ assert.throws(()=>selectSenate864RemainingEmbeddedOriginals(source,2023,0,8));
+ assert.throws(()=>selectSenate864RemainingEmbeddedOriginals({
+  ...source,meetingCensusOriginalSha256:'bad'},2024,0,12));
+ const changed=fixture();
+ changed.meetings[130]!.originalMinutes[0]!.originalPdfSha256='not-a-sha';
+ assert.throws(()=>selectSenate864RemainingEmbeddedOriginals(changed,2022,0,12));
+ const script=readFileSync('scripts/audit-senate-864-568-zero-action-originals-sample.ts','utf8');
+ assert.match(script,/--remaining-embedded-shard/);
+ assert.match(script,/sha\(bytes\)!==originalSha/);
  assert.doesNotMatch(script,/\b(?:INSERT INTO|UPDATE vote_events|DELETE FROM|DROP TABLE)\b/);
 });
