@@ -1,0 +1,85 @@
+name: '#864 11 original missed-action Senate minute PDFs: exact SHA and original motion cues'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-original-motion-cue-review.ts
+      - scripts/audit-senate-864-11-flagged-original-motion-passages.ts
+      - tests/senate-864-original-motion-cue-review.test.ts
+      - .github/workflows/senate-864-followup-11-original-action-cues.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original_action_cue_11:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - year: 2022
+            artifact_id: '11947644996'
+            zip_sha: 'a7e6fe5b4b232e0bacd78de9fd9bb16f1e02f523add82c8d5447849752ee9fb3'
+          - year: 2023
+            artifact_id: '11947719486'
+            zip_sha: '5448527da4f19faa688f8fa7cd2fb49590842aaba420812a84ccd0e02b73a6c4'
+          - year: 2024
+            artifact_id: '11947619791'
+            zip_sha: 'ede99f0d0385184f2ec833dc92e28379329a673a0abb785db6c9d12fa082638d'
+          - year: 2025
+            artifact_id: '11947834531'
+            zip_sha: '57f6c9b021c4ada542ad65acbaf09392f0075d01cba316e0d1729913fbcf3a0a'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Exact original parser and redaction policy
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-original-motion-cue-review.test.ts
+      - name: Install OCR source read-only helpers when needed
+        run: |
+          if ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - name: Independently pin old eight-per-year original PDF SHA audit artifact before retrieval
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          digest=$(gh api repos/killjoy00/votepredict/actions/artifacts/${{ matrix.artifact_id }} --jq '.digest')
+          test "$digest" = "sha256:${{ matrix.zip_sha }}"
+      - name: Download previously SHA-vetted 32 original PDFs metadata, select only 11 motion-cue flags
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '${{ matrix.artifact_id }}'
+          repository: killjoy00/votepredict
+          run-id: 38680095705
+          github-token: ${{ github.token }}
+          path: artifacts/prior
+          merge-multiple: true
+      - name: Re-fetch exact raw PDF SHA and extract redacted printed motion, voice, roll contexts
+        run: |
+          node --import tsx scripts/audit-senate-864-11-flagged-original-motion-passages.ts \
+            --year ${{ matrix.year }} \
+            --previous-source-audit artifacts/prior/zero-original-source-recall-${{ matrix.year }}.json \
+            --output artifacts/senate-864-followup-11-original-motions-${{ matrix.year }}.json
+      - name: Save only independently verified original text cue/provenance with member choice lists redacted
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-followup-11-original-motions-${{ matrix.year }}
+          path: artifacts/senate-864-followup-11-original-motions-${{ matrix.year }}.json
+          if-no-files-found: ignore
+          retention-days: 30
