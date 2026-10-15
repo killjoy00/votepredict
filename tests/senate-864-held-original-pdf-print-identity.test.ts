@@ -26,7 +26,7 @@ function fixtures(){
   const day=hearingDate.replaceAll('-','');
   const key=committeeName.startsWith('Taxes')?'taxes':'energy';
   const originalPdfDocuments=Array.from({length:n},(_,i)=>({
-   year,committeeName,hearingDate,originalSourceUrl:
+   originalSourceUrl:
     src+year+'/'+key+'/'+day+'/'+key+'_'+day+
     (n===2?i?'_Previous-Meeting-Minutes.pdf':'_Final-Meeting-Minutes.pdf':
       '_Minutes-and-Attendance.pdf'),
@@ -50,6 +50,9 @@ test('all original held committee-day PDF index URLs conserve 19 days, exactly 3
  const y24=select19OfficialUnverifiedLrlPdfMeetingSources(j,2024);
  const y25=select19OfficialUnverifiedLrlPdfMeetingSources(j,2025);
  assert.equal(y23.length,2);assert.equal(y24.length,24);assert.equal(y25.length,4);
+ assert.ok(y23.every(x=>x.year===2023&&x.hearingDate.startsWith('2023-')&&x.committeeName==='Taxes'));
+ assert.ok(y24.every(x=>x.year===2024&&x.hearingDate.startsWith('2024-')&&x.committeeName.length>1));
+ assert.ok(y25.every(x=>x.year===2025&&x.hearingDate.startsWith('2025-')));
  assert.ok([...y23,...y24,...y25].every(r=>r.status.includes('HOLD')));
 });
 test('official archive target day and exact printed committee must BOTH match; previous minutes file is not same-day evidence',()=>{
