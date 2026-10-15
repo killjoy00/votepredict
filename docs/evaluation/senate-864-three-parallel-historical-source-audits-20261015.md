@@ -34,8 +34,8 @@ These **207** are printed text cue slots, **not certified distinct parliamentary
 
 | Year | Newly authenticated original embedded-text PDFs | Documents flagged for additional source motion review | Documents with an explicit formal-result cue |
 | --- | ---: | ---: | ---: |
-| 2022 | 77 | 6 | 3 |
-| 2023 | 97 | 6 | 3 |
+| 2022 | 77 | 6 | 1 |
+| 2023 | 97 | 6 | 5 |
 | 2024 | 41 | 3 | 1 |
 | 2025 | 108 | 11 | 10 |
 | **Total** | **323** | **26** | **17** |
