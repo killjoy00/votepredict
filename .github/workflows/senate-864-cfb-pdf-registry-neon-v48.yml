@@ -31,20 +31,6 @@ jobs:
       github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    services:
-      postgres:
-        image: public.ecr.aws/docker/library/postgres:18-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: votepredict
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d votepredict"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     env:
       DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
       VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
@@ -57,6 +43,12 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --no-fund --no-audit
+      - name: Initialize PostgreSQL preinstalled on GitHub runner (no container registry)
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+          sudo -u postgres createdb votepredict
+          psql "postgresql://postgres:postgres@127.0.0.1:5432/votepredict" -c "SELECT current_database()"
       - name: Verify original 830 PDF identities, immutable migration ledgers and protected transaction guards
         run: |
           node --check src/evidence/cfb-864-pdf-registry-eligibility-v48.mjs
@@ -81,20 +73,6 @@ jobs:
       contains(github.event.head_commit.message, 'SENATE_864_CFB_PDF_LINK_REVALIDATE_V48')
     runs-on: ubuntu-latest
     timeout-minutes: 32
-    services:
-      postgres:
-        image: public.ecr.aws/docker/library/postgres:18-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: votepredict
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d votepredict"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     env:
       DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
       VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
@@ -111,6 +89,12 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --no-fund --no-audit
+      - name: Initialize PostgreSQL preinstalled on GitHub runner (no container registry)
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+          sudo -u postgres createdb votepredict
+          psql "postgresql://postgres:postgres@127.0.0.1:5432/votepredict" -c "SELECT current_database()"
       - name: Apply local migrations, revalidate CFB source identities and exercise SQL on disposable PostgreSQL
         run: |
           npm run db:migrate
