@@ -1,0 +1,27 @@
+name: 'Senate #864 read-only signed 2025 original/amended YE PDF source bytes, 109 versions V39'
+on:
+  pull_request:
+    paths:
+      - 'scripts/acquire-cfb-864-109-2025-official-YE-pdf-binaries-v39.mjs'
+      - 'tests/cfb-864-109-2025-government-original-pdf-bodies-v39.test.mjs'
+      - '.github/workflows/senate-864-109-original-2025-government-pdf-source-v39.yml'
+permissions:
+  contents: read
+jobs:
+  read-only-109-original-2025-government-PDF-byte-source-probes:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned original CFB source fetch dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify bounded 109 original/amended 2025 CFB YE viewer-indexed PDF sources
+        run: node --import tsx --test tests/cfb-864-109-2025-government-original-pdf-bodies-v39.test.mjs
+      - name: Fetch complete original CFB report PDF bytes; retain only full source SHA256, file sizes and source-version IDs
+        run: node --import tsx scripts/acquire-cfb-864-109-2025-official-YE-pdf-binaries-v39.mjs
