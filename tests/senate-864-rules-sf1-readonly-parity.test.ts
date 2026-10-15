@@ -34,7 +34,7 @@ function event(index:number):RulesStoredEvent{
  return {id:'event-'+index,source_document_id:doc.id,
   external_key:'senate-committee:legacy:'+index,occurred_on:'2023-01-24',
   bill_identifier:'SF1',vote_kind:index===0?'amendment':'motion',amendment_ref:null,
-  motion_text:'Old positional motion '+index,yea_count:index===0?4:6,
+  motion_text:source.rolls[index]!.motionText,yea_count:index===0?4:6,
   nay_count:index===0?6:4,passed:index===1,
   committee_name:'Rules and Administration',committee_vote:true};
 }
@@ -67,6 +67,14 @@ test('One direct original source with zero stored events can only produce two ad
  assert.equal(report.addOnlyCandidatesAwaitingSeparateApproval,2);
  assert.ok(report.statuses.every(x=>x.status==='candidate_add_only_after_separate_approval'));
  assert.equal(report.noLegacyPositionalRekeyOrReplay,true);
+});
+test('same named membership votes and tally are not sufficient to certify a different motion text',()=>{
+ const wrong={...event(0),motion_text:'Fictional DIFFERENT oral amendment on same bill and day'};
+ const report=compareRulesOriginalToStored(source,db([wrong]));
+ assert.equal(report.alreadyStoredExactly,0);
+ assert.equal(report.addOnlyCandidatesAwaitingSeparateApproval,0);
+ assert.equal(report.holds,2);
+ assert.equal(report.statuses[0]!.status,'hold_conflicting_existing_event');
 });
 test('one old stored SF1 event leaves the other ambiguous, never assumes absent identical-bill motion',()=>{
  const report=compareRulesOriginalToStored(source,db([event(0)]));
