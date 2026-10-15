@@ -26,5 +26,22 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - name: Summarize public article HTML structure without exposing content
+        run: |
+          node - <<'NODE'
+          async function probe(url) {
+            const response = await fetch(url, { headers: { 'User-Agent': 'VotePredictRawCollector/1.0 (first-party-public-archive)' } });
+            const html = await response.text();
+            const headings = [...html.matchAll(/<h[1-6]\b[^>]*>/gi)].slice(0, 25).map(m => m[0].slice(0, 150));
+            const regions = [...html.matchAll(/<(?:article|main|section)\b[^>]*>/gi)].slice(0, 20).map(m => m[0].slice(0, 150));
+            const classes = [...html.matchAll(/\bclass\s*=\s*"([^"]+)"/gi)]
+              .map(m => m[1]).filter(s => /content|post|article|main|et_pb_text|elementor/i.test(s)).slice(0, 50);
+            console.log(JSON.stringify({ origin: new URL(url).host, status: response.status, bytes: html.length, headings, regions, classes }));
+          }
+          Promise.all([
+            probe('https://senatedfl.mn/senate-majority-leader-erin-murphy-responds-to-health-insurance-rate-increases/'),
+            probe('https://www.mnsenaterepublicans.com/sen-rasmusson-calls-for-bipartisan-support-to-review-optum-report/')
+          ]).catch(err => {console.error(err.message); process.exitCode = 1;});
+          NODE
       - name: Sample live archives without database credentials or writes
         run: npm run data:senate:statements -- --dry-run --from=2025-01-01 --to=2026-10-15 --max-pages=2
