@@ -240,3 +240,73 @@ jobs:
             await github.rest.issues.createComment({
               owner:'killjoy00',repo:'votepredict',issue_number:864,body
             });
+
+  # #864 verified original 13. This legacy workflow is ALREADY registered
+  # with GitHub's issue_comment trigger in VotePredict. Reuse it after
+  # a newly added standalone workflow was not dispatched for owner comments.
+  thirteen-independent-ci:
+    if: >-
+      github.event_name == 'issue_comment' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.issue.number == 864 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      (github.event.comment.body == '[senate-864-2026-verified-13-readonly-v1-20261014]' ||
+       github.event.comment.body == '[senate-864-2026-verified-13-apply-v1-20261014]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Check main SHA in independent CI
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run check
+
+  thirteen-protected-neon:
+    needs: [thirteen-independent-ci]
+    if: >-
+      needs.thirteen-independent-ci.result == 'success' &&
+      github.event_name == 'issue_comment' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.issue.number == 864 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      (github.event.comment.body == '[senate-864-2026-verified-13-readonly-v1-20261014]' ||
+       github.event.comment.body == '[senate-864-2026-verified-13-apply-v1-20261014]')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_13_INDEPENDENT_CI: ${{ needs.thirteen-independent-ci.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Check same reviewed main SHA before Neon credentials
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Audit or atomically apply and read back original 13
+        env:
+          OPERATION: ${{ github.event.comment.body == '[senate-864-2026-verified-13-apply-v1-20261014]' && '--apply' || '--dry-run' }}
+        run: node --import tsx scripts/run-senate-864-2026-protected-neon-13.mjs "$OPERATION"
