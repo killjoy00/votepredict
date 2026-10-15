@@ -18,15 +18,13 @@ Original publisher HTML SHA mismatch or an exact URL not observed is not proof t
 
 The secret-bearing job has no GitHub issue-write privilege. It exports only exactly 95 validated **ordinal, bounded numeric/category results** after rollback, with no DB names, politician-name strings from SQL, source URLs, record IDs, source SHA or excerpts. A separate keyless reporter joins ordinal entries to the public authenticated names and posts the issue table to #864.
 
-## Owner one-shot trigger
+## Automatic main-branch execution (no owner comment)
 
-After an independently tested review PR merges into main, create this **exact new issue #864 comment** from the GitHub account killjoy00:
+This read-only audit runs automatically when a reviewed PR changes the audit workflow, public population manifest, source comparison, protected runner, local SQL verifier, or keyless reporter on `main`. The [GitHub Actions workflow](../../.github/workflows/senate-864-95-historical-source-neon-readonly.yml) does not depend on an owner-authored issue comment, manual workflow dispatch or bespoke approval phrase.
 
-[senate-864-95-historical-neon-readonly-20261015-v1]
+The first stage runs independently on the exact pushed main commit with no Neon secrets: fresh disposable localhost PostgreSQL migrations, four SELECT-only EXPLAIN plans without ANALYZE, synthetic identity/source/security tests, full repository check and production dependency audit. Only after that stage succeeds does the existing `evidence-readonly-sandbox` protected environment receive its existing `NEON_API_KEY`; the SQL transaction enforces read-only and explicit rollback. The Actions event must be a genuine first-attempt non-force push to `killjoy00/votepredict` `main` with matching immutable commit identity. Pull requests/forks never receive Neon secrets. Existing GitHub environment protection settings, if independently configured to require human reviewers, remain enforced by GitHub; changing the workflow does not bypass those settings.
 
-The [GitHub Actions workflow](../../.github/workflows/senate-864-95-historical-source-neon-readonly.yml) first runs independent keyless CI on exact main SHA, including fresh disposable PostgreSQL migrations and four SELECT-only EXPLAIN plans without ANALYZE, synthetic identity/source checks, full npm check and production dependency audit. Only if all pass does it enter existing GitHub protected environment evidence-readonly-sandbox, honoring any human review approvals. First-attempt, owner identity, issue number, exact comment, main SHA and prior CI success are checked by both Actions and runner. No ordinary PR, fork, schedule, second attempt or unmarked comment can touch the key.
-
-If a protected condition fails, a separate keyless issue comment reports a fixed-safe failure phase, not fabricated counts. Do not rerun a privileged job to bypass the first-attempt gate.
+On success a separate keyless job posts its safe 95-person comparison to [issue #864](https://github.com/killjoy00/votepredict/issues/864). On a protected failure it posts only a safe HOLD phase, never a fabricated zero. Running no-key PR checks or a fresh reviewed main commit is sufficient to initiate the pipeline; no owner action/comment is needed.
 
 ## Acceptance limits
 
