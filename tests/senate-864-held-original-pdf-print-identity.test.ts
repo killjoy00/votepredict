@@ -97,5 +97,5 @@ test('unverified original government sources cannot be changed to an off-year or
  assert.throws(()=>inspectHeldOfficialMinuteOriginalText({
   text:'valid text'.repeat(20),hearingDate:'2021-01-01',
   committeeName:'Taxes',originalSourceUrl:src+'2024/taxes/20240307/Minutes.pdf'
- }),/source identity invalid/);
+ }),/text identity invalid/);
 });
