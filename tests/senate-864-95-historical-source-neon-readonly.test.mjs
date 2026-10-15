@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readPublicInputs,validateOwnerEvent,ROSTER_SQL,CAMPAIGN_SQL,PRIMARY_SQL}
+import {readPublicInputs,validateMainPushEvent,ROSTER_SQL,CAMPAIGN_SQL,PRIMARY_SQL}
  from '../scripts/audit-senate-864-95-historical-source-neon-readonly.mjs';
-import {canonicalKey,compareHistoric95,validatePublicReport,OWNER_MARKER}
+import {canonicalKey,compareHistoric95,validatePublicReport}
  from '../src/evidence/senate-864-95-historical-source-neon-parity.mjs';
 test('all 95 actual-service people, 339 person-years, 1285 excerpts, 29 source ledgers',()=>{
  const {manifest,research}=readPublicInputs();
@@ -57,14 +57,18 @@ test('unmatched public actual-serving senator is HOLD not zero',()=>{
  assert.equal(pub.rows[0].storedCampaignSiteIssueRows,null);
  assert.equal(pub.rows[0].researchedExactUrlNotObserved,null);
 });
-test('owner-event gate rejects unauthorized users, attempts, issue bodies',()=>{
- const env={GITHUB_REPOSITORY:'killjoy00/votepredict',GITHUB_EVENT_NAME:'issue_comment',
+test('automatic exact-main read-only gate rejects PR, foreign repo, rerun, force push, changed commit',()=>{
+ const sha='a'.repeat(40);
+ const env={GITHUB_REPOSITORY:'killjoy00/votepredict',GITHUB_EVENT_NAME:'push',
   GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',
-  GITHUB_SHA:'a'.repeat(40),VOTEPREDICT_864_95_APPROVAL:OWNER_MARKER,
-  VOTEPREDICT_864_95_PRECI:'true'};
- const event={issue:{number:864},comment:{user:{login:'killjoy00'},body:OWNER_MARKER}};
- assert.doesNotThrow(()=>validateOwnerEvent(env,event));
- assert.throws(()=>validateOwnerEvent(env,{...event,comment:{user:{login:'attacker'},body:OWNER_MARKER}}));
- assert.throws(()=>validateOwnerEvent({...env,GITHUB_RUN_ATTEMPT:'2'},event));
- assert.throws(()=>validateOwnerEvent(env,{...event,issue:{number:863}}));
+  GITHUB_SHA:sha,VOTEPREDICT_864_95_AUTO_CI:'true'};
+ const event={ref:'refs/heads/main',repository:{full_name:'killjoy00/votepredict'},
+   after:sha,head_commit:{id:sha},deleted:false,forced:false};
+ assert.doesNotThrow(()=>validateMainPushEvent(env,event));
+ assert.throws(()=>validateMainPushEvent(env,{...event,repository:{full_name:'attacker/other'}}));
+ assert.throws(()=>validateMainPushEvent(env,{...event,forced:true}));
+ assert.throws(()=>validateMainPushEvent(env,{...event,after:'b'.repeat(40)}));
+ assert.throws(()=>validateMainPushEvent({...env,GITHUB_EVENT_NAME:'issue_comment'},event));
+ assert.throws(()=>validateMainPushEvent({...env,GITHUB_RUN_ATTEMPT:'2'},event));
+ assert.throws(()=>validateMainPushEvent({...env,VOTEPREDICT_864_95_AUTO_CI:'false'},event));
 });
