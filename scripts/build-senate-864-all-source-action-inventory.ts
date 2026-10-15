@@ -13,6 +13,8 @@ import {buildSenate864AllSourceActionInventory} from
  '../src/evidence/senate-864-all-source-action-inventory.js';
 import {integrateSenate864SupplementaryLrlOriginalMinutes} from
  '../src/evidence/senate-864-2022-25-official-original-minutes-overlay.js';
+import {integrateSenate864ElevenOriginalSameDayMinutes} from
+ '../src/evidence/senate-864-eleven-original-printed-minutes-overlay.js';
 const ROOT='docs/evaluation/source-proof/';
 let SOURCE_ONLY_STAGE='preflight';
 function args(){
@@ -48,7 +50,11 @@ function main(){
  SOURCE_ONLY_STAGE='load-8-additional-official-original-lrl-pdfs';
  const addendum=load(ROOT+'senate-864-2022-25-eight-alternate-lrl-original-pdf-sha-receipts.json');
  SOURCE_ONLY_STAGE='apply-additive-four-day-original-pdf-overlay';
- const audit=integrateSenate864SupplementaryLrlOriginalMinutes(original,addendum);
+ const eight=integrateSenate864SupplementaryLrlOriginalMinutes(original,addendum);
+ SOURCE_ONLY_STAGE='load-11-independently-original-printed-same-day-LRL-pdfs';
+ const eleven=load(ROOT+'senate-864-eleven-original-same-day-LRL-minutes-recovery.json');
+ SOURCE_ONLY_STAGE='apply-11-printed-hearing-day-original-pdf-source-overlay';
+ const audit=integrateSenate864ElevenOriginalSameDayMinutes(eight,eleven);
  SOURCE_ONLY_STAGE='output-sanitization';
  const text=JSON.stringify(audit,null,2)+'\n';
  if(text.length>4_000_000||/\b(?:sourceMemberName|normalized_member_name|membership_id|choiceIdentitySha256|postgresql:\/\/)\b/i.test(text))
