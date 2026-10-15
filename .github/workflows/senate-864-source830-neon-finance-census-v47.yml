@@ -1,0 +1,250 @@
+name: 'Senate #864 full 830 CFB source-to-Neon finance family + date read-only census V47'
+on:
+  pull_request:
+    paths:
+      - 'src/evidence/cfb-864-finance-db-reconciliation-v47.mjs'
+      - 'scripts/audit-cfb-864-neon-source830-eligibility-v47.mjs'
+      - 'scripts/verify-cfb-864-source830-neon-sql-local-v47.mjs'
+      - 'tests/cfb-864-source830-neon-finance-v47.test.mjs'
+      - '.github/workflows/senate-864-source830-neon-finance-census-v47.yml'
+      - 'docs/evaluation/cfb-2021-25-source830-neon-finance-date-reconciliation-v47.md'
+  push:
+    branches: [main]
+    paths:
+      - 'src/evidence/cfb-864-finance-db-reconciliation-v47.mjs'
+      - 'scripts/audit-cfb-864-neon-source830-eligibility-v47.mjs'
+      - 'scripts/verify-cfb-864-source830-neon-sql-local-v47.mjs'
+      - 'tests/cfb-864-source830-neon-finance-v47.test.mjs'
+      - '.github/workflows/senate-864-source830-neon-finance-census-v47.yml'
+permissions:
+  contents: read
+concurrency:
+  group: 'senate-864-cfb-830-neon-readonly-v47-${{ github.sha }'
+  cancel-in-progress: false
+jobs:
+  no-secret-unit-audit:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --no-fund --no-audit
+      - name: Exact 830 PDF/date source, strict family/date grouping and read-only fake Neon transaction
+        run: node --import tsx --test tests/cfb-864-source830-neon-finance-v47.test.mjs
+      - name: Parse runner and local Postgres verifier without secret
+        run: |
+          node --check src/evidence/cfb-864-finance-db-reconciliation-v47.mjs
+          node --check scripts/audit-cfb-864-neon-source830-eligibility-v47.mjs
+          node --check scripts/verify-cfb-864-source830-neon-sql-local-v47.mjs
+  no-secret-sql-compile:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --no-fund --no-audit
+      - name: Apply existing migrations ONLY to ephemeral disposable PostgreSQL
+        run: npm run db:migrate
+      - name: Compile all four fixed SQL census queries using EXPLAIN, zero Neon key
+        run: node --import tsx scripts/verify-cfb-864-source830-neon-sql-local-v47.mjs
+  main-presecret-independent:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_FINANCE_830_NEON_READONLY_V47')
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }
+          persist-credentials: false
+      - name: Require independent exact main revision and commit marker
+        env:
+          EXPECTED_SHA: ${{ github.sha }
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --no-fund --no-audit
+      - name: Prove SQL compiles against locally migrated disposable PostgreSQL
+        run: |
+          npm run db:migrate
+          node --import tsx scripts/verify-cfb-864-source830-neon-sql-local-v47.mjs
+      - name: Independently check 830 original PDF identities and bounded database simulator
+        run: node --import tsx --test tests/cfb-864-source830-neon-finance-v47.test.mjs
+      - name: Full application tests, TypeScript, migration drift and build before Neon secret
+        run: npm run check
+      - name: Dependency audit before protected credentials
+        run: npm audit --omit=dev --audit-level=high
+  protected-existing-neon-readonly:
+    needs: [main-presecret-independent]
+    if: >-
+      needs.main-presecret-independent.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_FINANCE_830_NEON_READONLY_V47')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    outputs:
+      safe_cfb_v47_b64: ${{ steps.audit.outputs.safe_cfb_v47_b64 }
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }
+      VOTEPREDICT_864_CFB_V47_VERIFIED: ${{ needs.main-presecret-independent.result == 'success' && 'true' || 'false' }
+      VOTEPREDICT_864_CFB_V47_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_FINANCE_830_NEON_READONLY_V47') && 'true' || 'false' }
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }
+          persist-credentials: false
+      - name: Verify the exact previously reviewed SHA prior to key access
+        env:
+          EXPECTED_SHA: ${{ github.sha }
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --no-fund --no-audit
+      - name: Existing default VotePredict Neon, four read-only SELECTs, repeatable-read and explicit ROLLBACK
+        id: audit
+        run: node --import tsx scripts/audit-cfb-864-neon-source830-eligibility-v47.mjs
+  keyless-issue-census-receipt:
+    needs: [main-presecret-independent, protected-existing-neon-readonly]
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_FINANCE_830_NEON_READONLY_V47') &&
+      (needs.main-presecret-independent.result == 'failure' ||
+       (needs.main-presecret-independent.result == 'success' &&
+       (needs.protected-existing-neon-readonly.result == 'success' ||
+        needs.protected-existing-neon-readonly.result == 'failure')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+      issues: write
+    env:
+      PREFLIGHT: ${{ needs.main-presecret-independent.result }
+      AUDIT_RESULT: ${{ needs.protected-existing-neon-readonly.result }
+      SAFE_COUNTS_B64: ${{ needs.protected-existing-neon-readonly.outputs.safe_cfb_v47_b64 }
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;
+            const intro=['## #864 Finance: exact 830 source / Neon family / historical eligibility audit (V47)',
+              '**Main SHA:** '+process.env.GITHUB_SHA,'**Protected audit:** '+run,
+              'Existing Neon default branch, strictly READ ONLY and ROLLBACK; no private transaction data.'];
+            let body;
+            if(process.env.PREFLIGHT!=='success'){
+              body=[...intro,'**HELD before Neon key:** independent local SQL, migration, application CI, or dependency audit failed.'].join('\n\n');
+            }else if(process.env.AUDIT_RESULT!=='success'){
+              body=[...intro,'**Protected audit HELD:** no validated database count set. Check safe phase in Actions; do not infer zero missing rows.'].join('\n\n');
+            }else{
+              const raw=process.env.SAFE_COUNTS_B64||'';
+              if(!/^[A-Za-z0-9+/=]{100,56000}$/.test(raw))throw Error('Invalid sanitized aggregate data');
+              const a=JSON.parse(Buffer.from(raw,'base64').toString('utf8'));
+              if(a.schema!=='cfb-864-source830-neon-finance-and-history-census-v47'
+                ||a.sourceIndexedPdfVersions!==830||a.sourceOriginalPdfBodies!==813
+                ||a.rollbackCompleted!==true||a.pastEligibilityNotChanged!==true
+                ||a.noProductionWrites!==true)throw Error('Invalid protected result');
+              function total(name,metric){return a.results[name].reduce((n,x)=>n+Number(x[metric]),0)}
+              const rows=a.results.finance_families;
+              const groups=['candidate_contribution','candidate_expenditure','independent_expenditure','category_mismatch']
+                .map(f=>({f,copies:rows.filter(x=>x.family===f).reduce((n,x)=>n+Number(x.copies),0)}));
+              const line=groups.map(x=>x.f+': '+x.copies+' stored evidence copies').join('; ');
+              body=[...intro,
+                '**Official PDF strict source match:** '+total('inventory','matched_pdf_url')+' / 830 viewer URLs; '+
+                  total('inventory','matched_full_pdf_sha')+' / 830 full-PDF SHA matches; '+
+                  total('inventory','no_pdf_match')+' without either exact PDF identifier. Registered year/bulk evidence is NOT version-proof.',
+                '**Candidate committee-year bulk evidence:** '+total('committee_years','candidate_years_with_stored_bulk')+
+                  ' / '+total('committee_years','indexed_committee_years')+' indexed candidate-year pairs.',
+                '**Separate finance families (not added as contributions):** '+line+'.',
+                '**Stored historical eligible evidence copies:** '+total('historical_eligibility','eligible_copies')+
+                  '; exact authenticated PDF-version ID linked '+total('historical_eligibility','exact_version_matched')+
+                  '; no exact version link '+total('historical_eligibility','no_exact_version_match')+
+                  '; filing-derived claims '+total('historical_eligibility','filing_derived_claims')+
+                  '; legacy/unversioned '+total('historical_eligibility','legacy_or_unversioned')+'.',
+                '**Date checks on actually version-linked eligible copies only:** before legal due-release floor '+
+                  total('historical_eligibility','published_before_legal_floor')+
+                  '; before V46 estimated available-on '+total('historical_eligibility','published_before_estimate')+
+                  '. Unlinked rows cannot be certified against exact version-specific V46 dates.',
+                '**Scope and conclusion:** True statutory owed original-report denominator remains unproven. No finance row/source storage changed, eligibility flags unchanged; categories and date anomalies remain identified for follow-on guarded correction, not automatically rewritten. The V46 estimated dates are not exact historic-publication proof.',
+                'Safe counts only; see code/tests for family and year categories. #864 remains open until actual database/source completeness passes.'
+              ].join('\n\n');
+            }
+            if(body.length>12000)throw Error('Audit receipt too long');
+            await github.rest.issues.createComment({
+              owner:'killjoy00',repo:'votepredict',issue_number:864,body
+            });
