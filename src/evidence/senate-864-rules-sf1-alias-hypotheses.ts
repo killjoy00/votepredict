@@ -25,17 +25,17 @@ const uniqueCandidateMatches=(source:string,active:MembershipCandidate[],
 const stripSenateTitles=(source:string)=>source.trim().replace(
  /^(?:(?:senator|sen\.|chair|vice\s+chair|minority\s+lead|ranking\s+member)\s+)+/gi,'').trim();
 export type UnmatchedRulesNameHypothesis={
- originalSourcePosition:number;
- sourceWordCount:number;
- originalHadComma:boolean;
- originalHadDottedInitial:boolean;
- originalHadSenatorOrChairPrefix:boolean;
- originalHadHyphenOrApostrophe:boolean;
- sameFullTokenBagActiveCandidateCountCappedAtTwo:number;
- sameNonInitialTokensActiveCandidateCountCappedAtTwo:number;
- honorificStrippedExactRosterMatch:boolean;
- inactiveRosterExactNameMatch:boolean;
- onlyUnverifiedHypothesesNotAnAuthenticatedIdentity:true;
+ sourcePosition:number;
+ words:number;
+ hasComma:boolean;
+ dottedInitial:boolean;
+ hasHonorific:boolean;
+ hasCompoundPunctuation:boolean;
+ exactTokenBagCandidatesCapped2:number;
+ withoutInitialsCandidatesCapped2:number;
+ honorificStrictMatch:boolean;
+ inactiveStrictMatch:boolean;
+ hypothesisOnly:true;
 };
 export function diagnoseUnmatchedRulesSenatorName(
  sourceName:string,position:number,active:MembershipCandidate[],
@@ -49,21 +49,21 @@ export function diagnoseUnmatchedRulesSenatorName(
  const strippedMatches=reconcileHouseMemberName(normalized,active);
  const tokenBag=sortedWords(normalized),nonInitial=substantiveWords(normalized);
  return {
-  originalSourcePosition:position,
-  sourceWordCount:Math.min(8,words(sourceName).length),
-  originalHadComma:sourceName.includes(','),
-  originalHadDottedInitial:/\b[A-Z]\./i.test(sourceName),
-  originalHadSenatorOrChairPrefix:/^(?:Senator|Sen\.|Chair|Vice\s+Chair)\s+/i.test(sourceName),
-  originalHadHyphenOrApostrophe:/[-']/u.test(sourceName),
-  sameFullTokenBagActiveCandidateCountCappedAtTwo:tokenBag?
+  sourcePosition:position,
+  words:Math.min(8,words(sourceName).length),
+  hasComma:sourceName.includes(','),
+  dottedInitial:/\b[A-Z]\./i.test(sourceName),
+  hasHonorific:/^(?:Senator|Sen\.|Chair|Vice\s+Chair)\s+/i.test(sourceName),
+  hasCompoundPunctuation:/[-']/u.test(sourceName),
+  exactTokenBagCandidatesCapped2:tokenBag?
    uniqueCandidateMatches(normalized,active,(a,b)=>sortedWords(a)===sortedWords(b)):0,
-  sameNonInitialTokensActiveCandidateCountCappedAtTwo:nonInitial&&
+  withoutInitialsCandidatesCapped2:nonInitial&&
     words(normalized).filter(w=>w.length>1).length>=2?
    uniqueCandidateMatches(normalized,active,(a,b)=>substantiveWords(a)===substantiveWords(b)):0,
-  honorificStrippedExactRosterMatch:activeMatches.status!=='matched'&&
+  honorificStrictMatch:activeMatches.status!=='matched'&&
     strippedMatches.status==='matched',
-  inactiveRosterExactNameMatch:activeMatches.status!=='matched'&&
+  inactiveStrictMatch:activeMatches.status!=='matched'&&
     allMatches.status==='matched',
-  onlyUnverifiedHypothesesNotAnAuthenticatedIdentity:true
+  hypothesisOnly:true
  };
 }

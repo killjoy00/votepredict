@@ -173,9 +173,9 @@ test('true source-name word-order and omitted-middle-initial hints never silentl
  assert.equal(receipt.alreadyStoredExactly,0);
  assert.ok(receipt.perMotionHistoricalAliasHypotheses.every(row=>
   row.sourceUnmatchedNameHypotheses.length===1&&
-  row.sourceUnmatchedNameHypotheses[0]!.originalSourcePosition===0&&
-  row.sourceUnmatchedNameHypotheses[0]!.sameFullTokenBagActiveCandidateCountCappedAtTwo===1&&
-  row.sourceUnmatchedNameHypotheses[0]!.onlyUnverifiedHypothesesNotAnAuthenticatedIdentity===true));
+  row.sourceUnmatchedNameHypotheses[0]!.sourcePosition===0&&
+  row.sourceUnmatchedNameHypotheses[0]!.exactTokenBagCandidatesCapped2===1&&
+  row.sourceUnmatchedNameHypotheses[0]!.hypothesisOnly===true));
  assert.ok(!JSON.stringify(receipt).includes('Doe'));
  assert.ok(!JSON.stringify(receipt).includes(ids[0]));
  assert.equal(assertSafeRulesSF1AggregateReceipt(JSON.stringify(receipt)),true);
@@ -186,8 +186,21 @@ test('true source-name word-order and omitted-middle-initial hints never silentl
  const lessExact=compareRulesOriginalToStored(withoutInitial,custom);
  assert.equal(lessExact.holds,2);
  assert.ok(lessExact.perMotionHistoricalAliasHypotheses.every(row=>
-  row.sourceUnmatchedNameHypotheses[0]!.sameFullTokenBagActiveCandidateCountCappedAtTwo===0&&
-  row.sourceUnmatchedNameHypotheses[0]!.sameNonInitialTokensActiveCandidateCountCappedAtTwo===1));
+  row.sourceUnmatchedNameHypotheses[0]!.exactTokenBagCandidatesCapped2===0&&
+  row.sourceUnmatchedNameHypotheses[0]!.withoutInitialsCandidatesCapped2===1));
+});
+test('six unresolved original senator instances fit in existing strict 4KB private-receipt gate',()=>{
+ const receipt=compareRulesOriginalToStored(source,{
+  ...db(),historicalRoster:roster.slice(0,7)
+ });
+ assert.equal(receipt.holds,2);
+ assert.ok(receipt.perMotionHistoricalAliasHypotheses.every(x=>
+  x.sourceUnmatchedNameHypotheses.length===3));
+ const json=JSON.stringify(receipt);
+ assert.ok(json.length<4000,'Do not weaken the existing 4KB private-output boundary');
+ assert.equal(assertSafeRulesSF1AggregateReceipt(json),true);
+ assert.ok(!json.includes('FictionalMember'));
+ assert.ok(!json.includes(ids[0]));
 });
 test('an inactive roster identity is diagnostic only and still cannot create member-specific votes',()=>{
  const original=db();
@@ -197,7 +210,7 @@ test('an inactive roster identity is diagnostic only and still cannot create mem
  assert.equal(receipt.holds,2);
  assert.equal(receipt.alreadyStoredExactly,0);
  assert.ok(receipt.perMotionHistoricalAliasHypotheses.every(row=>
-  row.sourceUnmatchedNameHypotheses[0]!.inactiveRosterExactNameMatch===true));
+  row.sourceUnmatchedNameHypotheses[0]!.inactiveStrictMatch===true));
  assert.equal(assertSafeRulesSF1AggregateReceipt(JSON.stringify(receipt)),true);
 });
 test('invalid original sides and unbounded stored rows refuse source-to-database declaration',()=>{
@@ -225,7 +238,7 @@ test('safe SF1 aggregate receipt is not rejected by sourceNamedMotions field sub
  assert.throws(()=>assertSafeRulesSF1AggregateReceipt(
   JSON.stringify({large:'x'.repeat(4100)})),/private identity gate/);
  assert.equal(ONE_SHOT_MARKER,
-  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V4');
+  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V5');
 });
 test('protected SQL has five bounded SELECTs only and gate requires reviewed main SHA',()=>{
  assert.equal(READ_ONLY_QUERIES.length,5);
