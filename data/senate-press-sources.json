@@ -1,0 +1,14 @@
+[
+  {
+    "id": "senate_dfl",
+    "source_type": "senate_dfl_caucus_and_members",
+    "archive_url": "https://senatedfl.mn/press-releases/",
+    "pagination": { "kind": "query", "key": "_page" }
+  },
+  {
+    "id": "senate_republicans",
+    "source_type": "senate_republican_caucus_and_members",
+    "archive_url": "https://www.mnsenaterepublicans.com/news/",
+    "pagination": { "kind": "path", "segment": "page" }
+  }
+]
