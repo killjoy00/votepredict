@@ -46,7 +46,8 @@ function choices(index:number):RulesStoredChoice[]{
 function db(events:RulesStoredEvent[]=[]):RulesSnapshot{
  return {readOnlyTransactionProven:true,databaseIdentityVerified:true,
   completeBoundedSourceEventsFetched:true,explicitRollbackCompleted:true,
-  documents:[doc],events,choices:events.flatMap(e=>choices(Number(e.id.at(-1)))),
+  documents:[doc],events,choices:events.flatMap(e=>choices(Number(e.id.at(-1)))
+   .map(c=>({...c,vote_event_id:e.id}))),
   historicalRoster:roster};
 }
 test('Two independently recorded SF1 choices match distinct old positional events without rekey or inserts',()=>{
