@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "senate-864-32-verified-original-zero-firstpass-action-source-recall-v1",
+  "issue": 864,
+  "scopeYears": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "exclude2021Completely": true,
+  "originalGovernmentLrlMeetingIndexSha256": "ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0",
+  "originalFrozenZeroActionMeetingDates": 568,
+  "originalFrozenZeroActionMeetingsNeedingOcr": 197,
+  "originalFrozenZeroActionMeetingsEmbeddedText": 371,
+  "sourceAuditWorkflowRunId": 38680095705,
+  "sourceAuditWorkflowUrl": "https://github.com/killjoy00/votepredict/actions/runs/38680095705",
+  "actualOriginalSourceCohortSampled": 32,
+  "originalRawPdfShaReverified": 32,
+  "heldOrMissingOriginalPdfBodies": 0,
+  "sampledOriginalOcrPdfs": 16,
+  "sampledOriginalEmbeddedPdfs": 16,
+  "flaggedOriginalMeetingsForActionReview": 11,
+  "unflaggedOriginalMeetingsStillNotCertifiedNoVote": 21,
+  "namedIndividualVotesAscertainedFromAggregateCountsOrMotionCues": 0,
+  "actualAllCommitteeMotionDenominatorIndependentlyCertified": false,
+  "sourceToActualStoredEventOrMemberChoicesCompared": false,
+  "allOriginalActionExcerptsOrNamesExported": false,
+  "noProductionDatabaseWriteReadOrModelRetraining": true,
+  "perYear": [
+    {
+      "year": 2022,
+      "originalPdfsSampled": 8,
+      "originalRawPdfsShaVerified": 8,
+      "originalPdfsHeld": 0,
+      "originalOcrSample": 4,
+      "originalEmbeddedTextSample": 4,
+      "originalWithMotionOrRollCuesNeedingReview": 2,
+      "originalActionsOfficiallyDistinctOrAllRecorded": false,
+      "originalSourceArtifactId": 11947644996,
+      "originalSourceArtifactZipSha256": "a7e6fe5b4b232e0bacd78de9fd9bb16f1e02f523add82c8d5447849752ee9fb3",
+      "flaggedOriginalMeetings": [
+        {
+          "hearingDate": "2022-02-28",
+          "committeeName": "Health and Human Services Finance and Policy",
+          "printedOriginalMotionResultCues": 2,
+          "newerParserRecognizesContextActions": 2,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        },
+        {
+          "hearingDate": "2022-03-23",
+          "committeeName": "Agriculture and Rural Development Finance and Policy",
+          "printedOriginalMotionResultCues": 1,
+          "newerParserRecognizesContextActions": 1,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "originalPdfsSampled": 8,
+      "originalRawPdfsShaVerified": 8,
+      "originalPdfsHeld": 0,
+      "originalOcrSample": 4,
+      "originalEmbeddedTextSample": 4,
+      "originalWithMotionOrRollCuesNeedingReview": 3,
+      "originalActionsOfficiallyDistinctOrAllRecorded": false,
+      "originalSourceArtifactId": 11947719486,
+      "originalSourceArtifactZipSha256": "5448527da4f19faa688f8fa7cd2fb49590842aaba420812a84ccd0e02b73a6c4",
+      "flaggedOriginalMeetings": [
+        {
+          "hearingDate": "2023-01-24",
+          "committeeName": "Rules and Administration",
+          "printedOriginalMotionResultCues": 0,
+          "newerParserRecognizesContextActions": 0,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        },
+        {
+          "hearingDate": "2023-02-07",
+          "committeeName": "Higher Education",
+          "printedOriginalMotionResultCues": 1,
+          "newerParserRecognizesContextActions": 1,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        },
+        {
+          "hearingDate": "2023-03-30",
+          "committeeName": "Higher Education",
+          "printedOriginalMotionResultCues": 1,
+          "newerParserRecognizesContextActions": 0,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "originalPdfsSampled": 8,
+      "originalRawPdfsShaVerified": 8,
+      "originalPdfsHeld": 0,
+      "originalOcrSample": 4,
+      "originalEmbeddedTextSample": 4,
+      "originalWithMotionOrRollCuesNeedingReview": 5,
+      "originalActionsOfficiallyDistinctOrAllRecorded": false,
+      "originalSourceArtifactId": 11947619791,
+      "originalSourceArtifactZipSha256": "ede99f0d0385184f2ec833dc92e28379329a673a0abb785db6c9d12fa082638d",
+      "flaggedOriginalMeetings": [
+        {
+          "hearingDate": "2024-02-20",
+          "committeeName": "Labor",
+          "printedOriginalMotionResultCues": 4,
+          "newerParserRecognizesContextActions": 8,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        },
+        {
+          "hearingDate": "2024-03-07",
+          "committeeName": "Higher Education",
+          "printedOriginalMotionResultCues": 2,
+          "newerParserRecognizesContextActions": 2,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        },
+        {
+          "hearingDate": "2024-03-19",
+          "committeeName": "Environment, Climate, and Legacy",
+          "printedOriginalMotionResultCues": 0,
+          "newerParserRecognizesContextActions": 0,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        },
+        {
+          "hearingDate": "2024-03-26",
+          "committeeName": "Labor",
+          "printedOriginalMotionResultCues": 5,
+          "newerParserRecognizesContextActions": 6,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        },
+        {
+          "hearingDate": "2024-04-18",
+          "committeeName": "Higher Education",
+          "printedOriginalMotionResultCues": 6,
+          "newerParserRecognizesContextActions": 5,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "originalPdfsSampled": 8,
+      "originalRawPdfsShaVerified": 8,
+      "originalPdfsHeld": 0,
+      "originalOcrSample": 4,
+      "originalEmbeddedTextSample": 4,
+      "originalWithMotionOrRollCuesNeedingReview": 1,
+      "originalActionsOfficiallyDistinctOrAllRecorded": false,
+      "originalSourceArtifactId": 11947834531,
+      "originalSourceArtifactZipSha256": "57f6c9b021c4ada542ad65acbaf09392f0075d01cba316e0d1729913fbcf3a0a",
+      "flaggedOriginalMeetings": [
+        {
+          "hearingDate": "2025-02-06",
+          "committeeName": "Housing and Homelessness Prevention",
+          "printedOriginalMotionResultCues": 1,
+          "newerParserRecognizesContextActions": 0,
+          "humanMotionAnchorReviewOutstanding": true,
+          "noMissingIndividualMemberVoteYetEstablished": true
+        }
+      ]
+    }
+  ]
+}
