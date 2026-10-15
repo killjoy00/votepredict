@@ -64,7 +64,7 @@ async function main(){
   deployedProductionDatabaseRowParityNotMeasured:true
  };
  const body=JSON.stringify(extra,null,2)+'\n';
- if(body.length>3500||/postgresql:|membershipId|choiceIdentitySha256|sourceName|sourceText|member_votes:/i.test(body))
+ if(body.length>3500||/postgresql:|membershipId|choiceIdentitySha256|sourceName|normalizedName|"memberVotes"|"member_votes":/i.test(body))
   throw Error('No private original source member details may be serialized');
  const output=resolve(a[1]);mkdirSync(dirname(output),{recursive:true});
  writeFileSync(output,body);
