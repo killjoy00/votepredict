@@ -33,7 +33,7 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
       - name: Source-provenanced 72-page plan and no-inference regression suite
-        run: node --test tests/senate-864-95-missing-original-recovery-plan.test.mjs
+        run: node --import tsx --test tests/senate-864-95-missing-original-recovery-plan.test.mjs
       - name: Produce fixed public 34-person original-file artifact plan
         run: node scripts/build-senate-864-95-missing-original-recovery-plan.mjs
       - uses: actions/upload-artifact@v6
