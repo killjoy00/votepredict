@@ -1,0 +1,53 @@
+name: Evidence audit (parameterized)
+
+on:
+  workflow_dispatch:
+    inputs:
+      audit_name:
+        description: Fixed audited command; never accepts a script path
+        required: true
+        type: choice
+        options:
+          - revisor-source-passage
+          - official-source-smoke
+          - quick-evidence-extractor
+      scope:
+        description: Official source smoke supports 302/300/257; other audits require all
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - '302'
+          - '300'
+          - '257'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      EVIDENCE_WORKFLOW_KIND: audit
+      EVIDENCE_AUDIT_NAME: ${{ inputs.audit_name }}
+      EVIDENCE_SCOPE: ${{ inputs.scope }}
+    steps:
+      - name: Checkout reviewed main
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Execute fixed source audit
+        run: node --import tsx scripts/run-evidence-workflow.ts
