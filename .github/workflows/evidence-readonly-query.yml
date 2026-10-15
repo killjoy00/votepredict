@@ -1,0 +1,74 @@
+name: Evidence named query (protected READ ONLY)
+
+# Explicit manual use only. Does not provision Neon, mutate SQL, or export raw rows.
+on:
+  workflow_dispatch:
+    inputs:
+      named_query:
+        description: Bounded aggregate or health query from the checked-in allow-list
+        required: true
+        type: choice
+        options:
+          - connection-health
+          - session-membership-counts
+          - evidence-item-count
+      session_scope:
+        description: Session filter for session-membership-counts; all for others
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - '2021-2022'
+          - '2023-2024'
+          - '2025-2026'
+      run_readonly:
+        description: Explicitly request the protected READ ONLY execution
+        required: true
+        type: boolean
+        default: false
+      approval_phrase:
+        description: Type READ_ONLY_SANDBOX_AUDIT to request the existing protected environment
+        required: true
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-readonly-query-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  read-only:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.run_readonly == true &&
+      inputs.approval_phrase == 'READ_ONLY_SANDBOX_AUDIT'
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      EVIDENCE_RO_RUN: ${{ inputs.run_readonly }}
+      EVIDENCE_RO_APPROVAL: ${{ inputs.approval_phrase }}
+      EVIDENCE_RO_QUERY: ${{ inputs.named_query }}
+      EVIDENCE_RO_SCOPE: ${{ inputs.session_scope }}
+    steps:
+      - name: Checkout reviewed main
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Query named aggregate inside REPEATABLE READ READ ONLY and ROLLBACK
+        run: node --import tsx scripts/run-evidence-readonly-query.ts
