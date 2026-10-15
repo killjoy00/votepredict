@@ -119,6 +119,14 @@ function anchoredSignals(text:string){
 }
 async function main(){
  const args=process.argv.slice(2);
+ if(args.length===2&&args[0]==='--cohort-preflight'){
+  const source=selectOriginalFlagged81(readReports(resolve(args[1]!)));
+  console.log('SENATE864_81_ORIGINAL_COHORT_PREFLIGHT='+JSON.stringify({
+   priorVerifiedOriginals:149,flaggedOriginals:source.length,
+   byYear:[2022,2023,2024,2025].map(y=>source.filter(x=>x.year===y).length)
+  }));
+  return;
+ }
  if(args.length!==6||args[0]!=='--shard'||args[2]!=='--artifact-dir'||args[4]!=='--output'||
   !/^[0-7]$/.test(args[1]??''))
   throw Error('Fixed --shard 0..7 --artifact-dir --output required');
