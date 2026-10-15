@@ -16,7 +16,7 @@ test('actual HTML bytes require both independent SHA256 and CDX SHA1 in same exa
  const html=Buffer.from('<html><body>independent original Senator candidate campaign issue proof</body></html>');
  const digest=sha1Base32(html);
  assert.match(digest,/^[A-Z2-7]{32}$/);
- assert.equal(digest,'PENDING_COMPUTED_IN_TEST'==='PENDING_COMPUTED_IN_TEST'?sha1Base32(html):'');
+ assert.equal(digest,'7PXP34KLHDGAYSOQ3AYMOQGLQPSGYYIB');
  const w={recoveryState:'READY_FOR_INDEPENDENT_BYTE_VERIFICATION',
   originalUrl:'https://www.example.test/issues',originalHtmlSha256:createHash('sha256').update(html).digest('hex'),
   originalArchiveCdxSha1Base32:digest,originalArchiveCapturedAtUtc:'2022-05-01T01:02:03.000Z'};
