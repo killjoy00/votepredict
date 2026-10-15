@@ -19,7 +19,7 @@ test('strict original 29 source leads excludes 2021 and preserves all year count
   [4,6,14,5]);
  assert.throws(()=>check29HeldOriginalMeetings([...rows.slice(0,-1),rows[0]]));
  assert.throws(()=>check29HeldOriginalMeetings([...rows.slice(0,-1),{
-  ...rows.at(-1),year:2021
+  ...rows.at(-1)!,year:2021
  }]));
 });
 test('official alternate archive extracts evening, morning and different filename Minutes, not other meeting PDFs',()=>{
