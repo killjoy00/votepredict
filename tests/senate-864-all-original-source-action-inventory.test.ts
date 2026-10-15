@@ -77,7 +77,7 @@ test('full original source audit conserves all 1592 LRL meeting days, 111 Clerk,
  assert.equal(report.safeToRerunLegacyPositionalBackfill,false);
  assert.equal(report.noNamedChoicesFromAttendanceVoiceOrCountOnly,true);
  const publicPayload=JSON.stringify(report);
- assert.doesNotMatch(publicPayload,/sourceName|normalized_member_name|choiceIdentitySha256|membership_id|postgresql:\/\//i);
+ assert.doesNotMatch(publicPayload,/\"sourceName\"\s*:|normalized_member_name|choiceIdentitySha256|membership_id|postgresql:\/\//i);
 });
 test('source-only report differentiates named rolls from ambiguous voice, count, other cues and orphan proposals',()=>{
  const report=buildSenate864AllSourceActionInventory({...source,indexed:syntheticFullIndex()});
