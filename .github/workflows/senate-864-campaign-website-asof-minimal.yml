@@ -4,13 +4,19 @@ on:
     paths:
       - .github/workflows/senate-864-campaign-website-asof-minimal.yml
       - src/evidence/senate-864-historical-site-excerpt-asof.mjs
+      - src/evidence/senate-864-website-signal-neon.mjs
+      - src/evidence/senate-864-website-signal-readback.mjs
       - tests/senate-864-historical-site-excerpt-asof.test.mjs
+      - tests/senate-864-website-signal-neon.test.mjs
   push:
     branches: [main]
     paths:
       - .github/workflows/senate-864-campaign-website-asof-minimal.yml
       - src/evidence/senate-864-historical-site-excerpt-asof.mjs
+      - src/evidence/senate-864-website-signal-neon.mjs
+      - src/evidence/senate-864-website-signal-readback.mjs
       - tests/senate-864-historical-site-excerpt-asof.test.mjs
+      - tests/senate-864-website-signal-neon.test.mjs
 permissions:
   contents: read
 jobs:
@@ -25,4 +31,5 @@ jobs:
         with:
           node-version: 22
       - run: node --check src/evidence/senate-864-historical-site-excerpt-asof.mjs
-      - run: node --test tests/senate-864-historical-site-excerpt-asof.test.mjs
+      - run: node --test tests/senate-864-historical-site-excerpt-asof.test.mjs tests/senate-864-website-signal-neon.test.mjs
+
