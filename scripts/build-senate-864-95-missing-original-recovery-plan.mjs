@@ -52,7 +52,7 @@ const DIRECT_PAGE_KEYS=new Set([
  'fullOriginalArchivedSourceReceipts','fullOriginalPageSHAReceipts',
  'fullOriginalPageReceipts','fullOriginalArchivedPageReceipts','sourcePages',
  'originalCandidateIssueSourcePages','candidateOwnedOriginalIssueSourceSections',
- 'originalFullPageSourceReceipts','originalFullHTMLReceipts','originalPageReceipts',
+ 'originalFullPageSourceReceipts','originalFullHTMLReceipts','originalFullPageReceipts','originalPageReceipts',
  'verifiedOriginals','originals'
 ].map(k=>k.toLowerCase()));
 function value(obj,keys){
