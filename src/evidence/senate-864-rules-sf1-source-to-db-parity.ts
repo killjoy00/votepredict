@@ -73,13 +73,13 @@ const bill=(v:string|null)=>v!==null&&v.replace(/[ .]/g,'').toUpperCase()==='SF1
  */
 export function normalize2023RulesSf1OfficePrintedName(value:string):string{
  const compact=normalizeSenateCommitteeMemberSourceName(value);
- const m=/^([^,]{1,65}),\\s*(Chair|Vice\\s+Chair|Lead)$/i.exec(compact);
+ const m=/^([^,]{1,65}),\s*(Chair|Vice\s+Chair|Lead)$/i.exec(compact);
  if(!m)return compact;
  const roles:{[surname:string]:string}={
   dziedzic:'chair',rest:'vice chair',johnson:'lead'
  };
  const surname=m[1]!.trim();
- return roles[surname.toLowerCase()]===m[2]!.toLowerCase().replace(/\\s+/g,' ')
+ return roles[surname.toLowerCase()]===m[2]!.toLowerCase().replace(/\s+/g,' ')
   ?surname:compact;
 }
 export function validateOriginalRulesSF1(source:OriginalRulesSource){
