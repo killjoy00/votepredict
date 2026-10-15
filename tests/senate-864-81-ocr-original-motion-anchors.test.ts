@@ -10,7 +10,9 @@ function fixture(){
   year:number;shard:number;originalPdfs:number;flaggedSourcePdfs:number;
  })=>({
   schemaVersion:'senate-864-568-original-remaining149-ocr-source-recall-v1',
-  sourceRecallPhase:'remaining149ocr',year:a.year,shard:a.shard,
+  sourceRecallPhase:'remaining149ocr',year:a.year,
+  remainingOcrShardIndex:a.shard,
+  remainingOcrTotalShards:({2022:10,2023:1,2024:1,2025:4} as Record<number,number>)[a.year],
   selectedOriginals:a.originalPdfs,originalShaReverified:a.originalPdfs,
   originalsHeld:0,sourceToStoredEventAndMemberParityPerformed:false,
   rows:Array.from({length:a.originalPdfs},(_,i)=>({
