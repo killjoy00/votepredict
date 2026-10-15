@@ -134,7 +134,7 @@ function record(
   identity: string,
 ): RawSenateTestimonyRecord {
   return {
-    recordKey: sha([context.hearingId, sourceType, sourceUrl, billIdentifier ?? '', identity].join('|')),
+    recordKey: sha([context.hearingId, sourceType, sourceUrl, billIdentifier ?? '', identity, rawContent ?? ''].join('|')),
     session: context.session,
     hearingId: context.hearingId,
     sourceType,
@@ -200,7 +200,8 @@ export function parseAgendaAttachments(agenda: unknown): Attachment[] {
       const bill = normalizedBill(text) ?? inheritedBill;
       for (const a of extractHrefs(node)) add(a.url, a.name, bill);
       // Some API fields are a direct URL string with no surrounding HTML.
-      const direct = resolveDocumentUrl(node);
+      // A bare display filename is not a usable URL; never invent its host.
+      const direct = /^(?:https:\/\/|\/|committees\/)/i.test(node.trim()) ? resolveDocumentUrl(node) : null;
       if (direct) add(direct, attachmentName(direct), inheritedBill);
       return;
     }
@@ -216,9 +217,9 @@ export function parseAgendaAttachments(agenda: unknown): Attachment[] {
     const name = directStrings.find(([key]) => /^(?:file_?name|document_?name|attachment_?name|title|label|name)$/i.test(key))?.[1];
     for (const [key, value] of directStrings) {
       for (const a of extractHrefs(value)) add(a.url, a.name, ownBill);
-      if (/url|href|link|path|filename|file_name/i.test(key)) {
+      if (/url|href|link|path/i.test(key) && /^(?:https:\/\/|\/|committees\/)/i.test(value.trim())) {
         const url = resolveDocumentUrl(value);
-        if (url) add(url, name && !FILE.test(name) ? name : attachmentName(url), ownBill);
+        if (url) add(url, name || attachmentName(url), ownBill);
       }
     }
     for (const value of Object.values(obj)) visit(value, ownBill, depth + 1);
@@ -331,7 +332,8 @@ function witnessRecord(context: HearingContext, witness: Witness, sourceUrl: str
 }
 
 function documentRecord(context: HearingContext, attachment: Attachment, text: string | null): RawSenateTestimonyRecord {
-  const row = record(context, 'document', attachment.url, 'application/pdf', text, attachment.url,
+  const row = record(context, 'document', attachment.url,
+    /\.pdf(?:[?#]|$)/i.test(attachment.url) ? 'application/pdf' : 'application/octet-stream', text, attachment.url,
     attachment.billIdentifier, attachment.url);
   row.documentName = attachment.name;
   row.documentKind = documentKind(attachment.name);
