@@ -1,0 +1,259 @@
+{
+  "schema": "cfb-864-11-official-candidate-year-source-summary-double-retrieval-v44",
+  "sourceRegion": "public_mn_cfb_candidate_financial_tab",
+  "checkedOn": "2026-10-15",
+  "sourcePullRequest": 1303,
+  "officialSourceWorkflowRunId": 38770091118,
+  "originalOfficialSourceJobId": 116543314555,
+  "independentReplayJobId": 116544130547,
+  "originalFinancialSummaryTabs": 11,
+  "distinctCommitteeYearAggregates": 13,
+  "arithmeticValidatedYearTotals": 12,
+  "yearsWithoutSummary": 1,
+  "independentWholeResponseHashesEqual": 11,
+  "currentCandidateYearAggregatesAreNotPdfVersionSpecific": true,
+  "reports": [
+    {
+      "registration": "16311",
+      "segmentEndYear": 2022,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/16311/2022/",
+      "responseSHA256": "3573b1747a6c0e7529748bb781732b3de02e907f729853d5fba2bd024244f7c5",
+      "sourceFilingVersionIds": [
+        "16311:22:pcc:YE:0:0"
+      ],
+      "years": [
+        {
+          "year": 2022,
+          "yearEndThroughOn": "2022-12-31",
+          "boardAnnualReportedReceiptsCents": 165000,
+          "independentPublicSourceFinancialCategoriesSumCents": 165000,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    },
+    {
+      "registration": "16931",
+      "segmentEndYear": 2022,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/16931/2022/",
+      "responseSHA256": "bb566074ead31179d16953f173abbd37863d7726c26dd7457605b42ff31ca6cf",
+      "sourceFilingVersionIds": [
+        "16931:21:pcc:YE:0:0"
+      ],
+      "years": [
+        {
+          "year": 2021,
+          "yearEndThroughOn": "2021-12-31",
+          "boardAnnualReportedReceiptsCents": 4774661,
+          "independentPublicSourceFinancialCategoriesSumCents": 4774661,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    },
+    {
+      "registration": "17140",
+      "segmentEndYear": 2022,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/17140/2022/",
+      "responseSHA256": "3662cb3381d70cab677b6f2dba55cf38b4c5dc41afe6ec6e8f1cf41d7034e981",
+      "sourceFilingVersionIds": [
+        "17140:21:pcc:YE:0:0",
+        "17140:22:pcc:YE:0:0"
+      ],
+      "years": [
+        {
+          "year": 2021,
+          "yearEndThroughOn": "2021-12-31",
+          "boardAnnualReportedReceiptsCents": 7655912,
+          "independentPublicSourceFinancialCategoriesSumCents": 7655912,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        },
+        {
+          "year": 2022,
+          "yearEndThroughOn": "2022-12-31",
+          "boardAnnualReportedReceiptsCents": 102500,
+          "independentPublicSourceFinancialCategoriesSumCents": 102500,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    },
+    {
+      "registration": "17347",
+      "segmentEndYear": 2022,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/17347/2022/",
+      "responseSHA256": "cb05943ec01fc36175c86d13cca6d5f4bbfc149a9571f7a6c0632392390b330e",
+      "sourceFilingVersionIds": [
+        "17347:22:pcc:YE:0:0"
+      ],
+      "years": [
+        {
+          "year": 2022,
+          "yearEndThroughOn": "2022-12-31",
+          "boardAnnualReportedReceiptsCents": 794655,
+          "independentPublicSourceFinancialCategoriesSumCents": 794655,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    },
+    {
+      "registration": "17362",
+      "segmentEndYear": 2026,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/17362/2026/",
+      "responseSHA256": "2b5846c905270153385f6bbe9a19dea76e3faad6545c629ef92ca50ec43cf301",
+      "sourceFilingVersionIds": [
+        "17362:25:pcc:YE:0:0"
+      ],
+      "years": [
+        {
+          "year": 2025,
+          "yearEndThroughOn": "2025-12-31",
+          "boardAnnualReportedReceiptsCents": 100000,
+          "independentPublicSourceFinancialCategoriesSumCents": 100000,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    },
+    {
+      "registration": "17929",
+      "segmentEndYear": 2022,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/17929/2022/",
+      "responseSHA256": "211b6a83c6a342632ff4cd7ea50e5a28114920b7f212bb9f47dbb5bafa8d6b34",
+      "sourceFilingVersionIds": [
+        "17929:21:pcc:YE:0:0",
+        "17929:22:pcc:YE:0:0",
+        "17929:22:pcc:YE:0:1"
+      ],
+      "years": [
+        {
+          "year": 2021,
+          "yearEndThroughOn": "2021-12-31",
+          "boardAnnualReportedReceiptsCents": 583020,
+          "independentPublicSourceFinancialCategoriesSumCents": 583020,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        },
+        {
+          "year": 2022,
+          "status": "no_report_year_in_current_official_board_financial_summary",
+          "boardAnnualReportedReceiptsCents": null,
+          "aggregateArithmeticVerified": false
+        }
+      ]
+    },
+    {
+      "registration": "17994",
+      "segmentEndYear": 2024,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/17994/2024/",
+      "responseSHA256": "38a7c95d7816a913725570e97e3f210b6d70223057f2f5de3b5180d72dfdd57b",
+      "sourceFilingVersionIds": [
+        "17994:23:pcc:YE:0:0"
+      ],
+      "years": [
+        {
+          "year": 2023,
+          "yearEndThroughOn": "2023-12-31",
+          "boardAnnualReportedReceiptsCents": 657747,
+          "independentPublicSourceFinancialCategoriesSumCents": 657747,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    },
+    {
+      "registration": "18004",
+      "segmentEndYear": 2022,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/18004/2022/",
+      "responseSHA256": "89718a5f2cdec506db43f07492ce4396fcac313c89e6754cd22f778c054019d6",
+      "sourceFilingVersionIds": [
+        "18004:21:pcc:YE:0:0"
+      ],
+      "years": [
+        {
+          "year": 2021,
+          "yearEndThroughOn": "2021-12-31",
+          "boardAnnualReportedReceiptsCents": 110000,
+          "independentPublicSourceFinancialCategoriesSumCents": 110000,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    },
+    {
+      "registration": "18430",
+      "segmentEndYear": 2022,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/18430/2022/",
+      "responseSHA256": "9100d40b60e315a5c21d8c162e70d1efd7b7ca6d7e0a2e83dac29e60ab359b16",
+      "sourceFilingVersionIds": [
+        "18430:21:pcc:YE:0:1"
+      ],
+      "years": [
+        {
+          "year": 2021,
+          "yearEndThroughOn": "2021-12-31",
+          "boardAnnualReportedReceiptsCents": 2749651,
+          "independentPublicSourceFinancialCategoriesSumCents": 2749651,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    },
+    {
+      "registration": "18488",
+      "segmentEndYear": 2022,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/18488/2022/",
+      "responseSHA256": "4bf691f94185c8567783db0875f9f6cffca865eb54e0c547aa93c3d65c5a9090",
+      "sourceFilingVersionIds": [
+        "18488:21:pcc:YE:0:1"
+      ],
+      "years": [
+        {
+          "year": 2021,
+          "yearEndThroughOn": "2021-12-31",
+          "boardAnnualReportedReceiptsCents": 4091400,
+          "independentPublicSourceFinancialCategoriesSumCents": 4091400,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    },
+    {
+      "registration": "18730",
+      "segmentEndYear": 2022,
+      "officialViewerSourceUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/18730/2022/",
+      "responseSHA256": "83e65de36e208538b8270e995e981bcc5e1ab23f46286f6453f8b9a17bfd6f91",
+      "sourceFilingVersionIds": [
+        "18730:21:pcc:YE:0:1"
+      ],
+      "years": [
+        {
+          "year": 2021,
+          "yearEndThroughOn": "2021-12-31",
+          "boardAnnualReportedReceiptsCents": 3113900,
+          "independentPublicSourceFinancialCategoriesSumCents": 3113900,
+          "componentCount": 8,
+          "aggregateArithmeticVerified": true,
+          "sourceType": "official_board_public_candidate_year_financial_summary_current"
+        }
+      ]
+    }
+  ],
+  "donorLevelDataNotSaved": true,
+  "reportPdfTextNotSaved": true,
+  "exactHistoricalFirstPublicByDatesProven": 0,
+  "correctedBoardReceiptDatesProven": 0
+}

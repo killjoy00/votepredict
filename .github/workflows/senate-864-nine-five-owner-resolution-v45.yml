@@ -1,0 +1,31 @@
+name: 'Senate #864 four accepted, three correspondence, two unknown, five later review dates V45'
+on:
+  pull_request:
+    paths:
+      - 'data/cfb-2021-25-nine-five-review-dispositions-v45.json'
+      - 'docs/evaluation/source-proof/cfb-2021-25-official-annual-financial-summary-double-source-v44.json'
+      - 'src/evidence/cfb-historical-official-filings.ts'
+      - 'src/app/dashboard/legislators/[legislatorId]/page.tsx'
+      - 'scripts/audit-cfb-864-nine-five-owner-resolution-v45.mjs'
+      - 'tests/cfb-864-nine-five-owner-resolution-v45.test.mjs'
+      - '.github/workflows/senate-864-nine-five-owner-resolution-v45.yml'
+permissions:
+  contents: read
+jobs:
+  independently-replay-user-accepted-official-CFB-report-sources:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned offline historical source test dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify exactly four amounts, three emails, two unknown scans and five conservative review dates
+        run: node --import tsx --test tests/cfb-864-nine-five-owner-resolution-v45.test.mjs
+      - name: Source-only offline replay of immutable full PDF provenance and independently twice-fetched Board summary hashes
+        run: node --import tsx scripts/audit-cfb-864-nine-five-owner-resolution-v45.mjs
