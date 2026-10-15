@@ -13,6 +13,7 @@ import {
 } from '../sources/minnesota/member-reconciliation.js';
 import {normalizeSenateCommitteeMemberSourceName,
  type SenateCommitteeVoteObservation} from './minnesota-senate-committee-minutes.js';
+import {diagnoseUnmatchedRulesSenatorName} from './senate-864-rules-sf1-alias-hypotheses.js';
 
 export type OriginalRulesSource={
  verifiedRawPdfSha:boolean;
@@ -120,6 +121,19 @@ export function compareRulesOriginalToStored(source:OriginalRulesSource,snapshot
    return ids.length-new Set(ids).size;
   })(),
  }));
+ // The original roll names and private roster stay strictly within runner
+ // memory. Emit only bounded source-name SHAPE and conservative counts for
+ // how many candidates share every printed word, regardless of order, or
+ // agree after dropping explicit single-letter middle initials. A diagnostic
+ // candidate is NEVER promoted to a matched historical membership.
+ const perMotionHistoricalAliasHypotheses=resolutionByRoll.map((entries,index)=>({
+  motion:index===0?'failed_oral_amendment':'adopted_committee_report',
+  sourceUnmatchedNameHypotheses:entries.flatMap((x,i)=>
+   x.status==='matched'&&validUuid(x.membershipId)?[]:[
+    diagnoseUnmatchedRulesSenatorName(source.rolls[index]!.memberVotes[i]!.sourceName,
+     i,active,snapshot.historicalRoster)
+   ])
+ }));
  // Even when each roll has ten independently resolved names, differences
  // between the two ten-person rosters could signal a broken OCR-side parse.
  const sidesConsistent=verifiedMembers.every(Boolean)&&
@@ -201,6 +215,7 @@ export function compareRulesOriginalToStored(source:OriginalRulesSource,snapshot
   historicalRosterRows:snapshot.historicalRoster.length,
   historicalRosterActiveOnHearingDate:active.length,
   perMotionHistoricalNameResolution:resolutionStats,
+  perMotionHistoricalAliasHypotheses,
   alreadyStoredExactly:counts('already_stored_exact'),
   addOnlyCandidatesAwaitingSeparateApproval:counts('candidate_add_only_after_separate_approval'),
   holds:results.filter(x=>x.status.startsWith('hold_')).length,
