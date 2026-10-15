@@ -351,11 +351,18 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
    seen.add(key);
    const committeeReport=/\bmoved\s+to\s+adopt\s+(?:the\s+)?committee\b[\s\S]{0,150}?\breport\b/i
     .test(nearbyMotion);
+   const printedOutcome=explicitOutcome(match[5]);
+   // Rules committee reports are parliamentary *motions*, not amendments.
+   // A committee report expressly "was adopted" is affirmative. Do not
+   // infer an outcome from a preceding failed amendment in the context.
+   const passed=printedOutcome??(
+    committeeReport&&/\bcommittee\s+report\s+was\s+adopted\b/i.test(match[5])?
+    true:undefined);
    observations.push({
     billIdentifier,amendmentRef,
     motionText:context.replace(/\s+/g,' ').trim().slice(-900),
     voteKind:committeeReport?'motion':voteKind(nearbyMotion),
-    yeaCount,nayCount,passed:explicitOutcome(match[5]+' '+context.slice(-180)),
+    yeaCount,nayCount,passed,
     memberVotes:sides,individualVotesAvailable:true,
    });
   }
