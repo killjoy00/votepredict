@@ -58,7 +58,14 @@ async function main(){
  const ledger=JSON.parse(bytes.toString('utf8'));
  const cohort=selectSenate864FirstPassZeroActionOriginals(ledger,year,4);
  if(cohort.selectedOriginals.length!==8)throw Error('Eight original stratified source proofs per year required');
- const rows=[];
+ const rows:Array<{
+  year:number;committeeName:string;hearingDate:string;originalSourceUrl:string;
+  originalPdfSha256:string;originallyRequiredOcr:boolean;status:string;
+  priority?:string;explicitRecordedMotionResultCues?:number;
+  explicitNamedRollLabelCues?:number;currentParserNamedRollCandidates?:number;
+  currentParserCountOnlyRollCandidates?:number;
+  currentParserContextActionCandidates?:number;[key:string]:unknown;
+ }>=[];
  for(const target of cohort.selectedOriginals){
   try{
    const pdf=await verifiedOriginalPdf(target.sourceUrl,target.sourcePdfSha256);
@@ -104,9 +111,9 @@ async function main(){
   originalsHeld:8-verified.length,
   possibleSourceActionsMissedOrNewlyRecognized:flagged.length,
   originalExplicitRollMotionResultsRequiringReview:verified.filter(r=>
-   r.explicitRecordedMotionResultCues>0).length,
+   (r.explicitRecordedMotionResultCues??0)>0).length,
   originalNamedRollLabelsRequiringReview:verified.filter(r=>
-   r.explicitNamedRollLabelCues>0).length,
+   (r.explicitNamedRollLabelCues??0)>0).length,
   everyZeroIsNotAutomaticallyANamedVote:true,
   sourceToStoredEventAndMemberParityPerformed:false,
   noProductionDatabaseReadWrite:true,
@@ -121,9 +128,9 @@ async function main(){
   flaggedSourceReview:flagged.length,originalExplicitResults:
    report.originalExplicitRollMotionResultsRequiringReview,
   flaggedDates:flagged.map(r=>({day:r.hearingDate,committee:r.committeeName,
-   parsedRolls:r.currentParserNamedRollCandidates+r.currentParserCountOnlyRollCandidates,
-   contextualMotions:r.currentParserContextActionCandidates,
-   explicitMotionResultCues:r.explicitRecordedMotionResultCues}))
+   parsedRolls:(r.currentParserNamedRollCandidates??0)+(r.currentParserCountOnlyRollCandidates??0),
+   contextualMotions:r.currentParserContextActionCandidates??0,
+   explicitMotionResultCues:r.explicitRecordedMotionResultCues??0}))
  }));
 }
 void main().catch(error=>{
