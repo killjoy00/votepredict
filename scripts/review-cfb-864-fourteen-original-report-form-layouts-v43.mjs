@@ -116,11 +116,16 @@ function printedLineSnips(pageImage,record,category){
   const maxX=Math.max(...words.map(w=>w.x+w.w))+15;
   const minY=Math.max(0,Math.min(...words.map(w=>w.y))-12);
   const maxY=Math.max(...words.map(w=>w.y+w.h))+12;
-  const width=Math.min(1600-minX,Math.max(120,maxX-minX));
-  const height=Math.min(80,Math.max(30,maxY-minY));
+  // Summary rows often print three aggregate monetary columns on the right,
+  // outside the OCR label's bounding box. Crop ONLY the narrow labelled row;
+  // do not include nearby transaction schedules or a full PDF page.
+  const summaryRow=category==='nine'&&/\btotal\s+receipts\b/i.test(label);
+  const width=summaryRow?1600:Math.min(1600-minX,Math.max(120,maxX-minX));
+  const height=summaryRow?Math.min(100,Math.max(45,maxY-minY+35)):
+   Math.min(80,Math.max(30,maxY-minY));
   if(width<120||height<25)continue;
-  options.push({label:category==='date'?'date_label_line':'summary_label_line',
-    x:minX,y:minY,w:width,h:height});
+  options.push({label:category==='date'?'date_label_line':summaryRow?'aggregate_receipts_full_summary_row':'summary_label_line',
+    x:summaryRow?0:minX,y:summaryRow?Math.max(0,minY-8):minY,w:width,h:height});
   if(options.length===2)break;
  }
  const crops=[];
