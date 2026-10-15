@@ -7,6 +7,9 @@ on:
       - tests/senate-864-all-original-source-action-inventory.test.ts
       - docs/evaluation/source-proof/senate-864-2022-25-eight-alternate-lrl-original-pdf-sha-receipts.json
       - src/evidence/senate-864-2022-25-official-original-minutes-overlay.ts
+      - src/evidence/senate-864-eleven-original-printed-minutes-overlay.ts
+      - docs/evaluation/source-proof/senate-864-eleven-original-same-day-LRL-minutes-recovery.json
+      - tests/senate-864-eleven-original-printed-minutes-overlay.test.ts
       - tests/senate-864-eight-alternate-original-lrl-minutes-overlay.test.ts
       - src/evidence/senate-864-verified-motion-addition-plan.ts
       - tests/senate-864-verified-motion-addition-plan.test.ts
@@ -39,6 +42,7 @@ jobs:
           npx tsc --noEmit
           node --import tsx --test tests/senate-864-all-original-source-action-inventory.test.ts
           node --import tsx --test tests/senate-864-eight-alternate-original-lrl-minutes-overlay.test.ts
+          node --import tsx --test tests/senate-864-eleven-original-printed-minutes-overlay.test.ts
           node --import tsx --test tests/senate-864-verified-motion-addition-plan.test.ts
       - name: Independently verify immutable official 1592-day indexed/PDF source ledger artifact ZIP SHA
         env:
@@ -52,6 +56,13 @@ jobs:
         run: |
           digest=$(gh api repos/killjoy00/votepredict/actions/artifacts/11948425264 --jq '.digest')
           test "$digest" = "sha256:1e4fa7a20643e3b10d750cf991935a62af70956e03d63de18a4ba545362ca893"
+      - name: Independently verify 30 original government PDF bodies' diagnostic ZIP SHAs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11979984527 --jq '.digest')" = "sha256:07af946e857ba7754d3bb433563d51231725863911bbd2cdac6207ae38dbeca1"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11981235308 --jq '.digest')" = "sha256:ecadc66cdf44a015adee2f2cf50173d8f3065a27676d7a33ab4ed69a691d5846"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11980916410 --jq '.digest')" = "sha256:69023b1b312a1f9dbec2141e83806bcefc896539232e25e9985281ec16a79339"
       - name: Acquire immutable original SHA-pinned indexed 1592 meeting source ledger
         uses: actions/download-artifact@v4
         with:
