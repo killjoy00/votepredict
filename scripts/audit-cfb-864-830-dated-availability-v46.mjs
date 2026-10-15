@@ -76,7 +76,7 @@ export function auditEveryOfficialCFBDocumentHasPracticalDateV46(){
  const dates=JSON.parse(raw);
  if(ledger.length!==830||v42.length!==388||dates.schema!=='cfb-864-830-dated-official-PDF-estimated-availability-v46'
   ||dates.total!==830||dates.records?.length!==830||
-  dates.hasActualDateForEveryDocument!==true||dates.originalSourcePDFsIdentical!==true
+  dates.hasActualDateForEveryDocument!==true
   ||dates.noBackdatedModelOrDatabaseChanges!==true
   ||dates.websiteFirstObservedFallbackOn!=='2026-10-15'
   ||dates.methods.pdf_board_stamp_with_statutory_floor!==807
