@@ -53,6 +53,25 @@ async function main(){
   allNamedVotesOnPrintedSides:row.memberVotes.every(v=>v.choice==='yea'||v.choice==='nay'),
   motionAnchorSha256:sha(row.motionText),
  }));
+ const flat=pdf.text.replace(/\s+/g,' ');
+ const markers=[...flat.matchAll(/\b(?:Members\s+voting\s+(?:AYE|NO)|On\s+a\s+vote\s+of)\b/gi)]
+  .map(x=>({at:x.index??0,label:x[0].toUpperCase().replace(/\s+/g,'_')}));
+ const narrativeCandidates=[...flat.matchAll(
+  /\bMembers\s+voting\s+AYE\s*:\s*([\s\S]{1,1000}?)\bMembers\s+voting\s+NO\s*:\s*([\s\S]{1,1000}?)\bOn\s+a\s+vote\s+of\s+(\d{1,2})\s+AYES?\s*,?\s*and\s+(\d{1,2})\s+NO\b([^\n]{0,180})/gi,
+ )].map(x=>({ayePrefixes:(x[1].match(/\bSenator\s+/gi)??[]).length,
+  noPrefixes:(x[2].match(/\bSenator\s+/gi)??[]).length,
+  printedAye:Number(x[3]),printedNo:Number(x[4]),
+  ayeChars:x[1].length,noChars:x[2].length,
+  ayePunctuation:(x[1].match(/[,:;()\r\n]/g)??[]).length,
+  noPunctuation:(x[2].match(/[,:;()\r\n]/g)??[]).length,
+ }));
+ const sourceShape={
+  markerLabels:markers.map(x=>x.label),
+  markerGaps:markers.slice(1).map((x,i)=>x.at-markers[i]!.at),
+  narrativeRegexMatches:narrativeCandidates.length,
+  matchedSideStructuralCounts:narrativeCandidates,
+  unredactedSenatorNamesInOutput:false,
+ };
  const passed=rolls.length===2&&rolls.every((r,i)=>{
   const expectedMotion=expected[i]!;
   return r.individualVotesAvailable===true&&r.billIdentifier==='SF1'&&
@@ -69,6 +88,7 @@ async function main(){
   hearingDate:'2023-01-24',committee:'Rules and Administration',
   originalTextSha256:sha(pdf.text),extractionMethod:pdf.extractionMethod,
   twoDistinctOriginalNamedRollObservations:passed,reported: safeRows,
+  originalSourceStructure:sourceShape,
   namedMembersComparedOnlyInMemory:true,historicalMemberIdResolution:false,
   storedMotionAndMemberVoteParityPerformed:false,noDatabaseOrModelWrites:true,
  }));
