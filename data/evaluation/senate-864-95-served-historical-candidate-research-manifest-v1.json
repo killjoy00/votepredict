@@ -1,0 +1,929 @@
+{
+  "schema": "senate-864-95-actual-served-2021-25-historical-original-site-research-manifest-v1",
+  "scope": "95 actually-serving senators, 2021-2025. Research excerpt counts are all-cycle, not person-year or persisted database counts.",
+  "sourceArtifact": {
+    "runId": 38260920551,
+    "artifactId": 11752575710,
+    "artifactSha256": "29c0030649fae371fbc4e434156705de3327315102af4afcb1957a20e1bf00b9",
+    "jsonSha256": "e47a363cf01a03b08d163768629d23b683438f27fab4200fbf5a6202f87e33c9",
+    "originalOfficialDirectorySha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51"
+  },
+  "notProven": [
+    "original author-first-publication",
+    "selected excerpt exact overlap with VotePredict persisted evidence",
+    "legislative vote",
+    "historical forecast eligibility",
+    "absence of unobserved campaign pages"
+  ],
+  "people": [
+    {
+      "officialName": "Alice Mann",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 12
+    },
+    {
+      "officialName": "Amanda Hemmingsen-Jaeger",
+      "serviceYears": [
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 5
+    },
+    {
+      "officialName": "Andrew Mathews",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "Andrew R. Lang",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 13
+    },
+    {
+      "officialName": "Ann H. Rest",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 14
+    },
+    {
+      "officialName": "Ann M Johnson Stewart",
+      "serviceYears": [
+        2021,
+        2022,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 18
+    },
+    {
+      "officialName": "Aric Putnam",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 10
+    },
+    {
+      "officialName": "Bill G. Ingebrigtsen",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 27
+    },
+    {
+      "officialName": "Bill Lieske",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 8
+    },
+    {
+      "officialName": "Bill Weber",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 2
+    },
+    {
+      "officialName": "Bobby Joe Champion",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 15
+    },
+    {
+      "officialName": "Bonnie Westlin",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 8
+    },
+    {
+      "officialName": "Bruce Douglas Anderson",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 14
+    },
+    {
+      "officialName": "Calvin K. Bahr",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "Carla J. Nelson",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 12
+    },
+    {
+      "officialName": "Carrie L. Ruud",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 5
+    },
+    {
+      "officialName": "Chris A. Eaton",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 9
+    },
+    {
+      "officialName": "Clare Oumou Verbeten",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 15
+    },
+    {
+      "officialName": "D. Scott Dibble",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 12
+    },
+    {
+      "officialName": "David H. Senjem",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 32
+    },
+    {
+      "officialName": "David J. Osmek",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 8
+    },
+    {
+      "officialName": "David J. Tomassoni",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 0
+    },
+    {
+      "officialName": "Doron Clark",
+      "serviceYears": [
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 41
+    },
+    {
+      "officialName": "Eric Lucero",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 10
+    },
+    {
+      "officialName": "Eric R. Pratt",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 8
+    },
+    {
+      "officialName": "Erin K. Maye Quade",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 35
+    },
+    {
+      "officialName": "Erin P. Murphy",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 19
+    },
+    {
+      "officialName": "Foung Hawj",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 9
+    },
+    {
+      "officialName": "Gary H. Dahms",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "Gene Dornink",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 35
+    },
+    {
+      "officialName": "Glenn Gruenhagen",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 14
+    },
+    {
+      "officialName": "Grant Hauschild",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 9
+    },
+    {
+      "officialName": "Gregory D. Clausen",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "Heather Gustafson",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 19
+    },
+    {
+      "officialName": "Jason Isaacson",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 10
+    },
+    {
+      "officialName": "Jason Rarick",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 20
+    },
+    {
+      "officialName": "Jeff R. Howe",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "Jennifer A McEwen",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 9
+    },
+    {
+      "officialName": "Jeremy R. Miller",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "Jerry Newton",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 11
+    },
+    {
+      "officialName": "Jim Abeler",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 8
+    },
+    {
+      "officialName": "Jim Carlson",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 8
+    },
+    {
+      "officialName": "John A. Hoffman",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "John J. Marty",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 14
+    },
+    {
+      "officialName": "John R. Jasinski",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 22
+    },
+    {
+      "officialName": "Jordan Rasmusson",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 11
+    },
+    {
+      "officialName": "Judy Seeberger",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "Julia E. Coleman",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 10
+    },
+    {
+      "officialName": "Julie A. Rosen",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 12
+    },
+    {
+      "officialName": "Justin D. Eichorn",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 12
+    },
+    {
+      "officialName": "Kari Dziedzic",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 2
+    },
+    {
+      "officialName": "Karin Housley",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 20
+    },
+    {
+      "officialName": "Karla Bigham",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 6
+    },
+    {
+      "officialName": "Kelly L. Morrison",
+      "serviceYears": [
+        2023,
+        2024
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 15
+    },
+    {
+      "officialName": "Kent Eken",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 13
+    },
+    {
+      "officialName": "Keri Heintzeman",
+      "serviceYears": [
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "Lindsey Port",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 22
+    },
+    {
+      "officialName": "Liz Boldon",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 11
+    },
+    {
+      "officialName": "Mark T. Johnson",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 8
+    },
+    {
+      "officialName": "Mark W. Koran",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 11
+    },
+    {
+      "officialName": "Mary K. Kunesh",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 31
+    },
+    {
+      "officialName": "Mary Kiffmeyer",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 26
+    },
+    {
+      "officialName": "Matt D. Klein",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 11
+    },
+    {
+      "officialName": "Melisa López Franzen",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 18
+    },
+    {
+      "officialName": "Melissa Halvorson Wiklund",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 14
+    },
+    {
+      "officialName": "Michael E. Kreun",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 5
+    },
+    {
+      "officialName": "Michael Holmstrom Jr",
+      "serviceYears": [
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 12
+    },
+    {
+      "officialName": "Michael P. Goggin",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 8
+    },
+    {
+      "officialName": "Michelle R. Benson",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 9
+    },
+    {
+      "officialName": "Nathan Wesenberg",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 10
+    },
+    {
+      "officialName": "Nick A. Frentz",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 26
+    },
+    {
+      "officialName": "Nicole Mitchell",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 6
+    },
+    {
+      "officialName": "Omar Fateh",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 22
+    },
+    {
+      "officialName": "Patricia Torres Ray",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 6
+    },
+    {
+      "officialName": "Paul E. Gazelka",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 12
+    },
+    {
+      "officialName": "Paul J. Utke",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 25
+    },
+    {
+      "officialName": "Rich Draheim",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 15
+    },
+    {
+      "officialName": "Robert Farnsworth",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 8
+    },
+    {
+      "officialName": "Robert Kupec",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 24
+    },
+    {
+      "officialName": "Roger C. Chamberlain",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 31
+    },
+    {
+      "officialName": "Ronald Steven Latz",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 24
+    },
+    {
+      "officialName": "Sandra L. Pappas",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 27
+    },
+    {
+      "officialName": "Scott J. Newman",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 2
+    },
+    {
+      "officialName": "Sr., Charles W. Wiger",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 0
+    },
+    {
+      "officialName": "Steve A. Cwodzinski",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 13
+    },
+    {
+      "officialName": "Steve Drazkowski",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 5
+    },
+    {
+      "officialName": "Steve Green",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 6
+    },
+    {
+      "officialName": "Susan Kent",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 35
+    },
+    {
+      "officialName": "Susan Pha",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 16
+    },
+    {
+      "officialName": "Thomas M. Bakk",
+      "serviceYears": [
+        2021,
+        2022
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 0
+    },
+    {
+      "officialName": "Torrey Westrom",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 7
+    },
+    {
+      "officialName": "Tou Xiong",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 15
+    },
+    {
+      "officialName": "Warren E. Limmer",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 31
+    },
+    {
+      "officialName": "Zach Duckworth",
+      "serviceYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 14
+    },
+    {
+      "officialName": "Zaynab Mohamed",
+      "serviceYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "selectedCandidateOwnedResearchExcerpts": 15
+    }
+  ]
+}
