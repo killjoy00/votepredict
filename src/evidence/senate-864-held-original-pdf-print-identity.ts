@@ -19,7 +19,7 @@ export interface HeldMeetingSource {
 }
 const MONTHS='January February March April May June July August September October November December'.split(' ');
 export const LRL_HELD_PDF_SOURCE_YEAR_COUNTS={2023:2,2024:13,2025:4} as const;
-export const HELD_LRL_PDF_SOURCE_CANDIDATE_COUNT=31 as const;
+export const HELD_LRL_PDF_SOURCE_CANDIDATE_COUNT=30 as const;
 function normalized(value:string){
  return value.toLowerCase().replace(/&/g,' and ').replace(/[^\p{L}\p{N}]+/gu,' ')
   .replace(/\s+/g,' ').trim();
