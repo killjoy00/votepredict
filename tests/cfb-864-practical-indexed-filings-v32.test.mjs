@@ -41,10 +41,10 @@ test('existing 15 parsing and single fetch holds remain USEFUL official CFB inde
  assert.ok(isaacson?.observedVersions >= 3);
  assert.equal(isaacson?.downloadedVersions,3);
  assert.ok(newton?.observedVersions >= 1);
- assert.equal(newton?.downloadedVersions,0);
+ assert.equal(newton?.downloadedVersions,1);
  const heldNewton=newton?.filings.find(f=>f.id==='18004:21:pcc:YE:0:0');
- assert.equal(heldNewton?.status,'official_filing_indexed_pdf_fetch_failed');
- assert.match(officialFilingStatusLabel(heldNewton.status),/Listed by CFB/);
+ assert.equal(heldNewton?.status,'official_pdf_downloaded_unparsed');
+ assert.match(officialFilingStatusLabel(heldNewton.status),/PDF downloaded/);
 });
 test('five documented original CFB Senator name-variant committees are linked to actual serving senators without string-similarity matching',()=>{
  for(const [member,alias] of [
@@ -81,11 +81,11 @@ test('original official PDF source inventory is attached to legislator profile a
  const s=historicalOfficialFilingInventoryTotals();
  assert.equal(s.senators,95);
  assert.equal(s.versions,830);
- assert.equal(s.downloadedVersions,480);
- assert.equal(s.distinctDownloadedPdfBodies,476);
+ assert.equal(s.downloadedVersions,590);
+ assert.equal(s.distinctDownloadedPdfBodies,579);
  assert.equal(s.readableVersions,425);
  assert.equal(s.unresolvedDocumentDetails,15);
- assert.equal(s.indexedVersionsAwaitingPdfDownload,349);
+ assert.equal(s.indexedVersionsAwaitingPdfDownload,240);
 });
 test('historical publication and mandatory owed-report counts are NOT inferred from CFB indexed document existence',()=>{
  assert.equal(report.historicallyContemporaneousPublicationNotAssumed,true);

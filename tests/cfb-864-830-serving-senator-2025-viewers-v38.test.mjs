@@ -39,14 +39,14 @@ test('unfetched new government 2025 indexed references count as official report 
 });
 test('source profile exposes original and updated 2025 amendment viewer records for LRL service members, and older records remain',()=>{
  const p=historicalOfficialFilingContextForSenator('John Marty','senate');
- assert.ok(p?.filings.some(f=>f.id==='11880:25:pcc:YE:0:0'&&f.status==='official_indexed_pdf_not_yet_retrieved'));
+ assert.ok(p?.filings.some(f=>f.id==='11880:25:pcc:YE:0:0'&&f.status==='official_pdf_downloaded_unparsed'));
  assert.ok(p?.filings.some(f=>f.id==='11880:22:pcc:C:0:0'));
  const c=historicalOfficialFilingContextForSenator('Jim Carlson','senate');
  assert.ok(c?.filings.some(f=>f.id==='16246:25:pcc:YE:0:3'&&f.kind==='amended'));
  const t=historicalOfficialFilingInventoryTotals();
  assert.equal(t.senators,95);assert.equal(t.versions,830);
- assert.equal(t.downloadedVersions,480);assert.equal(t.distinctDownloadedPdfBodies,476);
- assert.equal(t.indexedVersionsAwaitingPdfDownload,349);
+ assert.equal(t.downloadedVersions,590);assert.equal(t.distinctDownloadedPdfBodies,579);
+ assert.equal(t.indexedVersionsAwaitingPdfDownload,240);
  assert.equal(officialFilingStatusLabel('official_indexed_pdf_not_yet_retrieved'),'Listed by CFB; PDF not yet checked');
  const ui=readFileSync('src/app/dashboard/legislators/[legislatorId]/page.tsx','utf8');
  assert.match(ui,/Show \{historicalFilings\.observedVersions - 8\} earlier indexed versions/);

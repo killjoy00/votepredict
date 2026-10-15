@@ -1,4 +1,4 @@
-import source from '../../data/cfb-senate-official-filings-2021-25-v38.json';
+import source from '../../data/cfb-senate-official-filings-2021-25-v40.json';
 
 /**
  * Official indexed filing versions are usable historical CONTEXT even when a
@@ -98,7 +98,7 @@ export function historicalOfficialFilingInventoryTotals(): {
     versions: all.length,
     downloadedVersions: inventory.senators.reduce((n, s) => n + s.downloadedVersions, 0),
     readableVersions: all.filter(f => f.status === 'readable_official_pdf').length,
-    distinctDownloadedPdfBodies: 476, // pinned by complete original government PDF byte SHA and offline V36 audit
+    distinctDownloadedPdfBodies: 579, // 590 real downloaded versions, 11 same-binary indexed aliases; V40 pinned full PDF source audit
     unresolvedDocumentDetails: all.filter(f =>
       f.status === 'downloaded_pdf_details_unreadable_or_unresolved'
       || f.status === 'downloaded_pdf_report_date_conflict').length,
