@@ -26,7 +26,8 @@ async function main(){
    await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
    open=true;
    for(const [name,sql] of Object.entries(QUERIES)){
-    const result=await client.query('EXPLAIN (FORMAT JSON) '+sql,[JSON.stringify(source)]);
+    const params=sql.includes('$1::jsonb')?[JSON.stringify(source)]:[];
+    const result=await client.query('EXPLAIN (FORMAT JSON) '+sql,params);
     if(result.rows.length!==1)throw Error('SQL EXPLAIN failed for bounded '+name);
     console.log('CFB_864_V47_LOCAL_SQL_COMPILED='+name);
    }
