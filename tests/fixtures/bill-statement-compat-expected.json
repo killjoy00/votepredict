@@ -1,0 +1,1182 @@
+[
+  {
+    "name": "first-person-support",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "Legislative update. I strongly support HF 1234 because it addresses this issue for our district.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "Legislative update. I strongly support HF 1234 because it addresses this issue for our district.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "Legislative update. I strongly support HF 1234 because it addresses this issue for our district.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v4-evaluation",
+          "extractionVersion": "quick-evidence-statement-v4",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article",
+            "evaluationOnly": true,
+            "excludesCompletedVoteActionHistory": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "named-opposition",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Alice Mann expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Alice Mann opposes SF55 and will vote against SF 55 if it reaches the floor.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Alice Mann expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Alice Mann opposes SF55 and will vote against SF 55 if it reaches the floor.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Alice Mann expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Alice Mann opposes SF55 and will vote against SF 55 if it reaches the floor.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v4-evaluation",
+          "extractionVersion": "quick-evidence-statement-v4",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page",
+            "evaluationOnly": true,
+            "excludesCompletedVoteActionHistory": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "completed-vote-to-pass",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Doron Clark expressed support for SF55 on a member-controlled source.",
+          "excerpt": "Senator Doron Clark voted to pass Senate File 55 after debate on the measure.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:member_primary_article"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Doron Clark expressed support for SF55 on a member-controlled source.",
+          "excerpt": "Senator Doron Clark voted to pass Senate File 55 after debate on the measure.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:member_primary_article",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": []
+    }
+  },
+  {
+    "name": "not-support",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Alice Mann expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Alice Mann cannot support SF55 due to major concerns.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Alice Mann expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Alice Mann cannot support SF55 due to major concerns.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Alice Mann expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Alice Mann cannot support SF55 due to major concerns.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v4-evaluation",
+          "extractionVersion": "quick-evidence-statement-v4",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page",
+            "evaluationOnly": true,
+            "excludesCompletedVoteActionHistory": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "tight-bill-back",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I back HF 1234 and will keep fighting for this proposal.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I back HF 1234 and will keep fighting for this proposal.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I back HF 1234 and will keep fighting for this proposal.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v4-evaluation",
+          "extractionVersion": "quick-evidence-statement-v4",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article",
+            "evaluationOnly": true,
+            "excludesCompletedVoteActionHistory": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "completed-vote-against",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Doron Clark expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Doron Clark voted against Senate File 55 last night.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Doron Clark expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Doron Clark voted against Senate File 55 last night.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": []
+    }
+  },
+  {
+    "name": "vote-plan",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I will vote yes for HF 1234 because it is needed.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I will vote yes for HF 1234 because it is needed.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I will vote yes for HF 1234 because it is needed.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v4-evaluation",
+          "extractionVersion": "quick-evidence-statement-v4",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article",
+            "evaluationOnly": true,
+            "excludesCompletedVoteActionHistory": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "remote-opponent",
+    "baseline": {
+      "v2": [],
+      "v3": [],
+      "v4": []
+    }
+  },
+  {
+    "name": "limited-amendment",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I support the amendment to HF 1234 in this proposal.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article"
+          }
+        }
+      ],
+      "v3": [],
+      "v4": []
+    }
+  },
+  {
+    "name": "limited-education",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I support investments in schools under HF 1234.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:campaign_site_page"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I support investments in schools under HF 1234.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:campaign_site_page",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": []
+    }
+  },
+  {
+    "name": "historical-year-context",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I support the 2022 language included in HF 1234.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article"
+          }
+        }
+      ],
+      "v3": [],
+      "v4": []
+    }
+  },
+  {
+    "name": "other-bill",
+    "baseline": {
+      "v2": [],
+      "v3": [],
+      "v4": []
+    }
+  },
+  {
+    "name": "unknown-member",
+    "baseline": {
+      "v2": [],
+      "v3": [],
+      "v4": []
+    }
+  },
+  {
+    "name": "newspaper-quote",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Alice Mann expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Alice Mann has announced that she opposes Senate File 55.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Alice Mann expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Alice Mann has announced that she opposes Senate File 55.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Alice Mann expressed opposition to SF55 on a member-controlled source.",
+          "excerpt": "Senator Alice Mann has announced that she opposes Senate File 55.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v4-evaluation",
+          "extractionVersion": "quick-evidence-statement-v4",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page",
+            "evaluationOnly": true,
+            "excludesCompletedVoteActionHistory": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "compound-stances",
+    "baseline": {
+      "v2": [],
+      "v3": [],
+      "v4": []
+    }
+  },
+  {
+    "name": "no-position",
+    "baseline": {
+      "v2": [],
+      "v3": [],
+      "v4": []
+    }
+  },
+  {
+    "name": "endorse-reference",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I endorse House File 1234 as an important direction for the state.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I endorse House File 1234 as an important direction for the state.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for HF1234 on a member-controlled source.",
+          "excerpt": "I endorse House File 1234 as an important direction for the state.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v4-evaluation",
+          "extractionVersion": "quick-evidence-statement-v4",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article",
+            "evaluationOnly": true,
+            "excludesCompletedVoteActionHistory": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "reject-bill",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Mary Franson expressed opposition to HF1234 on a member-controlled source.",
+          "excerpt": "I reject HF1234 and urge the committee to reconsider.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:campaign_site_page"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Mary Franson expressed opposition to HF1234 on a member-controlled source.",
+          "excerpt": "I reject HF1234 and urge the committee to reconsider.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:campaign_site_page",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": []
+    }
+  },
+  {
+    "name": "against-bill",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "11111111-1111-1111-1111-111111111111"
+          },
+          "kind": "direct_statement",
+          "stance": "opposes",
+          "claim": "Mary Franson expressed opposition to HF1234 on a member-controlled source.",
+          "excerpt": "I am against HF1234 and have always been against the bill.",
+          "publishedAt": "2026-08-10T12:00:00.000Z",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "member_primary_article",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "HF1234",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:11111111-1111-1111-1111-111111111111:source:member_primary_article"
+          }
+        }
+      ],
+      "v3": [],
+      "v4": []
+    }
+  },
+  {
+    "name": "bill-year-back-reference",
+    "baseline": {
+      "v2": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for SF55 on a member-controlled source.",
+          "excerpt": "I back Senate File 55 with strong protections for residents in 2026.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement",
+          "extractionVersion": "quick-evidence-statement-v2",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": true,
+            "mechanicallyActionable": false,
+            "statementAttribution": "member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page"
+          }
+        }
+      ],
+      "v3": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for SF55 on a member-controlled source.",
+          "excerpt": "I back Senate File 55 with strong protections for residents in 2026.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v3-evaluation",
+          "extractionVersion": "quick-evidence-statement-v3",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page",
+            "evaluationOnly": true
+          }
+        }
+      ],
+      "v4": [
+        {
+          "target": {
+            "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "billId": "22222222-2222-2222-2222-222222222222"
+          },
+          "kind": "direct_statement",
+          "stance": "supports",
+          "claim": "Mary Franson expressed support for SF55 on a member-controlled source.",
+          "excerpt": "I back Senate File 55 with strong protections for residents in 2026.",
+          "sourceQuality": "member_primary",
+          "relevance": "direct",
+          "freshness": "current",
+          "extractionMethod": "deterministic-explicit-bill-statement-v4-evaluation",
+          "extractionVersion": "quick-evidence-statement-v4",
+          "confidence": 0.98,
+          "metadata": {
+            "contextType": "quick_evidence",
+            "subtype": "explicit_bill_statement",
+            "sourceSubtype": "campaign_site_page",
+            "sourceVerified": true,
+            "quickEvidenceCandidate": false,
+            "mechanicallyActionable": false,
+            "statementAttribution": "tight_member_or_first_person",
+            "exactBillIdentifier": "SF55",
+            "evidenceSeriesKey": "quick_evidence_statement:membership:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:bill:22222222-2222-2222-2222-222222222222:source:campaign_site_page",
+            "evaluationOnly": true,
+            "excludesCompletedVoteActionHistory": true
+          }
+        }
+      ]
+    }
+  }
+]
