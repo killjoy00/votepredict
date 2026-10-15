@@ -1,0 +1,82 @@
+name: Senate raw committee testimony collection
+
+on:
+  pull_request:
+    paths:
+      - 'src/sources/minnesota/senate-committee-testimony.ts'
+      - 'scripts/collect-senate-committee-testimony.ts'
+      - 'tests/senate-committee-testimony.test.ts'
+      - 'migrations/0016_senate_committee_testimony_raw.sql'
+      - '.github/workflows/senate-committee-testimony-raw.yml'
+  workflow_dispatch:
+    inputs:
+      session:
+        description: 'Biennium'
+        required: true
+        default: '2025-2026'
+        type: choice
+        options:
+          - '2025-2026'
+          - '2023-2024'
+      from:
+        description: 'YYYY-MM-DD (optional)'
+        required: false
+        type: string
+      to:
+        description: 'YYYY-MM-DD (optional)'
+        required: false
+        type: string
+      committee:
+        description: 'Committee ID/name filter (optional)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Make output directory
+        run: mkdir -p senate-raw-output
+      - name: Collect current biennium first (hearings and all linked document pointers)
+        if: github.event_name == 'pull_request'
+        run: npm run data:senate:testimony -- --session 2025-2026 --from 2025-01-01 --to 2026-10-15 --no-pdf-lists --out senate-raw-output/current-session.jsonl
+      - name: Collect 2023-2024 (hearings and all linked document pointers)
+        if: github.event_name == 'pull_request'
+        run: npm run data:senate:testimony -- --session 2023-2024 --from 2023-01-01 --to 2024-12-31 --no-pdf-lists --out senate-raw-output/2023-2024.jsonl
+      - name: Recover witnesses from representative posted agenda/list PDFs
+        if: github.event_name == 'pull_request'
+        run: |
+          npm run data:senate:testimony -- --session 2025-2026 --from 2026-04-13 --to 2026-04-13 --out senate-raw-output/2026-witness-lists.jsonl
+          npm run data:senate:testimony -- --session 2023-2024 --from 2023-01-23 --to 2023-01-23 --out senate-raw-output/2023-witness-lists.jsonl
+      - name: Collect selected range on demand (no database writes)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          SESSION: ${{ inputs.session }}
+          FROM: ${{ inputs.from }}
+          TO: ${{ inputs.to }}
+          COMMITTEE: ${{ inputs.committee }}
+        run: |
+          params=(--session "$SESSION" --out senate-raw-output/requested-range.jsonl)
+          if [ -n "$FROM" ]; then params+=(--from "$FROM"); fi
+          if [ -n "$TO" ]; then params+=(--to "$TO"); fi
+          if [ -n "$COMMITTEE" ]; then params+=(--committee "$COMMITTEE"); fi
+          npm run data:senate:testimony -- "${params[@]}"
+      - name: Preserve raw-source JSONL files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-committee-testimony-raw-${{ github.run_id }}
+          path: senate-raw-output/*.jsonl
+          if-no-files-found: warn
+          retention-days: 30
