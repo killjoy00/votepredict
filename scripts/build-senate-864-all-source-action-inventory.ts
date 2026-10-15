@@ -45,7 +45,14 @@ function main(){
  if(body.length>10_000)throw Error('Unexpected large source-only audit console summary');
  console.log('SENATE864_ALL_2022_25_ORIGINAL_ACTION_SOURCE_SUMMARY='+body);
 }
-try{main()}catch{
- console.error('SENATE864_ALL_2022_25_ORIGINAL_ACTION_SOURCE_HOLD=source_proof_or_expected_counts');
+try{main()}catch(error){
+ // All permitted error labels are static literals compiled into the reviewed
+ // source-only verifier. Never reveal an underlying source row/URL/name or a
+ // dynamic system error, path or credential in the public CI job log.
+ const source=readFileSync('src/evidence/senate-864-all-source-action-inventory.ts','utf8');
+ const labels=new Set([...source.matchAll(/throw Error\\('([^']+)'\\)/g)].map(m=>m[1]));
+ const message=error instanceof Error?error.message:'';
+ const safe=labels.has(message)?message.replaceAll(' ','_'):'unclassified_source_or_cli_failure';
+ console.error('SENATE864_ALL_2022_25_ORIGINAL_ACTION_SOURCE_HOLD='+safe);
  process.exitCode=1;
 }
