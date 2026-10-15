@@ -9,7 +9,7 @@ test('original Minnesota CFB 2021 Jerry Newton YE report is government-indexed d
  assert.equal(r.versionId,'18004:21:pcc:YE:0:0');
  assert.equal(r.person,'Jerry Newton');
  assert.equal(r.registrationNumber,'18004');
- assert.match(r.originalOfficialViewerSHA256,/^[a-f0-9]{64}$/);
+ assert.match(r.originalViewerResponseSha256,/^[a-f0-9]{64}$/);
  assert.equal(r.officialPdfUrl,
   'https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year=21&type=pcc&period=YE&se=0&regnum=18004&amend=0');
 });
