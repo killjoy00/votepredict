@@ -1,3 +1,4 @@
+// @ts-nocheck -- JS runtime entrypoints are .mjs with no TypeScript declaration file; this is an execution test.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
