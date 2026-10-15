@@ -27,12 +27,16 @@ function syntheticFullIndex(){
    actionType:'named_roll_call',explicitlyNamedChoiceOccurrences:i<53?10:9
   });
   if(i<49)actions.push({actionType:'count_only_roll_call',explicitlyNamedChoiceOccurrences:0});
+  // 883 linked days have at least one recognized action; 568 have zero.
+  if(i>=104&&i<883)actions.push({actionType:'result_only',explicitlyNamedChoiceOccurrences:0});
   totals+=actions.filter(x=>x.actionType==='named_roll_call')
    .reduce((n,x)=>n+x.explicitlyNamedChoiceOccurrences,0);
   const original=(num:number)=>({
    sourceUrl:'https://www.lrl.mn.gov/archive/minutes/senate/'+year+'/fixture/'+
     day.replaceAll('-','')+'/Fixture_'+num+'_Minutes.pdf',
-   originalPdfSha256:(i*2+num+1).toString(16).padStart(64,'0'),sourceActions:num===0?actions:[]
+   originalPdfSha256:(i*2+num+1).toString(16).padStart(64,'0'),
+   ocrRecoveredFromInitiallyLowText:num===0&&(i<10||(i>=883&&i<1080)),
+   sourceActions:num===0?actions:[]
   });
   linked.push({year,committee:name,hearingDate:day,status:'linked_originals_sha_authenticated',
    hasOriginalPdf:true,originalMinutes:i===0?[original(0),original(1)]:[original(0)],
@@ -64,6 +68,13 @@ test('full original source audit conserves all 1592 LRL meeting days, 111 Clerk,
  assert.equal(report.sourceExplicitNamedRollCandidatesInFrozenLinkedPdfs,104);
  assert.equal(report.sourceExplicitNamedRollCandidatesInCurrentLinkedPdfParserV3,112);
  assert.equal(report.sourceNamedRollsInNewClerkWrittenMinutes,27);
+ assert.equal(report.linkedMinutesMeetingDatesWithoutAnyParserRecognizedAction,568);
+ assert.equal(report.linkedOcrMeetingDatesWithoutAnyParserRecognizedAction,197);
+ assert.equal(report.linkedEmbeddedTextMeetingDatesWithoutAnyParserRecognizedAction,371);
+ assert.equal(report.linkedOriginalOcrRecoveredPdfBodies,207);
+ assert.equal(report.missingActionReviewQueue.length,568);
+ assert.equal(report.missingActionReviewQueue.filter(x=>x.reviewPriority===1).length,197);
+ assert.ok(report.missingActionReviewQueue.every(x=>x.parserFindsZeroActionsButVotesNotInferredMissing));
  assert.equal(report.combinedCurrentNamedRollSourceCandidates,139);
  assert.equal(report.totalProvenOriginalNamedChoiceOccurrencesBeforeV3AddedRollChoices,1332);
  assert.equal(report.sumNonExhaustiveDistinctCohortSourceActionCandidates,273);
