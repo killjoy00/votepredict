@@ -91,15 +91,35 @@ export function compareRulesOriginalToStored(source:OriginalRulesSource,snapshot
   const list=dbByEvent.get(row.vote_event_id)??[];
   list.push(row);dbByEvent.set(row.vote_event_id,list);
  }
- const verifiedMembers=source.rolls.map(original=>{
-  const resolved=original.memberVotes.map(v=>{
-   const result=reconcileHouseMemberName(
-    normalizeSenateCommitteeMemberSourceName(v.sourceName),active);
-   return result.status==='matched'?result.membershipId:null;
-  });
+ // Retain in-memory, per-printed-choice outcomes before the all-ten
+ // integrity gate. Earlier receipts reported zero "resolved" when even a
+ // single name of ten held, hiding whether the roster was empty or 9/10
+ // names matched. Export only bounded numeric counts and source ordinals,
+ // NEVER the original names, aliases, membership IDs, sides or choice hashes.
+ const resolutionByRoll=source.rolls.map(original=>original.memberVotes.map(v=>
+  reconcileHouseMemberName(
+   normalizeSenateCommitteeMemberSourceName(v.sourceName),active)));
+ const verifiedMembers=resolutionByRoll.map(resolutions=>{
+  const resolved=resolutions.map(r=>r.status==='matched'?r.membershipId:null);
   return resolved.every(x=>x!==null&&validUuid(x))&&unique(resolved)&&
    resolved.length===10?resolved as string[]:null;
  });
+ const resolutionStats=resolutionByRoll.map((entries,index)=>({
+  motion:index===0?'failed_oral_amendment':'adopted_committee_report',
+  printedChoices:entries.length,
+  matched:entries.filter(x=>x.status==='matched'&&validUuid(x.membershipId)).length,
+  ambiguous:entries.filter(x=>x.status==='ambiguous').length,
+  unmatched:entries.filter(x=>x.status==='unmatched').length,
+  matchedWithInvalidMembershipId:entries.filter(x=>x.status==='matched'&&
+   !validUuid(x.membershipId)).length,
+  unresolvedSourcePositions:entries.flatMap((x,i)=>
+   x.status!=='matched'||!validUuid(x.membershipId)?[i]:[]),
+  duplicateResolvedMemberships:(()=>{
+   const ids=entries.flatMap(x=>x.status==='matched'&&validUuid(x.membershipId)
+    ?[x.membershipId]:[]);
+   return ids.length-new Set(ids).size;
+  })(),
+ }));
  // Even when each roll has ten independently resolved names, differences
  // between the two ten-person rosters could signal a broken OCR-side parse.
  const sidesConsistent=verifiedMembers.every(Boolean)&&
@@ -178,6 +198,9 @@ export function compareRulesOriginalToStored(source:OriginalRulesSource,snapshot
   exactOriginalSourceStoredEvents:sourceSpecificEvents.length,
   sameDaySenateRulesSf1CandidateEvents:sameDayRelevant.length,
   serviceDayResolvedOriginalMemberChoices:verifiedMembers.reduce((n,x)=>n+(x?.length??0),0),
+  historicalRosterRows:snapshot.historicalRoster.length,
+  historicalRosterActiveOnHearingDate:active.length,
+  perMotionHistoricalNameResolution:resolutionStats,
   alreadyStoredExactly:counts('already_stored_exact'),
   addOnlyCandidatesAwaitingSeparateApproval:counts('candidate_add_only_after_separate_approval'),
   holds:results.filter(x=>x.status.startsWith('hold_')).length,
