@@ -60,7 +60,7 @@ try{main()}catch(error){
  const source=readFileSync('src/evidence/senate-864-all-source-action-inventory.ts','utf8');
  const labels=new Set([...source.matchAll(/throw Error\('([^']+)'\)/g)].map(m=>m[1]));
  const message=error instanceof Error?error.message:'';
- const fieldMatch=message.match(/^Cannot read properties of (?:undefined|null) \\(reading '([a-zA-Z][a-zA-Z0-9_]*)'\\)$/);
+ const fieldMatch=message.match(/^Cannot read properties of (?:undefined|null) \(reading '([a-zA-Z][a-zA-Z0-9_]*)'\)$/);
  const safe=labels.has(message)?message.replaceAll(' ','_'):
   fieldMatch?'missing_source_field_'+fieldMatch[1]:
   error instanceof Error&&error.name==='SyntaxError'?'source_json_parse_syntax':
