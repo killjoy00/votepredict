@@ -207,9 +207,11 @@ if(process.argv[1]?.replace(/\\/g,'/').endsWith('/audit-senate-864-81-ocr-origin
    'Fixed distinct document shard size',
    'Fixed --shard 0..7 --artifact-dir --output required'];
   const msg=error instanceof Error?error.message:'';
+  const safeGeneric=msg.length<180&&!/https?:|postgres|token|password|secret|\/home\/|\/github\//i.test(msg)?
+   msg.replace(/[^a-zA-Z0-9_:.\- ]/g,'_').replace(/\s+/g,'_'):'source_integrity_or_shard_validation';
   console.error('SENATE864_81_ORIGINAL_MOTION_HOLD='+(
    allowed.includes(msg)?msg.replace(/\s+/g,'_'):
    /^original_shard:202[2-5]\/\d{1,2}:[a-z_]{4,30}$/.test(msg)?
-    msg:'source_integrity_or_shard_validation'));
+    msg:safeGeneric));
   process.exitCode=1;
  });
