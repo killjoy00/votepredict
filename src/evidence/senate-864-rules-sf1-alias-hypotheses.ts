@@ -24,6 +24,28 @@ const uniqueCandidateMatches=(source:string,active:MembershipCandidate[],
 };
 const stripSenateTitles=(source:string)=>source.trim().replace(
  /^(?:(?:senator|sen\.|chair|vice\s+chair|minority\s+lead|ranking\s+member)\s+)+/gi,'').trim();
+/**
+ * Source names in the original government minutes sometimes spell a senator
+ * as "Surname, F" while a database record uses "Surname, FullGivenName".
+ * The generic House matcher assumes the roster puts surnames LAST. Test
+ * BOTH orderings with exact surname tokens and ordered printed given tokens;
+ * a single printed letter may match only the same given-name initial.
+ * Never accept a nickname, fuzzy spelling or surname alone.
+ */
+function exactPrintedSurnameAndGivenInitials(raw:string,rosterName:string):boolean{
+ const m=raw.match(/^([^,]{1,85}),\s*([^,]{1,85})$/);
+ if(!m)return false;
+ const surname=words(m[1]!),printedGiven=words(m[2]!),roster=words(rosterName);
+ if(!surname.length||!printedGiven.length||roster.length<=surname.length)return false;
+ const surnameSame=(parts:string[])=>parts.length===surname.length&&
+  parts.every((token,i)=>token===surname[i]);
+ const givenMatches=(parts:string[])=>printedGiven.length<=parts.length&&
+  printedGiven.every((token,i)=>token.length===1?
+   parts[i]?.startsWith(token)===true:parts[i]===token);
+ const n=surname.length;
+ return (surnameSame(roster.slice(0,n))&&givenMatches(roster.slice(n)))||
+  (surnameSame(roster.slice(-n))&&givenMatches(roster.slice(0,-n)));
+}
 export type UnmatchedRulesNameHypothesis={
  sourcePosition:number;
  words:number;
@@ -33,6 +55,7 @@ export type UnmatchedRulesNameHypothesis={
  hasCompoundPunctuation:boolean;
  exactTokenBagCandidatesCapped2:number;
  withoutInitialsCandidatesCapped2:number;
+ dualOrderSurnameGivenCandidatesCapped2:number;
  honorificStrictMatch:boolean;
  inactiveStrictMatch:boolean;
  hypothesisOnly:true;
@@ -60,6 +83,8 @@ export function diagnoseUnmatchedRulesSenatorName(
   withoutInitialsCandidatesCapped2:nonInitial&&
     words(normalized).filter(w=>w.length>1).length>=2?
    uniqueCandidateMatches(normalized,active,(a,b)=>substantiveWords(a)===substantiveWords(b)):0,
+  dualOrderSurnameGivenCandidatesCapped2:uniqueCandidateMatches(
+   normalized,active,exactPrintedSurnameAndGivenInitials),
   honorificStrictMatch:activeMatches.status!=='matched'&&
     strippedMatches.status==='matched',
   inactiveStrictMatch:activeMatches.status!=='matched'&&
