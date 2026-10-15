@@ -119,7 +119,7 @@ function printedLineSnips(pageImage,record,category){
   // Summary rows often print three aggregate monetary columns on the right,
   // outside the OCR label's bounding box. Crop ONLY the narrow labelled row;
   // do not include nearby transaction schedules or a full PDF page.
-  const summaryRow=category==='nine'&&/\btotal\s+receipts\b/i.test(label);
+  const summaryRow=category==='summary'&&/\btotal\s+receipts\b/i.test(label);
   const width=summaryRow?1600:Math.min(1600-minX,Math.max(120,maxX-minX));
   const height=summaryRow?Math.min(100,Math.max(45,maxY-minY+35)):
    Math.min(80,Math.max(30,maxY-minY));
