@@ -133,6 +133,14 @@ export function compareRulesOriginalToStored(source:OriginalRulesSource,snapshot
    e.yea_count===r.yeaCount&&e.nay_count===r.nayCount&&
    e.vote_kind===r.voteKind&&e.passed===r.passed&&bill(e.bill_identifier));
   const exact=sameMoment.filter(e=>{
+   // A matching bill/date/tally/side slate does NOT prove that this was
+   // the same parliamentary decision: identical slates can vote on several
+   // amendments and motions in a single committee hearing. Never certify
+   // "already stored" without the exact original parsed motion context.
+   const originalMotionContext=r.motionText.normalize('NFKC').replace(/\s+/g,' ').trim();
+   const storedMotionContext=e.motion_text?.normalize('NFKC').replace(/\s+/g,' ').trim();
+   if(!originalMotionContext||storedMotionContext!==originalMotionContext||
+    (e.amendment_ref??null)!==(r.amendmentRef??null))return false;
    if(!exactDocs.some(d=>d.id===e.source_document_id)||
     e.occurred_on!==DAY)return false;
    const choices=dbByEvent.get(e.id)??[];
