@@ -1,0 +1,160 @@
+{
+  "schema": "cfb-864-388-current-gov-report-bodies-379-verifiable-total-receipts-and-five-date-chronology-discrepancies-v42",
+  "createdOn": "2026-10-15",
+  "parentFullOriginalGovernmentSourceVersionLedger": "docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-830-downloaded-v41.psv",
+  "alreadyAuthenticatedIndexedOriginalAndAmendedVersions": 830,
+  "selectedOriginalGovPDFFilesForFinancialDetailReview": 388,
+  "originallyUnparsedVersionReferences": 373,
+  "originallyUnreadableOrUnresolvedPDFVersions": 14,
+  "originallyFlaggedReportDateConflicts": 1,
+  "captureRuns": [
+    {
+      "phase": "pilot",
+      "workflowRunId": 38755685024,
+      "jobId": 116493353902,
+      "sourcePDFsInspected": 15,
+      "sourceSummaryReportedVerified": 8
+    },
+    {
+      "phase": "unparsed-0",
+      "workflowRunId": 38756109428,
+      "jobId": 116494855994,
+      "sourcePDFsInspected": 95,
+      "sourceSummaryReportedVerified": 95
+    },
+    {
+      "phase": "unparsed-1",
+      "workflowRunId": 38756109428,
+      "jobId": 116494855883,
+      "sourcePDFsInspected": 95,
+      "sourceSummaryReportedVerified": 94
+    },
+    {
+      "phase": "unparsed-2",
+      "workflowRunId": 38756109428,
+      "jobId": 116494855303,
+      "sourcePDFsInspected": 95,
+      "sourceSummaryReportedVerified": 94
+    },
+    {
+      "phase": "unparsed-3",
+      "workflowRunId": 38756109428,
+      "jobId": 116494855966,
+      "sourcePDFsInspected": 88,
+      "sourceSummaryReportedVerified": 88
+    }
+  ],
+  "observedOriginalGovernmentPDFBytesChanged": 0,
+  "popplerTextLayerReadableDocuments": 381,
+  "assistedOCRFirstPageCandidateOnly": 6,
+  "noUsableTextLayerPDFsNotOCRProcessed": 1,
+  "sourceReceiptSummaryExactArithmeticVerified": 379,
+  "remainingVersionReferencesWithoutCertifiedAggregateReceipts": 9,
+  "independentOriginalFullPDFSHA256BinariesWithSummaryReceipts": 379,
+  "sourceRegistrationMismatchCount": 0,
+  "printedBoardReceiptEarlierThanPeriodEnd": [
+    {
+      "versionId": "16311:22:pcc:YE:0:0",
+      "senator": "Bill G. Ingebrigtsen",
+      "reportYear": 2022,
+      "boardReceivedOn": "2022-09-17",
+      "reportedPeriodEndOn": "2022-12-31"
+    },
+    {
+      "versionId": "16931:21:pcc:YE:0:0",
+      "senator": "Paul E. Gazelka",
+      "reportYear": 2021,
+      "boardReceivedOn": "2021-09-26",
+      "reportedPeriodEndOn": "2021-12-31"
+    },
+    {
+      "versionId": "17347:22:pcc:YE:0:0",
+      "senator": "Melisa López Franzen",
+      "reportYear": 2022,
+      "boardReceivedOn": "2022-11-05",
+      "reportedPeriodEndOn": "2022-12-31"
+    },
+    {
+      "versionId": "17994:23:pcc:YE:0:0",
+      "senator": "Andrew R. Lang",
+      "reportYear": 2023,
+      "boardReceivedOn": "2023-12-29",
+      "reportedPeriodEndOn": "2023-12-31"
+    },
+    {
+      "versionId": "17362:25:pcc:YE:0:0",
+      "senator": "Bruce Douglas Anderson",
+      "reportYear": 2025,
+      "boardReceivedOn": "2025-10-09",
+      "reportedPeriodEndOn": "2025-12-31"
+    }
+  ],
+  "historicFirstPublicExactVersionDateProven": 0,
+  "legallyOwedOriginalReportsDenominator": null,
+  "sourceAggregateReceiptsIsNotItemizedTransactionParity": true,
+  "financialExpenditureAndLoanDebtTotalsVerified": false,
+  "originalAndOfficialLatestVersionPairsWithVerifiedReceipts": 92,
+  "reportFamiliesWithPrintedReceiptChanges": 39,
+  "reportFamiliesWithIdenticalOriginalLatestReceiptTotals": 53,
+  "noRawPDForDonorPayeeDataStored": true,
+  "noProtectedNeonDbReadWriteOrModelEligibilityDeployment": true,
+  "originalReportLevelSources": "docs/evaluation/source-proof/cfb-2021-25-388-report-level-summary-and-date-review-v42.psv",
+  "originalLatestSummaryDifferences": "docs/evaluation/source-proof/cfb-2021-25-92-original-to-official-latest-receipts-comparisons-v42.psv",
+  "remainingSpecificUnresolvedSummaryVersions": [
+    {
+      "versionId": "17140:21:pcc:YE:0:0",
+      "senator": "Thomas M. Bakk",
+      "status": "ocr_candidate_unverified",
+      "summary": "committee_summary_not_found"
+    },
+    {
+      "versionId": "17140:22:pcc:YE:0:0",
+      "senator": "Thomas M. Bakk",
+      "status": "ocr_candidate_unverified",
+      "summary": "committee_summary_not_found"
+    },
+    {
+      "versionId": "17929:21:pcc:YE:0:0",
+      "senator": "Jason Isaacson",
+      "status": "ocr_candidate_unverified",
+      "summary": "committee_summary_not_found"
+    },
+    {
+      "versionId": "17929:22:pcc:YE:0:0",
+      "senator": "Jason Isaacson",
+      "status": "ocr_candidate_unverified",
+      "summary": "committee_summary_not_found"
+    },
+    {
+      "versionId": "17929:22:pcc:YE:0:1",
+      "senator": "Jason Isaacson",
+      "status": "ocr_candidate_unverified",
+      "summary": "committee_summary_not_found"
+    },
+    {
+      "versionId": "18430:21:pcc:YE:0:1",
+      "senator": "Aric Putnam",
+      "status": "text_layer_readable",
+      "summary": "committee_summary_not_found"
+    },
+    {
+      "versionId": "18488:21:pcc:YE:0:1",
+      "senator": "Omar Fateh",
+      "status": "ocr_candidate_unverified",
+      "summary": "committee_summary_not_found"
+    },
+    {
+      "versionId": "18004:21:pcc:YE:0:0",
+      "senator": "Jerry Newton",
+      "status": "no_usable_text_layer",
+      "summary": "not_inspected"
+    },
+    {
+      "versionId": "18730:21:pcc:YE:0:1",
+      "senator": "Zaynab Mohamed",
+      "status": "text_layer_readable",
+      "summary": "committee_summary_not_found"
+    }
+  ],
+  "auditRunStatus": "source jobs completed and ledger reconstruction pending independent offline replay"
+}
