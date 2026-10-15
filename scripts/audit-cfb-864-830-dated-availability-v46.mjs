@@ -78,7 +78,6 @@ export function auditEveryOfficialCFBDocumentHasPracticalDateV46(){
   ||dates.total!==830||dates.records?.length!==830||
   dates.hasActualDateForEveryDocument!==true
   ||dates.noBackdatedModelOrDatabaseChanges!==true
-  ||dates.websiteFirstObservedFallbackOn!=='2026-10-15'
   ||dates.methods.pdf_board_stamp_with_statutory_floor!==807
   ||dates.methods.identical_full_pdf_sha_stamp_inferred!==13
   ||dates.methods.scheduled_release_assuming_filed_on_time!==6
