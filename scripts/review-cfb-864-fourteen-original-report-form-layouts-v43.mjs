@@ -154,7 +154,9 @@ async function inspect(rec){
   const cases=[];let scans=0;let images=[];
   if(rec.category==='nine'&&!summaryOnDigital){
    // Original nine are still uncertain; OCR p1..3 only if no text.
-   const count=Math.min(n,3);
+   // Omar Fateh's image-only eight-page amendment has no aggregate label in
+   // pages 1..3. Inspect the remaining five pages once before calling it absent.
+   const count=rec.id==='18488:21:pcc:YE:0:1'?Math.min(n,8):Math.min(n,3);
    for(let idx=1;idx<=count;idx++){
     if((p[idx-1]?.pdfDigitalChars||0)>90)continue;
     const png=imagePage(pdf,idx,join(dir,'page'+idx));
