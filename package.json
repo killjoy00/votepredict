@@ -22,6 +22,7 @@
     "data:revisor:versions": "tsx scripts/enrich-revisor-bills.ts --include-versions --skip-existing",
     "data:senate:inspect": "tsx scripts/inspect-senate-journals.ts",
     "data:senate:ingest": "tsx scripts/ingest-senate-history.ts",
+    "data:senate:roles": "tsx scripts/ingest-senate-roles.ts",
     "data:senate:raw-votes": "tsx scripts/collect-senate-raw-votes.ts",
     "data:cfb:snapshot": "tsx scripts/build-cfb-snapshot.ts",
     "data:cfb:evidence": "tsx scripts/ingest-cfb-evidence.ts",

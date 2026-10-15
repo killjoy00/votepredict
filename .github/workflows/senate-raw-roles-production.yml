@@ -1,0 +1,115 @@
+name: Production Minnesota Senate raw-role ingest (one-shot)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/deploy-senate-raw-roles-neon.ts
+      - src/operations/senate-role-ingest.ts
+      - src/sources/minnesota/senate-roles.ts
+      - src/sources/minnesota/senate-assignment-pdf.ts
+      - migrations/0015_senate_raw_roles.sql
+      - .github/workflows/senate-raw-roles-production.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-raw-roles-production-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  independent-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_RAW_ROLES_PRODUCTION_20261015')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert independent exact reviewed main checkout
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Recreate schema on disposable PostgreSQL
+        run: npm run db:migrate
+      - name: Typecheck, all tests and Next.js build on exact main
+        run: npm run check
+      - name: Production dependency security gate
+        run: npm audit --omit=dev --audit-level=high
+      - name: Collect public Senate raw-role coverage without DB access
+        run: npm run data:senate:roles -- --dry-run
+
+  protected-production-neon:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_RAW_ROLES_PRODUCTION_20261015')
+    # Existing protected VotePredict Neon credential boundary. This job
+    # is the owner's explicit one-shot PRODUCTION WRITE exception, not a
+    # sandbox/read-only query; no credentials are available to PR CI.
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_ROLES_VERIFIED: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert exact verified main checkout
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply only raw Senate role migration, collect and read back
+        run: node --import tsx scripts/deploy-senate-raw-roles-neon.ts

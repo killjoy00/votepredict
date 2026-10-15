@@ -36,11 +36,11 @@ function decodeHtml(value: string): string {
     .replaceAll('&mdash;', '—');
 }
 
-function textLines(html: string): string[] {
+export function textLines(html: string): string[] {
   return decodeHtml(html)
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<\/?(?:h1|h2|h3|h4|p|div|li|tr|td|th|br|section|article)[^>]*>/gi, '\n')
+    .replace(/<\/?(?:h1|h2|h3|h4|h5|h6|p|div|li|tr|td|th|br|section|article)[^>]*>/gi, '\n')
     .replace(/<[^>]+>/g, ' ')
     .split(/\r?\n/)
     .map((line) => line.replace(/\s+/g, ' ').trim())
@@ -208,4 +208,130 @@ export async function listLrlMemberships(session: MinnesotaHouseSession): Promis
     results.push(...records);
   }
   return results;
+}
+
+// Senate role capture reuses the LRL directory and per-session detail structure
+// used for historical membership ingestion. Values below are observations of
+// page text, not assertions about when a position was held.
+export interface LrlSenateRole {
+  senatorName: string;
+  lrlId: string;
+  role: string;
+  committee: string | null;
+  startsOn: string | null;
+  endsOn: string | null;
+  rawContent: string;
+}
+
+function statedDate(value: string): string | null {
+  const numeric = value.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);
+  if (numeric) return `${numeric[3]}-${numeric[1].padStart(2, '0')}-${numeric[2].padStart(2, '0')}`;
+  const month = value.match(/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(\d{4})\b/i);
+  if (!month) return null;
+  const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+  return `${month[3]}-${String(months.indexOf(month[1].toLowerCase()) + 1).padStart(2, '0')}-${month[2].padStart(2, '0')}`;
+}
+
+export function statedRoleDates(text: string): { startsOn: string | null; endsOn: string | null } {
+  // Only dates actually specified with temporal wording are extracted. A
+  // legislative biennium is never converted into invented start/end dates.
+  const datePart = '(?:\\d{1,2}\\/\\d{1,2}\\/\\d{4}|(?:January|February|March|April|May|June|July|August|September|October|November|December)\\s+\\d{1,2},?\\s+\\d{4})';
+  const fromTo = text.match(new RegExp(`\\bfrom\\s+(${datePart})\\s+to\\s+(${datePart})`, 'i'));
+  if (fromTo) return { startsOn: statedDate(fromTo[1]), endsOn: statedDate(fromTo[2]) };
+  const beginning = text.match(new RegExp(`\\b(?:beginning|starting|since|effective|as of)\\s+(${datePart})`, 'i'));
+  const until = text.match(new RegExp(`\\b(?:until|through|ending|ended on)\\s+(${datePart})`, 'i'));
+  return { startsOn: beginning ? statedDate(beginning[1]) : null, endsOn: until ? statedDate(until[1]) : null };
+}
+
+export function parseLrlSenateRoles(input: {
+  html: string;
+  session: MinnesotaHouseSession;
+  lrlId: string;
+  fallbackName: string;
+}): LrlSenateRole[] {
+  const allLines = textLines(input.html);
+  const senatorName = nameFromPage(allLines, input.fallbackName);
+  const heading = `${sessionOrdinal(input.session)} Legislative Session`;
+  const result: LrlSenateRole[] = [];
+  for (let index = 0; index < allLines.length; index += 1) {
+    if (!allLines[index].includes(heading) || !allLines[index].includes(input.session.slug)) continue;
+    let end = index + 1;
+    while (end < allLines.length && !isLegislativeSessionHeading(allLines[end]) && !/^OTHER INFORMATION$/i.test(allLines[end])) end += 1;
+    const lines = allLines.slice(index, end);
+    if (!/^senate$/i.test(valueAfter(lines, 'Body') ?? '')) continue;
+    let inCommittees = false;
+    let currentCommittee: string | null = null;
+    for (let offset = 0; offset < lines.length; offset += 1) {
+      const line = lines[offset];
+      if (/^Committees:\s*$/i.test(line)) { inCommittees = true; currentCommittee = null; continue; }
+      const leader = line.match(/^Leadership Position:\s*(.*)$/i);
+      if (leader) {
+        inCommittees = false;
+        currentCommittee = null;
+        const title = (leader[1] || lines[++offset] || '').trim();
+        const separateNote = lines[offset + 1]?.match(/^\s*[-–—]\s*(.+)$/);
+        const full = separateNote ? `${title} - ${separateNote[1]}` : title;
+        const rawRole = title.split(/\s+[–—-]\s+/)[0].trim();
+        if (rawRole) result.push({ senatorName, lrlId: input.lrlId, role: rawRole, committee: null, ...statedRoleDates(full), rawContent: full });
+        if (separateNote) offset += 1;
+        continue;
+      }
+      if (/^(?:Leadership Notes|Session Change Notes|Bills Authored|Special Session Bills Authored|Other Information|Click to view)\b/i.test(line)) {
+        inCommittees = false; currentCommittee = null;
+      }
+      if (!inCommittees) continue;
+      // The live LRL HTML uses separate spans for a committee name and its
+      // bracketed note; preserve that note and any stated dates verbatim.
+      const note = line.match(/^\s*\[([^\]]+)\]\s*$/)?.[1];
+      const standaloneRole = line.match(/^\((Chair|Co-Chair|Vice Chair|Ranking Minority Member|Ranking Member)\)$/i)?.[1];
+      if ((note || standaloneRole) && currentCommittee) {
+        const member = [...result].reverse().find((item) => item.role === 'Committee Member' && item.committee === currentCommittee);
+        if (member) {
+          member.rawContent += ` ${line}`;
+          if (note && /\b(?:member|served on|joined)\b/i.test(note)) {
+            const dates = statedRoleDates(note);
+            member.startsOn = dates.startsOn;
+            member.endsOn = dates.endsOn;
+          }
+        }
+        const observedRole = standaloneRole || note?.match(/\b(co-chair|vice chair|chair|ranking minority member|ranking member)\b/i)?.[1];
+        if (observedRole) {
+          result.push({ senatorName, lrlId: input.lrlId, role: observedRole, committee: currentCommittee,
+            ...statedRoleDates(note ?? ''), rawContent: member?.rawContent ?? line });
+        }
+        continue;
+      }
+      const bracketless = line.replace(/\s*\[[^\]]*\]/g, '').trim();
+      const labeled = bracketless.match(/^(.*?)\s*\((Chair|Co-Chair|Vice Chair|Ranking Minority Member|Ranking Member)\)\s*$/i);
+      const committee = (labeled?.[1] ?? bracketless).trim();
+      if (!committee || /^\w+(?:\s+\w+){0,3}:$/i.test(committee)) continue;
+      currentCommittee = committee;
+      const inlineNote = line.match(/\[([^\]]+)\]/)?.[1];
+      const memberDates = inlineNote && /\b(?:member|served on|joined)\b/i.test(inlineNote) ? statedRoleDates(inlineNote) : { startsOn: null, endsOn: null };
+      result.push({ senatorName, lrlId: input.lrlId, role: 'Committee Member', committee, ...memberDates, rawContent: line });
+      if (labeled) result.push({ senatorName, lrlId: input.lrlId, role: labeled[2], committee,
+        ...statedRoleDates(line), rawContent: line });
+      const noteRole = inlineNote?.match(/\b(co-chair|vice chair|chair|ranking minority member|ranking member)\b/i)?.[1];
+      if (noteRole && (!labeled || noteRole.toLowerCase() !== labeled[2].toLowerCase())) {
+        result.push({ senatorName, lrlId: input.lrlId, role: noteRole, committee, ...statedRoleDates(inlineNote!), rawContent: line });
+      }
+    }
+    index = end - 1;
+  }
+  return result;
+}
+
+export function buildLrlSenateSessionSearchUrl(session: MinnesotaHouseSession): string {
+  return `${LRL_BASE}/legdb/results?body=Senate&gender=&q=&search=session&sess=${session.legislature}`;
+}
+
+export async function fetchLrlSenatorRefs(session: MinnesotaHouseSession): Promise<LrlLegislatorRef[]> {
+  // Keep using the existing discovery function. Older LRL sessions sometimes
+  // ignore the chamber parameter, so the detail parser filters to Senate.
+  const refs = discoverLrlLegislators(await fetchHtml(buildLrlSenateSessionSearchUrl(session)));
+  return refs.length >= 60 ? refs : fetchLrlLegislatorRefs(session);
+}
+
+export async function fetchLrlSenatorDetail(sourceUrl: string): Promise<string> {
+  return fetchHtml(sourceUrl);
 }
