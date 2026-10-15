@@ -82,9 +82,9 @@ async function minutePdf(url:string){
  }) as typeof fetch});
 }
 async function main(){
- if(process.argv.length!==3||process.argv[1]!=='--output'||!process.argv[2])
+ if(process.argv.length!==4||process.argv[2]!=='--output'||!process.argv[3])
   throw Error('Use only --output FILE');
- const output=resolve(process.argv[2]);
+ const output=resolve(process.argv[3]);
  const targets=original29();
  const years=new Map<number,ReturnType<typeof parseSenateCommitteeIndexHtml>>();
  const indexProofs=[] as Array<{year:number,governmentIndexUrl:string,htmlSha256:string,committeeCount:number}>;
