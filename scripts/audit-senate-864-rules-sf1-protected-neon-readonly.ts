@@ -8,7 +8,7 @@
  */
 import {appendFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import {Pool} from 'pg';
+import {Pool,type PoolClient} from 'pg';
 import {fetchSenateCommitteeMinutePdf} from '../src/evidence/minnesota-senate-committee-source.js';
 import {parseSenateCommitteeMinuteVotes} from '../src/evidence/minnesota-senate-committee-minutes.js';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
@@ -129,7 +129,7 @@ export async function runProtectedRulesSF1Parity(input:{
   max:1,connectionTimeoutMillis:8000,statement_timeout:17000,query_timeout:17000,
   application_name:'senate-864-rules-sf1-exact-readonly',
   options:'-c default_transaction_read_only=on -c statement_timeout=17000 -c lock_timeout=2500'});
- let client:Awaited<ReturnType<typeof pool.connect>>|null=null,open=false;
+ let client:PoolClient|null=null,open=false;
  try{
   client=await pool.connect();
   await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
