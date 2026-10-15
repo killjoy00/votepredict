@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS cfb_official_senate_pdf_versions (
   estimated_available_on date NOT NULL,
   website_observed_on date NOT NULL,
   dating_method text NOT NULL CHECK (length(dating_method) BETWEEN 5 AND 100),
-  dating_confidence text NOT NULL CHECK (dating_confidence IN ('high','medium','low')),
+  dating_confidence text NOT NULL CHECK (dating_confidence IN ('high_observed_by_not_historic','medium','medium_low','low_estimate')),
   historical_exact_version_public_by_proven boolean NOT NULL DEFAULT false
     CHECK (historical_exact_version_public_by_proven = false),
   source_manifest_version text NOT NULL DEFAULT 'v41+v46'
