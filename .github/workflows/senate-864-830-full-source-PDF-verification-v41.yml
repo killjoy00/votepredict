@@ -1,0 +1,32 @@
+name: 'Senate #864 independent 830 PDF full-source replay and source status V41'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-830-full-pdf-source-v41.mjs'
+      - 'tests/cfb-864-830-full-PDF-bodies-v41.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-240-new-government-PDF-source-retrieval-v41.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-830-downloaded-v41.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-240-government-PDF-source-recovery-checkpoint-v41.json'
+      - 'data/cfb-senate-official-filings-2021-25-v41.json'
+      - 'src/evidence/cfb-historical-official-filings.ts'
+      - '.github/workflows/senate-864-830-full-source-PDF-verification-v41.yml'
+permissions:
+  contents: read
+jobs:
+  independently-replay-830-official-indexed-government-PDF-source-versions:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned local TypeScript loader for historical profile proof tests
+        run: npm ci --no-fund --no-audit
+      - name: Verify all exact 830 PDF version sources, 813 whole binary hashes, and 95 senator profile statuses
+        run: node --import tsx --test tests/cfb-864-830-full-PDF-bodies-v41.test.mjs
+      - name: Independent SHA-pinned reconstruction of original/amended version source ledger
+        run: node --import tsx scripts/audit-cfb-864-830-full-pdf-source-v41.mjs
