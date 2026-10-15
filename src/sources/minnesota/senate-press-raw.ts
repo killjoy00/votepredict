@@ -141,7 +141,7 @@ function publicationDate(root:HtmlNode):string|null {
   for(const time of all(root,node=>node.tag==='time')) {
     const date=isoDate(attr(time,'datetime')??plain(text(time)));if(date)return date;
   }
-  for(const header of all(root,node=>node.tag==='header'||classMatch(node,/entry-meta|post-meta|elementor-post-info|post-date/i))) {
+  for(const header of all(root,node=>node.tag==='header'||classMatch(node,/entry-meta|post-meta|elementor-post-info|post-date|post_date|entry-date|posted-on/i))) {
     const date=isoDate(plain(text(header)).slice(0,750));if(date)return date;
   }
   // Never infer a publication date from an event date mentioned in article prose.
@@ -167,16 +167,18 @@ export function namedSenators(value:string):string[] {
   return [...names];
 }
 export function parseArticle(html:string,source:SenatePressSource,requestedUrl:string,fetchedAt:string):RawSenateStatement|null {
-  const root=htmlTree(html),heading=all(root,node=>node.tag==='h1')[0];
+  const root=htmlTree(html);
+  const heading=all(root,node=>node.tag==='h1')[0]??
+    all(root,node=>/^h[23]$/.test(node.tag)&&classMatch(node,/entry-title|post_title/i))[0];
   const title=heading?plain(text(heading)):'';
   if(!title)return null;
   const containers=all(root,node=>node.tag==='article'||node.tag==='main'||
-    classMatch(node,/entry-content|post-content|article-content|elementor-widget-theme-post-content|et_pb_post_content|wp-block-post-content/i));
+    classMatch(node,/entry-content|post-content|post_content|article-content|elementor-widget-theme-post-content|et_pb_post_content|wp-block-post-content/i));
   const priority=(n:HtmlNode)=>classMatch(n,/elementor-widget-theme-post-content|wp-block-post-content|et_pb_post_content/i)?100:
-    classMatch(n,/entry-content|article-content/i)?90:classMatch(n,/post-content/i)?80:n.tag==='article'?50:20;
+    classMatch(n,/entry-content|article-content|post_content/i)?90:classMatch(n,/post-content/i)?80:n.tag==='article'?50:20;
   containers.sort((a,b)=>priority(b)-priority(a));
-  const raw_text=containers.map(node=>plain(text(node,true))).find(x=>x.length>=40)??'';
-  if(raw_text.length<40)return null; // no excerpts-only substitutions
+  const raw_text=containers.map(node=>plain(text(node,true))).find(x=>x.length>=10)??'';
+  if(raw_text.length<10)return null; // no excerpts-only substitutions
   const canonical=all(root,node=>node.tag==='link'&&attr(node,'rel')==='canonical')[0];
   const source_url=(canonical && onSiteArticle(attr(canonical,'href')??'',source))||onSiteArticle(requestedUrl,source);
   if(!source_url)return null;
@@ -282,7 +284,7 @@ export async function collectSource(
   const failed=(url:string,error:unknown)=>result.failures.push({url,reason:error instanceof Error?error.message:String(error)});
   const fetcher=new PoliteFetcher(new URL(source.archive_url).origin,Math.max(1250,window.delayMs??1500),request);
   try{await fetcher.init();}catch(error){failed(source.archive_url,error);return result;}
-  const visited=new Set<string>();let olderPages=0;
+  const visited=new Set<string>();let olderPages=0,stopForRateLimit=false;
   for(let page=1;page<=(window.maxPages??1000);page++){
     if(window.maxItems&&result.matched>=window.maxItems)break;
     const listing=archivePageUrl(source,page);let html:string;
@@ -315,8 +317,14 @@ export async function collectSource(
         if(window.dryRun)result.previewed++;
         else if(await sink.insert(item))result.inserted++;
         else result.already_present++;
-      }catch(error){failed(url,error);}
+      }catch(error){
+        failed(url,error);
+        if(error instanceof Error && error.message.includes('Publisher rate-limited')){
+          stopForRateLimit=true;break;
+        }
+      }
     }
+    if(stopForRateLimit)break;
     // Verified archive ordering: newest first. Two fully older pages stop traversal.
     olderPages=fresh.length===dated&&dated===older?olderPages+1:0;
     if(olderPages>=2)break;

@@ -54,3 +54,18 @@ test('robots longest rule wins and crawl-delay is observed',()=>{
   assert.equal(rules.allows(new URL('https://www.mnsenaterepublicans.com/private/')),false);
   assert.equal(rules.crawlDelayMs,4000);
 });
+
+test('Republican published-page Impreza post_title/post_content markup is extracted in full',()=>{
+  const html='<html><head><link rel="canonical" href="https://www.mnsenaterepublicans.com/release/" /></head><body>'+ 
+    '<main id="page-content" class="l-main">'+
+    '<div class="w-post-elm post_date entry-date published">September 28, 2026</div>'+
+    '<h3 class="w-post-elm post_title entry-title">Sen. Rasmusson statement</h3>'+
+    '<div class="w-post-elm post_content"><p>Sen. Jordan Rasmusson describes the first paragraph.</p>'+
+    '<p>The rest of the complete source mentions SF 1234 and HF 56.</p></div></main></body></html>';
+  const parsed=parseArticle(html,gop,'https://www.mnsenaterepublicans.com/release/','2026-10-15T00:00:00Z');
+  assert.ok(parsed);
+  assert.equal(parsed.published_on,'2026-09-28');
+  assert.deepEqual(parsed.bill_identifiers,['SF 1234','HF 56']);
+  assert.ok(parsed.raw_text.includes('The rest of the complete source'));
+  assert.equal(parsed.raw_text.includes('Sen. Rasmusson statement'),false);
+});

@@ -41,7 +41,7 @@ function config(json:unknown):SenatePressSource[] {
              p.kind==='path'?!((typeof p.segment==='string')&&(/^[a-z]+$/).test(p.segment)):true))
       throw Error('Invalid/duplicate source config');
     const url=new URL(s.archive_url);
-    if(url.username||url.password||url.search||url.hash||!['senatedfl.mn','www.mnsenaterepublicans.com'].includes(url.hostname))
+    if(url.username||url.password||url.search||url.hash||!url.hostname.includes('.')||/\.(?:localhost|local)$/.test(url.hostname))
       throw Error('Non-allowlisted Senate source');
     seen.add(s.id);
     return s as unknown as SenatePressSource;
