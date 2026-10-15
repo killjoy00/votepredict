@@ -56,6 +56,32 @@ const unique=<T>(v:T[])=>new Set(v).size===v.length;
 const validUuid=(id:string)=>/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(id);
 const committee=(v:string|null)=>v!==null&&/rules(?:\s+and\s+administration)?/i.test(v);
 const bill=(v:string|null)=>v!==null&&v.replace(/[ .]/g,'').toUpperCase()==='SF1';
+/**
+ * Minnesota's Senate Resolution 7, ADOPTED 2023-01-04, lines 3.21-3.25,
+ * explicitly establishes the ten Rules and Administration members and
+ * identifies exactly these THREE offices:
+ *  Dziedzic, Chair; Rest, Vice Chair; Johnson, Lead.
+ * Official primary sources:
+ *  https://www.senate.mn/resolutions/pdf/ls93/2023_2024/SR0007_O0.pdf
+ *  https://www.senate.mn/journals/2023-2024/2023010402.pdf
+ *
+ * The January 24 original Minutes use these role-appended printed member
+ * labels IN a named AYE/NO list. ", Chair" is not a person's given name.
+ * Only remove the independently authenticated office suffix on this exact
+ * official 2023 Rules/SF1 source: never strip arbitrary commas/nicknames,
+ * infer sides, or change a different committee's generic name parser.
+ */
+export function normalize2023RulesSf1OfficePrintedName(value:string):string{
+ const compact=normalizeSenateCommitteeMemberSourceName(value);
+ const m=/^([^,]{1,65}),\\s*(Chair|Vice\\s+Chair|Lead)$/i.exec(compact);
+ if(!m)return compact;
+ const roles:{[surname:string]:string}={
+  dziedzic:'chair',rest:'vice chair',johnson:'lead'
+ };
+ const surname=m[1]!.trim();
+ return roles[surname.toLowerCase()]===m[2]!.toLowerCase().replace(/\\s+/g,' ')
+  ?surname:compact;
+}
 export function validateOriginalRulesSF1(source:OriginalRulesSource){
  if(!source.verifiedRawPdfSha||!source.verifiedSourceTextSha||source.rolls.length!==2)
   return false;
@@ -99,7 +125,7 @@ export function compareRulesOriginalToStored(source:OriginalRulesSource,snapshot
  // NEVER the original names, aliases, membership IDs, sides or choice hashes.
  const resolutionByRoll=source.rolls.map(original=>original.memberVotes.map(v=>
   reconcileHouseMemberName(
-   normalizeSenateCommitteeMemberSourceName(v.sourceName),active)));
+   normalize2023RulesSf1OfficePrintedName(v.sourceName),active)));
  const verifiedMembers=resolutionByRoll.map(resolutions=>{
   const resolved=resolutions.map(r=>r.status==='matched'?r.membershipId:null);
   return resolved.every(x=>x!==null&&validUuid(x))&&unique(resolved)&&
