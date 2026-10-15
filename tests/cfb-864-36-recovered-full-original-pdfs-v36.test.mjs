@@ -43,9 +43,9 @@ test('all prior unreadable/held docs still in source inventory and non-promoted 
  assert.equal(s.legallyRequiredReportsUnknown,true);
  assert.equal(s.noProductionDBOrAsOfFinancialForecastModelChanges,true);
  const x=historicalOfficialFilingInventoryTotals();
- assert.equal(x.senators,95);assert.equal(x.versions,721);
+ assert.equal(x.senators,95);assert.equal(x.versions,830);
  assert.equal(x.downloadedVersions,480);assert.equal(x.distinctDownloadedPdfBodies,476);
- assert.equal(x.indexedVersionsAwaitingPdfDownload,240);
+ assert.equal(x.indexedVersionsAwaitingPdfDownload,349);
  assert.equal(x.unresolvedDocumentDetails,15);
 });
 test('source PR-only SHA validator never operates on Neon, production forecasts, donor records or original PDF bodies',()=>{
