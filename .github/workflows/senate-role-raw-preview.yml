@@ -1,0 +1,30 @@
+name: Minnesota Senate raw-role collection preview
+
+on:
+  pull_request:
+    paths:
+      - src/sources/minnesota/lrl-members.ts
+      - src/sources/minnesota/senate-roles.ts
+      - src/sources/minnesota/senate-assignment-pdf.ts
+      - scripts/ingest-senate-roles.ts
+      - migrations/0015_senate_raw_roles.sql
+      - .github/workflows/senate-role-raw-preview.yml
+
+permissions:
+  contents: read
+
+jobs:
+  collect-counts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch public raw Senate roles (no database connection or writes)
+        run: npm run data:senate:roles -- --dry-run
