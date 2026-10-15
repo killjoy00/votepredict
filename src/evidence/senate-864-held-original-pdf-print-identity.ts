@@ -32,7 +32,7 @@ export function select19OfficialUnverifiedLrlPdfMeetingSources(
   throw Error('Expected all 29 originally held meeting dates and exact active year');
  const holds=rows.filter(r=>r.sourceStatus==='linked_original_lrl_pdf_unverified');
  if(holds.length!==19||[2023,2024,2025].some(y=>
-  holds.filter(r=>r.year===y).length!==LRL_HELD_PDF_SOURCE_YEAR_COUNTS[y]))
+  holds.filter(r=>r.year===y).length!==LRL_HELD_PDF_SOURCE_YEAR_COUNTS[y as 2023|2024|2025]))
   throw Error('Government index linked-but-unverified Minutes 19-day universe drift');
  const seen=new Set<string>(),byYear:HeldMinutePdfLink[]=[];
  for(const m of holds){
