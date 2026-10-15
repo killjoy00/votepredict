@@ -5,16 +5,19 @@ on:
       - .github/workflows/senate-864-95-historical-source-neon-readonly.yml
       - data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json
       - src/evidence/senate-864-95-historical-source-neon-parity.mjs
+      - src/evidence/senate-864-95-original-archive-url-diagnostics.mjs
       - scripts/audit-senate-864-95-historical-source-neon-readonly.mjs
       - scripts/verify-senate-864-95-historical-neon-sql-local.mjs
       - scripts/render-senate-864-95-historical-neon-audit-issue.mjs
       - tests/senate-864-95-historical-source-neon-readonly.test.mjs
+      - tests/senate-864-95-original-archive-url-diagnostics.test.mjs
   push:
     branches: [main]
     paths:
       - .github/workflows/senate-864-95-historical-source-neon-readonly.yml
       - data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json
       - src/evidence/senate-864-95-historical-source-neon-parity.mjs
+      - src/evidence/senate-864-95-original-archive-url-diagnostics.mjs
       - scripts/audit-senate-864-95-historical-source-neon-readonly.mjs
       - scripts/verify-senate-864-95-historical-neon-sql-local.mjs
       - scripts/render-senate-864-95-historical-neon-audit-issue.mjs
@@ -42,6 +45,7 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
       - run: node --import tsx --test tests/senate-864-95-historical-source-neon-readonly.test.mjs
+      - run: node --import tsx --test tests/senate-864-95-original-archive-url-diagnostics.test.mjs
       - run: node --check src/evidence/senate-864-95-historical-source-neon-parity.mjs
       - run: node --check scripts/audit-senate-864-95-historical-source-neon-readonly.mjs
       - run: node --check scripts/render-senate-864-95-historical-neon-audit-issue.mjs
@@ -54,7 +58,7 @@ jobs:
     timeout-minutes: 15
     services:
       postgres:
-        image: public.ecr.aws/docker/library/postgres:18-alpine
+        image: postgres:18-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -96,7 +100,7 @@ jobs:
     timeout-minutes: 25
     services:
       postgres:
-        image: public.ecr.aws/docker/library/postgres:18-alpine
+        image: postgres:18-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -128,6 +132,7 @@ jobs:
       - run: npm run db:migrate
       - run: node --import tsx scripts/verify-senate-864-95-historical-neon-sql-local.mjs
       - run: node --import tsx --test tests/senate-864-95-historical-source-neon-readonly.test.mjs
+      - run: node --import tsx --test tests/senate-864-95-original-archive-url-diagnostics.test.mjs
       - run: npm run check
       - run: npm audit --omit=dev --audit-level=high
   protected-sql-readonly:
@@ -148,6 +153,7 @@ jobs:
     timeout-minutes: 12
     outputs:
       safe_95_b64: ${{ steps.audit.outputs.safe_95_b64 }}
+      safe_95_v2_b64: ${{ steps.audit.outputs.safe_95_v2_b64 }}
       safe_failure_phase: ${{ steps.audit.outputs.safe_failure_phase }}
     env:
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
@@ -197,6 +203,7 @@ jobs:
       VERIFY_RESULT: ${{ needs.independent-presecret.result }}
       READONLY_RESULT: ${{ needs.protected-sql-readonly.result }}
       SAFE_95_B64: ${{ needs.protected-sql-readonly.outputs.safe_95_b64 }}
+      SAFE_95_V2_B64: ${{ needs.protected-sql-readonly.outputs.safe_95_v2_b64 }}
       SAFE_FAILURE_PHASE: ${{ needs.protected-sql-readonly.outputs.safe_failure_phase }}
     steps:
       - uses: actions/checkout@v7
@@ -214,6 +221,7 @@ jobs:
               verifyResult:process.env.VERIFY_RESULT,
               readOnlyResult:process.env.READONLY_RESULT,
               safe95B64:process.env.SAFE_95_B64,
+              safe95V2B64:process.env.SAFE_95_V2_B64,
               safeFailurePhase:process.env.SAFE_FAILURE_PHASE,
               runUrl:'https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID,
               mainSha:process.env.GITHUB_SHA
