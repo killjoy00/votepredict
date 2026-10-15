@@ -1,0 +1,28 @@
+name: 'Senate #864 SHA-pinned final nine original PDF summary and five Board date proof V43'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-nine-PDF-five-date-original-source-v43.mjs'
+      - 'tests/cfb-864-nine-five-original-source-v43.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-nine-unverified-PDFs-five-printed-receipt-date-anomalies-v43.json'
+      - '.github/workflows/senate-864-nine-five-source-review-proof-v43.yml'
+permissions:
+  contents: read
+jobs:
+  audit-fourteen-original-source-PDF-form-findings:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned original source parser for inherited immutable CFB audit
+        run: npm ci --no-fund --no-audit
+      - name: Independently replay 14 source PDF whole hashes, six scanned summary rows and five printed date conflicts
+        run: node --import tsx --test tests/cfb-864-nine-five-original-source-v43.test.mjs
+      - name: Print bounded original source report review totals only
+        run: node --import tsx scripts/audit-cfb-864-nine-PDF-five-date-original-source-v43.mjs
