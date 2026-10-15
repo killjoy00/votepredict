@@ -273,6 +273,8 @@ export function parseSenateJournalText(input: {
   sourceUrl: string;
   occurredOn?: string;
   knownMemberNames?: readonly string[];
+  /** Raw collection only: keep a roll call whose parsed names don't match its tally instead of throwing. */
+  allowRosterMismatch?: boolean;
 }): NormalizedVoteEvent[] {
   const text = input.text.replace(/\r/g, '');
   const events: NormalizedVoteEvent[] = [];
@@ -299,7 +301,7 @@ export function parseSenateJournalText(input: {
       ? []
       : splitNames(negative?.[1] ?? '', 'nay', yeaVotes.length, knownMemberNames).slice(0, nayCount);
 
-    if (yeaVotes.length !== yeaCount || nayVotes.length !== nayCount) {
+    if (!input.allowRosterMismatch && (yeaVotes.length !== yeaCount || nayVotes.length !== nayCount)) {
       throw new Error(`Senate journal roster mismatch for ${billIdentifier ?? 'non-bill roll call'}: expected ${yeaCount}-${nayCount}, parsed ${yeaVotes.length}-${nayVotes.length}`);
     }
 
