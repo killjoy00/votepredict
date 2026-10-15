@@ -19,7 +19,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: 'senate-864-cfb-830-neon-readonly-v47-${{ github.sha }'
+  group: 'senate-864-cfb-830-neon-readonly-v47-${{ github.sha }}'
   cancel-in-progress: false
 jobs:
   no-secret-unit-audit:
@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }
+          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
@@ -72,7 +72,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }
+          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
@@ -116,11 +116,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.sha }
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Require independent exact main revision and commit marker
         env:
-          EXPECTED_SHA: ${{ github.sha }
+          EXPECTED_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-node@v7
         with:
@@ -153,21 +153,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     outputs:
-      safe_cfb_v47_b64: ${{ steps.audit.outputs.safe_cfb_v47_b64 }
+      safe_cfb_v47_b64: ${{ steps.audit.outputs.safe_cfb_v47_b64 }}
     env:
-      NEON_API_KEY: ${{ secrets.NEON_API_KEY }
-      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }
-      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }
-      VOTEPREDICT_864_CFB_V47_VERIFIED: ${{ needs.main-presecret-independent.result == 'success' && 'true' || 'false' }
-      VOTEPREDICT_864_CFB_V47_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_FINANCE_830_NEON_READONLY_V47') && 'true' || 'false' }
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_CFB_V47_VERIFIED: ${{ needs.main-presecret-independent.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_CFB_V47_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_FINANCE_830_NEON_READONLY_V47') && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.sha }
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Verify the exact previously reviewed SHA prior to key access
         env:
-          EXPECTED_SHA: ${{ github.sha }
+          EXPECTED_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-node@v7
         with:
@@ -195,9 +195,9 @@ jobs:
       contents: read
       issues: write
     env:
-      PREFLIGHT: ${{ needs.main-presecret-independent.result }
-      AUDIT_RESULT: ${{ needs.protected-existing-neon-readonly.result }
-      SAFE_COUNTS_B64: ${{ needs.protected-existing-neon-readonly.outputs.safe_cfb_v47_b64 }
+      PREFLIGHT: ${{ needs.main-presecret-independent.result }}
+      AUDIT_RESULT: ${{ needs.protected-existing-neon-readonly.result }}
+      SAFE_COUNTS_B64: ${{ needs.protected-existing-neon-readonly.outputs.safe_cfb_v47_b64 }}
     steps:
       - uses: actions/github-script@v8
         with:
