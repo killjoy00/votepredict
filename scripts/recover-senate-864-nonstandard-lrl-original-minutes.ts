@@ -14,7 +14,7 @@ import {parseSenateCommitteeIndexHtml,fetchSenateCommitteeMinutePdf} from
 import {parseSenateCommitteeMinuteVotes,parseSenateCommitteeMinuteContextActions}
  from '../src/evidence/minnesota-senate-committee-minutes.js';
 import {check29HeldOriginalMeetings,inspectOtherOriginalLrlCommitteePdfUrls,
- validateOriginalAlternatePdfText,type HeldSenateMeeting} from
+ validateOriginalAlternatePdfText,type HeldSenateMeeting,type CandidateMinutePdf} from
  '../src/evidence/senate-864-nonstandard-lrl-minutes-source.js';
 const sha=(v:Uint8Array|string)=>createHash('sha256').update(v).digest('hex');
 const INDEX_SHA='ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0';
@@ -102,7 +102,8 @@ async function main(){
  for(const t of targets){
   const key=t.year+'|'+t.committeeName;
   const candidates=years.get(t.year)?.filter(p=>p.committeeName===t.committeeName)??[];
-  let pageHeldReason:string|null=null,links=[];
+  let pageHeldReason:string|null=null;
+  let links:CandidateMinutePdf[]=[];
   if(candidates.length!==1){
    pageHeldReason='committee_identity_not_unique_in_original_official_year_index';
    pagesHeld++;
