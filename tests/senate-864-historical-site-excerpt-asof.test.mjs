@@ -28,7 +28,9 @@ test('reuse existing 29 authenticated ledgers; distinguish pages from 1197 expli
  }
  console.log('SENATE_864_1285_MINIMAL_RESEARCH_PLAN='+JSON.stringify({
   selected:plan.selectedExcerpts,ready:plan.ready.length,held:plan.holds.length,
-  holdCounts:plan.holdCounts,distinctSourcePages:plan.sourcePagesIndexed
+  holdCounts:plan.holdCounts,distinctSourcePages:plan.sourcePagesIndexed,
+  readyFrom72:plan.ready.filter(x=>originals.some(p=>p.originalHtmlSha256===x.sourceSha && p.originalUrl===x.sourceUrl && p.originalArchiveCapturedAtUtc===x.archiveCapturedAt)).length,
+  uniqueReadyPages:new Set(plan.ready.map(x=>x.sourceSha)).size
  }));
 });
 test('historical replay uses exact archive observation, never later votes or same-day ambiguity',()=>{
