@@ -1,0 +1,27 @@
+name: 'Senate #864 11 independent public CFB candidate-year financial summary sources V44'
+on:
+  pull_request:
+    paths:
+      - 'scripts/acquire-cfb-864-eleven-public-board-financial-years-v44.mjs'
+      - 'tests/cfb-864-11-official-candidate-year-finance-v44.test.mjs'
+      - '.github/workflows/senate-864-11-official-annual-finance-v44.yml'
+permissions:
+  contents: read
+jobs:
+  publicly-retrieve-11-cfb-committee-financial-summary-tabs:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned offline source-test dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify exact 830 source PDFs / 9+5 registration-year selection
+        run: node --import tsx --test tests/cfb-864-11-official-candidate-year-finance-v44.test.mjs
+      - name: Read 11 current public government candidate-year Financial Summary tabs and compare category arithmetic only
+        run: node --import tsx scripts/acquire-cfb-864-eleven-public-board-financial-years-v44.mjs
