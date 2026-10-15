@@ -1,0 +1,45 @@
+name: Minnesota Senate election raw collection
+
+on:
+  pull_request:
+    paths:
+      - src/sources/minnesota/senate-election-results.ts
+      - scripts/collect-senate-election-results.ts
+      - migrations/0016_mn_senate_election_raw_results.sql
+      - package.json
+      - .github/workflows/minnesota-senate-election-raw-collection.yml
+
+permissions:
+  contents: read
+
+jobs:
+  collect-raw:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Capture published Senate bulk files for every listed year
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run data:senate:elections -- --all --dry-run \
+            --out "$RUNNER_TEMP/mn-senate-elections-raw.jsonl" \
+            | tee "$RUNNER_TEMP/mn-senate-elections-coverage.log"
+      - name: Store raw SOS downloads with source metadata and collection counts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mn-senate-election-raw-snapshots
+          path: |
+            ${{ runner.temp }}/mn-senate-elections-raw.jsonl
+            ${{ runner.temp }}/mn-senate-elections-coverage.log
+          if-no-files-found: warn
+          retention-days: 30
