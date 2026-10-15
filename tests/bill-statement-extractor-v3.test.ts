@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { extractExplicitBillStatementsV3, QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V3_VERSION } from '../src/evidence/bill-statement-extractor-v3';
+import { extractExplicitBillStatementsV3, QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V3_VERSION } from '../src/evidence/bill-statement-extractor';
 
 const bills = [
   { id: '11111111-1111-1111-1111-111111111111', identifier: 'HF1234' },

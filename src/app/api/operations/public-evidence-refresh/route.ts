@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { runPublicEvidenceRefresh } from '@/evidence/public-evidence-refresh';
+import { evidenceRefresh } from '@/evidence/refresh';
 
 export const maxDuration = 300;
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   const forceCampaignFinance = url.searchParams.get('forceFinance') === '1';
 
   try {
-    const result = await runPublicEvidenceRefresh({ batchSize, forceCampaignFinance });
+    const result = await evidenceRefresh.public({ batchSize, forceCampaignFinance });
     return NextResponse.json(result);
   } catch (error) {
     console.error('Public evidence refresh failed', error instanceof Error ? error.name : 'Error');

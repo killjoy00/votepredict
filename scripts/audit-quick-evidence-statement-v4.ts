@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
-import { extractExplicitBillStatementsV4 } from '../src/evidence/bill-statement-extractor-v4.js';
+import { extractExplicitBillStatementsV4 } from '../src/evidence/bill-statement-extractor.js';
 import {
   compareQuickEvidenceToManual,
   mergeQuickEvidenceManualAnnotationsBySource,
