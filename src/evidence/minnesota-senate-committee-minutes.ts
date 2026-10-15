@@ -123,7 +123,7 @@ function names(value: string, choice: 'yea' | 'nay'): SenateCommitteeMemberVote[
  * If any text is ambiguous, return no inferred named positions.
  */
 function senatorPrefixedRollSide(value:string,choice:'yea'|'nay'):SenateCommitteeMemberVote[]{
- const clean=value.replace(/--\s*\d+\s+of\s+\d+\s*--/gi,' ').trim();
+ const clean=value.replace(/--\s*\d+\s+of\s+\d+\s*--/gi,' ').replace(/\s+/g,' ').trim();
  if(!/^Senator\s+/i.test(clean))return [];
  const parts=clean.split(/\bSenator\s+/i).slice(1);
  if(parts.length<1||parts.length>30)return [];
