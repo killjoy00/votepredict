@@ -42,7 +42,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V1')
+      contains(github.event.head_commit.message, 'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V2')
     runs-on: ubuntu-latest
     timeout-minutes: 36
     steps:
@@ -75,7 +75,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V1')
+      contains(github.event.head_commit.message, 'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V2')
     runs-on: ubuntu-latest
     environment: evidence-readonly-sandbox
     timeout-minutes: 17
@@ -85,7 +85,7 @@ jobs:
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
       VOTEPREDICT_864_SF1_APPROVAL: HISTORIC_SF1_TWO_ROLL_READ_ONLY
       VOTEPREDICT_864_MAIN_CI_VERIFIED: ${{ needs.main_exact_source_presecret_ci.result == 'success' && 'true' || 'false' }}
-      VOTEPREDICT_864_SF1_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V1') && 'true' || 'false' }}
+      VOTEPREDICT_864_SF1_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V2') && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
