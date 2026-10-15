@@ -21,7 +21,7 @@ const SOURCE='https://www.lrl.mn.gov/archive/minutes/senate/2023/rules/20230124/
 const PDF_SHA='a49a0b9d2abdb716118951de8706faf313463ff43f1ab0f16408326a52fb0379';
 const TEXT_SHA='2a6eb9aced550ed193b4329fd33cc0fa8c59fd447c9be170ccc34ac36ead3544';
 const PDF_BYTES=189421,DAY='2023-01-24';
-export const ONE_SHOT_MARKER='SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V1';
+export const ONE_SHOT_MARKER='SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V2';
 export const DOC_SQL=[
  'SELECT sd.id::text AS id,sd.source_url,sd.content_sha256,',
  "sd.metadata->>'meetingDate' AS meeting_date,",
@@ -75,6 +75,18 @@ export const ALIAS_SQL=[
 ].join(' ');
 export const READ_ONLY_QUERIES=[DOC_SQL,EVENT_SQL,CHOICE_SQL,ROSTER_SQL,ALIAS_SQL] as const;
 
+/** Verify the sanitized result, not substrings within approved aggregate
+ * field names. The original gate accidentally treated "sourceNamedMotions"
+ * as a leaked "sourceName", suppressing a complete rolled-back Neon audit.
+ * Exact sensitive JSON keys and any URL/connection data still hard-fail.
+ */
+export function assertSafeRulesSF1AggregateReceipt(body:string):true{
+ if(body.length>4000||
+  /(?:postgres(?:ql)?:\/\/|https?:\/\/)/i.test(body)||
+  /"(?:normalized_member_name|membership_id|external_key|source_url|sourceName|memberVotes)"\s*:/i.test(body))
+  throw Error('Sanitized original/store output violated private identity gate');
+ return true;
+}
 export function assertProtectedRulesSF1Environment(e:Record<string,string|undefined>){
  if(e.GITHUB_REPOSITORY!=='killjoy00/votepredict'||
   e.GITHUB_EVENT_NAME!=='push'||e.GITHUB_REF!=='refs/heads/main'||
@@ -192,8 +204,7 @@ async function main(){
    database:process.env.VOTEPREDICT_MEDIA_EXISTING_DATABASE?.trim()||undefined,
   },v=>{phase=v});
   const body=JSON.stringify(report);
-  if(body.length>4000||/postgresql:|https?:\/\/|normalized_member_name|membership_id|external_key|source_url|sourceName|memberVotes/.test(body))
-   throw Error('Sanitized original/store output violated private identity gate');
+  assertSafeRulesSF1AggregateReceipt(body);
   if(process.env.GITHUB_OUTPUT)
    appendFileSync(process.env.GITHUB_OUTPUT,
     'safe_rules_sf1_parity_b64='+Buffer.from(body).toString('base64')+'\n');
