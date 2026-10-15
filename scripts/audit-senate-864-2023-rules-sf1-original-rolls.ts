@@ -60,7 +60,7 @@ async function main(){
   const clean=value.replace(/--\s*\d+\s+of\s+\d+\s*--/gi,' ').replace(/\s+/g,' ').trim();
   const parts=clean.split(/\bSenator\s+/i).slice(1)
    .map(x=>x.replace(/^[\s,;:]+|[\s,;:.]+$/g,'').trim());
-  const valid=/^[\p{L}\p{M}][\p{L}\p{M} .'-]{0,80}$/u;
+  const valid=/^[\p{L}\p{M}][\p{L}\p{M} .,'-]{0,80}$/u;
   return {
    startsWithSenator:/^Senator\s+/i.test(clean),
    parsedSenatorBlocks:parts.length,
