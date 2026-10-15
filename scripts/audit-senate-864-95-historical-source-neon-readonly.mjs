@@ -9,7 +9,7 @@ import {fileURLToPath} from 'node:url';
 import {discoverExistingVotePredictNeonConnection}
  from '../src/operations/senate-media-neon-api-readonly.js';
 import {
- OWNER_MARKER,SOURCE_LEDGER_FILES,assertManifest,extractAuthenticatedPageLeads,
+ SOURCE_LEDGER_FILES,assertManifest,extractAuthenticatedPageLeads,
  compareHistoric95,validatePublicReport
 } from '../src/evidence/senate-864-95-historical-source-neon-parity.mjs';
 
@@ -59,18 +59,25 @@ export const CATALOG_SQL=[
  'FROM unnest($1::text[]) AS names(name) ORDER BY name'
 ].join(' ');
 const REQUIRED=['memberships','legislators','chambers','legislative_sessions','source_documents','evidence_items'];
-export function validateOwnerEvent(env,raw){
+/** Only a clean first-attempt push to the protected main branch may read Neon.
+ * A dedicated pre-secret job must independently pass on this exact commit.
+ * Main source changes are explicitly the trigger; no user issue comment.
+ */
+export function validateMainPushEvent(env,raw){
+ const sha=env.GITHUB_SHA||'';
  if(env.GITHUB_REPOSITORY!=='killjoy00/votepredict'
-  ||env.GITHUB_EVENT_NAME!=='issue_comment'
+  ||env.GITHUB_EVENT_NAME!=='push'
   ||env.GITHUB_REF!=='refs/heads/main'
   ||env.GITHUB_RUN_ATTEMPT!=='1'
-  ||! /^[a-f0-9]{40}$/.test(env.GITHUB_SHA||'')
-  ||env.VOTEPREDICT_864_95_APPROVAL!==OWNER_MARKER
-  ||env.VOTEPREDICT_864_95_PRECI!=='true'
-  ||raw?.issue?.number!==864
-  ||raw?.comment?.user?.login!=='killjoy00'
-  ||raw?.comment?.body!==OWNER_MARKER)
-  throw Error('Not an independently CI-approved owner-only 95-person source audit');
+  ||! /^[a-f0-9]{40}$/.test(sha)
+  ||env.VOTEPREDICT_864_95_AUTO_CI!=='true'
+  ||raw?.ref!=='refs/heads/main'
+  ||raw?.repository?.full_name!=='killjoy00/votepredict'
+  ||raw?.after!==sha
+  ||raw?.head_commit?.id!==sha
+  ||raw?.deleted===true
+  ||raw?.forced===true)
+  throw Error('Not a protected exact-main first-attempt CI-verified 95-person source audit');
 }
 export function readPublicInputs(read=readFileSync){
  const manifest=assertManifest(JSON.parse(read(PUBLIC95,'utf8')));
@@ -133,7 +140,7 @@ export async function main(){
   if(process.argv.length!==2)throw Error('No arbitrary inputs allowed');
   const inputs=readPublicInputs();
   const event=JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH||'','utf8'));
-  validateOwnerEvent(process.env,event);
+  validateMainPushEvent(process.env,event);
   phase='protected_existing_neon_sql';
   const report=await auditHistorical95({
    apiKey:process.env.NEON_API_KEY?.trim()||'',
