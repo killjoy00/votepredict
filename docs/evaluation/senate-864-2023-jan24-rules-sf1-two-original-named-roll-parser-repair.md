@@ -20,3 +20,15 @@ The new narrowly scoped parser recognizes *only* original individual senator-pre
 This work changes source parsing and source-only tests. **No stored `vote_events`, `member_votes`, `source_documents` or production evidence are created or updated**. The historical senator-person ID crosswalk, parliamentary key mapping and exact source-to-stored parity remain unproven for these two source actions. The old importer uses an unstable source-URL-plus-position key and `ON CONFLICT DO UPDATE`; do **not** replay it against already stored Senate committee actions. This small parser fix alone cannot certify additional persisted individual votes, source-to-database completeness, availability for a specific forecast cutoff or any 2021 evidence.
 
 Accept only with passing exact-head general CI, deterministic parser tests, and [the separate original PDF QA workflow](../../.github/workflows/senate-864-2023-rules-sf1-original-roll-source-qa.yml). Issue [#864](https://github.com/killjoy00/votepredict/issues/864) remains open for the remaining 2022–2025 source and stored database reconciliation.
+
+## Actual independently re-fetched original PDF QA — verified
+
+[Exact source workflow #38760672178](https://github.com/killjoy00/votepredict/actions/runs/38760672178), job 116510798000, **SUCCESS** on source parser commit `d7bcf245fdaf02f1363bcf96c1c6f7977100e729`:
+
+- Independent government raw PDF **189,421 bytes** and full SHA256 `a49a0b9d2abdb716118951de8706faf313463ff43f1ab0f16408326a52fb0379` reproduced the prior audit with zero bytes drift.
+- Actual embedded extracted text SHA256: `2a6eb9aced550ed193b4329fd33cc0fa8c59fd447c9be170ccc34ac36ead3544`.
+- **Exactly two** original individually named vote observations parsed as `SF1`: (1) failed oral amendment, 4 AYE / 6 NO, 10 explicit choices; (2) adopted committee-report motion, 6 AYE / 4 NO, 10 explicit choices. No unnamed or imputed individual sides.
+- Motion-context fingerprints, names withheld from log: `60665907a1a90d30908a0d2996bd63ffe8223412994d36bbcd3fc6243422ca4d` and `436866d98930a63e39623e0ef957d9e1e3b6e5a5414ce188dcdc488acac2cffa`.
+- Actual source revealed **commas inside printed senator-prefixed names**; this explains why a synthetic-only name parser was insufficient. The final matcher permits comma punctuation *within* one explicitly prefixed name only, still requiring exact side totals and duplicate exclusions.
+
+This audit authenticates two source actions; it does **not** independently authenticate database person IDs or prove either source action absent from production storage. No SQL, database credentials, import, model, forecast or Vercel action occurred. The full original corpus regression and final exact-head CI must also pass before merging.
