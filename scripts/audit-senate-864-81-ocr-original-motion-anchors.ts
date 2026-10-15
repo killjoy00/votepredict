@@ -42,15 +42,19 @@ export function selectOriginalFlagged81(input:unknown){
  for(const a of data){
   const key=a.year+'/'+a.shard,receipt=manifest.originalShaProofZipArtifacts.find(
    x=>x.year===a.year&&x.shard===a.shard);
-  if(!receipt||artifactKeys.has(key)||a.schemaVersion!==SCHEMA||
-   a.sourceRecallPhase!=='remaining149ocr'||
-   !Array.isArray(a.rows)||a.rows.length!==receipt.originalPdfs||
-   a.selectedOriginals!==receipt.originalPdfs||
-   a.originalShaReverified!==receipt.originalPdfs||a.originalsHeld!==0||
-   a.sourceToStoredEventAndMemberParityPerformed!==false||
+  const cause=!receipt?'missing_receipt':
+   artifactKeys.has(key)?'duplicate_year_shard':
+   a.schemaVersion!==SCHEMA?'schema_version':
+   a.sourceRecallPhase!=='remaining149ocr'?'recall_phase':
+   !Array.isArray(a.rows)?'missing_source_rows':
+   a.rows.length!==receipt.originalPdfs?'row_count':
+   a.selectedOriginals!==receipt.originalPdfs?'selected_count':
+   a.originalShaReverified!==receipt.originalPdfs?'verified_count':
+   a.originalsHeld!==0?'held_originals':
+   a.sourceToStoredEventAndMemberParityPerformed!==false?'parity_flag':
    a.rows.filter(r=>r.priority!=='zero_detected_still_not_a_certified_no_vote').length!==
-    receipt.flaggedSourcePdfs)
-   throw Error('Original independent ZIP, PDF hash or source-recall cohort drift');
+    receipt.flaggedSourcePdfs?'flagged_count':null;
+  if(cause)throw Error('original_shard:'+key+':'+cause);
   artifactKeys.add(key);
   all.push(...a.rows);
  }
@@ -197,6 +201,7 @@ if(process.argv[1]?.replace(/\\/g,'/').endsWith('/audit-senate-864-81-ocr-origin
   const msg=error instanceof Error?error.message:'';
   console.error('SENATE864_81_ORIGINAL_MOTION_HOLD='+(
    allowed.includes(msg)?msg.replace(/\s+/g,'_'):
-   'source_integrity_or_shard_validation'));
+   /^original_shard:202[2-5]\/\d{1,2}:[a-z_]{4,30}$/.test(msg)?
+    msg:'source_integrity_or_shard_validation'));
   process.exitCode=1;
  });
