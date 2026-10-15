@@ -34,9 +34,19 @@ function original29(){
   'no_written_minutes_authenticated_through_independent_routes'));
 }
 async function html(url:string):Promise<string>{
- const r=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(25_000),
+ const r=await fetch(url,{redirect:'follow',signal:AbortSignal.timeout(25_000),
   headers:{accept:'text/html', 'user-agent':'VotePredict/2.0 committee-original-minutes-research'}});
- if(r.status!==200)throw Error('Official LRL page unavailable');
+ const requested=new URL(url),landed=new URL(r.url);
+ if(r.status!==200||landed.protocol!=='https:'||
+  !['www.lrl.mn.gov','lrl.mn.gov'].includes(landed.hostname)||
+  !['/minutes/default','/minutes/comm','/minutes/comm.aspx'].includes(landed.pathname)||
+  !(requested.pathname==='/minutes/default'&&landed.pathname==='/minutes/default'&&
+    landed.searchParams.get('year')===requested.searchParams.get('year')&&
+    landed.searchParams.get('body')==='senate')&&
+  !(requested.pathname.startsWith('/minutes/comm')&&landed.pathname.startsWith('/minutes/comm')&&
+    landed.searchParams.get('year')===requested.searchParams.get('year')&&
+    landed.searchParams.get('commid')===requested.searchParams.get('commid')))
+   throw Error('Official LRL page unavailable or redirected to an unrelated page');
  const length=r.headers.get('content-length');
  if(length!==null&&Number(length)>2_000_000)throw Error('Original government HTML exceeded byte cap');
  const body=await r.text();
