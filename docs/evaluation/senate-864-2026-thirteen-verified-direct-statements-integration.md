@@ -2,6 +2,19 @@
 
 **Review evidence status: October 14, 2026 (UTC).** This is a first-party source-verification and narrowly scoped evidence-integration record. It is not a verified March–May original-publication ledger, not a claim of 13 new database rows, and not a historical 2021–2025 capture.
 
+## Completed Neon reconciliation and read-back — October 15, 2026 UTC
+
+**The October 14 pre-execution status below is superseded for database reconciliation.** The exact 13-source integration has now executed and been independently read back on the existing VotePredict Neon default branch and writable primary.
+
+- **Owner-authorized protected apply:** [GitHub Actions run #38679085112](https://github.com/killjoy00/votepredict/actions/runs/38679085112) on reviewed main commit `aa41d1a9ac3901517588803d6a1c7f448b90fb3d`; independent full-CI and protected-Neon jobs both finished successfully. The protected log contains a sanitized transaction outcome, without private identifiers or credentials.
+- **Read-only pre-apply:** 13 `INSERT_VERIFIED_QUOTE`, 0 existing, 0 repair, 0 HOLD.
+- **Committed atomically:** 13 new `direct_statement` evidence rows (districts **1, 2, 5, 11, 13, 15, 20, 21, 24, 26, 31, 32, 54**); 0 repairs, 0 skipped, 0 HOLD.
+- **Independent post-commit read:** all 13 `EXISTING_QUOTE`; 0 missing, 0 repair, 0 HOLD. Database evidence integration for this exact cohort is complete; **do not rerun the apply merely because older text below says it was pending**.
+- **Scope unchanged:** first independently verified original-source public-by remains each precise October 14, 2026 UTC source GET; displayed February–May days are not authenticated earlier publication. All 13 remain `contextOnly=true`, `mechanicallyActionable=false`, `modelWeight=0`. The 15 blocked originals, one unmatched quote and three no-quote senators were not ingested. No backtest, prediction, model, vote or serving changes followed from this import.
+- **Important remaining boundary:** the job verified the *existing Neon default branch*, **not** that the deployed Vercel app's database binding points to that branch. A separate read-only Vercel inspection on October 15 found the production aliases `vote.planitnow.us` and `votepredict.vercel.app` pointing to an October 6 deployment (commit `860e70a`); automatic Git deployment is disabled by `vercel.json`. Neither app visibility nor a later app deployment is certified here.
+
+Auditable operator closeout: [Issue #864 comment #6184152061](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6184152061); implementation: [PR #1291](https://github.com/killjoy00/votepredict/pull/1291). Issue #864 remains open for the larger 2021–2025 substantive senator/year/issue coverage audit and other evidence tracks.
+
 ## Precise population and date choice
 
 - **13 original publisher pages** had complete live original HTML downloaded, a SHA-256 pinned, an exact personally attributed visible passage matched and the publisher's displayed day located on October 14. Source QA: [run 38501897295](https://github.com/killjoy00/votepredict/actions/runs/38501897295) and [run 38502764093](https://github.com/killjoy00/votepredict/actions/runs/38502764093).
@@ -66,6 +79,6 @@ node --import tsx scripts/reconcile-senate-864-2026-verified-positions.mjs --dry
 
 The script refuses `--apply` without one of the explicit owner/reviewed-commit authorization gates, and internally checks that a trusted manual operator's reviewed SHA exactly matches the checked-out commit. An apply executes **one transaction**, serializes concurrent imports, inserts no quoted article bodies, and makes no changes for HOLD cases. A final read-only pass should show each integrated statement as matched (or a separately reported HOLD). **Do not report integration complete until actual store results and the serving database identity have been verified.**
 
-## Current execution boundary
+## Historical pre-apply execution boundary (October 14; superseded above)
 
-As of this documentation update, the original publisher fetches and offline integration tests were completed, but **no direct connection or result from VotePredict's live evidence database was available to this coding session**. The 13 source observations are fully prepared for reconciliation; the number of new/reused/repaired stored rows is **unknown until the protected run actually executes**. The 15 blocked sources and three senator no-quote cases are intentionally out of this work.
+As of the October 14 documentation update, the original publisher fetches and offline integration tests were completed, but **no direct connection or result from VotePredict's live evidence database was available to this coding session**. The 13 source observations are fully prepared for reconciliation; the number of new/reused/repaired stored rows is **unknown until the protected run actually executes**. The 15 blocked sources and three senator no-quote cases are intentionally out of this work.
