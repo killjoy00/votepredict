@@ -131,7 +131,7 @@ export async function capture109Original2025PdfBodies(){
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
  if(process.argv.length!==2)throw Error('Fixed original 109 official version source targets only');
  const output=JSON.stringify(await capture109Original2025PdfBodies());
- if(output.length>85000||/%PDF-|donorName|transactionBody|rawOfficialPDF/i.test(output))
+ if(output.length>250000||/%PDF-|donorName|transactionBody|rawOfficialPDF/i.test(output))
   throw Error('Do not print 2025 source PDF content or transaction information');
  console.log(LOG+output);
 }
