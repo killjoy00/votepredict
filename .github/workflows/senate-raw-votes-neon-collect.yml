@@ -1,0 +1,143 @@
+name: Collect raw Senate pre-passage votes into existing VotePredict Neon
+# Runs on the reviewed main push that changes the collector. Keyless checks run
+# first; only then does a protected job load the existing NEON_API_KEY secret.
+# Writes only source_documents.metadata.rawPrepassageVotes (see
+# docs/sources/senate-raw-votes.md); idempotent, so a rerun from a new reviewed
+# commit only adds documents not yet collected.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-raw-votes-neon-collect.yml
+      - scripts/run-senate-raw-votes-neon.ts
+      - scripts/collect-senate-raw-votes.ts
+      - src/sources/minnesota/senate-raw-votes.ts
+      - src/sources/minnesota/senate-schedule.ts
+      - tests/senate-raw-votes.test.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-raw-votes-neon-collect.yml
+      - scripts/run-senate-raw-votes-neon.ts
+      - scripts/collect-senate-raw-votes.ts
+      - src/sources/minnesota/senate-raw-votes.ts
+      - src/sources/minnesota/senate-schedule.ts
+      - tests/senate-raw-votes.test.ts
+permissions:
+  contents: read
+concurrency:
+  group: senate-raw-votes-neon-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  pr-keyless:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/senate-raw-votes.test.ts tests/senate-journals.test.ts
+      - run: npx tsc --noEmit
+
+  independent-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact main commit
+        env:
+          EXACT_MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXACT_MAIN_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - name: Keyless smoke collection against the CI database (one week, both venues)
+        run: |
+          psql "$DATABASE_URL_UNPOOLED" -c "INSERT INTO jurisdictions (slug,name,country_code) VALUES ('us-mn','Minnesota','US') ON CONFLICT (slug) DO NOTHING"
+          npx tsx scripts/collect-senate-raw-votes.ts --session 2023-2024 --from 2024-03-13 --to 2024-03-14 --source all --limit 6 --delay-ms 100
+          test "$(psql "$DATABASE_URL_UNPOOLED" -tAc "SELECT count(*) FROM source_documents WHERE metadata ? 'rawPrepassageVotes'")" -gt 0
+
+  protected-neon-collect:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        session: ['2025-2026', '2023-2024', '2021-2022']
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_RAW_VOTES_INDEPENDENT_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_RAW_VOTES_SESSION: ${{ matrix.session }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm verified main commit
+        env:
+          EXACT_MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXACT_MAIN_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Collect raw Senate votes for ${{ matrix.session }} with read-only preflight and readback
+        run: node --import tsx scripts/run-senate-raw-votes-neon.ts
