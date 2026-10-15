@@ -310,3 +310,74 @@ test('Senate committee action parser recognizes explicit carried and did-not-car
     ['motion_result_only',false],
   ]);
 });
+
+test('Rules narrative senator-labeled source captures two distinct SF1 motions even when voters repeat',()=>{
+ const source=[
+  'S.F. 1 was before the Rules and Administration Committee.',
+  'Lead Johnson offered an oral amendment. Lead Johnson moved to amend the committee report.',
+  'After "do pass" add "and be re-referred to the Committee on Health and Human Services".',
+  'Senator Murphy requested a roll call. A roll call was granted.',
+  'Members voting AYE: Senator Johnson Senator Eichorn Senator Limmer Senator Miller',
+  'Members voting NO: Senator Murphy Senator Rest Senator Champion Senator Frentz Senator Marty Senator Pappas',
+  'On a vote of 4 AYE, and 6 NO, THE AMENDMENT WAS NOT ADOPTED.',
+  'Senator Murphy moved to adopt the committee on Judiciary and Public Safety’s committee report for Senate File 1.',
+  'Lead Johnson requested a roll call. A roll call was granted.',
+  '-- 1 of 2 --',
+  'Members voting AYE: Senator Murphy Senator Rest Senator Champion Senator Frentz Senator Marty Senator Pappas',
+  'Members voting NO: Senator Johnson Senator Eichorn Senator Limmer Senator Miller',
+  'On a vote of 6 AYE, and 4 NO, the committee report was adopted.',
+ ].join('\n');
+ const rows=parseSenateCommitteeMinuteVotes(source);
+ assert.equal(rows.length,2);
+ assert.ok(rows.every(x=>x.billIdentifier==='SF1'&&x.individualVotesAvailable));
+ assert.deepEqual(rows.map(x=>[x.yeaCount,x.nayCount,x.passed,x.voteKind]),[
+  [4,6,false,'amendment'],[6,4,true,'motion']]);
+ assert.deepEqual(rows[0].memberVotes.map(x=>[x.sourceName,x.choice]),[
+  ['Johnson','yea'],['Eichorn','yea'],['Limmer','yea'],['Miller','yea'],
+  ['Murphy','nay'],['Rest','nay'],['Champion','nay'],['Frentz','nay'],
+  ['Marty','nay'],['Pappas','nay']]);
+ assert.equal(rows[1].memberVotes.length,10);
+ assert.notDeepEqual(rows[0].memberVotes,rows[1].memberVotes);
+});
+test('Rules narrative named roll fails closed to aggregate-only when printed tally and labeled names disagree',()=>{
+ const source=[
+  'S.F. 1 committee hearing.',
+  'Lead Johnson requested a roll call.',
+  'Members voting AYE: Senator Johnson Senator Eichorn Senator Limmer Senator Miller',
+  'Members voting NO: Senator Murphy Senator Rest Senator Champion Senator Frentz Senator Marty',
+  'On a vote of 4 AYE, and 6 NO, THE AMENDMENT WAS NOT ADOPTED.',
+ ].join('\n');
+ const rows=parseSenateCommitteeMinuteVotes(source);
+ assert.ok(rows.every(x=>!x.individualVotesAvailable));
+ assert.ok(rows.every(x=>x.memberVotes.length===0));
+});
+test('Rules narrative does not assign names to a vote when either printed side lacks Senator labels',()=>{
+ const source=[
+  'S.F. 1 committee hearing.',
+  'Lead Johnson requested a roll call.',
+  'Members voting AYE: Johnson, Eichorn, Limmer, Miller',
+  'Members voting NO: Murphy, Rest, Champion, Frentz, Marty, Pappas',
+  'On a vote of 4 AYE, and 6 NO, THE AMENDMENT WAS NOT ADOPTED.',
+ ].join('\n');
+ const rows=parseSenateCommitteeMinuteVotes(source);
+ assert.ok(rows.every(x=>!x.individualVotesAvailable));
+});
+
+test('Rules names with printed surname comma/initial are one explicit Senator-labeled voter, not a new person',()=>{
+ const source=[
+  'S.F. 1 was before the committee.',
+  'Chair Example moved an oral amendment.',
+  'Senator Example requested a roll call.',
+  'Members voting AYE: Senator Smith, B.',
+  'Members voting NO: Senator Doe',
+  'On a vote of 1 AYE, and 1 NO, THE AMENDMENT WAS NOT ADOPTED.',
+ ].join('\n');
+ const rows=parseSenateCommitteeMinuteVotes(source);
+ assert.equal(rows.length,1);
+ assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[1,1]);
+ assert.equal(rows[0].memberVotes.length,2);
+ assert.equal(rows[0].memberVotes[0].sourceName,'Smith, B');
+ assert.equal(rows[0].memberVotes[1].sourceName,'Doe');
+ assert.equal(rows[0].individualVotesAvailable,true);
+ assert.equal(rows[0].passed,false);
+});

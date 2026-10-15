@@ -1,0 +1,33 @@
+name: '#864 January 24 2023 Rules SF1: original PDF SHA and two-roll parser integrity'
+on:
+  pull_request:
+    paths:
+      - src/evidence/minnesota-senate-committee-minutes.ts
+      - tests/minnesota-senate-committee-minutes.test.ts
+      - scripts/audit-senate-864-2023-rules-sf1-original-rolls.ts
+      - .github/workflows/senate-864-2023-rules-sf1-original-roll-source-qa.yml
+permissions:
+  contents: read
+jobs:
+  official_original_rules_rolls:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Typecheck and deterministic named-AYE-NO parser regression
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/minnesota-senate-committee-minutes.test.ts
+      - name: Reacquire authentic original Rules 2023 SF1 source and prove 2 individual named rolls in memory
+        run: node --import tsx scripts/audit-senate-864-2023-rules-sf1-original-rolls.ts

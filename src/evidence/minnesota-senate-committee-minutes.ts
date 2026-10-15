@@ -117,6 +117,28 @@ function names(value: string, choice: 'yea' | 'nay'): SenateCommitteeMemberVote[
     }));
 }
 
+
+/** A Rules-style printed list contains individually labeled "Senator Name"
+ * entries on each side. Neither a motion's mover nor nearby attendance counts.
+ * If any text is ambiguous, return no inferred named positions.
+ */
+function senatorPrefixedRollSide(value:string,choice:'yea'|'nay'):SenateCommitteeMemberVote[]{
+ const clean=value.replace(/--\s*\d+\s+of\s+\d+\s*--/gi,' ').replace(/\s+/g,' ').trim();
+ if(!/^Senator\s+/i.test(clean))return [];
+ const parts=clean.split(/\bSenator\s+/i).slice(1);
+ if(parts.length<1||parts.length>30)return [];
+ const side:SenateCommitteeMemberVote[]=[];
+ for(const part of parts){
+  const sourceName=part.replace(/^[\s,;:]+|[\s,;:.]+$/g,'').trim();
+  // The official Rules layout uses comma-separated surname/initial fragments
+  // inside some single senator-prefixed names; these are NOT extra voters.
+  if(!/^[\p{L}\p{M}][\p{L}\p{M} .,'-]{0,80}$/u.test(sourceName)||
+   /\b(?:Senator|Member|voting|Absent|roll call)\b/i.test(sourceName))return [];
+  side.push({sourceName,normalizedName:normalizeMemberName(sourceName),choice});
+ }
+ return new Set(side.map(x=>x.normalizedName)).size===side.length?side:[];
+}
+
 function voteKind(context: string): SenateCommitteeVoteObservation['voteKind'] {
   if (/\bamend(?:ment|ed)\b/i.test(context)) return 'amendment';
   if (/\bmotion\b|recommended\s+to\s+pass|re-?refer/i.test(context)) return 'motion';
@@ -300,6 +322,51 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
       memberVotes:[...yeaVotes,...nayVotes],
       individualVotesAvailable:true,
     });
+  }
+
+
+  // Official Rules minutes print individually identified "Members voting
+  // AYE/NO" sides *before* the final numeric tally. Distinct roll-call
+  // requests must retain independent motion anchors, including two SF1
+  // decisions on the same meeting day. Never infer a choice from a count.
+  const memberNarrativeRollPattern=
+   /\bMembers\s+voting\s+AYE\s*:\s*([\s\S]{1,1000}?)\bMembers\s+voting\s+NO\s*:\s*([\s\S]{1,1000}?)\bOn\s+a\s+vote\s+of\s+(\d{1,2})\s+AYES?\s*,?\s*and\s+(\d{1,2})\s+NO\b([^\n]{0,180})/gi;
+  for(const match of text.matchAll(memberNarrativeRollPattern)){
+   const start=match.index??0;
+   const yeaCount=Number(match[3]),nayCount=Number(match[4]);
+   const yeaVotes=senatorPrefixedRollSide(match[1],'yea');
+   const nayVotes=senatorPrefixedRollSide(match[2],'nay');
+   const sides=[...yeaVotes,...nayVotes];
+   if(yeaVotes.length!==yeaCount||nayVotes.length!==nayCount||
+    !sides.length||new Set(sides.map(x=>x.normalizedName)).size!==sides.length)continue;
+   const context=text.slice(Math.max(0,start-750),start+match[0].length+180);
+   const nearbyMotion=text.slice(Math.max(0,start-370),start);
+   // Printed Rules minutes also spell the bill out as "Senate File 1".
+   const proseBill=[...context.matchAll(/\bSenate\s+File\s+(\d{1,5})\b/gi)].at(-1);
+   const billIdentifier=proseBill?'SF'+Number(proseBill[1]):nearestBill(context);
+   const amendmentRef=nearestAmendment(nearbyMotion);
+   const anchor=recordedMotionAnchor(text,start)??'unanchored';
+   const key=[billIdentifier??'none',amendmentRef??'none',
+    yeaVotes.map(x=>x.normalizedName).join(','),
+    nayVotes.map(x=>x.normalizedName).join(','),anchor].join('|');
+   if(seen.has(key))continue;
+   seen.add(key);
+   const committeeReport=/\bmoved\s+to\s+adopt\s+(?:the\s+)?committee\b[\s\S]{0,150}?\breport\b/i
+    .test(nearbyMotion);
+   const printedOutcome=explicitOutcome(match[5]);
+   // Rules committee reports are parliamentary *motions*, not amendments.
+   // A committee report expressly "was adopted" is affirmative. Do not
+   // infer an outcome from a preceding failed amendment in the context.
+   const passed=printedOutcome??(
+    committeeReport&&/\bcommittee\s+report\s+was\s+adopted\b/i.test(match[5])?
+    true:undefined);
+   observations.push({
+    billIdentifier,amendmentRef,
+    motionText:context.replace(/\s+/g,' ').trim().slice(-900),
+    voteKind:committeeReport?'motion':voteKind(nearbyMotion),
+    yeaCount,nayCount,passed,
+    memberVotes:sides,individualVotesAvailable:true,
+   });
   }
 
   const countOnlyPatterns = [
