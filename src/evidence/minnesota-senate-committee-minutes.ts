@@ -339,7 +339,9 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
     !sides.length||new Set(sides.map(x=>x.normalizedName)).size!==sides.length)continue;
    const context=text.slice(Math.max(0,start-750),start+match[0].length+180);
    const nearbyMotion=text.slice(Math.max(0,start-370),start);
-   const billIdentifier=nearestBill(context);
+   // Printed Rules minutes also spell the bill out as "Senate File 1".
+   const proseBill=[...context.matchAll(/\\bSenate\\s+File\\s+(\\d{1,5})\\b/gi)].at(-1);
+   const billIdentifier=proseBill?'SF'+Number(proseBill[1]):nearestBill(context);
    const amendmentRef=nearestAmendment(nearbyMotion);
    const anchor=recordedMotionAnchor(text,start)??'unanchored';
    const key=[billIdentifier??'none',amendmentRef??'none',
