@@ -9,7 +9,7 @@
  */
 type Year=2022|2023|2024|2025;
 type LinkedOriginal={
- sourceUrl:string;originalPdfSha256:string|null;
+ sourceUrl:string;originalPdfSha256:string|null;ocrRecoveredFromInitiallyLowText?:boolean;
  sourceActions:Array<{actionType:string;explicitlyNamedChoiceOccurrences:number}>;
 };
 type IndexedMeeting={
@@ -107,6 +107,13 @@ export function buildSenate864AllSourceActionInventory(source:SourceActionInvent
  const otherIndex=byId(other.perOriginalIndexedMeeting);
  const seen=new Set<string>();
  let officialLinked=0,linkedPdfs=0,linkedNamed=0,linkedCount=0,linkedChoices=0;
+ let originalOcrPdfBodies=0,linkedMinutesWithNoRecognizedAction=0;
+ let linkedOcrMinutesWithNoRecognizedAction=0;
+ const missingActionReviewQueue:Array<{
+  year:Year;committeeName:string;hearingDate:string;reviewPriority:1|2;
+  initiallyLowTextOcr:boolean;originalPdfSha256:string[];originalMinutesUrls:string[];
+  parserFindsZeroActionsButVotesNotInferredMissing:true;
+ }>=[];
  let alternateClerk=0,orphanPdf=0,held=0;
  let altExplicitNamed=0,altExplicitChoices=0;
  let first2023Count=0,first2023Result=0,later2023Candidate=0;
@@ -137,6 +144,19 @@ export function buildSenate864AllSourceActionInventory(source:SourceActionInvent
    officialLinked++;
    linkedPdfs+=r.originalMinutes.length;
    const actions=r.originalMinutes.flatMap(x=>x.sourceActions);
+   const ocrSources=r.originalMinutes.filter(x=>x.ocrRecoveredFromInitiallyLowText===true);
+   originalOcrPdfBodies+=ocrSources.length;
+   if(actions.length===0){
+    linkedMinutesWithNoRecognizedAction++;
+    if(ocrSources.length)linkedOcrMinutesWithNoRecognizedAction++;
+    missingActionReviewQueue.push({
+     year:y as Year,committeeName:r.committee,hearingDate:r.hearingDate,
+     reviewPriority:ocrSources.length?1:2,initiallyLowTextOcr:ocrSources.length>0,
+     originalPdfSha256:r.originalMinutes.map(x=>x.originalPdfSha256!),
+     originalMinutesUrls:r.originalMinutes.map(x=>x.sourceUrl),
+     parserFindsZeroActionsButVotesNotInferredMissing:true,
+    });
+   }
    const named=actions.filter(x=>x.actionType==='named_roll_call');
    const counted=actions.filter(x=>x.actionType==='count_only_roll_call');
    const choices=named.reduce((s,x)=>s+x.explicitlyNamedChoiceOccurrences,0);
@@ -232,6 +252,8 @@ export function buildSenate864AllSourceActionInventory(source:SourceActionInvent
   officialLinked!==1451||linkedPdfs!==1452||
   alternateClerk!==111||orphanPdf!==1||held!==29||
   linkedNamed!==104||linkedCount!==49||linkedChoices!==989||
+  originalOcrPdfBodies!==207||linkedMinutesWithNoRecognizedAction!==568||
+  linkedOcrMinutesWithNoRecognizedAction!==197||
   altExplicitNamed!==27||altExplicitChoices!==343||
   first2023Count!==2||first2023Result!==31||
   later2023Candidate!==111||highCandidates!==129||highCounts!==1||
@@ -254,6 +276,12 @@ export function buildSenate864AllSourceActionInventory(source:SourceActionInvent
   originalLrlMeetingIndexSha256:SOURCE_SHA,years:[2022,2023,2024,2025] as const,
   officialIndexedMeetings:1592,officialLinkedOriginalPdfBodies:1452,
   originalClerkHtmlMinutes:111,otherOriginalArchivedMinutes:1,
+  linkedOriginalOcrRecoveredPdfBodies:originalOcrPdfBodies,
+  linkedMinutesMeetingDatesWithoutAnyParserRecognizedAction:linkedMinutesWithNoRecognizedAction,
+  linkedOcrMeetingDatesWithoutAnyParserRecognizedAction:linkedOcrMinutesWithNoRecognizedAction,
+  linkedEmbeddedTextMeetingDatesWithoutAnyParserRecognizedAction:
+   linkedMinutesWithNoRecognizedAction-linkedOcrMinutesWithNoRecognizedAction,
+  noActionReviewPriorityIsNotProofOfMissingVotes:true,
   authenticatedWrittenMinutesMeetingDates:1563,
   indexedMeetingDatesStillWithoutWrittenMinutes:29,
   sourceExplicitNamedRollCandidatesInFrozenLinkedPdfs:104,
@@ -283,7 +311,12 @@ export function buildSenate864AllSourceActionInventory(source:SourceActionInvent
   dayLevelHearingDateAvailabilityConventionOnly:true,
   noNamedChoicesFromAttendanceVoiceOrCountOnly:true,
   sourceLedgerAndDataNotVoteRowWrite:true,
-  byYear,perIndexedMeeting:ledger.sort((a,b)=>a.year-b.year||
+  byYear,
+  missingActionReviewQueue:missingActionReviewQueue.sort((a,b)=>
+   a.reviewPriority-b.reviewPriority||a.year-b.year||
+   a.committeeName.localeCompare(b.committeeName)||
+   a.hearingDate.localeCompare(b.hearingDate)),
+  perIndexedMeeting:ledger.sort((a,b)=>a.year-b.year||
    a.hearingDate.localeCompare(b.hearingDate)||a.committeeName.localeCompare(b.committeeName))
  };
 }
