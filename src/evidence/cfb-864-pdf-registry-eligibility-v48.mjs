@@ -30,7 +30,7 @@ export function registry830(){
     ||!isDay(s.release_floor)||!isDay(s.estimated_on)
     ||(d.boardReceivedOnOriginal!==null&&!isDay(d.boardReceivedOnOriginal))
     ||(d.reportDueOn!==null&&!isDay(d.reportDueOn))
-    ||!['high','medium','low'].includes(d.confidence)
+    ||!['high_observed_by_not_historic','medium','medium_low','low_estimate'].includes(d.confidence)
     ||s.estimated_on>d.websiteObservedByOn)
    throw Error('Unverifiable official PDF version registry record');
   return {id:s.id,reg:s.reg,year:s.year,url:s.url,sha:s.sha,bytes,
@@ -139,7 +139,7 @@ export const REVALIDATE_SQL=[
  "AND p.committee_registration=t.m->>'filerRegistrationNumber'",
  "AND p.report_year::text=t.m->>'year'",
  'WHERE t.scope IN ('+SCOPE_SQL+')',
- ') SELECT m->>\\'year\\' AS year,family,scope,',
+  ") SELECT m->>\'year\' AS year,family,scope,",
  'count(*)::text AS eligible_copies,',
  'count(*) FILTER (WHERE possibilities IS NOT NULL)::text AS candidate_year_candidates,',
  'count(*) FILTER (WHERE possibilities=1)::text AS unique_candidate_pdf,',
