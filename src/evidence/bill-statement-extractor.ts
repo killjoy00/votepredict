@@ -196,3 +196,12 @@ export function extractExplicitBillStatements(input: ExtractBillStatementsInput)
   }
   return [...unique.values()];
 }
+
+// Evaluation-only extraction policies share one internal implementation while
+// retaining the original v3/v4 output contracts and provenance version strings.
+export {
+  QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V3_VERSION,
+  QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V4_VERSION,
+  extractExplicitBillStatementsV3,
+  extractExplicitBillStatementsV4,
+} from './bill-statement-evaluation';

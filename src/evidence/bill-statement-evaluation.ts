@@ -1,7 +1,13 @@
 import type { DurableEvidenceDraft, DurableEvidenceFreshness } from './durable-ingestion';
 import type { BillReference, ExtractBillStatementsInput } from './bill-statement-extractor';
 
+// Evaluation-only historical policies: v3 includes some recorded-vote language; v4 excludes it.
+// Keep the outputs distinct from the live production v2 pipeline until a separately
+// approved evidence-eligibility change and historical evaluation occurs.
 export const QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V3_VERSION = 'quick-evidence-statement-v3' as const;
+export const QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V4_VERSION = 'quick-evidence-statement-v4' as const;
+
+type EvaluationPolicy = 'v3' | 'v4';
 
 type BillMention = {
   bill: BillReference;
@@ -44,11 +50,15 @@ function targetAttributionPattern(memberName: string): RegExp {
   );
 }
 
-const SUPPORT = /\b(?:support(?:s|ed|ing)?|back(?:s|ed|ing)|back(?=\s+(?:(?:HF|SF)\s*\d|(?:House|Senate)\s+File\b))|endorse(?:s|d|ment)?|vote(?:d|s|ing)?\s+(?:yes|aye|for)|vote(?:d|s|ing)?\s+in\s+favor(?:\s+of)?|vote(?:d|s|ing)?\s+to\s+pass|will\s+vote\s+(?:yes|aye|for))\b/i;
+const SUPPORT_V4 = /\b(?:support(?:s|ed|ing)?|back(?:s|ed|ing)|back(?=\s+(?:(?:HF|SF)\s*\d|(?:House|Senate)\s+File\b))|endorse(?:s|d|ment)?|will\s+vote\s+(?:yes|aye|for))\b/i;
+const SUPPORT_V3 = /\b(?:support(?:s|ed|ing)?|back(?:s|ed|ing)|back(?=\s+(?:(?:HF|SF)\s*\d|(?:House|Senate)\s+File\b))|endorse(?:s|d|ment)?|vote(?:d|s|ing)?\s+(?:yes|aye|for)|vote(?:d|s|ing)?\s+in\s+favor(?:\s+of)?|vote(?:d|s|ing)?\s+to\s+pass|will\s+vote\s+(?:yes|aye|for))\b/i;
 const NEGATED_SUPPORT = /\b(?:(?:do|does|did)\s+not\s+support|(?:cannot|can't|won't|wouldn't)\s+support|will\s+not\s+support|will\s+not\s+vote\s+for|(?:cannot|can't|won't|wouldn't)\s+vote\s+for)\b/i;
-const OPPOSE = /\b(?:oppos(?:e|es|ed|ing)|reject(?:s|ed|ing)?|vote(?:d|s|ing)?\s+(?:no|nay|against)|will\s+vote\s+(?:no|nay|against))\b/i;
+const OPPOSE_V4 = /\b(?:oppos(?:e|es|ed|ing)|will\s+vote\s+(?:no|nay|against))\b/i;
+const OPPOSE_V3 = /\b(?:oppos(?:e|es|ed|ing)|reject(?:s|ed|ing)?|vote(?:d|s|ing)?\s+(?:no|nay|against)|will\s+vote\s+(?:no|nay|against))\b/i;
 const INTERVENING_ACTOR = /\b(?:democrats?|republicans?|dfl(?:ers)?|gop|governor|committee|house|senate|members?|lawmakers?|colleagues?|opponents?|supporters?)\b/i;
-const LIMITED_OBJECT = /\b(?:amendment|amendments|provision|provisions|section|sections|language|alternative|alternatives|substitute|proposal|proposals|portion|component|components)\b/i;
+const LIMITED_OBJECT_V4 = /\b(?:amendment|amendments|provision|provisions|section|sections|language|alternative|alternatives|substitute|proposal|proposals|portion|component|components|schools?|students?|investment|funding|program|initiative|effort|goal|concept|idea|approach|policy)\b/i;
+const LIMITED_OBJECT_V3 = /\b(?:amendment|amendments|provision|provisions|section|sections|language|alternative|alternatives|substitute|proposal|proposals|portion|component|components)\b/i;
+const YEAR_CONTEXT = /\b(?:19|20)\d{2}\b/;
 
 function billMentions(text: string, billByKey: ReadonlyMap<string, BillReference>): BillMention[] {
   const mentions: BillMention[] = [];
@@ -89,6 +99,13 @@ function matchEnd(match: RegExpMatchArray | null): number {
   return match?.index === undefined ? -1 : match.index + match[0].length;
 }
 
+function completedVoteWrapsStance(excerpt: string, stance: RegExpMatchArray): boolean {
+  const stanceStart = stance.index ?? -1;
+  if (stanceStart < 0) return false;
+  const before = excerpt.slice(Math.max(0, stanceStart - 32), stanceStart);
+  return /\bvote(?:d|s|ing)?\s+(?:in\s+)?$/i.test(before);
+}
+
 function nearestTargetAttribution(excerpt: string, stanceIndex: number, memberName: string): RegExpMatchArray | null {
   const pattern = targetAttributionPattern(memberName);
   const matches = [...excerpt.matchAll(new RegExp(pattern.source, 'gi'))];
@@ -110,19 +127,32 @@ function attributionIsTight(excerpt: string, attribution: RegExpMatchArray, stan
   return true;
 }
 
-function cueTargetsWholeBill(excerpt: string, stance: RegExpMatchArray, billIndex: number, billRaw: string): boolean {
+function cueTargetsWholeBill(excerpt: string, stance: RegExpMatchArray, billIndex: number, billRaw: string, policy: EvaluationPolicy): boolean {
   const stanceStart = stance.index ?? -1;
   if (stanceStart < 0 || billIndex < 0) return false;
   if (Math.abs(stanceStart - billIndex) > 100) return false;
 
   const stanceEnd = stanceStart + stance[0].length;
   const billEnd = billIndex + billRaw.length;
-  const between = excerpt.slice(Math.min(stanceEnd, billEnd), Math.max(stanceStart, billIndex));
-  if (LIMITED_OBJECT.test(between)) return false;
+  if (policy === 'v3') {
+    const between = excerpt.slice(Math.min(stanceEnd, billEnd), Math.max(stanceStart, billIndex));
+    if (LIMITED_OBJECT_V3.test(between)) return false;
+    return true;
+  }
+  if (stanceStart < billIndex) {
+    const between = excerpt.slice(stanceEnd, billIndex);
+    if (between.length > 48) return false;
+    if (LIMITED_OBJECT_V4.test(between)) return false;
+  } else {
+    const between = excerpt.slice(billEnd, stanceStart);
+    if (between.length > 60) return false;
+    if (LIMITED_OBJECT_V4.test(between)) return false;
+    if (YEAR_CONTEXT.test(between)) return false;
+  }
   return true;
 }
 
-export function extractExplicitBillStatementsV3(input: ExtractBillStatementsInput): DurableEvidenceDraft[] {
+function extractEvaluationBillStatements(input: ExtractBillStatementsInput, policy: EvaluationPolicy): DurableEvidenceDraft[] {
   const drafts: DurableEvidenceDraft[] = [];
   const billByKey = new Map(input.bills.map((bill) => [
     bill.identifier.toUpperCase().replace(/\s+/g, ''),
@@ -132,8 +162,8 @@ export function extractExplicitBillStatementsV3(input: ExtractBillStatementsInpu
   for (const mention of billMentions(input.text, billByKey)) {
     const excerpt = statementWindow(input.text, mention.start, mention.start + mention.raw.length);
     const negatedSupportMatch = excerpt.match(NEGATED_SUPPORT);
-    let supportMatch = excerpt.match(SUPPORT);
-    let opposeMatch = excerpt.match(OPPOSE);
+    let supportMatch = excerpt.match(policy === 'v4' ? SUPPORT_V4 : SUPPORT_V3);
+    let opposeMatch = excerpt.match(policy === 'v4' ? OPPOSE_V4 : OPPOSE_V3);
 
     if (negatedSupportMatch) {
       const negatedStart = negatedSupportMatch.index ?? -1;
@@ -146,12 +176,13 @@ export function extractExplicitBillStatementsV3(input: ExtractBillStatementsInpu
     if (Boolean(supportMatch) === Boolean(opposeMatch)) continue;
     const stanceMatch = supportMatch ?? opposeMatch;
     if (!stanceMatch) continue;
+    if (policy === 'v4' && completedVoteWrapsStance(excerpt, stanceMatch)) continue;
 
     const attributionMatch = nearestTargetAttribution(excerpt, stanceMatch.index ?? -1, input.memberName);
     if (!attributionMatch || !attributionIsTight(excerpt, attributionMatch, stanceMatch)) continue;
 
     const billIndex = excerpt.toLowerCase().indexOf(mention.raw.toLowerCase());
-    if (!cueTargetsWholeBill(excerpt, stanceMatch, billIndex, mention.raw)) continue;
+    if (!cueTargetsWholeBill(excerpt, stanceMatch, billIndex, mention.raw, policy)) continue;
 
     const attributionIndex = attributionMatch.index ?? -1;
     const stanceIndex = stanceMatch.index ?? -1;
@@ -178,8 +209,8 @@ export function extractExplicitBillStatementsV3(input: ExtractBillStatementsInpu
       sourceQuality: 'member_primary',
       relevance: 'direct',
       freshness: freshness(input.publishedAt ?? input.fetchedAt, input.fetchedAt),
-      extractionMethod: 'deterministic-explicit-bill-statement-v3-evaluation',
-      extractionVersion: QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V3_VERSION,
+      extractionMethod: 'deterministic-explicit-bill-statement-' + policy + '-evaluation',
+      extractionVersion: policy === 'v4' ? QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V4_VERSION : QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V3_VERSION,
       confidence: 0.98,
       metadata: {
         contextType: 'quick_evidence',
@@ -192,6 +223,7 @@ export function extractExplicitBillStatementsV3(input: ExtractBillStatementsInpu
         exactBillIdentifier: mention.bill.identifier,
         evidenceSeriesKey: seriesKey,
         evaluationOnly: true,
+        ...(policy === 'v4' ? { excludesCompletedVoteActionHistory: true } : {}),
       },
     });
   }
@@ -202,4 +234,13 @@ export function extractExplicitBillStatementsV3(input: ExtractBillStatementsInpu
     if (!unique.has(key)) unique.set(key, draft);
   }
   return [...unique.values()];
+}
+
+/** Preserve historical audit result shape without shipping separate versioned algorithms. */
+export function extractExplicitBillStatementsV3(input: ExtractBillStatementsInput): DurableEvidenceDraft[] {
+  return extractEvaluationBillStatements(input, 'v3');
+}
+
+export function extractExplicitBillStatementsV4(input: ExtractBillStatementsInput): DurableEvidenceDraft[] {
+  return extractEvaluationBillStatements(input, 'v4');
 }

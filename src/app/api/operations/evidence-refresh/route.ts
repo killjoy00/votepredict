@@ -1,5 +1,4 @@
-import { runLiveCampaignFinanceRefresh } from '@/evidence/live-campaign-finance-refresh';
-import { runProductionEvidenceRefresh } from '@/evidence/production-refresh';
+import { evidenceRefresh } from '@/evidence/refresh';
 import { NextResponse } from 'next/server';
 
 export const maxDuration = 300;
@@ -14,8 +13,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await runProductionEvidenceRefresh();
-    const liveCampaignFinance = await runLiveCampaignFinanceRefresh();
+    const result = await evidenceRefresh.production();
+    const liveCampaignFinance = await evidenceRefresh.campaignFinance();
     return NextResponse.json({ generatedAt: new Date().toISOString(), ...result, liveCampaignFinance });
   } catch (error) {
     console.error('Production evidence refresh failed', error instanceof Error ? error.name : 'Error');

@@ -1,0 +1,489 @@
+[
+  {
+    "name": "first-person-support",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "Legislative update. I strongly support HF 1234 because it addresses this issue for our district.",
+      "publishedAt": "2026-08-10T12:00:00.000Z",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "named-opposition",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Alice Mann",
+      "text": "Senator Alice Mann opposes SF55 and will vote against SF 55 if it reaches the floor.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  },
+  {
+    "name": "completed-vote-to-pass",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Doron Clark",
+      "text": "Senator Doron Clark voted to pass Senate File 55 after debate on the measure.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "not-support",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Alice Mann",
+      "text": "Senator Alice Mann cannot support SF55 due to major concerns.",
+      "publishedAt": "2026-08-10T12:00:00.000Z",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  },
+  {
+    "name": "tight-bill-back",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I back HF 1234 and will keep fighting for this proposal.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "completed-vote-against",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Doron Clark",
+      "text": "Senator Doron Clark voted against Senate File 55 last night.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  },
+  {
+    "name": "vote-plan",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I will vote yes for HF 1234 because it is needed.",
+      "publishedAt": "2026-08-10T12:00:00.000Z",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "remote-opponent",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "Senator Alice Mann opposes HF1234. Representative Mary Franson praised improvements to the district.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  },
+  {
+    "name": "limited-amendment",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I support the amendment to HF 1234 in this proposal.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "limited-education",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I support investments in schools under HF 1234.",
+      "publishedAt": "2026-08-10T12:00:00.000Z",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  },
+  {
+    "name": "historical-year-context",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I support the 2022 language included in HF 1234.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "other-bill",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I strongly support HF9999 and its passage.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  },
+  {
+    "name": "unknown-member",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "They oppose SF55, but no candidate is named here.",
+      "publishedAt": "2026-08-10T12:00:00.000Z",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "newspaper-quote",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Alice Mann",
+      "text": "Senator Alice Mann has announced that she opposes Senate File 55.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  },
+  {
+    "name": "compound-stances",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I support HF 1234 for the district. I oppose SF55 and have discussed this issue for months.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "no-position",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I attended a hearing for HF1234 last week and met with the sponsors.",
+      "publishedAt": "2026-08-10T12:00:00.000Z",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  },
+  {
+    "name": "endorse-reference",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I endorse House File 1234 as an important direction for the state.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "reject-bill",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I reject HF1234 and urge the committee to reconsider.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  },
+  {
+    "name": "against-bill",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I am against HF1234 and have always been against the bill.",
+      "publishedAt": "2026-08-10T12:00:00.000Z",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "member_primary_article"
+    }
+  },
+  {
+    "name": "bill-year-back-reference",
+    "input": {
+      "membershipId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "memberName": "Mary Franson",
+      "text": "I back Senate File 55 with strong protections for residents in 2026.",
+      "fetchedAt": "2026-09-19T12:00:00.000Z",
+      "bills": [
+        {
+          "id": "11111111-1111-1111-1111-111111111111",
+          "identifier": "HF1234"
+        },
+        {
+          "id": "22222222-2222-2222-2222-222222222222",
+          "identifier": "SF55"
+        },
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "identifier": "HF1"
+        }
+      ],
+      "sourceSubtype": "campaign_site_page"
+    }
+  }
+]
