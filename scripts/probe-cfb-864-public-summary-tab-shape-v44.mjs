@@ -29,7 +29,7 @@ async function candidate(t){
   m[0].replace(/[\w.+%-]+@[\w.-]+/g,'[email removed]').replace(/\+?\d[\d ()-]{8,}/g,'[phone removed]'));
  const scriptUrls=[...html.matchAll(/<script[^>]+src=["']([^"']{0,180})["']/gi)].map(m=>m[1]).filter(x=>!x.includes('google')&&!x.includes('cdn')).slice(-20);
  const outcome=[];
- for(const tabname of ['reports_data','financial_summary','financial_summary_data','financial_data']){
+ for(const tabname of ['reports_data','financial']){
   try{
    const p=new URLSearchParams({id:t.reg,year:String(t.segment),
     'year_data[ElectionSegmentEndDate]':String(t.segment),
