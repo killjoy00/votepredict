@@ -74,7 +74,7 @@ export function selectOriginalFlagged81(input:unknown){
   throw Error('81 unique independently verified original flagged date/SHA identity drift');
  return flagged;
 }
-async function exactOriginal(r:Row){
+export async function exactOriginal(r:Row){
  const url=new URL(r.originalSourceUrl);
  if(url.protocol!=='https:'||url.hostname!=='www.lrl.mn.gov'||url.search||url.hash||
   !url.pathname.startsWith('/archive/minutes/senate/'+r.year+'/')||
@@ -104,7 +104,7 @@ async function exactOriginal(r:Row){
   throw Error('Original government text OCR or parser drift HOLD');
  return pdf;
 }
-function readReports(folder:string){
+export function readReports(folder:string){
  const names=readdirSync(folder).filter(x=>/^remaining-ocr-202[2-5]-\d+\.json$/.test(x));
  if(names.length!==16)throw Error('Need 16 unmodified source artifact JSON files');
  return names.map(n=>{
