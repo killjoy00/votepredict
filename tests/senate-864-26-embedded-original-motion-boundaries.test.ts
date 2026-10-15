@@ -6,7 +6,7 @@ import {selectExactFlagged26FromAll323} from
 const manifest=JSON.parse(readFileSync(
  'docs/evaluation/source-proof/senate-864-323-embedded-original-source-artifact-manifest.json','utf8'));
 function fixture(){
- const years=[[2022,77,6,3],[2023,97,6,3],[2024,41,3,1],[2025,108,11,10]] as const;
+ const years=[[2022,77,6,1],[2023,97,6,5],[2024,41,3,1],[2025,108,11,10]] as const;
  const a:any[]=[];
  for(const [year,total,flagged,formal] of years){
   const rows=Array.from({length:total},(_,i)=>({
@@ -49,7 +49,7 @@ test('all 48 source receipts conservatively partition 323 different raw original
   [6,6,3,11]);
  assert.deepEqual([2022,2023,2024,2025].map(y=>
   rows.filter(x=>x.year===y&&x.explicitRecordedMotionResultCues>0).length),
-  [3,3,1,10]);
+  [1,5,1,10]);
  assert.equal(new Set(rows.map(x=>x.originalSourceUrl)).size,26);
  assert.deepEqual(rows,selectExactFlagged26FromAll323(fixture(),manifest));
 });
