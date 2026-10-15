@@ -4,7 +4,7 @@ import { requireOwner } from '@/lib/auth/guard';
 import { loadLegislatorGamblingSummary } from '@/gambling/intelligence';
 import { loadLegislatorIssueSummaries } from '@/legislators/issue-summary';
 import { loadLegislatorProfile } from '@/legislators/profile';
-import { officialFilingStatusLabel } from '@/evidence/cfb-historical-official-filings';
+import { officialFilingDisplayTitle, officialFilingStatusLabel } from '@/evidence/cfb-historical-official-filings';
 import gamblingStyles from './gambling-summary.module.css';
 import issueStyles from './issue-summary.module.css';
 import styles from '../legislators.module.css';
@@ -404,7 +404,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 <div className={styles.financeList}>
                   {[...historicalFilings.filings].reverse().slice(0, 8).map((filing) => (
                     <div className={styles.financeItem} key={filing.id}>
-                      <strong>{filing.year} {filing.kind === 'original' ? 'original report' : `amendment ${filing.amendment}`}</strong>
+                      <strong>{officialFilingDisplayTitle(filing)}</strong>
                       <span>{officialFilingStatusLabel(filing.status)}</span>
                       <a href={filing.url} target="_blank" rel="noreferrer" className={styles.sourceLink}>Open CFB filing ↗</a>
                     </div>
@@ -416,7 +416,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                     <div className={styles.financeList}>
                       {[...historicalFilings.filings].slice(0, -8).reverse().map((filing) => (
                         <div className={styles.financeItem} key={filing.id}>
-                          <strong>{filing.year} {filing.kind === 'original' ? 'original report' : `amendment ${filing.amendment}`}</strong>
+                          <strong>{officialFilingDisplayTitle(filing)}</strong>
                           <span>{officialFilingStatusLabel(filing.status)}</span>
                           <a href={filing.url} target="_blank" rel="noreferrer" className={styles.sourceLink}>Open CFB filing ↗</a>
                         </div>
