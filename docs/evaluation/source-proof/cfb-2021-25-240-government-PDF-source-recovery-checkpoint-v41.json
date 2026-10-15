@@ -28,5 +28,8 @@
   "newSourceLedger": "docs/evaluation/source-proof/cfb-2021-25-240-new-government-PDF-source-retrieval-v41.psv",
   "fullSourceLedger": "docs/evaluation/source-proof/cfb-2021-25-95-senators-830-indexed-830-downloaded-v41.psv",
   "profileSourceJson": "data/cfb-senate-official-filings-2021-25-v41.json",
-  "originalIndependentReplayWorkflowRunId": null
+  "originalIndependentReplayWorkflowRunId": 38751927330,
+  "originalIndependentReplayJobId": 116482128081,
+  "independentlyReplayedSourceFullPdfHashesAndBytesEqual": true,
+  "independentlyReplayedSourcesCount": 240
 }
