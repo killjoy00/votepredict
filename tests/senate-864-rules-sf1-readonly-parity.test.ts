@@ -140,6 +140,26 @@ test('any historic membership ambiguity, missing source document, changed byte i
    c.membership_id===ids[0]?{...c,choice:'nay'}:c)
  }).holds,2);
 });
+test('per-choice private roster resolution distinguishes nine matched from an all-or-none hold',()=>{
+ const report=compareRulesOriginalToStored(source,{
+  ...db(),historicalRoster:roster.slice(0,9)
+ });
+ assert.equal(report.holds,2);
+ assert.equal(report.serviceDayResolvedOriginalMemberChoices,0);
+ assert.equal(report.historicalRosterRows,9);
+ assert.equal(report.historicalRosterActiveOnHearingDate,9);
+ assert.deepEqual(report.perMotionHistoricalNameResolution.map(x=>({
+  matched:x.matched,ambiguous:x.ambiguous,unmatched:x.unmatched,
+  invalid:x.matchedWithInvalidMembershipId,unresolved:x.unresolvedSourcePositions,
+  duplicates:x.duplicateResolvedMemberships
+ })),Array(2).fill(null).map(()=>({
+  matched:9,ambiguous:0,unmatched:1,invalid:0,unresolved:[9],duplicates:0
+ })));
+ const serial=JSON.stringify(report);
+ assert.equal(assertSafeRulesSF1AggregateReceipt(serial),true);
+ assert.ok(!serial.includes('FictionalMember'));
+ assert.ok(!serial.includes(ids[0]));
+});
 test('invalid original sides and unbounded stored rows refuse source-to-database declaration',()=>{
  assert.equal(validateOriginalRulesSF1({
   ...source,rolls:source.rolls.map((r,i)=>i===0?{...r,memberVotes:r.memberVotes.slice(1)}:r)
@@ -165,7 +185,7 @@ test('safe SF1 aggregate receipt is not rejected by sourceNamedMotions field sub
  assert.throws(()=>assertSafeRulesSF1AggregateReceipt(
   JSON.stringify({large:'x'.repeat(4100)})),/private identity gate/);
  assert.equal(ONE_SHOT_MARKER,
-  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V2');
+  'SENATE_864_2023_RULES_SF1_PROTECTED_PARITY_ONESHOT_20261015_V3');
 });
 test('protected SQL has five bounded SELECTs only and gate requires reviewed main SHA',()=>{
  assert.equal(READ_ONLY_QUERIES.length,5);
