@@ -5,6 +5,8 @@ on:
       - src/evidence/senate-864-all-source-action-inventory.ts
       - scripts/build-senate-864-all-source-action-inventory.ts
       - tests/senate-864-all-original-source-action-inventory.test.ts
+      - src/evidence/senate-864-verified-motion-addition-plan.ts
+      - tests/senate-864-verified-motion-addition-plan.test.ts
       - docs/evaluation/source-proof/senate-864-2022-25-141-official-no-pdf-meeting-to-Clerk-crosswalk.json
       - docs/evaluation/source-proof/senate-864-2023-fifty-original-clerk-three-run-union-receipts.json
       - docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-source-receipts-v2.json
@@ -33,6 +35,7 @@ jobs:
         run: |
           npx tsc --noEmit
           node --import tsx --test tests/senate-864-all-original-source-action-inventory.test.ts
+          node --import tsx --test tests/senate-864-verified-motion-addition-plan.test.ts
       - name: Independently verify immutable official 1592-day indexed/PDF source ledger artifact ZIP SHA
         env:
           GH_TOKEN: ${{ github.token }}
