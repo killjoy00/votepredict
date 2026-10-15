@@ -1,0 +1,96 @@
+name: '#864 remaining 149 zero-action OCR Senate originals: SHA-bound source recall'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-568-zero-action-original-triage.ts
+      - scripts/audit-senate-864-568-zero-action-originals-sample.ts
+      - tests/senate-864-568-zero-action-original-triage.test.ts
+      - .github/workflows/senate-864-remaining149-ocr-original-source-recall.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  remaining_ocr_original_minutes:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include:
+          - { year: 2022, shard: 0, total: 10 }
+          - { year: 2022, shard: 1, total: 10 }
+          - { year: 2022, shard: 2, total: 10 }
+          - { year: 2022, shard: 3, total: 10 }
+          - { year: 2022, shard: 4, total: 10 }
+          - { year: 2022, shard: 5, total: 10 }
+          - { year: 2022, shard: 6, total: 10 }
+          - { year: 2022, shard: 7, total: 10 }
+          - { year: 2022, shard: 8, total: 10 }
+          - { year: 2022, shard: 9, total: 10 }
+          - { year: 2023, shard: 0, total: 1 }
+          - { year: 2024, shard: 0, total: 1 }
+          - { year: 2025, shard: 0, total: 4 }
+          - { year: 2025, shard: 1, total: 4 }
+          - { year: 2025, shard: 2, total: 4 }
+          - { year: 2025, shard: 3, total: 4 }
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify frozen original index, 149-source partition and read-only safeguards
+        run: |
+          npx tsc --noEmit
+          node --import tsx --test tests/senate-864-568-zero-action-original-triage.test.ts
+      - name: Ensure PDF text plus OCR tools available
+        run: |
+          if ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - name: Pin the immutable original 1592-day government index artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          digest=$(gh api repos/killjoy00/votepredict/actions/artifacts/11776560365 --jq '.digest')
+          test "$digest" = "sha256:f801aac6a68f6d57d12ea544548860a3f6f2e57b858035f8468068fce6007fe5"
+      - name: Acquire pinned official-source SHA and original action inventory
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11776560365'
+          repository: killjoy00/votepredict
+          run-id: 38314080633
+          github-token: ${{ github.token }}
+          path: artifacts/original
+          merge-multiple: true
+      - name: Re-fetch all as-yet-unreviewed OCR Senate minutes and re-run motion extraction
+        run: |
+          node --import tsx scripts/audit-senate-864-568-zero-action-originals-sample.ts \
+            --year ${{ matrix.year }} \
+            --index-ledger artifacts/original/1592-official-meetings-to-source-action-candidates.json \
+            --output artifacts/remaining-ocr-${{ matrix.year }}-${{ matrix.shard }}.json \
+            --remaining-ocr-shard ${{ matrix.shard }} \
+            --total-ocr-shards ${{ matrix.total }}
+      - name: Require original bytes to match exact government PDF SHA
+        run: |
+          node -e 'const fs=require("fs"); const a=JSON.parse(fs.readFileSync(process.argv[1]));if(a.originalsHeld!==0||a.originalShaReverified!==a.selectedOriginals||a.sourceToStoredEventAndMemberParityPerformed!==false||a.no2021Sources!==true||a.noProductionDatabaseReadWrite!==true){console.error("SENATE864_ORIGINAL_OCR_SOURCE_HOLD");process.exit(1)}' \
+            artifacts/remaining-ocr-${{ matrix.year }}-${{ matrix.shard }}.json
+      - name: Save exact source SHA and bounded review categories only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-remaining-ocr-${{ matrix.year }}-${{ matrix.shard }}
+          path: artifacts/remaining-ocr-${{ matrix.year }}-${{ matrix.shard }}.json
+          if-no-files-found: ignore
+          retention-days: 30

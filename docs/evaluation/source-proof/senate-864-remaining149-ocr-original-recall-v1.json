@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "senate-864-remaining149-zero-firstpass-ocr-source-recall-v1",
+  "issue": 864,
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "sourceAuditRunId": 38755921210,
+  "reviewedCommitSha": "76c90534d4ba243c36dff28d6cc80c31f7bd1b98",
+  "original1592IndexArtifactId": 11776560365,
+  "original1592IndexZipSha256": "f801aac6a68f6d57d12ea544548860a3f6f2e57b858035f8468068fce6007fe5",
+  "originalZeroActionOcrCohort": 197,
+  "previouslyReviewedOcr": 48,
+  "newlyVerifiedUniqueOriginalPdfs": 149,
+  "originalPdfTransportOrHashHolds": 0,
+  "newlyFlaggedSourceOriginalsForMotionReview": 81,
+  "flaggedWithPotentialOriginalMotionOrRollCues": 79,
+  "parserNowRecognizesContextOnlyCases": 2,
+  "remainsNoDetectedActionCue": 68,
+  "candidateContextActionOccurrences": 235,
+  "candidateIndividualNamedRolls": 0,
+  "candidateCountOnlyRolls": 0,
+  "explicitFormalResultTextCues": 207,
+  "exactActualDistinctRecordedMotionsCertified": false,
+  "sourceToStoredMotionMemberVoteParityPerformed": false,
+  "noProductionDatabaseReadOrWrite": true,
+  "no2021Included": true,
+  "stillUnreviewedOriginalZeroActionEmbeddedTextPdfs": 323,
+  "yearRows": [
+    {
+      "year": 2022,
+      "sourcePdfs": 101,
+      "flaggedDocuments": 54,
+      "contextActionCandidates": 179,
+      "formalResultTextCues": 162
+    },
+    {
+      "year": 2023,
+      "sourcePdfs": 10,
+      "flaggedDocuments": 4,
+      "contextActionCandidates": 7,
+      "formalResultTextCues": 7
+    },
+    {
+      "year": 2024,
+      "sourcePdfs": 1,
+      "flaggedDocuments": 1,
+      "contextActionCandidates": 4,
+      "formalResultTextCues": 4
+    },
+    {
+      "year": 2025,
+      "sourcePdfs": 37,
+      "flaggedDocuments": 22,
+      "contextActionCandidates": 45,
+      "formalResultTextCues": 34
+    }
+  ],
+  "originalShaProofZipArtifacts": [
+    {
+      "year": 2022,
+      "shard": 0,
+      "artifactId": 11984070475,
+      "zipSha256": "f974fadb48166ccd3a26a239f7ff0aa8153992584e584285d6134f951fb80ece",
+      "originalPdfs": 11,
+      "flaggedSourcePdfs": 7
+    },
+    {
+      "year": 2022,
+      "shard": 1,
+      "artifactId": 11983916860,
+      "zipSha256": "5dead78f3f71ac657917cfebc8d4a3905db6e11d589aaa28756861f8e99cffb1",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 4
+    },
+    {
+      "year": 2022,
+      "shard": 2,
+      "artifactId": 11983487253,
+      "zipSha256": "9f8e93a922e20991640839a23175bb2fed59ac43ad3eb832507a349bf3e6e6bf",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 4
+    },
+    {
+      "year": 2022,
+      "shard": 3,
+      "artifactId": 11982878986,
+      "zipSha256": "d27193ef1b3bbbfe28f710f3448d3c69e94fbad3a4418b738e8a3dafa25393b7",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 4
+    },
+    {
+      "year": 2022,
+      "shard": 4,
+      "artifactId": 11983927029,
+      "zipSha256": "134388f637dbcff6e3c05897f7532ebdce02ad7066acc92caa2959a0ae923b55",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 8
+    },
+    {
+      "year": 2022,
+      "shard": 5,
+      "artifactId": 11983023999,
+      "zipSha256": "25f4922f53f14723abe5c303bc97ace3e32c8a59a20dc332ffc26bda74513996",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 4
+    },
+    {
+      "year": 2022,
+      "shard": 6,
+      "artifactId": 11982854591,
+      "zipSha256": "f0be8ac08c283c5294cef20fb607d5109dceac455af8c4c4164fb1b668acd527",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 7
+    },
+    {
+      "year": 2022,
+      "shard": 7,
+      "artifactId": 11983452856,
+      "zipSha256": "0ced7a4edb80ffdd485eafe02ebbb17236743f0285a4ac255f14b85b6a249646",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 4
+    },
+    {
+      "year": 2022,
+      "shard": 8,
+      "artifactId": 11984240792,
+      "zipSha256": "12a077ea627aa9cce6858567f41fdc85052c47a45f58980659fa732c7ad50ba5",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 7
+    },
+    {
+      "year": 2022,
+      "shard": 9,
+      "artifactId": 11984440305,
+      "zipSha256": "20aeab7830939338826dad25a23740ea454b5c720228bbdefb017ee11e187c3c",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 5
+    },
+    {
+      "year": 2023,
+      "shard": 0,
+      "artifactId": 11983937603,
+      "zipSha256": "d8c56eb5292114d7a42997dc00c76d50577351f2fcddc255a10e1f26edb9cc5a",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 4
+    },
+    {
+      "year": 2024,
+      "shard": 0,
+      "artifactId": 11984445536,
+      "zipSha256": "08593202c085ac027c9cf43549d6baac52366d8bd817571482f361dae6dda9a4",
+      "originalPdfs": 1,
+      "flaggedSourcePdfs": 1
+    },
+    {
+      "year": 2025,
+      "shard": 0,
+      "artifactId": 11983702808,
+      "zipSha256": "6a45e717fdb8c2d699b9215bfd5f96defb433ea7684bf03be1a5a52b8b5f173d",
+      "originalPdfs": 10,
+      "flaggedSourcePdfs": 6
+    },
+    {
+      "year": 2025,
+      "shard": 1,
+      "artifactId": 11984785130,
+      "zipSha256": "0083f421abb87dcec4da404b4d02a55da95ce39e91af61008600024573afa608",
+      "originalPdfs": 9,
+      "flaggedSourcePdfs": 6
+    },
+    {
+      "year": 2025,
+      "shard": 2,
+      "artifactId": 11983683173,
+      "zipSha256": "55891a7f703132c6661ab1b2b23889847c0f67061ccaeafaba0651ade3675ad2",
+      "originalPdfs": 9,
+      "flaggedSourcePdfs": 5
+    },
+    {
+      "year": 2025,
+      "shard": 3,
+      "artifactId": 11984695295,
+      "zipSha256": "ca35b419b86bcf9fbc1ae9431aef1d883a482de7ae1c99ef6307de39036c4c1a",
+      "originalPdfs": 9,
+      "flaggedSourcePdfs": 5
+    }
+  ],
+  "validation": "All 16 source QA jobs and the main CI passed on the reviewed commit. Original source artifacts in GitHub Actions have a 30-day retention. Counts refer to parser cues/observations, not 81 proven independent recorded votes."
+}
