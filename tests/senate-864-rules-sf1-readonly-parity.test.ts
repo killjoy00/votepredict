@@ -68,13 +68,52 @@ test('One direct original source with zero stored events can only produce two ad
  assert.ok(report.statuses.every(x=>x.status==='candidate_add_only_after_separate_approval'));
  assert.equal(report.noLegacyPositionalRekeyOrReplay,true);
 });
-test('same named membership votes and tally are not sufficient to certify a different motion text',()=>{
- const wrong={...event(0),motion_text:'Fictional DIFFERENT oral amendment on same bill and day'};
- const report=compareRulesOriginalToStored(source,db([wrong]));
- assert.equal(report.alreadyStoredExactly,0);
+test('ten-for-ten exact senator YEA/NAY choices confirm stored SF1 even when old motion text differs',()=>{
+ const changedText=[0,1].map(index=>({
+  ...event(index),motion_text:'Legacy imported differently formatted source motion '+index
+ }));
+ const report=compareRulesOriginalToStored(source,db(changedText));
+ assert.equal(report.alreadyStoredExactly,2);
+ assert.equal(report.holds,0);
  assert.equal(report.addOnlyCandidatesAwaitingSeparateApproval,0);
- assert.equal(report.holds,2);
- assert.equal(report.statuses[0]!.status,'hold_conflicting_existing_event');
+ assert.deepEqual(report.statuses.map(x=>x.status),
+  ['already_stored_exact','already_stored_exact']);
+ assert.ok(!JSON.stringify(report).includes('FictionalMember'));
+});
+test('full ten-voter agreement can distinguish two same-day same-tally candidate motions',()=>{
+ const extra={...event(0),id:'event-00',
+  motion_text:'Another prior amendment with identical numeric result'};
+ const snapshot=db([event(0),extra,event(1)]);
+ // Both stored 4-6 motions exist, but only event-0 has the true ten YEA/NAY sides.
+ const rival=snapshot.choices.find(x=>x.vote_event_id==='event-00'&&
+  x.membership_id===ids[0]);
+ assert.ok(rival);
+ rival.choice='nay';
+ const report=compareRulesOriginalToStored(source,snapshot);
+ assert.equal(report.alreadyStoredExactly,2);
+ assert.equal(report.holds,0);
+ assert.equal(report.addOnlyCandidatesAwaitingSeparateApproval,0);
+});
+test('two indistinguishable stored events both matching all ten votes must remain ambiguous',()=>{
+ const duplicate={...event(0),id:'event-00',motion_text:'Different legacy text'};
+ const report=compareRulesOriginalToStored(source,db([event(0),duplicate,event(1)]));
+ assert.equal(report.alreadyStoredExactly,1);
+ assert.equal(report.holds,1);
+ assert.equal(report.statuses[0]!.status,'hold_ambiguous_existing_event');
+});
+test('conflicting explicit amendment labels or wrong named sides never count as full matches',()=>{
+ const withSourceAmendment:OriginalRulesSource={...source,rolls:source.rolls.map(
+  (x,i)=>i===0?{...x,amendmentRef:'A12'}:x)};
+ const wrongRef={...event(0),amendment_ref:'A13'};
+ const conflict=compareRulesOriginalToStored(withSourceAmendment,db([wrongRef,event(1)]));
+ assert.equal(conflict.alreadyStoredExactly,1);
+ assert.equal(conflict.statuses[0]!.status,'hold_conflicting_existing_event');
+ const wrongSide=db([event(0),event(1)]);
+ wrongSide.choices=wrongSide.choices.map(x=>x.vote_event_id==='event-0'&&
+  x.membership_id===ids[0]?{...x,choice:'nay'}:x);
+ const sideMismatch=compareRulesOriginalToStored(source,wrongSide);
+ assert.equal(sideMismatch.alreadyStoredExactly,1);
+ assert.equal(sideMismatch.statuses[0]!.status,'hold_conflicting_existing_event');
 });
 test('one old stored SF1 event leaves the other ambiguous, never assumes absent identical-bill motion',()=>{
  const report=compareRulesOriginalToStored(source,db([event(0)]));
