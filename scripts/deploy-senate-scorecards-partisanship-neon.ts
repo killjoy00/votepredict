@@ -32,7 +32,7 @@ function requireMain(env:NodeJS.ProcessEnv):boolean {
     e.head_commit?.id!==env.GITHUB_SHA||e.forced===true||e.deleted===true||
     !e.head_commit?.message?.includes(MARKER))
     throw Error('Reviewed marker main SHA mismatch');
-  return e.head_commit.message.includes('SENATE_SCORECARD_REPARSE_STORED');
+  return !!e.head_commit?.message?.includes('SENATE_SCORECARD_REPARSE_STORED');
 }
 function ledgerExpected():Ledger[] {
   const files=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
