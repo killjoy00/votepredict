@@ -6,6 +6,7 @@
 import type {Pool} from 'pg';
 import {fetchRevisorBillSearchRangeDocument} from '../sources/minnesota/revisor-bill-search.js';
 import {RevisorPacer} from './senate-revisor-pacer.js';
+import {getMinnesotaHouseSession} from '../sources/minnesota/sessions.js';
 
 const SESSIONS = ['2025-2026','2023-2024','2021-2022'] as const;
 const MAX_BILL_NUMBER = 12000;
@@ -68,9 +69,17 @@ export async function importOfficialMinnesotaBillUniverse(
             }
             throw Error('Official Revisor catalog range unavailable: '+result.lastRange);
           }
-          if(doc.results.some(row=>
-            row.fileType!==fileType || row.fileNumber<first || row.fileNumber>last
-            || !new URL(row.statusXmlUrl).hostname.endsWith('.revisor.mn.gov')))
+          const session=getMinnesotaHouseSession(slug);
+          const firstYear=Number(session.startsOn.slice(0,4));
+          if(doc.results.some(row=>{
+            const uri=new URL(row.statusXmlUrl);
+            const path=uri.pathname.match(/^\/bills\/v1\/(\d+)\/(\d{4})\/0\/(HF|SF)\/(\d+)\/$/);
+            return row.fileType!==fileType || row.fileNumber<first || row.fileNumber>last ||
+              uri.protocol!=='https:' || uri.hostname!=='api.revisor.mn.gov' || !path ||
+              Number(path[1])!==session.legislature ||
+              ![firstYear,firstYear+1].includes(Number(path[2])) ||
+              path[3]!==fileType || Number(path[4])!==row.fileNumber;
+          }))
             throw Error('Official catalog returned a foreign, out-of-range, or mismatched bill');
           const unique=new Map(doc.results.map(row=>[row.identifier,row]));
           const rows=[...unique.values()].map(row=>({
