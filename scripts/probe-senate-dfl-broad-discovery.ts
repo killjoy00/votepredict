@@ -77,13 +77,14 @@ async function sitemap(path:string):Promise<void>{
     const snapshot=await getWayback(snap);
     let xml:string|null=null;
     if(snapshot.status===200)xml=(await snapshot.text()).slice(0,2500000);
-    const rawLocs=xml?[...xml.matchAll(/<loc>\s*([^<]{8,500})\s*<\/loc>/gi)]
-      .map(m=>m[1].trim().replace(/&amp;/g,'&')):[];
+    const rawLocs=xml?[...xml.matchAll(/<loc\b[^>]*>([\s\S]*?)<\/loc>/gi)]
+      .map(m=>m[1].replace(/<!\[CDATA\[|\]\]>/g,'').trim().replace(/&amp;/g,'&'))
+      .filter(x=>x.length>8&&x.length<750):[];
     const locs=rawLocs.map(originalDFLUrl).filter((x):x is string=>!!x);
     console.log('SENATE_DFL_SITEMAP='+JSON.stringify({path,status:200,captures:response.records.length,
       capture: capture.timestamp,replayStatus:snapshot.status,replayType:snapshot.headers.get('content-type'),
       payloadLength:xml?.length,xmlStart:xml?.slice(0,250),
-      rawLocCount:rawLocs.length,rawLocExamples:rawLocs.slice(0,9),
+      rawLocCount:rawLocs.length,rawLocExamples:rawLocs.slice(0,5),rawLocEnd:rawLocs.slice(-5),
       articleLocCount:locs.length,hasSitemapLinks:xml?xml.includes('sitemap'):false,
       examples:locs.slice(0,8)}));
   }catch(error){
@@ -99,6 +100,8 @@ async function main():Promise<void>{
   await sleep(1800);
   await sitemap('post-sitemap.xml');
   await sleep(1800);
-  await sitemap('wp-sitemap-posts-post-1.xml');
+  await sitemap('post-sitemap2.xml');
+  await sleep(1800);
+  await sitemap('sitemap.xml');
 }
 void main().catch(()=>{console.error('SENATE_DFL_BROAD_DISCOVERY_UNEXPECTED_ERROR');process.exitCode=1;});
