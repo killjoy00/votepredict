@@ -940,18 +940,6 @@
       "party": "DFL"
     },
     {
-      "id": "edmn-2026-sd24",
-      "publisher": "Education Minnesota",
-      "cycle": 2026,
-      "adapter": "edmn_pdf",
-      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/24-Simon-Glaser.pdf",
-      "title": "2026 Minnesota Legislative Screening",
-      "sourceKind": "publisher_response",
-      "candidate": "Simon Glaser",
-      "district": "24",
-      "party": "DFL"
-    },
-    {
       "id": "edmn-2026-sd26",
       "publisher": "Education Minnesota",
       "cycle": 2026,
