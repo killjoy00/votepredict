@@ -1,0 +1,56 @@
+name: Senate candidate questionnaire raw collector checks
+on:
+  pull_request:
+    paths:
+      - src/sources/minnesota/senate-questionnaire-raw.ts
+      - src/operations/senate-questionnaire-ingest.ts
+      - scripts/collect-senate-questionnaires.ts
+      - scripts/deploy-senate-questionnaires-neon.ts
+      - migrations/0019_mn_senate_questionnaire_raw.sql
+      - data/senate-questionnaire-sources.json
+      - tests/senate-questionnaires.test.ts
+      - .github/workflows/senate-questionnaires-ci.yml
+  push:
+    branches: ['collect/senate-candidate-questionnaires-20261015']
+permissions:
+  contents: read
+jobs:
+  raw-senate-questionnaires:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - name: Live MHP sample - actual State Senate response pages
+        run: |
+          node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source=mhp-housing-2026 --max-sources=3 --delay-ms=250 --out "$RUNNER_TEMP/answers.jsonl"
+          test -s "$RUNNER_TEMP/answers.jsonl"
+      - name: Live SNAP sample - published State Senate science questionnaire
+        run: |
+          node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source=snap-2026-robyn-gulley --out "$RUNNER_TEMP/science.jsonl"
+          test -s "$RUNNER_TEMP/science.jsonl"
