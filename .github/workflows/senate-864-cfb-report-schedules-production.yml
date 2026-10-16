@@ -91,23 +91,23 @@ jobs:
         with:
           node-version: "22"
       - run: npm ci --no-fund --no-audit
-      - name: Local static and full app tests
+      - name: Prepare ephemeral local PostgreSQL before application integration tests
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+          sudo -u postgres createdb votepredict
+      - name: Apply migrations and verify additive finance fixture
+        run: |
+          npm run db:migrate
+          node --import tsx scripts/verify-cfb-report-schedule-sql-local.mjs
+      - name: Verify public CFB source hashes and parser before opening credentials
+        run: node --import tsx scripts/probe-cfb-report-schedule-source-smoke.mjs
+      - name: Local static and full app tests with disposable DB available
         run: |
           node --check scripts/backfill-cfb-report-schedules-protected.mjs
           node --import tsx --test tests/cfb-report-schedule-provenance.test.mjs
           npm run check
           npm audit --omit=dev --audit-level=high
-      - name: Verify public CFB source hashes and parser before opening credentials
-        run: node --import tsx scripts/probe-cfb-report-schedule-source-smoke.mjs
-      - name: Prepare ephemeral local PostgreSQL
-        run: |
-          sudo systemctl start postgresql
-          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
-          sudo -u postgres createdb votepredict
-      - name: Verify additive schema and rollback fixture
-        run: |
-          npm run db:migrate
-          node --import tsx scripts/verify-cfb-report-schedule-sql-local.mjs
   guarded-existing-neon-raw-backfill:
     needs: [main-independent-presecret]
     if: >-
