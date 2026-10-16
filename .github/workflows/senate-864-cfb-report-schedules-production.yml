@@ -1,0 +1,232 @@
+name: "Senate #864 CFB raw official report schedules and exact transaction provenance"
+on:
+  pull_request:
+    paths:
+      - "migrations/0028_cfb_finance_report_schedule_provenance.sql"
+      - "src/evidence/cfb-report-schedule-raw.mjs"
+      - "scripts/backfill-cfb-report-schedules-protected.mjs"
+      - "scripts/verify-cfb-report-schedule-sql-local.mjs"
+      - "scripts/probe-cfb-report-schedule-source-smoke.mjs"
+      - "tests/cfb-report-schedule-provenance.test.mjs"
+      - ".github/workflows/senate-864-cfb-report-schedules-production.yml"
+  push:
+    branches: [main]
+    paths:
+      - "migrations/0028_cfb_finance_report_schedule_provenance.sql"
+      - "src/evidence/cfb-report-schedule-raw.mjs"
+      - "scripts/backfill-cfb-report-schedules-protected.mjs"
+      - "scripts/verify-cfb-report-schedule-sql-local.mjs"
+      - "scripts/probe-cfb-report-schedule-source-smoke.mjs"
+      - "tests/cfb-report-schedule-provenance.test.mjs"
+      - ".github/workflows/senate-864-cfb-report-schedules-production.yml"
+permissions:
+  contents: read
+concurrency:
+  group: "cfb-864-raw-schedule-provenance-${{ github.sha }}"
+  cancel-in-progress: false
+jobs:
+  pr-no-secret-tests:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Check source and exact-content synthetic matching
+        run: |
+          node --check src/evidence/cfb-report-schedule-raw.mjs
+          node --check scripts/backfill-cfb-report-schedules-protected.mjs
+          node --import tsx --test tests/cfb-report-schedule-provenance.test.mjs
+      - name: Verify SHA and extraction of two original 2025 official source PDFs (safe counts only)
+        run: node --import tsx scripts/probe-cfb-report-schedule-source-smoke.mjs
+      - name: Prepare disposable local PostgreSQL (no production access)
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+          sudo -u postgres createdb votepredict
+      - name: Apply all checked-in migrations and roll back SQL provenance fixture
+        run: |
+          npm run db:migrate
+          node --import tsx scripts/verify-cfb-report-schedule-sql-local.mjs
+      - name: App CI and build, without deployment
+        run: npm run check
+  main-independent-presecret:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_RAW_SCHEDULE_LINKS_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exactly the reviewed main revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Local static and full app tests
+        run: |
+          node --check scripts/backfill-cfb-report-schedules-protected.mjs
+          node --import tsx --test tests/cfb-report-schedule-provenance.test.mjs
+          npm run check
+          npm audit --omit=dev --audit-level=high
+      - name: Verify public CFB source hashes and parser before opening credentials
+        run: node --import tsx scripts/probe-cfb-report-schedule-source-smoke.mjs
+      - name: Prepare ephemeral local PostgreSQL
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+          sudo -u postgres createdb votepredict
+      - name: Verify additive schema and rollback fixture
+        run: |
+          npm run db:migrate
+          node --import tsx scripts/verify-cfb-report-schedule-sql-local.mjs
+  guarded-existing-neon-raw-backfill:
+    needs: [main-independent-presecret]
+    if: >-
+      needs.main-independent-presecret.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_RAW_SCHEDULE_LINKS_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    outputs:
+      safe_cfb_schedules_b64: ${{ steps.collect.outputs.safe_cfb_schedules_b64 }}
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_CFB_SCHEDULE_KEYLESS_PASSED: ${{ needs.main-independent-presecret.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_CFB_SCHEDULE_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_RAW_SCHEDULE_LINKS_V1') && 'true' || 'false' }}
+      VOTEPREDICT_CFB_SCHEDULE_BATCH_LIMIT: "830"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify reviewed main SHA before protected credentials
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Capture and match only official 2021-2025 Senate report schedules
+        id: collect
+        run: node --import tsx scripts/backfill-cfb-report-schedules-protected.mjs
+  safe-keyless-issue-receipt:
+    needs: [main-independent-presecret,guarded-existing-neon-raw-backfill]
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_RAW_SCHEDULE_LINKS_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+      issues: write
+    env:
+      PRESECRET: ${{ needs.main-independent-presecret.result }}
+      PROTECTED: ${{ needs.guarded-existing-neon-raw-backfill.result }}
+      SAFE_B64: ${{ needs.guarded-existing-neon-raw-backfill.outputs.safe_cfb_schedules_b64 }}
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const pre=process.env.PRESECRET;
+            const prod=process.env.PROTECTED;
+            const link='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;
+            const lines=['## #864: CFB original report schedule provenance',
+              '**Main SHA:** '+process.env.GITHUB_SHA,'**Protected run:** '+link];
+            const raw=process.env.SAFE_B64||'';
+            let result=null;
+            if(/^[A-Za-z0-9+/=]{80,4000}$/.test(raw)){
+              try{
+                const v=JSON.parse(Buffer.from(raw,'base64').toString('utf8'));
+                const metrics=['evidenceCopies','uniqueCanonicalTransactions','unique_pdf_bodies','reports_with_extraction',
+                  'machine_readable_reports','ocr_backlog','schedule_lines','exact_links','unique_linked_transactions',
+                  'ambiguous_rows','unmatched_report_row_pairs','separate_archived_bulk_observations','reportBacklog',
+                  'attemptedReports','completedThisRun','failedThisRun','distinctBodiesDownloadedThisRun',
+                  'totalFinanceEvidenceCopies','totalUniqueFinanceTransactions'];
+                if(v.schema==='cfb-864-transaction-specific-raw-report-provenance-v1'
+                  &&v.officialRegisteredReportVersions===830&&v.officialDistinctPdfHashes===813
+                  &&v.historicalEligibilityUnchanged===true&&v.forecastsAndModelsUnchanged===true
+                  &&metrics.every(k=>Number.isSafeInteger(v[k])&&v[k]>=0&&v[k]<=3000000)
+                  &&v.reports_with_extraction+v.reportBacklog===830
+                  &&v.unique_linked_transactions<=v.exact_links
+                  &&v.familyBreakdown
+                  &&['candidate_contribution','candidate_expenditure','independent_expenditure']
+                   .every(f=>Number.isSafeInteger(v.familyBreakdown[f]?.evidenceCopies)
+                    &&Number.isSafeInteger(v.familyBreakdown[f]?.uniqueTransactions)
+                    &&v.familyBreakdown[f].evidenceCopies>=0
+                    &&v.familyBreakdown[f].uniqueTransactions>=0
+                    &&v.familyBreakdown[f].uniqueTransactions<=v.familyBreakdown[f].evidenceCopies)
+                  &&['candidate_contribution','candidate_expenditure','independent_expenditure']
+                   .reduce((sum,f)=>sum+v.familyBreakdown[f].evidenceCopies,0)===v.totalFinanceEvidenceCopies
+                  &&['candidate_contribution','candidate_expenditure','independent_expenditure']
+                   .reduce((sum,f)=>sum+v.familyBreakdown[f].uniqueTransactions,0)===v.totalUniqueFinanceTransactions)
+                   result=v;
+              }catch{}
+            }
+            if(pre!=='success')lines.push('**Held before credentials:** independent checks failed. No production result certified.');
+            else if(result){
+              lines.push('**Production outcome:** '+(prod==='success'?'protected job completed':'partial or blocked; see protected workflow status'));
+              lines.push('**Raw evidence:** '+result.reports_with_extraction+'/830 report versions extracted; '
+                +result.unique_pdf_bodies+'/813 verified distinct PDF bodies; '+result.schedule_lines+' schedule-line captures.');
+              lines.push('**Existing finance:** '+result.uniqueCanonicalTransactions+' unique canonical transaction keys across '
+                +result.evidenceCopies+' copies (scoped candidate families).');
+              for(const [family,label] of [['candidate_contribution','Contributions'],
+                ['candidate_expenditure','Candidate expenditures'],
+                ['independent_expenditure','Independent expenditures (not candidate PDF matched)']]){
+                const v=result.familyBreakdown[family];
+                lines.push('**'+label+':** '+v.evidenceCopies+' stored evidence copies; '
+                  +v.uniqueTransactions+' distinct canonical transaction keys.');
+              }
+              lines.push('**Provenance:** '+result.exact_links+' exact transaction-to-version links across '
+                +result.unique_linked_transactions+' unique canonical transactions, '
+                +result.ambiguous_rows+' ambiguous and '+result.unmatched_report_row_pairs+' unmatched report/row pairs.');
+              lines.push('**Remaining:** '+result.reportBacklog+' uncaptured versions; '
+                +result.ocr_backlog+' OCR-needed reports; '+result.failedThisRun+' attempted sources failed safely.');
+              lines.push('**Independent bulk observations:** '+result.separate_archived_bulk_observations
+                +' stored separately, not PDF membership.');
+              lines.push('**No historical publication dates, asOfEligible, model, forecast, or serving input changed.**');
+            }else lines.push('**Protected outcome:** '+prod+'. No validated aggregate readback. Do not infer zero rows or completion.');
+            await github.rest.issues.createComment({owner:'killjoy00',repo:'votepredict',issue_number:864,body:lines.join('\n\n')});

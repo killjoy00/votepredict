@@ -56,18 +56,21 @@ function expectedMigrations():Ledger[]{
     throw Error('migration_number_or_concurrent_inventory_changed');
   return files.map(filename=>({filename,checksum:digest(readFileSync('migrations/'+filename,'utf8'))}));
 }
+function positionOfMigration(expected:Ledger[]):number{
+  const index=expected.findIndex(row=>row.filename===MIGRATION);
+  if(index!==26)throw Error('official_text_migration_number_moved');
+  return index;
+}
 function prefix(rows:Ledger[],expected:Ledger[]):boolean{
-  const position=expected.findIndex(row=>row.filename===MIGRATION);
-  if(position!==26)throw Error('official_text_migration_number_moved');
-  // Later additive migrations may exist after this collector merges. We may
-  // collect only when all of them are already deployed; never apply another
-  // agent's pending migration and never re-apply our own 0027.
-  if(rows.length!==expected.length && !(rows.length===position && expected.length===position+1))
-    throw Error('production_migration_prerequisite_or_later_release_pending');
-  for(let i=0;i<rows.length;i++)
-    if(rows[i].filename!==expected[i].filename||rows[i].checksum!==expected[i].checksum)
-      throw Error('production_migration_checksum_drift');
-  return rows.length===expected.length;
+  positionOfMigration(expected);
+  // Later agents may deploy later-numbered migrations before this PR merges.
+  // Require all *other* reviewed main migrations to be already applied and
+  // checksum-identical. The sole permitted gap is this collector's own 0027.
+  const matches=(actual:Ledger[],want:Ledger[])=>actual.length===want.length
+    &&actual.every((row,i)=>row.filename===want[i].filename&&row.checksum===want[i].checksum);
+  if(matches(rows,expected))return true;
+  if(matches(rows,expected.filter(row=>row.filename!==MIGRATION)))return false;
+  throw Error('production_migration_checksum_drift_or_other_migration_pending');
 }
 async function readOnly<T>(db:PoolClient,fn:()=>Promise<T>):Promise<T>{
   await db.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
@@ -103,7 +106,7 @@ async function migrate(db:PoolClient,expected:Ledger[]):Promise<boolean>{
     if(prefix(rows,expected)){await db.query('COMMIT');return false;}
     await db.query(readFileSync('migrations/'+MIGRATION,'utf8'));
     await db.query('INSERT INTO votepredict_schema_migrations(filename,checksum) VALUES($1,$2)',
-      [MIGRATION,expected.at(-1)!.checksum]);
+      [MIGRATION,expected[positionOfMigration(expected)].checksum]);
     await db.query('COMMIT');return true;
   } catch(error){await db.query('ROLLBACK');throw error;}
 }
