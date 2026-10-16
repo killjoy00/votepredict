@@ -23,15 +23,19 @@ export type ArchivedDFLStatement={
 const UA='VotePredictRawArchiveCollector/1.0 (public independent archives)';
 const FIRST='https://senatedfl.mn/';
 
-export function originalDFLUrl(raw:string):string|null{
+function canonicalCaptureURL(raw:string):string|null{
   try {
     const url=new URL(raw);
-    if(url.protocol!=='https:'||url.hostname!=='senatedfl.mn'||url.port||
+    if(!['https:','http:'].includes(url.protocol)||url.hostname!=='senatedfl.mn'||url.port||
       url.username||url.password||url.search||url.hash||
       url.pathname==='/'||!/^\/[a-z0-9-]+\/?$/.test(url.pathname))return null;
     url.pathname=url.pathname.replace(/\/?$/,'/');
+    url.protocol='https:';
     return url.href;
   }catch{return null;}
+}
+export function originalDFLUrl(raw:string):string|null{
+  return raw.startsWith('https://')?canonicalCaptureURL(raw):null;
 }
 export function capturedAt(timestamp:string):string|null{
   if(!/^(20\d{2})(0[1-9]|1[0-2])([0-2]\d|3[01])([01]\d|2[0-3])[0-5]\d[0-5]\d$/.test(timestamp))return null;
@@ -53,7 +57,7 @@ export function parseWaybackIndex(json:unknown,target:string):WaybackRecord[]{
   for(const row of json.slice(1,301)){
     if(!Array.isArray(row)||row.length!==header.length)continue;
     const record=Object.fromEntries(header.map((key,i)=>[key,row[i]])) as Record<string,unknown>;
-    if(typeof record.original!=='string'||originalDFLUrl(record.original)!==normalized||
+    if(typeof record.original!=='string'||canonicalCaptureURL(record.original)!==normalized||
       typeof record.timestamp!=='string'||!capturedAt(record.timestamp)||
       typeof record.statuscode!=='string'||record.statuscode!=='200'||
       typeof record.mimetype!=='string'||!/text\/html/i.test(record.mimetype)||
@@ -65,7 +69,7 @@ export function parseWaybackIndex(json:unknown,target:string):WaybackRecord[]{
   return selected.sort((a,b)=>a.timestamp.localeCompare(b.timestamp));
 }
 export function waybackReplayURL(original:string,timestamp:string):string{
-  if(originalDFLUrl(original)!==original||!capturedAt(timestamp))
+  if(!canonicalCaptureURL(original)||!capturedAt(timestamp))
     throw Error('Original URL or Wayback capture timestamp failed first-party allowlist');
   return 'https://web.archive.org/web/'+timestamp+'id_/'+original;
 }
@@ -94,8 +98,8 @@ export async function getWaybackRecords(
 export async function loadArchivedDFL(
   record:WaybackRecord,request:typeof fetch=fetch,
 ):Promise<ArchivedDFLStatement>{
-  const original=originalDFLUrl(record.original);
-  if(!original||original!==record.original||record.statuscode!=='200'||
+  const original=canonicalCaptureURL(record.original);
+  if(!original||record.statuscode!=='200'||
     !capturedAt(record.timestamp)||!/text\/html/i.test(record.mimetype)||
     !/^[A-Z2-7]{20,64}$/.test(record.digest))throw Error('Untrusted archive capture metadata');
   const archiveUrl=waybackReplayURL(original,record.timestamp);
