@@ -6,10 +6,15 @@
 import {createHash} from 'node:crypto';
 import {originalDFLUrl} from './senate-dfl-wayback.js';
 
+export interface PinnedDFLSitemap{
+  id:string;path:'post-sitemap.xml'|'post-sitemap2.xml';capture:string;sha256:string;
+}
 export const HISTORICAL_DFL_SITEMAPS=[
-  {id:'aioseo-post-1-20260128',path:'post-sitemap.xml',capture:'20260128083020'},
-  {id:'aioseo-post-2-20260128',path:'post-sitemap2.xml',capture:'20260128083029'},
-] as const;
+  {id:'aioseo-post-1-20260128',path:'post-sitemap.xml',capture:'20260128083020',
+    sha256:'72266e0e8a26ef581362e49ba83d99d508e530afcc54dab18178e7f21d643694'},
+  {id:'aioseo-post-2-20260128',path:'post-sitemap2.xml',capture:'20260128083029',
+    sha256:'5d0f65c1a973f7e404f99f4f682756b69000cecc6ac9cd73945652efac6ed3c8'},
+] as const satisfies readonly PinnedDFLSitemap[];
 export interface DflSitemapCandidate {
   url:string;
   sitemapId:string;
@@ -19,7 +24,7 @@ export interface DflSitemapPage {
   id:string;replayUrl:string;sha256:string;urlEntries:number;
   excludedBefore2023:number;candidateUrls:DflSitemapCandidate[];
 }
-export function dflSitemapReplayURL(item:typeof HISTORICAL_DFL_SITEMAPS[number]):string{
+export function dflSitemapReplayURL(item:PinnedDFLSitemap):string{
   if(!/^\d{14}$/.test(item.capture)||!/^post-sitemap2?\.xml$/.test(item.path))
     throw Error('Invalid pinned DFL sitemap record');
   return 'https://web.archive.org/web/'+item.capture+'id_/https://senatedfl.mn/'+item.path;
@@ -63,7 +68,7 @@ export function parseArchivedDFLSitemap(xml:string,id:string):Omit<DflSitemapPag
 }
 /** Unmodified archived XML bytes only, no live DFL requests or redirects. */
 export async function fetchArchivedDFLSitemap(
-  item:typeof HISTORICAL_DFL_SITEMAPS[number],request:typeof fetch=fetch,
+  item:PinnedDFLSitemap,request:typeof fetch=fetch,
 ):Promise<DflSitemapPage>{
   const replayUrl=dflSitemapReplayURL(item);
   const res=await request(replayUrl,{method:'GET',redirect:'manual',cache:'no-store',
@@ -77,6 +82,8 @@ export async function fetchArchivedDFLSitemap(
   const buffer=Buffer.from(await res.arrayBuffer());
   if(buffer.length>3000000)throw Error('Archived publisher sitemap size too large');
   const sha256=createHash('sha256').update(buffer).digest('hex');
+  if(sha256!==item.sha256)
+    throw Error('Publisher-original archived sitemap content hash differs from pinned reviewed snapshot');
   const parsed=parseArchivedDFLSitemap(buffer.toString('utf8'),item.id);
   return {...parsed,replayUrl,sha256};
 }
