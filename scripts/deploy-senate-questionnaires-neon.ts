@@ -6,6 +6,7 @@ import {discoverExistingVotePredictNeonConnection} from '../src/operations/senat
 import {collectQuestionnaires,validateCatalog} from '../src/sources/minnesota/senate-questionnaire-raw.js';
 import {insertQuestionnaire,questionnaireReadback,questionnaireEligibleScopeReadback,reconcileUnmatchedQuestionnaireMemberships} from '../src/operations/senate-questionnaire-ingest.js';
 import {assertAdditiveQuestionnaireMigration} from '../src/operations/senate-questionnaire-migration.js';
+import {senateQuestionnaireCandidateGroupReadback} from '../src/operations/senate-questionnaire-candidate-groups.js';
 const MARKER='SENATE_QUESTIONNAIRE_RAW_PRODUCTION_20261015';
 const MIGRATION='0021_mn_senate_questionnaire_raw.sql';
 type Ledger={filename:string;checksum:string};
@@ -141,6 +142,7 @@ async function main():Promise<void>{
     phase='readonly_postcommit_readback';
     const after=await readonly(pool,questionnaireReadback);
     const eligibilityScoped=await readonly(pool,questionnaireEligibleScopeReadback);
+    const candidateGroups=await readonly(pool,senateQuestionnaireCandidateGroupReadback);
     if(eligibilityScoped.includedCaptures+eligibilityScoped.legacyHistoricalExcludedCaptures!==after.totals.captures
       ||after.totals.captures!==before.totals.captures+inserted
       ||after.totals.qaPairs<before.totals.qaPairs
@@ -150,7 +152,7 @@ async function main():Promise<void>{
     const report={
       status:summary.failed.length?'committed_with_unavailable_or_unparsed_sources':'committed_readback_verified',
       migrationApplied,sourceCatalogEntries:sources.length,excludedCycles:[2020],identityBackfill,
-      eligibilityScoped,
+      eligibilityScoped,candidateGroups,
       fetchedSourceDocuments:summary.fetched,fetchedResponses:summary.responses,
       fetchedPairs:summary.pairs,skippedHistoricalNonWinners:summary.skippedHistoricalNonWinners,
       inserted,previous,matchedNew,
@@ -172,6 +174,9 @@ async function main():Promise<void>{
       +', legacy historical nonwinner/unknown captures excluded: '+eligibilityScoped.legacyHistoricalExcludedCaptures
       +', historical nonwinner answers skipped this run: '+summary.skippedHistoricalNonWinners
       +', candidate links filled in this backfill: '+identityBackfill.linked
+       +', distinct eligible candidate groups: '+candidateGroups.candidateGroups
+       +', multi-publisher candidate groups: '+candidateGroups.multiPublisherGroups
+       +', candidate-only groups (not Senate member links): '+candidateGroups.candidateOnlyGroups
       +', missing explicit publication dates: '+after.totals.missingDates
       +', failed sources: '+summary.failed.length
       +'. No forecasting tables or models were touched.\n');
