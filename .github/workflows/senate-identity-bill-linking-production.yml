@@ -3,7 +3,7 @@ name: Link raw Minnesota Senate evidence to existing person and bill identities
 on:
   pull_request:
     paths:
-      - migrations/0021_senate_identity_bill_linking.sql
+      - migrations/0022_senate_identity_bill_linking.sql
       - src/operations/senate-identity-bill-resolvers.ts
       - src/operations/senate-identity-bill-backfill.ts
       - src/operations/senate-bill-companions.ts
@@ -15,7 +15,7 @@ on:
   push:
     branches: [main]
     paths:
-      - migrations/0021_senate_identity_bill_linking.sql
+      - migrations/0022_senate_identity_bill_linking.sql
       - src/operations/senate-identity-bill-resolvers.ts
       - src/operations/senate-identity-bill-backfill.ts
       - src/operations/senate-bill-companions.ts
