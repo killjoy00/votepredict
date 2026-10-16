@@ -4,7 +4,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {Pool} from 'pg';
 import {
-  parseA4LSenatePdf,parseGunOwnersSenateHtml,parseScorecardBillPositions,
+  parseA4LSenatePdf,parseGunOwnersSenateHtml,parseEducationMinnesotaSenateEndorsements,parseScorecardBillPositions,
   parseRobots,validateScorecardManifest,parseScorecardContent,
   type ScorecardCapture,
 } from '../src/sources/minnesota/senate-scorecard-raw.js';
@@ -67,6 +67,30 @@ test('2022 MN Gun Owners Caucus HTML Senate table retains grades, endorsements a
   assert.equal(parseScorecardContent({groupName:'MNGOC',year:2022,
     adapter:'gunowners_html',url:'https://gunowners.mn/abc'},
   'text',html).entries.length,4);
+});
+test('Education Minnesota official two-column 2022 endorsement table only captures state Senators',()=>{
+  // Trimmed 2022 published release: paired Candidate/District cells.
+  const html='<table><tr><th>Candidate</th><th>District</th><th>Candidate</th><th>District</th></tr>'+
+    '<tr><td>Leonard Alan Roy</td><td>Senate 2</td><td>Kelly Morrison</td><td>Senate 45</td></tr>'+
+    '<tr><td>Reed Olson</td><td>House 2A</td><td>Kari Dorry**</td><td>Senate 12</td></tr></table>';
+  const rows=parseEducationMinnesotaSenateEndorsements(html);
+  assert.deepEqual(rows.map(r=>[r.nameRaw,r.districtRaw,r.kind,r.valueRaw]),
+    [['Leonard Alan Roy','2','endorsement','ENDORSED'],
+      ['Kelly Morrison','45','endorsement','ENDORSED'],
+      ['Kari Dorry','12','endorsement','ENDORSED']]);
+});
+test('Education Minnesota 2026 Senate-specific release retains endorsement and printed party',()=>{
+  // Trimmed July 31, 2026 press-release "House" then "Senate" section.
+  const html='<h1>Education Minnesota endorses 54 more candidates</h1>'+
+    '<p>House</p><p>24A: Heather Holmes, DFL</p>'+
+    '<p>Senate</p><p>24: Simon Glaser, DFL</p>'+
+    '<p>25: Liz Boldon, DFL</p><p>63: Zaynab Mohamed, DFL</p>'+
+    '<h2>About Education Minnesota</h2><p>noncandidate</p>';
+  const rows=parseEducationMinnesotaSenateEndorsements(html);
+  assert.equal(rows.length,3);
+  assert.equal(rows[0].nameRaw,'Simon Glaser');
+  assert.equal(rows[0].partyRaw,'DFL');
+  assert.equal(rows[0].valueNumeric,null);
 });
 test('Scorecard source catalog pinned 2021-2026 and robots grouping respects publisher restrictions',()=>{
   const cat=validateScorecardManifest(JSON.parse(readFileSync('data/senate-scorecard-sources.json','utf8')));
