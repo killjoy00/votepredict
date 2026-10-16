@@ -1,0 +1,131 @@
+name: Collect official Minnesota Senate raw bill-version and amendment text
+
+on:
+  pull_request:
+    paths:
+      - migrations/0024_senate_official_bill_text_raw.sql
+      - src/operations/senate-official-bill-text.ts
+      - scripts/deploy-senate-official-bill-text-neon.ts
+      - tests/senate-official-bill-text.test.ts
+      - .github/workflows/senate-official-bill-text-production.yml
+  push:
+    branches: [main]
+    paths:
+      - migrations/0024_senate_official_bill_text_raw.sql
+      - src/operations/senate-official-bill-text.ts
+      - scripts/deploy-senate-official-bill-text-neon.ts
+      - tests/senate-official-bill-text.test.ts
+      - .github/workflows/senate-official-bill-text-production.yml
+  # Continue bounded idempotent batches without owner dispatch or Vercel.
+  schedule:
+    - cron: '27 */6 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-official-bill-text-neon-primary
+  cancel-in-progress: false
+
+jobs:
+  keyless-review:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        github.event_name == 'pull_request' ||
+        github.event_name == 'schedule' ||
+        (
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main' &&
+          github.event.after == github.sha &&
+          github.event.head_commit.id == github.sha &&
+          github.event.deleted != true &&
+          github.event.forced != true &&
+          contains(github.event.head_commit.message, 'SENATE_OFFICIAL_TEXT_RAW_20261016')
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Check exact reviewed SHA
+        env:
+          CHECKED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$CHECKED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply all migrations to disposable Postgres
+        run: npm run db:migrate
+      - name: Check migration ledger on disposable Postgres
+        run: node --import tsx scripts/check-production-migration-drift.ts
+      - name: Run focused raw source and schema regressions
+        run: node --import tsx --test tests/senate-official-bill-text.test.ts
+      - name: Typecheck, full tests and build
+        run: npm run check
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+  protected-neon:
+    needs: [keyless-review]
+    if: >-
+      needs.keyless-review.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      (
+        github.event_name == 'schedule' ||
+        (
+          github.event_name == 'push' &&
+          github.event.after == github.sha &&
+          github.event.head_commit.id == github.sha &&
+          github.event.deleted != true &&
+          github.event.forced != true &&
+          contains(github.event.head_commit.message, 'SENATE_OFFICIAL_TEXT_RAW_20261016')
+        )
+      )
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 160
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_TEXT_INDEPENDENT_CI: ${{ needs.keyless-review.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact independently checked main SHA
+        env:
+          CHECKED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$CHECKED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply bounded additive migration and collect resumable raw Senate text
+        run: node --import tsx scripts/deploy-senate-official-bill-text-neon.ts
