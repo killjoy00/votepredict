@@ -1,0 +1,120 @@
+name: Recover indexed Senate attachment full raw text in Neon
+
+# Exact reviewed main push only; no PR runner receives production credentials.
+on:
+  push:
+    branches: [main]
+    paths:
+      - migrations/0019_senate_committee_attachment_raw_text.sql
+      - src/sources/minnesota/senate-committee-attachment-text.ts
+      - scripts/deploy-senate-committee-attachment-text-neon.ts
+      - tests/senate-committee-attachment-text.test.ts
+      - .github/workflows/senate-committee-attachment-text-production.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-attachment-text-neon-primary
+  cancel-in-progress: false
+
+jobs:
+  independent-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_ATTACHMENT_TEXT_BACKFILL_20261015')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Match checked main commit
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Test every migration on disposable Postgres
+        run: npm run db:migrate
+      - name: Typecheck, tests and production build
+        run: npm run check
+      - name: Dependency audit
+        run: npm audit --omit=dev --audit-level=high
+      - name: Check optional system text extractors
+        run: |
+          for helper in pdftoppm pdfinfo tesseract unzip antiword unrtf; do
+            if command -v "$helper" >/dev/null; then
+              echo "SENATE_ATTACHMENT_HELPER_$helper=available"
+            else
+              echo "SENATE_ATTACHMENT_HELPER_$helper=unavailable"
+            fi
+          done
+
+  protected-production-neon:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_ATTACHMENT_TEXT_BACKFILL_20261015')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_ATTACHMENT_VERIFIED: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Match independently checked main SHA
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Recover indexed raw attachment text and read back stored counts
+        run: node --import tsx scripts/deploy-senate-committee-attachment-text-neon.ts
