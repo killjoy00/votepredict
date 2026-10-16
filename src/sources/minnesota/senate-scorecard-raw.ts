@@ -5,7 +5,7 @@
  */
 import {createHash} from 'node:crypto';
 
-export type SourceAdapter = 'a4l_pdf'|'aflcio_pdf'|'generic_pdf'|'gunowners_html'|'raw_html';
+export type SourceAdapter = 'a4l_pdf'|'aflcio_pdf'|'generic_pdf'|'gunowners_html'|'edmn_html'|'raw_html';
 export interface ScorecardSource {
   groupName:string;year:number;adapter:SourceAdapter;url:string;electionCandidate?:boolean;
 }
@@ -26,7 +26,7 @@ export interface ScorecardCapture {
 }
 export interface ScorecardFailure {group:string;year:number;url:string;reason:string}
 const SOURCE_ADAPTERS:SourceAdapter[]=[
-  'a4l_pdf','aflcio_pdf','generic_pdf','gunowners_html','raw_html',
+  'a4l_pdf','aflcio_pdf','generic_pdf','gunowners_html','edmn_html','raw_html',
 ];
 const MAX_BODY_BYTES=12_000_000;
 const AGENT='VotePredictSenateEvidenceBot/1.0 (+https://github.com/killjoy00/votepredict)';
@@ -156,6 +156,44 @@ export function parseGunOwnersSenateHtml(html:string):ScorecardEntry[] {
   }
   return noDuplicates(found);
 }
+/**
+ * First-party Education Minnesota PAC release pages (2022 table and 2026
+ * Senate-only bullet section). Endorsement denotes exactly the literal
+ * named Senate candidate, not an inferred ideological or legislator position.
+ */
+export function parseEducationMinnesotaSenateEndorsements(html:string):ScorecardEntry[] {
+  const found:ScorecardEntry[]=[];
+  for(const rows of tableRows(html)){
+    for(const cells of rows){
+      for(let i=0;i+1<cells.length;i+=2){
+        const m=/^Senate\s+0*(\d{1,2})\b/i.exec(cells[i+1]??'');
+        if(!m||Number(m[1])<1||Number(m[1])>67)continue;
+        const name=cells[i]?.replace(/\*+$/,'').trim();
+        if(name&&!/^(?:candidate|name)$/i.test(name))
+          found.push(newEntry(name,String(Number(m[1])),null,'endorsement','ENDORSED'));
+      }
+    }
+  }
+  // Newer release uses "House" and "Senate" headings, followed by
+  // "24: Simon Glaser, DFL" (or "24: Simon Glaser").
+  const lines=htmlToRawText(html).split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  const idx=lines.findIndex(l=>/^Senate(?:\s+endorsements?)?$/i.test(l));
+  if(idx>=0){
+    for(const line of lines.slice(idx+1)){
+      if(/^About Education Minnesota\b/i.test(line)||/^House\b/i.test(line)
+        ||/^For more information\b/i.test(line))break;
+      const m=/^0*(\d{1,2})\s*:\s*(.+)$/.exec(line);
+      if(!m)continue;
+      const number=Number(m[1]);
+      if(number<1||number>67)continue;
+      const nameParty=/^(.*?)(?:,\s*(DFL|Republican|R|D|I))?\.?$/.exec(m[2])!;
+      const name=nameParty[1].trim();
+      if(name&&/[a-z]/i.test(name))
+        found.push(newEntry(name,String(number),nameParty[2]??null,'endorsement','ENDORSED'));
+    }
+  }
+  return noDuplicates(found);
+}
 function pdfSenatorScoreLines(text:string):ScorecardEntry[] {
   // Conservative fallback for scorecard PDFs that print "Sen. Name SD 17 89%".
   // Do not classify unlabelled mentions or vote totals as scores.
@@ -169,7 +207,7 @@ function pdfSenatorScoreLines(text:string):ScorecardEntry[] {
 }
 /** Preserve explicitly printed organizational support/opposition words, not a stance judgment. */
 export function parseScorecardBillPositions(rawText:string,adapter:SourceAdapter):ScorecardPosition[] {
-  if(adapter==='gunowners_html'||adapter==='raw_html')return [];
+  if(adapter==='gunowners_html'||adapter==='edmn_html'||adapter==='raw_html')return [];
   const results:ScorecardPosition[]=[];
   const lines=rawText.split(/\r?\n/);
   for(let i=0;i<lines.length;i++){
@@ -200,6 +238,7 @@ export function parseScorecardContent(source:ScorecardSource,rawText:string,html
   {entries:ScorecardEntry[];positions:ScorecardPosition[]} {
   const entries=source.adapter==='a4l_pdf'?parseA4LSenatePdf(rawText):
     source.adapter==='gunowners_html'?parseGunOwnersSenateHtml(html??''):
+    source.adapter==='edmn_html'?parseEducationMinnesotaSenateEndorsements(html??''):
     source.adapter==='raw_html'?[]:pdfSenatorScoreLines(rawText);
   return {entries,positions:parseScorecardBillPositions(rawText,source.adapter)};
 }
