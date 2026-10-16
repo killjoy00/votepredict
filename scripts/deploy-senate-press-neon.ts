@@ -42,20 +42,23 @@ function assertReviewedMain(): void {
 }
 function expectedMigrations(): Ledger[] {
   const files = readdirSync('migrations').filter(x => /^\d{4}_[a-z0-9_-]+\.sql$/.test(x)).sort();
-  if (files.length !== 16 || files.at(-1) !== MIGRATION)
-    throw Error('Unexpected migration inventory');
+  // 0017 and later additive migrations may be merged while the long-running
+  // 0016 archive backfill is still active. Replays must validate the entire
+  // ledger prefix rather than falsely require 0016 to be the last migration.
+  if (files.indexOf(MIGRATION) !== 15 || files.length < 16)
+    throw Error('Raw statement migration 0016 missing or out of order');
   return files.map(filename => ({
     filename, checksum: createHash('sha256').update(readFileSync('migrations/' + filename)).digest('hex'),
   }));
 }
 function validateLedger(actual: Ledger[], expected: Ledger[]): boolean {
-  if (actual.length < 15 || actual.length > 16)
-    throw Error('Production migration ledger not at expected 0015/0016 state');
+  if (actual.length < 15 || actual.length > expected.length)
+    throw Error('Production migration ledger incomplete or beyond reviewed inventory');
   for (let i = 0; i < actual.length; i++)
     if (actual[i].filename !== expected[i]?.filename
       || actual[i].checksum !== expected[i]?.checksum)
       throw Error('Production migration checksum/order drift');
-  return actual.length === 16;
+  return actual.length >= 16;
 }
 function configuredSources(): SenatePressSource[] {
   const value: unknown = JSON.parse(readFileSync('data/senate-press-sources.json', 'utf8'));
