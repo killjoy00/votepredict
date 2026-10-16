@@ -387,6 +387,14 @@ export function parse2016SenateBookDistricts(text: string): SenateElectionCandid
       });
     }
   }
+  // In the Secretary of State's PDF layout, District 2 prints its
+  // "Senate District 2 Total" heading AFTER the first district-total block
+  // at the page boundary. Parse that genuine block (not either House-half
+  // subtotal) from the same original PDF bytes.
+  if(!candidates.some((row)=>row.district==='2') &&
+     text.includes('Senate District 2 Total')){
+    candidates.push(...parsePublishedSpecialSenateBook(text,'general','2',false));
+  }
   if (new Set(candidates.map((row) => row.district)).size !== 67) {
     const found = new Set(candidates.map((row) => Number(row.district)));
     const missing = Array.from({ length: 67 }, (_, i) => i + 1).filter((d) => !found.has(d));
