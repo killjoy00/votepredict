@@ -1,0 +1,32 @@
+name: Probe broad independent DFL archive discovery (keyless)
+
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-dfl-broad-discovery.ts
+      - .github/workflows/senate-dfl-broad-discovery-probe.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/probe-senate-dfl-broad-discovery.ts
+      - .github/workflows/senate-dfl-broad-discovery-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  public-only:
+    if: github.repository == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Read-only Wayback domain CDX and archived publisher sitemap capability checks
+        run: node --import tsx scripts/probe-senate-dfl-broad-discovery.ts
