@@ -15,7 +15,7 @@ import {
 } from '../src/evidence/cfb-report-schedule-raw.mjs';
 
 export const DEPLOY_MARKER='SENATE_864_CFB_RAW_SCHEDULE_LINKS_V1';
-const MIGRATION='0026_cfb_finance_report_schedule_provenance.sql';
+const MIGRATION='0028_cfb_finance_report_schedule_provenance.sql';
 const safeInt=x=>Number.isSafeInteger(x)&&x>=0;
 const txKey=x=>[x.family,x.reg,x.year,x.rowKey].join('|');
 function sha(value){return createHash('sha256').update(value).digest('hex')}
