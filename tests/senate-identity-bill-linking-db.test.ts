@@ -27,7 +27,7 @@ test('Postgres: additive Senate raw crosswalk SQL writes only raw link columns a
     for(const slug of ['2021-2022','2023-2024','2025-2026']){
       sessions[slug]=(await client.query<{id:string}>(
         "INSERT INTO legislative_sessions(jurisdiction_id,slug,name,starts_on,ends_on) "+
-        "VALUES($1,$2,$2,$3::date,$4::date) ON CONFLICT(jurisdiction_id,slug) DO UPDATE "+
+        "VALUES($1,$2,$3,$4::date,$5::date) ON CONFLICT(jurisdiction_id,slug) DO UPDATE "+
         "SET name=EXCLUDED.name RETURNING id",
         [jurisdiction,slug,slug,slug.slice(0,4)+'-01-01',slug.slice(5)+'-12-31'])).rows[0].id;
       for(let n=1;n<=43;n++){
