@@ -32,6 +32,32 @@ A SQL view never guarantees order: always use an explicit `ORDER BY`.
 
 ## Live row counts, roll-call name coverage, link rates
 
+Production readback on **2026-10-16**, after migration `0024`:
+[one-shot verified deployment](https://github.com/killjoy00/votepredict/actions/runs/38951380101).
+The counts are a point-in-time observation of the mutable raw source material,
+not a frozen forecasting dataset.
+
+| Session | Venue | Docs with records | Raw record rows | Roll calls with names / total (%) | Named votes linked / total (%) | Numbered records bill-linked / total |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| 2021–22 | Committee | 398 | 2,271 | 49 / 138 (35.51%) | 447 / 447 (100%) | 2,242 / 2,242 |
+| 2021–22 | Floor | 77 | 423 | 423 / 423 (100%) | 27,858 / 27,858 (100%) | 332 / 332 |
+| 2023–24 | Committee | 598 | 4,596 | 111 / 339 (32.74%) | 1,202 / 1,208 (99.50%) | 4,469 / 4,469 |
+| 2023–24 | Floor | 92 | 1,076 | 1,076 / 1,076 (100%) | 70,083 / 70,083 (100%) | 910 / 910 |
+| 2025–26 | Committee | 495 | 3,479 | 99 / 174 (56.90%) | 1,021 / 1,026 (99.51%) | 3,408 / 3,408 |
+| 2025–26 | Floor | 66 | 568 | 568 / 568 (100%) | 37,185 / 37,185 (100%) | 453 / 453 |
+
+Totals: **12,413 raw record rows**, **137,807 named member-vote rows**,
+**137,796 existing member links** (11 not linked), and **11,814 / 11,814**
+numbered record bill links. The readback found **2,256** raw source
+documents, but not every stored source document has a parsed vote record;
+therefore the sum of `Docs with records` is smaller. The bill/companion
+trail expands rows by explicit bill paths and includes official
+`vote_events` as separate entries (23,259 raw-path entries and 7,272
+official-path entries), so those trail counts are **not** the count of
+unique raw vote records.
+
+To reproduce current counts, run:
+
 This query reports **exact row counts per session and venue**, including
 committee voice motions, the fraction of roll calls with at least one printed
 name, named-member link rates, and bill link rates. It runs directly against
