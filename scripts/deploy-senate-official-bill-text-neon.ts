@@ -390,7 +390,37 @@ async function report(db:PoolClient){
       +"(SELECT count(*)::int FROM senate_official_bill_text_discovery WHERE status='failed') AS failed_discovery,"
       +"(SELECT count(*)::int FROM senate_official_bill_text_discovery WHERE status='unavailable') AS unavailable_discovery,"
       +'(SELECT count(*)::int FROM senate_official_bill_text_record_links) AS exact_amendment_links')).rows[0];
-    return {families,queue,discovery,journals,outstanding};
+    const eligible=(await db.query([
+      'WITH bill_ids AS (',
+      ' SELECT DISTINCT m.bill_id FROM senate_raw_vote_bill_mentions m WHERE m.bill_id IS NOT NULL',
+      ' UNION SELECT c.house_bill_id FROM bill_companions c JOIN senate_raw_vote_bill_mentions m ON m.bill_id=c.senate_bill_id',
+      ' UNION SELECT c.senate_bill_id FROM bill_companions c JOIN senate_raw_vote_bill_mentions m ON m.bill_id=c.house_bill_id',
+      ') SELECT s.slug AS session,count(*)::int AS eligible_bills,',
+      "count(*) FILTER(WHERE disc.bill_id IS NULL)::int AS unstaged_bills",
+      ' FROM bill_ids a JOIN bills b ON b.id=a.bill_id',
+      ' JOIN legislative_sessions s ON s.id=b.session_id',
+      " JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'",
+      ' LEFT JOIN senate_official_bill_text_discovery disc ON disc.bill_id=b.id',
+      " WHERE s.slug IN ('2025-2026','2023-2024','2021-2022')",
+      ' GROUP BY s.slug ORDER BY s.slug DESC'
+    ].join('\n'))).rows;
+    const rawDocuments=(await db.query([
+      'SELECT s.slug AS session,count(*)::int AS eligible_documents,',
+      'count(*) FILTER(WHERE j.source_document_id IS NULL)::int AS unscanned_documents,',
+      "count(*) FILTER(WHERE j.status='failed')::int AS failed_documents,",
+      "count(*) FILTER(WHERE j.status='failed' AND j.attempts>=3)::int AS exhausted_document_retries",
+      ' FROM source_documents d',
+      ' JOIN legislative_sessions s ON s.id=d.session_id',
+      " JOIN jurisdictions jur ON jur.id=s.jurisdiction_id AND jur.slug='us-mn'",
+      ' LEFT JOIN senate_official_bill_text_journal_scans j ON j.source_document_id=d.id',
+      " WHERE s.slug IN ('2025-2026','2023-2024','2021-2022')",
+      " AND d.metadata->'rawPrepassageVotes'->>'sourceType'",
+      " IN ('mn_senate_journal','mn_senate_committee_minutes_html')",
+      ' AND EXISTS (SELECT 1 FROM senate_raw_vote_bill_mentions m',
+      ' WHERE m.source_document_id=d.id AND m.bill_id IS NOT NULL)',
+      ' GROUP BY s.slug ORDER BY s.slug DESC'
+    ].join('\n'))).rows;
+    return {families,queue,discovery,journals,eligible,rawDocuments,outstanding};
   });
 }
 async function main():Promise<void>{
