@@ -63,14 +63,14 @@ test('shared resolver leaves ambiguous names unresolved',()=>{
   assert.equal(resolveSenator({printedName:'Erin Rawtest',sessionSlug:'2025-2026'},roster).membershipId,'one');
   assert.equal(resolveSenator({printedName:'Smith',sessionSlug:'2025-2026'},roster).membershipId,null);
 });
-test('0024 additive and guarded production uses independent-main, protected environment, no schedule',()=>{
-  const migration=readFileSync('migrations/0024_senate_bill_authors.sql','utf8');
+test('0025 additive and guarded production uses independent-main, protected environment, no schedule',()=>{
+  const migration=readFileSync('migrations/0025_senate_bill_authors.sql','utf8');
   const runner=readFileSync('scripts/deploy-senate-bill-authors-neon.ts','utf8');
   const workflow=readFileSync('.github/workflows/senate-bill-authors-production.yml','utf8');
   assert.match(migration,/senate_bill_author_snapshots/);
   assert.match(migration,/senate_bill_author_scans/);
   assert.doesNotMatch(migration,/\b(?:DROP|TRUNCATE|DELETE)\b/i);
-  assert.match(runner,/filenames.length!==24/);
+  assert.match(runner,/filenames.length!==25/);
   assert.match(runner,/SENATE_BILL_AUTHORS_PRODUCTION/);
   assert.match(workflow,/environment: evidence-readonly-sandbox/);
   assert.match(workflow,/needs.independent-main.result == 'success'/);
