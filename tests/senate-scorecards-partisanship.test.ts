@@ -384,8 +384,8 @@ test('additive only, standalone production marker and model isolation are enforc
   assert.match(runner,/SENATE_SCORECARDS_PARTISANSHIP_PRODUCTION/);
   assert.match(runner,/SENATE_SCORECARD_EXPAND_PUBLISHERS/);
   assert.match(runner,/SENATE_SCORECARD_MCCL_RETRY/);
-  assert.match(runner,/static\\.wixstatic\\.com/);
-  assert.match(runner,/source\\.groupName==='MCCL'/);
+  assert.match(runner,/static\.wixstatic\.com/);
+  assert.match(runner,/source\.groupName==='MCCL'/);
   assert.match(runner,/scripts\/check-production-migration-drift\.ts/);
   assert.match(workflow,/independent-main/);
   assert.match(workflow,/evidence-readonly-sandbox/);
