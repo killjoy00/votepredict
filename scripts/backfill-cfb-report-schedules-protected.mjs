@@ -138,7 +138,7 @@ const BULK_ARCHIVE_SQL=[
  "SELECT x.family,x.reg,x.yr,x.key,x.source_id::uuid,x.sha,x.seen::timestamptz,",
  "'independent_archive_capture_exact_row' FROM jsonb_to_recordset($1::jsonb)",
  'AS x(family text,reg text,yr int,key text,source_id text,sha text,seen text)',
- 'ON CONFLICT DO NOTHING'
+ 'WHERE true ON CONFLICT DO NOTHING'
 ].join(' ');
 
 async function existingPages(client,sha256){
@@ -195,7 +195,7 @@ async function persistReport(client,record,source,canonicalRows){
   await client.query([
    'INSERT INTO cfb_finance_report_schedule_pages(pdf_sha256,page_number,raw_page_text)',
    'SELECT $1,x.page_number,x.raw_page_text FROM jsonb_to_recordset($2::jsonb)',
-   'AS x(page_number integer,raw_page_text text) ON CONFLICT DO NOTHING'
+   'AS x(page_number integer,raw_page_text text) WHERE true ON CONFLICT DO NOTHING'
   ].join(' '),[record.sha,JSON.stringify(pagePayload)]);
   const entries=extractScheduleEntries(pages,record.year);
   const readable=pages.some(s=>s.trim().length>100);
@@ -224,7 +224,7 @@ async function persistReport(client,record,source,canonicalRows){
     'e.schedule_family FROM jsonb_to_recordset($2::jsonb)',
     'AS e(page_number integer,line_number integer,raw_schedule_line text,',
     'printed_transaction_date text,printed_amount_cents bigint,',
-    'printed_counterparty text,schedule_family text) ON CONFLICT DO NOTHING'
+    'printed_counterparty text,schedule_family text) WHERE true ON CONFLICT DO NOTHING'
    ].join(' '),[record.id,JSON.stringify(entries)]);
   }
   const storedEntries=(await client.query([
@@ -248,7 +248,7 @@ async function persistReport(client,record,source,canonicalRows){
     'SELECT $1,x.family,x.reg,x.yr,x.row_key,x.status,',
     'x.line_id::bigint,x.candidate_count FROM jsonb_to_recordset($2::jsonb)',
     'AS x(family text,reg text,yr integer,row_key text,status text,',
-    'line_id text,candidate_count integer) ON CONFLICT DO NOTHING'
+    'line_id text,candidate_count integer) WHERE true ON CONFLICT DO NOTHING'
    ].join(' '),[record.id,JSON.stringify(inputs)]);
   }
   await client.query('COMMIT');transaction=false;
