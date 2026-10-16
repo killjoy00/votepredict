@@ -197,8 +197,9 @@ export function extractBillInclusionMentions(raw: string): InclusionMention[] {
     // Sentence-sized context preserves the printed bill numbers and exact phrase.
     const before = text.slice(Math.max(0,at-300),at);
     const after = text.slice(at+match[0].length,Math.min(text.length,at+match[0].length+220));
-    const start = Math.max(before.lastIndexOf('\n'),before.lastIndexOf('. '),before.lastIndexOf('; '));
-    const stopCandidates = [after.indexOf('\n'),after.indexOf('. '),after.indexOf('; ')].filter(x=>x>=0);
+    // Dots in S.F., H.F., and No. are part of the printed identifier.
+    const start = Math.max(before.lastIndexOf('\n'),before.lastIndexOf('; '));
+    const stopCandidates = [after.indexOf('\n'),after.indexOf('; ')].filter(x=>x>=0);
     const end = stopCandidates.length ? Math.min(...stopCandidates) : Math.min(after.length,180);
     const lead = before.slice(start+1).trim();
     const tail = after.slice(0,end).trim();
