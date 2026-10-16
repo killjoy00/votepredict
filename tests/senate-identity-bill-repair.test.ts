@@ -43,7 +43,7 @@ test('protected repair runner is scheduled, main-verified, and migration 0023 on
   assert.doesNotMatch(sql,/\b(?:DROP|TRUNCATE|DELETE)\b/i);
   assert.match(script,/SENATE_IDENTITY_BILL_REPAIR_PRODUCTION/);
   assert.match(script,/filenames.length!==23/);
-  assert.match(workflow,/cron: '17 \\* \\* \\* \\*'/);
+  assert.ok(workflow.includes("cron: '17 * * * *'"));
   assert.match(workflow,/needs.independent-main.result == 'success'/);
   assert.match(workflow,/environment: evidence-readonly-sandbox/);
 });
