@@ -7,13 +7,14 @@ import {readFileSync,readdirSync,appendFileSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {Pool,type PoolClient} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
-import {runSenateBillAuthorCollection,senateBillAuthorReadback} from '../src/operations/senate-bill-authors.js';
+import {runSenateBillAuthorCollection,senateBillAuthorReadback,SENATE_BILL_AUTHORS_MAX_LOOKUPS} from '../src/operations/senate-bill-authors.js';
 import {RevisorPacer} from '../src/operations/senate-revisor-pacer.js';
 
 const MARKER='SENATE_BILL_AUTHORS_PRODUCTION';
+const JOURNAL_ONLY_MARKER='SENATE_BILL_AUTHORS_JOURNALS_ONLY';
 const MIGRATION='0025_senate_bill_authors.sql';
 interface LedgerRow {filename:string;checksum:string}
-function guard(env:NodeJS.ProcessEnv):void{
+function guard(env:NodeJS.ProcessEnv):boolean{
   if(env.GITHUB_REPOSITORY!=='killjoy00/votepredict' ||
     env.GITHUB_EVENT_NAME!=='push' || env.GITHUB_REF!=='refs/heads/main' ||
     env.GITHUB_RUN_ATTEMPT!=='1' ||
@@ -30,23 +31,31 @@ function guard(env:NodeJS.ProcessEnv):void{
     event.deleted===true || event.forced===true ||
     !event.head_commit?.message?.includes(MARKER))
     throw Error('Commit is not exact reviewed first main push with required marker');
+  return event.head_commit.message.includes(JOURNAL_ONLY_MARKER);
 }
 function expectedMigrations():LedgerRow[]{
   const filenames=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
-  if(filenames.length!==25 || filenames.at(-1)!==MIGRATION)
-    throw Error('Unexpected migration inventory or collision at 0024');
+  // Other evidence agents may append their own migrations. Keep the exact
+  // immutable 0025 filename/checksum and verify the entire current release.
+  if(filenames.length<25 || filenames[24]!==MIGRATION)
+    throw Error('Missing expected authorship migration 0025 in release order');
   return filenames.map(filename=>({
     filename,checksum:createHash('sha256').update(readFileSync('migrations/'+filename)).digest('hex'),
   }));
 }
-function validatePrefix(rows:LedgerRow[],expected:LedgerRow[]):boolean{
-  if(rows.length<expected.length-1 || rows.length>expected.length)
-    throw Error('Expected ordered 0023 ledger prerequisite or already-applied 0024');
+export function validateSenateBillAuthorLedger(rows:LedgerRow[],expected:LedgerRow[]):boolean{
+  const authorIndex=expected.findIndex(x=>x.filename===MIGRATION);
+  if(authorIndex!==24 || rows.length<authorIndex || rows.length>expected.length)
+    throw Error('Required 0025 authorship migration prerequisite is absent');
   for(const [i,row] of rows.entries()){
     if(row.filename!==expected[i]?.filename || row.checksum!==expected[i]?.checksum)
       throw Error('Existing migration ledger does not match reviewed release');
   }
-  return rows.length===expected.length;
+  if(rows.length===expected.length)return true;
+  // We may apply exactly our own not-yet-applied 0025, but never apply another
+  // agent's later migration or bypass a full-release production drift gate.
+  if(rows.length===authorIndex && expected.length===authorIndex+1)return false;
+  throw Error('Production is behind newer unrelated migrations; wait for their guarded deployment');
 }
 async function preflight(
   client:PoolClient,target:{database:string;role:string},expected:LedgerRow[],
@@ -70,7 +79,7 @@ async function preflight(
     const ledger=(await client.query<LedgerRow>(
       'SELECT filename,checksum FROM votepredict_schema_migrations ORDER BY filename'
     )).rows;
-    const applied=validatePrefix(ledger,expected);
+    const applied=validateSenateBillAuthorLedger(ledger,expected);
     const count=(await client.query<{n:number}>(
       "SELECT count(*)::int AS n FROM bills b "+
       "JOIN legislative_sessions s ON s.id=b.session_id "+
@@ -99,7 +108,7 @@ async function migrate(client:PoolClient,expected:LedgerRow[]):Promise<boolean>{
     const rows=(await client.query<LedgerRow>(
       'SELECT filename,checksum FROM votepredict_schema_migrations ORDER BY filename FOR UPDATE'
     )).rows;
-    if(validatePrefix(rows,expected)){await client.query('COMMIT');return false;}
+    if(validateSenateBillAuthorLedger(rows,expected)){await client.query('COMMIT');return false;}
     await client.query(readFileSync('migrations/'+MIGRATION,'utf8'));
     await client.query(
       'INSERT INTO votepredict_schema_migrations(filename,checksum) VALUES ($1,$2)',
@@ -120,7 +129,7 @@ async function main():Promise<void>{
   let pool:Pool|null=null;
   try{
     if(process.argv.length!==2)throw Error('No arguments accepted');
-    guard(process.env);
+    const journalsOnly=guard(process.env);
     const expected=expectedMigrations();
     phase='discover_existing_default_primary';
     const target=await discoverExistingVotePredictNeonConnection({
@@ -151,13 +160,15 @@ async function main():Promise<void>{
     });
     if(drift.status!==0)throw Error('Post-migration release ledger drift');
     phase='bounded_serial_official_collection';
-    const result=await runSenateBillAuthorCollection(pool,350,new RevisorPacer());
+    const billLookupLimit=journalsOnly?0:SENATE_BILL_AUTHORS_MAX_LOOKUPS;
+    const result=await runSenateBillAuthorCollection(pool,billLookupLimit,new RevisorPacer());
     phase='readonly_repeatable_readback';
     const sessions=await senateBillAuthorReadback(pool);
     const output={
       status:result.remainingUnscanned===0 && result.remainingJournals===0 &&
-        !result.stoppedForThrottle?'completed':'bounded_partial',
-      migrationApplied,collection:result,sessions,
+        !result.stoppedForThrottle && !result.stoppedForTimeBudget?'completed':'bounded_partial',
+      migrationApplied,collectionMode:journalsOnly?'journals_only':'bounded_bills',
+      requestedBillLookups:billLookupLimit,collection:result,sessions,
       remaining_unscanned:result.remainingUnscanned,
       remaining_journals:result.remainingJournals,
       continuation:'Fresh reviewed main merge commit containing SENATE_BILL_AUTHORS_PRODUCTION',
