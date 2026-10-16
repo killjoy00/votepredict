@@ -216,7 +216,7 @@ async function main():Promise<void>{
       sum(captureAfter)-sum(captureBefore)!==stats.inserted||
       sum(captureAfter)>sum(after))
       throw Error('Raw original and capture provenance inserts do not reconcile');
-    const report={status:'archived_sitemap_shard_raw_backfill',mode:run.kind,
+    const report={status:stopReason?'paused_archive_unavailable_or_rate_limited':'archived_sitemap_shard_raw_backfill',mode:run.kind,
       shard:batch.shard,shardCount:batch.shardCount,
       inventorySize:candidates.length,selectedCount:selected.length,
       publisherSitemapManifest:manifest,stats,byYearAdded,stopReason,
@@ -227,11 +227,21 @@ async function main():Promise<void>{
     if(process.env.GITHUB_STEP_SUMMARY)appendFileSync(process.env.GITHUB_STEP_SUMMARY,
       '## Senate DFL original archived publisher sitemap recovery\n\n'+
       'Shard: '+(batch.shard+1)+'/'+batch.shardCount+
-      '; candidates: '+selected.length+'; inserted: '+stats.inserted+'\n\n'+
+      '; candidates: '+selected.length+'; inserted: '+stats.inserted+
+      '; archive pause: '+(stopReason??'none')+'\n\n'+
       'Captured first-party original counts: '+captureAfter.map(r=>r.year+': '+r.total).join(', ')+
       '\n\nPublisher post sitemap manifest: '+manifest+
       '\n\nOriginal publication date and Wayback capture timestamp are distinct. No models or votes changed.\n');
-    if(stopReason)throw Error('Archive rate-limit/unavailability after verified partial safe insert');
+    // 429/503 is a publisher-archive restriction, not a code deployment
+    // failure. Stop immediately, retain only verified insert-only additions,
+    // and make the next scheduled hour a fresh, bounded attempt at a different
+    // source shard. Never bypass the archive or request the live DFL site.
+    if(stopReason)
+      console.warn('SENATE_DFL_SITEMAP_PAUSED='+JSON.stringify({
+        reason:stopReason,shard:batch.shard,attempted:stats.attempted,
+        inserted:stats.inserted,willRetryOnFutureHourlyRotation:true,
+        isHistoricalCollectionComplete:false,
+      }));
   }catch(error){
     // Never log credentials, query parameters or source contents. SQLSTATE and
     // a bounded diagnostic category are enough to diagnose read-only failures.
