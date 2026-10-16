@@ -49,12 +49,12 @@ jobs:
       - name: Live public-publisher smoke; inaccessible sources remain reported, not bypassed
         shell: bash
         run: |
-          for source in mhp-housing-2026 mhp-2026-dan-rogers snap-2026-robyn-gulley kaxe-2026-sd2 mnbiofuels-2022-weber-dornink wspreader-2026-sd53; do
+          for source in mhp-housing-2026 mhp-2026-dan-rogers snap-2026-robyn-gulley kaxe-2026-sd2 mnbiofuels-2022-weber-dornink mnbiofuels-2020-index wspreader-2026-sd53; do
             node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source="$source" --max-sources=3 --delay-ms=250 --out "$RUNNER_TEMP/$source.jsonl"
           done
           SENATE_SMOKE_DIR="$RUNNER_TEMP" node --input-type=module <<'NODE'
           import {readFileSync} from 'node:fs';
-          const names=['mhp-housing-2026','mhp-2026-dan-rogers','snap-2026-robyn-gulley','kaxe-2026-sd2','mnbiofuels-2022-weber-dornink','wspreader-2026-sd53'];
+          const names=['mhp-housing-2026','mhp-2026-dan-rogers','snap-2026-robyn-gulley','kaxe-2026-sd2','mnbiofuels-2022-weber-dornink','mnbiofuels-2020-index','wspreader-2026-sd53'];
           const rows=names.flatMap(n=>readFileSync(process.env.SENATE_SMOKE_DIR+'/'+n+'.jsonl','utf8').trim().split('\n').filter(Boolean).map(JSON.parse));
           if(rows.length<1 || !rows.every(r=>r.office==='Minnesota State Senate'&&r.qa.length>=2&&r.contentSha256.length===64))
             throw Error('No valid live Senate candidate questionnaire responses accessible from Actions');
