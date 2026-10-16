@@ -94,8 +94,8 @@ export function extractScheduleEntries(pages,reportYear){
    // Only populate the structured counterparty when the *whole* line
    // has an unambiguous date-name-amount layout. Otherwise retain the source
    // line and leave the printed counterpart field null, never inventing it.
-   const simple=line.match(/^(?:\\d{1,2}\\/\\d{1,2}\\/\\d{2,4}|20\\d{2}-\\d{2}-\\d{2})\\s+(.{5,160}?)\\s+\\$?[\\d,]+\\.\\d{2}$/);
-   const printedCounterparty=simple&&/[a-z]/i.test(simple[1])&&!/\\d/.test(simple[1])
+   const simple=line.match(/^(?:\d{1,2}\/\d{1,2}\/\d{2,4}|20\d{2}-\d{2}-\d{2})\s+(.{5,160}?)\s+\$?[\d,]+\.\d{2}$/);
+   const printedCounterparty=simple&&/[a-z]/i.test(simple[1])&&!/\d/.test(simple[1])
     ?simple[1].trim():null;
    entries.push({
     page_number:pageIndex+1,line_number:i+1,raw_schedule_line:line,
