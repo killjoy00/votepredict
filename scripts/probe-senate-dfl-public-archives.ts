@@ -12,7 +12,7 @@ const SAMPLES=[
   {year:2024,url:'https://senatedfl.mn/senator-mitchell-responds-to-new-and-expanded-tax-savings-for-2024-providing-relief-to-families-social-security-recipients/'},
   {year:2025,url:'https://senatedfl.mn/senator-bobby-joe-champion-says-final-bipartisan-jobs-and-economic-development-budget-clears-senate-heads-to-governors-desk/'},
 ] as const;
-const INDEXES=['CC-MAIN-2025-26','CC-MAIN-2024-51','CC-MAIN-2023-50','CC-MAIN-2026-30'];
+const INDEXES=['CC-MAIN-2023-50','CC-MAIN-2024-51','CC-MAIN-2025-26','CC-MAIN-2026-30'];
 type Cdx={url:string;timestamp:string;status:string;filename:string;offset:string;length:string;digest:string};
 const report:{endpoint:string;year?:number;status:number|string;records?:number;html?:boolean;length?:number;fingerprint?:string}[]=[];
 const userAgent='VotePredictRawArchiveProbe/1.0 (public historical indexes; bounded)';
@@ -35,13 +35,13 @@ async function ccProbe(year:number,url:string,index:string):Promise<void>{
     };
     if(response.status===200){
       const raw=(await response.text()).slice(0,100000);
-      const items: Cdx[]=raw.split('\\n').map(line=>{
+      const items: Cdx[]=raw.split('\n').map(line=>{
         try{return JSON.parse(line) as Cdx;}catch{return null;}
       }).filter((record):record is Cdx=>record!==null);
       entry.records=items.length;
       const candidate=items.find(item=>item.url===url&&item.status==='200'&&
-        /^crawl-data\\/CC-MAIN-[\\w-]+\\/segments\\/[\\w./-]+\\.warc\\.gz$/.test(item.filename)&&
-        /^\\d+$/.test(item.offset)&&/^\\d+$/.test(item.length)&&
+        /^crawl-data\/CC-MAIN-[\w-]+\/segments\/[\w./-]+\.warc\.gz$/.test(item.filename)&&
+        /^\d+$/.test(item.offset)&&/^\d+$/.test(item.length)&&
         Number(item.length)<=1500000);
       if(candidate){
         const start=Number(candidate.offset),size=Number(candidate.length);
@@ -55,7 +55,7 @@ async function ccProbe(year:number,url:string,index:string):Promise<void>{
               const text=decompressed.toString('utf8');
               const originalInHeader=text.slice(0,1500).includes('WARC-Target-URI: '+url);
               entry.html=originalInHeader&&text.includes('HTTP/1.1 200')&&
-                /<html[\\s>]/i.test(text);
+                /<html[\s>]/i.test(text);
               entry.length=decompressed.length;
               entry.fingerprint=createHash('sha256').update(decompressed).digest('hex').slice(0,16);
             }
@@ -102,7 +102,7 @@ async function main():Promise<void>{
   try{
     const response=await guardedGet(wildcard);
     let records=0;
-    if(response.status===200)records=(await response.text()).split('\\n')
+    if(response.status===200)records=(await response.text()).split('\n')
       .filter(x=>x.trim().startsWith('{')).length;
     report.push({endpoint:'cc-domain-wildcard-sample',status:response.status,records});
   }catch(error){report.push({endpoint:'cc-domain-wildcard-sample',status:error instanceof Error?error.name:'unavailable'});}
