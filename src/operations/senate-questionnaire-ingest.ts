@@ -2,10 +2,10 @@
 import type { PoolClient } from 'pg';
 import type { CandidateResponse } from '../sources/minnesota/senate-questionnaire-raw.js';
 import {resolveSenator,type SenateMember} from './senate-identity-bill-resolvers.js';
-import {eligibleSenateQuestionnaireCandidate} from '../sources/minnesota/senate-questionnaire-eligibility.js';
+import {eligibleSenateQuestionnaireCandidate,historicalWinnerCanonicalName} from '../sources/minnesota/senate-questionnaire-eligibility.js';
 
 type Link={legislatorId:string|null;membershipId:string|null};
-type CandidateIdentity=Pick<CandidateResponse,'candidateName'|'district'|'party'|'electionCycle'>;
+type CandidateIdentity=Pick<CandidateResponse,'candidateName'|'district'|'party'|'electionCycle'> & {sourceUrl?:string|null};
 function normalizedParty(raw:string|null):string|null {
   if(!raw)return null;
   const s=raw.toLowerCase().trim();
@@ -55,7 +55,8 @@ export async function exactExistingSenateMembership(
     startsOn:row.starts_on,endsOn:row.ends_on,aliases:row.aliases,
   }));
   const resolved=resolveSenator({
-    printedName:record.candidateName,sessionSlug:session,district:record.district,
+    printedName:historicalWinnerCanonicalName(record.electionCycle,record.candidateName,record.district,record.sourceUrl),
+    sessionSlug:session,district:record.district,
   },roster);
   const exact=matchingMembers.find(m=>m.id===resolved.membershipId);
   return exact?{legislatorId:exact.legislator_id,membershipId:exact.id}:
@@ -70,9 +71,9 @@ export async function reconcileUnmatchedQuestionnaireMemberships(
 ):Promise<{scanned:number;linked:number;remaining:number;skippedHistoricalNonWinners:number}>{
   if(!Number.isInteger(max)||max<1||max>15000)throw Error('Invalid bounded candidate link limit');
   const rows=await client.query<{
-    id:string;candidate_name:string;district:string|null;party:string|null;election_cycle:number;
+    id:string;candidate_name:string;district:string|null;party:string|null;election_cycle:number;source_url:string;
   }>(
-    'SELECT id,candidate_name,district,party,election_cycle '+
+    'SELECT id,candidate_name,district,party,election_cycle,source_url '+
     'FROM mn_senate_questionnaire_captures '+
     'WHERE membership_id IS NULL AND legislator_id IS NULL '+
     'AND election_cycle=ANY($1::int[]) ORDER BY id LIMIT $2',
@@ -80,13 +81,13 @@ export async function reconcileUnmatchedQuestionnaireMemberships(
   );
   let linked=0,skippedHistoricalNonWinners=0;
   for(const row of rows.rows){
-    if(!eligibleSenateQuestionnaireCandidate(row.election_cycle,row.candidate_name,row.district)){
+    if(!eligibleSenateQuestionnaireCandidate(row.election_cycle,row.candidate_name,row.district,row.source_url)){
       skippedHistoricalNonWinners++;
       continue;
     }
     const resolved=await exactExistingSenateMembership(client,{
       candidateName:row.candidate_name,district:row.district,
-      party:row.party,electionCycle:row.election_cycle,
+      party:row.party,electionCycle:row.election_cycle,sourceUrl:row.source_url,
     });
     if(!resolved.membershipId||!resolved.legislatorId)continue;
     const result=await client.query(
@@ -111,7 +112,7 @@ Promise<{inserted:boolean;matched:boolean}> {
   if(!item.qa.length||!item.rawContent.length||!item.candidateName)throw Error('Empty raw candidate answer');
   // Guard direct API callers as well as the publisher collector. Prior-cycle
   // losing or unconfirmed candidates must not generate new raw captures.
-  if(!eligibleSenateQuestionnaireCandidate(item.electionCycle,item.candidateName,item.district))
+  if(!eligibleSenateQuestionnaireCandidate(item.electionCycle,item.candidateName,item.district,item.sourceUrl))
     throw Error('Questionnaire candidate is outside historical election-winner scope');
   if(item.qa.some((x,i)=>x.ordinal!==i+1||!x.question.trim()||!x.answer.trim()))
     throw Error('Q&A order/content invalid');
@@ -190,19 +191,19 @@ export async function questionnaireEligibleScopeReadback(client:PoolClient):Prom
   legacyHistoricalExcludedQas:number;
 }> {
   const result=await client.query<{
-    cycle:number;candidate_name:string;district:string|null;captures:string;pairs:string;
+    cycle:number;candidate_name:string;district:string|null;source_url:string;captures:string;pairs:string;
   }>([
-    'SELECT c.election_cycle AS cycle,c.candidate_name,c.district,',
+    'SELECT c.election_cycle AS cycle,c.candidate_name,c.district,c.source_url,',
     'COUNT(DISTINCT c.id)::text AS captures,COUNT(q.id)::text AS pairs',
     'FROM mn_senate_questionnaire_captures c',
     'LEFT JOIN mn_senate_questionnaire_qa q ON q.capture_id=c.id',
-    'GROUP BY c.election_cycle,c.candidate_name,c.district',
+    'GROUP BY c.election_cycle,c.candidate_name,c.district,c.source_url',
   ].join(' '));
   let includedCaptures=0,includedQas=0,included2026Captures=0;
   let includedHistoricalWinnerCaptures=0,legacyHistoricalExcludedCaptures=0,legacyHistoricalExcludedQas=0;
   for(const row of result.rows){
     const captures=Number(row.captures),pairs=Number(row.pairs);
-    if(eligibleSenateQuestionnaireCandidate(Number(row.cycle),row.candidate_name,row.district)){
+    if(eligibleSenateQuestionnaireCandidate(Number(row.cycle),row.candidate_name,row.district,row.source_url)){
       includedCaptures+=captures;includedQas+=pairs;
       if(Number(row.cycle)===2026)included2026Captures+=captures;
       else includedHistoricalWinnerCaptures+=captures;
