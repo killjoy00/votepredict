@@ -1,0 +1,649 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "mhp-housing-2026",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp_index",
+      "url": "https://mhponline.org/2026-candidate-housing-questionnaire/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mhp-2026-dan-rogers",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/dan-rogers/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Dan Rogers",
+      "district": "02",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-jen-mcewen",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/jen-mcewen/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Jen McEwen",
+      "district": "08",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-mary-carlson",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/mary-carlson/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Mary Carlson",
+      "district": "11",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-monique-doward",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/monique-doward/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Monique Doward",
+      "district": "11",
+      "party": "FI"
+    },
+    {
+      "id": "mhp-2026-glenn-gruenhagen",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/glenn-gruenhagen/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Glenn Gruenhagen",
+      "district": "17",
+      "party": "R"
+    },
+    {
+      "id": "mhp-2026-caitlyn-sanow-minett",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/caitlyn-sanow-minett/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Caitlyn Sanow-Minett",
+      "district": "21",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-jeremy-munson",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/jeremy-munson/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Jeremy Munson",
+      "district": "22",
+      "party": "R"
+    },
+    {
+      "id": "mhp-2026-liz-boldon",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/liz-boldon/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Liz Boldon",
+      "district": "25",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-gadisa-berkessa",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/gadisa-berkessa/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Gadisa Berkessa",
+      "district": "31",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-chris-ford",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/chris-ford/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Chris Ford",
+      "district": "32",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-angela-nelson",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/angela-nelson/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Angela Nelson",
+      "district": "35",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-kristy-janigo",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/kristy-janigo/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Kristy Janigo",
+      "district": "37",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-ngone-niang",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/ngone-niang/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Ngone Niang",
+      "district": "39",
+      "party": "Other"
+    },
+    {
+      "id": "mhp-2026-rachel-japuntich",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/rachel-japuntich/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Rachel Japuntich",
+      "district": "40",
+      "party": "R"
+    },
+    {
+      "id": "mhp-2026-john-marty",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/john-marty/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "John Marty",
+      "district": "40",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-amanda-hemmingsen-jaeger-2",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/amanda-hemmingsen-jaeger-2/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Amanda Hemmingsen-Jaeger",
+      "district": "47",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-dustin-dufault",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/dustin-dufault/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Dustin DuFault",
+      "district": "49",
+      "party": "R"
+    },
+    {
+      "id": "mhp-2026-kris-babler",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/kris-babler/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Kris Babler",
+      "district": "49",
+      "party": "I"
+    },
+    {
+      "id": "mhp-2026-todd-podgorski",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/todd-podgorski/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Todd Podgorski",
+      "district": "53",
+      "party": "R"
+    },
+    {
+      "id": "mhp-2026-robert-bushard",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/robert-bushard/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Robert Bushard",
+      "district": "64",
+      "party": "R"
+    },
+    {
+      "id": "mhp-2026-robyn-gulley",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/robyn-gulley/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Robyn Gulley",
+      "district": "65",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-rocco",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/rocco/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Rocco",
+      "district": "65",
+      "party": "R"
+    },
+    {
+      "id": "mhp-2026-kathleen-bart",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/kathleen-bart/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Kathleen Bart",
+      "district": "66",
+      "party": "R"
+    },
+    {
+      "id": "snap-2026-robyn-gulley",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/robyn-gulley",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-liz-boldon",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/liz-boldon",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-omar-fateh",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/omar-fateh",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-louis-mcnutt",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/louis-mcnutt",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-gadisa-berkessa",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/gadisa-berkessa",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-jeremy-munson",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/jeremy-munson",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-amanda-hemmingsen-jaeger",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/amanda-hemmingsen-jaeger",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-bjorn-solberg",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/bjorn-solberg",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd1",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-25/legislature-state-senate-district-1-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 1 Election Guide",
+      "district": "1",
+      "candidates": [
+        "Mark Johnson",
+        "Bjorn Solberg"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd2",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-2-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 2 Election Guide",
+      "district": "2",
+      "candidates": [
+        "Steve Green",
+        "Dan Rogers",
+        "Calvin Larson Jr."
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd3",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-3-hauschild-zupancich-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 3 Election Guide",
+      "district": "3",
+      "candidates": [
+        "Grant Hauschild",
+        "Andrea Zupancich"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd4",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-4-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 4 Election Guide",
+      "district": "4",
+      "candidates": [
+        "Rob Kupec",
+        "Austin Peterson"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd5",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-5-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 5 Election Guide",
+      "district": "5",
+      "candidates": [
+        "Skylar Fynboh",
+        "Mike Wiener"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd6",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-6-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 6 Election Guide",
+      "district": "6",
+      "candidates": [
+        "Keri Heintzeman",
+        "Denise Slipy"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd7",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-7-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 7 Election Guide",
+      "district": "7",
+      "candidates": [
+        "Robert Farnsworth",
+        "Kim (Kotanias) McLaughlin"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd10",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-10-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 10 Election Guide",
+      "district": "10",
+      "candidates": [
+        "Tara Killen",
+        "Nathan Wesenberg"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd11",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-11-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 11 Election Guide",
+      "district": "11",
+      "candidates": [
+        "Mary Carlson",
+        "Monique Doward",
+        "Jason Rarick"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-hauschild-gaul",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://mnbiofuels.org/media-mba/blog/item/3434-candidates-biofuels-grant-hauschild-anita-gaul",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Grant Hauschild"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-weber-dornink",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://mnbiofuels.org/candidates-biofuels-weber-dornink",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Bill Weber",
+        "Gene Dornink"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-navitsky-brazelton",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://www.mnbiofuels.org/candidates-biofuels-navitsky-brazelton",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Ken Navitsky",
+        "Chris Brazelton"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-falvey-drenckhahn",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://www.mnbiofuels.org/media-mba/blog/item/3435-candidates-biofuels-falvey-drenckhahn",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Kate Falvey",
+        "Bradley Drenckhahn"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-cwodzinski-craig",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://mnbiofuels.org/media-mba/blog/item/3440-candidates-biofuels-cwodzinski-craig",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Steve Cwodzinski"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2020-index",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2020,
+      "adapter": "biofuels_index",
+      "url": "https://www.mnbiofuels.org/the-epa-wrecking-ball/itemlist/category/11-media?start=912",
+      "title": "Candidates & Biofuels (2020)",
+      "articleNames": [
+        "A. John Peters, Julie Rosen",
+        "Roger Steinkamp, Dan Sparks",
+        "Melisa Lopez Franzen, Reed Perkins",
+        "Nick Frentz, Ralph Kaehler",
+        "David Senjem, Joshua Fike",
+        "Jim Carlson"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "wspreader-2026-sd52",
+      "publisher": "West St. Paul Reader",
+      "cycle": 2026,
+      "adapter": "wsp_reader",
+      "url": "https://weststpaulreader.com/2026/10/01/2026-election-minnesota-senate-district-52/",
+      "title": "2026 Election: Minnesota Senate District 52",
+      "sourceKind": "publisher_response",
+      "district": "52",
+      "candidates": [
+        "Brady O’Neil",
+        "Liz Reyer"
+      ]
+    },
+    {
+      "id": "wspreader-2026-sd53",
+      "publisher": "West St. Paul Reader",
+      "cycle": 2026,
+      "adapter": "wsp_reader",
+      "url": "https://weststpaulreader.com/2026/09/18/2026-election-minnesota-senate-district-53/",
+      "title": "2026 Election: Minnesota Senate District 53",
+      "sourceKind": "publisher_response",
+      "district": "53",
+      "candidates": [
+        "Paul Cumings",
+        "Todd Podgorski"
+      ]
+    },
+    {
+      "id": "wspreader-2026-sd65",
+      "publisher": "West St. Paul Reader",
+      "cycle": 2026,
+      "adapter": "wsp_reader",
+      "url": "https://weststpaulreader.com/2026/09/23/2026-election-minnesota-senate-district-65/",
+      "title": "2026 Election: Minnesota Senate District 65",
+      "sourceKind": "publisher_response",
+      "district": "65",
+      "candidates": [
+        "Robyn Gulley",
+        "Rocco"
+      ]
+    },
+    {
+      "id": "roseville-reader-2026-sd40",
+      "publisher": "Roseville Reader",
+      "cycle": 2026,
+      "adapter": "roseville_reader",
+      "url": "https://www.rosevillereader.com/minnesota-senate-district-40-candidate-guide-2026/",
+      "title": "2026 Minnesota Senate District 40 Candidate Guide — Questionnaire Responses",
+      "sourceKind": "publisher_response",
+      "district": "40",
+      "candidates": [
+        "Rachel Japuntich",
+        "John Marty"
+      ]
+    },
+    {
+      "id": "roseville-reader-2026-sd66",
+      "publisher": "Roseville Reader",
+      "cycle": 2026,
+      "adapter": "roseville_reader",
+      "url": "https://www.rosevillereader.com/minnesota-senate-district-66-candidate-guide/",
+      "title": "2026 Minnesota Senate District 66 Candidate Guide — Questionnaire Responses",
+      "sourceKind": "publisher_response",
+      "district": "66",
+      "candidates": [
+        "Kathleen Bart",
+        "Clare Oumou Verbeten"
+      ]
+    },
+    {
+      "id": "mnrtl-2026-primary",
+      "publisher": "Minnesota Right to Life",
+      "cycle": 2026,
+      "adapter": "mnrtl",
+      "url": "https://www.mnrtl.org/elections/",
+      "title": "2026 Primary Survey Results — State Legislature",
+      "sourceKind": "publisher_response"
+    }
+  ]
+}

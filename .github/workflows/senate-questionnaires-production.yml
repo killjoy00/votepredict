@@ -1,0 +1,130 @@
+name: Protected Minnesota Senate candidate questionnaire raw import
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-questionnaires-production.yml
+      - scripts/deploy-senate-questionnaires-neon.ts
+      - scripts/collect-senate-questionnaires.ts
+      - src/sources/minnesota/senate-questionnaire-raw.ts
+      - src/operations/senate-questionnaire-ingest.ts
+      - src/operations/senate-questionnaire-migration.ts
+      - migrations/0021_mn_senate_questionnaire_raw.sql
+      - data/senate-questionnaire-sources.json
+permissions:
+  contents: read
+concurrency:
+  group: senate-questionnaires-raw-production-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  independently-tested-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_QUESTIONNAIRE_RAW_PRODUCTION_20261015')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact independently tested main SHA
+        env:
+          COMMIT: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$COMMIT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: All migrations on disposable PostgreSQL
+        run: npm run db:migrate
+      - name: Full typecheck tests and Next.js build
+        run: npm run check
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+      - name: Live public-publisher smoke; inaccessible sources remain reported, not bypassed
+        shell: bash
+        run: |
+          for source in mhp-housing-2026 mhp-2026-dan-rogers snap-2026-robyn-gulley kaxe-2026-sd2 mnbiofuels-2022-weber-dornink mnbiofuels-2020-index wspreader-2026-sd53 roseville-reader-2026-sd40 mnrtl-2026-primary; do
+            node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source="$source" --max-sources=3 --delay-ms=250 --out "$RUNNER_TEMP/$source.jsonl"
+          done
+          SENATE_SMOKE_DIR="$RUNNER_TEMP" node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          const names=['mhp-housing-2026','mhp-2026-dan-rogers','snap-2026-robyn-gulley','kaxe-2026-sd2','mnbiofuels-2022-weber-dornink','mnbiofuels-2020-index','wspreader-2026-sd53','roseville-reader-2026-sd40','mnrtl-2026-primary'];
+          const rows=names.flatMap(n=>readFileSync(process.env.SENATE_SMOKE_DIR+'/'+n+'.jsonl','utf8').trim().split('\n').filter(Boolean).map(JSON.parse));
+          if(rows.length<1 || !rows.every(r=>r.office==='Minnesota State Senate'&&r.qa.length>=2&&r.contentSha256.length===64))
+            throw Error('No valid live Senate candidate questionnaire responses accessible from Actions');
+          for(const id of ['roseville-reader-2026-sd40','mnrtl-2026-primary']) {
+            const text=readFileSync(process.env.SENATE_SMOKE_DIR+'/'+id+'.jsonl','utf8').trim();
+            const entries=text?text.split('\n').map(JSON.parse):[];
+            if(!entries.length || !entries.every(r=>r.qa.length>=4))
+              throw Error('Additional original publisher Senate candidate Q&A unavailable: '+id);
+          }
+          console.log('SENATE_QUESTIONNAIRE_LIVE_SMOKE='+JSON.stringify({
+            candidates:rows.map(r=>r.candidateName),pairs:rows.reduce((n,r)=>n+r.qa.length,0),
+          }));
+          NODE
+
+  protected-neon-production:
+    needs: [independently-tested-main]
+    if: >-
+      needs.independently-tested-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_QUESTIONNAIRE_RAW_PRODUCTION_20261015')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_QUESTIONNAIRES_VERIFIED: ${{ needs.independently-tested-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify immutable reviewed main SHA
+        env:
+          COMMIT: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$COMMIT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Existing Neon default branch, only migration 0021, raw answers and readback
+        run: node --import tsx scripts/deploy-senate-questionnaires-neon.ts

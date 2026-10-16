@@ -1,0 +1,71 @@
+name: Senate candidate questionnaire raw collector checks
+on:
+  pull_request:
+    paths:
+      - src/sources/minnesota/senate-questionnaire-raw.ts
+      - src/operations/senate-questionnaire-ingest.ts
+      - src/operations/senate-questionnaire-migration.ts
+      - scripts/collect-senate-questionnaires.ts
+      - scripts/deploy-senate-questionnaires-neon.ts
+      - migrations/0021_mn_senate_questionnaire_raw.sql
+      - data/senate-questionnaire-sources.json
+      - tests/senate-questionnaires.test.ts
+      - .github/workflows/senate-questionnaires-ci.yml
+  push:
+    branches: ['collect/senate-candidate-questionnaires-20261015', 'collect/senate-questionnaires-more-publishers-20261016']
+permissions:
+  contents: read
+jobs:
+  raw-senate-questionnaires:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - name: Live public-publisher smoke; inaccessible sources remain reported, not bypassed
+        shell: bash
+        run: |
+          for source in mhp-housing-2026 mhp-2026-dan-rogers snap-2026-robyn-gulley kaxe-2026-sd2 mnbiofuels-2022-weber-dornink mnbiofuels-2020-index wspreader-2026-sd53 roseville-reader-2026-sd40 mnrtl-2026-primary; do
+            node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source="$source" --max-sources=3 --delay-ms=250 --out "$RUNNER_TEMP/$source.jsonl"
+          done
+          SENATE_SMOKE_DIR="$RUNNER_TEMP" node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          const names=['mhp-housing-2026','mhp-2026-dan-rogers','snap-2026-robyn-gulley','kaxe-2026-sd2','mnbiofuels-2022-weber-dornink','mnbiofuels-2020-index','wspreader-2026-sd53','roseville-reader-2026-sd40','mnrtl-2026-primary'];
+          const rows=names.flatMap(n=>readFileSync(process.env.SENATE_SMOKE_DIR+'/'+n+'.jsonl','utf8').trim().split('\n').filter(Boolean).map(JSON.parse));
+          if(rows.length<1 || !rows.every(r=>r.office==='Minnesota State Senate'&&r.qa.length>=2&&r.contentSha256.length===64))
+            throw Error('No valid live Senate candidate questionnaire responses accessible from Actions');
+          for(const id of ['roseville-reader-2026-sd40','mnrtl-2026-primary']) {
+            const text=readFileSync(process.env.SENATE_SMOKE_DIR+'/'+id+'.jsonl','utf8').trim();
+            const entries=text?text.split('\n').map(JSON.parse):[];
+            if(!entries.length || !entries.every(r=>r.qa.length>=4))
+              throw Error('Additional original publisher Senate candidate Q&A unavailable: '+id);
+          }
+          console.log('SENATE_QUESTIONNAIRE_LIVE_SMOKE='+JSON.stringify({
+            candidates:rows.map(r=>r.candidateName),pairs:rows.reduce((n,r)=>n+r.qa.length,0),
+          }));
+          NODE
