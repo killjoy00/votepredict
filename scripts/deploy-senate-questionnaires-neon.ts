@@ -4,7 +4,7 @@ import {readFileSync,readdirSync,appendFileSync} from 'node:fs';
 import {Pool,type PoolClient} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {collectQuestionnaires,validateCatalog} from '../src/sources/minnesota/senate-questionnaire-raw.js';
-import {insertQuestionnaire,questionnaireReadback} from '../src/operations/senate-questionnaire-ingest.js';
+import {insertQuestionnaire,questionnaireReadback,reconcileUnmatchedQuestionnaireMemberships} from '../src/operations/senate-questionnaire-ingest.js';
 import {assertAdditiveQuestionnaireMigration} from '../src/operations/senate-questionnaire-migration.js';
 const MARKER='SENATE_QUESTIONNAIRE_RAW_PRODUCTION_20261015';
 const MIGRATION='0021_mn_senate_questionnaire_raw.sql';
@@ -57,9 +57,9 @@ async function main():Promise<void>{
     requireReviewedMain();
     const expected=expectedLedger();
     const sources=validateCatalog(JSON.parse(readFileSync('data/senate-questionnaire-sources.json','utf8')));
-    if(!sources.length||sources[0].cycle!==2026||!sources.some(x=>x.cycle===2022)
-      ||!sources.some(x=>x.cycle===2020))
-      throw Error('Reviewed 2026/2022/2020 source catalog missing');
+    const selected=sources.filter(s=>s.cycle!==2020);
+    if(!selected.length||selected[0].cycle!==2026||![2022,2024,2025,2026].every(c=>selected.some(s=>s.cycle===c)))
+      throw Error('Reviewed requested 2026/2025/2024/2022 source catalog missing');
     phase='resolve_existing_default_neon_primary';
     const target=await discoverExistingVotePredictNeonConnection({
       apiKey:process.env.NEON_API_KEY?.trim()??'',
@@ -120,10 +120,10 @@ async function main():Promise<void>{
     }finally{if(inTransaction)try{await c.query('ROLLBACK');}catch{}c.release(true);}
     phase='readonly_before_counts';
     const before=await readonly(pool,questionnaireReadback);
-    phase='bounded_2026_to_2020_raw_publisher_capture';
+    phase='bounded_2026_to_2022_raw_publisher_capture_excluding_2020';
     let inserted=0,previous=0,matchedNew=0;
     const summary=await collectQuestionnaires({
-      sources,maxSources:220,maxBytes:2_000_000,delayMs:400,
+      sources:selected,maxSources:220,maxBytes:4_000_000,delayMs:400,
       onResponse:async item=>{
         const db=await pool!.connect();
         try{
@@ -133,6 +133,11 @@ async function main():Promise<void>{
         }finally{db.release(true);}
       },
     });
+    phase='bounded_null_only_candidate_membership_reconciliation';
+    const identityDb=await pool.connect();
+    let identityBackfill;
+    try{identityBackfill=await reconcileUnmatchedQuestionnaireMemberships(identityDb);}
+    finally{identityDb.release(true);}
     phase='readonly_postcommit_readback';
     const after=await readonly(pool,questionnaireReadback);
     if(after.totals.captures!==before.totals.captures+inserted
@@ -142,7 +147,7 @@ async function main():Promise<void>{
       throw Error('Unexpected raw-only insert/readback counts');
     const report={
       status:summary.failed.length?'committed_with_unavailable_or_unparsed_sources':'committed_readback_verified',
-      migrationApplied,sourceCatalogEntries:sources.length,
+      migrationApplied,sourceCatalogEntries:sources.length,excludedCycles:[2020],identityBackfill,
       fetchedSourceDocuments:summary.fetched,fetchedResponses:summary.responses,
       fetchedPairs:summary.pairs,inserted,previous,matchedNew,
       failures:summary.failed,explicitlyUnanswered:summary.explicitlyUnanswered,
@@ -159,6 +164,7 @@ async function main():Promise<void>{
       +', distinct Q&A pairs: '+after.totals.uniqueQaPairs
       +', repeated raw-page snapshots of identical Q&A: '+after.totals.repeatQaSnapshots
       +', unmatched captures: '+after.totals.unmatched
+      +', candidate links filled in this backfill: '+identityBackfill.linked
       +', missing explicit publication dates: '+after.totals.missingDates
       +', failed sources: '+summary.failed.length
       +'. No forecasting tables or models were touched.\n');
