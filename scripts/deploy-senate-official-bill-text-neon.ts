@@ -52,12 +52,12 @@ function guard(e:NodeJS.ProcessEnv):void{
 }
 function expectedMigrations():Ledger[]{
   const files=readdirSync('migrations').filter(n=>/^\d{4}_[\w-]+\.sql$/.test(n)).sort();
-  if(files.length!==24 || files.at(-1)!==MIGRATION)
+  if(files.length<24 || files[23]!==MIGRATION)
     throw Error('migration_number_or_concurrent_inventory_changed');
   return files.map(filename=>({filename,checksum:digest(readFileSync('migrations/'+filename,'utf8'))}));
 }
 function prefix(rows:Ledger[],expected:Ledger[]):boolean{
-  if(rows.length<expected.length-1||rows.length>expected.length)
+  if(rows.length!==23 && rows.length!==expected.length)
     throw Error('production_migration_prerequisite_or_order_mismatch');
   for(let i=0;i<rows.length;i++)
     if(rows[i].filename!==expected[i].filename||rows[i].checksum!==expected[i].checksum)
@@ -140,7 +140,7 @@ async function stageBills(db:PoolClient):Promise<number>{
     ' AND NOT EXISTS(SELECT 1 FROM senate_official_bill_text_discovery d WHERE d.bill_id=b.id)',
     ' ORDER BY s.slug DESC,b.id LIMIT $2',
     ') INSERT INTO senate_official_bill_text_discovery(bill_id,session_id)',
-    ' SELECT bill_id,session_id FROM missing ON CONFLICT (bill_id) DO NOTHING RETURNING bill_id'
+    ' SELECT bill_id,session_id FROM missing WHERE true ON CONFLICT (bill_id) DO NOTHING RETURNING bill_id'
   ].join('\n');
   const res=await db.query<{bill_id:string}>(sql,[SESSIONS,MAX_NEW_BILLS]);
   return res.rowCount??0;
@@ -308,11 +308,16 @@ async function scanDocument(db:PoolClient,d:RawDocument):Promise<{found:number;l
         +'original_body_sha256,body_hash_provenance,extracted_text_sha256,fetched_at,proceeding_on)'
         +" VALUES($1,$2,$3,'amendment',$4,$5,$6,$7,$8,'existing_source_document_fingerprint',$9,now(),$10)"
         +' ON CONFLICT(source_url,source_locator,original_body_sha256,extracted_text_sha256) '
-        +'DO UPDATE SET id=senate_official_bill_text_captures.id RETURNING id',
+        +'DO NOTHING RETURNING id',
         [d.session_id,billId,d.id,d.source_url,snippet.sourceLocator,snippet.printedLabel,
         snippet.rawText,d.content_sha256,snippet.extractedTextSha256,
         typeof d.raw.sourceDate==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d.raw.sourceDate)
           ? d.raw.sourceDate:null]);
+      const receiptId=capture.rows[0]?.id ?? (await db.query<{id:string}>(
+        'SELECT id FROM senate_official_bill_text_captures WHERE source_url=$1 AND source_locator=$2 '
+        +'AND original_body_sha256=$3 AND extracted_text_sha256=$4',
+        [d.source_url,snippet.sourceLocator,d.content_sha256,snippet.extractedTextSha256])).rows[0]?.id;
+      if(!receiptId)throw Error('amendment_capture_receipt_not_found');
       // Strict A-number match plus preexisting linked record ordinal. No
       // same-bill, nearby-position or companion inference for unnumbered motions.
       if(!snippet.amendmentRef)continue;
@@ -328,7 +333,7 @@ async function scanDocument(db:PoolClient,d:RawDocument):Promise<{found:number;l
         'INSERT INTO senate_official_bill_text_record_links'
         +' (source_document_id,record_ordinal,capture_id,relation,source_locator)'
         +" VALUES($1,$2,$3,'literal_amendment_reference',$4) ON CONFLICT DO NOTHING",
-        [d.id,ordinal,capture.rows[0].id,snippet.sourceLocator]);
+        [d.id,ordinal,receiptId,snippet.sourceLocator]);
       exactLinks+=written.rowCount??0;
     }
     await db.query(
