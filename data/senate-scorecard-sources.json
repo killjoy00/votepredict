@@ -54,6 +54,20 @@
     },
     {
       "groupName": "Education Minnesota",
+      "year": 2024,
+      "adapter": "edmn_html",
+      "url": "https://educationminnesota.org/news/press-release/education-minnesota-announces-23-new-legislative-endorsements/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Education Minnesota",
+      "year": 2025,
+      "adapter": "edmn_html",
+      "url": "https://educationminnesota.org/news/press-release/education-minnesota-endorses-clark-in-special-election-for-state-senate/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Education Minnesota",
       "year": 2026,
       "adapter": "edmn_html",
       "url": "https://educationminnesota.org/news/press-release/education-minnesota-endorses-13-more-candidates-for-legislature/",
@@ -173,6 +187,82 @@
       "adapter": "raw_html",
       "url": "https://gunowners.mn/elections/",
       "electionCandidate": true
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2022,
+      "adapter": "nfib_pdf",
+      "url": "https://assets.nfib.com/nfibcom/Minnesota-Voting-Record-21-22.pdf"
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2022,
+      "adapter": "nfib_html",
+      "url": "https://www.nfib.com/news/news/2022-nfib-mn-pac-endorsements-for-the-minnesota-legislature/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2022,
+      "adapter": "nfib_html",
+      "url": "https://www.nfib.com/news/news/nfib-mn-pac-announces-first-round-of-legislative-endorsements/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2022,
+      "adapter": "nfib_html",
+      "url": "https://www.nfib.com/news/news/nfib-mn-pac-endorses-35-candidates-for-minnesota-legislature/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2022,
+      "adapter": "nfib_html",
+      "url": "https://www.nfib.com/news/news/nfib-mn-pac-issues-15-endorsements-for-minnesota-legislature/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2022,
+      "adapter": "nfib_html",
+      "url": "https://www.nfib.com/news/news/nfib-mn-pac-releases-second-round-of-legislative-endorsements/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2024,
+      "adapter": "nfib_pdf",
+      "url": "https://strgnfibcom.blob.core.windows.net/nfibcom/MN-Voting-Record-03.pdf",
+      "electionCandidate": false
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2024,
+      "adapter": "nfib_html",
+      "url": "https://www.nfib.com/news/news/nfib-minnesota-pac-announces-third-round-of-legislative-endorsements/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2025,
+      "adapter": "nfib_html",
+      "url": "https://www.nfib.com/news/news/nfib-minnesota-pac-endorses-keri-heintzeman-for-sd-6/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2026,
+      "adapter": "nfib_html",
+      "url": "https://www.nfib.com/news/news/nfib-minnesota-pac-announces-third-round-of-2026-legislative-endorsements/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2026,
+      "adapter": "nfib_pdf",
+      "url": "https://www.nfib.com/wp-content/uploads/2026/07/Minnesota-Voting-Record-3.pdf",
+      "electionCandidate": false
     }
   ],
   "requestedGroups": [

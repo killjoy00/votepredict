@@ -4,7 +4,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {Pool} from 'pg';
 import {
-  parseA4LSenatePdf,parseGunOwnersSenateHtml,parseEducationMinnesotaSenateEndorsements,parseScorecardBillPositions,explicitPublishedOn,
+  parseA4LSenatePdf,parseGunOwnersSenateHtml,parseEducationMinnesotaSenateEndorsements,parseNfibMinnesotaSenateEndorsements,parseNfibScorecardBillPositions,parseScorecardBillPositions,explicitPublishedOn,
   parseRobots,validateScorecardManifest,parseScorecardContent,
   type ScorecardCapture,
 } from '../src/sources/minnesota/senate-scorecard-raw.js';
@@ -96,6 +96,139 @@ test('Keep the first-party 2026 education endorsement dateline separate from fet
   assert.equal(explicitPublishedOn('ST. PAUL, Minnesota. July 31, 2026 – Education Minnesota endorsed senators.'),'2026-07-31');
   assert.equal(explicitPublishedOn('Last Updated: August 10, 2022'),'2022-08-10');
   assert.equal(explicitPublishedOn('No displayed publication date'),null);
+});
+
+
+test('2021-22 original NFIB Minnesota PDF extracts nine printed State Senate positions and excludes House',()=>{
+  // Trimmed page 1 of the first-party 2021-22 NFIB MN Senate voting record.
+  const pdf='VOTING RECORD\nSENATE ONLY\n'+
+    '1. 1. Unemployment Insurance Experience COVID-19 Exclusion (2021-SF 192):\n'+
+    'Freezes taxable wages. A “Yes” vote supports the NFIB position.\n'+
+    '2. PPP Loan Forgiveness State Tax Exemption (2021-SF 263):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '3. Individual Health Insurance Market Reinsurance (2021-SF 694):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '4. Governor’s Peacetime Emergency Reform (2021-SF 4):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '5. UI Debt Repayment (2022-SF 2677):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '6. Reinsurance for 2023-27 (2022-SF 3472):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '7. 2022 Senate Tax Bill (2022-SF 3692):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '8. Southwest Light Rail Audit (2022-HF 3035):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '9. Paid Leave Insurance Policies (2022-SF 3885):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    'HOUSE ONLY\n'+
+    '1. 2021 House Tax Bill (2021-HF 991):\n'+
+    'A “No” vote supports the NFIB position.\n';
+  const rows=parseNfibScorecardBillPositions(pdf);
+  assert.equal(rows.length,9);
+  assert.deepEqual(rows.map(x=>x.billIdentifierRaw),
+    ['SF 192','SF 263','SF 694','SF 4','SF 2677','SF 3472','SF 3692','HF 3035','SF 3885']);
+  assert.ok(rows.every(x=>/Yes/i.test(x.groupPositionRaw)));
+});
+test('2026 NFIB source PDF numbered Senate-only issues retain literal YES/NO text and bill duplicates',()=>{
+  // Trimmed literal original "Minnesota-Voting-Record-3.pdf", page 1:
+  const raw='SENATE ONLY\n'+
+    '1. Health & Human Services Omnibus Bill (2025 – HF 2435):\n'+
+    'Increased taxes on healthcare. A “NO” vote supports the NFIB position.\n'+
+    '2. Earned Sick & Safe Time Fixes (2025 – SF 2300):\n'+
+    'Various modifications. A “YES” vote supports the NFIB position.\n'+
+    '4. Suitable Seating Mandate Scope Modification (2026 – SF 4059):\n'+
+    'Narrow scope. A “YES” vote supports the NFIB position.\n'+
+    '5. Suitable Seating Mandate (2026 – SF 4059):\n'+
+    'Narrow scope. A “NO” vote supports the NFIB positions. Passed Senate.\n'+
+    'SENATE VOTING RECORD\n'+
+    'Abeler, Jim\n60%\nDistrict\n35\n';
+  const parsed=parseNfibScorecardBillPositions(raw);
+  assert.deepEqual(parsed.map(v=>[v.billIdentifierRaw,v.groupPositionRaw]),
+    [['HF 2435','A “NO” vote supports the NFIB position'],
+      ['SF 2300','A “YES” vote supports the NFIB position'],
+      ['SF 4059','A “YES” vote supports the NFIB position'],
+      ['SF 4059','A “NO” vote supports the NFIB positions']]);
+  assert.deepEqual(parseScorecardBillPositions(raw,'nfib_pdf'),parsed);
+});
+test('2024 NFIB Both Chambers vote descriptions stop before House-only issues',()=>{
+  const raw='BOTH CHAMBERS\n'+
+    '1. Federal Tax Conformity (2023 - HF 31):\n'+
+    'Simplifies small business taxes. A “YES” vote supports the NFIB position.\n'+
+    '2. Environment and Energy Omnibus Bill (2023 - HF 2310):\n'+
+    'Increases fees. A “NO” vote supports the NFIB position.\n'+
+    'HOUSE ONLY\n11. House Tax Omnibus Bill (2023 - HF 1938):\n'+
+    'A “NO” vote supports the NFIB position.\n';
+  const rows=parseNfibScorecardBillPositions(raw);
+  assert.deepEqual(rows.map(v=>v.billIdentifierRaw),['HF 31','HF 2310']);
+  assert.equal(rows.length,2);
+});
+test('NFIB 2022 publisher consolidated table preserves 45 State Senate candidates, never House rows',()=>{
+  // Trimmed original Aug. 17, 2022 NFIB index: MN House table then Senate
+  // four-column repeated pair table. A lettered House district stays excluded.
+  const html='<h3>Minnesota House of Representatives</h3>'+
+    '<table><tr><th>District</th><th>Endorsed Candidate</th></tr>'+
+    '<tr><td>01A</td><td>Rep. John Burkel</td></tr></table>'+
+    '<h3>Minnesota Senate</h3>'+
+    '<table><tr><th>District</th><th>Endorsed Candidate</th><th>District</th><th>Endorsed Candidate</th></tr>'+
+    '<tr><td>1</td><td>Sen. Mark Johnson*</td><td>27</td><td>Sen. Andrew Mathews</td></tr>'+
+    '<tr><td>2</td><td>Steve Green</td><td>28</td><td>Sen. Mark Koran</td></tr>'+
+    '<tr><td>3A</td><td>House Person</td><td>67</td><td>Another Senator</td></tr></table>';
+  const got=parseNfibMinnesotaSenateEndorsements(html);
+  assert.deepEqual(got.map(x=>[x.nameRaw,x.districtRaw,x.kind,x.valueRaw]),
+    [['Sen. Mark Johnson','1','endorsement','ENDORSED'],
+     ['Sen. Andrew Mathews','27','endorsement','ENDORSED'],
+     ['Steve Green','2','endorsement','ENDORSED'],
+     ['Sen. Mark Koran','28','endorsement','ENDORSED'],
+     ['Another Senator','67','endorsement','ENDORSED']]);
+});
+test('NFIB 2022 first-round Senate bullet rows never treat House district as Senate',()=>{
+  // First-round original release uses "District 01—Sen. Mark Johnson".
+  const html='<h2>Minnesota Senate</h2><ul>'+
+    '<li>District 01—Sen. Mark Johnson</li>'+
+    '<li>District 05—Sen. Paul Utke</li>'+
+    '<li>District 54—Sen. Eric Pratt</li></ul>'+
+    '<h2>Minnesota House</h2><li>District 06B—Rep. Josh Heintzeman</li>';
+  const got=parseNfibMinnesotaSenateEndorsements(html);
+  assert.deepEqual(got.map(x=>x.nameRaw),['Sen. Mark Johnson','Sen. Paul Utke','Sen. Eric Pratt']);
+  assert.equal(got[0].valueNumeric,null);
+});
+test('NFIB 2026 four-cell Senate table and exact 2025 special press release',()=>{
+  const html='<h3>MN House of Representatives</h3>'+
+    '<table><tr><th>House District</th><th>Candidate</th></tr>'+
+    '<tr><td>HD 32B</td><td>Leslie Larson</td></tr></table>'+
+    '<h3>MN Senate</h3>'+
+    '<table><tr><th>Senate District</th><th>Candidate</th>'+
+    '<th>Senate District</th><th>Candidate</th></tr>'+
+    '<tr><td>SD 13</td><td>Jared Gapinski</td><td>SD 24</td><td>Nels Pierson</td></tr>'+
+    '<tr><td>SD 20</td><td>Steve Jacob</td><td>SD 42</td><td>Kevin Peterson</td></tr></table>';
+  assert.deepEqual(parseNfibMinnesotaSenateEndorsements(html).map(x=>x.nameRaw),
+    ['Jared Gapinski','Nels Pierson','Steve Jacob','Kevin Peterson']);
+  const release='<h1>NFIB Minnesota PAC Endorses Keri Heintzeman for SD 6</h1>'+
+    '<p>Heintzeman will stand up for small businesses in Minnesota</p>';
+  assert.deepEqual(parseNfibMinnesotaSenateEndorsements(release)
+    .map(x=>[x.nameRaw,x.districtRaw]),[['Keri Heintzeman','6']]);
+});
+test('Education Minnesota 2024 State Senate 45 special and 2025 SD60 release',()=>{
+  const table='<h1>Education Minnesota announces 23 new legislative endorsements</h1>'+
+    '<table><tr><th>District</th><th>Name</th><th>Party</th></tr>'+
+    '<tr><td>19B</td><td>Edel Fernandez-Mejia</td><td>DFL</td></tr>'+
+    '<tr><td>Senate 45</td><td>Ann M. Johnson Stewart</td><td>Democratic-Farmer-Labor</td></tr></table>';
+  assert.deepEqual(parseEducationMinnesotaSenateEndorsements(table)
+    .map(x=>[x.nameRaw,x.districtRaw,x.partyRaw]),
+    [['Ann M. Johnson Stewart','45','Democratic-Farmer-Labor']]);
+  const press='<h1>Education Minnesota endorses Clark in special election for state Senate</h1>'+
+    '<p>ST. PAUL, Minnesota. Jan. 27, 2025 – Education Minnesota announced its endorsement of Doron Clark in the special election on Tuesday for the Senate seat in Minneapolis.</p>'+
+    '<p>Educators support Clark in Senate District 60 because they agree about public education.</p>';
+  assert.deepEqual(parseEducationMinnesotaSenateEndorsements(press)
+    .map(x=>[x.nameRaw,x.districtRaw]),[['Doron Clark','60']]);
+  assert.equal(parseEducationMinnesotaSenateEndorsements(press.replace('Senate District 60','U.S. Senate')).length,0);
+});
+test('publisher literal calendar-date extraction accepts NFIB index and MN special datelines',()=>{
+  assert.equal(explicitPublishedOn('August 17, 2022'),'2022-08-17');
+  assert.equal(explicitPublishedOn('ST. PAUL, Minnesota. Jan. 27, 2025 – endorsements'),'2025-01-27');
+  assert.equal(explicitPublishedOn('Published: September 3, 2026'),'2026-09-03');
+  assert.equal(explicitPublishedOn('Published: February 30, 2025'),null);
+  assert.equal(explicitPublishedOn('Fetched 2026-10-16; no printed publication date'),null);
 });
 test('Scorecard source catalog pinned 2021-2026 and robots grouping respects publisher restrictions',()=>{
   const cat=validateScorecardManifest(JSON.parse(readFileSync('data/senate-scorecard-sources.json','utf8')));
