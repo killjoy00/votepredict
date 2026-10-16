@@ -1,6 +1,7 @@
 import {readFileSync} from 'node:fs';
 import {assertAdditiveQuestionnaireMigration} from '../src/operations/senate-questionnaire-migration.js';
-import {insertQuestionnaire,exactExistingSenateMembership,questionnaireServiceSession,reconcileUnmatchedQuestionnaireMemberships} from '../src/operations/senate-questionnaire-ingest.js';
+import {insertQuestionnaire,exactExistingSenateMembership,questionnaireServiceSession,reconcileUnmatchedQuestionnaireMemberships,questionnaireEligibleScopeReadback} from '../src/operations/senate-questionnaire-ingest.js';
+import {eligibleSenateQuestionnaireCandidate,HISTORICAL_QUESTIONNAIRE_WINNERS} from '../src/sources/minnesota/senate-questionnaire-eligibility.js';
 import type {PoolClient} from 'pg';
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
@@ -355,10 +356,10 @@ test('2022 Star Tribune keeps only printed Senate candidate Q&A; article edits a
     '<h2>State House District 3B</h2><h3>Mary Murphy (DFL)</h3>'+
     '<p>Why are you running? House response should be excluded.</p>';
   const rows=parseResponses(html,seed);
-  assert.deepEqual(rows.map(r=>r.candidateName),['Grant Hauschild','Andrea Zupancich','Jen McEwen']);
+  assert.deepEqual(rows.map(r=>r.candidateName),['Grant Hauschild','Jen McEwen']);
   assert.equal(rows[0].qa.length,2);
   assert.equal(rows[0].qa[1].answer,'Housing matters.\nGetting our Fair Share for the Northland: More money for roads.');
-  assert.equal(rows[2].district,'8');
+  assert.equal(rows[1].district,'8');
   assert.equal(rows[0].displayedPublicationOn,'2022-10-27');
   assert.ok(rows.every(r=>r.qa.every(x=>!x.answer.includes('House response'))));
   assert.throws(()=>parseResponses(html.replace('Answers were edited for length.','No publisher edits disclosed.'),seed));
@@ -443,6 +444,92 @@ test('null-only candidate reconciliation updates uniquely matched incumbents, no
     throw Error('Unexpected database query');
   }} as unknown as PoolClient;
   const report=await reconcileUnmatchedQuestionnaireMemberships(pg);
-  assert.deepEqual(report,{scanned:2,linked:1,remaining:1});
+  assert.deepEqual(report,{scanned:2,linked:1,remaining:1,skippedHistoricalNonWinners:1});
   assert.equal(calls.filter(s=>s.startsWith('UPDATE mn_senate_questionnaire_captures')).length,1);
+});
+
+
+test('2026 Senate questionnaires accept every candidate without guessing November results',()=>{
+  for(const candidate of ['Rachel Japuntich','Dan Rogers','Doron Clark','Candidate Not Yet Elected'])
+    assert.equal(eligibleSenateQuestionnaireCandidate(2026,candidate,'40'),true);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2026,'Another Candidate',null),true);
+});
+
+test('2022, 2024 special and 2025 special questionnaires retain ONLY documented election winners',()=>{
+  assert.equal(HISTORICAL_QUESTIONNAIRE_WINNERS.length,7);
+  for(const winner of HISTORICAL_QUESTIONNAIRE_WINNERS){
+    assert.equal(eligibleSenateQuestionnaireCandidate(winner.cycle,winner.candidate,winner.district),true);
+    assert.match(winner.resultUrl,/^https:\/\/electionresults\.sos\.mn\.gov\//);
+    assert.match(winner.electionDate,/^20\d{2}-\d{2}-\d{2}$/);
+  }
+  for(const [cycle,name,district] of [
+    [2022,'Andrea Zupancich','3'],[2022,'Alex Moe','8'],
+    [2022,'Kate Falvey','19'],[2022,'Bradley Drenckhahn','20'],
+    [2022,'Ken Navitsky','25'],[2022,'Chris Brazelton','29'],
+    [2024,'Kathleen Fowke','45'],
+    [2025,'Monica Meyer','60'],[2025,'Peter Wagenius','60'],
+    [2025,'Amal Karim','60'],[2025,'Emilio Cesar Rodriguez','60'],
+  ] as const)
+    assert.equal(eligibleSenateQuestionnaireCandidate(cycle,name,district),false);
+  // Neither a prior primary vote total nor a same-name different-district race counts.
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Grant Hauschild','8'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2025,'Doron Clark','61'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2024,'Ann Johnson Stewart',null),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2020,'Bill Weber','22'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2027,'Candidate','40'),false);
+});
+
+test('publisher collection skips completed-election nonwinners before persistence or Q&A counts',async()=>{
+  const seed:QuestionnaireSource={id:'local2022',publisher:'Original 2022 News',
+    cycle:2022,adapter:'biofuels',url:'https://mnbiofuels.org/example-2022-respondents',
+    title:'Questionnaire',sourceKind:'publisher_response',
+    candidates:['Ken Navitsky','Bill Weber']};
+  const html='<h1>Original publisher</h1>'+
+    '<h3>Ken Navitsky (R) District 25</h3>'+
+    '<p>Q. What is one proposal?</p><p>A. A proposal.</p>'+
+    '<p>Q. Why propose it?</p><p>A. My reasons.</p>'+
+    '<h3>Bill Weber (R) District 21</h3>'+
+    '<p>Q. What is one proposal?</p><p>A. A different proposal.</p>'+
+    '<p>Q. Why propose it?</p><p>A. My own reasons.</p>';
+  const seen:string[]=[];
+  const fetcher=(async(url:string)=>({ok:true,url,headers:new Headers({'content-type':'text/html'}),
+    arrayBuffer:async()=>new TextEncoder().encode(html).buffer})) as typeof fetch;
+  const report=await collectQuestionnaires({sources:[seed],delayMs:0,fetcher,
+    onResponse:async x=>{seen.push(x.candidateName);}});
+  assert.deepEqual(seen,['Bill Weber']);
+  assert.equal(report.skippedHistoricalNonWinners,1);
+  assert.equal(report.responses,1);
+  assert.equal(report.pairs,2);
+});
+
+test('DB-level historical loser insertion rejects before opening any transaction',async()=>{
+  const item:CandidateResponse={
+    sourceId:'loser-2024',publisher:'MPR',sourceKind:'publisher_response',
+    sourceUrl:'https://www.mprnews.org/state-senate-district-45-general-election',
+    electionCycle:2024,title:'Senate District 45',candidateName:'Kathleen Fowke',
+    office:'Minnesota State Senate',district:'45',party:'R',
+    displayedPublicationOn:null,displayedSubmittedOn:null,archiveCapturedAt:null,
+    fetchedAt:'2026-10-16T12:00:00Z',contentType:'text/html',
+    contentSha256:'a'.repeat(64),rawContent:'<p>Raw original answer.</p>',
+    qa:[{ordinal:1,question:'What?',answer:'My answer.'}],
+  };
+  let queries=0;
+  const mock={query:async()=>{queries++;throw Error('No database writes allowed');}} as unknown as PoolClient;
+  await assert.rejects(()=>insertQuestionnaire(mock,item),/historical election-winner scope/);
+  assert.equal(queries,0);
+});
+
+test('legacy historical loser snapshots remain immutable but excluded from useful scope readback',async()=>{
+  const mock={query:async()=>({rows:[
+    {cycle:2026,candidate_name:'New 2026 Candidate',district:'1',captures:'3',pairs:'12'},
+    {cycle:2022,candidate_name:'Grant Hauschild',district:'3',captures:'2',pairs:'10'},
+    {cycle:2022,candidate_name:'Ken Navitsky',district:'25',captures:'2',pairs:'10'},
+    {cycle:2024,candidate_name:'Ann Johnson Stewart',district:'45',captures:'1',pairs:'5'},
+    {cycle:2025,candidate_name:'Monica Meyer',district:'60',captures:'1',pairs:'5'},
+  ]})} as unknown as PoolClient;
+  assert.deepEqual(await questionnaireEligibleScopeReadback(mock),{
+    includedCaptures:6,includedQas:27,included2026Captures:3,
+    includedHistoricalWinnerCaptures:3,
+    legacyHistoricalExcludedCaptures:3,legacyHistoricalExcludedQas:15,
+  });
 });
