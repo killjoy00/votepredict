@@ -17,7 +17,7 @@ import {loadScorecardCatalog,storeRawScorecardCapture,
 const MARKER='SENATE_SCORECARDS_PARTISANSHIP_PRODUCTION';
 const MIGRATION='0026_senate_scorecards_district_partisanship.sql';
 const MEMBER_MIGRATION='0029_senate_scorecard_member_votes_raw.sql';
-type ImportMode='normal'|'stored'|'expand';
+type ImportMode='normal'|'stored'|'expand'|'mccl_retry';
 interface Ledger {filename:string;checksum:string}
 function requireMain(env:NodeJS.ProcessEnv):ImportMode {
   if(process.argv.length!==2||env.GITHUB_REPOSITORY!=='killjoy00/votepredict'||
@@ -36,6 +36,7 @@ function requireMain(env:NodeJS.ProcessEnv):ImportMode {
     !e.head_commit?.message?.includes(MARKER))
     throw Error('Reviewed marker main SHA mismatch');
   const message=e.head_commit?.message??'';
+  if(message.includes('SENATE_SCORECARD_MCCL_RETRY'))return 'mccl_retry';
   if(message.includes('SENATE_SCORECARD_EXPAND_PUBLISHERS'))return 'expand';
   if(message.includes('SENATE_SCORECARD_REPARSE_STORED'))return 'stored';
   return 'normal';
@@ -83,6 +84,7 @@ async function main():Promise<void> {
   try{
     const importMode=requireMain(process.env);
     const storedOnly=importMode==='stored',expanding=importMode==='expand';
+    const retryMCCL=importMode==='mccl_retry';
     const expected=ledgerExpected();
     const migrationSql=readFileSync('migrations/'+MIGRATION,'utf8');
     assertAdditiveRawMigration(migrationSql);
@@ -180,7 +182,7 @@ async function main():Promise<void> {
     phase='existing_memberships_and_bills';
     const catalog=await readonly(pool,loadScorecardCatalog);
     const fetcher=new PolitePublicFetcher();
-    const attempted=storedOnly?[]:expanding?sources.sources.filter(s=>
+    const attempted=storedOnly?[]:(expanding||retryMCCL)?sources.sources.filter(s=>
       s.groupName==='MCCL'&&s.adapter==='generic_pdf'):sources.sources.slice(0,50);
     let fetched=0,newSnapshots=0,entriesParsed=0,positionsParsed=0;
     let matchedNew=0,linkedBillsNew=0,reparsed=0;
@@ -192,10 +194,18 @@ async function main():Promise<void> {
     phase='bounded_polite_publisher_capture';
     for(const source of attempted){
       let capture;
-      try{capture=await fetchScorecardCapture(source,fetcher,allowHosts);}
+      try{
+        // MCCL's official Wix site serves original PDF files through its
+        // first-party file CDN. Permit only this known asset host for MCCL;
+        // the fetcher still checks robots.txt and limits each redirect hop.
+        const scopedHosts=source.groupName==='MCCL'
+          ?new Set([...allowHosts,'static.wixstatic.com']):allowHosts;
+        capture=await fetchScorecardCapture(source,fetcher,scopedHosts);
+      }
       catch(error){
         const reason=error instanceof Error?error.message:'publisher_parse_unavailable';
         const safeReason=/robots/i.test(reason)?'robots_restricted':
+          /Unapproved publisher host or redirect/i.test(reason)?'unapproved_redirect':
           /HTTP\s+\d+/.test(reason)?'publisher_http_failure':
           /PDF|pdf|readable|text/.test(reason)?'unreadable_or_unsupported_text':
           'fetch_or_parse_failed';
@@ -354,7 +364,7 @@ async function main():Promise<void> {
       '2022|attorney_general|2022','2024|president|2022'];
     const districtDataReused=expectedElections.every(key=>before.elections.some(e=>
       [e.election_year,e.office,e.district_plan].join('|')===key&&e.districts===67&&e.rows>=67));
-    if((storedOnly||expanding)&&!districtDataReused)
+    if((storedOnly||expanding||retryMCCL)&&!districtDataReused)
       throw Error('Saved-only replay requires four verified 67-district datasets');
     const electionResult=districtDataReused?{collected:[],failed:[]}:
       await collectRawDistrictPartisanship(fetcher,async record=>{
