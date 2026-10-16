@@ -1,3 +1,4 @@
+import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
@@ -50,12 +51,16 @@ test('read-only sitemap snapshots reject redirects and non-XML responses',async(
     ()=>fetchArchivedDFLSitemap(example,async()=>new Response('<html></html>',{status:200,headers:{'content-type':'text/html'}})),
     /non-XML/);
   const hits:string[]=[];
-  const result=await fetchArchivedDFLSitemap(example,async(request)=>{
+  const xml=sitemap(fixture('2025'));
+  const mock={...example,sha256:createHash('sha256').update(xml).digest('hex')};
+  const response:typeof fetch=async(request)=>{
     hits.push(String(request));
-    return new Response(sitemap(fixture('2025')),{status:200,headers:{'content-type':'text/xml'}});
-  });
-  assert.equal(hits.length,1);
-  assert.ok(hits[0].startsWith('https://web.archive.org/'));
+    return new Response(xml,{status:200,headers:{'content-type':'text/xml'}});
+  };
+  await assert.rejects(()=>fetchArchivedDFLSitemap(example,response),/content hash differs/);
+  const result=await fetchArchivedDFLSitemap(mock,response);
+  assert.equal(hits.length,2);
+  assert.ok(hits.every(url=>url.startsWith('https://web.archive.org/')));
   assert.equal(result.candidateUrls.length,105);
   assert.equal(result.sha256.length,64);
 });
