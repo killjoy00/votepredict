@@ -56,8 +56,8 @@ Do not translate missing CDX index or a present-day redirect into evidence a 202
 
 - [Original two-episode raw HTML receipts](senate-media-mpr-2021-and-2024-original-episode-audio-link-receipts-20261011.json), including all four capture UTCs/sha1/sha256/byte counts.
 - [Exact MP3 archive-index/current redirect result receipts](senate-media-mpr-original-mp3-unavailable-index-receipts-20261011.json), including original downloadable workflow artifact hashes.
-- Original HTML audit: `scripts/probe-senate-media-mpr-episode-embeds.mjs`; negative/positive synthetic tests: `tests/senate-media-mpr-episode-embeds.test.mjs`.
-- Audio byte audit: `scripts/probe-senate-media-mpr-original-mp3s.mjs`; tests `tests/senate-media-mpr-original-mp3s.test.mjs`.
+- Original HTML audit: `scripts/probe-senate-media-mpr-episode-embeds.mjs`; negative/positive synthetic tests: `research/tests/senate-media-mpr-episode-embeds.test.mjs`.
+- Audio byte audit: `scripts/probe-senate-media-mpr-original-mp3s.mjs`; tests `research/tests/senate-media-mpr-original-mp3s.test.mjs`.
 - Live artifacts retain only hashes, capture UTC, bounded short phrase outcome, exact first-party MP3 URL lead and explicit UNKNOWN states. No original copyright source HTML or MP3 stored.
 - Further research: validate historical publisher feed/enclosure GUID and distinct `%user_agent` URL form; obtain original first-party MP3 bytes with independently index-matched historical checksum, or a dated authentic publisher transcript whose own historical bytes are verifiable; human-review speaker context in retrieved original audio. #987 **remains OPEN**. #946 seven historical URL identities remain unresolved and out of scope for this MPR-only change.
 

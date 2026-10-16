@@ -37,7 +37,7 @@ One article with multiple `evidence_items` still contributes **one distinct sour
 Run offline adversarial tests:
 
 ```bash
-node --test tests/reconcile-mpr-interviews-private-context.test.mjs
+node --test research/tests/reconcile-mpr-interviews-private-context.test.mjs
 ```
 
 Tests are entirely synthetic except for read-only checked-in **public** receipt identities. No GitHub Action or workflow accepts private context JSONL, and no Neon/private role is accessed by the script. This step enables a correct private source audit once the right restricted VotePredict SELECT role/export is available; it does **not** claim that comparison actually occurred here.

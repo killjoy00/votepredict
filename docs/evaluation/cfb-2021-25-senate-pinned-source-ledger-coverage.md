@@ -26,7 +26,7 @@ The new TypeScript audit validates each original report SHA-256 format, original
 From the repository root:
 
     node --import tsx scripts/audit-cfb-senate-pinned-ledgers-offline.ts
-    node --import tsx --test tests/cfb-senate-pinned-ledger-coverage.test.ts
+    node --import tsx --test research/tests/cfb-senate-pinned-ledger-coverage.test.ts
 
 Optional metadata-only report output:
 

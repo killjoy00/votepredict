@@ -16,7 +16,7 @@ The [PR-only workflow](../../.github/workflows/cfb-2025-dated-senate-report-refs
 
     node --import tsx scripts/capture-cfb-2025-dated-senate-report-references.ts --output artifacts/cfb-2025-registered-senate-report-viewer-references.json
 
-    node --import tsx --test tests/cfb-2025-dated-senate-registration-cohort.test.ts
+    node --import tsx --test research/tests/cfb-2025-dated-senate-registration-cohort.test.ts
 
 The offline selector validates exact source-viewer ID and segment masks, and the SHA-256 of the 230-reg date ledger from the prior source proof. It refuses to proceed unless the cohort remains **41/78/15**. In particular **19205** (independently verified Senate District 6 original 2025 PDFs) is a mandatory cross-control. Source failures are materialized and cause the job to fail rather than translating into "no report filed". A public current-list match cannot establish historical filing validity.
 

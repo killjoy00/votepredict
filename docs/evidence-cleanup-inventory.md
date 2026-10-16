@@ -369,22 +369,22 @@ Every script/test in the dependency closure of the moved evidence modules was mo
 - `scripts/reconcile-senate-media-batches-private.ts` → `research/scripts/reconcile-senate-media-batches-private.ts`
 - `scripts/reconcile-senate-media-offline-private.ts` → `research/scripts/reconcile-senate-media-offline-private.ts`
 - `scripts/rehydrate-senate-media-archive-private.ts` → `research/scripts/rehydrate-senate-media-archive-private.ts`
-- `tests/campaign-issue-platform-audit.test.ts` → `research/tests/campaign-issue-platform-audit.test.ts`
-- `tests/cfb-2023-24-71-version-disclosure-barriers.test.ts` → `research/tests/cfb-2023-24-71-version-disclosure-barriers.test.ts`
-- `tests/cfb-2025-senate-special-12-due-vs-received-audit.test.ts` → `research/tests/cfb-2025-senate-special-12-due-vs-received-audit.test.ts`
-- `tests/cfb-senate-pinned-ledger-coverage.test.ts` → `research/tests/cfb-senate-pinned-ledger-coverage.test.ts`
-- `tests/minnesota-vote-text-alignment-audit.test.ts` → `research/tests/minnesota-vote-text-alignment-audit.test.ts`
-- `tests/senate-2025-special-primary-audit.test.ts` → `research/tests/senate-2025-special-primary-audit.test.ts`
-- `tests/senate-864-fourteen-written-minute-source-holds.test.ts` → `research/tests/senate-864-fourteen-written-minute-source-holds.test.ts`
-- `tests/senate-864-positional-event-key-risk.test.ts` → `research/tests/senate-864-positional-event-key-risk.test.ts`
-- `tests/senate-864-public-social-post-source-boundary.test.mjs` → `research/tests/senate-864-public-social-post-source-boundary.test.mjs`
-- `tests/senate-864-verified-motion-addition-plan.test.ts` → `research/tests/senate-864-verified-motion-addition-plan.test.ts`
-- `tests/senate-media-archive-rehydration.test.ts` → `research/tests/senate-media-archive-rehydration.test.ts`
-- `tests/senate-media-batch-reconciliation-cli.test.ts` → `research/tests/senate-media-batch-reconciliation-cli.test.ts`
-- `tests/senate-media-batch-reconciliation.test.ts` → `research/tests/senate-media-batch-reconciliation.test.ts`
-- `tests/senate-media-offline-proof-reconciliation.test.ts` → `research/tests/senate-media-offline-proof-reconciliation.test.ts`
-- `tests/senate-media-remarks-audit.test.ts` → `research/tests/senate-media-remarks-audit.test.ts`
-- `tests/senate-primary-ballot-observation-audit.test.ts` → `research/tests/senate-primary-ballot-observation-audit.test.ts`
+- `research/tests/campaign-issue-platform-audit.test.ts` → `research/tests/campaign-issue-platform-audit.test.ts`
+- `research/tests/cfb-2023-24-71-version-disclosure-barriers.test.ts` → `research/tests/cfb-2023-24-71-version-disclosure-barriers.test.ts`
+- `research/tests/cfb-2025-senate-special-12-due-vs-received-audit.test.ts` → `research/tests/cfb-2025-senate-special-12-due-vs-received-audit.test.ts`
+- `research/tests/cfb-senate-pinned-ledger-coverage.test.ts` → `research/tests/cfb-senate-pinned-ledger-coverage.test.ts`
+- `research/tests/minnesota-vote-text-alignment-audit.test.ts` → `research/tests/minnesota-vote-text-alignment-audit.test.ts`
+- `research/tests/senate-2025-special-primary-audit.test.ts` → `research/tests/senate-2025-special-primary-audit.test.ts`
+- `research/tests/senate-864-fourteen-written-minute-source-holds.test.ts` → `research/tests/senate-864-fourteen-written-minute-source-holds.test.ts`
+- `research/tests/senate-864-positional-event-key-risk.test.ts` → `research/tests/senate-864-positional-event-key-risk.test.ts`
+- `research/tests/senate-864-public-social-post-source-boundary.test.mjs` → `research/tests/senate-864-public-social-post-source-boundary.test.mjs`
+- `research/tests/senate-864-verified-motion-addition-plan.test.ts` → `research/tests/senate-864-verified-motion-addition-plan.test.ts`
+- `research/tests/senate-media-archive-rehydration.test.ts` → `research/tests/senate-media-archive-rehydration.test.ts`
+- `research/tests/senate-media-batch-reconciliation-cli.test.ts` → `research/tests/senate-media-batch-reconciliation-cli.test.ts`
+- `research/tests/senate-media-batch-reconciliation.test.ts` → `research/tests/senate-media-batch-reconciliation.test.ts`
+- `research/tests/senate-media-offline-proof-reconciliation.test.ts` → `research/tests/senate-media-offline-proof-reconciliation.test.ts`
+- `research/tests/senate-media-remarks-audit.test.ts` → `research/tests/senate-media-remarks-audit.test.ts`
+- `research/tests/senate-primary-ballot-observation-audit.test.ts` → `research/tests/senate-primary-ballot-observation-audit.test.ts`
 
 ## Evaluated exception and excluded script candidates
 
