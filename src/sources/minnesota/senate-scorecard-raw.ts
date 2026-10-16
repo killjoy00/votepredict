@@ -192,6 +192,26 @@ export function parseEducationMinnesotaSenateEndorsements(html:string):Scorecard
         found.push(newEntry(name,String(number),nameParty[2]??null,'endorsement','ENDORSED'));
     }
   }
+
+  // The 2024 SD45 special-election release uses a three-column
+  // "District | Name | Party" table, unlike the 2022 paired layout.
+  for(const rows of tableRows(html)){
+    if(!rows.some(cells=>/^District$/i.test(cells[0]??'')&&/^Name$/i.test(cells[1]??'')))
+      continue;
+    for(const cells of rows){
+      const m=/^Senate\s+0*(\d{1,2})\s*$/i.exec(cells[0]??'');
+      const n=Number(m?.[1]);const name=cells[1]?.trim();
+      if(n>=1&&n<=67&&name)
+        found.push(newEntry(name,String(n),cells[2]?.trim()||null,'endorsement','ENDORSED'));
+    }
+  }
+  // Jan. 27, 2025 first-party special-election release explicitly names
+  // one endorsed State Senate candidate and district in the publisher body.
+  const body=htmlToRawText(html);
+  const name=/announced its endorsement of\s+([A-Z][A-Za-z.'’-]+(?:\s+[A-Z][A-Za-z.'’-]+){1,3})\s+in the special election\b/i.exec(body);
+  const number=/\bSenate District\s+(\d{1,2})\b/.exec(body.slice(0,4500));
+  if(name&&number&&Number(number[1])>=1&&Number(number[1])<=67)
+    found.push(newEntry(name[1],String(Number(number[1])),null,'endorsement','ENDORSED'));
   return noDuplicates(found);
 }
 
