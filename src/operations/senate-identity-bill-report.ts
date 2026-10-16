@@ -9,6 +9,8 @@ export interface SenateLinkReport {
   companions:Array<{session:string;result:string;count:number}>;
   inclusions:Array<{session:string;mention_type:string;count:number;with_source_bill:number;with_target_bill:number}>;
   attachmentAssociations:Array<{session:string;captured_files:number;with_bill:number;with_senator:number}>;
+  statementSessionMethods:Array<{session:string;method:string;count:number}>;
+  billInventory:Array<{session:string;chamber:string;count:number}>;
 }
 function toNumber(value:unknown):number {return Number(value??0);}
 export async function senateLinkReadback(pool:Pool):Promise<SenateLinkReport>{
@@ -117,7 +119,28 @@ export async function senateLinkReadback(pool:Pool):Promise<SenateLinkReport>{
         "WHERE s.slug IN ('2021-2022','2023-2024','2025-2026') "+
         "GROUP BY s.slug ORDER BY s.slug",
       );
+      const statementSessions=await client.query<{session:string;method:string;count:string}>(
+        "SELECT COALESCE(s.slug,'unknown') AS session,"+
+        "COALESCE(t.session_match_method,'unresolved') AS method,count(*)::text AS count "+
+        "FROM senate_raw_statements t LEFT JOIN legislative_sessions s ON s.id=t.session_id "+
+        "GROUP BY s.slug,t.session_match_method ORDER BY session,method",
+      );
+      const inventory=await client.query<{session:string;chamber:string;count:string}>(
+        "SELECT s.slug AS session,CASE WHEN b.identifier LIKE 'SF%' THEN 'Senate' "+
+        "WHEN b.identifier LIKE 'HF%' THEN 'House' ELSE 'other' END AS chamber,"+
+        "count(*)::text AS count FROM bills b "+
+        "JOIN legislative_sessions s ON s.id=b.session_id "+
+        "JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn' "+
+        "WHERE s.slug IN ('2021-2022','2023-2024','2025-2026') "+
+        "GROUP BY s.slug,chamber ORDER BY s.slug,chamber",
+      );
       return {
+        statementSessionMethods:statementSessions.rows.map(r=>({
+          session:r.session,method:r.method,count:toNumber(r.count),
+        })),
+        billInventory:inventory.rows.map(r=>({
+          session:r.session,chamber:r.chamber,count:toNumber(r.count),
+        })),
         byTableAndSession:summary.rows.map(r=>({
           table:r.table,session:r.session,match_method:r.match_method,
           total:toNumber(r.total),matched:toNumber(r.matched),
