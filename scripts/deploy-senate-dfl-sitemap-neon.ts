@@ -162,42 +162,49 @@ async function main():Promise<void>{
     for(const seed of selected){
       if(already.has(seed.url))continue;
       stats.attempted++;
+      let recovered:Awaited<ReturnType<typeof loadArchivedDFL>>|null=null;
       try{
         const records=await getWaybackRecords(seed.url,fetch,6);
-        if(records.length===0){stats.noCapture++;consecutiveErrors=0;continue;}
-        let saved=false;
-        for(const record of records.slice(-2).reverse()){
-          try{
-            const result=await loadArchivedDFL(record);
-            const added=await store.insert(result);
-            if(added){
-              stats.inserted++;
-              const year=result.item.published_on!.slice(0,4);
-              byYearAdded[year]=(byYearAdded[year]??0)+1;
-            }else stats.alreadyPresent++;
-            saved=true;
-            break;
-          }catch(error){
-            const reason=error instanceof Error?error.message:'unexpected replay error';
-            if(/HTTP (429|503)\b/.test(reason)){
-              stopReason='archive_replay_rate_limited';break;
+        if(records.length===0){
+          stats.noCapture++;
+        }else{
+          for(const record of records.slice(-2).reverse()){
+            try{
+              recovered=await loadArchivedDFL(record);
+              break;
+            }catch(error){
+              const reason=error instanceof Error?error.message:'unexpected replay error';
+              if(/HTTP (429|503)\b/.test(reason)){
+                stopReason='archive_replay_rate_limited';break;
+              }
+              stats.ineligibleOrInvalid++;
             }
-            stats.ineligibleOrInvalid++;
           }
+          if(!recovered&&!stopReason)stats.unavailable++;
         }
-        if(stopReason)break;
-        if(!saved)stats.unavailable++;
         consecutiveErrors=0;
       }catch(error){
         const reason=error instanceof Error?error.message:'unexpected index error';
-        if(/HTTP (429|503)\b/.test(reason)){
-          stopReason='archive_index_rate_limited';break;
-        }
-        stats.indexErrors++;
-        if(++consecutiveErrors>=5){
-          stopReason='repeated_archive_index_unavailable';break;
+        if(/HTTP (429|503)\b/.test(reason))
+          stopReason='archive_index_rate_limited';
+        else{
+          stats.indexErrors++;
+          if(++consecutiveErrors>=5)
+            stopReason='repeated_archive_index_unavailable';
         }
       }
+      if(stopReason)break;
+      if(recovered){
+        // Database failures must abort this protected job; never misclassify
+        // a failed SQL insert as a publisher archive/network error.
+        const added=await store.insert(recovered);
+        if(added){
+          stats.inserted++;
+          const year=recovered.item.published_on!.slice(0,4);
+          byYearAdded[year]=(byYearAdded[year]??0)+1;
+        }else stats.alreadyPresent++;
+      }
+      // Pace *every* external request, including missing captures and errors.
       await sleep(1850);
     }
     phase='read_only_production_source_year_and_capture_lineage_readback';
