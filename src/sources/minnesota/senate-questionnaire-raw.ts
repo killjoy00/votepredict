@@ -310,7 +310,6 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>{
   return records;
 }
 
-
 const rosevillePrompts=[
   /^Why are you running for elected office\?/i,
   /^What are some of your legislative priorities for the next legislative session\?/i,
@@ -373,7 +372,43 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   if(!lines.some(s=>/^2026 Primary Survey Results$/i.test(s)))
     throw Error('Not the published 2026 legislative primary survey results');
   const questionStarts=Array.from({length:6},(_,i)=>lines.findIndex(s=>
-    new RegExp('^Question\\s+'+(i+1)+'(html:string,seed:QuestionnaireSource):
+    new RegExp('^Question\\s+'+(i+1)+'$','i').test(s)));
+  if(questionStarts.some(i=>i<0)||questionStarts.some((i,n)=>n>0&&i<=questionStarts[n-1]))
+    throw Error('Publisher six original survey questions unavailable in order');
+  const end=lines.findIndex((x,i)=>i>questionStarts[5]&&/^Scroll to the right to see all the results/i.test(x));
+  const originalQuestions=questionStarts.map((from,i)=>{
+    const to=i<5?questionStarts[i+1]:(end>from?end:lines.length);
+    return lines.slice(from+1,to).join('\n').trim();
+  });
+  if(originalQuestions.some(q=>q.length<25))throw Error('Full original publisher question content missing');
+  const result:Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>= [];
+  const unique=new Set<string>();
+  for(const tr of html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)){
+    const cells=[...tr[1].matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)]
+      .map(x=>visibleLines(x[1]).join('\n').trim());
+    if(cells.length<17)continue;
+    if(!/^Minnesota Senate$/i.test(cells[9]))continue;
+    if(cells[1].replace(/,/g,'')!=='2026')continue;
+    const name=[cells[5],cells[6]].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+    const district=districtNumber(cells[8]);
+    if(!name||!district||name.length>130)continue;
+    const seenKey=seed.cycle+'|'+district+'|'+name.toLowerCase();
+    if(unique.has(seenKey))continue;
+    unique.add(seenKey);
+    const answers=cells.slice(10,16);
+    if(answers.length!==6||answers.some(a=>!a))continue;
+    const qa=originalQuestions.map((question,ordinal)=>({
+      ordinal:ordinal+1,question,answer:answers[ordinal],
+    }));
+    const date=dateFrom(cells[4]);
+    result.push({candidateName:name,district,party:cells[7]||null,
+      displayedSubmittedOn:date,qa});
+  }
+  if(!result.length)throw Error('Publisher survey table contained no readable State Senate respondent rows');
+  return result;
+}
+
+export function parseResponses(html:string,seed:QuestionnaireSource):
 Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   if(seed.adapter==='mhp')return parseMhp(html,seed);
   if(seed.adapter==='snap')return parseSnap(html);
@@ -434,198 +469,6 @@ export function validateCatalog(value:unknown):QuestionnaireSource[] {
     wsp_reader:['weststpaulreader.com'],
     roseville_reader:['www.rosevillereader.com'],
     mnrtl:['www.mnrtl.org'],
-    biofuels:['mnbiofuels.org','www.mnbiofuels.org'],
-    biofuels_index:['mnbiofuels.org','www.mnbiofuels.org'],
-    ballotpedia:['ballotpedia.org'],
-  };
-  return doc.sources.map((input:unknown)=>{
-    if(!input||typeof input!=='object'||Array.isArray(input))throw Error('Malformed catalog item');
-    const s=input as QuestionnaireSource;
-    if(!s.id||!s.publisher||!s.title||!s.url||!allow[s.adapter]
-      ||!Number.isInteger(s.cycle)||s.cycle<2020||s.cycle>2026
-      ||!['publisher_response','candidate_copy','archived_response'].includes(s.sourceKind))
-      throw Error('Invalid questionnaire source fields');
-    const u=new URL(s.url);
-    if(u.protocol!=='https:'||!allow[s.adapter].includes(u.hostname)||u.username||u.password||u.hash)
-      throw Error('Out-of-scope candidate questionnaire URL');
-    if(ids.has(s.id)||urls.has(s.cycle+'|'+u.href))throw Error('Duplicate catalog source');
-    ids.add(s.id);urls.add(s.cycle+'|'+u.href);
-    if(s.archiveCapturedAt&&!/^\d{4}-\d\d-\d\dT/i.test(s.archiveCapturedAt))
-      throw Error('Archive timestamp must be explicit original observation');
-    return s;
-  }).sort((a,b)=>b.cycle-a.cycle);
-}
-const agent='VotePredict research collector/1.0 (public Minnesota Senate questionnaire citations)';
-async function fetchBounded(url:string,limit:number,runFetch:typeof fetch):Promise<{html:string;contentType:string}> {
-  const response=await runFetch(url,{
-    redirect:'follow',signal:AbortSignal.timeout(20000),
-    headers:{'User-Agent':agent,Accept:'text/html,application/xhtml+xml;q=0.9'},
-  });
-  if(!response.ok)throw Error('HTTP '+response.status);
-  const effective=new URL(response.url||url),original=new URL(url);
-  if(effective.protocol!=='https:'||effective.hostname.replace(/^www\./,'')!==original.hostname.replace(/^www\./,''))
-    throw Error('Cross-host redirect is not a trusted publisher response');
-  if(Number(response.headers.get('content-length')||0)>limit)throw Error('Exceeded content byte cap');
-  const bytes=new Uint8Array(await response.arrayBuffer());
-  if(bytes.length>limit)throw Error('Exceeded content byte cap');
-  const type=response.headers.get('content-type')||'';
-  if(!/html|text\/plain/i.test(type))throw Error('Not a readable HTML response ('+type.slice(0,60)+')');
-  return {html:new TextDecoder().decode(bytes),contentType:type};
-}
-export async function collectQuestionnaires(options:CollectionOptions):Promise<CollectionSummary> {
-  const runFetch=options.fetcher??fetch;
-  const max=options.maxSources??180,limit=options.maxBytes??2_000_000;
-  if(!Number.isInteger(max)||max<1||max>500||limit<1024||limit>5_000_000)
-    throw Error('Bounded source and size limits required');
-  const queue=[...options.sources],visited=new Set<string>();
-  const downloads=new Map<string,Promise<{html:string;contentType:string}>>();
-  const summary:CollectionSummary={attempted:0,fetched:0,responses:0,pairs:0,byCyclePublisher:{},failed:[],explicitlyUnanswered:0};
-  while(queue.length && summary.attempted<max) {
-    const seed=queue.shift()!;
-    const visitKey=seed.cycle+'|'+seed.adapter+'|'+seed.url;
-    if(visited.has(visitKey))continue;
-    visited.add(visitKey);summary.attempted++;
-    try{
-      let download=downloads.get(seed.url);
-      if(!download){
-        download=fetchBounded(seed.url,limit,runFetch);
-        downloads.set(seed.url,download);
-      }
-      const {html,contentType}=await download;
-      summary.fetched++;
-      if(seed.adapter==='mhp_index'||seed.adapter==='biofuels_index'){
-        const children=seed.adapter==='mhp_index'?mhpLinks(html,seed):biofuelsLinks(html,seed);
-        queue.unshift(...children);
-        continue;
-      }
-      if(/JavaScript is disabled[\s\S]{0,500}verify that you.re not a robot/i.test(html))
-        throw Error('Publisher anti-bot interstitial; no bypass attempted');
-      const records=parseResponses(html,seed);
-      if(!records.length && /did not respond|no response from this candidate/i.test(html))
-        summary.explicitlyUnanswered++;
-      for(const parsed of records) {
-        const item:CandidateResponse={
-          sourceId:seed.id,publisher:seed.publisher,sourceKind:seed.sourceKind,
-          sourceUrl:seed.url,electionCycle:seed.cycle,title:seed.title,
-          candidateName:parsed.candidateName,office:'Minnesota State Senate',
-          district:parsed.district??districtNumber(seed.district),
-          party:parsed.party??seed.party??null,
-          displayedPublicationOn:parsed.displayedPublicationOn??null,
-          displayedSubmittedOn:parsed.displayedSubmittedOn??null,
-          archiveCapturedAt:seed.archiveCapturedAt??null,
-          fetchedAt:new Date().toISOString(),contentType,
-          contentSha256:sha256(html),rawContent:html,qa:parsed.qa,
-        };
-        await options.onResponse(item);
-        summary.responses++;
-        summary.pairs+=item.qa.length;
-        const k=item.electionCycle+'|'+item.publisher;
-        const rec=summary.byCyclePublisher[k]??{responses:0,pairs:0};
-        rec.responses++;rec.pairs+=item.qa.length;summary.byCyclePublisher[k]=rec;
-      }
-    }catch(error) {
-      summary.failed.push({source:seed.id,url:seed.url,
-        reason:error instanceof Error?error.message.slice(0,200):'Unknown fetch or parse failure'});
-    }
-    if((options.delayMs??350)>0 && queue.length)
-      await new Promise(r=>setTimeout(r,Math.max(0,Math.min(5000,options.delayMs??350))));
-  }
-  if(queue.length)summary.failed.push({source:'catalog',url:'',reason:'Bounded maxSources reached with '+queue.length+' remaining'});
-  return summary;
-}
-,'i').test(s)));
-  if(questionStarts.some(i=>i<0)||questionStarts.some((i,n)=>n>0&&i<=questionStarts[n-1]))
-    throw Error('Publisher six original survey questions unavailable in order');
-  const end=lines.findIndex((x,i)=>i>questionStarts[5]&&/^Scroll to the right to see all the results/i.test(x));
-  const originalQuestions=questionStarts.map((from,i)=>{
-    const to=i<5?questionStarts[i+1]:(end>from?end:lines.length);
-    return lines.slice(from+1,to).join('\n').trim();
-  });
-  if(originalQuestions.some(q=>q.length<25))throw Error('Full original publisher question content missing');
-  const result:Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>= [];
-  const unique=new Set<string>();
-  for(const tr of html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)){
-    const cells=[...tr[1].matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)]
-      .map(x=>visibleLines(x[1]).join('\n').trim());
-    if(cells.length<17)continue;
-    if(!/^Minnesota Senate$/i.test(cells[9]))continue;
-    if(cells[1].replace(/,/g,'')!=='2026')continue;
-    const name=[cells[5],cells[6]].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
-    const district=districtNumber(cells[8]);
-    if(!name||!district||name.length>130)continue;
-    const seenKey=seed.cycle+'|'+district+'|'+name.toLowerCase();
-    if(unique.has(seenKey))continue;
-    unique.add(seenKey);
-    const answers=cells.slice(10,16);
-    if(answers.length!==6||answers.some(a=>!a))continue;
-    const qa=originalQuestions.map((question,ordinal)=>({
-      ordinal:ordinal+1,question,answer:answers[ordinal],
-    }));
-    const date=dateFrom(cells[4]);
-    result.push({candidateName:name,district,party:cells[7]||null,
-      displayedSubmittedOn:date,qa});
-  }
-  if(!result.length)throw Error('Publisher survey table contained no readable State Senate respondent rows');
-  return result;
-}
-
-export function parseResponses(html:string,seed:QuestionnaireSource):
-Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
-  if(seed.adapter==='mhp')return parseMhp(html,seed);
-  if(seed.adapter==='snap')return parseSnap(html);
-  if(seed.adapter==='kaxe')return parseKaxe(html,seed);
-  if(seed.adapter==='wsp_reader')return parseWestSaintPaulReader(html,seed);
-  if(seed.adapter==='biofuels')return parseBiofuels(html,seed);
-  // Historical Ballotpedia pages are fetched, but do not silently convert
-  // article quote excerpts or survey indexes into full question/answer records.
-  if(seed.adapter==='ballotpedia')throw Error('Full Ballotpedia candidate survey unavailable or unparseable; leave uncollected');
-  throw Error('Index is not a candidate response');
-}
-export function mhpLinks(html:string,seed:QuestionnaireSource):QuestionnaireSource[] {
-  const sources:QuestionnaireSource[]=[];
-  for(const tr of html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)) {
-    const cells=[...tr[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)].map(x=>x[1]);
-    if(cells.length<4||visibleLines(cells[1]).join(' ').trim()!=='Senate')continue;
-    const href=/\bhref\s*=\s*["']([^"']+)["']/i.exec(cells[0]);
-    if(!href)continue;
-    const url=new URL(decode(href[1]),seed.url);
-    if(url.protocol!=='https:'||url.hostname!=='mhponline.org'
-      ||!url.pathname.startsWith('/2026_questionnaire/')||url.search)continue;
-    const candidate=visibleLines(cells[0]).join(' ').trim();
-    if(!candidate||candidate.length>120)continue;
-    const district=districtNumber(visibleLines(cells[3]).join(' '));
-    if(!district)continue;
-    sources.push({...seed,id:seed.id+'-'+sources.length,adapter:'mhp',url:url.href,
-      candidate,district,party:visibleLines(cells[2]).join(' ')});
-  }
-  if(!sources.length)throw Error('No actual linked MHP Senate candidate responses found (never use submission form)');
-  return sources;
-}
-export function biofuelsLinks(html:string,seed:QuestionnaireSource):QuestionnaireSource[] {
-  const sources:QuestionnaireSource[]=[];const seen=new Set<string>();
-  for(const a of html.matchAll(/<a\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
-    const label=visibleLines(a[2]).join(' ').replace(/\s+/g,' ');
-    if(!/Candidates\s*&\s*Biofuels\s*:/i.test(label))continue;
-    if(!seed.articleNames?.some(name=>label.toLowerCase().includes(name.toLowerCase())))continue;
-    const url=new URL(decode(a[1]),seed.url);
-    if(url.protocol!=='https:'||!['www.mnbiofuels.org','mnbiofuels.org'].includes(url.hostname)
-      ||seen.has(url.href))continue;
-    seen.add(url.href);
-    sources.push({...seed,id:seed.id+'-'+sources.length,adapter:'biofuels',url:url.href});
-  }
-  if(!sources.length)throw Error('2020 original Senate questionnaire archive links not accessible');
-  return sources.slice(0,12);
-}
-export function validateCatalog(value:unknown):QuestionnaireSource[] {
-  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('Expected source catalog object');
-  const doc=value as {schemaVersion?:unknown;sources?:unknown};
-  if(doc.schemaVersion!==1||!Array.isArray(doc.sources)||!doc.sources.length||doc.sources.length>120)
-    throw Error('Invalid version or source list');
-  const ids=new Set<string>(),urls=new Set<string>();
-  const allow:Record<Adapter,string[]>={
-    mhp_index:['mhponline.org'],mhp:['mhponline.org'],
-    snap:['snapcoalition.org'],kaxe:['www.kaxe.org'],
-    wsp_reader:['weststpaulreader.com'],
     biofuels:['mnbiofuels.org','www.mnbiofuels.org'],
     biofuels_index:['mnbiofuels.org','www.mnbiofuels.org'],
     ballotpedia:['ballotpedia.org'],
