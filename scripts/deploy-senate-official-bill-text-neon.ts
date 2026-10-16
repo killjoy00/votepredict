@@ -19,7 +19,11 @@ const MARKER='SENATE_OFFICIAL_TEXT_RAW_20261016';
 const MIGRATION='0027_senate_official_bill_text_raw.sql';
 const REPO='killjoy00/votepredict';
 const SESSIONS=['2025-2026','2023-2024','2021-2022'];
-const MAX_NEW_BILLS=100, MAX_DISCOVER=100, MAX_VERSIONS=550, MAX_JOURNALS=30;
+// A guarded merge push is a small live-source canary. Once it proves real
+// captures, the existing six-hour scheduled run uses the full polite budgets.
+const PUSH_CANARY=process.env.GITHUB_EVENT_NAME==='push';
+const MAX_NEW_BILLS=PUSH_CANARY?15:100,MAX_DISCOVER=PUSH_CANARY?15:100,
+  MAX_VERSIONS=PUSH_CANARY?60:550,MAX_JOURNALS=PUSH_CANARY?10:30;
 const MAX_HTTP_BYTES=8_000_000, RETRIES=3, TIMEOUT_MS=20000;
 type Ledger={filename:string;checksum:string};
 type Bill={bill_id:string;session_id:string;slug:string;identifier:string;attempts:number};
@@ -475,15 +479,23 @@ async function main():Promise<void>{
         failedVersions:0,unavailableVersions:0,journalDocuments:0,amendmentBlocks:0,
         exactAmendmentLinks:0,unresolvedAmendments:0};
       let throttled=false;
+      let haltedOnDiscoveryFailures=false;
+      let repeatedDiscoveryFailures=0;
       phase='stage_raw_vote_linked_bills';
       counts.staged=await stageBills(client);
       phase='discover_versions';
       for(const bill of await nextDiscovery(client)){
         try {
           const result=await discoverBill(client,bill,pacer);
-          if(result==='complete')counts.discovered++;
-          if(result==='failed')counts.failedDiscovery++;
-          if(result==='unavailable')counts.unavailableDiscovery++;
+          if(result==='complete'){counts.discovered++;repeatedDiscoveryFailures=0;}
+          if(result==='failed'){counts.failedDiscovery++;repeatedDiscoveryFailures++;}
+          if(result==='unavailable'){counts.unavailableDiscovery++;repeatedDiscoveryFailures=0;}
+          // A run with repeated failures and no successes must never silently
+          // exhaust thousands of source retries. Keep queued work resumable.
+          if(repeatedDiscoveryFailures>=8){
+            haltedOnDiscoveryFailures=true;
+            break;
+          }
         }catch(error){
           if(error instanceof Throttled){throttled=true;break;}
           throw error;
@@ -528,14 +540,19 @@ async function main():Promise<void>{
       if(!baseline||!after||baseline.votes!==after.votes||baseline.members!==after.members)
         throw Error('forbidden_live_vote_counts_changed');
       const summary=await report(client);
-      const output={status:throttled?'stopped_on_official_throttle':'bounded_batch_committed',
-        migrationApplied,throttled,counts,baselineUnchanged:true,...summary,
+      const output={status:throttled?'stopped_on_official_throttle'
+          :haltedOnDiscoveryFailures?'stopped_on_repeated_discovery_failures':'bounded_batch_committed',
+        migrationApplied,throttled,haltedOnDiscoveryFailures,pushCanary:PUSH_CANARY,counts,
+        baselineUnchanged:true,...summary,
         servingInputsUntouched:true};
       console.log('SENATE_OFFICIAL_TEXT_RAW_READBACK='+JSON.stringify(output));
       if(process.env.GITHUB_STEP_SUMMARY)
         appendFileSync(process.env.GITHUB_STEP_SUMMARY,
           'Minnesota Senate official RAW text (no forecast changes)\n\n'
           +'State: '+output.status+'\n\n'+JSON.stringify(output,null,2)+'\n');
+      // Operational gate: returning success on repeated failed fetches hid
+      // the 100/100 first-production failure. Keep receipts but flag the run.
+      if(haltedOnDiscoveryFailures)process.exitCode=1;
     }finally{client.release(true);}
   }catch(error){
     const sqlState=typeof (error as {code?:unknown})?.code==='string'

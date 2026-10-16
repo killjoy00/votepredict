@@ -35,9 +35,22 @@ function labelText(html: string): string {
 }
 export function discoverOfficialVersionLeads(html: string, statusUrl: string): OfficialVersionLead[] {
   const root = revisorRoot(statusUrl);
-  // Inspect anchors without relying on the live numeric-only parser.
+  // The status-page banner repeats the current version URL before the
+  // authoritative "Bill Text Versions" table, but omits its printed date.
+  // Limit discovery to the actual published version listing when identifiable.
+  // The Revisor heading sometimes wraps words in nested markup, so do
+  // not require the heading to consist of a bare H2/H3 text node.
+  // The literal published section title is the boundary before the table.
+  const heading = /\bBill\s+Text\s+Versions\b/i.exec(html);
+  const afterHeading = heading ? html.slice(heading.index + heading[0].length) : html;
+  // Status pages repeat the same version as "Intro" in later Actions rows.
+  // Only anchors in the actual version-list section are version receipts.
+  // Keep subgroup headings (engrossments, unofficial and CCR), but stop at
+  // the first Description, Authors or Actions section heading.
+  const sectionEnd = heading ? /<h[1-6]\b[^>]*>\s*(?:<[^>]+>\s*){0,3}(?:Description|Authors|Actions)\b/i.exec(afterHeading) : null;
+  const listingHtml = sectionEnd ? afterHeading.slice(0,sectionEnd.index) : afterHeading;
   const anchor = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
-  const matches = [...html.matchAll(anchor)];
+  const matches = [...listingHtml.matchAll(anchor)];
   const discovered = new Map<string, OfficialVersionLead>();
   for (let i=0; i<matches.length; i++) {
     const m = matches[i];
@@ -58,13 +71,25 @@ export function discoverOfficialVersionLeads(html: string, statusUrl: string): O
     const nextVersion = matches.slice(i+1).find(next =>
       /href\s*=\s*["'][^"']*\bversions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\/["']/i.test(next[1]));
     const gapEnd = nextVersion?.index ?? (m.index!+m[0].length+500);
-    const gap = html.slice(m.index!+m[0].length,Math.min(gapEnd,m.index!+m[0].length+500));
+    const gap = listingHtml.slice(m.index!+m[0].length,Math.min(gapEnd,m.index!+m[0].length+500));
     const date = gap.match(/\bPosted on\s*(\d{2})\/(\d{2})\/(\d{4})/i);
     const postedOn = date ? isoDate(date[1],date[2],date[3]) : null;
     if (date && !postedOn) throw Error('invalid_printed_posting_date');
     const row: OfficialVersionLead = { family,printedLabel,sourceUrl:u.toString(),locator,postedOn };
     const existing = discovered.get(locator);
-    if (existing && JSON.stringify(existing)!==JSON.stringify(row)) throw Error('conflicting_official_version_listing');
+    if (existing) {
+      // Duplicate links are not separate versions. The dated listing row
+      // wins over a date-free banner/action link; two contradictory published
+      // dates or two contradictory labels with equal date quality still fail.
+      if (existing.family!==row.family || existing.sourceUrl!==row.sourceUrl
+        || (existing.postedOn!==null && row.postedOn!==null
+          && (existing.postedOn!==row.postedOn || existing.printedLabel!==row.printedLabel))
+        || (existing.postedOn===null && row.postedOn===null
+          && existing.printedLabel!==row.printedLabel))
+        throw Error('conflicting_official_version_listing');
+      if (existing.postedOn===null && row.postedOn!==null) discovered.set(locator,row);
+      continue;
+    }
     discovered.set(locator,row);
     if (discovered.size>100) throw Error('unexpectedly_large_revisor_version_list');
   }

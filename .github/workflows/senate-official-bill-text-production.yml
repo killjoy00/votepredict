@@ -23,9 +23,11 @@ on:
 permissions:
   contents: read
 
+# Cancel only superseded, keyless PR checks. Protected main/Neon runs remain
+# serialized and can never be cancelled by PR activity or a new main push.
 concurrency:
-  group: senate-official-bill-text-neon-primary
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('senate-official-bill-text-pr-{0}', github.event.pull_request.number) || 'senate-official-bill-text-neon-primary' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   keyless-review:
@@ -78,7 +80,7 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Diagnose public Revisor access from keyless runner
         run: |
-          node --input-type=module <<'NODE'
+          node --import tsx --input-type=module <<'NODE'
           const url = 'https://www.revisor.mn.gov/bills/94/2025/0/SF/1/';
           try {
             const response = await fetch(url, {
@@ -89,11 +91,40 @@ jobs:
               signal: AbortSignal.timeout(20000),
             });
             const html = await response.text();
+            let parsedLeadCount = null;
+            let parserError = null;
+            if (response.ok) {
+              try {
+                const { discoverOfficialVersionLeads } = await import('./src/operations/senate-official-bill-text.js');
+                parsedLeadCount = discoverOfficialVersionLeads(html, response.url).length;
+              } catch (error) {
+                parserError = error instanceof Error ? error.message.slice(0,90) : 'unknown';
+              }
+            }
+            const listingMarker = html.search(/\bBill\s+Text\s+Versions\b/i);
+            const versionAnchorSummary = parserError ? [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)]
+              .map(match => {
+                const href = match[1].match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2] ?? '';
+                let locator = '';
+                try {
+                  const pathname = new URL(href, url).pathname;
+                  locator = pathname.match(/(versions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\/)$/i)?.[1] ?? '';
+                } catch { /* non-URL link */ }
+                return {
+                  afterListing: (match.index ?? 0) >= listingMarker,
+                  locator,
+                  label: match[2].replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,55),
+                };
+              }).filter(item => item.locator).slice(0,12) : [];
             const result = {
               status: response.status,
+              listingMarkerFound: listingMarker >= 0,
+              versionAnchorSummary,
               finalHost: new URL(response.url).hostname,
               bytes: Buffer.byteLength(html),
               hasVersionHeading: /Bill Text Versions/i.test(html),
+              parsedLeadCount,
+              parserError,
               versionAnchorCount: (html.match(/href\s*=\s*["'][^"']*versions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\//gi) ?? []).length,
               contentType: response.headers.get('content-type')?.slice(0,60) ?? null,
             };
