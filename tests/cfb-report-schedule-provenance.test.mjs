@@ -53,7 +53,7 @@ test('duplicate bulk evidence copies are one canonical key',()=>{
  assert.equal(classifyReportMatches(rows,extractScheduleEntries([page],2025),2025).length,1);
 });
 test('two exact lines for one row remain ambiguous, never arbitrarily choose one',()=>{
- const twice=page+'\n10/02/2025 Taylor Example $250.00';
+ const twice=page.replace('SCHEDULE B1 - GENERAL EXPENDITURES', '10/02/2025 Taylor Example $250.00\nSCHEDULE B1 - GENERAL EXPENDITURES');
  const outcome=classifyReportMatches([contrib('a')],extractScheduleEntries([twice],2025),2025)[0];
  assert.equal(outcome.match_status,'ambiguous');
  assert.equal(outcome.entry_index,null);
