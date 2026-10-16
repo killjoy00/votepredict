@@ -3,7 +3,7 @@ name: Collect raw Minnesota Senate bill authors and House companions
 on:
   pull_request:
     paths:
-      - migrations/0024_senate_bill_authors.sql
+      - migrations/0025_senate_bill_authors.sql
       - src/operations/senate-bill-author-parser.ts
       - src/operations/senate-bill-authors.ts
       - scripts/deploy-senate-bill-authors-neon.ts
@@ -13,7 +13,7 @@ on:
   push:
     branches: [main]
     paths:
-      - migrations/0024_senate_bill_authors.sql
+      - migrations/0025_senate_bill_authors.sql
       - src/operations/senate-bill-author-parser.ts
       - src/operations/senate-bill-authors.ts
       - scripts/deploy-senate-bill-authors-neon.ts
@@ -63,7 +63,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: All migrations, including 0024, to disposable Postgres
+      - name: All migrations, including 0025, to disposable Postgres
         run: npm run db:migrate
       - name: Migration ledger drift gate
         run: node --import tsx scripts/check-production-migration-drift.ts
@@ -161,5 +161,5 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Preflight, ledgered 0024, drift, bounded raw author collection and readback
+      - name: Preflight, ledgered 0025, drift, bounded raw author collection and readback
         run: node --import tsx scripts/deploy-senate-bill-authors-neon.ts
