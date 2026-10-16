@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/killjoy00/votepredict/blob/main/data/sources/source-catalog.schema.json",
+  "title": "VotePredict evidence public-source catalogs v1",
+  "description": "Strict catalog and seed fields. Uniqueness of seed ids and normalized URLs, plus real YYYYMMDD window ordering, are enforced by the runtime loader because JSON Schema uniqueItems does not detect duplicate fields across objects.",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "kind",
+        "sources"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "source-catalog-v1"
+        },
+        "kind": {
+          "const": "local_trade_news"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/localTradeNewsSeed"
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "kind",
+        "sources"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "source-catalog-v1"
+        },
+        "kind": {
+          "const": "organization_publication"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/organizationPublicationSeed"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "localTradeNewsSeed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "publisher",
+        "publisherKind",
+        "url",
+        "from",
+        "to",
+        "prefix"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publisherKind": {
+          "type": "string",
+          "enum": [
+            "local_news",
+            "trade_news"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://",
+          "format": "uri"
+        },
+        "from": {
+          "type": "string",
+          "pattern": "^[0-9]{8}$"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^[0-9]{8}$"
+        },
+        "prefix": {
+          "const": true
+        },
+        "pathHints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "organizationPublicationSeed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "organization",
+        "sector",
+        "publicationKind",
+        "url",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "organization": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sector": {
+          "type": "string",
+          "enum": [
+            "labor",
+            "business",
+            "environmental",
+            "education",
+            "healthcare",
+            "local_government",
+            "professional",
+            "advocacy"
+          ]
+        },
+        "publicationKind": {
+          "type": "string",
+          "enum": [
+            "legislative_voting_record",
+            "legislative_scorecard_index",
+            "legislative_recap",
+            "legislative_advocacy",
+            "candidate_endorsements"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://",
+          "format": "uri"
+        },
+        "from": {
+          "type": "string",
+          "pattern": "^[0-9]{8}$"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^[0-9]{8}$"
+        }
+      }
+    }
+  }
+}
