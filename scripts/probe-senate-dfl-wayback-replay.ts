@@ -1,28 +1,39 @@
-/** Read-only full-body smoke: 2023 DFL original in public Internet Archive. */
+/** Keyless 2023-2025 Internet Archive CDX + immediate full original replay. */
+import { setTimeout as sleep } from 'node:timers/promises';
 import {getWaybackRecords,loadArchivedDFL} from '../src/sources/minnesota/senate-dfl-wayback.js';
 
-const ORIGINAL='https://senatedfl.mn/senate-finance-chair-john-marty-releases-statement-in-response-to-february-budget-forecast/';
+const SAMPLES=[
+  {year:'2023',url:'https://senatedfl.mn/senate-finance-chair-john-marty-releases-statement-in-response-to-february-budget-forecast/'},
+  {year:'2024',url:'https://senatedfl.mn/senator-mitchell-responds-to-new-and-expanded-tax-savings-for-2024-providing-relief-to-families-social-security-recipients/'},
+  {year:'2025',url:'https://senatedfl.mn/senator-bobby-joe-champion-says-final-bipartisan-jobs-and-economic-development-budget-clears-senate-heads-to-governors-desk/'},
+];
 async function main():Promise<void>{
-  try {
-    const records=await getWaybackRecords(ORIGINAL);
-    let recovered=0;
+  const outcome=[];
+  for(const sample of SAMPLES){
+    let found=0,recovered=0;
     const attempts:Array<{capture:string;status:string;publishedYear?:string;contentBytes?:number}>=[];
-    for(const row of records.slice(0,3)){
-      try {
-        const full=await loadArchivedDFL(row);
-        recovered++;
-        attempts.push({capture:row.timestamp,status:'full-original',
-          publishedYear:full.item.published_on?.slice(0,4),contentBytes:full.item.raw_text.length});
-        break;
-      }catch(error){
-        attempts.push({capture:row.timestamp,status:error instanceof Error?error.message:'unavailable'});
+    try {
+      const records=await getWaybackRecords(sample.url,fetch,5);
+      found=records.length;
+      for(const record of records.slice(-2).reverse()){
+        try {
+          const page=await loadArchivedDFL(record);
+          recovered++;
+          attempts.push({capture:record.timestamp,status:'full-first-party-html',
+            publishedYear:page.item.published_on?.slice(0,4),
+            contentBytes:page.item.raw_text.length});
+          break;
+        }catch(error){
+          attempts.push({capture:record.timestamp,status:error instanceof Error?error.message:'unavailable'});
+        }
       }
+    }catch(error){
+      attempts.push({capture:'none',status:error instanceof Error?error.message:'index unavailable'});
     }
-    console.log('SENATE_DFL_WAYBACK_REPLAY_PROBE='+JSON.stringify({records:records.length,recovered,attempts}));
-  }catch(error){
-    console.log('SENATE_DFL_WAYBACK_REPLAY_PROBE='+JSON.stringify({
-      recovered:0,index:'unavailable',reason:error instanceof Error?error.message:'unknown',
-    }));
+    outcome.push({year:sample.year,found,recovered,attempts});
+    console.log('SENATE_DFL_WAYBACK_YEAR='+JSON.stringify(outcome[outcome.length-1]));
+    await sleep(3000);
   }
+  console.log('SENATE_DFL_WAYBACK_REPLAY_PROBE='+JSON.stringify({byYear:outcome}));
 }
-void main();
+void main().catch(()=>{console.error('SENATE_DFL_WAYBACK_REPLAY_PROBE_FAILED');process.exitCode=1;});
