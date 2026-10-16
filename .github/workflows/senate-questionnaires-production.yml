@@ -8,6 +8,7 @@ on:
       - scripts/collect-senate-questionnaires.ts
       - src/sources/minnesota/senate-questionnaire-raw.ts
       - src/operations/senate-questionnaire-ingest.ts
+      - src/operations/senate-questionnaire-migration.ts
       - migrations/0021_mn_senate_questionnaire_raw.sql
       - data/senate-questionnaire-sources.json
 permissions:
