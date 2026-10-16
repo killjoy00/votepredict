@@ -35,9 +35,13 @@ function labelText(html: string): string {
 }
 export function discoverOfficialVersionLeads(html: string, statusUrl: string): OfficialVersionLead[] {
   const root = revisorRoot(statusUrl);
-  // Inspect anchors without relying on the live numeric-only parser.
+  // The status-page banner repeats the current version URL before the
+  // authoritative "Bill Text Versions" table, but omits its printed date.
+  // Limit discovery to the actual published version listing when identifiable.
+  const heading = /<h[1-6]\b[^>]*>\s*Bill Text Versions\s*<\/h[1-6]>/i.exec(html);
+  const listingHtml = heading ? html.slice(heading.index + heading[0].length) : html;
   const anchor = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
-  const matches = [...html.matchAll(anchor)];
+  const matches = [...listingHtml.matchAll(anchor)];
   const discovered = new Map<string, OfficialVersionLead>();
   for (let i=0; i<matches.length; i++) {
     const m = matches[i];
@@ -58,13 +62,25 @@ export function discoverOfficialVersionLeads(html: string, statusUrl: string): O
     const nextVersion = matches.slice(i+1).find(next =>
       /href\s*=\s*["'][^"']*\bversions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\/["']/i.test(next[1]));
     const gapEnd = nextVersion?.index ?? (m.index!+m[0].length+500);
-    const gap = html.slice(m.index!+m[0].length,Math.min(gapEnd,m.index!+m[0].length+500));
+    const gap = listingHtml.slice(m.index!+m[0].length,Math.min(gapEnd,m.index!+m[0].length+500));
     const date = gap.match(/\bPosted on\s*(\d{2})\/(\d{2})\/(\d{4})/i);
     const postedOn = date ? isoDate(date[1],date[2],date[3]) : null;
     if (date && !postedOn) throw Error('invalid_printed_posting_date');
     const row: OfficialVersionLead = { family,printedLabel,sourceUrl:u.toString(),locator,postedOn };
     const existing = discovered.get(locator);
-    if (existing && JSON.stringify(existing)!==JSON.stringify(row)) throw Error('conflicting_official_version_listing');
+    if (existing) {
+      // Duplicate links are not separate versions. The dated listing row
+      // wins over a date-free banner/action link; two contradictory published
+      // dates or two contradictory labels with equal date quality still fail.
+      if (existing.family!==row.family || existing.sourceUrl!==row.sourceUrl
+        || (existing.postedOn!==null && row.postedOn!==null
+          && (existing.postedOn!==row.postedOn || existing.printedLabel!==row.printedLabel))
+        || (existing.postedOn===null && row.postedOn===null
+          && existing.printedLabel!==row.printedLabel))
+        throw Error('conflicting_official_version_listing');
+      if (existing.postedOn===null && row.postedOn!==null) discovered.set(locator,row);
+      continue;
+    }
     discovered.set(locator,row);
     if (discovered.size>100) throw Error('unexpectedly_large_revisor_version_list');
   }
