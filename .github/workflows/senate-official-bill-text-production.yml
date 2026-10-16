@@ -78,7 +78,7 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Diagnose public Revisor access from keyless runner
         run: |
-          node --input-type=module <<'NODE'
+          node --import tsx --input-type=module <<'NODE'
           const url = 'https://www.revisor.mn.gov/bills/94/2025/0/SF/1/';
           try {
             const response = await fetch(url, {
@@ -89,11 +89,23 @@ jobs:
               signal: AbortSignal.timeout(20000),
             });
             const html = await response.text();
+            let parsedLeadCount = null;
+            let parserError = null;
+            if (response.ok) {
+              try {
+                const { discoverOfficialVersionLeads } = await import('./src/operations/senate-official-bill-text.js');
+                parsedLeadCount = discoverOfficialVersionLeads(html, response.url).length;
+              } catch (error) {
+                parserError = error instanceof Error ? error.message.slice(0,90) : 'unknown';
+              }
+            }
             const result = {
               status: response.status,
               finalHost: new URL(response.url).hostname,
               bytes: Buffer.byteLength(html),
               hasVersionHeading: /Bill Text Versions/i.test(html),
+              parsedLeadCount,
+              parserError,
               versionAnchorCount: (html.match(/href\s*=\s*["'][^"']*versions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\//gi) ?? []).length,
               contentType: response.headers.get('content-type')?.slice(0,60) ?? null,
             };
