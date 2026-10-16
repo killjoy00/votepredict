@@ -64,10 +64,23 @@ a prior receipt is not silently treated as a new publication.
 
 The collector requests both possible year-specific status XML URLs in sequence,
 always serially paced through RevisorPacer (minimum 1,150 ms per request).
-Each protected production run is bounded to 350 bill lookups (potentially
-700 HTTP requests), plus at most 80 preexisting journal documents.
-Runs resume from receipts; over 28k lookups require many reviewed marker commits.
-There is **no schedule**, personal dispatch or open-ended production runner.
+Each protected collection run is capped at **3,000 bill lookups**, with a
+**65-minute collector budget**, within the existing 90-minute protected job
+limit. This leaves time for the migration drift check and final read-only
+readback even when the Revisor's first-year or second-year response is slow.
+All requests remain serial and use the existing minimum 1,150 ms pacing.
+A 429 or 503 immediately stops fetching; the budget cutoff also ends a run
+after its last committed bill. Neither condition loses persisted work.
+
+Before any Revisor HTTP request, each run processes up to **500 existing
+stored journals**, enough for all 257 pending journals at the first readback.
+Journal text is mined from source_documents with no network request; journal
+receipts remain idempotent. A reviewed main merge can include both
+SENATE_BILL_AUTHORS_PRODUCTION and SENATE_BILL_AUTHORS_JOURNALS_ONLY to
+request **zero bill lookups** for the first run, finishing the journal backlog
+without the much slower Revisor scan. A later independently reviewed main
+merge with only SENATE_BILL_AUTHORS_PRODUCTION resumes official bill scans,
+still bounded at 3,000. There is no schedule or direct dispatch.
 
 ## Session inventory and production metrics
 
@@ -81,12 +94,46 @@ the authorship migration was deployed**:
 | 2025-2026 | 5,310 | 4,496 | 9,806 |
 | **Total** | **15,455** | **13,485** | **28,940** |
 
-These are **precollection inventory counts**, not claims that author rows
-have been populated. The protected production readback emits per-session
-targetBills, scannedBills, successBills, authorRows, senateAuthorRows,
-senateLinked, houseAuthorRows, billsWithCoauthors, coauthorShare and
-senateLinkRate. After the first observed protected run, record real values
-here; never invent a completed coverage rate.
+These were **precollection companion-inventory counts**, not claims that
+authorship rows had been populated. The first official author readback below
+is the authoritative point-in-time count; its target total is two lower than
+this earlier inventory (one fewer HF target in 2023-2024 and in 2025-2026).
+No reason for that difference is inferred without a catalog comparison.
+
+### Verified first protected collection: October 16, 2026
+
+[Production run #38953446404](https://github.com/killjoy00/votepredict/actions/runs/38953446404)
+successfully passed exact-marker independent main, ledgered migration 0025,
+post-migration drift, bounded serial Revisor fetches and read-only readback.
+It is a **bounded partial** collection, not completed coverage.
+
+| Session | Live SF + linked HF target | Revisor XML success scans | Current raw author rows (XML + stored journals) | Senate membership links | Coauthor share among successful XML-scanned bills |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 2021-2022 | 8,652 | 0 | 726 | 726 / 726 (100%) | Not available (0 scanned) |
+| 2023-2024 | 10,481 | 0 | 484 | 484 / 484 (100%) | Not available (0 scanned) |
+| 2025-2026 | 9,805 | 350 | 1,275 | 1,275 / 1,275 (100%) | 188 / 350 (53.71%) |
+| **Total** | **28,938** | **350** | **2,485** | **2,485 / 2,485 (100%)** | **188 / 350 (53.71%)** |
+
+The official collector attempted **350/350 successful SF XML status lookups**;
+no 404, source errors, 429 or 503 were observed. It parsed **817 official
+current/action author entries**. Separately, **80 stored Senate journal
+documents** yielded **1,691 author-change mentions linked to existing bills**.
+These mentions can overlap an XML author row and are not additional unique
+people or bills. Readback found **0 House author rows**, because the configured
+priority processes SF bills before their linked HF companions.
+
+**Remaining:** 28,588 target bills without successful/not-found Revisor scan
+receipts and 257 unscanned stored journal documents. The next reviewed,
+marker-bearing main merge can resume from these receipts; no schedule exists.
+All 2,485 observed Senate author rows resolved to existing membership IDs,
+but this is a first-batch rate, **not** a claim that unscanned authors or
+all House people are resolved.
+
+The readback emits targetBills, scannedBills, successBills, authorRows,
+senateAuthorRows, senateLinked, houseAuthorRows, billsWithCoauthors,
+coauthorShare and senateLinkRate. These figures may change as new evidence
+is collected or the catalog changes. Do not extrapolate the coauthor share
+to all 28,938 target bills.
 
 Definitions: coauthor share is distinct successfully scanned bills with at
 least one coauthor, divided by successfully scanned bills. Senate link rate is
@@ -114,7 +161,15 @@ default primary; no secrets are printed. Branch or environment protection
 must not be bypassed.
 
 Ordinary bounded runs report **bounded_partial**, not false completion.
-To continue, review a fresh marker-bearing main change (for example an
-update with observed production counts), pass CI and merge. The next
-bounded run resumes from saved scans. Never trigger an unreviewed direct
-dispatch or forced empty push merely to invoke production.
+Each run includes explicit remaining_unscanned, remaining_journals,
+requestedBillLookups, collectionMode and stoppedForTimeBudget fields.
+The runner verifies the **entire current release migration ledger**; agents
+may add new, independently deployed additive migrations after 0025.
+It will not apply another agent's migrations, rewrite applied checksums,
+or suppress a drift mismatch. If the production ledger is behind the current
+release, the protected run is held for that migration's own guarded deploy.
+
+To continue the remaining official catalog, review a fresh marker-bearing
+main change, pass CI and merge. The next bounded run resumes from existing
+scan receipts. Never trigger an unreviewed direct dispatch, a forced empty
+push or an uncontrolled parallel Revisor crawl.
