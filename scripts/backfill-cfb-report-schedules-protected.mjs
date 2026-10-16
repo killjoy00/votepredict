@@ -180,11 +180,12 @@ function safeDateText(value){
  return typeof value==='string'&&/^20\d\d-\d\d-\d\d/.test(value)?value:null;
 }
 async function persistReport(client,record,source,canonicalRows){
- let transaction=false;
+ let transaction=false,storeStage='begin';
  try{
   await client.query('BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED READ WRITE');
   transaction=true;
   // Hash verified on first network acquisition and again when cache was read.
+  storeStage='pdf_body';
   await client.query([
    'INSERT INTO cfb_finance_pdf_body_captures',
    '(pdf_sha256,byte_length,original_pdf,verified_from_url,fetched_at)',
@@ -192,6 +193,7 @@ async function persistReport(client,record,source,canonicalRows){
   ].join(' '),[record.sha,record.bytes,Buffer.from(source.bytes),record.url,source.fetchedAt]);
   const pages=source.pages;
   const pagePayload=pages.map((raw_page_text,i)=>({page_number:i+1,raw_page_text}));
+  storeStage='pages';
   await client.query([
    'INSERT INTO cfb_finance_report_schedule_pages(pdf_sha256,page_number,raw_page_text)',
    'SELECT $1,x.page_number,x.raw_page_text FROM jsonb_to_recordset($2::jsonb)',
@@ -202,6 +204,7 @@ async function persistReport(client,record,source,canonicalRows){
   const period=parseReportPeriod(pages);
   const status=!readable?'ocr_needed':entries.length?'machine_readable':'no_schedule_text';
   const designation=Number(record.id.split(':').at(-1))>0?'amended':'original';
+  storeStage='captures';
   await client.query([
    'INSERT INTO cfb_finance_report_schedule_captures',
    '(report_version_id,pdf_sha256,fetched_at,extractor_version,page_count,',
@@ -215,6 +218,7 @@ async function persistReport(client,record,source,canonicalRows){
    period.start,period.end,designation,status
   ]);
   if(entries.length){
+   storeStage='entries';
    await client.query([
     'INSERT INTO cfb_finance_report_schedule_entries',
     '(report_version_id,page_number,line_number,raw_schedule_line,',
@@ -227,6 +231,7 @@ async function persistReport(client,record,source,canonicalRows){
     'printed_counterparty text,schedule_family text) WHERE true ON CONFLICT DO NOTHING'
    ].join(' '),[record.id,JSON.stringify(entries)]);
   }
+  storeStage='read_entries';
   const storedEntries=(await client.query([
    'SELECT id,page_number,line_number,raw_schedule_line,',
    'printed_transaction_date::text,printed_amount_cents::text,schedule_family',
@@ -241,6 +246,7 @@ async function persistReport(client,record,source,canonicalRows){
    candidate_count:m.possible_entry_count
   }));
   if(inputs.length){
+   storeStage='links';
    await client.query([
     'INSERT INTO cfb_finance_report_transaction_links',
     '(report_version_id,family,committee_registration,transaction_year,canonical_row_key,',
@@ -251,10 +257,15 @@ async function persistReport(client,record,source,canonicalRows){
     'line_id text,candidate_count integer) WHERE true ON CONFLICT DO NOTHING'
    ].join(' '),[record.id,JSON.stringify(inputs)]);
   }
+  storeStage='commit';
   await client.query('COMMIT');transaction=false;
   return {entries:storedEntries.length,exact:matches.filter(x=>x.match_status==='exact').length,
    ambiguous:matches.filter(x=>x.match_status==='ambiguous').length,
    unmatched:matches.filter(x=>x.match_status==='unmatched').length,status};
+ }catch(error){
+  // Fixed operation label only. Never serialize SQL values or driver messages.
+  if(error&&typeof error==='object')error.cfbStoreStage=storeStage;
+  throw error;
  }finally{
   if(transaction)await client.query('ROLLBACK').catch(()=>{});
  }
@@ -372,9 +383,21 @@ export async function main(){
     // print source URLs, donor/vendor names, report identities or error strings.
     const rawCode=error&&typeof error==='object'&&'code' in error?error.code:null;
     const code=typeof rawCode==='string'&&/^[A-Z0-9]{5}$/.test(rawCode)?rawCode:'non_sql';
-    const category=phase+'_'+code;
+    const stage=error&&typeof error==='object'&&
+     ['begin','pdf_body','pages','captures','entries','read_entries','links','commit']
+       .includes(error.cfbStoreStage)?error.cfbStoreStage:'unknown';
+    const rawConstraint=error&&typeof error==='object'&&'constraint' in error
+      ?error.constraint:null;
+    // Constraint names come from our checked-in schema; suppress all other
+    // values, including driver messages, SQL detail, URLs and donor data.
+    const constraint=typeof rawConstraint==='string'&&
+      /^cfb_finance_[a-z0-9_]{1,100}$/.test(rawConstraint)
+      ?rawConstraint:'unspecified';
+    const category=phase+'_'+stage+'_'+code+'_'+constraint;
     safeFailureCategories.set(category,(safeFailureCategories.get(category)??0)+1);
-    // A later reviewed main job retries any version missing a completed capture.
+    // Stop repeated identical schema failures without wasting all 830 retries.
+    // The remaining versions stay uncaptured for a reviewed repair run.
+    if(processed===0&&failed>=5&&code==='23514'&&safeFailureCategories.size===1)break;
    }
   }
   // Treat independently archived exact *bulk* observations separately.
@@ -388,7 +411,7 @@ export async function main(){
     })).filter(x=>x.seen)
    )]);
   }
-  const result={...(await counts(client,baseline)),attemptedReports:Math.min(batch,outstanding.length),
+  const result={...(await counts(client,baseline)),attemptedReports:processed+failed,
    completedThisRun:processed,failedThisRun:failed,distinctBodiesDownloadedThisRun:downloaded,
    reusedBodyCapturesThisRun:reused,
    failureCategories:Object.fromEntries([...safeFailureCategories].sort((a,b)=>a[0].localeCompare(b[0])))};
