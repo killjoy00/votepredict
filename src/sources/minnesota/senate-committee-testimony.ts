@@ -134,7 +134,7 @@ function record(
   identity: string,
 ): RawSenateTestimonyRecord {
   return {
-    recordKey: sha([context.hearingId, sourceType, sourceUrl, billIdentifier ?? '', identity, rawContent ?? ''].join('|')),
+    recordKey: sha([context.hearingId, sourceType, sourceUrl, billIdentifier ?? '', identity, sourceType === 'hearing' ? rawContent ?? '' : ''].join('|')),
     session: context.session,
     hearingId: context.hearingId,
     sourceType,
