@@ -42,6 +42,16 @@ async function main(){
   await client.query(
    'INSERT INTO cfb_finance_report_schedule_pages(pdf_sha256,page_number,raw_page_text) VALUES($1,1,$2)',
    [sha,'SCHEDULE A1\n10/02/2025 Taylor Example $250.00']);
+
+  // Exercise the production INSERT ... SELECT ... FROM jsonb_to_recordset
+  // statements verbatim. PostgreSQL otherwise interprets bare ON after
+  // SELECT/FROM ambiguously, which the earlier VALUES-only test missed.
+  const duplicatePages=await client.query([
+   'INSERT INTO cfb_finance_report_schedule_pages(pdf_sha256,page_number,raw_page_text)',
+   'SELECT $1,x.page_number,x.raw_page_text FROM jsonb_to_recordset($2::jsonb)',
+   'AS x(page_number integer,raw_page_text text) WHERE true ON CONFLICT DO NOTHING'
+  ].join(' '),[sha,JSON.stringify([{page_number:1,raw_page_text:'SCHEDULE A1\\n10/02/2025 Taylor Example $250.00'}])]);
+  if(duplicatePages.rowCount!==0)throw Error('Repeat source page must remain immutable');
   const ids=[];
   for(const id of versions){
    await client.query([
@@ -58,6 +68,24 @@ async function main(){
    ].join(' '),[id,'10/02/2025 Taylor Example $250.00']);
    ids.push(r.rows[0].id);
   }
+
+  // Idempotent JSONB schedule entry replay must not insert duplicate rows.
+  const existingEntry=await client.query([
+   'INSERT INTO cfb_finance_report_schedule_entries',
+   '(report_version_id,page_number,line_number,raw_schedule_line,printed_transaction_date,',
+   'printed_amount_cents,printed_counterparty,schedule_family)',
+   'SELECT $1,e.page_number,e.line_number,e.raw_schedule_line,',
+   'e.printed_transaction_date::date,e.printed_amount_cents,e.printed_counterparty,',
+   'e.schedule_family FROM jsonb_to_recordset($2::jsonb)',
+   'AS e(page_number integer,line_number integer,raw_schedule_line text,',
+   'printed_transaction_date text,printed_amount_cents bigint,',
+   'printed_counterparty text,schedule_family text) WHERE true ON CONFLICT DO NOTHING'
+  ].join(' '),[versions[0],JSON.stringify([{
+   page_number:1,line_number:2,raw_schedule_line:'10/02/2025 Taylor Example $250.00',
+   printed_transaction_date:'2025-10-02',printed_amount_cents:25000,
+   printed_counterparty:'Taylor Example',schedule_family:'candidate_contribution'
+  }])]);
+  if(existingEntry.rowCount!==0)throw Error('Repeat extracted entry must remain immutable');
   const key='a'.repeat(64);
   for(let i=0;i<versions.length;i++){
    const insert=[
@@ -70,6 +98,22 @@ async function main(){
    await client.query(insert,[versions[i],key,ids[i]]);
    await client.query(insert,[versions[i],key,ids[i]]);
   }
+
+  // Distinct report versions may reference the same canonical key, while
+  // exact JSONB replay must never create duplicate links.
+  const duplicateLinks=await client.query([
+   'INSERT INTO cfb_finance_report_transaction_links',
+   '(report_version_id,family,committee_registration,transaction_year,canonical_row_key,',
+   'match_status,entry_id,possible_entry_count)',
+   'SELECT $1,x.family,x.reg,x.yr,x.row_key,x.status,',
+   'x.line_id::bigint,x.candidate_count FROM jsonb_to_recordset($2::jsonb)',
+   'AS x(family text,reg text,yr integer,row_key text,status text,',
+   'line_id text,candidate_count integer) WHERE true ON CONFLICT DO NOTHING'
+  ].join(' '),[versions[0],JSON.stringify([{
+   family:'candidate_contribution',reg:'999999',yr:2025,row_key:key,
+   status:'exact',line_id:String(ids[0]),candidate_count:1
+  }])]);
+  if(duplicateLinks.rowCount!==0)throw Error('Repeat canonical version link must be idempotent');
   const ambiguousKey='b'.repeat(64),unmatchedKey='c'.repeat(64);
   await client.query([
    'INSERT INTO cfb_finance_report_transaction_links',

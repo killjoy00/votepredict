@@ -138,7 +138,7 @@ const BULK_ARCHIVE_SQL=[
  "SELECT x.family,x.reg,x.yr,x.key,x.source_id::uuid,x.sha,x.seen::timestamptz,",
  "'independent_archive_capture_exact_row' FROM jsonb_to_recordset($1::jsonb)",
  'AS x(family text,reg text,yr int,key text,source_id text,sha text,seen text)',
- 'ON CONFLICT DO NOTHING'
+ 'WHERE true ON CONFLICT DO NOTHING'
 ].join(' ');
 
 async function existingPages(client,sha256){
@@ -195,7 +195,7 @@ async function persistReport(client,record,source,canonicalRows){
   await client.query([
    'INSERT INTO cfb_finance_report_schedule_pages(pdf_sha256,page_number,raw_page_text)',
    'SELECT $1,x.page_number,x.raw_page_text FROM jsonb_to_recordset($2::jsonb)',
-   'AS x(page_number integer,raw_page_text text) ON CONFLICT DO NOTHING'
+   'AS x(page_number integer,raw_page_text text) WHERE true ON CONFLICT DO NOTHING'
   ].join(' '),[record.sha,JSON.stringify(pagePayload)]);
   const entries=extractScheduleEntries(pages,record.year);
   const readable=pages.some(s=>s.trim().length>100);
@@ -224,7 +224,7 @@ async function persistReport(client,record,source,canonicalRows){
     'e.schedule_family FROM jsonb_to_recordset($2::jsonb)',
     'AS e(page_number integer,line_number integer,raw_schedule_line text,',
     'printed_transaction_date text,printed_amount_cents bigint,',
-    'printed_counterparty text,schedule_family text) ON CONFLICT DO NOTHING'
+    'printed_counterparty text,schedule_family text) WHERE true ON CONFLICT DO NOTHING'
    ].join(' '),[record.id,JSON.stringify(entries)]);
   }
   const storedEntries=(await client.query([
@@ -248,7 +248,7 @@ async function persistReport(client,record,source,canonicalRows){
     'SELECT $1,x.family,x.reg,x.yr,x.row_key,x.status,',
     'x.line_id::bigint,x.candidate_count FROM jsonb_to_recordset($2::jsonb)',
     'AS x(family text,reg text,yr integer,row_key text,status text,',
-    'line_id text,candidate_count integer) ON CONFLICT DO NOTHING'
+    'line_id text,candidate_count integer) WHERE true ON CONFLICT DO NOTHING'
    ].join(' '),[record.id,JSON.stringify(inputs)]);
   }
   await client.query('COMMIT');transaction=false;
@@ -354,18 +354,26 @@ export async function main(){
    ||a.id.localeCompare(b.id));
   const sessionCache=new Map(),seenBodyHashes=new Set();
   let processed=0,failed=0,downloaded=0,reused=0;
+  const safeFailureCategories=new Map();
   // Bounded retry. Failures remain backlog and never receive guessed provenance.
   for(const record of outstanding.slice(0,batch)){
+   let phase='source';
    try{
     const source=await loadSourceBodyAndPages(client,record,sessionCache);
     if(source.downloaded&&!seenBodyHashes.has(record.sha))downloaded++;
     else reused++;
     seenBodyHashes.add(record.sha);
+    phase='store';
     await persistReport(client,record,source,baseline.byYear.get(record.reg+'|'+record.year)??[]);
     processed++;
-   }catch(_error){
+   }catch(error){
     failed++;
-    // Do not emit a source URL, donor identity, source row or exception message.
+    // Only fixed phase + normalized 5-character PostgreSQL SQLSTATE; never
+    // print source URLs, donor/vendor names, report identities or error strings.
+    const rawCode=error&&typeof error==='object'&&'code' in error?error.code:null;
+    const code=typeof rawCode==='string'&&/^[A-Z0-9]{5}$/.test(rawCode)?rawCode:'non_sql';
+    const category=phase+'_'+code;
+    safeFailureCategories.set(category,(safeFailureCategories.get(category)??0)+1);
     // A later reviewed main job retries any version missing a completed capture.
    }
   }
@@ -382,7 +390,8 @@ export async function main(){
   }
   const result={...(await counts(client,baseline)),attemptedReports:Math.min(batch,outstanding.length),
    completedThisRun:processed,failedThisRun:failed,distinctBodiesDownloadedThisRun:downloaded,
-   reusedBodyCapturesThisRun:reused};
+   reusedBodyCapturesThisRun:reused,
+   failureCategories:Object.fromEntries([...safeFailureCategories].sort((a,b)=>a[0].localeCompare(b[0])))};
   if(result.reports_with_extraction>830||result.reportBacklog<0||result.exact_links>3000000)
    throw Error('CFB provenance aggregate out of bounds');
   console.log('CFB_RAW_SCHEDULE_SAFE_COUNTS '+JSON.stringify(result));
