@@ -191,6 +191,12 @@
     {
       "groupName": "NFIB Minnesota",
       "year": 2022,
+      "adapter": "nfib_pdf",
+      "url": "https://assets.nfib.com/nfibcom/Minnesota-Voting-Record-21-22.pdf"
+    },
+    {
+      "groupName": "NFIB Minnesota",
+      "year": 2022,
       "adapter": "nfib_html",
       "url": "https://www.nfib.com/news/news/2022-nfib-mn-pac-endorsements-for-the-minnesota-legislature/",
       "electionCandidate": true
