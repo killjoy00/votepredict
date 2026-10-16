@@ -173,7 +173,10 @@ export function lastArchivePageFromListing(html:string,source:SenatePressSource)
 export function memberPagesFromDirectory(html:string,source:SenatePressSource):SenatePressSource[] {
   if(source.id!=='senate_republicans')return [];
   const root=htmlTree(html),base=new URL(source.archive_url),found=new Set<string>();
-  for(const heading of all(root,n=>n.tag==='h5'))for(const link of all(heading,n=>n.tag==='a')) {
+  for(const heading of all(root,n=>n.tag==='h5')) {
+    const links=all(heading,n=>n.tag==='a');
+    if(heading.parent?.tag==='a')links.push(heading.parent);
+    for(const link of links){
     const href=attr(link,'href');if(!href)continue;
     try {
       const u=new URL(href,base);
@@ -183,6 +186,7 @@ export function memberPagesFromDirectory(html:string,source:SenatePressSource):S
       u.pathname=u.pathname.replace(/\/?$/,'/');
       found.add(u.href);
     }catch{/* Ignore malformed member links. */}
+    }
   }
   return [...found].map(url=>({...source,archive_url:url,member_archive:true}));
 }
