@@ -109,9 +109,11 @@ export function historicalDFLSitemapManifest(pages:DflSitemapPage[]):string{
   ].join(':')).join('\n')).digest('hex');
 }
 
-/** Fixed, disjoint index shards cover the entire deterministic publisher inventory.
- * The GitHub workflow run number rotates shards hourly without mutable DB cursor state.
- * A failed run is retried on the next full rotation; existing URLs skip immediately.
+/** Fixed, disjoint index shards cover the deterministic publisher inventory.
+ * The GitHub workflow rotates shards hourly. Within each shard a round-robin
+ * first URL prevents a repeatedly rate-limited early capture from starving
+ * the rest of that shard on every later 24-hour rotation.
+ * Existing original URLs always skip before any archive request.
  */
 export const DFL_SITEMAP_SHARD_COUNT=24;
 export function dflSitemapShard(candidates:DflSitemapCandidate[],runNumber:number):{
@@ -122,8 +124,11 @@ export function dflSitemapShard(candidates:DflSitemapCandidate[],runNumber:numbe
     new Set(candidates.map(c=>c.url)).size!==candidates.length)
     throw Error('Unreviewed archived publisher inventory or invalid scheduled run number');
   const shard=(runNumber-1)%DFL_SITEMAP_SHARD_COUNT;
-  const selected=candidates.filter((_,i)=>i%DFL_SITEMAP_SHARD_COUNT===shard);
-  if(!selected.length||selected.length>100)
+  const inShard=candidates.filter((_,i)=>i%DFL_SITEMAP_SHARD_COUNT===shard);
+  if(!inShard.length||inShard.length>100)
     throw Error('DFL archived publisher run exceeded bounded per-shard candidate cap');
+  const round=Math.floor((runNumber-1)/DFL_SITEMAP_SHARD_COUNT);
+  const offset=round%inShard.length;
+  const selected=[...inShard.slice(offset),...inShard.slice(0,offset)];
   return {shard,shardCount:DFL_SITEMAP_SHARD_COUNT,selected};
 }

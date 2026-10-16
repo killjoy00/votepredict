@@ -96,7 +96,21 @@ test('24 deterministic bounded, disjoint run-number shards eventually cover ever
     }
   }
   assert.equal(found.size,candidates.length);
-  assert.deepEqual(dflSitemapShard(candidates,25),dflSitemapShard(candidates,1));
+  // Same candidate set every 24 runs, but its starting article changes:
+  // a repeatedly rate-limited first request must not starve later URLs.
+  const dayOne=dflSitemapShard(candidates,1);
+  const dayTwo=dflSitemapShard(candidates,25);
+  assert.equal(dayTwo.shard,dayOne.shard);
+  assert.equal(dayTwo.selected.length,dayOne.selected.length);
+  assert.equal(dayTwo.selected[0].url,dayOne.selected[1].url);
+  assert.deepEqual(new Set(dayTwo.selected.map(x=>x.url)),
+    new Set(dayOne.selected.map(x=>x.url)));
+  // Every URL in this shard eventually becomes the first request, with a
+  // bounded per-hour batch, even when every previous pass was rate-limited.
+  const possibleFirst=new Set<string>();
+  for(let round=0;round<dayOne.selected.length;round++)
+    possibleFirst.add(dflSitemapShard(candidates,1+round*24).selected[0].url);
+  assert.equal(possibleFirst.size,dayOne.selected.length);
   assert.throws(()=>dflSitemapShard(candidates,0),/Unreviewed/);
   assert.throws(()=>dflSitemapShard(candidates,NaN),/Unreviewed/);
 });
