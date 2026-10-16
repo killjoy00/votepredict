@@ -299,7 +299,10 @@ export function parse2016SenateBookDistricts(text: string): SenateElectionCandid
     }
   }
   if (new Set(candidates.map((row) => row.district)).size !== 67) {
-    throw new Error('Published 2016 Senate book does not expose all 67 district totals');
+    const found = new Set(candidates.map((row) => Number(row.district)));
+    const missing = Array.from({ length: 67 }, (_, i) => i + 1).filter((d) => !found.has(d));
+    const headings = lines.filter((line) => /^Senate District\\s+\\d+\\s+Total\\s*$/.test(line));
+    throw new Error('Published 2016 Senate book parse incomplete: found '+found.size+' district totals, missed '+missing.join(',')+' (headings '+headings.length+'; lines '+lines.length+')');
   }
   return markRawElectionLeaders(candidates, 'general');
 }
