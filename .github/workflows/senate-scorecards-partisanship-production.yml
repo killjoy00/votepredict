@@ -3,7 +3,8 @@ name: Capture raw Minnesota Senate scorecards and district partisanship
 on:
   pull_request:
     paths:
-      - migrations/0024_senate_scorecards_district_partisanship.sql
+      - migrations/0024_senate_raw_vote_views.sql
+      - migrations/0025_senate_scorecards_district_partisanship.sql
       - data/senate-scorecard-sources.json
       - src/sources/minnesota/senate-scorecard-raw.ts
       - src/sources/minnesota/senate-district-partisanship-raw.ts
@@ -15,7 +16,8 @@ on:
   push:
     branches: [main]
     paths:
-      - migrations/0024_senate_scorecards_district_partisanship.sql
+      - migrations/0024_senate_raw_vote_views.sql
+      - migrations/0025_senate_scorecards_district_partisanship.sql
       - data/senate-scorecard-sources.json
       - src/sources/minnesota/senate-scorecard-raw.ts
       - src/sources/minnesota/senate-district-partisanship-raw.ts
@@ -67,7 +69,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Apply 24 additive migrations twice to one disposable Postgres and verify drift
+      - name: Apply full additive migrations twice to one disposable Postgres and verify drift
         run: |
           npm run db:migrate
           npm run db:migrate
