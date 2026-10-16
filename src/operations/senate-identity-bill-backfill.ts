@@ -14,6 +14,7 @@ const SESSIONS = ['2021-2022','2023-2024','2025-2026'] as const;
 const MAX_STATEMENTS = 25000;
 const MAX_TESTIMONY = 100000;
 const MAX_ELECTIONS = 15000;
+const MAX_QUESTIONNAIRES = 15000;
 const MAX_VOTE_DOCUMENTS = 20000;
 const CHUNK = 350;
 
@@ -303,6 +304,47 @@ async function elections(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Prom
   }
   return {scanned};
 }
+
+async function questionnaires(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Promise<{scanned:number}>{
+  let scanned=0,cursor='';
+  while(scanned<MAX_QUESTIONNAIRES){
+    const q=await client.query<{
+      id:string;election_cycle:number;candidate_name:string;district:string|null;
+      source_url:string;membership_id:string|null;
+    }>(
+      "SELECT id,election_cycle,candidate_name,district,source_url,membership_id "+
+      "FROM mn_senate_questionnaire_captures "+
+      "WHERE ($1::text='' OR id>NULLIF($1,'')::uuid) ORDER BY id LIMIT $2",
+      [cursor,Math.min(400,MAX_QUESTIONNAIRES-scanned)],
+    );
+    if(!q.rows.length)break;
+    const updates:Record<string,unknown>[]=[];
+    for(const row of q.rows){
+      const year=Number(row.election_cycle);
+      const slug=year===2020 ? '2021-2022' : year===2022 ? '2023-2024'
+        : year===2026 ? '2025-2026' : senateSessionForDate(String(year)+'-01-01');
+      const link=resolveSenator({
+        printedName:row.candidate_name,sessionSlug:slug??'',district:row.district,
+      },cat.roster);
+      updates.push({
+        id:row.id,membership_id:link.membershipId,
+        match_method:row.membership_id && row.membership_id!==link.membershipId
+          ? 'existing_preserved' : link.matchMethod,
+      });
+      aliases.add(link,row.candidate_name,'mn_senate_questionnaire_captures',row.source_url,cat);
+    }
+    await updateRows(client,
+      "UPDATE mn_senate_questionnaire_captures t SET "+
+      "membership_id=COALESCE(t.membership_id,v.membership_id),"+
+      "membership_match_method=CASE "+
+      "WHEN t.membership_id IS NULL AND v.membership_id IS NOT NULL THEN v.match_method "+
+      "ELSE COALESCE(t.membership_match_method,v.match_method) END "+
+      "FROM jsonb_to_recordset($1::jsonb) AS v(id uuid,membership_id uuid,match_method text) "+
+      "WHERE t.id=v.id",updates);
+    scanned+=q.rows.length;cursor=q.rows.at(-1)!.id;
+  }
+  return {scanned};
+}
 async function rawVotes(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Promise<{
   scanned:number;members:number;bills:number;inclusions:number;
 }>{
@@ -416,7 +458,7 @@ async function rawVotes(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Promi
 }
 export async function runSenateRawIdentityBillBackfill(pool:Pool):Promise<{
   statements:LinkTally;testimony:{scanned:number;senatorWitnesses:number;billReferences:number};
-  elections:{scanned:number};rawVotes:{scanned:number;members:number;bills:number;inclusions:number};
+  elections:{scanned:number};questionnaires:{scanned:number};rawVotes:{scanned:number;members:number;bills:number;inclusions:number};
 }>{
   const client=await pool.connect();
   try{
@@ -426,8 +468,9 @@ export async function runSenateRawIdentityBillBackfill(pool:Pool):Promise<{
     await statements(client,cat,aliases,stmt);
     const tst=await testimony(client,cat,aliases);
     const elect=await elections(client,cat,aliases);
+    const questionnaire=await questionnaires(client,cat,aliases);
     const votes=await rawVotes(client,cat,aliases);
     stmt.aliasesLearned=await aliases.flush(client);
-    return {statements:stmt,testimony:tst,elections:elect,rawVotes:votes};
+    return {statements:stmt,testimony:tst,elections:elect,questionnaires:questionnaire,rawVotes:votes};
   }finally{client.release(true);}
 }
