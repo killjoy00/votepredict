@@ -81,11 +81,23 @@ async function sitemap(path:string):Promise<void>{
       .map(m=>m[1].replace(/<!\[CDATA\[|\]\]>/g,'').trim().replace(/&amp;/g,'&'))
       .filter(x=>x.length>8&&x.length<750):[];
     const locs=rawLocs.map(originalDFLUrl).filter((x):x is string=>!!x);
+    const years:Record<string,number>={};
+    const urlEntries=xml?[...xml.matchAll(/<url\\b[^>]*>([\\s\\S]*?)<\\/url>/gi)]:[];
+    const previewLastmod:Array<{url:string;lastmod:string|null}>=[];
+    for(const entry of urlEntries){
+      const loc=entry[1].match(/<loc\\b[^>]*>([\\s\\S]*?)<\\/loc>/i)?.[1]
+        .replace(/<!\\[CDATA\\[|\\]\\]>/g,'').trim()??'';
+      const lastmod=entry[1].match(/<lastmod\\b[^>]*>([\\s\\S]*?)<\\/lastmod>/i)?.[1]?.trim()??null;
+      const year=lastmod?.slice(0,4)??'none';
+      years[year]=(years[year]??0)+1;
+      if(previewLastmod.length<8&&originalDFLUrl(loc))
+        previewLastmod.push({url:loc,lastmod});
+    }
     console.log('SENATE_DFL_SITEMAP='+JSON.stringify({path,status:200,captures:response.records.length,
       capture: capture.timestamp,replayStatus:snapshot.status,replayType:snapshot.headers.get('content-type'),
       payloadLength:xml?.length,xmlStart:xml?.slice(0,250),
       rawLocCount:rawLocs.length,rawLocExamples:rawLocs.slice(0,5),rawLocEnd:rawLocs.slice(-5),
-      articleLocCount:locs.length,hasSitemapLinks:xml?xml.includes('sitemap'):false,
+      articleLocCount:locs.length,urlsetEntryCount:urlEntries.length,lastmodYears:years,previewLastmod,hasSitemapLinks:xml?xml.includes('sitemap'):false,
       examples:locs.slice(0,8)}));
   }catch(error){
     console.log('SENATE_DFL_SITEMAP='+JSON.stringify({path,status:error instanceof Error?error.name:'unavailable'}));
