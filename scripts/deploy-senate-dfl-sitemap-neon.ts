@@ -149,8 +149,11 @@ async function main():Promise<void>{
       if(!privilege.rows[0]?.raw||!privilege.rows[0]?.captures)
         throw Error('Missing scoped raw statement or archival provenance insert privileges');
     });
-    phase='read_only_before_counts_and_url_deduplication';
-    const before=await countDFL(pool,'raw'),captureBefore=await countDFL(pool,'captures');
+    phase='read_only_before_raw_year_counts';
+    const before=await countDFL(pool,'raw');
+    phase='read_only_before_archive_capture_year_counts';
+    const captureBefore=await countDFL(pool,'captures');
+    phase='read_only_original_url_deduplication';
     const store=new ArchivedSenateDFLStore(pool);
     const already=await store.existing(selected.map(s=>s.url));
     phase='bounded_insert_only_first_party_archive_restoration';
@@ -229,8 +232,20 @@ async function main():Promise<void>{
       '\n\nPublisher post sitemap manifest: '+manifest+
       '\n\nOriginal publication date and Wayback capture timestamp are distinct. No models or votes changed.\n');
     if(stopReason)throw Error('Archive rate-limit/unavailability after verified partial safe insert');
-  }catch{
-    console.error('SENATE_DFL_SITEMAP_PRODUCTION_HELD_AT='+phase);
+  }catch(error){
+    // Never log credentials, query parameters or source contents. SQLSTATE and
+    // a bounded diagnostic category are enough to diagnose read-only failures.
+    const pg=error as {code?:unknown;name?:unknown;message?:unknown};
+    const code=typeof pg.code==='string' && /^[A-Z0-9]{5}$/.test(pg.code)
+      ? pg.code : 'none';
+    const kind=error instanceof Error ? error.name.slice(0,60) : 'non_error';
+    const diagnostic=error instanceof Error
+      ? error.message.replace(/postgres(?:ql)?:\/\/\S+/gi,'[redacted]')
+        .replace(/https?:\/\/\S+/gi,'[redacted url]').slice(0,180)
+      : 'unavailable';
+    console.error('SENATE_DFL_SITEMAP_PRODUCTION_HELD_AT='+JSON.stringify({
+      phase,kind,sqlstate:code,diagnostic,
+    }));
     process.exitCode=1;
   }finally{
     if(pool)try{await pool.end();}catch{process.exitCode=1;}
