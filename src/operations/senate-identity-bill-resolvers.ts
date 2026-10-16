@@ -84,8 +84,9 @@ export function resolveSenator(
   const unresolved: SenatorResolution = {membershipId:null,matchMethod:'unresolved'};
   if (!printed || !/^[a-z]/.test(printed)) return unresolved;
   const district = input.district?.replace(/\D+/g,'').replace(/^0+/,'').trim() || null;
-  const members = roster.filter(m => m.sessionSlug === input.sessionSlug && inDate(m,input.date)
-    && (!district || m.district?.replace(/\D+/g,'').replace(/^0+/,'') === district));
+  const inSession = roster.filter(m => m.sessionSlug === input.sessionSlug && inDate(m,input.date));
+  const members = inSession.filter(m =>
+    !district || m.district?.replace(/\D+/g,'').replace(/^0+/,'') === district);
   const exact = members.filter(m => withoutMiddleInitial(normalizePrintedSenatorName(m.name)) === withoutMiddleInitial(printed));
   const direct = unique(exact);
   if (direct) return {membershipId:direct.id,matchMethod:'exact'};
@@ -116,12 +117,13 @@ export function resolveSenator(
 
   // 'Maye Quade' and 'Oumou Verbeten' are compound surnames, not separate people.
   // Do not automatically treat a full, conflicting first+last name as surname-only.
-  const suffixes = members.filter(m => {
+  const suffixes = inSession.filter(m => {
     const official = normalizePrintedSenatorName(m.name);
     return official !== printed && official.endsWith(' '+printed);
   });
   const uniqueSurname = unique(suffixes);
-  if (uniqueSurname) return {membershipId:uniqueSurname.id,matchMethod:'surname_unique_in_session'};
+  if (uniqueSurname && members.some(m => m.id===uniqueSurname.id))
+    return {membershipId:uniqueSurname.id,matchMethod:'surname_unique_in_session'};
   // A district disambiguates compatible, but not contradictory, surnames.
   if (district) {
     const surnameMatches = members.filter(m => {
