@@ -1,0 +1,113 @@
+name: Deploy and backfill Senate first-party raw statements (one-shot)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-press-raw-production.yml
+      - scripts/deploy-senate-press-neon.ts
+      - scripts/collect-senate-press.ts
+      - src/sources/minnesota/senate-press-raw.ts
+      - src/operations/senate-press-raw-store.ts
+      - migrations/0016_senate_raw_statements.sql
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-first-party-raw-production-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  independent-reviewed-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_RAW_PRODUCTION_20261015')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm reviewed exact main checkout
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Test every migration on disposable PostgreSQL
+        run: npm run db:migrate
+      - name: Typecheck, all tests and Next.js build
+        run: npm run check
+      - name: Production dependency security gate
+        run: npm audit --omit=dev --audit-level=high
+      - name: Confirm live caucus article access without production credentials
+        run: npm run data:senate:statements -- --dry-run --from=2025-01-01 --to=2026-10-15 --max-pages=1
+
+  protected-neon-write:
+    needs: [independent-reviewed-main]
+    if: >-
+      needs.independent-reviewed-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_RAW_PRODUCTION_20261015')
+    # Reuses existing protected Neon boundary, never exposes secrets in PR jobs.
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_PRESS_CI: ${{ needs.independent-reviewed-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require exact independently reviewed main revision
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Guarded migration, insert-only 2023-to-current crawl, and readback
+        run: node --import tsx scripts/deploy-senate-press-neon.ts
