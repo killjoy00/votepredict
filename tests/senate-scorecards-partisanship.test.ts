@@ -4,7 +4,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {Pool} from 'pg';
 import {
-  parseA4LSenatePdf,parseGunOwnersSenateHtml,parseEducationMinnesotaSenateEndorsements,parseNfibMinnesotaSenateEndorsements,parseScorecardBillPositions,explicitPublishedOn,
+  parseA4LSenatePdf,parseGunOwnersSenateHtml,parseEducationMinnesotaSenateEndorsements,parseNfibMinnesotaSenateEndorsements,parseNfibScorecardBillPositions,parseScorecardBillPositions,explicitPublishedOn,
   parseRobots,validateScorecardManifest,parseScorecardContent,
   type ScorecardCapture,
 } from '../src/sources/minnesota/senate-scorecard-raw.js';
@@ -98,6 +98,40 @@ test('Keep the first-party 2026 education endorsement dateline separate from fet
   assert.equal(explicitPublishedOn('No displayed publication date'),null);
 });
 
+
+test('2026 NFIB source PDF numbered Senate-only issues retain literal YES/NO text and bill duplicates',()=>{
+  // Trimmed literal original "Minnesota-Voting-Record-3.pdf", page 1:
+  const raw='SENATE ONLY\n'+
+    '1. Health & Human Services Omnibus Bill (2025 – HF 2435):\n'+
+    'Increased taxes on healthcare. A “NO” vote supports the NFIB position.\n'+
+    '2. Earned Sick & Safe Time Fixes (2025 – SF 2300):\n'+
+    'Various modifications. A “YES” vote supports the NFIB position.\n'+
+    '4. Suitable Seating Mandate Scope Modification (2026 – SF 4059):\n'+
+    'Narrow scope. A “YES” vote supports the NFIB position.\n'+
+    '5. Suitable Seating Mandate (2026 – SF 4059):\n'+
+    'Narrow scope. A “NO” vote supports the NFIB positions. Passed Senate.\n'+
+    'SENATE VOTING RECORD\n'+
+    'Abeler, Jim\n60%\nDistrict\n35\n';
+  const parsed=parseNfibScorecardBillPositions(raw);
+  assert.deepEqual(parsed.map(v=>[v.billIdentifierRaw,v.groupPositionRaw]),
+    [['HF 2435','A “NO” vote supports the NFIB position'],
+      ['SF 2300','A “YES” vote supports the NFIB position'],
+      ['SF 4059','A “YES” vote supports the NFIB position'],
+      ['SF 4059','A “NO” vote supports the NFIB positions']]);
+  assert.deepEqual(parseScorecardBillPositions(raw,'nfib_pdf'),parsed);
+});
+test('2024 NFIB Both Chambers vote descriptions stop before House-only issues',()=>{
+  const raw='BOTH CHAMBERS\n'+
+    '1. Federal Tax Conformity (2023 - HF 31):\n'+
+    'Simplifies small business taxes. A “YES” vote supports the NFIB position.\n'+
+    '2. Environment and Energy Omnibus Bill (2023 - HF 2310):\n'+
+    'Increases fees. A “NO” vote supports the NFIB position.\n'+
+    'HOUSE ONLY\n11. House Tax Omnibus Bill (2023 - HF 1938):\n'+
+    'A “NO” vote supports the NFIB position.\n';
+  const rows=parseNfibScorecardBillPositions(raw);
+  assert.deepEqual(rows.map(v=>v.billIdentifierRaw),['HF 31','HF 2310']);
+  assert.equal(rows.length,2);
+});
 test('NFIB 2022 publisher consolidated table preserves 45 State Senate candidates, never House rows',()=>{
   // Trimmed original Aug. 17, 2022 NFIB index: MN House table then Senate
   // four-column repeated pair table. A lettered House district stays excluded.
