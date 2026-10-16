@@ -8,7 +8,7 @@ on:
       - scripts/collect-senate-questionnaires.ts
       - src/sources/minnesota/senate-questionnaire-raw.ts
       - src/operations/senate-questionnaire-ingest.ts
-      - migrations/0019_mn_senate_questionnaire_raw.sql
+      - migrations/0020_mn_senate_questionnaire_raw.sql
       - data/senate-questionnaire-sources.json
 permissions:
   contents: read
@@ -119,5 +119,5 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Existing Neon default branch, only migration 0019, raw answers and readback
+      - name: Existing Neon default branch, only migration 0020, raw answers and readback
         run: node --import tsx scripts/deploy-senate-questionnaires-neon.ts
