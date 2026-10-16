@@ -15,6 +15,22 @@ export type MembershipResolution =
   | { status: 'ambiguous'; candidateMembershipIds: string[]; reason: string }
   | { status: 'unmatched'; reason: string };
 
+/** Surname forms a Senate journal roll call may print for a member (last 1-3 tokens, or text before a comma). */
+export function senateJournalNameForms(candidate: MembershipCandidate): string[] {
+  const forms = new Set<string>();
+  for (const raw of [candidate.name, ...(candidate.aliases ?? [])]) {
+    const value = raw.replace(/^spk\.?\s+/i, '').replace(/^speaker\s+/i, '').trim();
+    const comma = value.match(/^([^,]+),/);
+    if (comma) {
+      forms.add(comma[1].trim());
+      continue;
+    }
+    const tokens = value.replace(/\s*"[^"]*"\s*/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+    for (let width = 1; width <= Math.min(3, tokens.length); width += 1) forms.add(tokens.slice(-width).join(' '));
+  }
+  return [...forms].filter(Boolean);
+}
+
 export function activeMembershipCandidates(candidates: MembershipCandidate[], occurredOn: string): MembershipCandidate[] {
   return candidates.filter((candidate) => {
     if (candidate.startsOn && occurredOn < candidate.startsOn) return false;

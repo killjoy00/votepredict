@@ -11,6 +11,7 @@ import {runSenateRawIdentityBillBackfill} from '../src/operations/senate-identit
 import {backfillOfficialSenateBillCompanions} from '../src/operations/senate-bill-companions.js';
 import {RevisorPacer} from '../src/operations/senate-revisor-pacer.js';
 import {importOfficialMinnesotaBillUniverse} from '../src/operations/senate-bill-universe.js';
+import {reparseStoredSenateJournalRawVotes} from '../src/operations/senate-journal-raw-reparse.js';
 import {senateLinkReadback} from '../src/operations/senate-identity-bill-report.js';
 
 const MARKER='SENATE_IDENTITY_BILL_REPAIR_PRODUCTION';
@@ -186,6 +187,8 @@ async function main():Promise<void>{
     phase='official_revisor_bill_universe_if_needed';
     const pacer=new RevisorPacer();
     const universe=importRequired?await importOfficialMinnesotaBillUniverse(pool,pacer):null;
+    phase='journal_roster_reparse';
+    const journalReparse=await reparseStoredSenateJournalRawVotes(pool);
     phase='bounded_idempotent_backfill';
     const results=await runSenateRawIdentityBillBackfill(pool);
     phase='official_revisor_companion_status';
@@ -199,7 +202,7 @@ async function main():Promise<void>{
         !companionResults.stoppedForThrottle
           ? 'committed_and_readback_verified':'bounded_partial',
       migrationApplied,importRequired,initialBillReferenceCoverage:[...totals.entries()],
-      billUniverse:universe,backfill:results,companions:companionResults,report,
+      billUniverse:universe,journalReparse,backfill:results,companions:companionResults,report,
       forecastsAndServingUntouched:true,
     };
     console.log('SENATE_IDENTITY_BILL_REPAIR_PRODUCTION='+JSON.stringify(output));
