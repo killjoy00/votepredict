@@ -155,6 +155,9 @@ async function main():Promise<void>{
       +', previously stored: '+previous+'\n\n'
       +after.groups.map(x=>'- '+x.cycle+' '+x.publisher+': '+x.responses+' captures / '+x.qaPairs+' pairs').join('\n')
       +'\n\nDistinct candidates: '+after.totals.distinctCandidates
+      +', distinct Q&A versions: '+after.totals.uniqueQaVersions
+      +', distinct Q&A pairs: '+after.totals.uniqueQaPairs
+      +', repeated raw-page snapshots of identical Q&A: '+after.totals.repeatQaSnapshots
       +', unmatched captures: '+after.totals.unmatched
       +', missing explicit publication dates: '+after.totals.missingDates
       +', failed sources: '+summary.failed.length
