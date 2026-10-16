@@ -99,6 +99,36 @@ test('Keep the first-party 2026 education endorsement dateline separate from fet
 });
 
 
+test('2021-22 original NFIB Minnesota PDF extracts nine printed State Senate positions and excludes House',()=>{
+  // Trimmed page 1 of the first-party 2021-22 NFIB MN Senate voting record.
+  const pdf='VOTING RECORD\nSENATE ONLY\n'+
+    '1. 1. Unemployment Insurance Experience COVID-19 Exclusion (2021-SF 192):\n'+
+    'Freezes taxable wages. A “Yes” vote supports the NFIB position.\n'+
+    '2. PPP Loan Forgiveness State Tax Exemption (2021-SF 263):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '3. Individual Health Insurance Market Reinsurance (2021-SF 694):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '4. Governor’s Peacetime Emergency Reform (2021-SF 4):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '5. UI Debt Repayment (2022-SF 2677):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '6. Reinsurance for 2023-27 (2022-SF 3472):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '7. 2022 Senate Tax Bill (2022-SF 3692):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '8. Southwest Light Rail Audit (2022-HF 3035):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    '9. Paid Leave Insurance Policies (2022-SF 3885):\n'+
+    'A “Yes” vote supports the NFIB position.\n'+
+    'HOUSE ONLY\n'+
+    '1. 2021 House Tax Bill (2021-HF 991):\n'+
+    'A “No” vote supports the NFIB position.\n';
+  const rows=parseNfibScorecardBillPositions(pdf);
+  assert.equal(rows.length,9);
+  assert.deepEqual(rows.map(x=>x.billIdentifierRaw),
+    ['SF 192','SF 263','SF 694','SF 4','SF 2677','SF 3472','SF 3692','HF 3035','SF 3885']);
+  assert.ok(rows.every(x=>/Yes/i.test(x.groupPositionRaw)));
+});
 test('2026 NFIB source PDF numbered Senate-only issues retain literal YES/NO text and bill duplicates',()=>{
   // Trimmed literal original "Minnesota-Voting-Record-3.pdf", page 1:
   const raw='SENATE ONLY\n'+
