@@ -7,7 +7,7 @@ CREATE TABLE mn_senate_election_source_snapshots (
   post_2022_redistricting boolean NOT NULL,
   source_url text NOT NULL,
   source_index_url text NOT NULL,
-  source_kind text NOT NULL CHECK (source_kind IN ('official_bulk_text','official_archived_rows_copy','official_sos_pdf')),
+  source_kind text NOT NULL CHECK (source_kind IN ('official_bulk_text','official_sos_pdf','university_election_archive_html')),
   original_observed_on date,
   fetched_at timestamptz NOT NULL,
   content_type text NOT NULL,
