@@ -533,3 +533,22 @@ test('legacy historical loser snapshots remain immutable but excluded from usefu
     legacyHistoricalExcludedCaptures:3,legacyHistoricalExcludedQas:15,
   });
 });
+
+
+test('historical source catalog rejects defeated candidates before HTTP fetch',()=>{
+  const winner:QuestionnaireSource={...base,id:'sd60-winning-pdf',
+    cycle:2025,adapter:'sd60_pdf',
+    url:'https://drive.google.com/file/d/1pbX-cHOKJFfMT4roJDXx-cNUdPs_-G46/view',
+    candidate:'Doron Clark',district:'60',party:'DFL'};
+  const loser={...winner,id:'sd60-nonwinning-pdf',candidate:'Monica Meyer',
+    url:'https://drive.google.com/file/d/1YgHwGlXg4coatqA211Nhhbl-q_gzO3Mu/view'};
+  assert.equal(validateCatalog({schemaVersion:1,sources:[winner]}).length,1);
+  assert.throws(()=>validateCatalog({schemaVersion:1,sources:[loser]}),/unconfirmed election loser/);
+  const two:QuestionnaireSource={...base,id:'st-2022',cycle:2022,
+    adapter:'startribune_2022',
+    url:'https://www.startribune.com/questions-on-candidates-heres-a-guide-to-duluth-area-elections/600219506',
+    candidates:['Grant Hauschild','Jen McEwen']};
+  assert.equal(validateCatalog({schemaVersion:1,sources:[two]}).length,1);
+  assert.throws(()=>validateCatalog({schemaVersion:1,
+    sources:[{...two,candidates:['Grant Hauschild','Andrea Zupancich']}]}),/unconfirmed election loser/);
+});
