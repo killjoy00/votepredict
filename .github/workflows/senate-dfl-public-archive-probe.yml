@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - scripts/probe-senate-dfl-public-archives.ts
+      - scripts/probe-senate-dfl-wayback-replay.ts
+      - src/sources/minnesota/senate-dfl-wayback.ts
       - .github/workflows/senate-dfl-public-archive-probe.yml
   push:
     branches: [main]
@@ -30,3 +32,5 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Check source-preserving Common Crawl and Wayback captures without access to DFL server
         run: node --import tsx scripts/probe-senate-dfl-public-archives.ts
+      - name: Attempt unchanged full-body 2023 Senate DFL Wayback replay
+        run: node --import tsx scripts/probe-senate-dfl-wayback-replay.ts
