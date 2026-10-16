@@ -1,0 +1,30 @@
+name: Senate first-party raw statements preview
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-raw-statements-preview.yml
+      - data/senate-press-sources.json
+      - src/sources/minnesota/senate-press-raw.ts
+      - src/operations/senate-press-raw-store.ts
+      - scripts/collect-senate-press.ts
+      - migrations/0016_senate_raw_statements.sql
+      - package.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Sample live archives without database credentials or writes
+        run: npm run data:senate:statements -- --dry-run --from=2025-01-01 --to=2026-10-15 --max-pages=2

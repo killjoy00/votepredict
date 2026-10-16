@@ -5,7 +5,7 @@ on:
     paths:
       - src/sources/minnesota/senate-election-results.ts
       - scripts/collect-senate-election-results.ts
-      - migrations/0016_mn_senate_election_raw_results.sql
+      - migrations/0018_mn_senate_election_raw_results.sql
       - package.json
       - .github/workflows/minnesota-senate-election-raw-collection.yml
 
