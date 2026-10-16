@@ -5,7 +5,7 @@
  */
 import {createHash} from 'node:crypto';
 
-export type SourceAdapter = 'a4l_pdf'|'aflcio_pdf'|'generic_pdf'|'gunowners_html'|'edmn_html'|'raw_html';
+export type SourceAdapter = 'a4l_pdf'|'aflcio_pdf'|'generic_pdf'|'gunowners_html'|'edmn_html'|'nfib_html'|'nfib_pdf'|'raw_html';
 export interface ScorecardSource {
   groupName:string;year:number;adapter:SourceAdapter;url:string;electionCandidate?:boolean;
 }
@@ -26,7 +26,7 @@ export interface ScorecardCapture {
 }
 export interface ScorecardFailure {group:string;year:number;url:string;reason:string}
 const SOURCE_ADAPTERS:SourceAdapter[]=[
-  'a4l_pdf','aflcio_pdf','generic_pdf','gunowners_html','edmn_html','raw_html',
+  'a4l_pdf','aflcio_pdf','generic_pdf','gunowners_html','edmn_html','nfib_html','nfib_pdf','raw_html',
 ];
 const MAX_BODY_BYTES=12_000_000;
 const AGENT='VotePredictSenateEvidenceBot/1.0 (+https://github.com/killjoy00/votepredict)';
@@ -194,6 +194,67 @@ export function parseEducationMinnesotaSenateEndorsements(html:string):Scorecard
   }
   return noDuplicates(found);
 }
+
+/**
+ * NFIB Minnesota's original 2022/2024/2026 Senate endorsement releases
+ * publish either a 2/4-cell Senate-only table, or literal "District 01—Sen.
+ * Mark Johnson" bullet rows. Keep printed names, including "Sen." and "*".
+ * Context must explicitly identify *Minnesota STATE Senate*: never copy
+ * House, federal Senate, or general news commentary as endorsements.
+ */
+export function parseNfibMinnesotaSenateEndorsements(html:string):ScorecardEntry[] {
+  const entries:ScorecardEntry[]=[];
+  const district=(raw:string):string|null=>{
+    const m=/^(?:(?:Senate\s+District|SD|District)\s*#?\s*)?0*(\d{1,2})$/i.exec(raw.trim());
+    const n=Number(m?.[1]);
+    return n>=1&&n<=67?String(n):null;
+  };
+  const senateHeading=/^(?:(?:Minnesota|MN)\s+)(?:State\s+)?Senate(?:\s+endorsements?)?$/i;
+  const houseHeading=/^(?:(?:Minnesota|MN)\s+)(?:House(?:\s+of\s+Representatives?)?|State\s+House)/i;
+  const text=htmlToRawText(html);
+  let inSenate=false;
+  for(const raw of text.split(/\r?\n/)){
+    const line=raw.trim();
+    if(senateHeading.test(line)){inSenate=true;continue;}
+    if(inSenate&&(houseHeading.test(line)||/^Topics\s*:|^About NFIB|^State\s*:/i.test(line))){
+      inSenate=false;continue;
+    }
+    if(!inSenate)continue;
+    const bullet=/^District\s+#?\s*0*(\d{1,2})\s*(?:—|–|-|:)\s*(.+)$/.exec(line);
+    if(bullet&&district(bullet[1])&&bullet[2].trim())
+      entries.push(newEntry(bullet[2].trim(),district(bullet[1]),null,'endorsement','ENDORSED'));
+  }
+  // Tables are processed only when their nearest preceding explicit chamber
+  // heading is Minnesota/MN Senate (never a House or U.S. Senate table).
+  for(const t of html.matchAll(/<table\b[^>]*>[\s\S]*?<\/table>/gi)){
+    const before=htmlToRawText(html.slice(Math.max(0,(t.index??0)-3000),t.index));
+    const headings=before.split(/\r?\n/).map(x=>x.trim())
+      .filter(x=>senateHeading.test(x)||houseHeading.test(x));
+    if(!headings.length||!senateHeading.test(headings.at(-1)!))continue;
+    const rows=tableRows(t[0])[0]??[];
+    const header=rows.find(x=>x.some(v=>/^(?:District\s*#?|Senate\s+District)$/i.test(v))
+      &&x.some(v=>/^(?:Endorsed\s+Candidate|Candidate)$/i.test(v)));
+    if(!header)continue;
+    for(const cells of rows.slice(rows.indexOf(header)+1)){
+      // Original NFIB index tables print repeating pairs: district, person,
+      // district, person. Do not interpret unmatched House-district cells.
+      for(let i=0;i+1<cells.length;i+=2){
+        const d=district(cells[i]??'');
+        const name=cells[i+1]?.replace(/\*+$/,'').trim();
+        if(d&&name&&/[A-Za-z]/.test(name))
+          entries.push(newEntry(name,d,null,'endorsement','ENDORSED'));
+      }
+    }
+  }
+  // An explicitly named Senate special-election endorsement can appear in a
+  // single-candidate release, with the district printed in its own headline.
+  const title=htmlToRawText(html.slice(0,30000)).split(/\r?\n/)
+    .find(line=>/NFIB Minnesota PAC Endorses .* for SD\s*\d{1,2}/i.test(line));
+  const single=title&&/NFIB Minnesota PAC Endorses\s+(.+?)\s+for\s+SD\s*0*(\d{1,2})\b/i.exec(title);
+  if(single&&district(single[2]))
+    entries.push(newEntry(single[1],district(single[2]),null,'endorsement','ENDORSED'));
+  return noDuplicates(entries);
+}
 function pdfSenatorScoreLines(text:string):ScorecardEntry[] {
   // Conservative fallback for scorecard PDFs that print "Sen. Name SD 17 89%".
   // Do not classify unlabelled mentions or vote totals as scores.
@@ -207,7 +268,7 @@ function pdfSenatorScoreLines(text:string):ScorecardEntry[] {
 }
 /** Preserve explicitly printed organizational support/opposition words, not a stance judgment. */
 export function parseScorecardBillPositions(rawText:string,adapter:SourceAdapter):ScorecardPosition[] {
-  if(adapter==='gunowners_html'||adapter==='edmn_html'||adapter==='raw_html')return [];
+  if(adapter==='gunowners_html'||adapter==='edmn_html'||adapter==='nfib_html'||adapter==='raw_html')return [];
   const results:ScorecardPosition[]=[];
   const lines=rawText.split(/\r?\n/);
   for(let i=0;i<lines.length;i++){
@@ -239,6 +300,7 @@ export function parseScorecardContent(source:ScorecardSource,rawText:string,html
   const entries=source.adapter==='a4l_pdf'?parseA4LSenatePdf(rawText):
     source.adapter==='gunowners_html'?parseGunOwnersSenateHtml(html??''):
     source.adapter==='edmn_html'?parseEducationMinnesotaSenateEndorsements(html??''):
+    source.adapter==='nfib_html'?parseNfibMinnesotaSenateEndorsements(html??''):
     source.adapter==='raw_html'?[]:pdfSenatorScoreLines(rawText);
   return {entries,positions:parseScorecardBillPositions(rawText,source.adapter)};
 }
