@@ -1,10 +1,12 @@
 import {readFileSync} from 'node:fs';
 import {assertAdditiveQuestionnaireMigration} from '../src/operations/senate-questionnaire-migration.js';
+import {insertQuestionnaire} from '../src/operations/senate-questionnaire-ingest.js';
+import type {PoolClient} from 'pg';
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
   sha256,visibleLines,mhpLinks,biofuelsLinks,parseResponses,
-  validateCatalog,collectQuestionnaires,type QuestionnaireSource,
+  validateCatalog,collectQuestionnaires,type QuestionnaireSource,type CandidateResponse,
 } from '../src/sources/minnesota/senate-questionnaire-raw.js';
 const base:QuestionnaireSource={
   id:'mhp',publisher:'MHP',cycle:2026,adapter:'mhp_index',
@@ -260,4 +262,71 @@ test('MN Right to Life 2026 original six question texts and raw candidate respon
   assert.equal(got[0].qa[0].answer,'Co-Sponsor,Sponsor');
   assert.ok(got[0].qa[0].question.includes('Publisher question number 1'));
   assert.equal(got[0].qa.some(x=>x.answer.includes('Free text supplied')),false);
+});
+
+test('raw storage is idempotent for identical published Q&A despite volatile page HTML',async()=>{
+  const candidate:CandidateResponse={
+    sourceId:'test',publisher:'Test Publisher',sourceKind:'publisher_response',
+    sourceUrl:'https://example.invalid/actual-candidate-answers',electionCycle:2026,
+    title:'2026 Senate questionnaire',candidateName:'Actual Candidate',
+    office:'Minnesota State Senate',district:'3',party:'DFL',
+    displayedPublicationOn:'2026-08-01',displayedSubmittedOn:null,
+    archiveCapturedAt:null,fetchedAt:'2026-10-16T00:00:00.000Z',
+    contentType:'text/html',contentSha256:'a'.repeat(64),rawContent:'<h1>original page</h1>',
+    qa:[{ordinal:1,question:'Question one?',answer:'Answer one'},
+      {ordinal:2,question:'Question two?',answer:'Answer two'}],
+  };
+  const knownQa=JSON.stringify(candidate.qa.map(q=>[q.ordinal,q.question,q.answer]));
+  const statements:string[]=[];
+  let inserts=0,answerRows=0,resolverCalls=0;
+  const client={query:async(sql:string,params?:unknown[])=>{
+    statements.push(sql);
+    if(sql.includes('SELECT c.id FROM mn_senate_questionnaire_captures c')){
+      assert.equal(params?.[11]===knownQa,true);
+      assert.equal(params?.[8],candidate.displayedPublicationOn);
+      assert.equal(params?.[10],null);
+      return {rows:[{id:'old-capture'}]};
+    }
+    if(sql.includes('FROM memberships m'))resolverCalls++;
+    if(sql.startsWith('INSERT INTO mn_senate_questionnaire_captures'))inserts++;
+    if(sql.startsWith('INSERT INTO mn_senate_questionnaire_qa'))answerRows++;
+    return {rows:[]};
+  }} as unknown as PoolClient;
+  const secondPage={...candidate,rawContent:'<h1>same answers, different banner</h1>',contentSha256:'b'.repeat(64)};
+  const result=await insertQuestionnaire(client,secondPage);
+  assert.equal(result.inserted,false);
+  assert.equal(inserts,0);assert.equal(answerRows,0);assert.equal(resolverCalls,0);
+  assert.equal(statements[0],'BEGIN');
+  assert.ok(statements.some(s=>s.includes('pg_advisory_xact_lock')));
+  assert.equal(statements.at(-1),'COMMIT');
+});
+
+test('actual changed published answer appends raw capture and all Q&A in order',async()=>{
+  const item:CandidateResponse={
+    sourceId:'test',publisher:'Test',sourceKind:'publisher_response',
+    sourceUrl:'https://example.invalid/real-questionnaire',electionCycle:2026,
+    title:'Questionnaire',candidateName:'Unmatched Senate Challenger',
+    office:'Minnesota State Senate',district:'9',party:null,
+    displayedPublicationOn:null,displayedSubmittedOn:null,archiveCapturedAt:null,
+    fetchedAt:'2026-10-16T00:00:00Z',contentType:'text/html',
+    contentSha256:'c'.repeat(64),rawContent:'<h1>Published revised questionnaire</h1>',
+    qa:[{ordinal:1,question:'Do you agree?',answer:'Revised answer'},
+      {ordinal:2,question:'Why?',answer:'Fully quoted explanation'}],
+  };
+  const seen:string[]=[];const qaParams:unknown[][]=[];
+  const client={query:async(sql:string,params?:unknown[])=>{
+    seen.push(sql);
+    if(sql.includes('FROM memberships m'))return {rows:[]};
+    if(sql.startsWith('SELECT c.id FROM mn_senate_questionnaire_captures'))return {rows:[]};
+    if(sql.startsWith('INSERT INTO mn_senate_questionnaire_captures'))return {rows:[{id:'new-capture'}]};
+    if(sql.startsWith('INSERT INTO mn_senate_questionnaire_qa'))qaParams.push(params??[]);
+    return {rows:[]};
+  }} as unknown as PoolClient;
+  const result=await insertQuestionnaire(client,item);
+  assert.equal(result.inserted,true);assert.equal(result.matched,false);
+  assert.deepEqual(qaParams,[
+    ['new-capture',1,'Do you agree?','Revised answer'],
+    ['new-capture',2,'Why?','Fully quoted explanation'],
+  ]);
+  assert.equal(seen.at(-1),'COMMIT');
 });
