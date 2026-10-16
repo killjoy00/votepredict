@@ -16,3 +16,7 @@ See [PR 3 consolidation details](../../docs/evidence-workflow-consolidation.md) 
 ## Historical workflow retirement, batch 2: `acquire-*`, `audit-*`, `cfb-*` (2026-10-16)
 
 122 one-off historical acquisition, audit and Campaign Finance Board workflows, last modified on or before 2026-10-12, moved here unchanged. Three workflows matching these prefixes stay active because live code or tests reference them: `audit-cfb-availability-debt.yml` and `audit-senate-2021-publication-recovery.yml` (listed in `src/operations/evidence-operating-posture.ts`) and `audit-senate-campaign-neon-readonly-once.yml` (read by a test).
+
+## Historical workflow retirement, batch 3: `senate-media-*`, `senate-committee-*`, `senate-20xx-*` (2026-10-16)
+
+108 one-off Senate media, committee-minutes and dated Senate source workflows, last modified on or before 2026-10-12, moved here unchanged. Four stay active because tests read them: `senate-media-neon-api-readonly-counts.yml`, `senate-media-neon-readonly-preflight.yml`, `senate-media-new-public-remarks-wayback.yml` and `senate-2021-apr08-judiciary-acoustic-overlap-source.yml`. The `senate-committee-testimony-*` workflows are current collectors and were never candidates.
