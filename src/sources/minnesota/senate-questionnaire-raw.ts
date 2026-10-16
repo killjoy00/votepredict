@@ -5,8 +5,9 @@
  */
 import { createHash } from 'node:crypto';
 import { eligibleSenateQuestionnaireCandidate,HISTORICAL_QUESTIONNAIRE_WINNERS } from './senate-questionnaire-eligibility.js';
+import {parseEducationMinnesotaPdfPages} from './senate-questionnaire-edmn-pdf.js';
 
-export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia'|'wsp_reader'|'roseville_reader'|'mnrtl'|'startribune_2022'|'mpr_special_2024'|'sd60_pdf';
+export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia'|'wsp_reader'|'roseville_reader'|'mnrtl'|'startribune_2022'|'mpr_special_2024'|'sd60_pdf'|'edmn_pdf';
 export interface QuestionnaireSource {
   id:string; publisher:string; cycle:number; adapter:Adapter; url:string; title:string;
   sourceKind:'publisher_response'|'candidate_copy'|'archived_response';
@@ -570,7 +571,7 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   if(seed.adapter==='mnrtl')return parseMnRightToLife(html,seed);
   if(seed.adapter==='startribune_2022')return parseStarTribune2022(html,seed);
   if(seed.adapter==='mpr_special_2024')return parseMprSpecial2024(html,seed);
-  if(seed.adapter==='sd60_pdf')throw Error('PDF documents must be parsed from the source bytes');
+  if(seed.adapter==='sd60_pdf'||seed.adapter==='edmn_pdf')throw Error('PDF documents must be parsed from original source bytes');
   if(seed.adapter==='biofuels')return parseBiofuels(html,seed);
   // Historical Ballotpedia pages are fetched, but do not silently convert
   // article quote excerpts or survey indexes into full question/answer records.
@@ -630,6 +631,7 @@ export function validateCatalog(value:unknown):QuestionnaireSource[] {
     startribune_2022:['www.startribune.com'],
     mpr_special_2024:['www.mprnews.org'],
     sd60_pdf:['drive.google.com'],
+    edmn_pdf:['www.edmnvotes.org'],
   };
   return doc.sources.map((input:unknown)=>{
     if(!input||typeof input!=='object'||Array.isArray(input))throw Error('Malformed catalog item');
@@ -641,6 +643,10 @@ export function validateCatalog(value:unknown):QuestionnaireSource[] {
     const u=new URL(s.url);
     if(u.protocol!=='https:'||!allow[s.adapter].includes(u.hostname)||u.username||u.password||u.hash)
       throw Error('Out-of-scope candidate questionnaire URL');
+    if(s.adapter==='edmn_pdf' && (s.cycle!==2026||!s.candidate||!s.district
+      ||!/^\/wp-content\/uploads\/2026\/(?:0[1-9]|1[0-2])\/[0-9]{2}-[a-zA-Z0-9-]+\.pdf$/.test(u.pathname)
+      ||u.search||!districtNumber(s.district)))
+      throw Error('2026 Education Minnesota source must be a direct original Senate screening PDF');
     if(ids.has(s.id)||urls.has(s.cycle+'|'+u.href))throw Error('Duplicate catalog source');
     ids.add(s.id);urls.add(s.cycle+'|'+u.href);
     if(s.archiveCapturedAt&&!/^\d{4}-\d\d-\d\dT/i.test(s.archiveCapturedAt))
@@ -664,13 +670,14 @@ async function fetchBounded(
   seed:QuestionnaireSource,limit:number,runFetch:typeof fetch,
 ):Promise<SourceDownload> {
   const source=new URL(seed.url);
-  const pdf=seed.adapter==='sd60_pdf';
+  const pdf=seed.adapter==='sd60_pdf'||seed.adapter==='edmn_pdf';
   // The publicly linked SD60 questionnaires are original Google Drive files.
   // Anonymous /uc download is the documented standard public-file delivery
   // endpoint; it is NOT a workaround for login or download restrictions.
-  const pdfId=pdf ? /^\/file\/d\/([a-zA-Z0-9_-]+)\/view\/?$/.exec(source.pathname)?.[1] : null;
-  if(pdf&&!pdfId)throw Error('Unexpected Drive original PDF link format');
-  const url=pdf?'https://drive.google.com/uc?export=download&id='+pdfId:seed.url;
+  const drivePdf=seed.adapter==='sd60_pdf';
+  const pdfId=drivePdf ? /^\/file\/d\/([a-zA-Z0-9_-]+)\/view\/?$/.exec(source.pathname)?.[1] : null;
+  if(drivePdf&&!pdfId)throw Error('Unexpected Drive original PDF link format');
+  const url=drivePdf?'https://drive.google.com/uc?export=download&id='+pdfId:seed.url;
   const response=await runFetch(url,{
     redirect:'follow',signal:AbortSignal.timeout(25000),
     headers:{'User-Agent':agent,Accept:pdf?'application/pdf':'text/html,application/xhtml+xml;q=0.9'},
@@ -679,7 +686,7 @@ async function fetchBounded(
   const effective=new URL(response.url||url);
   const samePublisher=effective.protocol==='https:' &&
     effective.hostname.replace(/^www\./,'')===source.hostname.replace(/^www\./,'');
-  const googleDelivery=pdf && effective.protocol==='https:' &&
+  const googleDelivery=drivePdf && effective.protocol==='https:' &&
     effective.hostname==='drive.usercontent.google.com';
   if(!samePublisher&&!googleDelivery)throw Error('Cross-host redirect is not a trusted publisher response');
   if(Number(response.headers.get('content-length')||0)>limit)throw Error('Exceeded content byte cap');
@@ -688,7 +695,7 @@ async function fetchBounded(
   const type=response.headers.get('content-type')||'';
   if(pdf){
     if(bytes.length<200||new TextDecoder('ascii').decode(bytes.subarray(0,5))!=='%PDF-')
-      throw Error('Google Drive did not publish a directly downloadable original PDF (no access bypass)');
+      throw Error('Original publisher did not deliver a directly downloadable PDF (no access bypass)');
     return {html:'',contentType:'application/pdf;base64',pdfBytes:bytes};
   }
   if(!/html|text\/plain/i.test(type))throw Error('Not a readable HTML response ('+type.slice(0,60)+')');
@@ -724,7 +731,7 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
         throw Error('Publisher anti-bot interstitial; no bypass attempted');
       let records:Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>;
       let rawContent=html,contentSha256=sha256(html);
-      if(seed.adapter==='sd60_pdf'){
+      if(seed.adapter==='sd60_pdf'||seed.adapter==='edmn_pdf'){
         if(!pdfBytes)throw Error('No original publicly delivered PDF bytes');
         // Preserve the EXACT original binary in a reversible base64 column,
         // because the existing append-only raw_content field is PostgreSQL text.
@@ -734,7 +741,12 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
         const {PDFParse}=await import('pdf-parse');
         const {CanvasFactory}=await import('pdf-parse/worker');
         const parser=new PDFParse({data:pdfBytes.slice(),CanvasFactory});
-        try{records=parseSd60PdfText((await parser.getText()).text,seed);}
+        try{
+          const pageText=await parser.getText();
+          records=seed.adapter==='edmn_pdf'
+            ? parseEducationMinnesotaPdfPages(pageText.pages.map(p=>p.text),seed)
+            : parseSd60PdfText(pageText.text,seed);
+        }
         finally{await parser.destroy();}
       }else records=parseResponses(html,seed);
       if(!records.length && /did not respond|no response from this candidate/i.test(html))
