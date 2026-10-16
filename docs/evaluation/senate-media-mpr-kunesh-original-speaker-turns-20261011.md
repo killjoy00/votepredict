@@ -26,7 +26,7 @@ In December 2024 the evidence is stronger: **one** short phrase is within one bo
 Initial real public [GitHub Actions run #38194030668](https://github.com/killjoy00/votepredict/actions/runs/38194030668) **SUCCESS** with **12** adversarial offline tests, **four** strict SHA-1/SHA-256/byte-length original HTML replays, **one** same-named-speaker-turn short cue, **two** pre-transcript/context-only cue cases, and **one** earlier original missing the selected current transcript section. Action artifact ID **11722502139**, ZIP SHA-256 `fbb228dadbbdf0c58b8b573dfff8f4d7aff85fa4b3b31864022a38153d4a9029`; nested **7,141-byte** original-source metadata JSON SHA-256 `e013999d57e8844e8c90c5e75617bee7bbcabb496ed497f257dc292b3bf58f8b`. Permanent [machine-readable public original and speaker-turn receipt](senate-media-mpr-kunesh-original-speaker-turns-20261011.json) is checked in; no raw copyrighted article HTML or full transcript is included.
 
 ```bash
-node --test tests/senate-media-mpr-kunesh-historic-speaker-turns.test.mjs tests/senate-media-mpr-kunesh-real-speaker-turn-receipts.test.mjs
+node --test research/tests/senate-media-mpr-kunesh-historic-speaker-turns.test.mjs research/tests/senate-media-mpr-kunesh-real-speaker-turn-receipts.test.mjs
 node scripts/run-senate-media-mpr-kunesh-original-speaker-turns.mjs --output artifacts/mpr-kunesh-adjacency.json
 ```
 

@@ -36,7 +36,7 @@ The initial live public-only [GitHub Actions run #38193281218](https://github.co
 Reproduce on a network-enabled operator with no secrets or private DB:
 
 ```bash
-node --test tests/senate-media-mpr-2025-pha-coleman-3play-originals.test.mjs tests/senate-media-mpr-2025-pha-coleman-real-receipts.test.mjs
+node --test research/tests/senate-media-mpr-2025-pha-coleman-3play-originals.test.mjs research/tests/senate-media-mpr-2025-pha-coleman-real-receipts.test.mjs
 node scripts/run-senate-media-mpr-2025-pha-coleman-3play-pdfs.mjs --output artifacts/mpr-2025-3play-proof.json
 ```
 

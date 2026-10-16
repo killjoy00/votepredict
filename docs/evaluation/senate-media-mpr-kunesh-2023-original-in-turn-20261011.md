@@ -24,7 +24,7 @@ The two specific short fragments serve **different policy statements** within th
 The initial public-only [GitHub Actions source verification run #38194711492](https://github.com/killjoy00/votepredict/actions/runs/38194711492) **SUCCESS**: **6/6 synthetic tests** and **6/6 actual original body SHA-1/SHA-256/size replays**, two new short printed MPR policy speaker-turn candidates in the Feb 10 original and the reporter-summary negative control correctly excluded. Public metadata artifact id `11722727635`, never full HTML, audio or transcripts. Permanent [source UTC/hash and speaker-turn boolean JSON](senate-media-mpr-kunesh-2023-original-in-turn-20261011.json) is checked in.
 
 ```bash
-node --test tests/senate-media-mpr-kunesh-2023-original-in-turn.test.mjs tests/senate-media-mpr-kunesh-2023-original-receipts.test.mjs
+node --test research/tests/senate-media-mpr-kunesh-2023-original-in-turn.test.mjs research/tests/senate-media-mpr-kunesh-2023-original-receipts.test.mjs
 node scripts/run-senate-media-mpr-kunesh-2023-speaker-cues.mjs --output artifacts/mpr-kunesh-2023-speaker-cues.json
 ```
 
