@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  normalizedBill, parseAgendaAttachments, parseAgendaWitnesses, parseWitnesses, statedPosition,
+  normalizedBill, parseAgendaAttachments, parseAgendaWitnesses, parseWitnesses, postgresSafeText, statedPosition,
 } from '../src/sources/minnesota/senate-committee-testimony.js';
 
 test('raw Senate agenda collection keeps actual attachment URLs and bill context', () => {
@@ -50,4 +50,10 @@ test('agenda notes retain unnamed positions as null and link explicit testifiers
   assert.equal(normalizedBill('S.F. 03854'), 'SF3854');
   assert.equal(statedPosition('Letter of Opposition to SF1120'), 'against');
   assert.equal(statedPosition('submitted without a stated view'), null);
+});
+
+test('NUL characters from PDF text are removed before PostgreSQL writes', () => {
+  assert.equal(postgresSafeText('Jane\u0000 Doe\u0000'), 'Jane Doe');
+  assert.equal(postgresSafeText(null), null);
+  assert.equal(postgresSafeText('unchanged'), 'unchanged');
 });

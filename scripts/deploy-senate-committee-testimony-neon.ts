@@ -9,7 +9,7 @@ import { readFileSync, readdirSync, appendFileSync } from 'node:fs';
 import { Pool, type PoolClient } from 'pg';
 import { discoverExistingVotePredictNeonConnection } from '../src/operations/senate-media-neon-api-readonly.js';
 import {
-  collectSenateCommitteeTestimony, normalizedBill,
+  collectSenateCommitteeTestimony, normalizedBill, postgresSafeText,
   type RawSenateTestimonyRecord, type RawSenateTestimonySummary,
 } from '../src/sources/minnesota/senate-committee-testimony.js';
 import { getMinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
@@ -227,13 +227,14 @@ async function upsertSession(client: PoolClient, batch: Collection): Promise<{
     const records = batch.records.slice(offset, offset + 180);
     const rows = records.map(row => ({
       hearing_id: row.hearingId, record_key: row.recordKey, source_type: row.sourceType,
-      source_url: row.sourceUrl, fetched_at: row.fetchedAt, hearing_date: row.hearingDate,
-      source_content_type: row.sourceContentType, raw_content: row.rawContent,
-      raw_content_url: row.rawContentUrl, committee: row.committee,
+      source_url: postgresSafeText(row.sourceUrl), fetched_at: row.fetchedAt, hearing_date: row.hearingDate,
+      source_content_type: row.sourceContentType, raw_content: postgresSafeText(row.rawContent),
+      raw_content_url: postgresSafeText(row.rawContentUrl), committee: postgresSafeText(row.committee),
       bill_identifier: row.billIdentifier,
       bill_id: row.billIdentifier ? billIds.get(row.billIdentifier) ?? null : null,
-      witness_name: row.witnessName, organization: row.organization,
-      stated_position: row.statedPosition, document_name: row.documentName, document_kind: row.documentKind,
+      witness_name: postgresSafeText(row.witnessName), organization: postgresSafeText(row.organization),
+      stated_position: row.statedPosition, document_name: postgresSafeText(row.documentName),
+      document_kind: row.documentKind,
     }));
     let active = false;
     try {

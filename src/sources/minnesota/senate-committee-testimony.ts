@@ -119,6 +119,11 @@ export function statedPosition(value: string): StatedPosition | null {
   return null;
 }
 
+/** PostgreSQL text and jsonb cannot hold U+0000, which PDF text extraction occasionally yields. */
+export function postgresSafeText<T extends string | null>(value: T): T {
+  return (typeof value === 'string' ? value.replaceAll('\u0000', '') : value) as T;
+}
+
 function hearingRecord(context: HearingContext, event: unknown): RawSenateTestimonyRecord {
   return record(context, 'hearing', ROOT + '/api/schedule/daily?date=' + context.hearingDate,
     'application/json', JSON.stringify(event), context.hearingUrl, null, 'hearing');
