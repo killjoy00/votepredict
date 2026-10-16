@@ -7,6 +7,8 @@
  * Catalog: https://www.sos.mn.gov/elections-voting/election-results/
  */
 import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { PDFParse } from 'pdf-parse';
 
 export type SenateElectionType = 'general' | 'special' | 'primary' | 'special_primary';
 
@@ -23,7 +25,7 @@ export interface SenateElectionCandidate {
   candidate: string;
   party: string;
   votes: number;
-  totalVotes: number;
+  totalVotes: number | null;
   voteShare: number;
   winner: boolean;
   rawLine: string;
@@ -38,6 +40,8 @@ export interface SenateElectionDownload {
   contentSha256: string;
   rawContent: string;
   rawBase64: string;
+  sourceKind: 'official_bulk_text' | 'official_archived_rows_copy' | 'official_sos_pdf';
+  originalObservedOn: string | null;
   post2022Redistricting: boolean;
   candidates: SenateElectionCandidate[];
 }
@@ -152,9 +156,11 @@ export function parseSenateDistrictFile(rawContent: string, type: SenateElection
   }
   if (!records.length) throw new Error('The downloaded bulk file contains no State Senate district rows');
 
-  // Winner is the leading named candidate, inferred directly from published
-  // vote counts, not a separate canvass / certification claim. For primaries,
-  // the winner means leading candidate within a party nomination contest.
+  return markRawElectionLeaders(records, type);
+}
+
+function markRawElectionLeaders(records: SenateElectionCandidate[], type: SenateElectionType): SenateElectionCandidate[] {
+  // Only an inferred leading named candidate, NOT certification of election.
   const groups = new Map<string, SenateElectionCandidate[]>();
   for (const record of records) {
     const key = record.district +
@@ -165,8 +171,8 @@ export function parseSenateDistrictFile(rawContent: string, type: SenateElection
     const named = group.filter((record) => record.party !== 'WI' &&
       !/^write[\s-]?in/i.test(record.candidate));
     const highest = Math.max(...named.map((record) => record.votes));
-    const first = named.filter((record) => record.votes === highest);
-    if (first.length === 1) first[0].winner = true;
+    const top = named.filter((record) => record.votes === highest);
+    if (top.length === 1) top[0].winner = true;
   }
   return records;
 }
@@ -224,6 +230,106 @@ async function waitForArchivedHost(): Promise<void> {
   lastArchiveRequestAt = Date.now();
 }
 
+interface LegacyOfficialRows {
+  observationDate: string;
+  sources: Array<{resultsId: number;rows: string[]}>;
+}
+/**
+ * The old results host challenges automated requests. These seven literal
+ * official published source text exports have been recorded separately as
+ * source DATA. They are normalized copies (not a claim of byte-exact remote
+ * transfer), with the original official archival download URL preserved.
+ */
+async function readArchivedPublishedRows(event: SenateElectionEvent): Promise<SenateElectionDownload | null> {
+  const buffer = await readFile(new URL('../../../data/mn-senate-election-legacy-official-rows.json', import.meta.url), 'utf8');
+  const bundled = JSON.parse(buffer) as LegacyOfficialRows;
+  const item = bundled.sources.find((item) => item.resultsId === event.resultsId);
+  if (!item) return null;
+  const rawContent = item.rows.join('\n') + '\n';
+  const bytes = Buffer.from(rawContent,'utf8');
+  const officialUrl = directSenateDistrictFileUrl(event);
+  if (!officialUrl) return null;
+  return {
+    event,
+    indexUrl: senateElectionMediaIndexUrl(event.resultsId),
+    sourceUrl: officialUrl,
+    fetchedAt: new Date().toISOString(),
+    sourceKind: 'official_archived_rows_copy',
+    originalObservedOn: bundled.observationDate,
+    contentType:'text/plain; charset=utf-8',
+    contentSha256: createHash('sha256').update(bytes).digest('hex'),
+    rawContent,rawBase64: bytes.toString('base64'),
+    post2022Redistricting:false,
+    candidates:parseSenateDistrictFile(rawContent,event.type),
+  };
+}
+
+const OFFICIAL_2016_ELECTION_BOOK = 'https://www.sos.mn.gov/media/3002/mn-votes_2017.pdf';
+
+/**
+ * The 2016 state general text export is blocked to GitHub runners by the
+ * official archive's request challenge. Instead retain the SOS-published
+ * 2017 Minnesota Votes book PDF, which has district totals for the 2016
+ * general. That booklet omits minor-party/write-in records; never present
+ * this partial fallback as a complete 2016 candidate inventory.
+ */
+export function parse2016SenateBookDistricts(text: string): SenateElectionCandidate[] {
+  const lines = text.split(/\r\n|\n|\r/);
+  const candidates: SenateElectionCandidate[] = [];
+  for (let index = 0; index < lines.length; index += 1) {
+    const headline = lines[index].match(/^Senate District\s+(\d+)\s+Total\s*$/);
+    if (!headline) continue;
+    const district = String(Number(headline[1]));
+    // Each district-total block is headed by the district number on
+    // its own line, then candidate rows. Other pages contain district-level
+    // precinct figures; those are deliberately ignored.
+    let start = index + 1;
+    while (start < lines.length && !/^Senate District$/.test(lines[start].trim())) start++;
+    if (start + 1 >= lines.length || lines[start + 1].trim() !== district) continue;
+    for (let row = start + 2; row < Math.min(lines.length, start + 18); row += 1) {
+      const line = lines[row].trim();
+      if (!line || line.startsWith('-- ') || /^House District|^Ballot|^Senate District|^Total persons/.test(line)) break;
+      const m = line.match(/^(.+?)\s+\(([A-Z]{1,4})\)\s+([\d,]+)\s+\((\d+(?:\.\d+)?)%\)$/);
+      if (!m) continue;
+      candidates.push({
+        sourceOrdinal: row + 1, district, candidate:m[1].trim(), party:m[2],
+        votes:integerField(m[3],'2016 book candidate votes'),totalVotes:null,
+        voteShare:Number(m[4]),winner:false,rawLine:line,
+      });
+    }
+  }
+  if (new Set(candidates.map((row) => row.district)).size !== 67) {
+    throw new Error('Published 2016 Senate book does not expose all 67 district totals');
+  }
+  return markRawElectionLeaders(candidates, 'general');
+}
+
+async function official2016BookElection(event: SenateElectionEvent): Promise<SenateElectionDownload> {
+  const response = await fetch(OFFICIAL_2016_ELECTION_BOOK,{
+    redirect:'error',
+    headers:{'user-agent':'VotePredict/2.0 Minnesota Senate original source collector'},
+    signal:AbortSignal.timeout(40_000),
+  });
+  if (!response.ok || new URL(response.url).hostname !== 'www.sos.mn.gov') {
+    throw new Error('Official 2016 Minnesota Votes PDF not accessible');
+  }
+  const bytes=new Uint8Array(await response.arrayBuffer());
+  if(bytes.byteLength<100_000||bytes.byteLength>5_000_000) throw new Error('SOS 2016 published book size unexpected');
+  const pdf=new PDFParse({data:bytes});
+  let text:string;
+  try {text=(await pdf.getText({partial:Array.from({length:68},(_,i)=>i+31)})).text;}
+  finally {await pdf.destroy();}
+  const candidates=parse2016SenateBookDistricts(text);
+  return {
+    event,indexUrl:senateElectionMediaIndexUrl(event.resultsId),
+    sourceUrl:OFFICIAL_2016_ELECTION_BOOK,fetchedAt:new Date().toISOString(),
+    contentType:'application/pdf',contentSha256:createHash('sha256').update(bytes).digest('hex'),
+    rawContent:text,rawBase64:Buffer.from(bytes).toString('base64'),
+    post2022Redistricting:false,candidates,sourceKind:'official_sos_pdf',
+    originalObservedOn:null,
+  };
+}
+
 export async function fetchSenateElection(event: SenateElectionEvent): Promise<SenateElectionDownload> {
   const indexUrl = senateElectionMediaIndexUrl(event.resultsId);
   const directUrl = directSenateDistrictFileUrl(event);
@@ -234,9 +340,14 @@ export async function fetchSenateElection(event: SenateElectionEvent): Promise<S
     if (Number(event.date.slice(0, 4)) < 2020) await waitForArchivedHost();
     file = await getOfficialResponse(fileUrl);
   } catch (directError) {
-    // Never make a second rapid request to the archived results host when
-    // its official bulk URL returns an anti-bot challenge.
-    if (Number(event.date.slice(0, 4)) < 2020) throw directError;
+    // No circumvention of the archived host challenge: use separate
+    // original published SOS sources that remain openly accessible.
+    if (Number(event.date.slice(0, 4)) < 2020) {
+      if (event.resultsId === 100) return official2016BookElection(event);
+      const archiveCopy = await readArchivedPublishedRows(event);
+      if (archiveCopy) return archiveCopy;
+      throw directError;
+    }
     // For modern files, the index is discovery fallback, not a routine GET.
     const index = await getOfficialResponse(indexUrl);
     const alternative = locateSenateDistrictDownload(await index.text(), indexUrl);
@@ -257,6 +368,7 @@ export async function fetchSenateElection(event: SenateElectionEvent): Promise<S
     rawContent,
     rawBase64: Buffer.from(bytes).toString('base64'),
     post2022Redistricting: isPost2022RedistrictedMap(event.date),
+    sourceKind:'official_bulk_text',originalObservedOn:null,
     candidates: parseSenateDistrictFile(rawContent, event.type),
   };
 }

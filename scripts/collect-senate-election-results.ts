@@ -92,15 +92,15 @@ async function storeDownload(client: PoolClient, download: SenateElectionDownloa
   try {
     const source = await client.query<{ id: string }>([
       'INSERT INTO mn_senate_election_source_snapshots',
-      '(election_date,election_type,post_2022_redistricting,source_url,source_index_url,',
+      '(election_date,election_type,post_2022_redistricting,source_url,source_index_url,source_kind,original_observed_on,',
       'fetched_at,content_type,content_sha256,raw_content,raw_bytes_base64)',
-      'VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+      'VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
       'ON CONFLICT (election_date,election_type,source_url,content_sha256)',
       'DO UPDATE SET fetched_at=EXCLUDED.fetched_at RETURNING id',
     ].join(' '), [
       event.date, event.type, download.post2022Redistricting, download.sourceUrl,
-      download.indexUrl, download.fetchedAt, download.contentType,
-      download.contentSha256, download.rawContent, download.rawBase64,
+      download.indexUrl, download.sourceKind, download.originalObservedOn, download.fetchedAt,
+      download.contentType, download.contentSha256, download.rawContent, download.rawBase64,
     ]);
     const sourceId = source.rows[0].id;
     const members = event.type === 'primary' || event.type === 'special_primary'
@@ -172,6 +172,7 @@ async function main(): Promise<void> {
             fetchedAt: raw.fetchedAt, contentType: raw.contentType,
             contentSha256: raw.contentSha256, rawBase64: raw.rawBase64,
             post2022Redistricting: raw.post2022Redistricting,
+            sourceKind:raw.sourceKind,originalObservedOn:raw.originalObservedOn,
             candidates: raw.candidates,
           }) + '\n');
           let matched = 0;
@@ -194,7 +195,7 @@ async function main(): Promise<void> {
             status: 'collected', year, electionDate: event.date, type: event.type,
             map: raw.post2022Redistricting ? 'post-2022' : 'pre-2022',
             districts: eventDistricts.size, candidates: raw.candidates.length,
-            matchedMemberships: matched, sourceUrl: raw.sourceUrl,
+            matchedMemberships: matched, sourceUrl: raw.sourceUrl,sourceKind:raw.sourceKind,
           }));
         } catch (error) {
           const reason = error instanceof Error ? error.message : String(error);
