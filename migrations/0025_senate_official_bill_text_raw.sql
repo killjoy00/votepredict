@@ -72,6 +72,7 @@ CREATE TABLE senate_official_bill_text_journal_scans (
   source_document_id uuid PRIMARY KEY REFERENCES source_documents(id),
   scanned_at timestamptz NOT NULL,
   status text NOT NULL CHECK (status IN ('extracted','none','failed')),
+  attempts integer NOT NULL DEFAULT 0 CHECK (attempts >= 0),
   snippets_found integer NOT NULL CHECK (snippets_found >= 0),
   exact_record_links integer NOT NULL CHECK (exact_record_links >= 0),
   unresolved_snippets integer NOT NULL CHECK (unresolved_snippets >= 0),
