@@ -107,3 +107,40 @@ test('collection hashes original page, fetches each URL once and records failure
   assert.equal(saved[0],sha256(content));
   assert.ok(visibleLines('<script>secret</script><p>text</p>').includes('text'));
 });
+
+test('SNAP real linked WordPress metadata splits Minnesota from State Senate heading',()=>{
+  const seed={...base,adapter:'snap' as const,
+    url:'https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/robyn-gulley'};
+  const html='<main><p>Back to all Minnesota responses</p><h1>Robyn Gulley</h1><p>Democratic</p>'+
+    '<a href="/state/mn">Minnesota</a><p>State Senate District 65</p>'+
+    '<p>Submitted July 6, 2026</p>'+
+    '<h4>Q1 Why support science?</h4><p>Trust in Science</p><p>Listen to experts.</p><p>KEYWORDS: A</p>'+
+    '<h4>Q2 How protect water?</h4><p>Environment</p><p>Conserve clean water.</p><p>KEYWORDS: B</p></main>';
+  const rows=parseResponses(html,seed);
+  assert.equal(rows[0].candidateName,'Robyn Gulley');
+  assert.equal(rows[0].district,'65');
+  assert.equal(rows[0].party,'Democratic');
+  assert.deepEqual(rows[0].qa.map(x=>x.answer),['Listen to experts.','Conserve clean water.']);
+});
+test('local 2026 original-publisher multi-candidate responses keep 6 long plus 10 short questions in order',()=>{
+  const seed={...base,adapter:'wsp_reader' as const,district:'53',candidates:['Paul Cumings','Todd Podgorski'],
+    url:'https://weststpaulreader.com/2026/09/18/2026-election-minnesota-senate-district-53/'};
+  const html='<main><h1>2026 Election: Minnesota Senate District 53</h1><p>September 18, 2026</p>'+
+    '<li>Paul Cumings – DFL – Candidate</li><li>Todd Podgorski – GOP – Candidate</li>'+
+    '<h2>Candidate Questions</h2><h3>Priorities: What are your top priorities?</h3>'+
+    '<p>Paul Cumings: People and schools.</p><p>Continuing this answer.</p>'+
+    '<p>Todd Podgorski: Safer streets.</p>'+
+    '<h3>Fraud: What should be done to stop fraud?</h3>'+
+    '<p>Todd Podgorski: More audits.</p><p>Paul Cumings: Better oversight.</p>'+
+    '<h2>Lightning Round</h2><h3>1. Do you have a library card?</h3>'+
+    '<li>Paul Cumings: Yes.</li><li>Todd Podgorski: Not currently.</li>'+
+    '<h2>More Information</h2></main>';
+  const rows=parseResponses(html,seed);
+  assert.equal(rows.length,2);
+  assert.equal(rows[0].qa.length,3);
+  assert.equal(rows[0].qa[0].answer,'People and schools.\nContinuing this answer.');
+  assert.equal(rows[0].qa[2].question,'1. Do you have a library card?');
+  assert.equal(rows[0].party,'DFL');
+  assert.equal(rows[1].party,'GOP');
+  assert.equal(rows[0].displayedPublicationOn,'2026-09-18');
+});
