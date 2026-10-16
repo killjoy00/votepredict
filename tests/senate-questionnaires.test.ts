@@ -357,7 +357,7 @@ test('2022 Star Tribune keeps only printed Senate candidate Q&A; article edits a
   const rows=parseResponses(html,seed);
   assert.deepEqual(rows.map(r=>r.candidateName),['Grant Hauschild','Andrea Zupancich','Jen McEwen']);
   assert.equal(rows[0].qa.length,2);
-  assert.equal(rows[0].qa[1].answer,'Housing matters.\nMore money for roads.');
+  assert.equal(rows[0].qa[1].answer,'Housing matters.\nGetting our Fair Share for the Northland: More money for roads.');
   assert.equal(rows[2].district,'8');
   assert.equal(rows[0].displayedPublicationOn,'2022-10-27');
   assert.ok(rows.every(r=>r.qa.every(x=>!x.answer.includes('House response'))));
