@@ -64,6 +64,7 @@ async function preflight(client:PoolClient,target:{database:string;role:string},
       "to_regclass('public.senate_raw_statements') AS statements,"+
       "to_regclass('public.senate_committee_testimony_raw') AS testimony,"+
       "to_regclass('public.mn_senate_election_raw_results') AS elections,"+
+      "to_regclass('public.mn_senate_questionnaire_captures') AS questionnaires,"+
       "to_regclass('public.senate_committee_attachment_text_captures') AS attachments,"+
       "to_regclass('public.source_documents') AS raw_documents")).rows[0];
     if(!required || Object.values(required).some(x=>x===null))
