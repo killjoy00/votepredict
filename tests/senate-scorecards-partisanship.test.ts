@@ -1,0 +1,222 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createHash,randomUUID} from 'node:crypto';
+import {readFileSync} from 'node:fs';
+import {Pool} from 'pg';
+import {
+  parseA4LSenatePdf,parseGunOwnersSenateHtml,parseScorecardBillPositions,
+  parseRobots,validateScorecardManifest,parseScorecardContent,
+  type ScorecardCapture,
+} from '../src/sources/minnesota/senate-scorecard-raw.js';
+import {
+  parseOfficialPrecinctDistrictCodes,aggregateOfficialPrecinctVotes,
+  aggregateOfficialHouseDistrictPresidentialVotes,officialStatewideTotals,
+  validateDistrictStatewideTotals,type DistrictResult,
+} from '../src/sources/minnesota/senate-district-partisanship-raw.js';
+import {
+  storeRawScorecardCapture,storeRawDistrictPartisanship,scorecardPartisanshipReadback,
+} from '../src/operations/senate-scorecard-partisanship-ingest.js';
+
+const digest=(x:string)=>createHash('sha256').update(x).digest('hex');
+test('2025 Action 4 Liberty PDF extract retains printed district, party and numeric percentage',()=>{
+  // Trimmed literal rows from A4L-MN-Scorecard-2025.pdf, p. 14.
+  const pdf='2025 MN SENATE SCORECARD\nSENATOR PARTY DISTRICT\n'+
+    'Mark Johnson R 1 72.73% 43.39% 0 1 1 1 1\n'+
+    'Steve Green R 2 77.27% 79.10% 1 1 1 1\n'+
+    'Grant Hauschild D 3 4.55% 5.86% 0 0 0 0\n'+
+    '2025 MN HOUSE OF REPRESENTATIVES SCORECARD\n'+
+    'Roger Skraba R 3A 20.83% 25.00% 1 1\n';
+  const rows=parseA4LSenatePdf(pdf);
+  assert.equal(rows.length,3);
+  assert.deepEqual(rows.map(x=>[x.nameRaw,x.districtRaw,x.valueRaw,x.valueNumeric]),
+    [['Mark Johnson','1','72.73%',72.73],['Steve Green','2','77.27%',77.27],
+      ['Grant Hauschild','3','4.55%',4.55]]);
+  assert.equal(rows[0].partyRaw,'R');assert.equal(rows[2].kind,'score');
+  assert.deepEqual(rows.map(x=>x.sourceOrdinal),[1,2,3]);
+});
+test('A4L 2025 and AFL-CIO 2025 print the position they took on named Senate bills',()=>{
+  const a4l='2025 VOTE DESCRIPTIONS\nHF1 - Removal of program Senate Vote: 37-30 CORRECT VOTE: YES\n'+
+    'SF1 - Higher Edu. Omnibus Senate Vote: 36-31 CORRECT VOTE: NO\n'+
+    'HF2 was mentioned here, but no explicit group position was printed.';
+  const a4lPos=parseScorecardBillPositions(a4l,'a4l_pdf');
+  assert.deepEqual(a4lPos.map(x=>[x.billIdentifierRaw,x.groupPositionRaw]),
+    [['HF1','CORRECT VOTE: YES'],['SF1','CORRECT VOTE: NO']]);
+  const afl='SENATE VOTE DESCRIPTIONS\n1. Reopening Paid Leave\n'+
+    'SF1832 – Rasmusson Appeal – April 29, 2025/Senate Journal Page 4153\n'+
+    'Minnesota AFL-CIO Position: Uphold the President’s decision\n'+
+    'Correct Vote: Yes\n';
+  assert.deepEqual(parseScorecardBillPositions(afl,'aflcio_pdf')
+    .map(x=>[x.billIdentifierRaw,x.groupPositionRaw]),
+    [['SF1832','Uphold the President’s decision']]);
+});
+test('2022 MN Gun Owners Caucus HTML Senate table retains grades, endorsements and literal unknowns',()=>{
+  // Trimmed 2022 publisher table headers/rows; House rows must NOT enter.
+  const html='<h2>State Senate</h2><table><tr><th>Race</th><th>Name</th><th>Party</th>'+
+    '<th>Grade</th><th>Endorsement</th><th>Received Survey</th><th>Voting Record</th></tr>'+
+    '<tr><td>SD 1</td><td>Mark Johnson</td><td>R</td><td>A+</td><td>ENDORSED</td><td>YES</td><td>100%</td></tr>'+
+    '<tr><td>SD 2</td><td>Leonard Alan Roy</td><td>DFL</td><td>?</td><td></td><td>NO</td><td></td></tr>'+
+    '<tr><td>HD 1A</td><td>Other Person</td><td>R</td><td>A+</td><td>ENDORSED</td><td>YES</td><td>100%</td></tr>'+
+    '</table>';
+  const got=parseGunOwnersSenateHtml(html);
+  assert.equal(got.length,4);
+  assert.deepEqual(got.map(e=>[e.nameRaw,e.districtRaw,e.kind,e.valueRaw,e.valueNumeric]),
+    [['Mark Johnson','1','grade','A+',null],
+     ['Mark Johnson','1','endorsement','ENDORSED',null],
+     ['Mark Johnson','1','score','100%',100],
+     ['Leonard Alan Roy','2','grade','?',null]]);
+  assert.equal(parseScorecardContent({groupName:'MNGOC',year:2022,
+    adapter:'gunowners_html',url:'https://gunowners.mn/abc'},
+  'text',html).entries.length,4);
+});
+test('Scorecard source catalog pinned 2021-2026 and robots grouping respects publisher restrictions',()=>{
+  const cat=validateScorecardManifest(JSON.parse(readFileSync('data/senate-scorecard-sources.json','utf8')));
+  assert.ok(cat.requestedGroups.includes('Minnesota AFL-CIO'));
+  assert.ok(cat.sources.some(x=>x.adapter==='gunowners_html'));
+  assert.throws(()=>validateScorecardManifest({...cat,sources:[...cat.sources,cat.sources[0]]}));
+  const policy=parseRobots('User-agent: *\nDisallow: /\n\n'+
+    'User-agent: VotePredictSenateEvidenceBot\nAllow: /scorecards/\nDisallow: /private/\n');
+  assert.ok(policy.rules.some(x=>x.allow&&x.pattern==='/scorecards/'));
+  assert.equal(policy.rules.some(x=>x.pattern==='/'&&!x.allow),false);
+});
+test('2022 precinct aggregation joins official county+precinct code, not an assumed Senate code',()=>{
+  const mapLines:string[]=[];
+  const results:string[]=[];
+  const statewideLines:string[]=[
+    'MN;;;0331;Governor & Lt Governor;;0301;Scott Jensen;;;R;134;134;268;44.61;670',
+    'MN;;;0331;Governor & Lt Governor;;0401;Tim Walz;;;DFL;134;134;335;52.27;670',
+    'MN;;;0331;Governor & Lt Governor;;9901;WRITE-IN;;;WI;134;134;67;0.04;670',
+  ];
+  for(let sd=1;sd<=67;sd++){
+    for(const half of ['A','B']){
+      const county=String(sd).padStart(2,'0'),p=half==='A'?'0010':'0020';
+      mapLines.push(county+';'+p+';TEST;8;'+sd+half+';01;09;3001;00001;');
+      const prefix='MN;'+county+';'+p+';0331;Governor & Lt Governor;;';
+      results.push(prefix+'0301;Jensen;;;R;1;1;2;40;5');
+      results.push(prefix+'0401;Walz;;;DFL;1;1;'+(half==='A'?2:3)+';50;5');
+      results.push(prefix+'9901;WRITE-IN;;;WI;1;1;'+(half==='A'?1:0)+';10;5');
+    }
+  }
+  // 134 house precincts: R=268, DFL=335, Other=67.
+  const precinctMap=parseOfficialPrecinctDistrictCodes(mapLines.join('\n'));
+  assert.equal(precinctMap.size,134);
+  const tallied=aggregateOfficialPrecinctVotes(results.join('\n'),'governor',precinctMap);
+  const expected=officialStatewideTotals(statewideLines.join('\n'),'governor');
+  const check=validateDistrictStatewideTotals(tallied,expected);
+  assert.equal(check.districts,67);assert.equal(check.matches,true);
+  assert.deepEqual(check.districtTotals,expected);
+  // No silent dropping precincts if district is missing.
+  assert.throws(()=>aggregateOfficialPrecinctVotes(results.join('\n'),'governor',new Map()));
+  assert.equal(validateDistrictStatewideTotals(tallied,{...expected,demVotes:334}).matches,false);
+});
+test('2020 president remains 2012 district plan; House A+B aggregation covers exactly 67 SDs',()=>{
+  const lines:string[]=[];
+  for(let sd=1;sd<=67;sd++){
+    for(const half of ['A','B']){
+      for(const [party,votes] of [['R',2],['DFL',3],['WI',1]] as const)
+        lines.push('MN;;;0101;U.S. President & Vice President;'+sd+half+
+          ';0101;Candidate;;;'+party+';2;2;'+votes+';50;6');
+    }
+  }
+  const {votes,houseDistricts}=aggregateOfficialHouseDistrictPresidentialVotes(lines.join('\n'));
+  assert.equal(houseDistricts,134);
+  const sum=validateDistrictStatewideTotals(votes,{demVotes:402,repVotes:268,
+    otherVotes:134,totalVotes:804});
+  assert.equal(sum.matches,true);
+});
+test('additive only, standalone production marker and model isolation are enforced',()=>{
+  const migration=readFileSync('migrations/0024_senate_scorecards_district_partisanship.sql','utf8');
+  const runner=readFileSync('scripts/deploy-senate-scorecards-partisanship-neon.ts','utf8');
+  const workflow=readFileSync('.github/workflows/senate-scorecards-partisanship-production.yml','utf8');
+  assert.match(migration,/CREATE TABLE IF NOT EXISTS senate_scorecard_snapshots/);
+  assert.match(migration,/CREATE TABLE IF NOT EXISTS mn_senate_district_partisanship_raw/);
+  assert.doesNotMatch(migration,/^\s*(?:DROP|TRUNCATE|DELETE|UPDATE)\s/mi);
+  assert.match(runner,/SENATE_SCORECARDS_PARTISANSHIP_PRODUCTION/);
+  assert.match(runner,/scripts\/check-production-migration-drift\.ts/);
+  assert.match(workflow,/independent-main/);
+  assert.match(workflow,/evidence-readonly-sandbox/);
+  assert.doesNotMatch(workflow,/\bschedule\s*:/);
+});
+const connection=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
+const local=!!connection&&['127.0.0.1','localhost'].includes(new URL(connection).hostname);
+test('disposable Postgres: running the entire raw evidence suite twice keeps exactly one version',
+  {skip:!local,timeout:90000},async()=>{
+  const pool=new Pool({connectionString:connection,max:2});
+  const token=randomUUID(),hash=digest(token);
+  const group='Scorecard fixture '+token;
+  const client=await pool.connect();
+  let memberId='',billId='';
+  try{
+    const jurisdiction=(await client.query<{id:string}>(
+      "INSERT INTO jurisdictions(slug,name,country_code) VALUES('us-mn','Minnesota','US') "+
+      "ON CONFLICT(slug) DO UPDATE SET name=EXCLUDED.name RETURNING id")).rows[0].id;
+    const senate=(await client.query<{id:string}>(
+      "INSERT INTO chambers(jurisdiction_id,slug,name,kind) VALUES($1,'senate','Minnesota Senate','upper') "+
+      "ON CONFLICT(jurisdiction_id,slug) DO UPDATE SET name=EXCLUDED.name RETURNING id",
+      [jurisdiction])).rows[0].id;
+    const session=(await client.query<{id:string}>(
+      "INSERT INTO legislative_sessions(jurisdiction_id,slug,name,starts_on,ends_on) "+
+      "VALUES($1,'2025-2026','2025-2026','2025-01-01','2026-12-31') "+
+      "ON CONFLICT(jurisdiction_id,slug) DO UPDATE SET name=EXCLUDED.name RETURNING id",
+      [jurisdiction])).rows[0].id;
+    const name='Fixture Legislator '+token.slice(0,8);
+    const legislator=(await client.query<{id:string}>(
+      'INSERT INTO legislators(jurisdiction_id,external_key,name,normalized_name) '+
+      'VALUES($1,$2,$3,$4) RETURNING id',
+      [jurisdiction,'scorecard-fixture:'+token,name,name.toLowerCase()])).rows[0].id;
+    memberId=(await client.query<{id:string}>(
+      'INSERT INTO memberships(session_id,chamber_id,legislator_id,district,party,title) '+
+      "VALUES($1,$2,$3,'17','R','Senator') RETURNING id",
+      [session,senate,legislator])).rows[0].id;
+    billId=(await client.query<{id:string}>(
+      "INSERT INTO bills(session_id,originating_chamber_id,identifier,title) VALUES($1,$2,'SF99001','Fixture') "+
+      "ON CONFLICT(session_id,identifier) DO UPDATE SET title=EXCLUDED.title RETURNING id",
+      [session,senate])).rows[0].id;
+    const source={groupName:group,year:2025,adapter:'a4l_pdf' as const,
+      url:'https://example.org/fixture/'+token+'.pdf'};
+    const capture:ScorecardCapture={
+      source,sourceUrl:source.url,sha256:hash,fetchedAt:'2026-10-16T00:00:00Z',
+      contentType:'application/pdf',rawText:'Published Senate scorecard fixture '+token,
+      publishedOn:null,entries:[{sourceOrdinal:1,nameRaw:name,districtRaw:'17',partyRaw:'R',
+        kind:'score',valueRaw:'72.73%',valueNumeric:72.73}],
+      positions:[{sourceOrdinal:1,billIdentifierRaw:'SF99001',groupPositionRaw:'CORRECT VOTE: YES'}],
+    };
+    const districtRows=Array.from({length:67},(_,i)=>({
+      district:String(i+1),districtPlan:'2022' as const,electionYear:2024 as const,
+      office:'president' as const,demVotes:3,repVotes:2,otherVotes:1,totalVotes:6,
+      source:'fixture',sourceUrl:'https://example.org/fixture/'+token+'.txt',
+      fetchedAt:'2026-10-16T00:00:00Z',sha256:hash,
+    }));
+    const election:DistrictResult={year:2024,office:'president',districtPlan:'2022',
+      sourceUrl:districtRows[0].sourceUrl,rows:districtRows,districts:67,
+      statewideTotals:{demVotes:201,repVotes:134,otherVotes:67,totalVotes:402},
+      districtTotals:{demVotes:201,repVotes:134,otherVotes:67,totalVotes:402},totalsMatch:true};
+    const catalog={roster:[{id:memberId,sessionSlug:'2025-2026',name,district:'17'}],
+      bills:[{id:billId,sessionSlug:'2025-2026',identifier:'SF99001'}]};
+    for(let i=0;i<2;i++){
+      const score=await storeRawScorecardCapture(client,capture,catalog);
+      const inserted=await storeRawDistrictPartisanship(client,election);
+      assert.equal(score.entries,1);assert.equal(score.matchedMembers,1);
+      assert.equal(score.matchedBills,1);
+      assert.equal(inserted,i===0?67:0);
+      const checked=await client.query<{snapshots:number;entries:number;positions:number;districts:number}>(
+        'SELECT (SELECT count(*)::int FROM senate_scorecard_snapshots WHERE group_name=$1) AS snapshots,'+
+        '(SELECT count(*)::int FROM senate_scorecard_entries WHERE group_name=$1) AS entries,'+
+        '(SELECT count(*)::int FROM senate_scorecard_vote_positions WHERE group_name=$1) AS positions,'+
+        '(SELECT count(*)::int FROM mn_senate_district_partisanship_raw WHERE sha256=$2) AS districts',
+        [group,hash]);
+      assert.deepEqual(checked.rows[0],{snapshots:1,entries:1,positions:1,districts:67});
+      const report=await scorecardPartisanshipReadback(client);
+      assert.ok(report.linkedMembers>=1&&report.linkedBills>=1);
+    }
+  }finally{
+    // This fixture runs on disposable CI PostgreSQL. Preserve unrelated fixtures.
+    await client.query('DELETE FROM senate_scorecard_vote_positions WHERE group_name=$1',[group]);
+    await client.query('DELETE FROM senate_scorecard_entries WHERE group_name=$1',[group]);
+    await client.query('DELETE FROM senate_scorecard_snapshots WHERE group_name=$1',[group]);
+    await client.query('DELETE FROM mn_senate_district_partisanship_raw WHERE sha256=$1',[hash]);
+    await client.query('DELETE FROM memberships WHERE id=$1',[memberId]);
+    await client.query('DELETE FROM bills WHERE id=$1',[billId]);
+    client.release();
+    await pool.end();
+  }
+});
