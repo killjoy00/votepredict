@@ -31,6 +31,32 @@ test('discovers numeric, UE, numeric CCR and alphabetic CCR exactly as printed',
   assert.equal(leads[0].postedOn,'2023-01-04');
   assert.equal(leads[0].sourceUrl,root+'versions/0/');
 });
+test('the current-version banner does not conflict with the dated published version listing',()=>{
+  const html='<a href="versions/12/">Current bill text: 12th Engrossment</a>'
+    +'<p>Bill status navigation</p><h2>Bill Text Versions</h2>'
+    +'<a href="versions/0/">Introduction</a> Posted on 01/04/2023 | '
+    +'<a href="versions/12/">12th Engrossment</a> Posted on 05/20/2023 | ';
+  const versions=discoverOfficialVersionLeads(html,root);
+  assert.deepEqual(versions.map(v=>[v.locator,v.printedLabel,v.postedOn]),[
+    ['versions/0/','Introduction','2023-01-04'],
+    ['versions/12/','12th Engrossment','2023-05-20'],
+  ]);
+});
+test('without a heading a dated listing wins over date-free duplicate links',()=>{
+  const html='<a href="versions/12/">Current bill text</a>'
+    +'<a href="versions/12/">12th Engrossment</a> Posted on 05/20/2023';
+  const versions=discoverOfficialVersionLeads(html,root);
+  assert.equal(versions.length,1);
+  assert.equal(versions[0].printedLabel,'12th Engrossment');
+  assert.equal(versions[0].postedOn,'2023-05-20');
+});
+test('genuinely contradictory printed version dates still fail closed',()=>{
+  const html='<h2>Bill Text Versions</h2>'
+    +'<a href="versions/12/">12th Engrossment</a> Posted on 05/20/2023'
+    +'<a href="versions/12/">12th Engrossment</a> Posted on 05/21/2023';
+  assert.throws(()=>discoverOfficialVersionLeads(html,root),
+    /conflicting_official_version_listing/);
+});
 test('missing posted dates remain null, never borrowed from next version',()=>{
   const html='<h2>Bill Text Versions</h2>'
     +'<a href="versions/ue/1/">Unofficial</a>'
