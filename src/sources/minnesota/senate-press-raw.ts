@@ -342,7 +342,7 @@ class PoliteFetcher {
   async init():Promise<void> {
     const response=await this.send(new URL('/robots.txt',this.origin));
     if(response.status===404)this.policy=robotsPolicy('');
-    else if(response.ok)this.policy=robotsPolicy(await response.text());
+    else if(response.status===200)this.policy=robotsPolicy(await response.text());
     else throw Error('robots.txt unavailable (HTTP '+response.status+'); refusing collection');
   }
   async html(url:string):Promise<string> {
@@ -350,7 +350,9 @@ class PoliteFetcher {
     const target=new URL(url);
     if(target.origin!==this.origin||!this.policy.allows(target))throw Error('robots.txt disallows URL');
     const response=await this.send(target);
-    if(!response.ok)throw Error('HTTP '+response.status);
+    // Some publishers return HTTP 202 with an HTML challenge instead of the
+    // requested public article. Never mistake this for successful collection.
+    if(response.status!==200)throw Error('Publisher did not deliver source page (HTTP '+response.status+')');
     if(!/html|text\/plain/i.test(response.headers.get('content-type')??''))throw Error('Non-HTML response');
     return response.text();
   }
