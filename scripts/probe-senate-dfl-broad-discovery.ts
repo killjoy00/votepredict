@@ -77,11 +77,13 @@ async function sitemap(path:string):Promise<void>{
     const snapshot=await getWayback(snap);
     let xml:string|null=null;
     if(snapshot.status===200)xml=(await snapshot.text()).slice(0,2500000);
-    const locs=xml?[...xml.matchAll(/<loc>\s*([^<]{8,500})\s*<\/loc>/gi)]
-      .map(m=>m[1].trim().replace(/&amp;/g,'&')).map(originalDFLUrl)
-      .filter((x):x is string=>!!x):[];
+    const rawLocs=xml?[...xml.matchAll(/<loc>\s*([^<]{8,500})\s*<\/loc>/gi)]
+      .map(m=>m[1].trim().replace(/&amp;/g,'&')):[];
+    const locs=rawLocs.map(originalDFLUrl).filter((x):x is string=>!!x);
     console.log('SENATE_DFL_SITEMAP='+JSON.stringify({path,status:200,captures:response.records.length,
-      replayStatus:snapshot.status,replayType:snapshot.headers.get('content-type'),
+      capture: capture.timestamp,replayStatus:snapshot.status,replayType:snapshot.headers.get('content-type'),
+      payloadLength:xml?.length,xmlStart:xml?.slice(0,250),
+      rawLocCount:rawLocs.length,rawLocExamples:rawLocs.slice(0,9),
       articleLocCount:locs.length,hasSitemapLinks:xml?xml.includes('sitemap'):false,
       examples:locs.slice(0,8)}));
   }catch(error){
