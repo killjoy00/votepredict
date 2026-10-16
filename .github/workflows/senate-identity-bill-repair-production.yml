@@ -161,7 +161,7 @@ jobs:
     needs: [independent-main]
     if: >-
       needs.independent-main.result == 'success' &&
-      (
+      ((
         github.event_name == 'schedule' &&
         github.repository == 'killjoy00/votepredict' &&
         github.ref == 'refs/heads/main' &&
@@ -177,7 +177,7 @@ jobs:
         github.event.deleted != true &&
         github.event.forced != true &&
         contains(github.event.head_commit.message, 'SENATE_IDENTITY_BILL_REPAIR_PRODUCTION')
-      )
+      ))
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 90
