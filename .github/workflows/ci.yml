@@ -44,4 +44,6 @@ jobs:
       - name: Verify migrations from a clean database
         run: npm run db:migrate
       - run: npm run check
+      - name: Check protected historical DFL source-year SQL and URL deduplication on disposable PostgreSQL
+        run: node --import tsx scripts/check-senate-dfl-sitemap-sql-local.ts
       - run: npm audit --omit=dev --audit-level=high
