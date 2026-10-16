@@ -6,7 +6,7 @@ on:
       - 'src/sources/minnesota/senate-committee-testimony.ts'
       - 'scripts/collect-senate-committee-testimony.ts'
       - 'tests/senate-committee-testimony.test.ts'
-      - 'migrations/0016_senate_committee_testimony_raw.sql'
+      - 'migrations/0017_senate_committee_testimony_raw.sql'
       - '.github/workflows/senate-committee-testimony-raw.yml'
   workflow_dispatch:
     inputs:

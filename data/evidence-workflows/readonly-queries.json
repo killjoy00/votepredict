@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "evidence-readonly-query-allowlist-v1",
+  "queries": [
+    {
+      "name": "connection-health",
+      "maxRows": 1,
+      "scope": "all",
+      "columns": [
+        "check_count"
+      ],
+      "sql": "SELECT 1::integer AS check_count"
+    },
+    {
+      "name": "session-membership-counts",
+      "maxRows": 3,
+      "scope": "session",
+      "columns": [
+        "session_slug",
+        "membership_count"
+      ],
+      "sql": "SELECT s.slug AS session_slug, COUNT(m.id)::integer AS membership_count FROM legislative_sessions s LEFT JOIN memberships m ON m.session_id=s.id WHERE s.slug IN ('2021-2022','2023-2024','2025-2026') AND ($1::text = 'all' OR s.slug = $1::text) GROUP BY s.slug ORDER BY s.slug LIMIT 3"
+    },
+    {
+      "name": "evidence-item-count",
+      "maxRows": 1,
+      "scope": "all",
+      "columns": [
+        "evidence_item_count"
+      ],
+      "sql": "SELECT COUNT(*)::integer AS evidence_item_count FROM evidence_items"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+name: Evidence acquire (parameterized)
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_type:
+        description: Reviewed source adapter (no arbitrary script or URL)
+        required: true
+        type: choice
+        options:
+          - official-source-smoke
+          - revisor-source-passage
+      session:
+        description: House source session; revisor requires all
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - '302'
+          - '300'
+          - '257'
+      member_or_batch:
+        description: Exact batch selector; these adapters support all only
+        required: true
+        type: string
+        default: all
+      dry_run:
+        description: Run source checks without emitting the Revisor snapshot
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-acquire-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  acquire:
+    if: github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      EVIDENCE_WORKFLOW_KIND: acquire
+      EVIDENCE_SOURCE_TYPE: ${{ inputs.source_type }}
+      EVIDENCE_SESSION: ${{ inputs.session }}
+      EVIDENCE_MEMBER_OR_BATCH: ${{ inputs.member_or_batch }}
+      EVIDENCE_DRY_RUN: ${{ inputs.dry_run }}
+    steps:
+      - name: Checkout reviewed main
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Run reviewed acquisition adapter
+        run: node --import tsx scripts/run-evidence-workflow.ts
+      - name: Upload authoritative passage snapshot
+        if: inputs.source_type == 'revisor-source-passage' && inputs.dry_run == false
+        uses: actions/upload-artifact@v7
+        with:
+          name: revisor-source-passage-snapshot
+          path: artifacts/revisor-source-passage-snapshot.json
+          if-no-files-found: error
+          retention-days: 7

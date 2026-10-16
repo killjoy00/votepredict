@@ -10,7 +10,7 @@ on:
       - scripts/deploy-senate-committee-testimony-neon.ts
       - scripts/collect-senate-committee-testimony.ts
       - src/sources/minnesota/senate-committee-testimony.ts
-      - migrations/0016_senate_committee_testimony_raw.sql
+      - migrations/0017_senate_committee_testimony_raw.sql
 
 permissions:
   contents: read

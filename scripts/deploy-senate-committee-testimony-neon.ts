@@ -14,7 +14,7 @@ import {
 } from '../src/sources/minnesota/senate-committee-testimony.js';
 import { getMinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
 
-const MIGRATION = '0016_senate_committee_testimony_raw.sql';
+const MIGRATION = '0017_senate_committee_testimony_raw.sql';
 const MARKER = 'SENATE_COMMITTEE_TESTIMONY_DEPLOY_20261015';
 const SESSIONS = ['2025-2026', '2023-2024'] as const;
 type LedgerRow = { filename: string; checksum: string };
@@ -44,7 +44,7 @@ function assertReviewedMain(): void {
 
 function migrations(): LedgerRow[] {
   const names = readdirSync('migrations').filter(s => /^\d{4}_[\w-]+\.sql$/.test(s)).sort();
-  if (names.length !== 16 || names.at(-1) !== MIGRATION)
+  if (names.length !== 17 || names.at(-1) !== MIGRATION)
     throw Error('Unexpected reviewed migration inventory');
   return names.map(filename => ({
     filename, checksum: createHash('sha256').update(readFileSync('migrations/' + filename)).digest('hex'),
@@ -52,12 +52,12 @@ function migrations(): LedgerRow[] {
 }
 
 function assertLedger(actual: LedgerRow[], expected: LedgerRow[]): boolean {
-  if (![15, 16].includes(actual.length))
+  if (![16, 17].includes(actual.length))
     throw Error('Existing schema ledger is incomplete or unexpected');
   for (const [index, row] of actual.entries())
     if (row.filename !== expected[index]?.filename || row.checksum !== expected[index].checksum)
       throw Error('Existing schema ledger checksum mismatch');
-  return actual.length === 16;
+  return actual.length === 17;
 }
 
 function byKind(rows: readonly RawSenateTestimonyRecord[]): Record<Kind, number> {
@@ -162,7 +162,7 @@ async function applyMigration(client: PoolClient, expected: LedgerRow[]): Promis
     if (!already) {
       await client.query(readFileSync('migrations/' + MIGRATION, 'utf8'));
       await client.query('INSERT INTO votepredict_schema_migrations (filename,checksum) VALUES ($1,$2)',
-        [MIGRATION, expected[15].checksum]);
+        [MIGRATION, expected[16].checksum]);
     }
     await client.query('COMMIT');
     active = false;
