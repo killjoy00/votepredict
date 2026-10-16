@@ -75,6 +75,7 @@
     "audit:evidence-quality-priority": "tsx scripts/audit-evidence-quality-priority.ts",
     "audit:evidence-quality-human": "tsx scripts/build-evidence-quality-human-audit.ts",
     "data:senate:testimony": "tsx scripts/collect-senate-committee-testimony.ts",
+    "data:senate:elections": "tsx scripts/collect-senate-election-results.ts",
     "data:senate:statements": "tsx scripts/collect-senate-press.ts"
   },
   "dependencies": {

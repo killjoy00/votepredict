@@ -1,0 +1,135 @@
+name: Protected production Minnesota Senate raw-election import
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/sources/minnesota/senate-election-results.ts
+      - src/operations/senate-election-ingest.ts
+      - scripts/collect-senate-election-results.ts
+      - scripts/deploy-mn-senate-elections-neon.ts
+      - migrations/0018_mn_senate_election_raw_results.sql
+      - .github/workflows/mn-senate-elections-production.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mn-senate-election-raw-production-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  independent-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_ELECTION_RAW_PRODUCTION_20261015')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact reviewed main SHA
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: All schema migrations on disposable PostgreSQL
+        run: npm run db:migrate
+      - name: Typecheck tests and Next.js production build
+        run: npm run check
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+      - name: Obtain all 139 required district-election originals with no production credentials
+        run: |
+          npm run data:senate:elections -- --all --no-primaries --dry-run \
+            --out "$RUNNER_TEMP/senate-originals.jsonl"
+          SENATE_RAW_FILE="$RUNNER_TEMP/senate-originals.jsonl" node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import { createHash } from 'node:crypto';
+          const items = readFileSync(process.env.SENATE_RAW_FILE,'utf8').trim().split('\n').map(JSON.parse);
+          const required = items.filter(x=>x.event.type==='general'||x.event.type==='special');
+          const count = required.reduce((n,x)=>n+new Set(x.candidates.map(c=>c.district)).size,0);
+          if(required.length!==6 || count!==139)throw Error('Original source coverage incomplete');
+          for(const x of required) {
+            const bytes=Buffer.from(x.rawBase64,'base64');
+            const hash=createHash('sha256').update(bytes).digest('hex');
+            if(hash!==x.contentSha256 || !x.candidates.length)throw Error('Original source integrity failure');
+            if(['2020-11-03','2022-11-08'].includes(x.event.date) &&
+              (new Set(x.candidates.map(c=>c.district)).size!==67 ||
+               x.candidates.length<67 || x.candidates.length>350))
+              throw Error('Statewide Senate general missing 67 districts');
+          }
+          console.log('SENATE_ELECTION_RAW_COVERAGE='+JSON.stringify({
+            requiredEvents:required.length,generalSpecialDistricts:count,
+            sourceFiles:items.length,candidateRows:items.reduce((n,x)=>n+x.candidates.length,0),
+          }));
+          NODE
+
+  protected-production-neon:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_ELECTION_RAW_PRODUCTION_20261015')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_ELECTIONS_VERIFIED: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact checked main SHA
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply only 0018, import raw Senate elections and aggregate readback
+        run: node --import tsx scripts/deploy-mn-senate-elections-neon.ts

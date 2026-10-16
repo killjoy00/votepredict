@@ -1,0 +1,106 @@
+name: Minnesota Senate election raw collection
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - src/sources/minnesota/senate-election-results.ts
+      - scripts/collect-senate-election-results.ts
+      - src/operations/senate-election-ingest.ts
+      - .github/workflows/mn-senate-elections-production.yml
+      - scripts/deploy-mn-senate-elections-neon.ts
+      - migrations/0018_mn_senate_election_raw_results.sql
+      - package.json
+      - tests/senate-election-results.test.ts
+      - .github/workflows/minnesota-senate-election-raw-collection.yml
+  pull_request:
+    paths:
+      - src/sources/minnesota/senate-election-results.ts
+      - scripts/collect-senate-election-results.ts
+      - src/operations/senate-election-ingest.ts
+      - .github/workflows/mn-senate-elections-production.yml
+      - scripts/deploy-mn-senate-elections-neon.ts
+      - migrations/0018_mn_senate_election_raw_results.sql
+      - package.json
+      - tests/senate-election-results.test.ts
+      - .github/workflows/minnesota-senate-election-raw-collection.yml
+
+permissions:
+  contents: read
+
+jobs:
+  collect-raw:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - name: Dry-run all 2020-2026 SOS election sources without writing
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run data:senate:elections -- --all --dry-run \
+            --out "$RUNNER_TEMP/mn-senate-elections-dry-run.jsonl" \
+            | tee "$RUNNER_TEMP/mn-senate-elections-dry-run-coverage.log"
+      - name: Capture and insert published Senate raw files in disposable PostgreSQL
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run data:senate:elections -- --all \
+            --out "$RUNNER_TEMP/mn-senate-elections-raw.jsonl" \
+            | tee "$RUNNER_TEMP/mn-senate-elections-coverage.log"
+      - name: Verify disposable Postgres has 139 raw general/special districts
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import pg from 'pg';
+          const client = new pg.Client({connectionString:process.env.DATABASE_URL_UNPOOLED});
+          await client.connect();
+          try{
+            const r = await client.query("SELECT COUNT(*)::int AS candidates, COUNT(DISTINCT (election_date,district))::int AS contests, COUNT(*) FILTER (WHERE winner)::int AS leading FROM mn_senate_election_raw_results WHERE election_type IN ('general','special')");
+            const snaps=await client.query("SELECT COUNT(*)::int AS count FROM mn_senate_election_source_snapshots");
+            if(r.rows[0].contests!==139||r.rows[0].leading!==139||
+                r.rows[0].candidates<350||r.rows[0].candidates>1000||
+                snaps.rows[0].count<6)
+              throw Error('Ephemeral Senate election migration/ingestion coverage did not match sources');
+            console.log('EPHEMERAL_SENATE_ELECTION_ROWS='+JSON.stringify({ ...r.rows[0], snapshots:snaps.rows[0].count }));
+          } finally { await client.end(); }
+          NODE
+      - name: Store raw SOS downloads with source metadata and collection counts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mn-senate-election-raw-snapshots
+          path: |
+            ${{ runner.temp }}/mn-senate-elections-raw.jsonl
+            ${{ runner.temp }}/mn-senate-elections-coverage.log
+            ${{ runner.temp }}/mn-senate-elections-dry-run.jsonl
+            ${{ runner.temp }}/mn-senate-elections-dry-run-coverage.log
+          if-no-files-found: warn
+          retention-days: 30
