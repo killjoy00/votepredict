@@ -256,6 +256,96 @@ async function main():Promise<void> {
         }finally{c.release(true);}
       }
     }
+    if(expanding){
+      phase='readonly_original_2025_education_replay';
+      const saved=await readonly(pool,async c=>c.query<{
+        url:string;group_name:string;year:number;sha256:string;content_type:string;
+        raw_text:string;published_on:string|null;fetched_at:string;
+      }>("SELECT url,group_name,year,sha256,content_type,raw_text,"+
+        "published_on::text AS published_on,fetched_at::text AS fetched_at "+
+        "FROM senate_scorecard_snapshots WHERE group_name='Education Minnesota' AND year=2025 "+
+        "ORDER BY fetched_at DESC LIMIT 3"));
+      if(saved.rows.length!==1)throw Error('Unexpected special election saved-source count');
+      const source=sources.sources.find(src=>src.url===saved.rows[0].url&&src.groupName==='Education Minnesota');
+      if(!source)throw Error('Unrecognized 2025 Education Minnesota saved source');
+      const parsed=parseScorecardContent(source,saved.rows[0].raw_text);
+      if(parsed.entries.length!==1||
+        parsed.entries[0].nameRaw!=='Doron Clark'||parsed.entries[0].districtRaw!=='60')
+        throw Error('2025 Senate District 60 publisher text did not parse unambiguously');
+      const capture:ScorecardCapture={
+        source,sourceUrl:saved.rows[0].url,fetchedAt:saved.rows[0].fetched_at,
+        sha256:saved.rows[0].sha256,contentType:saved.rows[0].content_type,
+        rawText:saved.rows[0].raw_text,publishedOn:saved.rows[0].published_on,...parsed,
+      };
+      const c=await pool.connect();
+      try{
+        const result=await storeRawScorecardCapture(c,capture,catalog,true);
+        if(result.newSnapshot||result.entries!==1)throw Error('Education saved-source replay was not idempotent');
+        entriesParsed+=result.entries;matchedNew+=result.matchedMembers;reparsed++;
+        bySource.push({group:'Education Minnesota',year:2025,entries:1,positions:0,
+          status:'saved_original_named_senate_special'});
+      }finally{c.release(true);}
+
+      phase='polite_original_conservation_directory_discovery';
+      const directory=sources.sources.find(src=>src.groupName==='Conservation Minnesota'&&
+        src.year===2026&&src.adapter==='raw_html');
+      if(!directory)throw Error('Uncataloged Conservation Minnesota official directory');
+      let discovered:string[]=[];
+      try{
+        const response=await fetcher.bytes(directory.url,allowHosts);
+        discovered=parseConservationSenateProfileLinks(
+          new TextDecoder().decode(response.bytes),response.finalUrl);
+      }catch(error){
+        const reason=error instanceof Error?error.message:'directory unavailable';
+        failed.push({group:directory.groupName,year:2026,url:directory.url,
+          reason:/robots/i.test(reason)?'robots_restricted':'directory_unavailable'});
+      }
+      discoveredProfiles=discovered.length;
+      const fallback=sources.sources.filter(src=>src.groupName==='Conservation Minnesota'&&
+        src.year===2026&&src.adapter==='conservation_html').map(src=>src.url);
+      // Every URL is an original publisher link, either observed on the
+      // directory or independently cataloged. No derived URL patterns.
+      const profiles=[...new Set([...discovered,...fallback])].slice(0,80);
+      if(profiles.length<30)
+        failed.push({group:'Conservation Minnesota',year:2026,url:directory.url,
+          reason:'bounded_partial_profile_discovery'});
+      phase='bounded_original_senator_profile_votes';
+      const visited=new Set<string>();
+      for(const original of profiles){
+        const urls=[original];
+        for(let n=0;n<urls.length&&n<3&&profilePagesAttempted<240;n++){
+          const url=urls[n];
+          if(visited.has(url))continue;visited.add(url);profilePagesAttempted++;
+          const profileSource:ScorecardSource={
+            groupName:'Conservation Minnesota',year:2026,adapter:'conservation_html',url};
+          let profile:ScorecardCapture;
+          try{profile=await fetchScorecardCapture(profileSource,fetcher,allowHosts);}
+          catch(error){
+            const reason=error instanceof Error?error.message:'publisher retrieval failed';
+            failed.push({group:'Conservation Minnesota',year:2026,url,
+              reason:/robots/i.test(reason)?'robots_restricted':
+                /HTTP\s+\d+/.test(reason)?'publisher_http_failure':'profile_unavailable'});
+            continue;
+          }
+          // Pagination links must originate in the publisher's fetched HTML.
+          for(const extra of profile.paginationUrls??[])
+            if(!visited.has(extra)&&!urls.includes(extra)&&urls.length<3)urls.push(extra);
+          const c=await pool.connect();
+          try{
+            const receipt=await storeRawScorecardCapture(c,profile,catalog);
+            fetched++;profilePagesFetched++;
+            if(receipt.newSnapshot)newSnapshots++;
+            entriesParsed+=receipt.entries;matchedNew+=receipt.matchedMembers;
+            positionsParsed+=receipt.billPositions;linkedBillsNew+=receipt.matchedBills;
+            memberVotesParsed+=receipt.memberVotes;
+            linkedMemberVotesNew+=receipt.linkedMemberVotes;
+            linkedVoteBillsNew+=receipt.linkedVoteBills;
+          }finally{c.release(true);}
+        }
+      }
+      bySource.push({group:'Conservation Minnesota',year:2026,entries:0,positions:0,
+        memberVotes:memberVotesParsed,status:'original_senator_profiles'});
+    }
     phase='bounded_official_district_partisanship';
     let electionRowsNew=0;
     // Original one-shot verified all four 67-district statewide reconciliations.
