@@ -19,7 +19,7 @@ const yn=(start:number,count:number)=>
 const first=marker+'Candidate for Minnesota Senate District 20\nJun 24, 2026\nYes/No questions\n'+yn(1,7)+footer;
 const second=marker+'Do you support the following education funding priorities?\n'+
   ['a','b','c','d','e','f','h','g'].map(i=>'Yes\nQ8'+i+'. Fully fund this education item '+i+'?').join('\n')+footer;
-const third=marker+yn(9,6)+footer;
+const third=marker+[9,11,12,13,14,17,18].map(n=>'Yes\nQ'+n+'. Will you support published policy '+n+'?').join('\n')+footer;
 const fourth=marker+yn(19,4)+footer;
 const story=(answer:string,q:string)=>marker+answer+'\n'+q+footer;
 const pages=[first,second,third,fourth,
