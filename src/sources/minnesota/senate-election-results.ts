@@ -379,7 +379,10 @@ export function parse2016SenateBookDistricts(text: string): SenateElectionCandid
       const line = lines[row].trim();
       if (!line || line.startsWith('-- ') || /^House District|^Ballot|^Senate District|^Total persons/.test(line)) break;
       const m = line.match(/^(.+?)\s+\(([A-Z]{1,4})\)\s+([\d,]+)\s+\((\d+(?:\.\d+)?)%\)$/);
-      if (!m) continue;
+      // Candidate lines must be contiguous directly after the Senate heading.
+      // Stop at the next office heading (often United States/President); do
+      // not absorb Presidential, House, or congressional candidate rows.
+      if (!m) break;
       candidates.push({
         sourceOrdinal: row + 1, district, candidate:m[1].trim(), party:m[2],
         votes:integerField(m[3],'2016 book candidate votes'),totalVotes:null,
