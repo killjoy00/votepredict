@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - src/sources/minnesota/senate-questionnaire-raw.ts
+      - src/sources/minnesota/senate-questionnaire-edmn-pdf.ts
+      - src/operations/senate-questionnaire-candidate-groups.ts
       - src/sources/minnesota/senate-questionnaire-eligibility.ts
       - src/operations/senate-questionnaire-ingest.ts
       - scripts/check-senate-questionnaire-idempotency-local.ts
@@ -57,19 +59,19 @@ jobs:
       - name: Live public-publisher smoke; inaccessible sources remain reported, not bypassed
         shell: bash
         run: |
-          for source in mhp-housing-2026 mhp-2026-dan-rogers snap-2026-robyn-gulley snap-2026-tara-killen snap-2026-krystyne-knutson kaxe-2026-sd2 mnbiofuels-2022-weber-dornink wspreader-2026-sd53 roseville-reader-2026-sd40 mnrtl-2026-primary; do
+          for source in mhp-housing-2026 mhp-2026-dan-rogers snap-2026-robyn-gulley snap-2026-tara-killen snap-2026-krystyne-knutson edmn-2026-sd02 edmn-2026-sd14 kaxe-2026-sd2 mnbiofuels-2022-weber-dornink wspreader-2026-sd53 roseville-reader-2026-sd40 mnrtl-2026-primary; do
             node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source="$source" --max-sources=3 --delay-ms=250 --out "$RUNNER_TEMP/$source.jsonl"
           done
           SENATE_SMOKE_DIR="$RUNNER_TEMP" node --input-type=module <<'NODE'
           import {readFileSync} from 'node:fs';
-          const names=['mhp-housing-2026','mhp-2026-dan-rogers','snap-2026-robyn-gulley','snap-2026-tara-killen','snap-2026-krystyne-knutson','kaxe-2026-sd2','mnbiofuels-2022-weber-dornink','wspreader-2026-sd53','roseville-reader-2026-sd40','mnrtl-2026-primary'];
+          const names=['mhp-housing-2026','mhp-2026-dan-rogers','snap-2026-robyn-gulley','snap-2026-tara-killen','snap-2026-krystyne-knutson','edmn-2026-sd02','edmn-2026-sd14','kaxe-2026-sd2','mnbiofuels-2022-weber-dornink','wspreader-2026-sd53','roseville-reader-2026-sd40','mnrtl-2026-primary'];
           const rows=names.flatMap(n=>readFileSync(process.env.SENATE_SMOKE_DIR+'/'+n+'.jsonl','utf8').trim().split('\n').filter(Boolean).map(JSON.parse));
           if(rows.length<1 || !rows.every(r=>r.office==='Minnesota State Senate'&&r.qa.length>=2&&r.contentSha256.length===64))
             throw Error('No valid live Senate candidate questionnaire responses accessible from Actions');
-          for(const id of ['roseville-reader-2026-sd40','mnrtl-2026-primary']) {
+          for(const id of ['roseville-reader-2026-sd40','mnrtl-2026-primary','edmn-2026-sd02','edmn-2026-sd14']) {
             const text=readFileSync(process.env.SENATE_SMOKE_DIR+'/'+id+'.jsonl','utf8').trim();
             const entries=text?text.split('\n').map(JSON.parse):[];
-            if(entries.length && !entries.every(r=>r.qa.length>=4))
+            if(entries.length && !entries.every(r=>r.qa.length>= (id.startsWith('edmn-')?15:4)))
               throw Error('Incomplete original publisher Senate candidate Q&A: '+id);
           }
           console.log('SENATE_QUESTIONNAIRE_LIVE_SMOKE='+JSON.stringify({
