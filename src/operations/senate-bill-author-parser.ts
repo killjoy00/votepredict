@@ -109,5 +109,19 @@ export function parseSenateJournalAuthorChanges(text:string):JournalAuthorChange
       }
     }
   }
+  // Also accept direct, declarative Senate journal author-change notices;
+  // avoid proposals ("moved that"), negations, and stand-alone mentions.
+  const direct=flat.matchAll(/\bSenator\s+([A-Z][A-Za-z\u2019' -]{1,65}?)\s+was\s+(added|stricken)\s+as?\s+(?:a\s+)?(chief\s+author|co-author|author)\s+(?:to|from|of)\s+S\s*\.\s*F\s*\.\s*No\s*\.\s*(\d{1,6})\b/gi);
+  for(const match of direct){
+    const bill='SF'+String(Number(match[4]));
+    const role:AuthorRole=/chief/i.test(match[3])?'chief':/co-author/i.test(match[3])?'coauthor':'other';
+    const name=match[1].trim();
+    const operation=match[2].toLowerCase()==='added'?'add':'strike';
+    const key=[bill,authorKey(name),operation,role].join('|');
+    if(!dedup.has(key) && authorKey(name)){
+      dedup.add(key);
+      results.push({billIdentifier:bill,nameRaw:name,operation,role});
+    }
+  }
   return results;
 }
