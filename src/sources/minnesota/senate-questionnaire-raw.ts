@@ -63,8 +63,9 @@ export function visibleLines(html:string):string[] {
 const monthNames=['january','february','march','april','may','june','july','august','september','october','november','december'];
 function dateFrom(text:string):string|null {
   const m=/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(20\d{2})\b/i.exec(text);
-  if(!m)return null;
-  const day=Number(m[2]),month=monthNames.indexOf(m[1].toLowerCase())+1,year=Number(m[3]);
+  const rev=/\b(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})\b/i.exec(text);
+  if(!m&&!rev)return null;
+  const day=Number(m?m[2]:rev![1]),month=monthNames.indexOf((m?m[1]:rev![2]).toLowerCase())+1,year=Number(m?m[3]:rev![3]);
   const dt=new Date(Date.UTC(year,month-1,day));
   return dt.getUTCDate()===day&&dt.getUTCMonth()===month-1
     ?year+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0'):null;
@@ -153,7 +154,7 @@ const kaxeQuestions=[
 function parseKaxe(html:string,seed:QuestionnaireSource):Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   if(!seed.candidates?.length||!seed.district)throw Error('KAXE Senate district/candidate source not configured');
   const lines=visibleLines(html);
-  if(!lines.some(line=>/state\s+Senate District\s+\d+\b/i.test(line)))throw Error('KAXE page not about State Senate');
+  if(!lines.some(line=>/(?:state\s+)?Senate District\s+\d+\b/i.test(line)))throw Error('KAXE page not about State Senate');
   const start=lines.findIndex(x=>/Click the tabs below to learn more about the candidates/i.test(x));
   if(start<0)throw Error('KAXE candidate tab section not found');
   const remaining=lines.slice(start+1);
