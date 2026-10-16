@@ -428,7 +428,9 @@ test('disposable Postgres: running the entire raw evidence suite twice keeps exa
     const capture:ScorecardCapture={
       source,sourceUrl:source.url,sha256:hash,fetchedAt:'2026-10-16T00:00:00Z',
       contentType:'application/pdf',rawText:'Published Senate scorecard fixture '+token,
-      publishedOn:null,entries:[{sourceOrdinal:1,nameRaw:name,districtRaw:'17',partyRaw:'R',
+      publishedOn:null,memberVotes:[{sourceOrdinal:1,nameRaw:name,districtRaw:'17',partyRaw:'R',
+        billIdentifierRaw:'SF99001',votedOn:'2025-06-09',voteRaw:'Senator Fixture voted Yes'}],
+      entries:[{sourceOrdinal:1,nameRaw:name,districtRaw:'17',partyRaw:'R',
         kind:'score',valueRaw:'72.73%',valueNumeric:72.73}],
       positions:[{sourceOrdinal:1,billIdentifierRaw:'SF99001',groupPositionRaw:'CORRECT VOTE: YES'}],
     };
@@ -449,16 +451,20 @@ test('disposable Postgres: running the entire raw evidence suite twice keeps exa
       const inserted=await storeRawDistrictPartisanship(client,election);
       assert.equal(score.entries,1);assert.equal(score.matchedMembers,1);
       assert.equal(score.matchedBills,1);
+      assert.equal(score.memberVotes,1);assert.equal(score.linkedMemberVotes,1);
+      assert.equal(score.linkedVoteBills,1);
       assert.equal(inserted,i===0?67:0);
-      const checked=await client.query<{snapshots:number;entries:number;positions:number;districts:number}>(
+      const checked=await client.query<{snapshots:number;entries:number;positions:number;member_votes:number;districts:number}>(
         'SELECT (SELECT count(*)::int FROM senate_scorecard_snapshots WHERE group_name=$1) AS snapshots,'+
         '(SELECT count(*)::int FROM senate_scorecard_entries WHERE group_name=$1) AS entries,'+
         '(SELECT count(*)::int FROM senate_scorecard_vote_positions WHERE group_name=$1) AS positions,'+
+        '(SELECT count(*)::int FROM senate_scorecard_member_votes_raw WHERE group_name=$1) AS member_votes,'+
         '(SELECT count(*)::int FROM mn_senate_district_partisanship_raw WHERE sha256=$2) AS districts',
         [group,hash]);
-      assert.deepEqual(checked.rows[0],{snapshots:1,entries:1,positions:1,districts:67});
+      assert.deepEqual(checked.rows[0],{snapshots:1,entries:1,positions:1,member_votes:1,districts:67});
       const report=await scorecardPartisanshipReadback(client);
-      assert.ok(report.linkedMembers>=1&&report.linkedBills>=1);
+      assert.ok(report.linkedMembers>=1&&report.linkedBills>=1&&
+        report.memberVotes>=1&&report.linkedMemberVotes>=1&&report.linkedVoteBills>=1);
     }
     const replay=await storeRawScorecardCapture(client,capture,catalog,true);
     assert.equal(replay.newSnapshot,false);
@@ -467,6 +473,7 @@ test('disposable Postgres: running the entire raw evidence suite twice keeps exa
     /Saved-only replay cannot create a new publisher snapshot/);
   }finally{
     // This fixture runs on disposable CI PostgreSQL. Preserve unrelated fixtures.
+    await client.query('DELETE FROM senate_scorecard_member_votes_raw WHERE group_name=$1',[group]);
     await client.query('DELETE FROM senate_scorecard_vote_positions WHERE group_name=$1',[group]);
     await client.query('DELETE FROM senate_scorecard_entries WHERE group_name=$1',[group]);
     await client.query('DELETE FROM senate_scorecard_snapshots WHERE group_name=$1',[group]);
