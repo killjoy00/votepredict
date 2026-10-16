@@ -15,6 +15,11 @@ ALTER TABLE senate_committee_testimony_raw
 ALTER TABLE mn_senate_election_raw_results
   ADD COLUMN IF NOT EXISTS membership_match_method text;
 
+-- 0021 added published Senate candidate questionnaires while this branch was open.
+-- Their preexisting membership_id is reused; never create a candidate identity.
+ALTER TABLE mn_senate_questionnaire_captures
+  ADD COLUMN IF NOT EXISTS membership_match_method text;
+
 -- Captures have neither a senator name nor a bill number. Keep their original
 -- by-URL structure and join through senate_committee_testimony_raw.source_url.
 
