@@ -75,6 +75,21 @@ CREATE TABLE IF NOT EXISTS bill_companions (
 );
 CREATE INDEX IF NOT EXISTS bill_companions_house_idx ON bill_companions(house_bill_id,session_id);
 
+-- Resumable official lookups, including bills with no listed companion.
+-- A scan records only an attempted official source, not a verified relationship.
+CREATE TABLE IF NOT EXISTS senate_bill_companion_scans (
+  senate_bill_id uuid PRIMARY KEY REFERENCES bills(id),
+  session_id uuid NOT NULL REFERENCES legislative_sessions(id),
+  source_url text NOT NULL,
+  fetched_at timestamptz NOT NULL,
+  printed_companion_identifier text,
+  result text NOT NULL CHECK (result IN ('none','linked','target_missing')),
+  last_checked_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS senate_bill_companion_scans_session_idx
+  ON senate_bill_companion_scans(session_id,result);
+
+
 -- Raw textual claims only: a possible target is NOT an inferred inclusion.
 CREATE TABLE IF NOT EXISTS bill_inclusion_mentions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
