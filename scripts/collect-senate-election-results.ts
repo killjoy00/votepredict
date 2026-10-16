@@ -8,7 +8,8 @@
 import { appendFileSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
 import {
-  fetchSenateElection, senateElectionsForYear,
+  fetchSenateElection, senateElectionsForYear, hasMissingRequiredSenateElections,
+  type SenateElectionType,
 } from '../src/sources/minnesota/senate-election-results.js';
 import {storeSenateElectionDownload} from '../src/operations/senate-election-ingest.js';
 
@@ -31,11 +32,11 @@ function parseOptions(): Options {
   if (all === Boolean(rawYear)) throw new Error('Supply exactly one of --year YYYY or --all');
   const currentYear = new Date().getUTCFullYear();
   const year = rawYear ? Number(rawYear) : 0;
-  if (!all && (!Number.isInteger(year) || year < 2016 || year > currentYear)) {
-    throw new Error('--year must be an integer from 2016 through the current year');
+  if (!all && (!Number.isInteger(year) || year < 2020 || year > currentYear)) {
+    throw new Error('--year must be an integer from 2020 through the current year');
   }
   return {
-    years: all ? Array.from({ length: currentYear - 2015 }, (_unused, index) => 2016 + index) : [year],
+    years: all ? Array.from({ length: currentYear - 2019 }, (_unused, index) => 2020 + index) : [year],
     includePrimaries: !args.includes('--no-primaries'),
     dryRun: args.includes('--dry-run'),
     out: readOption(args, '--out'),
@@ -52,7 +53,7 @@ interface Coverage {
   generalOrSpecialElections: number;
   primaryDistricts: number;
   matchingWinnerMemberships: number;
-  missing: { date: string; type: string; reason: string }[];
+  missing: { date: string; type: SenateElectionType; reason: string }[];
 }
 function blankCoverage(year: number): Coverage {
   return { year, elections: 0, districts: 0, districtElections: 0,
@@ -126,8 +127,7 @@ async function main(): Promise<void> {
   console.log(JSON.stringify({ mode: options.dryRun ? 'raw-file' : 'database',
     includePrimaries: options.includePrimaries, byYear: coverage }, null, 2));
   // A missing optional primary does not obscure incomplete required elections.
-  if (coverage.some((year) => year.missing.some((miss) =>
-    miss.type === 'general' || miss.type === 'special'))) process.exitCode = 1;
+  if (coverage.some((year) => hasMissingRequiredSenateElections(year.missing))) process.exitCode = 1;
 }
 main().catch((error) => {
   console.error(error instanceof Error ? error.message : String(error));
