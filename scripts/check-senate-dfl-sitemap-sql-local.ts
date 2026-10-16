@@ -4,7 +4,8 @@
  */
 import {Pool} from 'pg';
 const url=process.env.DATABASE_URL_UNPOOLED??'';
-if(!url||new URL(url).hostname!=='127.0.0.1'||new URL(url).pathname!=='/votepredict')
+if(!url||!['127.0.0.1','localhost'].includes(new URL(url).hostname)||
+  new URL(url).pathname!=='/votepredict')
   throw Error('Only ephemeral GitHub CI PostgreSQL is permitted');
 const pool=new Pool({connectionString:url,max:1,connectionTimeoutMillis:5000});
 async function run():Promise<void>{
