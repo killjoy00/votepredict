@@ -46,11 +46,19 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - run: npm run db:migrate
       - run: npm run check
-      - name: Live MHP sample - actual State Senate response pages
+      - name: Live public-publisher smoke; inaccessible sources remain reported, not bypassed
+        shell: bash
         run: |
-          node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source=mhp-housing-2026 --max-sources=3 --delay-ms=250 --out "$RUNNER_TEMP/answers.jsonl"
-          test -s "$RUNNER_TEMP/answers.jsonl"
-      - name: Live SNAP sample - published State Senate science questionnaire
-        run: |
-          node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source=snap-2026-robyn-gulley --out "$RUNNER_TEMP/science.jsonl"
-          test -s "$RUNNER_TEMP/science.jsonl"
+          for source in mhp-housing-2026 snap-2026-robyn-gulley kaxe-2026-sd2 mnbiofuels-2022-weber-dornink; do
+            node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source="$source" --max-sources=3 --delay-ms=250 --out "$RUNNER_TEMP/$source.jsonl"
+          done
+          SENATE_SMOKE_DIR="$RUNNER_TEMP" node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          const names=['mhp-housing-2026','snap-2026-robyn-gulley','kaxe-2026-sd2','mnbiofuels-2022-weber-dornink'];
+          const rows=names.flatMap(n=>readFileSync(process.env.SENATE_SMOKE_DIR+'/'+n+'.jsonl','utf8').trim().split('\n').filter(Boolean).map(JSON.parse));
+          if(rows.length<1 || !rows.every(r=>r.office==='Minnesota State Senate'&&r.qa.length>=2&&r.contentSha256.length===64))
+            throw Error('No valid live Senate candidate questionnaire responses accessible from Actions');
+          console.log('SENATE_QUESTIONNAIRE_LIVE_SMOKE='+JSON.stringify({
+            candidates:rows.map(r=>r.candidateName),pairs:rows.reduce((n,r)=>n+r.qa.length,0),
+          }));
+          NODE
