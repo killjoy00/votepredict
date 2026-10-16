@@ -45,13 +45,15 @@ function scorecardSession(year:number,electionCandidate:boolean):string {
   return '2025-2026';
 }
 export async function storeRawScorecardCapture(
-  client:PoolClient,capture:ScorecardCapture,catalog:ScorecardCatalog,
+  client:PoolClient,capture:ScorecardCapture,catalog:ScorecardCatalog,existingOnly=false,
 ):Promise<{newSnapshot:boolean;entries:number;matchedMembers:number;billPositions:number;matchedBills:number}> {
   await client.query('BEGIN');
   try{
     const before=await client.query<{id:string}>(
       'SELECT id FROM senate_scorecard_snapshots WHERE url=$1 AND group_name=$2 AND year=$3 AND sha256=$4',
       [capture.sourceUrl,capture.source.groupName,capture.source.year,capture.sha256]);
+    if(existingOnly&&!before.rows.length)
+      throw Error('Saved-only replay cannot create a new publisher snapshot');
     const snap=await client.query<{id:string}>(
       'INSERT INTO senate_scorecard_snapshots '+
       '(url,group_name,year,fetched_at,sha256,content_type,raw_text,published_on) '+

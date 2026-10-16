@@ -319,6 +319,43 @@ export function parseNfibScorecardBillPositions(text:string):ScorecardPosition[]
   return positions.slice(0,50);
 }
 
+/**
+ * Minnesota Chamber printed bill/amendment headings and its own explicit
+ * "Bill passed, Chamber opposed" / "Amendment failed, Chamber supported"
+ * lines. These are organizational bill positions, not legislator scores or
+ * reconstructed Senate votes. Never guess a position from explanatory prose.
+ *
+ * The heading can wrap over 2-4 PDF text lines. Retain the literal amendment
+ * label to distinguish conflicting positions on the same underlying bill.
+ */
+export function parseChamberScorecardBillPositions(rawText:string):ScorecardPosition[] {
+  const lines=rawText.split(/\r?\n/).map(line=>line.trim().replace(/\s+/g,' '));
+  const positions:ScorecardPosition[]=[];
+  for(let i=0;i<lines.length;i++){
+    const position=/^((?:(?:Bill|Amendment)\s+(?:passed|failed),?\s*)?Chamber\s+(?:supported|opposed))\.?$/i.exec(lines[i]);
+    if(!position)continue;
+    const heading:string[]=[];
+    for(let back=i-1;back>=0&&back>=i-4;back--){
+      const line=lines[back];
+      if(!line)continue;
+      // Stop at prose; an explicit named bill is required in the heading.
+      if(line.length>180||/[.!?]$/.test(line)||/^\s*(?:the|this|these)\b/i.test(line))break;
+      heading.unshift(line);
+      if(/\b(?:H\s*\.?\s*F\s*\.?|S\s*\.?\s*F\s*\.?)\s*\d{1,6}\b/i.test(line))break;
+    }
+    const title=heading.join(' ');
+    // Exclude a heading explicitly identified as House-only.
+    if(/\bHouse\b/i.test(title)&&!/\bSenate\b/i.test(title))continue;
+    const bills=[...title.matchAll(/\b(?:H\s*\.?\s*F\s*\.?|S\s*\.?\s*F\s*\.?)\s*\d{1,6}\b/gi)];
+    if(bills.length!==1)continue;
+    const amendment=/\b(?:Amendment\s+A\d+|A\d+\s+Amendment)\b/i.exec(title);
+    const literal=(amendment?amendment[0]+'; ':'')+position[1];
+    positions.push({sourceOrdinal:positions.length+1,
+      billIdentifierRaw:bills[0][0],groupPositionRaw:literal});
+  }
+  return positions.slice(0,150);
+}
+
 /** Preserve explicitly printed organizational support/opposition words, not a stance judgment. */
 export function parseScorecardBillPositions(rawText:string,adapter:SourceAdapter):ScorecardPosition[] {
   if(adapter==='gunowners_html'||adapter==='edmn_html'||adapter==='nfib_html'||adapter==='raw_html')return [];
@@ -353,10 +390,13 @@ export function parseScorecardContent(source:ScorecardSource,rawText:string,html
   {entries:ScorecardEntry[];positions:ScorecardPosition[]} {
   const entries=source.adapter==='a4l_pdf'?parseA4LSenatePdf(rawText):
     source.adapter==='gunowners_html'?parseGunOwnersSenateHtml(html??''):
-    source.adapter==='edmn_html'?parseEducationMinnesotaSenateEndorsements(html??''):
+    source.adapter==='edmn_html'?parseEducationMinnesotaSenateEndorsements(html??rawText):
     source.adapter==='nfib_html'?parseNfibMinnesotaSenateEndorsements(html??''):
     source.adapter==='raw_html'?[]:pdfSenatorScoreLines(rawText);
-  return {entries,positions:parseScorecardBillPositions(rawText,source.adapter)};
+  const positions=source.groupName==='Minnesota Chamber of Commerce'&&source.adapter==='generic_pdf'
+    ?parseChamberScorecardBillPositions(rawText)
+    :parseScorecardBillPositions(rawText,source.adapter);
+  return {entries,positions};
 }
 interface RobotsRule {pattern:string;allow:boolean}
 interface RobotsPolicy {rules:RobotsRule[];crawlDelay:number}

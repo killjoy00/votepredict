@@ -8,7 +8,7 @@ import {spawnSync} from 'node:child_process';
 import {Pool,type PoolClient} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {PolitePublicFetcher,fetchScorecardCapture,validateScorecardManifest,
-  type ScorecardFailure} from '../src/sources/minnesota/senate-scorecard-raw.js';
+  parseScorecardContent,type ScorecardFailure,type ScorecardCapture} from '../src/sources/minnesota/senate-scorecard-raw.js';
 import {collectRawDistrictPartisanship} from '../src/sources/minnesota/senate-district-partisanship-raw.js';
 import {loadScorecardCatalog,storeRawScorecardCapture,
   storeRawDistrictPartisanship,scorecardPartisanshipReadback} from '../src/operations/senate-scorecard-partisanship-ingest.js';
@@ -16,7 +16,7 @@ import {loadScorecardCatalog,storeRawScorecardCapture,
 const MARKER='SENATE_SCORECARDS_PARTISANSHIP_PRODUCTION';
 const MIGRATION='0026_senate_scorecards_district_partisanship.sql';
 interface Ledger {filename:string;checksum:string}
-function requireMain(env:NodeJS.ProcessEnv):void {
+function requireMain(env:NodeJS.ProcessEnv):boolean {
   if(process.argv.length!==2||env.GITHUB_REPOSITORY!=='killjoy00/votepredict'||
     env.GITHUB_EVENT_NAME!=='push'||env.GITHUB_REF!=='refs/heads/main'||
     env.GITHUB_RUN_ATTEMPT!=='1'||
@@ -32,6 +32,7 @@ function requireMain(env:NodeJS.ProcessEnv):void {
     e.head_commit?.id!==env.GITHUB_SHA||e.forced===true||e.deleted===true||
     !e.head_commit?.message?.includes(MARKER))
     throw Error('Reviewed marker main SHA mismatch');
+  return !!e.head_commit?.message?.includes('SENATE_SCORECARD_REPARSE_STORED');
 }
 function ledgerExpected():Ledger[] {
   const files=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
@@ -74,7 +75,7 @@ function connectionUrl(target:{
 async function main():Promise<void> {
   let phase='main_gate',pool:Pool|undefined;
   try{
-    requireMain(process.env);
+    const storedOnly=requireMain(process.env);
     const expected=ledgerExpected();
     const migrationSql=readFileSync('migrations/'+MIGRATION,'utf8');
     assertAdditiveRawMigration(migrationSql);
@@ -141,9 +142,9 @@ async function main():Promise<void> {
     phase='existing_memberships_and_bills';
     const catalog=await readonly(pool,loadScorecardCatalog);
     const fetcher=new PolitePublicFetcher();
-    const attempted=sources.sources.slice(0,50);
+    const attempted=storedOnly?[]:sources.sources.slice(0,50);
     let fetched=0,newSnapshots=0,entriesParsed=0,positionsParsed=0;
-    let matchedNew=0,linkedBillsNew=0;
+    let matchedNew=0,linkedBillsNew=0,reparsed=0;
     const failed:ScorecardFailure[]=[];
     const bySource:Array<{group:string;year:number;entries:number;positions:number;status:string}>=[];
     phase='bounded_polite_publisher_capture';
@@ -171,6 +172,46 @@ async function main():Promise<void> {
           status:result.entries||result.billPositions?'parsed':'captured_unstructured'});
       }finally{c.release(true);}
     }
+    if(storedOnly){
+      phase='readonly_bounded_saved_snapshot_preflight';
+      // Replay only stored original text; no HTTP requests or election writes.
+      const saved=await readonly(pool,async c=>c.query<{
+        url:string;group_name:string;year:number;sha256:string;content_type:string;
+        raw_text:string;published_on:string|null;fetched_at:string;
+      }>("SELECT url,group_name,year,sha256,content_type,raw_text,"+
+        "published_on::text AS published_on,fetched_at::text AS fetched_at "+
+        "FROM senate_scorecard_snapshots "+
+        "WHERE group_name IN ('Minnesota Chamber of Commerce','MCCL','Conservation Minnesota') "+
+        "OR (group_name='Education Minnesota' AND year=2025) "+
+        "ORDER BY group_name,year,fetched_at,url LIMIT 25"));
+      if(!saved.rows.length||saved.rows.length>=25)
+        throw Error('Saved source replay missing or exceeds bounded 24-version limit');
+      phase='bounded_saved_snapshot_parser_replay';
+      for(const snap of saved.rows){
+        const choices=sources.sources.filter(src=>src.groupName===snap.group_name&&src.year===snap.year);
+        const source=choices.find(src=>src.url===snap.url)??(choices.length===1?choices[0]:null);
+        if(!source)throw Error('Stored snapshot missing unambiguous catalog adapter');
+        const parsed=parseScorecardContent(source,snap.raw_text);
+        reparsed++;
+        if(!parsed.entries.length&&!parsed.positions.length){
+          bySource.push({group:snap.group_name,year:snap.year,entries:0,positions:0,
+            status:'saved_index_without_explicit_rows'});
+          continue;
+        }
+        const capture:ScorecardCapture={source,sourceUrl:snap.url,sha256:snap.sha256,
+          contentType:snap.content_type,rawText:snap.raw_text,
+          fetchedAt:snap.fetched_at,publishedOn:snap.published_on,...parsed};
+        const c=await pool.connect();
+        try{
+          const result=await storeRawScorecardCapture(c,capture,catalog,true);
+          if(result.newSnapshot)throw Error('Replay unexpectedly inserted a new source version');
+          entriesParsed+=result.entries;matchedNew+=result.matchedMembers;
+          positionsParsed+=result.billPositions;linkedBillsNew+=result.matchedBills;
+          bySource.push({group:snap.group_name,year:snap.year,entries:result.entries,
+            positions:result.billPositions,status:'reparsed_saved_version'});
+        }finally{c.release(true);}
+      }
+    }
     phase='bounded_official_district_partisanship';
     let electionRowsNew=0;
     // Original one-shot verified all four 67-district statewide reconciliations.
@@ -179,6 +220,8 @@ async function main():Promise<void> {
       '2022|attorney_general|2022','2024|president|2022'];
     const districtDataReused=expectedElections.every(key=>before.elections.some(e=>
       [e.election_year,e.office,e.district_plan].join('|')===key&&e.districts===67&&e.rows>=67));
+    if(storedOnly&&!districtDataReused)
+      throw Error('Saved-only replay requires four verified 67-district datasets');
     const electionResult=districtDataReused?{collected:[],failed:[]}:
       await collectRawDistrictPartisanship(fetcher,async record=>{
         const c=await pool!.connect();
@@ -190,11 +233,14 @@ async function main():Promise<void> {
     if(after.snapshots<before.snapshots||after.entries<before.entries||
       after.districtRows<before.districtRows||after.billPositions<before.billPositions||
       after.snapshots>before.snapshots+newSnapshots||
-      after.districtRows>before.districtRows+electionRowsNew)
+      after.entries>before.entries+entriesParsed||
+      after.billPositions>before.billPositions+positionsParsed||
+      after.districtRows>before.districtRows+electionRowsNew||
+      (storedOnly&&(after.snapshots!==before.snapshots||after.districtRows!==before.districtRows)))
       throw Error('Raw-only collection receipt/readback inconsistent');
     const report={
       status:failed.length||electionResult.failed.length?'bounded_partial':'committed_readback_verified',
-      migrated,wasMigrated,attempted:attempted.length,fetched,newSnapshots,
+      migrated,wasMigrated,storedOnly,reparsed,attempted:attempted.length,fetched,newSnapshots,
       entriesParsed,positionsParsed,matchedNew,linkedBillsNew,
       scoresMemberLinkRate:after.entries?after.linkedMembers/after.entries:null,
       scorecardBillLinkRate:after.billPositions?after.linkedBills/after.billPositions:null,

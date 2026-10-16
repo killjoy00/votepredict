@@ -5,6 +5,7 @@ import {readFileSync} from 'node:fs';
 import {Pool} from 'pg';
 import {
   parseA4LSenatePdf,parseGunOwnersSenateHtml,parseEducationMinnesotaSenateEndorsements,parseNfibMinnesotaSenateEndorsements,parseNfibScorecardBillPositions,parseScorecardBillPositions,explicitPublishedOn,
+  parseChamberScorecardBillPositions,
   parseRobots,validateScorecardManifest,parseScorecardContent,
   type ScorecardCapture,
 } from '../src/sources/minnesota/senate-scorecard-raw.js';
@@ -99,6 +100,49 @@ test('Keep the first-party 2026 education endorsement dateline separate from fet
 });
 
 
+test('Stored Chamber PDFs yield only printed bill/issue positions, not fabricated grades',()=>{
+  const raw='2025 Legislative Session Voting Record\nVote summaries\n'+
+    'HHS Omnibus Finance bill, HF 2435 (Wiklund)\nBill passed, Chamber opposed\n'+
+    'Earned Sick and Safe Time Modifications bill, SF 2300\n(Seeberger)\nBill passed, Chamber supported\n'+
+    'A Chamber-supported bill without an explicit label is not parsed.\n'+
+    'Senate votes\nAbeler No No\nAnderson No Yes\n';
+  const source={groupName:'Minnesota Chamber of Commerce',year:2025,
+    adapter:'generic_pdf' as const,url:'https://www.mnchamber.com/test.pdf'};
+  const parsed=parseScorecardContent(source,raw);
+  assert.deepEqual(parsed.entries,[]);
+  assert.deepEqual(parsed.positions.map(p=>[p.billIdentifierRaw,p.groupPositionRaw]),
+    [['HF 2435','Bill passed, Chamber opposed'],['SF 2300','Bill passed, Chamber supported']]);
+  assert.deepEqual(parsed.positions.map(p=>p.sourceOrdinal),[1,2]);
+  const unrelated=parseScorecardContent({...source,groupName:'Generic publisher'},raw);
+  assert.equal(unrelated.positions.length,0);
+});
+test('Stored Chamber PDF amendment positions preserve literal amendment names and exclude House-only headings',()=>{
+  const raw='2023-24 Legislative Voting Record\n'+
+    '2021 House Omnibus Tax Bill – HF 991 (Marquart)\nChamber opposed\n'+
+    '2021 Senate Omnibus Tax Bill – HF 991 (Nelson)\nChamber supported\n'+
+    'Climate and Energy Finance and Policy Omnibus bill; HF 7\n'+
+    'Amendment A3\nAmendment failed, Chamber supported\n'+
+    'Climate and Energy Finance and Policy Omnibus bill; HF 7\n'+
+    'Amendment A6\nAmendment failed, Chamber supported\n'+
+    'The Chamber supports SF 4 legislation broadly.\n'+
+    'Chamber supported a statewide reform.\n';
+  const rows=parseChamberScorecardBillPositions(raw);
+  assert.deepEqual(rows.map(p=>[p.billIdentifierRaw,p.groupPositionRaw]),
+    [['HF 991','Chamber supported'],
+      ['HF 7','Amendment A3; Amendment failed, Chamber supported'],
+      ['HF 7','Amendment A6; Amendment failed, Chamber supported']]);
+  assert.deepEqual(rows.map(p=>p.sourceOrdinal),[1,2,3]);
+});
+test('Reparse saved 2025 Education Minnesota plaintext without refetching HTML',()=>{
+  const raw='Education Minnesota endorses Clark in special election for state Senate\n'+
+    'ST. PAUL, Minnesota. Jan. 27, 2025 – Education Minnesota announced its endorsement of Doron Clark in the special election on Tuesday for the Senate seat in Minneapolis.\n'+
+    'Educators support Clark in Senate District 60 because they agree about public education.\n';
+  const result=parseScorecardContent({groupName:'Education Minnesota',year:2025,
+    adapter:'edmn_html',url:'https://educationminnesota.org/2025',electionCandidate:true},raw);
+  assert.deepEqual(result.entries.map(e=>[e.nameRaw,e.districtRaw,e.kind,e.valueRaw]),
+    [['Doron Clark','60','endorsement','ENDORSED']]);
+  assert.deepEqual(result.positions,[]);
+});
 test('2021-22 original NFIB Minnesota PDF extracts nine printed State Senate positions and excludes House',()=>{
   // Trimmed page 1 of the first-party 2021-22 NFIB MN Senate voting record.
   const pdf='VOTING RECORD\nSENATE ONLY\n'+
@@ -370,6 +414,11 @@ test('disposable Postgres: running the entire raw evidence suite twice keeps exa
       const report=await scorecardPartisanshipReadback(client);
       assert.ok(report.linkedMembers>=1&&report.linkedBills>=1);
     }
+    const replay=await storeRawScorecardCapture(client,capture,catalog,true);
+    assert.equal(replay.newSnapshot,false);
+    await assert.rejects(()=>storeRawScorecardCapture(client,
+      {...capture,sha256:digest(token+'different-source-version')},catalog,true),
+    /Saved-only replay cannot create a new publisher snapshot/);
   }finally{
     // This fixture runs on disposable CI PostgreSQL. Preserve unrelated fixtures.
     await client.query('DELETE FROM senate_scorecard_vote_positions WHERE group_name=$1',[group]);
