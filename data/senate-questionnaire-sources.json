@@ -1,0 +1,294 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "mhp-housing-2026",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp_index",
+      "url": "https://mhponline.org/2026-candidate-housing-questionnaire/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-robyn-gulley",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/robyn-gulley",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-liz-boldon",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/liz-boldon",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-omar-fateh",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/omar-fateh",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-louis-mcnutt",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/louis-mcnutt",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-gadisa-berkessa",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/gadisa-berkessa",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-jeremy-munson",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/jeremy-munson",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-amanda-hemmingsen-jaeger",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/amanda-hemmingsen-jaeger",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "snap-2026-bjorn-solberg",
+      "publisher": "Scientist Network for Advancing Policy",
+      "cycle": 2026,
+      "adapter": "snap",
+      "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/bjorn-solberg",
+      "title": "2026 Minnesota Stance on Science",
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd1",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-25/legislature-state-senate-district-1-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 1 Election Guide",
+      "district": "1",
+      "candidates": [
+        "Mark Johnson",
+        "Bjorn Solberg"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd2",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-2-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 2 Election Guide",
+      "district": "2",
+      "candidates": [
+        "Steve Green",
+        "Dan Rogers",
+        "Calvin Larson Jr."
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd3",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-3-hauschild-zupancich-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 3 Election Guide",
+      "district": "3",
+      "candidates": [
+        "Grant Hauschild",
+        "Andrea Zupancich"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd4",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-4-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 4 Election Guide",
+      "district": "4",
+      "candidates": [
+        "Rob Kupec",
+        "Austin Peterson"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd5",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-5-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 5 Election Guide",
+      "district": "5",
+      "candidates": [
+        "Skylar Fynboh",
+        "Mike Wiener"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd6",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-6-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 6 Election Guide",
+      "district": "6",
+      "candidates": [
+        "Keri Heintzeman",
+        "Denise Slipy"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd7",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-7-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 7 Election Guide",
+      "district": "7",
+      "candidates": [
+        "Robert Farnsworth",
+        "Kim (Kotanias) McLaughlin"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd10",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-10-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 10 Election Guide",
+      "district": "10",
+      "candidates": [
+        "Tara Killen",
+        "Nathan Wesenberg"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "kaxe-2026-sd11",
+      "publisher": "KAXE",
+      "cycle": 2026,
+      "adapter": "kaxe",
+      "url": "https://www.kaxe.org/2026-09-28/legislature-state-senate-district-11-mn-2026-election-guide",
+      "title": "2026 KAXE State Senate District 11 Election Guide",
+      "district": "11",
+      "candidates": [
+        "Mary Carlson",
+        "Monique Doward",
+        "Jason Rarick"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-hauschild-gaul",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://mnbiofuels.org/media-mba/blog/item/3434-candidates-biofuels-grant-hauschild-anita-gaul",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Grant Hauschild"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-weber-dornink",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://mnbiofuels.org/candidates-biofuels-weber-dornink",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Bill Weber",
+        "Gene Dornink"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-navitsky-brazelton",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://www.mnbiofuels.org/candidates-biofuels-navitsky-brazelton",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Ken Navitsky",
+        "Chris Brazelton"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-falvey-drenckhahn",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://www.mnbiofuels.org/media-mba/blog/item/3435-candidates-biofuels-falvey-drenckhahn",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Kate Falvey",
+        "Bradley Drenckhahn"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2022-cwodzinski-craig",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2022,
+      "adapter": "biofuels",
+      "url": "https://mnbiofuels.org/media-mba/blog/item/3440-candidates-biofuels-cwodzinski-craig",
+      "title": "Candidates & Biofuels",
+      "candidates": [
+        "Steve Cwodzinski"
+      ],
+      "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mnbiofuels-2020-index",
+      "publisher": "Minnesota Bio-Fuels Association",
+      "cycle": 2020,
+      "adapter": "biofuels_index",
+      "url": "https://www.mnbiofuels.org/the-epa-wrecking-ball/itemlist/category/11-media?start=912",
+      "title": "Candidates & Biofuels (2020)",
+      "articleNames": [
+        "A. John Peters, Julie Rosen",
+        "Roger Steinkamp, Dan Sparks",
+        "Melisa Lopez Franzen, Reed Perkins",
+        "Nick Frentz, Ralph Kaehler",
+        "David Senjem, Joshua Fike",
+        "Jim Carlson"
+      ],
+      "sourceKind": "publisher_response"
+    }
+  ]
+}
