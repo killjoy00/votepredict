@@ -4,7 +4,8 @@ on:
   pull_request:
     paths:
       - migrations/0024_senate_raw_vote_views.sql
-      - migrations/0025_senate_scorecards_district_partisanship.sql
+      - migrations/0025_senate_bill_authors.sql
+      - migrations/0026_senate_scorecards_district_partisanship.sql
       - data/senate-scorecard-sources.json
       - src/sources/minnesota/senate-scorecard-raw.ts
       - src/sources/minnesota/senate-district-partisanship-raw.ts
@@ -17,7 +18,8 @@ on:
     branches: [main]
     paths:
       - migrations/0024_senate_raw_vote_views.sql
-      - migrations/0025_senate_scorecards_district_partisanship.sql
+      - migrations/0025_senate_bill_authors.sql
+      - migrations/0026_senate_scorecards_district_partisanship.sql
       - data/senate-scorecard-sources.json
       - src/sources/minnesota/senate-scorecard-raw.ts
       - src/sources/minnesota/senate-district-partisanship-raw.ts
