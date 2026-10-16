@@ -203,7 +203,7 @@ export async function persistOfficialAuthorCapture(
         "INSERT INTO senate_bill_author_snapshots "+
         "(bill_id,source_url,fetched_at,http_status,sha256,raw_xml) "+
         "VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (bill_id,sha256) "+
-        "DO UPDATE SET fetched_at=EXCLUDED.fetched_at RETURNING id",[
+        "DO UPDATE SET source_url=senate_bill_author_snapshots.source_url RETURNING id",[
         bill.bill_id,capture.url,capture.fetchedAt,capture.httpStatus??200,
         sha256(capture.rawXml),capture.rawXml,
       ])).rows[0];
@@ -359,7 +359,7 @@ export async function senateBillAuthorReadback(pool:Pool):Promise<AuthorSessionR
       "SELECT t.slug AS session,count(DISTINCT t.id)::text AS target_bills,"+
       "count(DISTINCT scan.bill_id)::text AS scanned_bills,"+
       "count(DISTINCT scan.bill_id) FILTER (WHERE scan.result='success')::text AS success_bills,"+
-      "count(DISTINCT a.bill_id) FILTER (WHERE a.role='coauthor')::text AS bills_with_coauthors,"+
+      "count(DISTINCT a.bill_id) FILTER (WHERE a.role='coauthor' AND scan.result='success')::text AS bills_with_coauthors,"+
       "count(DISTINCT a.id)::text AS author_rows,"+
       "count(DISTINCT a.id) FILTER (WHERE a.chamber='senate')::text AS senate_author_rows,"+
       "count(DISTINCT a.id) FILTER (WHERE a.chamber='senate' AND a.membership_id IS NOT NULL)::text AS senate_linked,"+
