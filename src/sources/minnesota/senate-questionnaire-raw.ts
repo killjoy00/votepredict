@@ -4,7 +4,7 @@
  * historical feature eligibility. Publisher-only, bounded, fail-closed parsing.
  */
 import { createHash } from 'node:crypto';
-import { eligibleSenateQuestionnaireCandidate } from './senate-questionnaire-eligibility.js';
+import { eligibleSenateQuestionnaireCandidate,HISTORICAL_QUESTIONNAIRE_WINNERS } from './senate-questionnaire-eligibility.js';
 
 export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia'|'wsp_reader'|'roseville_reader'|'mnrtl'|'startribune_2022'|'mpr_special_2024'|'sd60_pdf';
 export interface QuestionnaireSource {
@@ -645,6 +645,16 @@ export function validateCatalog(value:unknown):QuestionnaireSource[] {
     ids.add(s.id);urls.add(s.cycle+'|'+u.href);
     if(s.archiveCapturedAt&&!/^\d{4}-\d\d-\d\dT/i.test(s.archiveCapturedAt))
       throw Error('Archive timestamp must be explicit original observation');
+    // Fail closed during source discovery too: a historical catalog cannot
+    // silently reintroduce losing candidates or rely on primary-only winners.
+    if([2022,2024,2025].includes(s.cycle)) {
+      const candidates=s.candidate?[s.candidate]:(s.candidates??[]);
+      if(!candidates.length||candidates.some(candidate=>
+        !HISTORICAL_QUESTIONNAIRE_WINNERS.some(w=>w.cycle===s.cycle
+          && eligibleSenateQuestionnaireCandidate(s.cycle,candidate,w.district)
+          && (!s.district||districtNumber(s.district)===w.district))))
+        throw Error('Historical questionnaire catalog includes an unconfirmed election loser');
+    }
     return s;
   }).sort((a,b)=>b.cycle-a.cycle);
 }
