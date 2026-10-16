@@ -71,8 +71,10 @@ function dateFrom(text:string):string|null {
     ?year+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0'):null;
 }
 function candidateValue(lines:string[],key:string):string|null {
-  const line=lines.find(v=>new RegExp('^'+key+'\\s*:', 'i').test(v));
-  return line?.replace(new RegExp('^'+key+'\\s*:\\s*','i'),'').trim()||null;
+  const index=lines.findIndex(v=>new RegExp('^'+key+'\\s*:', 'i').test(v));
+  if(index<0)return null;
+  const inline=lines[index].replace(new RegExp('^'+key+'\\s*:\\s*','i'),'').trim();
+  return inline||lines[index+1]||null;
 }
 function districtNumber(input:string|null|undefined):string|null {
   if(!input)return null;
@@ -88,8 +90,13 @@ function parseMhp(html:string,seed:QuestionnaireSource):Array<Partial<CandidateR
   const lines=visibleLines(html);
   const title=/<h[12][^>]*>([\s\S]*?)<\/h[12]>/i.exec(html);
   const name=seed.candidate|| (title?visibleLines(title[1]).join(' '):null);
-  const district=districtNumber(candidateValue(lines,'Legislative District')??seed.district);
-  if(!name||!district||!/senate/i.test(lines.find(x=>/^Legislative District:/i.test(x))??'') )
+  // WordPress renders the metadata label and its value in separate nodes.
+  // Inspect adjacent visible lines rather than requiring one combined line.
+  const marker=lines.findIndex(x=>/^Legislative District\s*:/i.test(x));
+  const statedDistrict=marker>=0?lines.slice(marker,marker+4).join(' '):'';
+  const senator=/\bSenate\s+District\s+([1-9]|[1-5]\d|6[0-7])\b/i.exec(statedDistrict);
+  const district=senator?String(Number(senator[1])):null;
+  if(!name||!district||(seed.district&&districtNumber(seed.district)!==district))
     throw Error('Not an explicitly labeled Minnesota Senate candidate response');
   const party=candidateValue(lines,'Party')||seed.party||null;
   const start=lines.findIndex(x=>/^Q1\s*:/i.test(x));
