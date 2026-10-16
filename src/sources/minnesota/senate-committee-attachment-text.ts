@@ -134,17 +134,17 @@ async function pdfOcr(data: Buffer): Promise<string | null> {
     // the bounded all-pages OCR budget; preserve their scanned status.
     const { stdout: info } = await exec('pdfinfo', [file], { timeout: 10000, maxBuffer: 80000 });
     const pages = Number(info.match(/^Pages:\s*(\d+)/m)?.[1]);
-    if (!Number.isInteger(pages) || pages < 1 || pages > 60) return null;
+    if (!Number.isInteger(pages) || pages < 1 || pages > 24) return null;
     const prefix = join(dir, 'page');
     await exec('pdftoppm', ['-f', '1', '-l', String(pages), '-r', '125', '-png', file, prefix],
-      { timeout: 150000, maxBuffer: 100000 });
+      { timeout: 90000, maxBuffer: 100000 });
     const names = (await readdir(dir)).filter(name => /^page-\d+\.png$/.test(name)).sort((a,b) =>
       Number(a.match(/\d+/)?.[0]) - Number(b.match(/\d+/)?.[0]));
     if (names.length !== pages) return null;
     const pageText: string[] = [];
     for (const name of names) {
       const { stdout } = await exec('tesseract', [join(dir, name), 'stdout', '-l', 'eng'],
-        { timeout: 30000, maxBuffer: 5_000_000 });
+        { timeout: 12000, maxBuffer: 5_000_000 });
       pageText.push(stdout);
     }
     return pageText.join('\n\n');
@@ -248,8 +248,9 @@ export async function captureSenateAttachment(
   } catch (error) {
     const category = error instanceof Error && /^(?:oversize|outside_senate_hosts|invalid_redirect|no_response)$/.test(error.message)
       ? error.message : 'extraction_or_network_error';
-    statusKind = category;
-    base.extractionStatus = category === 'oversize' ? 'unsupported' : 'failed';
+    const helperMissing = (error as { code?: unknown } | null)?.code === 'ENOENT';
+    statusKind = helperMissing ? 'local_extractor_unavailable' : category;
+    base.extractionStatus = category === 'oversize' || helperMissing ? 'unsupported' : 'failed';
   }
   base.failureKind = statusKind;
   // Source bytes key versions; failures without bytes are idempotent by error category.
