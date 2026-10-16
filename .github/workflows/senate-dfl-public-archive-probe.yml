@@ -1,0 +1,34 @@
+name: Probe public historical archives for Senate DFL (keyless)
+
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-dfl-public-archives.ts
+      - scripts/probe-senate-dfl-wayback-replay.ts
+      - src/sources/minnesota/senate-dfl-wayback.ts
+      - .github/workflows/senate-dfl-public-archive-probe.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/probe-senate-dfl-public-archives.ts
+      - .github/workflows/senate-dfl-public-archive-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  public-only:
+    if: github.repository == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Query archived 2023-2025 originals and attempt unchanged full-body Wayback replay
+        run: node --import tsx scripts/probe-senate-dfl-wayback-replay.ts
