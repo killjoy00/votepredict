@@ -94,25 +94,35 @@ mentions, not unique source documents or senators.
 
 ### Production rates by table, session and method
 
-From the protected repair run on 2026-10-16
-([run 38941315620](https://github.com/killjoy00/votepredict/actions/runs/38941315620),
+From the protected repair run on 2026-10-16, after the journal roster re-parse
+([run 38944846939](https://github.com/killjoy00/votepredict/actions/runs/38944846939),
 status `committed_and_readback_verified`). Rates are matched ÷ total across all
 match methods. Edge tables count mentions.
 
 | Table | 2021–22 | 2023–24 | 2025–26 |
 | --- | --- | --- | --- |
-| senate_raw_vote_member_mentions (movers + voters) | 30,028 / 30,233 (99.3%) | 73,849 / 74,507 (99.1%) | 40,605 / 40,940 (99.2%) |
+| senate_raw_vote_member_mentions (movers + voters) | 30,326 / 30,347 (99.93%) | 74,930 / 74,952 (99.97%) | 41,163 / 41,178 (99.96%) |
 | senate_raw_vote_bill_mentions | 2,574 / 2,574 (100%) | 5,379 / 5,379 (100%) | 3,861 / 3,861 (100%) |
 | senate_statement_member_mentions | — | 1,988 / 2,157 (92.2%) | 2,082 / 2,424 (85.9%) |
 | senate_statement_bill_mentions | — | 423 / 423 (100%) | 539 / 539 (100%) |
 | senate_committee_testimony_raw.bill | — | 13,433 / 13,433 (100%) | 11,578 / 11,583 (99.96%) |
 | mn_senate_election_raw_results | 87 / 340 | 69 / 205 | 17 / 85 |
-| mn_senate_questionnaire_captures | — | 8 / 16 | 12 / 53 |
+| mn_senate_questionnaire_captures | — | 8 / 16 | 12 / 67 |
 
-Raw-vote member links are almost all `surname_unique_in_session`, since journals
-and minutes print surnames. Election and questionnaire totals include losing
-candidates and write-ins, who never served and correctly stay unresolved.
-Only one testimony row is a senator witness (linked).
+**Journal roster re-parse** (`src/operations/senate-journal-raw-reparse.ts`)
+ran in this job. It re-read all 337 stored journal documents with the session
+roster:
+
+- Names grew from 134,329 to 135,126, as run-together columns split into
+  individual members.
+- Roll calls whose names did not match the printed tally fell from 278 to 0.
+- Unresolved raw-vote names fell from 1,198 to 58.
+
+Raw-vote member links are mostly `alias`, meaning a journal surname form
+learned on an earlier run, or `surname_unique_in_session`. Election and
+questionnaire totals include losing candidates and write-ins, who never served
+and correctly stay unresolved. Only one testimony row is a senator witness
+(linked).
 
 Other readback counts:
 
@@ -134,22 +144,23 @@ Other readback counts:
 
 ### Unresolved printed names
 
-The largest remaining groups in this run:
+After the re-parse, raw votes are essentially fully linked (58 unresolved). What
+remains is mostly statement text that is not a sitting senator:
 
-- **Run-together journal roll-call columns** ("Carlson Champion",
-  "Weber Wesenberg Westrom", "Abeler Anderson Bahr Coleman Dahms") and
-  **journal page headers** ("FRIDAY, JANUARY 27,"). The first raw collection
-  parsed journal PDFs without a roster. The journal roster re-parse
-  (`src/operations/senate-journal-raw-reparse.ts`) re-reads the stored journal
-  text with the session roster, splits these runs into members and drops
-  headers. New collections pass the roster too.
 - **WRITE-IN** election rows (139), which are expected.
-- **Single leftovers**: "Ingebrigsten" has two letters swapped, which is beyond
-  the one-edit rule. "Kari Dziedzic" appears in statements outside her service
-  dates.
+- **People who are not senators**, named after a "Senator"-like prefix in
+  press text: U.S. senators (Klobuchar, Tina Smith), House members and
+  testifiers.
+- **Statement extraction artifacts**: a senator's name followed by the next
+  word ("Julia Coleman Senator Julia", "Sandy Pappas Applauds Passage",
+  "Nicole Mitchell Trial"), memorial names ("David J. Tomassoni Memorial"),
+  and the word "District".
+- **Misspellings beyond the one-edit rule** ("Ingebrigsten", "Dornik",
+  "Housely", "Papas"), and "Kari Dziedzic" outside her service dates.
 
 The resolver already handles possessives ("Mitchell's"), doubled surnames,
-common nicknames and one-edit misspellings of long surnames.
+common nicknames and one-edit misspellings of long surnames. A tighter
+statement name extractor could recover most of the trailing-word artifacts.
 
 ### Limitations
 
