@@ -184,3 +184,80 @@ test('production guard accepts real 0021 additive DDL with FK ON DELETE but reje
   assert.throws(()=>assertAdditiveQuestionnaireMigration('CREATE TABLE test(x integer); DROP TABLE memberships;'));
   assert.throws(()=>assertAdditiveQuestionnaireMigration('ALTER TABLE memberships DROP COLUMN party;'));
 });
+
+test('Roseville Reader Senate D40 stores exactly six full published answers per named candidate',()=>{
+  const source={...base,adapter:'roseville_reader' as const,district:'40',cycle:2026,
+    url:'https://www.rosevillereader.com/minnesota-senate-district-40-candidate-guide-2026/',
+    candidates:['Rachel Japuntich','John Marty']};
+  const questions=[
+    'Why are you running for elected office?',
+    'What are some of your legislative priorities for the next legislative session?',
+    'How would you work to make life better for ordinary people living in the Roseville area?',
+    'What are your priorities when it comes to public education?',
+    'How do you plan to connect with residents in the Roseville area and their local city leaders to represent their unique interests at the state level?',
+    'What else do you want voters in the Roseville area to know about you?',
+  ];
+  const blocks=(name:string)=>questions.map((q,i)=>'<h3>'+q+'</h3><blockquote><p>'+
+    name+' published answer '+(i+1)+'</p><p>Second paragraph kept.</p></blockquote>').join('');
+  const html='<article><h1>Minnesota Senate District 40 candidate guide</h1>'+
+    '<time>01 Oct 2026 — 8 min read</time>'+
+    '<h2>Rachel Japuntich</h2><p>Republican</p><p>Editorial campaign platform summary ignored.</p>'+
+    blocks('Rachel')+
+    '<h2>John Marty (incumbent)</h2><p>Democratic Farmer-Labor</p>'+
+    blocks('Marty')+'<h2>Candidate Forum & Speakouts</h2><p>Not questionnaire text.</p></article>';
+  const rows=parseResponses(html,source);
+  assert.equal(rows.length,2);assert.equal(rows[0].qa.length,6);
+  assert.equal(rows[0].qa[0].question,questions[0]);
+  assert.equal(rows[0].qa[0].answer,'Rachel published answer 1\nSecond paragraph kept.');
+  assert.equal(rows[0].displayedPublicationOn,'2026-10-01');
+  assert.equal(rows[1].party,'Democratic Farmer-Labor');
+  assert.equal(rows[1].qa[5].answer,'Marty published answer 6\nSecond paragraph kept.');
+  assert.equal(rows[1].qa[5].answer.includes('Candidate Forum'),false);
+});
+test('Roseville Reader excludes explicitly named Senate candidate without respondent answers',()=>{
+  const source={...base,adapter:'roseville_reader' as const,district:'66',
+    url:'https://www.rosevillereader.com/minnesota-senate-district-66-candidate-guide/',
+    candidates:['Kathleen Bart','Clare Oumou Verbeten']};
+  const questions=[
+    'Why are you running for elected office?',
+    'What are some of your legislative priorities for the next legislative session?',
+    'How would you work to make life better for ordinary people living in the Roseville area?',
+    'What are your priorities when it comes to public education?',
+    'How do you plan to connect with residents in the Roseville area and their local city leaders to represent their unique interests at the state level?',
+    'What else do you want voters in the Roseville area to know about you?',
+  ];
+  const html='<h1>Minnesota Senate District 66 candidate guide</h1><h2>Kathleen Bart</h2>'+
+    '<p>Republican</p><p>Bart did not respond to our invitation to participate in a candidate questionnaire.</p>'+
+    '<h2>Clare Oumou Verbeten</h2><p>Democratic-Farmer-Labor</p>'+
+    questions.map((q,i)=>'<h3>'+q+'</h3><blockquote>Original answer '+i+'.</blockquote>').join('')+
+    '<h2>Candidate Forum</h2>';
+  const got=parseResponses(html,source);
+  assert.equal(got.length,1);assert.equal(got[0].candidateName,'Clare Oumou Verbeten');
+  assert.equal(got[0].qa.length,6);
+});
+test('MN Right to Life 2026 original six question texts and raw candidate responses exclude House',()=>{
+  const source={...base,adapter:'mnrtl' as const,
+    url:'https://www.mnrtl.org/elections/',title:'2026 Primary Survey Results'};
+  const questions=Array.from({length:6},(_,i)=>'<h3>Question '+(i+1)+'</h3>'+
+    '<p>Publisher question number '+(i+1)+' described in full and asks about the relevant legislation.</p>');
+  const row=(cells:string[])=>'<tr>'+cells.map(t=>'<td>'+t+'</td>').join('')+'</tr>';
+  const candidate=(office:string)=>[
+    '75430','2,026','Legislative','35','20 Jun 2026 04:02 AM',
+    'Bill','Lieske','Republican','58',office,
+    'Co-Sponsor,Sponsor','Yes','No','Co-Sponsor','Yes','No',
+    'Free text supplied in separate Q7 column','View survey',
+  ];
+  const html='<h1>2026 Primary Survey Results</h1>'+
+    questions.join('')+'<p>Scroll to the right to see all the results.</p>'+
+    '<table><tbody>'+row(candidate('Minnesota House'))+
+    row(candidate('Minnesota Senate'))+'</tbody></table>';
+  const got=parseResponses(html,source);
+  assert.equal(got.length,1);
+  assert.equal(got[0].candidateName,'Bill Lieske');
+  assert.equal(got[0].district,'58');
+  assert.equal(got[0].displayedSubmittedOn,'2026-06-20');
+  assert.equal(got[0].qa.length,6);
+  assert.equal(got[0].qa[0].answer,'Co-Sponsor,Sponsor');
+  assert.ok(got[0].qa[0].question.includes('Publisher question number 1'));
+  assert.equal(got[0].qa.some(x=>x.answer.includes('Free text supplied')),false);
+});

@@ -5,7 +5,7 @@
  */
 import { createHash } from 'node:crypto';
 
-export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia'|'wsp_reader';
+export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia'|'wsp_reader'|'roseville_reader'|'mnrtl';
 export interface QuestionnaireSource {
   id:string; publisher:string; cycle:number; adapter:Adapter; url:string; title:string;
   sourceKind:'publisher_response'|'candidate_copy'|'archived_response';
@@ -62,10 +62,10 @@ export function visibleLines(html:string):string[] {
 }
 const monthNames=['january','february','march','april','may','june','july','august','september','october','november','december'];
 function dateFrom(text:string):string|null {
-  const m=/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(20\d{2})\b/i.exec(text);
-  const rev=/\b(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})\b/i.exec(text);
+  const m=/\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{1,2}),?\s+(20\d{2})\b/i.exec(text);
+  const rev=/\b(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(20\d{2})\b/i.exec(text);
   if(!m&&!rev)return null;
-  const day=Number(m?m[2]:rev![1]),month=monthNames.indexOf((m?m[1]:rev![2]).toLowerCase())+1,year=Number(m?m[3]:rev![3]);
+  const day=Number(m?m[2]:rev![1]),month=monthNames.findIndex(x=>x.startsWith((m?m[1]:rev![2]).slice(0,3).toLowerCase()))+1,year=Number(m?m[3]:rev![3]);
   const dt=new Date(Date.UTC(year,month-1,day));
   return dt.getUTCDate()===day&&dt.getUTCMonth()===month-1
     ?year+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0'):null;
@@ -310,12 +310,112 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>{
   return records;
 }
 
+const rosevillePrompts=[
+  /^Why are you running for elected office\?/i,
+  /^What are some of your legislative priorities for the next legislative session\?/i,
+  /^How would you work to make life better for ordinary people living in the Roseville area\?/i,
+  /^What are your priorities when it comes to public education\?/i,
+  /^How do you plan to connect with residents in the Roseville area and their local city leaders/i,
+  /^What else do you want voters in the Roseville area to know about you\?/i,
+];
+/** Extract only answers under question headings, not editorial candidate summaries. */
+function parseRosevilleReader(html:string,seed:QuestionnaireSource):
+Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
+  if(!seed.candidates?.length||!seed.district)throw Error('Unconfigured local Senate candidate listing');
+  const lines=visibleLines(html);
+  const heading='Minnesota Senate District '+seed.district+' candidate guide';
+  if(!lines.some(x=>x.toLowerCase()===heading.toLowerCase())
+    && !new RegExp('Minnesota Senate District\\s+'+seed.district+'\\b','i').test(html))
+    throw Error('Not the named 2026 original publisher State Senate guide');
+  const headers=seed.candidates.map(name=>{
+    const index=lines.findIndex(s=>s.toLowerCase()===name.toLowerCase() ||
+      s.toLowerCase()===(name+' (incumbent)').toLowerCase());
+    return {candidateName:name,index};
+  }).filter(x=>x.index>=0).sort((a,b)=>a.index-b.index);
+  const result:Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>= [];
+  for(const [i,c] of headers.entries()) {
+    const stop=headers[i+1]?.index??lines.length;
+    const section=lines.slice(c.index+1,stop);
+    const firstQ=section.findIndex(x=>rosevillePrompts.some(re=>re.test(x)));
+    if(firstQ<0)continue; // Explicit nonresponse or no published answers.
+    const party=section.slice(0,firstQ).find(s=>
+      /^(?:Republican|Democratic(?:[- ]Farmer[- ]Labor)?|DFL|Independent)$/i.test(s))??null;
+    const parts:Array<{q:string;a:string[]}>=[];let current:{q:string;a:string[]}|undefined;
+    for(const line of section.slice(firstQ)) {
+      if(/^(?:Candidate Forum(?: & Speakouts)?|Prepare to Vote|Additional Roseville-specific election coverage|Sign up for The Roseville Reader|Read more)$/i.test(line))break;
+      if(rosevillePrompts.some(re=>re.test(line))) {
+        if(current)parts.push(current);
+        current={q:line,a:[]};
+      } else if(current && !/^(?:Questionnaire Responses:?|Campaign website)$/i.test(line)) {
+        current.a.push(line);
+      }
+    }
+    if(current)parts.push(current);
+    const qa=qaFromParts(parts.map(p=>({q:p.q,a:p.a.join('\n')})));
+    if(qa.length<4)continue;
+    const shownDate=lines.find(x=>/^\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+20\d{2}\b/i.test(x));
+    result.push({candidateName:c.candidateName,party,district:districtNumber(seed.district),
+      displayedPublicationOn:dateFrom(shownDate??''),qa});
+  }
+  if(!result.length)throw Error('No original Roseville State Senate Q&A returned');
+  return result;
+}
+
+/** Publisher prints full six multi-paragraph survey questions and individual
+ * State Senate response rows. Do not include its House/Congress respondents,
+ * scorecards, commentary, or a seventh answer without a displayed Q7 prompt.
+ */
+function parseMnRightToLife(html:string,seed:QuestionnaireSource):
+Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
+  if(seed.cycle!==2026)throw Error('Unsupported election year for published MNRTL table');
+  const lines=visibleLines(html);
+  if(!lines.some(s=>/^2026 Primary Survey Results$/i.test(s)))
+    throw Error('Not the published 2026 legislative primary survey results');
+  const questionStarts=Array.from({length:6},(_,i)=>lines.findIndex(s=>
+    new RegExp('^Question\\s+'+(i+1)+'$','i').test(s)));
+  if(questionStarts.some(i=>i<0)||questionStarts.some((i,n)=>n>0&&i<=questionStarts[n-1]))
+    throw Error('Publisher six original survey questions unavailable in order');
+  const end=lines.findIndex((x,i)=>i>questionStarts[5]&&/^Scroll to the right to see all the results/i.test(x));
+  const originalQuestions=questionStarts.map((from,i)=>{
+    const to=i<5?questionStarts[i+1]:(end>from?end:lines.length);
+    return lines.slice(from+1,to).join('\n').trim();
+  });
+  if(originalQuestions.some(q=>q.length<25))throw Error('Full original publisher question content missing');
+  const result:Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>= [];
+  const unique=new Set<string>();
+  for(const tr of html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)){
+    const cells=[...tr[1].matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)]
+      .map(x=>visibleLines(x[1]).join('\n').trim());
+    if(cells.length<17)continue;
+    if(!/^Minnesota Senate$/i.test(cells[9]))continue;
+    if(cells[1].replace(/,/g,'')!=='2026')continue;
+    const name=[cells[5],cells[6]].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+    const district=districtNumber(cells[8]);
+    if(!name||!district||name.length>130)continue;
+    const seenKey=seed.cycle+'|'+district+'|'+name.toLowerCase();
+    if(unique.has(seenKey))continue;
+    unique.add(seenKey);
+    const answers=cells.slice(10,16);
+    if(answers.length!==6||answers.some(a=>!a))continue;
+    const qa=originalQuestions.map((question,ordinal)=>({
+      ordinal:ordinal+1,question,answer:answers[ordinal],
+    }));
+    const date=dateFrom(cells[4]);
+    result.push({candidateName:name,district,party:cells[7]||null,
+      displayedSubmittedOn:date,qa});
+  }
+  if(!result.length)throw Error('Publisher survey table contained no readable State Senate respondent rows');
+  return result;
+}
+
 export function parseResponses(html:string,seed:QuestionnaireSource):
 Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   if(seed.adapter==='mhp')return parseMhp(html,seed);
   if(seed.adapter==='snap')return parseSnap(html);
   if(seed.adapter==='kaxe')return parseKaxe(html,seed);
   if(seed.adapter==='wsp_reader')return parseWestSaintPaulReader(html,seed);
+  if(seed.adapter==='roseville_reader')return parseRosevilleReader(html,seed);
+  if(seed.adapter==='mnrtl')return parseMnRightToLife(html,seed);
   if(seed.adapter==='biofuels')return parseBiofuels(html,seed);
   // Historical Ballotpedia pages are fetched, but do not silently convert
   // article quote excerpts or survey indexes into full question/answer records.
@@ -367,6 +467,8 @@ export function validateCatalog(value:unknown):QuestionnaireSource[] {
     mhp_index:['mhponline.org'],mhp:['mhponline.org'],
     snap:['snapcoalition.org'],kaxe:['www.kaxe.org'],
     wsp_reader:['weststpaulreader.com'],
+    roseville_reader:['www.rosevillereader.com'],
+    mnrtl:['www.mnrtl.org'],
     biofuels:['mnbiofuels.org','www.mnbiofuels.org'],
     biofuels_index:['mnbiofuels.org','www.mnbiofuels.org'],
     ballotpedia:['ballotpedia.org'],
