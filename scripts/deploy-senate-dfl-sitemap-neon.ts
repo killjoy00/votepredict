@@ -19,17 +19,17 @@ import {
 } from '../src/sources/minnesota/senate-dfl-sitemap-archive.js';
 
 const MARKER='SENATE_DFL_SITEMAP_RAW_20261016';
-const CRON='18 * * * *';
+const CRON='47 * * * *';
 const MIGRATION='0020_senate_raw_statement_archive_captures.sql';
 type Ledger={filename:string;checksum:string};
 type Count={year:string;total:number};
-type CheckedRun={kind:'scheduled'|'initial-main-push';runNumber:number};
+type CheckedRun={kind:'scheduled'|'initial-main-push'|'manual-fallback';runNumber:number};
 
 function assertReviewedMain():CheckedRun{
   const e=process.env;
   if(process.argv.length!==2||
     e.GITHUB_REPOSITORY!=='killjoy00/votepredict'||
-    !['push','schedule'].includes(e.GITHUB_EVENT_NAME??'')||
+    !['push','schedule','workflow_dispatch'].includes(e.GITHUB_EVENT_NAME??'')||
     e.GITHUB_REF!=='refs/heads/main'||e.GITHUB_RUN_ATTEMPT!=='1'||
     e.VOTEPREDICT_SENATE_SITEMAP_CI!=='true'||
     !/^[0-9a-f]{40}$/.test(e.GITHUB_SHA??'')||!e.GITHUB_EVENT_PATH)
@@ -50,6 +50,11 @@ function assertReviewedMain():CheckedRun{
       !p.head_commit?.message?.includes(MARKER))
       throw Error('Initial insert-only publisher sitemap backfill was not explicitly marked');
     return {kind:'initial-main-push',runNumber};
+  }
+  if(e.GITHUB_EVENT_NAME==='workflow_dispatch'){
+    if(p.ref && p.ref!=='refs/heads/main')
+      throw Error('Manual archive recovery must target the default main branch');
+    return {kind:'manual-fallback',runNumber};
   }
   if(e.GITHUB_EVENT_NAME!=='schedule'||p.schedule!==CRON)
     throw Error('Unexpected protected scheduled archive source');
