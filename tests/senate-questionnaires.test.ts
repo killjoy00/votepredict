@@ -159,3 +159,15 @@ test('MHP original response can print Senate District and Party below bold label
   assert.equal(rows[0].qa.length,2);
   assert.throws(()=>parseResponses(html.replace('Senate District 2','House District 2B'),seed));
 });
+
+test('MHP index metadata fallback requires named real question page, not form/House',()=>{
+  const candidate={...base,adapter:'mhp' as const,candidate:'Dan Rogers',district:'02',
+    url:'https://mhponline.org/2026_questionnaire/dan-rogers/'};
+  const original='<h2>Dan Rogers</h2><p>Q1: Your first policy question?</p>'+
+    '<i>Actual response.</i><p>Q2: Your second policy question?</p><i>Second response.</i>';
+  const parsed=parseResponses(original,candidate);
+  assert.equal(parsed[0].district,'2');
+  assert.equal(parsed[0].qa.length,2);
+  assert.throws(()=>parseResponses(original.replace('Dan Rogers','House Candidate'),candidate));
+  assert.throws(()=>parseResponses(original.replace('Q1:','Form:'),candidate));
+});
