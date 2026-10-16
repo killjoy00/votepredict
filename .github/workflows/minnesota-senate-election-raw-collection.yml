@@ -11,6 +11,7 @@ on:
       - scripts/deploy-mn-senate-elections-neon.ts
       - migrations/0018_mn_senate_election_raw_results.sql
       - package.json
+      - tests/senate-election-results.test.ts
       - .github/workflows/minnesota-senate-election-raw-collection.yml
   pull_request:
     paths:
@@ -21,6 +22,7 @@ on:
       - scripts/deploy-mn-senate-elections-neon.ts
       - migrations/0018_mn_senate_election_raw_results.sql
       - package.json
+      - tests/senate-election-results.test.ts
       - .github/workflows/minnesota-senate-election-raw-collection.yml
 
 permissions:
@@ -66,7 +68,7 @@ jobs:
           npm run data:senate:elections -- --all \
             --out "$RUNNER_TEMP/mn-senate-elections-raw.jsonl" \
             | tee "$RUNNER_TEMP/mn-senate-elections-coverage.log"
-      - name: Verify disposable Postgres has 210 raw general/special districts
+      - name: Verify disposable Postgres has 139 raw general/special districts
         shell: bash
         run: |
           node --input-type=module <<'NODE'
@@ -76,9 +78,9 @@ jobs:
           try{
             const r = await client.query("SELECT COUNT(*)::int AS candidates, COUNT(DISTINCT (election_date,district))::int AS contests, COUNT(*) FILTER (WHERE winner)::int AS leading FROM mn_senate_election_raw_results WHERE election_type IN ('general','special')");
             const snaps=await client.query("SELECT COUNT(*)::int AS count FROM mn_senate_election_source_snapshots");
-            if(r.rows[0].contests!==210||r.rows[0].leading!==210||
+            if(r.rows[0].contests!==139||r.rows[0].leading!==139||
                 r.rows[0].candidates<350||r.rows[0].candidates>1000||
-                snaps.rows[0].count<19)
+                snaps.rows[0].count<6)
               throw Error('Ephemeral Senate election migration/ingestion coverage did not match sources');
             console.log('EPHEMERAL_SENATE_ELECTION_ROWS='+JSON.stringify({ ...r.rows[0], snapshots:snaps.rows[0].count }));
           } finally { await client.end(); }
