@@ -18,9 +18,11 @@ const MARKER = 'SENATE_PRESS_RAW_PRODUCTION_20261015';
 const DFL_REPAIR_MARKER = 'SENATE_PRESS_DFL_REPAIR_20261015';
 const DFL_ONLY = process.env.VOTEPREDICT_SENATE_PRESS_DFL_ONLY === 'true';
 const COVERAGE_MARKER = 'SENATE_PRESS_COVERAGE_20261015';
-const DAILY_CRON = '17 14 * * *';
+const GOP_MARKER = 'SENATE_GOP_RAW_REPAIR_20261015';
+const DAILY_CRON = '27 15 * * *';
 const MODE = process.env.VOTEPREDICT_SENATE_PRESS_MODE ?? (DFL_ONLY ? 'dfl' : 'initial');
-const DAILY = MODE === 'daily', COVERAGE = MODE === 'coverage';
+const GOP_ONLY = MODE === 'gop-repair' || MODE === 'gop-daily';
+const DAILY = MODE === 'gop-daily', COVERAGE = MODE === 'coverage';
 const END = new Date().toISOString().slice(0, 10);
 const START = DAILY
   ? new Date(Date.now() - 45 * 86400000).toISOString().slice(0, 10) : '2023-01-01';
@@ -36,7 +38,7 @@ type Count = { source_id: string; year: string; items: number };
 
 function assertReviewedMain(): void {
   const env = process.env;
-  if(!['initial','dfl','coverage','daily'].includes(MODE)
+  if(!['initial','dfl','coverage','gop-repair','gop-daily'].includes(MODE)
     || (DFL_ONLY && MODE!=='dfl')
     || (!DFL_ONLY && MODE==='dfl'))
     throw Error('Unexpected production collection mode');
@@ -60,7 +62,7 @@ function assertReviewedMain(): void {
     || event.ref !== 'refs/heads/main' || event.after !== env.GITHUB_SHA
     || event.deleted === true || event.forced === true
     || event.head_commit?.id !== env.GITHUB_SHA
-    || !event.head_commit?.message?.includes(COVERAGE ? COVERAGE_MARKER : DFL_ONLY ? DFL_REPAIR_MARKER : MARKER))
+    || !event.head_commit?.message?.includes(COVERAGE ? COVERAGE_MARKER : GOP_ONLY ? GOP_MARKER : DFL_ONLY ? DFL_REPAIR_MARKER : MARKER))
     throw Error('One-shot protected production merge marker missing or mismatched');
 }
 function expectedMigrations(): Ledger[] {
@@ -134,8 +136,9 @@ async function main(): Promise<void> {
     if (process.argv.length !== 2) throw Error('Unexpected production arguments');
     assertReviewedMain();
     const expected = expectedMigrations();
-    const sources = configuredSources().filter(s => !DFL_ONLY || s.id === 'senate_dfl');
-    if (sources.length !== (DFL_ONLY ? 1 : 2))
+    const sources = configuredSources().filter(s =>
+      GOP_ONLY ? s.id==='senate_republicans' : !DFL_ONLY || s.id==='senate_dfl');
+    if (sources.length !== ((DFL_ONLY||GOP_ONLY) ? 1 : 2))
       throw Error('Expected reviewed first-party source subset not found');
     phase = 'existing_default_branch_primary';
     const target = await discoverExistingVotePredictNeonConnection({
@@ -249,7 +252,7 @@ async function main(): Promise<void> {
         }
       }
       // Extra first-party publication pages, not arbitrary searches or inferred slugs.
-      if(COVERAGE||DAILY) {
+      if(COVERAGE||DAILY||GOP_ONLY) {
         if(source.id==='senate_dfl') {
           const linkedAuthors = [...new Set(dflPasses.flatMap(r=>r.member_archives))];
           if(!linkedAuthors.length)
