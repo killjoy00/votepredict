@@ -184,13 +184,26 @@ jobs:
                 const metrics=['evidenceCopies','uniqueCanonicalTransactions','unique_pdf_bodies','reports_with_extraction',
                   'machine_readable_reports','ocr_backlog','schedule_lines','exact_links','unique_linked_transactions',
                   'ambiguous_rows','unmatched_report_row_pairs','separate_archived_bulk_observations','reportBacklog',
-                  'attemptedReports','completedThisRun','failedThisRun','distinctBodiesDownloadedThisRun'];
+                  'attemptedReports','completedThisRun','failedThisRun','distinctBodiesDownloadedThisRun',
+                  'totalFinanceEvidenceCopies','totalUniqueFinanceTransactions'];
                 if(v.schema==='cfb-864-transaction-specific-raw-report-provenance-v1'
                   &&v.officialRegisteredReportVersions===830&&v.officialDistinctPdfHashes===813
                   &&v.historicalEligibilityUnchanged===true&&v.forecastsAndModelsUnchanged===true
                   &&metrics.every(k=>Number.isSafeInteger(v[k])&&v[k]>=0&&v[k]<=3000000)
                   &&v.reports_with_extraction+v.reportBacklog===830
-                  &&v.unique_linked_transactions<=v.exact_links)result=v;
+                  &&v.unique_linked_transactions<=v.exact_links
+                  &&v.familyBreakdown
+                  &&['candidate_contribution','candidate_expenditure','independent_expenditure']
+                   .every(f=>Number.isSafeInteger(v.familyBreakdown[f]?.evidenceCopies)
+                    &&Number.isSafeInteger(v.familyBreakdown[f]?.uniqueTransactions)
+                    &&v.familyBreakdown[f].evidenceCopies>=0
+                    &&v.familyBreakdown[f].uniqueTransactions>=0
+                    &&v.familyBreakdown[f].uniqueTransactions<=v.familyBreakdown[f].evidenceCopies)
+                  &&['candidate_contribution','candidate_expenditure','independent_expenditure']
+                   .reduce((sum,f)=>sum+v.familyBreakdown[f].evidenceCopies,0)===v.totalFinanceEvidenceCopies
+                  &&['candidate_contribution','candidate_expenditure','independent_expenditure']
+                   .reduce((sum,f)=>sum+v.familyBreakdown[f].uniqueTransactions,0)===v.totalUniqueFinanceTransactions)
+                   result=v;
               }catch{}
             }
             if(pre!=='success')lines.push('**Held before credentials:** independent checks failed. No production result certified.');
@@ -200,6 +213,13 @@ jobs:
                 +result.unique_pdf_bodies+'/813 verified distinct PDF bodies; '+result.schedule_lines+' schedule-line captures.');
               lines.push('**Existing finance:** '+result.uniqueCanonicalTransactions+' unique canonical transaction keys across '
                 +result.evidenceCopies+' copies (scoped candidate families).');
+              for(const [family,label] of [['candidate_contribution','Contributions'],
+                ['candidate_expenditure','Candidate expenditures'],
+                ['independent_expenditure','Independent expenditures (not candidate PDF matched)']]){
+                const v=result.familyBreakdown[family];
+                lines.push('**'+label+':** '+v.evidenceCopies+' stored evidence copies; '
+                  +v.uniqueTransactions+' distinct canonical transaction keys.');
+              }
               lines.push('**Provenance:** '+result.exact_links+' exact transaction-to-version links across '
                 +result.unique_linked_transactions+' unique canonical transactions, '
                 +result.ambiguous_rows+' ambiguous and '+result.unmatched_report_row_pairs+' unmatched report/row pairs.');
