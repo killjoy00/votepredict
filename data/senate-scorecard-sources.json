@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "researchIndex": "https://www.lrl.mn.gov/guides/guides?issue=ratings",
+  "sources": [
+    {
+      "groupName": "Action 4 Liberty",
+      "year": 2021,
+      "adapter": "a4l_pdf",
+      "url": "https://assets.nationbuilder.com/action4liberty/pages/44/attachments/original/1651254172/A4L-MN-Scorecard-2021-final.pdf?1651254172="
+    },
+    {
+      "groupName": "Action 4 Liberty",
+      "year": 2022,
+      "adapter": "a4l_pdf",
+      "url": "https://assets.nationbuilder.com/action4liberty/pages/44/attachments/original/1702403449/A4L-MN-Scorecard-2022.pdf?1702403449="
+    },
+    {
+      "groupName": "Action 4 Liberty",
+      "year": 2024,
+      "adapter": "a4l_pdf",
+      "url": "https://assets.nationbuilder.com/action4liberty/pages/44/attachments/original/1765990503/A4L-MN-Scorecard-2024.pdf?1765990503="
+    },
+    {
+      "groupName": "Action 4 Liberty",
+      "year": 2025,
+      "adapter": "a4l_pdf",
+      "url": "https://assets.nationbuilder.com/action4liberty/pages/44/attachments/original/1761168497/A4L-MN-Scorecard-2025.pdf?1761168497="
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2025,
+      "adapter": "raw_html",
+      "url": "https://www.conservationminnesota.org/voting-records"
+    },
+    {
+      "groupName": "CPAC Foundation",
+      "year": 2025,
+      "adapter": "generic_pdf",
+      "url": "https://0fcd04ed-0315-495d-9994-5ea6bb008275.usrfiles.com/ugd/0fcd04_239ab4943cb04b6fa6f2ce787dd2beaf.pdf"
+    },
+    {
+      "groupName": "Education Minnesota",
+      "year": 2022,
+      "adapter": "edmn_html",
+      "url": "https://educationminnesota.org/news/press-release/education-minnesota-announces-latest-legislative-endorsements/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Education Minnesota",
+      "year": 2022,
+      "adapter": "edmn_html",
+      "url": "https://educationminnesota.org/news/press-release/education-minnesota-announces-legislative-endorsements/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Education Minnesota",
+      "year": 2026,
+      "adapter": "edmn_html",
+      "url": "https://educationminnesota.org/news/press-release/education-minnesota-endorses-13-more-candidates-for-legislature/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Education Minnesota",
+      "year": 2026,
+      "adapter": "edmn_html",
+      "url": "https://educationminnesota.org/news/press-release/education-minnesota-endorses-18-more-candidates-for-legislature/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Education Minnesota",
+      "year": 2026,
+      "adapter": "edmn_html",
+      "url": "https://educationminnesota.org/news/press-release/education-minnesota-endorses-54-more-candidates-for-legislature/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Education Minnesota",
+      "year": 2026,
+      "adapter": "edmn_html",
+      "url": "https://educationminnesota.org/news/press-release/education-minnesota-endorses-99-candidates-for-legislature/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Legislative Evaluation Assembly",
+      "year": 2025,
+      "adapter": "raw_html",
+      "url": "https://lea-mn.org/lea-annual-reports-on-the-legislature/"
+    },
+    {
+      "groupName": "MCCL",
+      "year": 2023,
+      "adapter": "raw_html",
+      "url": "https://www.mccl.org/legislative-accountability-ratings"
+    },
+    {
+      "groupName": "Minnesota AFL-CIO",
+      "year": 2021,
+      "adapter": "aflcio_pdf",
+      "url": "https://www.mnaflcio.org/sites/default/files/Uploaded%20Files/2021%20Legislative%20Report.pdf"
+    },
+    {
+      "groupName": "Minnesota AFL-CIO",
+      "year": 2022,
+      "adapter": "aflcio_pdf",
+      "url": "https://www.mnaflcio.org/sites/default/files/Uploaded%20Files/2022%20Legislative%20Report.pdf"
+    },
+    {
+      "groupName": "Minnesota AFL-CIO",
+      "year": 2023,
+      "adapter": "aflcio_pdf",
+      "url": "https://mnaflcio.org/sites/default/files/Uploaded%20Files/2023%20Legislative%20Report_0.pdf"
+    },
+    {
+      "groupName": "Minnesota AFL-CIO",
+      "year": 2024,
+      "adapter": "aflcio_pdf",
+      "url": "https://mnaflcio.org/sites/default/files/Uploaded%20Files/2024%20Legislative%20Report.pdf"
+    },
+    {
+      "groupName": "Minnesota AFL-CIO",
+      "year": 2025,
+      "adapter": "aflcio_pdf",
+      "url": "https://mnaflcio.org/sites/default/files/Uploaded%20Files/2025%20Legislative%20Report.pdf"
+    },
+    {
+      "groupName": "Minnesota Chamber of Commerce",
+      "year": 2021,
+      "adapter": "generic_pdf",
+      "url": "https://www.mnchamber.com/sites/default/files/Voting%20Record%202021%209.22.21.pdf"
+    },
+    {
+      "groupName": "Minnesota Chamber of Commerce",
+      "year": 2024,
+      "adapter": "generic_pdf",
+      "url": "https://www.mnchamber.com/sites/default/files/VotingRecord_2024_11.pdf"
+    },
+    {
+      "groupName": "Minnesota Chamber of Commerce",
+      "year": 2025,
+      "adapter": "generic_pdf",
+      "url": "https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/la2h29b2/fk1/h8z/ur6/Voting%20Record%202025%20%281%29.pdf"
+    },
+    {
+      "groupName": "Minnesota Chamber of Commerce",
+      "year": 2026,
+      "adapter": "raw_html",
+      "url": "https://www.mnchamber.com/2025-2026-legislative-voting-record"
+    },
+    {
+      "groupName": "Minnesota Gun Owners Caucus",
+      "year": 2022,
+      "adapter": "gunowners_html",
+      "url": "https://gunowners.mn/elections/2022-general-election-legislature/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Minnesota Gun Owners Caucus",
+      "year": 2024,
+      "adapter": "gunowners_html",
+      "url": "https://gunowners.mn/elections/2024-general-election/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Minnesota Gun Owners Caucus",
+      "year": 2025,
+      "adapter": "gunowners_html",
+      "url": "https://gunowners.mn/elections/2025-special-elections/",
+      "electionCandidate": true
+    },
+    {
+      "groupName": "Minnesota Gun Owners Caucus",
+      "year": 2026,
+      "adapter": "raw_html",
+      "url": "https://gunowners.mn/elections/",
+      "electionCandidate": true
+    }
+  ],
+  "requestedGroups": [
+    "Minnesota Chamber of Commerce",
+    "NFIB Minnesota",
+    "Minnesota AFL-CIO",
+    "Education Minnesota",
+    "Sierra Club North Star",
+    "Conservation Minnesota",
+    "MCCL",
+    "Pro-Choice Minnesota / Gender Justice / Planned Parenthood MN Action",
+    "NRA",
+    "Protect Minnesota",
+    "Taxpayers League",
+    "Action 4 Liberty",
+    "Minnesota Gun Owners Caucus",
+    "CPAC Foundation",
+    "Legislative Evaluation Assembly"
+  ]
+}

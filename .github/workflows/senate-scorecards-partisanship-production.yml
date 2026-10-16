@@ -1,0 +1,180 @@
+name: Capture raw Minnesota Senate scorecards and district partisanship
+
+on:
+  pull_request:
+    paths:
+      - migrations/0024_senate_raw_vote_views.sql
+      - migrations/0025_senate_bill_authors.sql
+      - migrations/0026_senate_scorecards_district_partisanship.sql
+      - data/senate-scorecard-sources.json
+      - src/sources/minnesota/senate-scorecard-raw.ts
+      - src/sources/minnesota/senate-district-partisanship-raw.ts
+      - src/operations/senate-scorecard-partisanship-ingest.ts
+      - scripts/deploy-senate-scorecards-partisanship-neon.ts
+      - tests/senate-scorecards-partisanship.test.ts
+      - docs/sources/senate-scorecards-and-district-partisanship.md
+      - .github/workflows/senate-scorecards-partisanship-production.yml
+  push:
+    branches: [main]
+    paths:
+      - migrations/0024_senate_raw_vote_views.sql
+      - migrations/0025_senate_bill_authors.sql
+      - migrations/0026_senate_scorecards_district_partisanship.sql
+      - data/senate-scorecard-sources.json
+      - src/sources/minnesota/senate-scorecard-raw.ts
+      - src/sources/minnesota/senate-district-partisanship-raw.ts
+      - src/operations/senate-scorecard-partisanship-ingest.ts
+      - scripts/deploy-senate-scorecards-partisanship-neon.ts
+      - tests/senate-scorecards-partisanship.test.ts
+      - docs/sources/senate-scorecards-and-district-partisanship.md
+      - .github/workflows/senate-scorecards-partisanship-production.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-scorecards-partisanship-raw-production
+  cancel-in-progress: false
+
+jobs:
+  pr-keyless:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply full additive migrations twice to one disposable Postgres and verify drift
+        run: |
+          npm run db:migrate
+          npm run db:migrate
+          node --import tsx scripts/check-production-migration-drift.ts
+      - name: Real source parsers and repeated disposable PostgreSQL collection
+        run: node --import tsx --test tests/senate-scorecards-partisanship.test.ts
+      - name: Explicit npm test twice against same PostgreSQL
+        run: |
+          npm test
+          npm test
+      - name: Complete TypeScript, tests, and production build
+        run: npm run check
+
+  independent-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_SCORECARDS_PARTISANSHIP_PRODUCTION')
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Match independently reviewed main SHA
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Migrations twice, drift check, typecheck, full tests and build
+        run: |
+          npm run db:migrate
+          npm run db:migrate
+          node --import tsx scripts/check-production-migration-drift.ts
+          npm run check
+          npm test
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+  protected-production-neon:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_SCORECARDS_PARTISANSHIP_PRODUCTION')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SCORECARDS_PARTISANSHIP_INDEPENDENT_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm exact marker-bearing main SHA
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Read-only preflight, additive ledger migration, drift gate, bounded evidence, read-only readback
+        run: node --import tsx scripts/deploy-senate-scorecards-partisanship-neon.ts
