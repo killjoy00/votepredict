@@ -35,5 +35,8 @@ async function main():Promise<void>{
     await sleep(3000);
   }
   console.log('SENATE_DFL_WAYBACK_REPLAY_PROBE='+JSON.stringify({byYear:outcome}));
+  if(process.env.VOTEPREDICT_DFL_ARCHIVE_REQUIRES_FULL==='true' &&
+    outcome.reduce((n,x)=>n+x.recovered,0)===0)
+    throw Error('No original complete DFL archive content accessible; protected production held');
 }
 void main().catch(()=>{console.error('SENATE_DFL_WAYBACK_REPLAY_PROBE_FAILED');process.exitCode=1;});
