@@ -24,9 +24,9 @@ interface Catalog {
   bills: SessionBill[];
   memberById: Map<string,SenateMember>;
 }
-interface LinkTally { scanned:number; memberEdges:number; billEdges:number; inclusionEdges:number; aliasesLearned:number }
+interface LinkTally { scanned:number; memberEdges:number; billEdges:number; inclusionEdges:number; aliasesLearned:number; archiveSessionFallbacks:number; unresolvedSessions:number }
 interface Statement {
-  id:string; source_url:string; published_on:string|null;
+  id:string; source_url:string; published_on:string|null; archive_captured_at:string|null;
   named_senators:string[]; bill_identifiers:string[];
 }
 interface Testimony {
@@ -62,8 +62,23 @@ function yearFromPublishedUrl(url:string):string|null {
   const years=[...path.matchAll(/(?:^|\/)(202[1-6])(?:\/|$)/g)].map(m=>Number(m[1]));
   return years.length === 1 ? String(years[0])+'-01-01' : null;
 }
-function sourceSession(published:string|null,url:string):string|null {
-  return senateSessionForDate(published ?? yearFromPublishedUrl(url));
+export function statementSessionEvidence(
+  published:string|null,url:string,capturedAt:string|null,
+):{slug:string|null;method:'published_on'|'url_year'|'archive_capture_upper_bound'|'unresolved'}{
+  // Publication dates are authoritative for attribution; capture timestamps
+  // are only an upper bound on when the text was publicly observed.
+  if(published){
+    const slug=senateSessionForDate(published);
+    return {slug,method:slug?'published_on':'unresolved'};
+  }
+  const urlDate=yearFromPublishedUrl(url);
+  if(urlDate){
+    const slug=senateSessionForDate(urlDate);
+    return {slug,method:slug?'url_year':'unresolved'};
+  }
+  const observedDate=capturedAt?.slice(0,10)??null;
+  const slug=senateSessionForDate(observedDate);
+  return {slug,method:slug?'archive_capture_upper_bound':'unresolved'};
 }
 function memberIdsUnique(rows: readonly {membership_id:string|null}[]):string|null {
   const ids=new Set(rows.map(r=>r.membership_id).filter((id):id is string=>!!id));
@@ -155,19 +170,28 @@ async function statements(client:PoolClient,cat:Catalog,aliases:AliasBuffer,tall
   let cursor='';
   while(tally.scanned<MAX_STATEMENTS) {
     const q=await client.query<Statement>(
-      "SELECT id,source_url,published_on::text,named_senators,bill_identifiers FROM senate_raw_statements "+
-      "WHERE ($1::text='' OR id>NULLIF($1,'')::uuid) ORDER BY id LIMIT $2",
+      "SELECT t.id,t.source_url,t.published_on::text,t.named_senators,t.bill_identifiers,"+
+      "a.captured_at::text AS archive_captured_at FROM senate_raw_statements t "+
+      "LEFT JOIN senate_raw_statement_archive_captures a ON a.source_url=t.source_url "+
+      "WHERE ($1::text='' OR t.id>NULLIF($1,'')::uuid) ORDER BY t.id LIMIT $2",
       [cursor,Math.min(250,MAX_STATEMENTS-tally.scanned)]);
     if(!q.rows.length)break;
     const memberRows:Record<string,unknown>[]=[];
     const billRows:Record<string,unknown>[]=[];
     const parentRows:Record<string,unknown>[]=[];
     for(const row of q.rows){
-      const slug=sourceSession(row.published_on,row.source_url);
+      const evidence=statementSessionEvidence(row.published_on,row.source_url,row.archive_captured_at);
+      const slug=evidence.slug;
+      if(evidence.method==='archive_capture_upper_bound')tally.archiveSessionFallbacks++;
+      if(!slug)tally.unresolvedSessions++;
       const memberMentions:( {membership_id:string|null;match_method:string})[]=[];
       const billMentions:({bill_id:string|null;match_method:string})[]=[];
       for(const [index,name] of (row.named_senators??[]).entries()){
-        const result=resolveSenator({printedName:name,sessionSlug:slug??''},cat.roster);
+        const result=resolveSenator({
+          printedName:name,sessionSlug:slug??'',
+          date:row.published_on??(evidence.method==='archive_capture_upper_bound'
+            ? row.archive_captured_at?.slice(0,10) : null),
+        },cat.roster);
         memberRows.push({
           statement_id:row.id,source_ordinal:index,printed_name:name,
           membership_id:result.membershipId,match_method:result.matchMethod,
@@ -187,6 +211,7 @@ async function statements(client:PoolClient,cat:Catalog,aliases:AliasBuffer,tall
       const billId=billMentions.length===1 ? billIdsUnique(billMentions) : null;
       parentRows.push({
         id:row.id,session_id:slug?cat.sessions.get(slug):null,
+        session_match_method:evidence.method,
         membership_id:memberId,
         membership_match_method:memberId?memberMentions[0].match_method:'unresolved',
         bill_id:billId,
@@ -211,11 +236,12 @@ async function statements(client:PoolClient,cat:Catalog,aliases:AliasBuffer,tall
       'ELSE senate_statement_bill_mentions.match_method END');
     await updateRows(client,
       "UPDATE senate_raw_statements t SET session_id=COALESCE(t.session_id,v.session_id),"+
+       "session_match_method=CASE WHEN t.session_id IS NULL AND v.session_id IS NOT NULL THEN v.session_match_method ELSE COALESCE(t.session_match_method,v.session_match_method) END,"+
       "membership_id=COALESCE(t.membership_id,v.membership_id),"+
       "membership_match_method=CASE WHEN t.membership_id IS NULL AND v.membership_id IS NOT NULL THEN v.membership_match_method ELSE COALESCE(t.membership_match_method,v.membership_match_method) END,"+
       "bill_id=COALESCE(t.bill_id,v.bill_id),"+
       "bill_match_method=CASE WHEN t.bill_id IS NULL AND v.bill_id IS NOT NULL THEN v.bill_match_method ELSE COALESCE(t.bill_match_method,v.bill_match_method) END "+
-      "FROM jsonb_to_recordset($1::jsonb) AS v(id uuid,session_id uuid,membership_id uuid,"+
+      "FROM jsonb_to_recordset($1::jsonb) AS v(id uuid,session_id uuid,session_match_method text,membership_id uuid,"+
       "membership_match_method text,bill_id uuid,bill_match_method text) WHERE t.id=v.id",
       parentRows);
     tally.scanned+=q.rows.length;
@@ -464,7 +490,7 @@ export async function runSenateRawIdentityBillBackfill(pool:Pool):Promise<{
   try{
     const cat=await catalog(client);
     const aliases=new AliasBuffer();
-    const stmt:LinkTally={scanned:0,memberEdges:0,billEdges:0,inclusionEdges:0,aliasesLearned:0};
+    const stmt:LinkTally={scanned:0,memberEdges:0,billEdges:0,inclusionEdges:0,aliasesLearned:0,archiveSessionFallbacks:0,unresolvedSessions:0};
     await statements(client,cat,aliases,stmt);
     const tst=await testimony(client,cat,aliases);
     const elect=await elections(client,cat,aliases);
