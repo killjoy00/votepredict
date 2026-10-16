@@ -77,6 +77,11 @@ async function main(): Promise<void> {
         try {
           const raw = await fetchSenateElection(event);
           const eventDistricts = new Set(raw.candidates.map((item) => item.district));
+          if (event.expectedDistricts !== undefined && eventDistricts.size !== event.expectedDistricts)
+            throw Error('Official source contains ' + eventDistricts.size + ' districts; expected ' + event.expectedDistricts);
+          if ((event.type === 'general' || event.type === 'special') &&
+              raw.candidates.filter((c) => c.winner).length !== eventDistricts.size)
+            throw Error('One unambiguous leading Senate candidate required per general/special district');
           if (options.out) appendFileSync(options.out, JSON.stringify({
             event, sourceUrl: raw.sourceUrl, sourceIndexUrl: raw.indexUrl,
             fetchedAt: raw.fetchedAt, contentType: raw.contentType,
