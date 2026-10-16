@@ -57,7 +57,7 @@ test('genuine PDF parser retains the source text, without summarizing', async ()
   const bytes = pdfWithText('Senate PDF testimony and ordinary footer');
   const url = 'https://assets.senate.mn/committees/2025-2026/3140/sample.pdf';
   const result = await captureSenateAttachment(url, {
-    fetcher: async () => new Response(bytes, { headers: { 'content-type': 'application/pdf' } }),
+    fetcher: async () => new Response(Uint8Array.from(bytes).buffer, { headers: { 'content-type': 'application/pdf' } }),
     allowOcr: false,
   });
   assert.equal(result.extractionStatus, 'extracted');
