@@ -4,7 +4,7 @@
 
 This is **raw collection**, not position verification, historical evidence
 certification, forecasting, model features or serving. The only new persistent
-tables are from additive migration 0024_senate_bill_authors.sql.
+tables are from additive migration 0025_senate_bill_authors.sql.
 Existing bill IDs, SF/HF companions, and Senate memberships are reused without
 changing their source tables. No House person-to-Senate membership link is made.
 
@@ -107,7 +107,7 @@ Production workflow: .github/workflows/senate-bill-authors-production.yml.
 A first-attempt, non-forced main merge commit must include the marker
 **SENATE_BILL_AUTHORS_PRODUCTION**, after independent-main CI has passed,
 and then run within existing evidence-readonly-sandbox. The runner performs
-read-only preflight, ledgered 0024 migration, migration drift gate, bounded
+read-only preflight, ledgered 0025 migration, migration drift gate, bounded
 collection and read-only repeatable-read readback with ROLLBACK.
 GitHub Actions reuses the existing protected Neon credentials and marked
 default primary; no secrets are printed. Branch or environment protection
