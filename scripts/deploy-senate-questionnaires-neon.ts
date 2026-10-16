@@ -157,7 +157,8 @@ async function main():Promise<void>{
       +', missing explicit publication dates: '+after.totals.missingDates
       +', failed sources: '+summary.failed.length
       +'. No forecasting tables or models were touched.\n');
-    if(summary.failed.length)process.exitCode=1;
+    // Publisher access/parse failures remain explicit in structured readback;
+    // do not erase successfully committed raw responses or mark them as absent.
     phase='complete';
   }catch{
     // No Neon secrets or source answer text in errors.
