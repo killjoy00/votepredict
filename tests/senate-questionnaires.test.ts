@@ -144,3 +144,18 @@ test('local 2026 original-publisher multi-candidate responses keep 6 long plus 1
   assert.equal(rows[1].party,'GOP');
   assert.equal(rows[0].displayedPublicationOn,'2026-09-18');
 });
+
+test('MHP original response can print Senate District and Party below bold labels',()=>{
+  const seed={...base,adapter:'mhp' as const,candidate:'Dan Rogers',district:'02',
+    url:'https://mhponline.org/2026_questionnaire/dan-rogers/'};
+  const html='<main><h2>Dan Rogers</h2><h4>Legislative District:</h4><p>Senate District 2</p>'+
+    '<h4>Party:</h4><p>Democratic-Farmer-Labor Party</p>'+
+    '<p>Q1: What would you fund?</p><i>Home construction.</i>'+
+    '<p>Q2: How should the law change?</p><i>Improve permitting.</i></main>';
+  const rows=parseResponses(html,seed);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].district,'2');
+  assert.equal(rows[0].party,'Democratic-Farmer-Labor Party');
+  assert.equal(rows[0].qa.length,2);
+  assert.throws(()=>parseResponses(html.replace('Senate District 2','House District 2B'),seed));
+});
