@@ -75,19 +75,27 @@ The PR workflow `.github/workflows/senate-scorecards-partisanship-production.yml
 
 **Part B remains verified without repeat fetching:** the follow-up reported `districtDataReused=true`, **0 new district rows**, and exactly the original **268 district results** (67 for each of 2020 president on 2012 lines, 2022 governor and attorney general on 2022 lines, and 2024 president on 2022 lines). Original same-release statewide total checks all passed. The follow-up did not reapply migration 0026 or modify forecasting/serving.
 
+**Third production receipt, 2026-10-16 (saved-source replay):** [PR #1383](https://github.com/killjoy00/votepredict/pull/1383) passed both CI workflows and merged to main. The reviewed one-shot [protected run #38971092839](https://github.com/killjoy00/votepredict/actions/runs/38971092839) completed with `status=committed_readback_verified`, `storedOnly=true`, `reparsed=9`, `attempted=0`, `fetched=0`, `newSnapshots=0`, `electionRowsNew=0`, and `districtDataReused=true`. It replayed the existing saved publisher plaintext for Chamber, MCCL, Conservation Minnesota, and Education Minnesota's 2025 special, using the exact preexisting URL/group/year/SHA; it did **not** request another public source, create a new publisher version, alter source hashes, or touch forecast/model/serving code.
+
+The saved Minnesota Chamber PDF text yielded **58 new literal publisher bill-position records**, mechanically resolving **all 58 bill IDs**: **11** from the **2021** voting record, **43** from the **2024** record, and **4** from the **2025** record. These retain the explicitly printed Chamber support/opposition wording and amendment identifiers where available. They are **not** reconstructed individual senator scores or proof a vote took place. Existing AFL-CIO's 38 positions remain intact: total **38 → 96 bill positions; all 96 linked**. The newly printed records are evidence of the publisher's position and are not forecast features.
+
+There were **zero** additional per-senator score, grade or endorsement entries from the nine replayed snapshots. Both Conservation Minnesota saved versions, both MCCL saved versions, the 2026 Chamber landing page and the 2025 Education Minnesota District 60 special page yielded no safely structured record from already stored text. The Education Minnesota 2025 item remains a **raw captured publisher page**, not a structured endorsement. No inferred member ratings were synthesized from the Chamber individual Yes/No voting grid or linked MCCL original legislative vote lists.
+
+Exact before → after readback: **30 → 30 publisher snapshot versions, 421 → 421 entry rows, 205 → 205 member links, 38 → 96 positions, 38 → 96 bill links, 268 → 268 official district-election rows**. Publisher line counts, year labels and partial-coverage caveats above remain applicable; **0 new senator scores** does not mean MCCL or Conservation Minnesota lack first-party published voting records.
+
 ### Current versioned publisher readback
 
 | Group / publication years | Snapshot versions | Scorecard entry rows |
 | --- | ---: | ---: |
 | Education Minnesota 2022, 2024, 2025, 2026 | 4, 1, 1, 8 | 92, 1, 0, 122 |
 | Minnesota Gun Owners Caucus 2022, 2024, 2025, 2026 | 1, 1, 1, 2 | 190, 2, 14, 0 |
-| Minnesota Chamber of Commerce 2021, 2024, 2025, 2026 | 1 each | 0 |
+| Minnesota Chamber of Commerce 2021, 2024, 2025, 2026 | 1 each | 0 entries; 11, 43, 4, 0 explicit publisher bill positions respectively |
 | Minnesota AFL-CIO 2023, 2024, 2025 | 1 each | 0 entries; 38 literal bill positions across 3 snapshots |
 | Conservation Minnesota 2025 | 2 | 0 |
 | MCCL 2023 | 2 | 0 |
 | NFIB and all unavailable groups | 0 | 0 |
 
-Totals: **30 snapshot versions, 421 senator entry rows and 38 linked bill positions**. The publisher snapshots can repeat the same name/value across refreshed versions; these versioned rows are not a unique candidate-endorsement count. Further NFIB capture requires a publisher-permitted, technically reliable original source path; do not evade robots rules.
+Totals following saved-only replay: **30 snapshot versions, 421 senator entry rows and 96 linked bill positions** (38 original AFL-CIO + 58 newly parsed Chamber publisher positions). The publisher snapshots can repeat the same name/value across refreshed versions; these versioned rows are not a unique candidate-endorsement count. Further NFIB capture requires a publisher-permitted, technically reliable original source path; do not evade robots rules.
 
 Read-only production SQL after deployment:
 
