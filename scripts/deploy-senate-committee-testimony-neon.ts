@@ -9,7 +9,7 @@ import { readFileSync, readdirSync, appendFileSync } from 'node:fs';
 import { Pool, type PoolClient } from 'pg';
 import { discoverExistingVotePredictNeonConnection } from '../src/operations/senate-media-neon-api-readonly.js';
 import {
-  collectSenateCommitteeTestimony, normalizedBill,
+  collectSenateCommitteeTestimony, normalizedBill, senateSqlSafeRecord,
   type RawSenateTestimonyRecord, type RawSenateTestimonySummary,
 } from '../src/sources/minnesota/senate-committee-testimony.js';
 import { getMinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
@@ -92,7 +92,7 @@ async function collectSources(): Promise<Collection[]> {
       session, from, to, delayMs: 250, parsePdfLists: true,
       onRecord: async row => {
         validateRow(row, slug, from, to);
-        unique.set(row.recordKey, row);
+        unique.set(row.recordKey, senateSqlSafeRecord(row));
         if (unique.size > 55_000) throw Error('Raw Senate source row cap exceeded');
       },
     });
@@ -240,7 +240,17 @@ async function upsertSession(client: PoolClient, batch: Collection): Promise<{
       await client.query('BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED READ WRITE');
       active = true;
       await client.query("SET LOCAL lock_timeout='4s'");
-      await client.query(UPSERT_SQL, [sessionId, JSON.stringify(rows)]);
+      try {
+        await client.query(UPSERT_SQL, [sessionId, JSON.stringify(rows)]);
+      } catch (error) {
+        const state = (error as { code?: unknown } | null)?.code;
+        // Never log row contents, errors, URLs, SQL text or credentials.
+        const sqlState = typeof state === 'string' && /^[A-Z0-9]{5}$/.test(state) ? state : 'unknown';
+        console.error('SENATE_TESTIMONY_BATCH_HELD=' + JSON.stringify({
+          session: batch.session, offset, size: rows.length, sqlState,
+        }));
+        throw error;
+      }
       await client.query('COMMIT');
       active = false;
     } finally {
@@ -293,7 +303,7 @@ async function main(): Promise<void> {
     try {
       phase = 'readonly_production_ledger_and_identity';
       await preflight(client, target, expected);
-      phase = 'additive_migration_0016';
+      phase = 'additive_migration_0017';
       const migrationApplied = await applyMigration(client, expected);
       phase = 'verify_raw_only_table_and_ledger';
       await confirmMigration(client, expected);
