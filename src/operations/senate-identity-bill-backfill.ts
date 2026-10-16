@@ -79,7 +79,7 @@ async function bulk(
   if (!rows.length) return;
   const sql='INSERT INTO '+table+' ('+columns.join(',')+') SELECT '
     +columns.map(c=>'v.'+c).join(',')+' FROM jsonb_to_recordset($1::jsonb) AS v('
-    +definitions+') '+clause;
+    +definitions+') WHERE true '+clause;
   for(let i=0;i<rows.length;i+=CHUNK) {
     await client.query(sql,[JSON.stringify(rows.slice(i,i+CHUNK))]);
   }
@@ -198,7 +198,7 @@ async function statements(client:PoolClient,cat:Catalog,aliases:AliasBuffer,tall
       memberRows,
       'ON CONFLICT (statement_id,source_ordinal) DO UPDATE SET '+
       'membership_id=COALESCE(senate_statement_member_mentions.membership_id,EXCLUDED.membership_id), '+
-      'match_method=CASE WHEN senate_statement_member_mentions.membership_id IS NULL THEN EXCLUDED.match_method '+
+      'match_method=CASE WHEN senate_statement_member_mentions.membership_id IS NULL AND EXCLUDED.membership_id IS NOT NULL THEN EXCLUDED.match_method '+
       'ELSE senate_statement_member_mentions.match_method END');
     await bulk(client,'senate_statement_bill_mentions',
       ['statement_id','source_ordinal','printed_identifier','bill_id','match_method'],
@@ -206,14 +206,14 @@ async function statements(client:PoolClient,cat:Catalog,aliases:AliasBuffer,tall
       billRows,
       'ON CONFLICT (statement_id,source_ordinal) DO UPDATE SET '+
       'bill_id=COALESCE(senate_statement_bill_mentions.bill_id,EXCLUDED.bill_id), '+
-      'match_method=CASE WHEN senate_statement_bill_mentions.bill_id IS NULL THEN EXCLUDED.match_method '+
+      'match_method=CASE WHEN senate_statement_bill_mentions.bill_id IS NULL AND EXCLUDED.bill_id IS NOT NULL THEN EXCLUDED.match_method '+
       'ELSE senate_statement_bill_mentions.match_method END');
     await updateRows(client,
       "UPDATE senate_raw_statements t SET session_id=COALESCE(t.session_id,v.session_id),"+
       "membership_id=COALESCE(t.membership_id,v.membership_id),"+
-      "membership_match_method=COALESCE(t.membership_match_method,v.membership_match_method),"+
+      "membership_match_method=CASE WHEN t.membership_id IS NULL AND v.membership_id IS NOT NULL THEN v.membership_match_method ELSE COALESCE(t.membership_match_method,v.membership_match_method) END,"+
       "bill_id=COALESCE(t.bill_id,v.bill_id),"+
-      "bill_match_method=COALESCE(t.bill_match_method,v.bill_match_method) "+
+      "bill_match_method=CASE WHEN t.bill_id IS NULL AND v.bill_id IS NOT NULL THEN v.bill_match_method ELSE COALESCE(t.bill_match_method,v.bill_match_method) END "+
       "FROM jsonb_to_recordset($1::jsonb) AS v(id uuid,session_id uuid,membership_id uuid,"+
       "membership_match_method text,bill_id uuid,bill_match_method text) WHERE t.id=v.id",
       parentRows);
@@ -296,7 +296,7 @@ async function elections(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Prom
     await updateRows(client,
       "UPDATE mn_senate_election_raw_results t SET "+
       "membership_id=COALESCE(t.membership_id,v.membership_id),"+
-      "membership_match_method=COALESCE(t.membership_match_method,v.match_method) "+
+      "membership_match_method=CASE WHEN t.membership_id IS NULL AND v.membership_id IS NOT NULL THEN v.match_method ELSE COALESCE(t.membership_match_method,v.match_method) END "+
       "FROM jsonb_to_recordset($1::jsonb) AS v(id uuid,membership_id uuid,match_method text) "+
       "WHERE t.id=v.id",updates);
     scanned+=q.rows.length;cursor=q.rows.at(-1)!.id;
@@ -389,7 +389,7 @@ async function rawVotes(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Promi
       memberRows,
       'ON CONFLICT (source_document_id,record_ordinal,role,name_ordinal) DO UPDATE SET '+
       'membership_id=COALESCE(senate_raw_vote_member_mentions.membership_id,EXCLUDED.membership_id),'+
-      'match_method=CASE WHEN senate_raw_vote_member_mentions.membership_id IS NULL THEN EXCLUDED.match_method '+
+      'match_method=CASE WHEN senate_raw_vote_member_mentions.membership_id IS NULL AND EXCLUDED.membership_id IS NOT NULL THEN EXCLUDED.match_method '+
       'ELSE senate_raw_vote_member_mentions.match_method END');
     await bulk(client,'senate_raw_vote_bill_mentions',
       ['source_document_id','record_ordinal','printed_identifier','bill_id','match_method'],
@@ -397,7 +397,7 @@ async function rawVotes(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Promi
       billRows,
       'ON CONFLICT (source_document_id,record_ordinal) DO UPDATE SET '+
       'bill_id=COALESCE(senate_raw_vote_bill_mentions.bill_id,EXCLUDED.bill_id),'+
-      'match_method=CASE WHEN senate_raw_vote_bill_mentions.bill_id IS NULL THEN EXCLUDED.match_method '+
+      'match_method=CASE WHEN senate_raw_vote_bill_mentions.bill_id IS NULL AND EXCLUDED.bill_id IS NOT NULL THEN EXCLUDED.match_method '+
       'ELSE senate_raw_vote_bill_mentions.match_method END');
     await bulk(client,'bill_inclusion_mentions',
       ['mention_key','session_id','source_bill_id','possible_target_bill_id','source_bill_identifier',
