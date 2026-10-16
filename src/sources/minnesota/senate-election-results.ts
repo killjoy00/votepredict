@@ -317,7 +317,8 @@ export function parse2016SpecialAcademicArchive(html:string):SenateElectionCandi
     const cells=[...allRows[i][1].matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)]
       .map(x=>htmlEntityDecode(x[1]));
     if(cells.length<5)continue;
-    const party={'Republican':'R','Democratic-Farmer-Labor':'DFL','Legal Marijuana Now':'LMN','Write-In':'WI'}[cells[2]];
+    const parties:Record<string,string>={'Republican':'R','Democratic-Farmer-Labor':'DFL','Legal Marijuana Now':'LMN','Write-In':'WI'};
+    const party=parties[cells[2]];
     const votes=cells[3].replace(/,/g,'');
     const percent=cells[4].replace('%','');
     if(!party||! /^\d+$/.test(votes)||! /^\d+(?:\.\d+)?$/.test(percent))continue;
