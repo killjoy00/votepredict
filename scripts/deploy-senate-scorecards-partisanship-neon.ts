@@ -8,15 +8,18 @@ import {spawnSync} from 'node:child_process';
 import {Pool,type PoolClient} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {PolitePublicFetcher,fetchScorecardCapture,validateScorecardManifest,
-  parseScorecardContent,type ScorecardFailure,type ScorecardCapture} from '../src/sources/minnesota/senate-scorecard-raw.js';
+  parseScorecardContent,parseConservationSenateProfileLinks,
+  type ScorecardFailure,type ScorecardCapture,type ScorecardSource} from '../src/sources/minnesota/senate-scorecard-raw.js';
 import {collectRawDistrictPartisanship} from '../src/sources/minnesota/senate-district-partisanship-raw.js';
 import {loadScorecardCatalog,storeRawScorecardCapture,
   storeRawDistrictPartisanship,scorecardPartisanshipReadback} from '../src/operations/senate-scorecard-partisanship-ingest.js';
 
 const MARKER='SENATE_SCORECARDS_PARTISANSHIP_PRODUCTION';
 const MIGRATION='0026_senate_scorecards_district_partisanship.sql';
+const MEMBER_MIGRATION='0029_senate_scorecard_member_votes_raw.sql';
+type ImportMode='normal'|'stored'|'expand';
 interface Ledger {filename:string;checksum:string}
-function requireMain(env:NodeJS.ProcessEnv):boolean {
+function requireMain(env:NodeJS.ProcessEnv):ImportMode {
   if(process.argv.length!==2||env.GITHUB_REPOSITORY!=='killjoy00/votepredict'||
     env.GITHUB_EVENT_NAME!=='push'||env.GITHUB_REF!=='refs/heads/main'||
     env.GITHUB_RUN_ATTEMPT!=='1'||
@@ -32,7 +35,10 @@ function requireMain(env:NodeJS.ProcessEnv):boolean {
     e.head_commit?.id!==env.GITHUB_SHA||e.forced===true||e.deleted===true||
     !e.head_commit?.message?.includes(MARKER))
     throw Error('Reviewed marker main SHA mismatch');
-  return !!e.head_commit?.message?.includes('SENATE_SCORECARD_REPARSE_STORED');
+  const message=e.head_commit?.message??'';
+  if(message.includes('SENATE_SCORECARD_EXPAND_PUBLISHERS'))return 'expand';
+  if(message.includes('SENATE_SCORECARD_REPARSE_STORED'))return 'stored';
+  return 'normal';
 }
 function ledgerExpected():Ledger[] {
   const files=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
@@ -75,10 +81,15 @@ function connectionUrl(target:{
 async function main():Promise<void> {
   let phase='main_gate',pool:Pool|undefined;
   try{
-    const storedOnly=requireMain(process.env);
+    const importMode=requireMain(process.env);
+    const storedOnly=importMode==='stored',expanding=importMode==='expand';
     const expected=ledgerExpected();
     const migrationSql=readFileSync('migrations/'+MIGRATION,'utf8');
     assertAdditiveRawMigration(migrationSql);
+    const memberSql=readFileSync('migrations/'+MEMBER_MIGRATION,'utf8');
+    assertAdditiveRawMigration(memberSql);
+    if(expected[28]?.filename!==MEMBER_MIGRATION)
+      throw Error('Unexpected member vote migration numbering or concurrent migration inventory');
     const sources=validateScorecardManifest(JSON.parse(
       readFileSync('data/senate-scorecard-sources.json','utf8')));
     const allowHosts=new Set(sources.sources.map(s=>new URL(s.url).hostname));
@@ -132,6 +143,33 @@ async function main():Promise<void> {
         await client.query('COMMIT');
       }catch(error){await client.query('ROLLBACK');throw error;}
     }finally{client.release(true);}
+    phase='serializable_ledgered_additive_0029_member_votes';
+    let memberMigrationApplied=false;
+    if(expanding){
+      const migrationClient=await pool.connect();
+      try{
+        await migrationClient.query('BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE READ WRITE');
+        try{
+          const applied=(await migrationClient.query<Ledger>(
+            'SELECT filename,checksum FROM votepredict_schema_migrations ORDER BY filename FOR UPDATE')).rows;
+          ledgerStatus(applied,expected);
+          if(applied.length===28){
+            await migrationClient.query(memberSql);
+            await migrationClient.query(
+              'INSERT INTO votepredict_schema_migrations(filename,checksum) VALUES($1,$2)',
+              [MEMBER_MIGRATION,expected[28].checksum]);
+            memberMigrationApplied=true;
+          }else if(applied.length!==29){
+            throw Error('Unexpected ledger prefix before raw member-votes migration');
+          }
+          const tables=(await migrationClient.query<{present:boolean}>(
+            "SELECT to_regclass('public.senate_scorecard_member_votes_raw') IS NOT NULL AS present"
+          )).rows[0];
+          if(!tables?.present)throw Error('Publisher member-votes migration table missing');
+          await migrationClient.query('COMMIT');
+        }catch(error){await migrationClient.query('ROLLBACK');throw error;}
+      }finally{migrationClient.release(true);}
+    }
     phase='production_migration_drift_gate';
     const drift=spawnSync('node',['--import','tsx','scripts/check-production-migration-drift.ts'],{
       env:{...process.env,DATABASE_URL_UNPOOLED:connectionUrl(target),
@@ -142,11 +180,15 @@ async function main():Promise<void> {
     phase='existing_memberships_and_bills';
     const catalog=await readonly(pool,loadScorecardCatalog);
     const fetcher=new PolitePublicFetcher();
-    const attempted=storedOnly?[]:sources.sources.slice(0,50);
+    const attempted=storedOnly?[]:expanding?sources.sources.filter(s=>
+      s.groupName==='MCCL'&&s.adapter==='generic_pdf'):sources.sources.slice(0,50);
     let fetched=0,newSnapshots=0,entriesParsed=0,positionsParsed=0;
     let matchedNew=0,linkedBillsNew=0,reparsed=0;
+    let memberVotesParsed=0,linkedMemberVotesNew=0,linkedVoteBillsNew=0;
+    let discoveredProfiles=0,profilePagesAttempted=0,profilePagesFetched=0;
     const failed:ScorecardFailure[]=[];
-    const bySource:Array<{group:string;year:number;entries:number;positions:number;status:string}>=[];
+    const bySource:Array<{group:string;year:number;entries:number;positions:number;
+      memberVotes?:number;status:string}>=[];
     phase='bounded_polite_publisher_capture';
     for(const source of attempted){
       let capture;
@@ -167,6 +209,8 @@ async function main():Promise<void> {
         fetched++;if(result.newSnapshot)newSnapshots++;
         entriesParsed+=result.entries;matchedNew+=result.matchedMembers;
         positionsParsed+=result.billPositions;linkedBillsNew+=result.matchedBills;
+        memberVotesParsed+=result.memberVotes;linkedMemberVotesNew+=result.linkedMemberVotes;
+        linkedVoteBillsNew+=result.linkedVoteBills;
         bySource.push({group:source.groupName,year:source.year,
           entries:result.entries,positions:result.billPositions,
           status:result.entries||result.billPositions?'parsed':'captured_unstructured'});
@@ -220,7 +264,7 @@ async function main():Promise<void> {
       '2022|attorney_general|2022','2024|president|2022'];
     const districtDataReused=expectedElections.every(key=>before.elections.some(e=>
       [e.election_year,e.office,e.district_plan].join('|')===key&&e.districts===67&&e.rows>=67));
-    if(storedOnly&&!districtDataReused)
+    if((storedOnly||expanding)&&!districtDataReused)
       throw Error('Saved-only replay requires four verified 67-district datasets');
     const electionResult=districtDataReused?{collected:[],failed:[]}:
       await collectRawDistrictPartisanship(fetcher,async record=>{
@@ -235,13 +279,18 @@ async function main():Promise<void> {
       after.snapshots>before.snapshots+newSnapshots||
       after.entries>before.entries+entriesParsed||
       after.billPositions>before.billPositions+positionsParsed||
+      after.memberVotes<before.memberVotes||
+      after.memberVotes>before.memberVotes+memberVotesParsed||
       after.districtRows>before.districtRows+electionRowsNew||
-      (storedOnly&&(after.snapshots!==before.snapshots||after.districtRows!==before.districtRows)))
+      ((storedOnly||expanding)&&after.districtRows!==before.districtRows)||
+      (storedOnly&&after.snapshots!==before.snapshots))
       throw Error('Raw-only collection receipt/readback inconsistent');
     const report={
       status:failed.length||electionResult.failed.length?'bounded_partial':'committed_readback_verified',
-      migrated,wasMigrated,storedOnly,reparsed,attempted:attempted.length,fetched,newSnapshots,
-      entriesParsed,positionsParsed,matchedNew,linkedBillsNew,
+      migrated,wasMigrated,memberMigrationApplied,importMode,reparsed,
+      attempted:attempted.length,fetched,newSnapshots,discoveredProfiles,profilePagesAttempted,profilePagesFetched,
+      entriesParsed,positionsParsed,memberVotesParsed,linkedMemberVotesNew,linkedVoteBillsNew,
+      matchedNew,linkedBillsNew,
       scoresMemberLinkRate:after.entries?after.linkedMembers/after.entries:null,
       scorecardBillLinkRate:after.billPositions?after.linkedBills/after.billPositions:null,
       electionRowsNew,districtDataReused,elections:electionResult.collected,unavailableElections:electionResult.failed,
@@ -252,7 +301,7 @@ async function main():Promise<void> {
     if(process.env.GITHUB_STEP_SUMMARY){
       appendFileSync(process.env.GITHUB_STEP_SUMMARY,
         '## Raw Minnesota Senate scorecards and district election results\n\n'+
-        'Migration 0024 applied: '+migrated+'. Publisher snapshots: '+after.snapshots+
+        'Raw publisher migration applied: '+(migrated||memberMigrationApplied)+'. Publisher snapshots: '+after.snapshots+
         ', entries: '+after.entries+' (linked: '+after.linkedMembers+'), bill positions: '+
         after.billPositions+' (linked: '+after.linkedBills+'), election district rows: '+
         after.districtRows+'.\n\n'+
