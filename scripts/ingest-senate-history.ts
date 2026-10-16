@@ -1,7 +1,7 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 import { Pool, type PoolClient } from 'pg';
 import { fetchSenateJournal, listSenateJournalLinks, parseSenateJournalText, SENATE_JOURNAL_VOTE_PARSER_VERSION } from '../src/sources/minnesota/senate-journals.js';
-import { activeMembershipCandidates, reconcileHouseMemberName, type MembershipCandidate } from '../src/sources/minnesota/member-reconciliation.js';
+import { activeMembershipCandidates, reconcileHouseMemberName, senateJournalNameForms, type MembershipCandidate } from '../src/sources/minnesota/member-reconciliation.js';
 import { getMinnesotaHouseSession, MINNESOTA_HOUSE_HISTORICAL_SESSIONS, type MinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
 
 interface Options {
@@ -99,20 +99,6 @@ async function candidates(client: PoolClient, context: Context): Promise<Members
   }));
 }
 
-function senateJournalNameForms(candidate: MembershipCandidate): string[] {
-  const forms = new Set<string>();
-  for (const raw of [candidate.name, ...(candidate.aliases ?? [])]) {
-    const value = raw.replace(/^spk\.?\s+/i, '').replace(/^speaker\s+/i, '').trim();
-    const comma = value.match(/^([^,]+),/);
-    if (comma) {
-      forms.add(comma[1].trim());
-      continue;
-    }
-    const tokens = value.replace(/\s*"[^"]*"\s*/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
-    for (let width = 1; width <= Math.min(3, tokens.length); width += 1) forms.add(tokens.slice(-width).join(' '));
-  }
-  return [...forms].filter(Boolean);
-}
 
 async function ensureBill(client: PoolClient, context: Context, identifier: string, sourceUrl: string): Promise<string> {
   const result = await client.query<{ id: string }>(

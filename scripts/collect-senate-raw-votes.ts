@@ -14,6 +14,8 @@ import { appendFileSync, writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { Pool } from 'pg';
 import { fetchSenateJournal, listSenateJournalLinks, parseSenateJournalText } from '../src/sources/minnesota/senate-journals.js';
+import { journalKnownNames, loadSenateJournalRosters, SENATE_JOURNAL_NAME_SEGMENTATION } from '../src/operations/senate-journal-raw-reparse.js';
+import type { MembershipCandidate } from '../src/sources/minnesota/member-reconciliation.js';
 import { parseSenateCommitteeMinutesRaw, SENATE_RAW_VOTE_PARSER_VERSION, senateJournalEventsToRaw, type RawSenateVoteRecord } from '../src/sources/minnesota/senate-raw-votes.js';
 import {
   extractSenateMinutesText,
@@ -51,6 +53,7 @@ interface RawDocument {
     sourceDate: string | null;
     fetchedAt: string;
     hearing?: Omit<SenateHearing, 'minutesUrl'>;
+    nameSegmentation?: typeof SENATE_JOURNAL_NAME_SEGMENTATION;
     present?: string[];
     text: string;
     records: RawSenateVoteRecord[];
@@ -218,7 +221,7 @@ async function collectCommittee(store: Store, options: Options, totals: Totals):
   }
 }
 
-async function collectFloor(store: Store, options: Options, totals: Totals): Promise<void> {
+async function collectFloor(store: Store, options: Options, totals: Totals, roster: readonly MembershipCandidate[]): Promise<void> {
   const journals = (await listSenateJournalLinks(options.session.slug))
     .filter((journal) => !journal.date || (journal.date >= options.from && journal.date <= options.to));
   const selected = options.limit ? journals.slice(0, options.limit) : journals;
@@ -235,6 +238,8 @@ async function collectFloor(store: Store, options: Options, totals: Totals): Pro
         sessionKey: options.session.sessionKey,
         sourceUrl: journal.sourceUrl,
         occurredOn: journal.date,
+        // With a roster, roll-call columns split into members and page headers drop out.
+        ...(roster.length ? { knownMemberNames: journalKnownNames(roster, journal.date ?? null) } : {}),
         allowRosterMismatch: true,
       });
       const records = senateJournalEventsToRaw(events);
@@ -248,6 +253,7 @@ async function collectFloor(store: Store, options: Options, totals: Totals): Pro
           sessionSlug: options.session.slug,
           sourceDate: journal.date ?? null,
           fetchedAt: new Date().toISOString(),
+          ...(roster.length ? { nameSegmentation: SENATE_JOURNAL_NAME_SEGMENTATION } : {}),
           text: pdf.text,
           records,
           stats: stats(records),
@@ -274,7 +280,10 @@ async function main(): Promise<void> {
   try {
     await store.init();
     if (options.source !== 'floor') await collectCommittee(store, options, totals);
-    if (options.source !== 'committee') await collectFloor(store, options, totals);
+    if (options.source !== 'committee') {
+      const roster = pool ? (await loadSenateJournalRosters(pool)).get(options.session.slug) ?? [] : [];
+      await collectFloor(store, options, totals, roster);
+    }
   } finally {
     await pool?.end();
   }

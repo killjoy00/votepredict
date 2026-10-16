@@ -94,14 +94,62 @@ mentions, not unique source documents or senators.
 
 ### Production rates by table, session and method
 
-**Awaiting actual protected production readback.** Do not enter invented rates.
-This section must be updated from the completed job output.
+From the protected repair run on 2026-10-16
+([run 38941315620](https://github.com/killjoy00/votepredict/actions/runs/38941315620),
+status `committed_and_readback_verified`). Rates are matched ÷ total across all
+match methods. Edge tables count mentions.
 
-### 50 most frequent unresolved printed names
+| Table | 2021–22 | 2023–24 | 2025–26 |
+| --- | --- | --- | --- |
+| senate_raw_vote_member_mentions (movers + voters) | 30,028 / 30,233 (99.3%) | 73,849 / 74,507 (99.1%) | 40,605 / 40,940 (99.2%) |
+| senate_raw_vote_bill_mentions | 2,574 / 2,574 (100%) | 5,379 / 5,379 (100%) | 3,861 / 3,861 (100%) |
+| senate_statement_member_mentions | — | 1,988 / 2,157 (92.2%) | 2,082 / 2,424 (85.9%) |
+| senate_statement_bill_mentions | — | 423 / 423 (100%) | 539 / 539 (100%) |
+| senate_committee_testimony_raw.bill | — | 13,433 / 13,433 (100%) | 11,578 / 11,583 (99.96%) |
+| mn_senate_election_raw_results | 87 / 340 | 69 / 205 | 17 / 85 |
+| mn_senate_questionnaire_captures | — | 8 / 16 | 12 / 53 |
 
-**Awaiting actual protected production readback.** The protected report uses
-the raw name frequencies across statement mentions, explicitly designated
-senator testimony witnesses, candidate results, candidate questionnaires and raw-vote name mentions.
+Raw-vote member links are almost all `surname_unique_in_session`, since journals
+and minutes print surnames. Election and questionnaire totals include losing
+candidates and write-ins, who never served and correctly stay unresolved.
+Only one testimony row is a senator witness (linked).
+
+Other readback counts:
+
+- **Companions** (official Revisor XML): 13,485 of 15,455 Senate bills have a
+  linked House companion (2021–22: 4,042; 2023–24: 4,947; 2025–26: 4,496). The
+  other 1,970 list no companion. None are `target_missing`, and there were no
+  source failures.
+- **Bill inventory** (existing `bills`): SF 4,610 / 5,535 / 5,310 and
+  HF 4,905 / 5,488 / 5,162 for 2021–22 / 2023–24 / 2025–26. Coverage was
+  high enough that no Revisor catalog import was needed.
+- **Inclusion mentions**: "laid over for possible inclusion" 113 / 530 / 398,
+  and "incorporated into" 1 / 0 / 6. Almost none name the target omnibus bill,
+  because the source text does not.
+- **Statement sessions**: all 2,959 statements are placed by a printed
+  `published_on`. No archive-date fallback was needed.
+- **Attachments**: 13,675 (2023–24) and 12,760 (2025–26) captured files. Of
+  these, 12,371 and 10,554 join to a bill through testimony `source_url`.
+  None carry a senator.
+
+### Unresolved printed names
+
+The largest remaining groups in this run:
+
+- **Run-together journal roll-call columns** ("Carlson Champion",
+  "Weber Wesenberg Westrom", "Abeler Anderson Bahr Coleman Dahms") and
+  **journal page headers** ("FRIDAY, JANUARY 27,"). The first raw collection
+  parsed journal PDFs without a roster. The journal roster re-parse
+  (`src/operations/senate-journal-raw-reparse.ts`) re-reads the stored journal
+  text with the session roster, splits these runs into members and drops
+  headers. New collections pass the roster too.
+- **WRITE-IN** election rows (139), which are expected.
+- **Single leftovers**: "Ingebrigsten" has two letters swapped, which is beyond
+  the one-edit rule. "Kari Dziedzic" appears in statements outside her service
+  dates.
+
+The resolver already handles possessives ("Mitchell's"), doubled surnames,
+common nicknames and one-edit misspellings of long surnames.
 
 ### Limitations
 
