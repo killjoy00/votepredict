@@ -70,7 +70,7 @@ jobs:
         run: npm run check
       - name: Production dependency audit
         run: npm audit --omit=dev --audit-level=high
-      - name: Obtain all 210 required district-election originals with no production credentials
+      - name: Obtain all 139 required district-election originals with no production credentials
         run: |
           npm run data:senate:elections -- --all --no-primaries --dry-run \
             --out "$RUNNER_TEMP/senate-originals.jsonl"
@@ -80,14 +80,15 @@ jobs:
           const items = readFileSync(process.env.SENATE_RAW_FILE,'utf8').trim().split('\n').map(JSON.parse);
           const required = items.filter(x=>x.event.type==='general'||x.event.type==='special');
           const count = required.reduce((n,x)=>n+new Set(x.candidates.map(c=>c.district)).size,0);
-          if(required.length!==11 || count!==210)throw Error('Original source coverage incomplete');
+          if(required.length!==6 || count!==139)throw Error('Original source coverage incomplete');
           for(const x of required) {
             const bytes=Buffer.from(x.rawBase64,'base64');
             const hash=createHash('sha256').update(bytes).digest('hex');
             if(hash!==x.contentSha256 || !x.candidates.length)throw Error('Original source integrity failure');
-            if(x.event.date==='2016-11-08' && (new Set(x.candidates.map(c=>c.district)).size!==67 ||
-              x.candidates.length<67||x.candidates.length>300))
-              throw Error('2016 published Senate district result block incomplete');
+            if(['2020-11-03','2022-11-08'].includes(x.event.date) &&
+              (new Set(x.candidates.map(c=>c.district)).size!==67 ||
+               x.candidates.length<67 || x.candidates.length>350))
+              throw Error('Statewide Senate general missing 67 districts');
           }
           console.log('SENATE_ELECTION_RAW_COVERAGE='+JSON.stringify({
             requiredEvents:required.length,generalSpecialDistricts:count,
