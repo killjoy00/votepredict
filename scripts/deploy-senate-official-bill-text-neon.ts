@@ -292,7 +292,9 @@ function normBill(bill:string):string|null{
 }
 async function scanDocument(db:PoolClient,d:RawDocument):Promise<{found:number;links:number;unresolved:number}>{
   const extracted=typeof d.raw?.text==='string'?d.raw.text:'';
-  if(!/^[0-9a-f]{64}$/i.test(d.content_sha256)||extracted.length<50)
+  if(!/^[0-9a-f]{64}$/i.test(d.content_sha256)
+    || d.content_sha256.toLowerCase()==='e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    || extracted.length<50)
     throw Error('raw_document_text_or_fingerprint_missing');
   const links=await db.query<{bill_id:string;identifier:string;record_ordinal:number}>(
     'SELECT m.bill_id,b.identifier,m.record_ordinal FROM senate_raw_vote_bill_mentions m '
