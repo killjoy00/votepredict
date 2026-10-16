@@ -52,13 +52,18 @@ function guard(e:NodeJS.ProcessEnv):void{
 }
 function expectedMigrations():Ledger[]{
   const files=readdirSync('migrations').filter(n=>/^\d{4}_[\w-]+\.sql$/.test(n)).sort();
-  if(files.length!==27 || files[26]!==MIGRATION || !files[25]?.startsWith('0026_'))
+  if(files[26]!==MIGRATION || !files[25]?.startsWith('0026_'))
     throw Error('migration_number_or_concurrent_inventory_changed');
   return files.map(filename=>({filename,checksum:digest(readFileSync('migrations/'+filename,'utf8'))}));
 }
 function prefix(rows:Ledger[],expected:Ledger[]):boolean{
-  if(rows.length!==expected.length-1 && rows.length!==expected.length)
-    throw Error('production_migration_prerequisite_or_order_mismatch');
+  const position=expected.findIndex(row=>row.filename===MIGRATION);
+  if(position!==26)throw Error('official_text_migration_number_moved');
+  // Later additive migrations may exist after this collector merges. We may
+  // collect only when all of them are already deployed; never apply another
+  // agent's pending migration and never re-apply our own 0027.
+  if(rows.length!==expected.length && !(rows.length===position && expected.length===position+1))
+    throw Error('production_migration_prerequisite_or_later_release_pending');
   for(let i=0;i<rows.length;i++)
     if(rows[i].filename!==expected[i].filename||rows[i].checksum!==expected[i].checksum)
       throw Error('production_migration_checksum_drift');
