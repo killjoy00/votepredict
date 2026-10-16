@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "evidence-source-catalog-baseline-v1",
+  "catalogs": {
+    "local_trade_news": {
+      "count": 44,
+      "sha256": "86dd2d7aac66c31fa379a5db6f6179fe907681aa314dfcc30cf89d522334ebad",
+      "firstId": "star-tribune-minnesota-politics-archive",
+      "lastId": "isanti-chisago-star-news-archive"
+    },
+    "organization_publication": {
+      "count": 24,
+      "sha256": "6f643dd5b0677f78ecaecfaa08a64d62c4574335130504a4813ee7c51fdf9aa8",
+      "firstId": "league-mn-cities-2024-legislative-session",
+      "lastId": "takeaction-mn-endorsements"
+    }
+  }
+}
