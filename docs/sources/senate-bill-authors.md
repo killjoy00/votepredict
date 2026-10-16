@@ -162,6 +162,41 @@ successfully recognized. The counters above are a point-in-time production
 observation; if new source documents arrive they may require a new reviewed
 scan.
 
+### Verified first 3,000-lookup Revisor batch: October 16, 2026
+
+[Production run #38964859570](https://github.com/killjoy00/votepredict/actions/runs/38964859570)
+finished successfully with `requestedBillLookups=3000`. All **3,000 lookups
+were attempted**, yielding **2,998 successful official XML scans**, zero
+not-found responses, **two retryable source errors**, no 429/503 throttle,
+and no time-budget stop. The work committed **7,738 extracted XML author
+entries** (not all distinct from existing journal mentions). No previously
+completed stored journals were rescanned.
+
+| Session | Successful official XML scans, cumulative | Current distinct Senate author rows | Senate membership links |
+| --- | ---: | ---: | ---: |
+| 2021-2022 | 0 | 2,937 | 2,936 |
+| 2023-2024 | 0 | 2,133 | 2,133 |
+| 2025-2026 | 3,348 | 9,228 | 9,228 |
+| **Total** | **3,348 / 28,938 (11.57%)** | **14,298** | **14,297** |
+
+The production readback found **25,590 remaining target bill lookups**,
+including the two retryable source errors, and **zero pending stored
+journals**. There were 2,099 distinct scanned bills with a coauthor across
+3,348 successful XML scans (62.69%); the observed 2025-2026 subset is not
+representative of other biennia. House authors remained uncollected because
+the existing Senate-first order had not exhausted the Senate catalog.
+
+### Second reviewed 3,000-lookup Revisor continuation
+
+The next first-attempt protected run resumes from the successful/not-found
+receipts above, processing **at most 3,000 additional targets** at the
+existing minimum 1,150 ms serial request interval. It uses the same 65-minute
+collector budget, immediate 429/503 stop, exact-main CI gate and existing
+protected Neon database. The two source-error entries may be retried after
+fresh targets. Actual successful counts and remaining targets will be
+reported by the next protected production readback; do not treat a run
+request as proof of completion.
+
 Definitions: coauthor share is distinct successfully scanned bills with at
 least one coauthor, divided by successfully scanned bills. Senate link rate is
 resolved Senate membership author rows divided by all Senate author rows;
