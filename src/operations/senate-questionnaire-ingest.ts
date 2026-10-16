@@ -31,7 +31,9 @@ export async function exactExistingSenateMembership(
   client:PoolClient,record:CandidateIdentity,
 ):Promise<Link>{
   const session=questionnaireServiceSession(record.electionCycle);
-  if(!session||!record.candidateName.trim()||!record.district)
+  if(!session||!record.candidateName.trim()||!record.district
+    ||!eligibleSenateQuestionnaireCandidate(record.electionCycle,record.candidateName,
+      record.district,record.sourceUrl))
     return {legislatorId:null,membershipId:null};
   const rows=await client.query<{
     id:string;legislator_id:string;party:string|null;name:string;district:string;
@@ -58,6 +60,12 @@ export async function exactExistingSenateMembership(
     printedName:historicalWinnerCanonicalName(record.electionCycle,record.candidateName,record.district,record.sourceUrl),
     sessionSlug:session,district:record.district,
   },roster);
+  // The shared resolver's district/surname fallback is useful for records
+  // explicitly describing officeholders, but is too permissive for candidate
+  // questionnaires (challengers may share an initial and surname). Require
+  // the unique full name or existing verified name alias for candidate links.
+  if(!['exact','alias'].includes(resolved.matchMethod))
+    return {legislatorId:null,membershipId:null};
   const exact=matchingMembers.find(m=>m.id===resolved.membershipId);
   return exact?{legislatorId:exact.legislator_id,membershipId:exact.id}:
     {legislatorId:null,membershipId:null};
