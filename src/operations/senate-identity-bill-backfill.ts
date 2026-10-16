@@ -155,7 +155,7 @@ async function statements(client:PoolClient,cat:Catalog,aliases:AliasBuffer,tall
   while(tally.scanned<MAX_STATEMENTS) {
     const q=await client.query<Statement>(
       "SELECT id,source_url,published_on::text,named_senators,bill_identifiers FROM senate_raw_statements "+
-      "WHERE ($1::text='' OR id>$1::uuid) ORDER BY id LIMIT $2",
+      "WHERE ($1::text='' OR id>NULLIF($1,'')::uuid) ORDER BY id LIMIT $2",
       [cursor,Math.min(250,MAX_STATEMENTS-tally.scanned)]);
     if(!q.rows.length)break;
     const memberRows:Record<string,unknown>[]=[];
@@ -231,7 +231,7 @@ async function testimony(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Prom
       "SELECT t.id,s.slug AS session_slug,t.source_type,t.witness_name,t.organization,"+
       "t.bill_identifier,t.bill_id,t.membership_id,t.source_url,t.hearing_date::text "+
       "FROM senate_committee_testimony_raw t JOIN legislative_sessions s ON s.id=t.session_id "+
-      "WHERE s.slug=ANY($2::text[]) AND ($1::text='' OR t.id>$1::uuid) "+
+      "WHERE s.slug=ANY($2::text[]) AND ($1::text='' OR t.id>NULLIF($1,'')::uuid) "+
       "ORDER BY t.id LIMIT $3",[cursor,SESSIONS,Math.min(400,MAX_TESTIMONY-scanned)]);
     if(!result.rows.length)break;
     const updates:Record<string,unknown>[]=[];
@@ -278,7 +278,7 @@ async function elections(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Prom
     const q=await client.query<Election>(
       "SELECT id,election_date::text,election_type,district,candidate_name,source_url,membership_id "+
       "FROM mn_senate_election_raw_results "+
-      "WHERE ($1::text='' OR id>$1::uuid) ORDER BY id LIMIT $2",
+      "WHERE ($1::text='' OR id>NULLIF($1,'')::uuid) ORDER BY id LIMIT $2",
       [cursor,Math.min(400,MAX_ELECTIONS-scanned)]);
     if(!q.rows.length)break;
     const updates:Record<string,unknown>[]=[];
@@ -311,7 +311,7 @@ async function rawVotes(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Promi
     const q=await client.query<RawDocument>(
       "SELECT id,source_url,fetched_at::text,metadata->'rawPrepassageVotes' AS raw "+
       "FROM source_documents WHERE metadata->'rawPrepassageVotes'->>'sessionSlug'=ANY($2::text[]) "+
-      "AND ($1::text='' OR id>$1::uuid) ORDER BY id LIMIT $3",
+      "AND ($1::text='' OR id>NULLIF($1,'')::uuid) ORDER BY id LIMIT $3",
       [cursor,SESSIONS,Math.min(30,MAX_VOTE_DOCUMENTS-scanned)]);
     if(!q.rows.length)break;
     const memberRows:Record<string,unknown>[]=[];
