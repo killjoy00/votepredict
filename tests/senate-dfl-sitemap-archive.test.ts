@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
   HISTORICAL_DFL_SITEMAPS,parseArchivedDFLSitemap,fetchArchivedDFLSitemap,
-  orderedHistoricalDFLCandidates,historicalDFLSitemapManifest,dflSitemapReplayURL,
+  orderedHistoricalDFLCandidates,historicalDFLSitemapManifest,dflSitemapReplayURL,dflSitemapShard,
 } from '../src/sources/minnesota/senate-dfl-sitemap-archive.js';
 
 const publisher=(i:number)=>'https://senatedfl.mn/senator-historical-release-'+i+'/';
@@ -73,4 +73,25 @@ test('deterministic inventory orders by lastmod, deduplicates, and hashes snapsh
   assert.equal(historicalDFLSitemapManifest(pages).length,64);
   assert.equal(historicalDFLSitemapManifest(pages),historicalDFLSitemapManifest(pages));
   assert.throws(()=>orderedHistoricalDFLCandidates(pages.slice(0,1)),/Missing a pinned/);
+});
+
+test('24 deterministic bounded, disjoint run-number shards eventually cover every source URL',()=>{
+  const candidates=Array.from({length:1681},(_,i)=>({
+    url:publisher(i+1),sitemapId:'fixture',lastModifiedOn:'2025-02-03',
+  }));
+  const found=new Set<string>();
+  for(let run=1;run<=24;run++){
+    const batch=dflSitemapShard(candidates,run);
+    assert.equal(batch.shard,run-1);
+    assert.equal(batch.shardCount,24);
+    assert.ok(batch.selected.length<=100);
+    for(const candidate of batch.selected){
+      assert.ok(!found.has(candidate.url));
+      found.add(candidate.url);
+    }
+  }
+  assert.equal(found.size,candidates.length);
+  assert.deepEqual(dflSitemapShard(candidates,25),dflSitemapShard(candidates,1));
+  assert.throws(()=>dflSitemapShard(candidates,0),/Unreviewed/);
+  assert.throws(()=>dflSitemapShard(candidates,NaN),/Unreviewed/);
 });
