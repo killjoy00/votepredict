@@ -109,7 +109,7 @@ export function extractLiteralAmendmentBlocks(text: string): JournalAmendmentSni
     // Only published proposed legislative language, not a heading or a summary.
     if(literal.length<95 || !/\b(?:as follows|page\s+\d+,\s*line|delete|insert|strike|amendment reads)\b/i.test(literal))
       continue;
-    const ref=literal.match(/\bA-?\d{1,5}\b/i)?.[0]?.toUpperCase()??null;
+    const ref=literal.match(/\bA-?\d{1,5}(?:-\d{1,5})?\b/i)?.[0]?.toUpperCase()??null;
     const billIdentifier=m[2].toUpperCase()+'F'+Number(m[3]);
     if(!/^(?:HF|SF)[1-9]\d{0,5}$/.test(billIdentifier))continue;
     const sourceLocator='extracted-text:char:'+start+'-'+(start+literal.length)+':proposal:'+String(i+1);
