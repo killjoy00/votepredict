@@ -1,0 +1,76 @@
+import assert from 'node:assert/strict';
+import {test} from 'node:test';
+import {
+  HISTORICAL_DFL_SITEMAPS,parseArchivedDFLSitemap,fetchArchivedDFLSitemap,
+  orderedHistoricalDFLCandidates,historicalDFLSitemapManifest,dflSitemapReplayURL,
+} from '../src/sources/minnesota/senate-dfl-sitemap-archive.js';
+
+const publisher=(i:number)=>'https://senatedfl.mn/senator-historical-release-'+i+'/';
+function sitemap(urls:Array<{url:string;lastmod?:string}>):string{
+  return '<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
+    urls.map(row=>'<url><loc><![CDATA['+row.url+']]></loc>'+
+      (row.lastmod?'<lastmod><![CDATA['+row.lastmod+']]></lastmod>':'')+'</url>').join('')+
+    '</urlset>';
+}
+function fixture(year:string){
+  return Array.from({length:105},(_,i)=>({url:publisher(i+1),lastmod:year+'-05-05T17:00:00+00:00'}));
+}
+test('archive sitemap replay URLs are pinned to public Wayback captures',()=>{
+  assert.equal(dflSitemapReplayURL(HISTORICAL_DFL_SITEMAPS[0]),
+    'https://web.archive.org/web/20260128083020id_/https://senatedfl.mn/post-sitemap.xml');
+  assert.equal(dflSitemapReplayURL(HISTORICAL_DFL_SITEMAPS[1]),
+    'https://web.archive.org/web/20260128083029id_/https://senatedfl.mn/post-sitemap2.xml');
+});
+test('publisher URL extraction handles XML CDATA and excludes known pre-2023 edits',()=>{
+  const items=fixture('2024');
+  items[0]={url:publisher(1),lastmod:'2022-12-15'};
+  items[1]={url:'https://other.example/foo/',lastmod:'2025-05-05'};
+  items[2]={url:'https://senatedfl.mn/author/jane/',lastmod:'2024-01-01'};
+  items[3]={url:'https://senatedfl.mn/valid-post/',lastmod:'2026-01-22'};
+  const found=parseArchivedDFLSitemap(sitemap(items),'aioseo-post-1-20260128');
+  assert.equal(found.urlEntries,105);
+  assert.equal(found.excludedBefore2023,1);
+  assert.equal(found.candidateUrls.length,102);
+  assert.ok(found.candidateUrls.find(x=>x.url==='https://senatedfl.mn/valid-post/'));
+  assert.equal(found.candidateUrls.find(x=>x.url===publisher(5))?.lastModifiedOn,'2024-05-05');
+  assert.ok(found.candidateUrls.every(x=>x.url.startsWith('https://senatedfl.mn/')));
+});
+test('bad archived publisher sitemap XML is not silently accepted',()=>{
+  assert.throws(()=>parseArchivedDFLSitemap('<html>Access challenge</html>','x'),/incomplete/);
+  assert.throws(()=>parseArchivedDFLSitemap(sitemap(fixture('2024')).slice(0,-10),'x'),/incomplete/);
+  assert.throws(()=>parseArchivedDFLSitemap('<!DOCTYPE foo>'+sitemap(fixture('2024')),'x'),/incomplete/);
+  assert.throws(()=>parseArchivedDFLSitemap(sitemap(fixture('2024').slice(0,10)),'x'),/Unexpected number/);
+});
+test('read-only sitemap snapshots reject redirects and non-XML responses',async()=>{
+  const example=HISTORICAL_DFL_SITEMAPS[0];
+  await assert.rejects(
+    ()=>fetchArchivedDFLSitemap(example,async()=>new Response(null,{status:302,headers:{location:'https://senatedfl.mn/'}})),
+    /HTTP 302/);
+  await assert.rejects(
+    ()=>fetchArchivedDFLSitemap(example,async()=>new Response('<html></html>',{status:200,headers:{'content-type':'text/html'}})),
+    /non-XML/);
+  const hits:string[]=[];
+  const result=await fetchArchivedDFLSitemap(example,async(request)=>{
+    hits.push(String(request));
+    return new Response(sitemap(fixture('2025')),{status:200,headers:{'content-type':'text/xml'}});
+  });
+  assert.equal(hits.length,1);
+  assert.ok(hits[0].startsWith('https://web.archive.org/'));
+  assert.equal(result.candidateUrls.length,105);
+  assert.equal(result.sha256.length,64);
+});
+test('deterministic inventory orders by lastmod, deduplicates, and hashes snapshots',()=>{
+  const first=parseArchivedDFLSitemap(sitemap(fixture('2023')),'aioseo-post-1-20260128');
+  const second=parseArchivedDFLSitemap(sitemap(fixture('2024')
+    .map((c,i)=>i===0?{...c,lastmod:'2025-01-02'}:c)),'aioseo-post-2-20260128');
+  const pages=[
+    {...first,replayUrl:dflSitemapReplayURL(HISTORICAL_DFL_SITEMAPS[0]),sha256:'a'.repeat(64)},
+    {...second,replayUrl:dflSitemapReplayURL(HISTORICAL_DFL_SITEMAPS[1]),sha256:'b'.repeat(64)},
+  ];
+  const ordered=orderedHistoricalDFLCandidates(pages);
+  assert.equal(ordered.length,105);
+  assert.equal(ordered[0].lastModifiedOn,'2023-05-05'); // first original sitemap is authoritative on duplicates
+  assert.equal(historicalDFLSitemapManifest(pages).length,64);
+  assert.equal(historicalDFLSitemapManifest(pages),historicalDFLSitemapManifest(pages));
+  assert.throws(()=>orderedHistoricalDFLCandidates(pages.slice(0,1)),/Missing a pinned/);
+});
