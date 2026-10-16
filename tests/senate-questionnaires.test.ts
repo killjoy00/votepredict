@@ -1,11 +1,11 @@
 import {readFileSync} from 'node:fs';
 import {assertAdditiveQuestionnaireMigration} from '../src/operations/senate-questionnaire-migration.js';
-import {insertQuestionnaire} from '../src/operations/senate-questionnaire-ingest.js';
+import {insertQuestionnaire,exactExistingSenateMembership,questionnaireServiceSession,reconcileUnmatchedQuestionnaireMemberships} from '../src/operations/senate-questionnaire-ingest.js';
 import type {PoolClient} from 'pg';
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
-  sha256,visibleLines,mhpLinks,biofuelsLinks,parseResponses,
+  sha256,visibleLines,mhpLinks,biofuelsLinks,parseResponses,parseSd60PdfText,
   validateCatalog,collectQuestionnaires,type QuestionnaireSource,type CandidateResponse,
 } from '../src/sources/minnesota/senate-questionnaire-raw.js';
 const base:QuestionnaireSource={
@@ -329,4 +329,120 @@ test('actual changed published answer appends raw capture and all Q&A in order',
     ['new-capture',2,'Why?','Fully quoted explanation'],
   ]);
   assert.equal(seen.at(-1),'COMMIT');
+});
+
+
+test('2022 Star Tribune keeps only printed Senate candidate Q&A; article edits are not original submissions',()=>{
+  const seed:QuestionnaireSource={id:'startribune-2022-duluth-senate',
+    publisher:'Star Tribune',cycle:2022,adapter:'startribune_2022',
+    url:'https://www.startribune.com/questions-on-candidates-heres-a-guide-to-duluth-area-elections/600219506',
+    title:'2022 Duluth Senate',sourceKind:'publisher_response'};
+  const html='<article><h1>Questions on candidates? Here’s a guide to Duluth area elections</h1>'+
+    '<p>October 27, 2022 at 9:29AM</p><p>Answers were edited for length.</p>'+
+    '<h2>Senate District 3</h2><h3>Grant Hauschild (DFL)</h3>'+
+    '<p>Age: 33</p><p>Why are you running? To help our region.</p>'+
+    '<p>Top three issues facing your district and plans to address them: Housing matters.</p>'+
+    '<h2>Most Read</h2><p>Celebrity news</p><p>Getting our Fair Share for the Northland: More money for roads.</p>'+
+    '<p>Website: https://example.org</p>'+
+    '<h3>Andrea Zupancich (R)</h3><p>Why are you running? Employment.</p>'+
+    '<p>Top three issues facing your district? Jobs and schools.</p>'+
+    '<p>Plans to address those issues? Invest locally.</p>'+
+    '<h2>State Senate District 8</h2><h3>Jen McEwen (incumbent, DFL)</h3>'+
+    '<p>Why are you running? Continue representing Duluth.</p>'+
+    '<p>Top three issues facing your district? Health care.</p>'+
+    '<p>Plans to address those issues? Support reform.</p>'+
+    '<h3>Alex Moe (R)</h3><p>Did not respond to questionnaire.</p>'+
+    '<h2>State House District 3B</h2><h3>Mary Murphy (DFL)</h3>'+
+    '<p>Why are you running? House response should be excluded.</p>';
+  const rows=parseResponses(html,seed);
+  assert.deepEqual(rows.map(r=>r.candidateName),['Grant Hauschild','Andrea Zupancich','Jen McEwen']);
+  assert.equal(rows[0].qa.length,2);
+  assert.equal(rows[0].qa[1].answer,'Housing matters.\nMore money for roads.');
+  assert.equal(rows[2].district,'8');
+  assert.equal(rows[0].displayedPublicationOn,'2022-10-27');
+  assert.ok(rows.every(r=>r.qa.every(x=>!x.answer.includes('House response'))));
+  assert.throws(()=>parseResponses(html.replace('Answers were edited for length.','No publisher edits disclosed.'),seed));
+});
+
+test('2024 MPR SD45 page is not mistaken for two complete published responses',()=>{
+  const seed:QuestionnaireSource={...base,adapter:'mpr_special_2024',cycle:2024,district:'45',
+    url:'https://www.mprnews.org/state-senate-district-45-general-election',
+    candidates:['Ann Johnson Stewart','Kathleen Fowke']};
+  assert.throws(()=>parseResponses('<h1>State Senate: District 45</h1>'+
+    '<p>We asked candidates to respond to a three-question survey.</p>'+
+    '<p>Ann Johnson Stewart</p><p>Kathleen Fowke</p>',seed));
+});
+
+test('2025 SD60 DFL original PDF extractor fails closed without named candidate and real numbered answers',()=>{
+  const seed:QuestionnaireSource={...base,adapter:'sd60_pdf',cycle:2025,
+    candidate:'Doron Clark',party:'DFL',district:'60',
+    url:'https://drive.google.com/file/d/1pbX-cHOKJFfMT4roJDXx-cNUdPs_-G46/view'};
+  const printed='Senate District 60 DFL Endorsement Questionnaire\nDoron Clark\n'+
+    '1. Why are you seeking this office?\nBecause I care about my community.\n'+
+    '2. What are your priorities?\nSchools and transit.\n';
+  const parsed=parseSd60PdfText(printed,seed);
+  assert.equal(parsed.length,1);
+  assert.deepEqual(parsed[0].qa.map(q=>q.answer),[
+    'Because I care about my community.','Schools and transit.',
+  ]);
+  assert.equal(parsed[0].qa[0].question,'Why are you seeking this office?');
+  assert.throws(()=>parseSd60PdfText(printed.replace('Doron Clark','Other Person'),seed));
+  assert.throws(()=>parseSd60PdfText(printed.replace('2. What are your priorities?', 'Unnumbered introduction'),seed));
+  assert.throws(()=>parseResponses(printed,seed));
+});
+
+test('2022 Senate questionnaires use 2023-2024 service roster, never 2021-2022 incumbents',async()=>{
+  assert.equal(questionnaireServiceSession(2022),'2023-2024');
+  assert.equal(questionnaireServiceSession(2024),'2023-2024');
+  assert.equal(questionnaireServiceSession(2025),'2025-2026');
+  assert.equal(questionnaireServiceSession(2026),'2025-2026');
+  assert.equal(questionnaireServiceSession(2020),null);
+  let serviceSession='';
+  const pg={query:async(_sql:string,args:unknown[])=>{
+    serviceSession=String(args[0]);
+    return {rows:[
+      {id:'member-a',legislator_id:'legislator-a',party:'DFL',
+       name:'Grant Hauschild',district:'3',starts_on:null,ends_on:null,aliases:[]},
+      {id:'member-b',legislator_id:'legislator-b',party:'R',
+       name:'Andrea Zupancich',district:'3',starts_on:null,ends_on:null,aliases:[]},
+    ]};
+  }} as unknown as PoolClient;
+  const found=await exactExistingSenateMembership(pg,{
+    electionCycle:2022,candidateName:'Grant Hauschild',district:'03',party:'D',
+  });
+  assert.equal(serviceSession,'2023-2024');
+  assert.deepEqual(found,{membershipId:'member-a',legislatorId:'legislator-a'});
+  const outsider=await exactExistingSenateMembership(pg,{
+    electionCycle:2022,candidateName:'Someone Else',district:'3',party:'DFL',
+  });
+  assert.deepEqual(outsider,{membershipId:null,legislatorId:null});
+  assert.deepEqual(await exactExistingSenateMembership(pg,{
+    electionCycle:2020,candidateName:'Grant Hauschild',district:'3',party:'DFL',
+  }),{membershipId:null,legislatorId:null});
+});
+
+test('null-only candidate reconciliation updates uniquely matched incumbents, not challengers',async()=>{
+  const calls:string[]=[];
+  const pg={query:async(sql:string,args:unknown[]=[])=>{
+    calls.push(sql);
+    if(sql.startsWith('SELECT id,candidate_name,district,party,election_cycle'))
+      return {rows:[
+        {id:'snapshot-1',election_cycle:2022,candidate_name:'Grant Hauschild',district:'3',party:'DFL'},
+        {id:'snapshot-2',election_cycle:2022,candidate_name:'Challenger Person',district:'3',party:'DFL'},
+      ]};
+    if(sql.startsWith('SELECT m.id,m.legislator_id,m.party'))
+      return {rows:[{id:'member-a',legislator_id:'legislator-a',party:'DFL',
+        name:'Grant Hauschild',district:'3',starts_on:null,ends_on:null,aliases:[]}]};
+    if(sql.startsWith('UPDATE mn_senate_questionnaire_captures')){
+      assert.deepEqual(args.slice(0,2),['member-a','legislator-a']);
+      assert.match(sql,/membership_id IS NULL AND legislator_id IS NULL/);
+      return {rowCount:1};
+    }
+    if(sql.startsWith('SELECT COUNT(*)::text'))
+      return {rows:[{count:'1'}]};
+    throw Error('Unexpected database query');
+  }} as unknown as PoolClient;
+  const report=await reconcileUnmatchedQuestionnaireMemberships(pg);
+  assert.deepEqual(report,{scanned:2,linked:1,remaining:1});
+  assert.equal(calls.filter(s=>s.startsWith('UPDATE mn_senate_questionnaire_captures')).length,1);
 });
