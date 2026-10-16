@@ -55,6 +55,15 @@ export async function senateLinkReadback(pool:Pool):Promise<SenateLinkReport>{
         "(EXTRACT(YEAR FROM election_date)::int+1)::text END,"+
         "COALESCE(membership_match_method,'unresolved'),membership_id "+
         "FROM mn_senate_election_raw_results "+
+        "UNION ALL SELECT 'mn_senate_questionnaire_captures',"+
+        "CASE WHEN election_cycle=2020 THEN '2021-2022' "+
+        "WHEN election_cycle=2022 THEN '2023-2024' "+
+        "WHEN election_cycle=2026 THEN '2025-2026' "+
+        "WHEN election_cycle IN (2021) THEN '2021-2022' "+
+        "WHEN election_cycle IN (2023,2024) THEN '2023-2024' "+
+        "WHEN election_cycle=2025 THEN '2025-2026' ELSE 'unknown' END,"+
+        "COALESCE(membership_match_method,'unresolved'),membership_id "+
+        "FROM mn_senate_questionnaire_captures "+
         "UNION ALL SELECT 'senate_raw_vote_member_mentions',"+
         "COALESCE(d.metadata->'rawPrepassageVotes'->>'sessionSlug','unknown'),"+
         "e.match_method,e.membership_id "+
@@ -74,6 +83,8 @@ export async function senateLinkReadback(pool:Pool):Promise<SenateLinkReport>{
         "UNION ALL SELECT witness_name FROM senate_committee_testimony_raw "+
         "WHERE membership_match_method='unresolved' AND witness_name IS NOT NULL "+
         "UNION ALL SELECT candidate_name FROM mn_senate_election_raw_results "+
+        "WHERE membership_match_method='unresolved' "+
+        "UNION ALL SELECT candidate_name FROM mn_senate_questionnaire_captures "+
         "WHERE membership_match_method='unresolved' "+
         "UNION ALL SELECT printed_name FROM senate_raw_vote_member_mentions "+
         "WHERE match_method='unresolved') "+
