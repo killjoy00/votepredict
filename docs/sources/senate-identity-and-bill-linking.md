@@ -11,6 +11,7 @@ the preexisting senator or bill identity columns are preserved.
 | senate_raw_statements | membership_id for a single named senator; senate_statement_member_mentions for multiple names | bill_id for a single reference; senate_statement_bill_mentions for multiple |
 | senate_committee_testimony_raw | membership_id **only** for an explicitly Senator-labeled witness or Senate organization, not unrelated testifiers | existing bill_id preserved; newly recorded bill_match_method |
 | mn_senate_election_raw_results | existing membership_id preserved, new membership_match_method, session scoped by election/service year | No bill identifiers published |
+| mn_senate_questionnaire_captures | existing membership_id preserved, new membership_match_method, session scoped to Senate campaign/service cycle | Raw questionnaire Q/A preserved as published, no bill number field |
 | source_documents Senate raw vote metadata | senate_raw_vote_member_mentions for each named mover/voter | senate_raw_vote_bill_mentions for every numbered vote record |
 | senate_committee_attachment_text_captures | No per-senator name is stored on a shared capture. Join by source_url to senate_committee_testimony_raw | Join to testimony rows by source_url; do not invent a bill on the binary capture |
 
@@ -70,7 +71,7 @@ This section must be updated from the completed job output.
 
 **Awaiting actual protected production readback.** The protected report uses
 the raw name frequencies across statement mentions, explicitly designated
-senator testimony witnesses, candidate results and raw-vote name mentions.
+senator testimony witnesses, candidate results, candidate questionnaires and raw-vote name mentions.
 
 ### Limitations
 
