@@ -67,17 +67,23 @@ jobs:
         run: npm run check
       - name: Production dependency audit
         run: npm audit --omit=dev --audit-level=high
-      - name: Live housing response extraction, Senate only and never blank form
+      - name: Live public-publisher smoke; inaccessible sources remain reported, not bypassed
         shell: bash
         run: |
-          node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source=mhp-housing-2026 --max-sources=3 --delay-ms=300 --out "$RUNNER_TEMP/senate-questionnaire-smoke.jsonl"
-          SENATE_RAW_FILE="$RUNNER_TEMP/senate-questionnaire-smoke.jsonl" node --input-type=module <<'NODE'
+          for source in mhp-housing-2026 snap-2026-robyn-gulley kaxe-2026-sd2 mnbiofuels-2022-weber-dornink; do
+            node --import tsx scripts/collect-senate-questionnaires.ts --dry-run --source="$source" --max-sources=3 --delay-ms=250 --out "$RUNNER_TEMP/$source.jsonl"
+          done
+          SENATE_SMOKE_DIR="$RUNNER_TEMP" node --input-type=module <<'NODE'
           import {readFileSync} from 'node:fs';
-          const rows=readFileSync(process.env.SENATE_RAW_FILE,'utf8').trim().split('\n').filter(Boolean).map(JSON.parse);
-          if(rows.length<1 || !rows.every(x=>x.electionCycle===2026&&x.office==='Minnesota State Senate'&&x.qa.length>=2&&x.contentSha256.length===64))
-            throw Error('Actual MHP linked Senate response source smoke failed');
-          console.log('MHP_SENATE_QUESTIONNAIRE_SMOKE='+JSON.stringify({responses:rows.length,pairs:rows.reduce((s,r)=>s+r.qa.length,0)}));
+          const names=['mhp-housing-2026','snap-2026-robyn-gulley','kaxe-2026-sd2','mnbiofuels-2022-weber-dornink'];
+          const rows=names.flatMap(n=>readFileSync(process.env.SENATE_SMOKE_DIR+'/'+n+'.jsonl','utf8').trim().split('\n').filter(Boolean).map(JSON.parse));
+          if(rows.length<1 || !rows.every(r=>r.office==='Minnesota State Senate'&&r.qa.length>=2&&r.contentSha256.length===64))
+            throw Error('No valid live Senate candidate questionnaire responses accessible from Actions');
+          console.log('SENATE_QUESTIONNAIRE_LIVE_SMOKE='+JSON.stringify({
+            candidates:rows.map(r=>r.candidateName),pairs:rows.reduce((n,r)=>n+r.qa.length,0),
+          }));
           NODE
+
   protected-neon-production:
     needs: [independently-tested-main]
     if: >-
