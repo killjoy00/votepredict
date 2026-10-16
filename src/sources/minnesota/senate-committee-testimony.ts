@@ -65,7 +65,7 @@ function needsSafeEncoding(value: string): boolean {
 }
 
 export function senateSqlSafeText(value: string | null): string | null {
-  if (value === null || !needsSafeEncoding(value)) return value;
+  if (value === null || (!needsSafeEncoding(value) && !value.startsWith(UNSAFE_TEXT_PREFIX))) return value;
   return UNSAFE_TEXT_PREFIX + Buffer.from(value, 'utf16le').toString('base64');
 }
 
