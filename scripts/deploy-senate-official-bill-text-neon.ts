@@ -19,7 +19,11 @@ const MARKER='SENATE_OFFICIAL_TEXT_RAW_20261016';
 const MIGRATION='0027_senate_official_bill_text_raw.sql';
 const REPO='killjoy00/votepredict';
 const SESSIONS=['2025-2026','2023-2024','2021-2022'];
-const MAX_NEW_BILLS=100, MAX_DISCOVER=100, MAX_VERSIONS=550, MAX_JOURNALS=30;
+// A guarded merge push is a small live-source canary. Once it proves real
+// captures, the existing six-hour scheduled run uses the full polite budgets.
+const PUSH_CANARY=process.env.GITHUB_EVENT_NAME==='push';
+const MAX_NEW_BILLS=PUSH_CANARY?15:100,MAX_DISCOVER=PUSH_CANARY?15:100,
+  MAX_VERSIONS=PUSH_CANARY?60:550,MAX_JOURNALS=PUSH_CANARY?10:30;
 const MAX_HTTP_BYTES=8_000_000, RETRIES=3, TIMEOUT_MS=20000;
 type Ledger={filename:string;checksum:string};
 type Bill={bill_id:string;session_id:string;slug:string;identifier:string;attempts:number};
@@ -538,7 +542,8 @@ async function main():Promise<void>{
       const summary=await report(client);
       const output={status:throttled?'stopped_on_official_throttle'
           :haltedOnDiscoveryFailures?'stopped_on_repeated_discovery_failures':'bounded_batch_committed',
-        migrationApplied,throttled,haltedOnDiscoveryFailures,counts,baselineUnchanged:true,...summary,
+        migrationApplied,throttled,haltedOnDiscoveryFailures,pushCanary:PUSH_CANARY,counts,
+        baselineUnchanged:true,...summary,
         servingInputsUntouched:true};
       console.log('SENATE_OFFICIAL_TEXT_RAW_READBACK='+JSON.stringify(output));
       if(process.env.GITHUB_STEP_SUMMARY)
