@@ -4,6 +4,7 @@ on:
     paths:
       - src/sources/minnesota/senate-questionnaire-raw.ts
       - src/operations/senate-questionnaire-ingest.ts
+      - scripts/check-senate-questionnaire-idempotency-local.ts
       - src/operations/senate-questionnaire-migration.ts
       - scripts/collect-senate-questionnaires.ts
       - scripts/deploy-senate-questionnaires-neon.ts
@@ -47,6 +48,11 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - run: npm run db:migrate
       - run: npm run check
+      - name: Verify response-level idempotency on disposable local PostgreSQL
+        env:
+          CI: 'true'
+          VOTEPREDICT_QUESTIONNAIRE_DISPOSABLE_TEST: 'true'
+        run: node --import tsx scripts/check-senate-questionnaire-idempotency-local.ts
       - name: Live public-publisher smoke; inaccessible sources remain reported, not bypassed
         shell: bash
         run: |
