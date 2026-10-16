@@ -11,7 +11,7 @@ import {runSenateBillAuthorCollection,senateBillAuthorReadback} from '../src/ope
 import {RevisorPacer} from '../src/operations/senate-revisor-pacer.js';
 
 const MARKER='SENATE_BILL_AUTHORS_PRODUCTION';
-const MIGRATION='0024_senate_bill_authors.sql';
+const MIGRATION='0025_senate_bill_authors.sql';
 interface LedgerRow {filename:string;checksum:string}
 function guard(env:NodeJS.ProcessEnv):void{
   if(env.GITHUB_REPOSITORY!=='killjoy00/votepredict' ||
@@ -33,7 +33,7 @@ function guard(env:NodeJS.ProcessEnv):void{
 }
 function expectedMigrations():LedgerRow[]{
   const filenames=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
-  if(filenames.length!==24 || filenames.at(-1)!==MIGRATION)
+  if(filenames.length!==25 || filenames.at(-1)!==MIGRATION)
     throw Error('Unexpected migration inventory or collision at 0024');
   return filenames.map(filename=>({
     filename,checksum:createHash('sha256').update(readFileSync('migrations/'+filename)).digest('hex'),
