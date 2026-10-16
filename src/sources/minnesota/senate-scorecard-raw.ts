@@ -286,9 +286,35 @@ function pdfSenatorScoreLines(text:string):ScorecardEntry[] {
   }
   return noDuplicates(out);
 }
+
+/**
+ * NFIB original Senate Voting Record descriptions print numbered issues, a
+ * literal (2025 - HF 2435) or (2024 - SF 3852) and "A YES/NO vote supports
+ * the NFIB position". Both-chambers descriptions apply to Senate too;
+ * STOP at HOUSE ONLY. Preserve printed wording, not a stance inference.
+ */
+export function parseNfibScorecardBillPositions(text:string):ScorecardPosition[] {
+  const beforeHouse=text.split(/\bHOUSE ONLY\b/i)[0]
+    .split(/\bSENATE VOTING RECORD\b/i)[0];
+  const positions:ScorecardPosition[]=[];
+  const headings=[...beforeHouse.matchAll(/(?:^|\n)\s*\d{1,2}\.\s+\S/g)];
+  for(let i=0;i<headings.length;i++){
+    const start=headings[i].index??0;
+    const end=i+1<headings.length?(headings[i+1].index??beforeHouse.length):beforeHouse.length;
+    const section=beforeHouse.slice(start,end).replace(/\s+/g,' ');
+    const bill=/\(\s*202[1-6]\s*[-–—]\s*((?:HF|SF)\s*\d{1,6})\s*\)/i.exec(section);
+    const position=/\bA\s+[“"']\s*(?:YES|NO)\s*[”"']\s+vote\s+supports\s+the\s+NFIB\s+positions?\b/i.exec(section);
+    if(bill&&position)
+      positions.push({sourceOrdinal:positions.length+1,billIdentifierRaw:bill[1],
+        groupPositionRaw:position[0]});
+  }
+  return positions.slice(0,50);
+}
+
 /** Preserve explicitly printed organizational support/opposition words, not a stance judgment. */
 export function parseScorecardBillPositions(rawText:string,adapter:SourceAdapter):ScorecardPosition[] {
   if(adapter==='gunowners_html'||adapter==='edmn_html'||adapter==='nfib_html'||adapter==='raw_html')return [];
+  if(adapter==='nfib_pdf')return parseNfibScorecardBillPositions(rawText);
   const results:ScorecardPosition[]=[];
   const lines=rawText.split(/\r?\n/);
   for(let i=0;i<lines.length;i++){
