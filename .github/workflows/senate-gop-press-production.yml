@@ -1,0 +1,115 @@
+name: Recover missed GOP Senate statement and run bounded daily GOP source collection
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-gop-press-production.yml
+      - scripts/deploy-senate-press-neon.ts
+      - scripts/probe-senate-gop-recovery.ts
+      - src/sources/minnesota/senate-press-raw.ts
+      - tests/senate-press-raw.test.ts
+  schedule:
+    - cron: '27 15 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-republican-first-party-production
+  cancel-in-progress: false
+
+jobs:
+  independent-reviewed-main:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      (
+        (github.event_name == 'schedule' && github.event.schedule == '27 15 * * *')
+        ||
+        (github.event_name == 'push' && github.event.after == github.sha &&
+         github.event.head_commit.id == github.sha &&
+         github.event.deleted != true && github.event.forced != true &&
+         contains(github.event.head_commit.message, 'SENATE_GOP_RAW_REPAIR_20261015'))
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require exact independent main revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Prove exact missing 2023 article and official linked senator roster without production access
+        run: node --import tsx scripts/probe-senate-gop-recovery.ts
+
+  protected-gop-only-neon:
+    needs: [independent-reviewed-main]
+    if: >-
+      needs.independent-reviewed-main.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      (
+        (github.event_name == 'schedule' && github.event.schedule == '27 15 * * *')
+        ||
+        (github.event_name == 'push' && github.event.after == github.sha &&
+         github.event.head_commit.id == github.sha &&
+         github.event.deleted != true && github.event.forced != true &&
+         contains(github.event.head_commit.message, 'SENATE_GOP_RAW_REPAIR_20261015'))
+      )
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 280
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_PRESS_CI: ${{ needs.independent-reviewed-main.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_SENATE_PRESS_MODE: ${{ github.event_name == 'schedule' && 'gop-daily' || 'gop-repair' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact reviewed main commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Recover only missing GOP official raw pages, retry one 2023 URL, and read back source/year counts
+        run: node --import tsx scripts/deploy-senate-press-neon.ts
