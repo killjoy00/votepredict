@@ -362,6 +362,10 @@ export async function collectSource(
     if(window.maxItems&&result.matched>=window.maxItems)break;
     const listing=archivePageUrl(source,page);let html:string;
     try{html=await fetcher.html(listing);}catch(error){
+      // Never keep crawling a publisher that signals a rate limit.
+      if(error instanceof Error && error.message.includes('Publisher rate-limited')){
+        failed(listing,error);break;
+      }
       // A page error before the publisher's announced last page is a gap, not exhaustion.
       if(page>1 && error instanceof Error && error.message==='HTTP 404' &&
         (knownLastPage===null || page>knownLastPage))break;
@@ -375,7 +379,23 @@ export async function collectSource(
     for(const url of authorArchivesFromListing(html,source))authorArchives.add(url);
     const last=lastArchivePageFromListing(html,source);
     if(last!==null)knownLastPage=Math.max(knownLastPage??0,last);
-    const fresh=articleUrlsFromListing(html,source).filter(url=>!visited.has(url));
+    let fresh=articleUrlsFromListing(html,source).filter(url=>!visited.has(url));
+    if(!fresh.length && knownLastPage!==null && page<knownLastPage) {
+      // A transient blank/challenge page was the original silent 2026-only backfill cause.
+      // Retry twice with the same robots-protected, paced fetcher before recording a gap.
+      for(let retry=0;retry<2 && !fresh.length;retry++) {
+        try {
+          const second=await fetcher.html(listing);
+          for(const url of authorArchivesFromListing(second,source))authorArchives.add(url);
+          fresh=articleUrlsFromListing(second,source).filter(url=>!visited.has(url));
+        }catch(error) {
+          if(error instanceof Error && error.message.includes('Publisher rate-limited')){
+            failed(listing,error);stopForRateLimit=true;break;
+          }
+        }
+      }
+    }
+    if(stopForRateLimit)break;
     if(!fresh.length){
       if(knownLastPage!==null && page<knownLastPage){
         failed(listing,Error('Archive page unexpectedly omitted linked articles'));
