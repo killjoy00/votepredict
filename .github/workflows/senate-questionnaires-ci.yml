@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - src/sources/minnesota/senate-questionnaire-raw.ts
+      - src/sources/minnesota/senate-questionnaire-eligibility.ts
       - src/operations/senate-questionnaire-ingest.ts
       - scripts/check-senate-questionnaire-idempotency-local.ts
       - src/operations/senate-questionnaire-migration.ts
