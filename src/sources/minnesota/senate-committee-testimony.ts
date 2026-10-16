@@ -120,7 +120,8 @@ export function statedPosition(value: string): StatedPosition | null {
 }
 
 function hearingRecord(context: HearingContext, event: unknown): RawSenateTestimonyRecord {
-  return record(context, 'hearing', context.hearingUrl, 'application/json', JSON.stringify(event), null, null, 'hearing');
+  return record(context, 'hearing', ROOT + '/api/schedule/daily?date=' + context.hearingDate,
+    'application/json', JSON.stringify(event), context.hearingUrl, null, 'hearing');
 }
 
 function record(
