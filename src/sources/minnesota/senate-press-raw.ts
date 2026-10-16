@@ -356,6 +356,7 @@ export async function collectSource(
     request===fetch ? Math.max(1250,window.delayMs??1500) : Math.max(0,window.delayMs??0),request);
   try{await fetcher.init();}catch(error){failed(source.archive_url,error);return result;}
   const visited=new Set<string>(),authorArchives=new Set<string>();
+  const maxConsecutiveGaps = 25; // Allows recovery when a run of older DFL pages is unavailable.
   let olderPages=0,stopForRateLimit=false,knownLastPage:number|null=null,consecutiveGaps=0;
   for(let page=1;page<=(window.maxPages??1000);page++){
     if(window.maxItems&&result.matched>=window.maxItems)break;
@@ -365,7 +366,7 @@ export async function collectSource(
       if(page>1 && error instanceof Error && error.message==='HTTP 404' &&
         (knownLastPage===null || page>knownLastPage))break;
       failed(listing,error);
-      if(knownLastPage!==null && page<knownLastPage && consecutiveGaps<2) {
+      if(knownLastPage!==null && page<knownLastPage && consecutiveGaps<maxConsecutiveGaps) {
         result.archive_gaps.push(page);consecutiveGaps++;continue;
       }
       break;
@@ -379,7 +380,7 @@ export async function collectSource(
       if(knownLastPage!==null && page<knownLastPage){
         failed(listing,Error('Archive page unexpectedly omitted linked articles'));
         result.archive_gaps.push(page);
-        if(++consecutiveGaps<=2)continue;
+        if(++consecutiveGaps<=maxConsecutiveGaps)continue;
       }
       break;
     }
