@@ -255,7 +255,7 @@ async function main():Promise<void>{
       '; candidates: '+selected.length+'; inserted: '+stats.inserted+
       '; archive pause: '+(stopReason??'none')+'\n\n'+
       'Publisher sitemap URLs currently stored: '+publisherStoredAfter+'/'+candidates.length+
-      ' (remaining candidates are not all eligible historical statements)\\n\\n'+
+      ' (remaining candidates are not all eligible historical statements)\n\n'+
       'Captured first-party original counts: '+captureAfter.map(r=>r.year+': '+r.total).join(', ')+
       '\n\nPublisher post sitemap manifest: '+manifest+
       '\n\nOriginal publication date and Wayback capture timestamp are distinct. No models or votes changed.\n');
