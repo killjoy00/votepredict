@@ -303,7 +303,16 @@ async function main(): Promise<void> {
           + ' FROM senate_committee_attachment_text_captures');
         return r.rows[0];
       });
+      const distinctIndexedUrls = await readonly(client, async () => {
+        const r = await client.query<{ count: number }>(
+          "SELECT count(DISTINCT d.source_url)::int AS count FROM senate_committee_testimony_raw d"
+          + " JOIN legislative_sessions s ON s.id=d.session_id"
+          + " JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'"
+          + " WHERE d.source_type='document' AND s.slug IN ('2025-2026','2023-2024')");
+        return r.rows[0]?.count ?? 0;
+      });
       const output = {
+        distinctIndexedUrls,
         status:pending===0?'all_indexed_urls_attempted_and_readback_verified':'bounded_partial_resume_required',
         migrationApplied,originalPendingDistinctUrls:originalPending,
         attemptedThisRun:processed,extractedThisRun:extracted,failedOrUnavailableThisRun:failures,
