@@ -1,6 +1,6 @@
 name: Collect first-party historical Senate DFL from publisher Wayback sitemaps (hourly)
 # Make scheduled-vs-reviewed-push-vs-manual fallback visible in the Actions run list.
-run-name: DFL raw ${{ github.event_name }} #${{ github.run_number }}
+run-name: "DFL raw ${{ github.event_name }} run #${{ github.run_number }}"
 
 on:
   push:
