@@ -6,18 +6,20 @@ on:
     paths:
       - src/sources/minnesota/senate-election-results.ts
       - scripts/collect-senate-election-results.ts
+      - src/operations/senate-election-ingest.ts
+      - .github/workflows/mn-senate-elections-production.yml
       - scripts/deploy-mn-senate-elections-neon.ts
       - migrations/0018_mn_senate_election_raw_results.sql
-      - data/mn-senate-election-legacy-official-rows.json
       - package.json
       - .github/workflows/minnesota-senate-election-raw-collection.yml
   pull_request:
     paths:
       - src/sources/minnesota/senate-election-results.ts
       - scripts/collect-senate-election-results.ts
+      - src/operations/senate-election-ingest.ts
+      - .github/workflows/mn-senate-elections-production.yml
       - scripts/deploy-mn-senate-elections-neon.ts
       - migrations/0018_mn_senate_election_raw_results.sql
-      - data/mn-senate-election-legacy-official-rows.json
       - package.json
       - .github/workflows/minnesota-senate-election-raw-collection.yml
 
