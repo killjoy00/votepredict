@@ -62,10 +62,10 @@ export function visibleLines(html:string):string[] {
 }
 const monthNames=['january','february','march','april','may','june','july','august','september','october','november','december'];
 function dateFrom(text:string):string|null {
-  const m=/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(20\d{2})\b/i.exec(text);
-  const rev=/\b(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})\b/i.exec(text);
+  const m=/\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{1,2}),?\s+(20\d{2})\b/i.exec(text);
+  const rev=/\b(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(20\d{2})\b/i.exec(text);
   if(!m&&!rev)return null;
-  const day=Number(m?m[2]:rev![1]),month=monthNames.indexOf((m?m[1]:rev![2]).toLowerCase())+1,year=Number(m?m[3]:rev![3]);
+  const day=Number(m?m[2]:rev![1]),month=monthNames.findIndex(x=>x.startsWith((m?m[1]:rev![2]).slice(0,3).toLowerCase()))+1,year=Number(m?m[3]:rev![3]);
   const dt=new Date(Date.UTC(year,month-1,day));
   return dt.getUTCDate()===day&&dt.getUTCMonth()===month-1
     ?year+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0'):null;
