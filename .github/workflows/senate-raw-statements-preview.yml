@@ -8,6 +8,8 @@ on:
       - src/sources/minnesota/senate-press-raw.ts
       - src/operations/senate-press-raw-store.ts
       - scripts/collect-senate-press.ts
+      - scripts/probe-senate-press-directories.ts
+      - .github/workflows/senate-press-coverage-production.yml
       - migrations/0016_senate_raw_statements.sql
       - package.json
   workflow_dispatch:
@@ -26,5 +28,5 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Sample live archives without database credentials or writes
-        run: npm run data:senate:statements -- --dry-run --from=2025-01-01 --to=2026-10-15 --max-pages=2
+      - name: Check actual first-party senator sources and DFL article links without database access
+        run: node --import tsx scripts/probe-senate-press-directories.ts
