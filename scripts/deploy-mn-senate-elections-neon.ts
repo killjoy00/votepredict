@@ -13,8 +13,8 @@ import { fetchSenateElection, senateElectionsForYear, type SenateElectionDownloa
 
 const MIGRATION = '0018_mn_senate_election_raw_results.sql';
 const MARKER = 'SENATE_ELECTION_RAW_PRODUCTION_20261015';
-const MINIMUM_REQUIRED_DISTRICT_ELECTIONS = 210;
-const MINIMUM_REQUIRED_EVENTS = 11;
+const MINIMUM_REQUIRED_DISTRICT_ELECTIONS = 139;
+const MINIMUM_REQUIRED_EVENTS = 6;
 
 function requireProtectedMain(env: NodeJS.ProcessEnv): void {
   if(env.GITHUB_REPOSITORY !== 'killjoy00/votepredict'
@@ -59,13 +59,8 @@ function assertTrustedSnapshot(item:SenateElectionDownload):number{
     ||item.fetchedAt.length<20)
     throw Error('Fetched original source payload integrity or size invalid');
   const host=new URL(item.sourceUrl).hostname;
-  const valid=
-    (item.sourceKind==='official_bulk_text'&&
-      ['electionresults.sos.mn.gov','electionresultsfiles.sos.mn.gov'].includes(host))||
-    (item.sourceKind==='official_sos_pdf'&&
-      ['www.sos.mn.gov','sos.mn.gov'].includes(host))||
-    (item.sourceKind==='university_election_archive_html'&&
-      ['mn.electionarchives.lib.umn.edu','mnelectionarchive.datamade.us'].includes(host));
+  const valid=item.sourceKind==='official_bulk_text' &&
+    ['electionresults.sos.mn.gov','electionresultsfiles.sos.mn.gov'].includes(host);
   if(!valid)throw Error('Untrusted Senate election source type or host');
   const districts=new Set(item.candidates.map(x=>x.district));
   if(districts.size===0||districts.size>67
@@ -92,7 +87,7 @@ async function gatherRawSources():Promise<{downloads:SenateElectionDownload[];mi
   const missingOptional:string[]=[];
   let districts=0;
   let requiredEvents=0;
-  for(let year=2016;year<=2026;year++){
+  for(let year=2020;year<=2026;year++){
     for(const event of senateElectionsForYear(year,true)){
       const required=event.type==='general'||event.type==='special';
       try{
@@ -107,7 +102,7 @@ async function gatherRawSources():Promise<{downloads:SenateElectionDownload[];mi
     }
   }
   if(requiredEvents!==MINIMUM_REQUIRED_EVENTS||districts!==MINIMUM_REQUIRED_DISTRICT_ELECTIONS)
-    throw Error('All 210 general and special Senate district contests are required before write');
+    throw Error('All 139 general and special Senate district contests are required before write');
   return {downloads,missingOptional,districts};
 }
 async function main():Promise<void>{
@@ -183,26 +178,45 @@ async function main():Promise<void>{
     const verify=await pool.connect();
     let readback:{
       generalOrSpecialDistricts:number;snapshots:number;candidateRows:number;
-      matchedWinners:number;yearCounts:Array<{year:number;contests:number;candidateRows:number}>;
+      matchedWinners:number;
+      yearCounts:Array<{year:number;districtElections:number;generalSpecialDistricts:number;
+        primaryDistrictElections:number;candidateRows:number;generalSpecialCandidateRows:number}>;
     };
     try{
       await verify.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
       try{
-        const r=await verify.query<{year:string;contests:string;rows:string}>(
+        const r=await verify.query<{
+          year:string;contests:string;required_contests:string;primary_contests:string;
+          rows:string;required_rows:string;
+        }>(
           "SELECT EXTRACT(YEAR FROM election_date)::int::text AS year,"
-          +"COUNT(DISTINCT (election_date,district))::text AS contests,"
-          +"COUNT(*)::text AS rows FROM mn_senate_election_raw_results"
-          +" WHERE election_type IN ('general','special')"
+          +"COUNT(DISTINCT (election_date,election_type,district))::text AS contests,"
+          +"COUNT(DISTINCT (election_date,district)) FILTER "
+          +"(WHERE election_type IN ('general','special'))::text AS required_contests,"
+          +"COUNT(DISTINCT (election_date,district)) FILTER "
+          +"(WHERE election_type IN ('primary','special_primary'))::text AS primary_contests,"
+          +"COUNT(*)::text AS rows,"
+          +"COUNT(*) FILTER (WHERE election_type IN ('general','special'))::text AS required_rows"
+          +" FROM mn_senate_election_raw_results"
           +" GROUP BY EXTRACT(YEAR FROM election_date) ORDER BY year");
         const a=await verify.query<{snapshots:string;rows:string;matched:string}>(
           "SELECT (SELECT COUNT(*)::text FROM mn_senate_election_source_snapshots) AS snapshots,"
           +"COUNT(*)::text AS rows,COUNT(membership_id)::text AS matched"
           +" FROM mn_senate_election_raw_results");
-        const yearCounts=r.rows.map(row=>({
-          year:Number(row.year),contests:Number(row.contests),candidateRows:Number(row.rows),
-        }));
+        if(r.rows.some(row=>Number(row.year)<2020||Number(row.year)>2026))
+          throw Error('Unexpected out-of-scope election year in production readback');
+        const yearCounts=Array.from({length:7},(_unused,i)=>2020+i).map(year=>{
+          const row=r.rows.find(item=>Number(item.year)===year);
+          return {
+            year,districtElections:Number(row?.contests??0),
+            generalSpecialDistricts:Number(row?.required_contests??0),
+            primaryDistrictElections:Number(row?.primary_contests??0),
+            candidateRows:Number(row?.rows??0),
+            generalSpecialCandidateRows:Number(row?.required_rows??0),
+          };
+        });
         readback={
-          generalOrSpecialDistricts:yearCounts.reduce((sum,row)=>sum+row.contests,0),
+          generalOrSpecialDistricts:yearCounts.reduce((sum,row)=>sum+row.generalSpecialDistricts,0),
           snapshots:Number(a.rows[0].snapshots),candidateRows:Number(a.rows[0].rows),
           matchedWinners:Number(a.rows[0].matched),yearCounts,
         };
