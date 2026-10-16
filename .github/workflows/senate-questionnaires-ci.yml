@@ -81,3 +81,29 @@ jobs:
             candidates:rows.map(r=>r.candidateName),pairs:rows.reduce((n,r)=>n+r.qa.length,0),
           }));
           NODE
+      - name: Original 2026 PDF Q&A is valid PostgreSQL JSONB in disposable database
+        env:
+          SENATE_SMOKE_DIR: ${{ runner.temp }}
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          import pg from 'pg';
+          const row=JSON.parse(readFileSync(process.env.SENATE_SMOKE_DIR+'/edmn-2026-sd32.jsonl','utf8').trim());
+          if(row.qa.length<15 || row.contentType!=='application/pdf;base64')
+            throw Error('Missing original Chris Ford PDF response evidence');
+          if(row.qa.some(q=>q.question.includes(String.fromCharCode(0))||q.answer.includes(String.fromCharCode(0))))
+            throw Error('Extracted Q&A contains non-storable Unicode NUL');
+          const ordered=JSON.stringify(row.qa.map(q=>[q.ordinal,q.question,q.answer]));
+          const db=new pg.Client({connectionString:process.env.DATABASE_URL_UNPOOLED});
+          await db.connect();
+          try{
+            await db.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
+            const result=await db.query('SELECT jsonb_array_length($1::jsonb) AS pair_count',[ordered]);
+            if(result.rows[0]?.pair_count!==row.qa.length)
+              throw Error('PDF Q&A JSONB roundtrip failed');
+          } finally {
+            await db.query('ROLLBACK');
+            await db.end();
+          }
+          console.log('SENATE_QUESTIONNAIRE_PDF_JSONB_SMOKE='+JSON.stringify({pairs:row.qa.length,postgreSqlSafe:true}));
+          NODE
