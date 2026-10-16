@@ -1,0 +1,104 @@
+name: One-shot Senate raw statement production readback (read-only)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-press-production-readonly.yml
+      - scripts/check-senate-press-neon-readonly.ts
+      - scripts/deploy-senate-press-neon.ts
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-press-readonly-counts-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  independent-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_COUNTS_READONLY_20261015')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert independent exact reviewed main checkout
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+  protected-readonly-neon:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_COUNTS_READONLY_20261015')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_PRESS_COUNTS_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require the exact checked main commit
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Read bounded Senate statement counts under rollback-only SQL
+        run: node --import tsx scripts/check-senate-press-neon-readonly.ts
