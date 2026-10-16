@@ -8,9 +8,6 @@ on:
       - scripts/deploy-senate-press-neon.ts
       - src/sources/minnesota/senate-press-raw.ts
       - tests/senate-press-raw.test.ts
-  schedule:
-    # Daily first-party publications, bounded by a 45-day lookback and URL-only dedup.
-    - cron: '17 14 * * *'
 
 permissions:
   contents: read
@@ -27,14 +24,11 @@ jobs:
       github.event.repository.full_name == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      (
-        (github.event_name == 'schedule' && github.event.schedule == '17 14 * * *')
-        ||
-        (github.event_name == 'push' && github.event.after == github.sha &&
-         github.event.head_commit.id == github.sha &&
-         github.event.deleted != true && github.event.forced != true &&
-         contains(github.event.head_commit.message, 'SENATE_PRESS_COVERAGE_20261015'))
-      )
+      github.event_name == 'push' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true && github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_COVERAGE_20261015')
     runs-on: ubuntu-latest
     timeout-minutes: 35
     services:
@@ -84,14 +78,11 @@ jobs:
       github.repository == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      (
-        (github.event_name == 'schedule' && github.event.schedule == '17 14 * * *')
-        ||
-        (github.event_name == 'push' && github.event.after == github.sha &&
-         github.event.head_commit.id == github.sha &&
-         github.event.deleted != true && github.event.forced != true &&
-         contains(github.event.head_commit.message, 'SENATE_PRESS_COVERAGE_20261015'))
-      )
+      github.event_name == 'push' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true && github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_COVERAGE_20261015')
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 350
@@ -100,7 +91,7 @@ jobs:
       VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
       VOTEPREDICT_SENATE_PRESS_CI: ${{ needs.independent-reviewed-main.result == 'success' && 'true' || 'false' }}
-      VOTEPREDICT_SENATE_PRESS_MODE: ${{ github.event_name == 'schedule' && 'daily' || 'coverage' }}
+      VOTEPREDICT_SENATE_PRESS_MODE: 'coverage'
     steps:
       - uses: actions/checkout@v7
         with:
