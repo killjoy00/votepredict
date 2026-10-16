@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import type {QuestionnaireSource} from '../src/sources/minnesota/senate-questionnaire-raw.js';
-import {parseEducationMinnesotaPdfPages} from '../src/sources/minnesota/senate-questionnaire-edmn-pdf.js';
+import {parseEducationMinnesotaPdfPages,validExtractedUtf8} from '../src/sources/minnesota/senate-questionnaire-edmn-pdf.js';
 import {groupQuestionnaireCandidates,senateQuestionnaireCandidateKey,
   type CandidateCaptureIdentity} from '../src/operations/senate-questionnaire-candidate-groups.js';
 const source:QuestionnaireSource={
@@ -92,4 +92,16 @@ test('conflicting party or member IDs never silently join; historical losers omi
   assert.equal(valid.length,1);
   assert.equal(valid[0].state,'member_linked');
   assert.equal(senateQuestionnaireCandidateKey(cap('a',{district:null})),null);
+});
+
+test('original PDF raw Q&A extraction replaces ONLY non-storable Unicode scalars',()=>{
+  assert.equal(validExtractedUtf8('alpha\\u0000beta'),'alpha\uFFFDbeta');
+  assert.equal(validExtractedUtf8('alpha\\uD800beta'),'alpha\uFFFDbeta');
+  assert.equal(validExtractedUtf8('Crème, São Paulo – 2026'),'Crème, São Paulo – 2026');
+  const malformed=pages.map(p=>p.replace('I support raising revenue fairly.',
+    'I support raising'+String.fromCharCode(0)+' revenue fairly.'));
+  const parsed=parseEducationMinnesotaPdfPages(malformed,source);
+  const q10=parsed[0].qa.find(x=>x.question.startsWith('Q10.'));
+  assert.equal(q10?.answer,'I support raising\uFFFD revenue fairly.');
+  assert.ok(!parsed[0].qa.some(q=>(q.question+q.answer).includes(String.fromCharCode(0))));
 });
