@@ -1,0 +1,67 @@
+{
+  "source": "Minnesota Secretary of State official electionresults.sos.mn.gov Senate by-district media files",
+  "observationDate": "2026-10-15",
+  "provenance": "Literal plain-text row copy of publicly served SOS archival download; line endings normalized for repository storage. Prefer live source when available.",
+  "sources": [
+    {
+      "resultsId": 93,
+      "rows": [
+        "MN;;;0155;State Senator District 35;35;0301;ANDY APLIKOWSKI;;;R;28;28;1807;39.07;4625",
+        "MN;;;0155;State Senator District 35;35;0302;JIM ABELER;;;R;28;28;2818;60.93;4625",
+        "MN;;;0155;State Senator District 35;35;0401;ROGER JOHNSON;;;DFL;28;28;282;100.00;282"
+      ]
+    },
+    {
+      "resultsId": 94,
+      "rows": [
+        "MN;;;0155;State Senator District 35;35;0301;JIM ABELER;;;R;28;28;3237;73.69;4393",
+        "MN;;;0155;State Senator District 35;35;0401;ROGER JOHNSON;;;DFL;28;28;947;21.56;4393",
+        "MN;;;0155;State Senator District 35;35;0501;ZACHARY PHELPS;;;LMN;28;28;180;4.10;4393",
+        "MN;;;0155;State Senator District 35;35;9901;WRITE-IN**;;;WI;28;28;29;0.66;4393"
+      ]
+    },
+    {
+      "resultsId": 109,
+      "rows": [
+        "MN;;;0174;State Senator District 54;54;0301;James E. Brunsgaard, III;;;R;34;34;236;15.09;1564",
+        "MN;;;0174;State Senator District 54;54;0302;Denny McNamara;;;R;34;34;1328;84.91;1564",
+        "MN;;;0174;State Senator District 54;54;0401;Karla Bigham;;;DFL;34;34;449;100.00;449"
+      ]
+    },
+    {
+      "resultsId": 110,
+      "rows": [
+        "MN;;;0174;State Senator District 54;54;0301;Denny McNamara;;;R;34;34;6813;47.06;14476",
+        "MN;;;0174;State Senator District 54;54;0401;Karla Bigham;;;DFL;34;34;7343;50.73;14476",
+        "MN;;;0174;State Senator District 54;54;0501;Emily Mellingen;;;LIB;34;34;313;2.16;14476",
+        "MN;;;0174;State Senator District 54;54;9901;WRITE-IN**;;;WI;34;34;7;0.05;14476"
+      ]
+    },
+    {
+      "resultsId": 115,
+      "rows": [
+        "MN;;;0133;State Senator District 13;13;0301;Jeff Howe;;;R;47;47;21714;57.38;37842",
+        "MN;;;0133;State Senator District 13;13;0401;Joe Perske;;;DFL;47;47;16108;42.57;37842",
+        "MN;;;0133;State Senator District 13;13;9901;WRITE-IN**;;;WI;47;47;20;0.05;37842"
+      ]
+    },
+    {
+      "resultsId": 118,
+      "rows": [
+        "MN;;;0131;State Senator District 11;11;0101;John \"Sparky\" Birrenbach;;;LMN;103;103;69;100.00;69",
+        "MN;;;0131;State Senator District 11;11;0304;Jason Rarick;;;R;103;103;689;100.00;689",
+        "MN;;;0131;State Senator District 11;11;0401;Michelle Lee;;;DFL;103;103;1699;46.79;3631",
+        "MN;;;0131;State Senator District 11;11;0402;Stu Lourey;;;DFL;103;103;1932;53.21;3631"
+      ]
+    },
+    {
+      "resultsId": 119,
+      "rows": [
+        "MN;;;0131;State Senator District 11;11;0101;John \"Sparky\" Birrenbach;;;LMN;103;103;298;1.91;15623",
+        "MN;;;0131;State Senator District 11;11;0304;Jason Rarick;;;R;103;103;8127;52.02;15623",
+        "MN;;;0131;State Senator District 11;11;0402;Stu Lourey;;;DFL;103;103;7171;45.90;15623",
+        "MN;;;0131;State Senator District 11;11;9901;WRITE-IN**;;;WI;103;103;27;0.17;15623"
+      ]
+    }
+  ]
+}
