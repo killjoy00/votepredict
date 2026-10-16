@@ -157,7 +157,11 @@ async function pdfText(data: Buffer, allowOcr: boolean): Promise<{ text: string;
   let text: string;
   try { text = (await pdf.getText()).text ?? ''; }
   finally { await pdf.destroy(); }
-  if (text.trim()) return { text, method: 'pdf-parse', scanned: false };
+  // pdf-parse writes its own "-- 1 of 2 --" page headers into getText().text.
+  // They are not document text; without other characters a PDF remains scanned.
+  // Preserve the COMPLETE original parsed string when genuine content exists.
+  const sourceTextOnly = text.replace(/^\s*--\s*\d+\s+of\s+\d+\s*--\s*$/gm, '').trim();
+  if (sourceTextOnly) return { text, method: 'pdf-parse', scanned: false };
   if (!allowOcr) return { text: '', method: 'none', scanned: true };
   try {
     const ocr = await pdfOcr(data);
