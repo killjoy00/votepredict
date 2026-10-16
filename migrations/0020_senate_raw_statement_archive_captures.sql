@@ -2,7 +2,7 @@
 -- Minnesota Senate DFL raw statements from independent public web archives.
 -- Capture time is NOT the source publication date or a first observation proof.
 CREATE TABLE senate_raw_statement_archive_captures (
-  source_url text PRIMARY KEY REFERENCES senate_raw_statements(source_url) ON DELETE RESTRICT,
+  source_url text PRIMARY KEY REFERENCES senate_raw_statements(source_url),
   archive_provider text NOT NULL
     CHECK (archive_provider = 'internet_archive'),
   archive_snapshot_url text NOT NULL,
