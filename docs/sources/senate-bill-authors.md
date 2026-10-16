@@ -81,12 +81,46 @@ the authorship migration was deployed**:
 | 2025-2026 | 5,310 | 4,496 | 9,806 |
 | **Total** | **15,455** | **13,485** | **28,940** |
 
-These are **precollection inventory counts**, not claims that author rows
-have been populated. The protected production readback emits per-session
-targetBills, scannedBills, successBills, authorRows, senateAuthorRows,
-senateLinked, houseAuthorRows, billsWithCoauthors, coauthorShare and
-senateLinkRate. After the first observed protected run, record real values
-here; never invent a completed coverage rate.
+These were **precollection companion-inventory counts**, not claims that
+authorship rows had been populated. The first official author readback below
+is the authoritative point-in-time count; its target total is two lower than
+this earlier inventory (one fewer HF target in 2023-2024 and in 2025-2026).
+No reason for that difference is inferred without a catalog comparison.
+
+### Verified first protected collection: October 16, 2026
+
+[Production run #38953446404](https://github.com/killjoy00/votepredict/actions/runs/38953446404)
+successfully passed exact-marker independent main, ledgered migration 0025,
+post-migration drift, bounded serial Revisor fetches and read-only readback.
+It is a **bounded partial** collection, not completed coverage.
+
+| Session | Live SF + linked HF target | Revisor XML success scans | Current raw author rows (XML + stored journals) | Senate membership links | Coauthor share among successful XML-scanned bills |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 2021-2022 | 8,652 | 0 | 726 | 726 / 726 (100%) | Not available (0 scanned) |
+| 2023-2024 | 10,481 | 0 | 484 | 484 / 484 (100%) | Not available (0 scanned) |
+| 2025-2026 | 9,805 | 350 | 1,275 | 1,275 / 1,275 (100%) | 188 / 350 (53.71%) |
+| **Total** | **28,938** | **350** | **2,485** | **2,485 / 2,485 (100%)** | **188 / 350 (53.71%)** |
+
+The official collector attempted **350/350 successful SF XML status lookups**;
+no 404, source errors, 429 or 503 were observed. It parsed **817 official
+current/action author entries**. Separately, **80 stored Senate journal
+documents** yielded **1,691 author-change mentions linked to existing bills**.
+These mentions can overlap an XML author row and are not additional unique
+people or bills. Readback found **0 House author rows**, because the configured
+priority processes SF bills before their linked HF companions.
+
+**Remaining:** 28,588 target bills without successful/not-found Revisor scan
+receipts and 257 unscanned stored journal documents. The next reviewed,
+marker-bearing main merge can resume from these receipts; no schedule exists.
+All 2,485 observed Senate author rows resolved to existing membership IDs,
+but this is a first-batch rate, **not** a claim that unscanned authors or
+all House people are resolved.
+
+The readback emits targetBills, scannedBills, successBills, authorRows,
+senateAuthorRows, senateLinked, houseAuthorRows, billsWithCoauthors,
+coauthorShare and senateLinkRate. These figures may change as new evidence
+is collected or the catalog changes. Do not extrapolate the coauthor share
+to all 28,938 target bills.
 
 Definitions: coauthor share is distinct successfully scanned bills with at
 least one coauthor, divided by successfully scanned bills. Senate link rate is
