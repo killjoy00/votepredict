@@ -59,13 +59,30 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - run: npm run db:migrate
       - run: npm run check
-      - name: Capture published Senate bulk files for every listed year
+      - name: Capture and insert published Senate raw files in disposable PostgreSQL
         shell: bash
         run: |
           set -o pipefail
-          npm run data:senate:elections -- --all --dry-run \
+          npm run data:senate:elections -- --all \
             --out "$RUNNER_TEMP/mn-senate-elections-raw.jsonl" \
             | tee "$RUNNER_TEMP/mn-senate-elections-coverage.log"
+      - name: Verify disposable Postgres has 210 raw general/special districts
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import pg from 'pg';
+          const client = new pg.Client({connectionString:process.env.DATABASE_URL_UNPOOLED});
+          await client.connect();
+          try{
+            const r = await client.query("SELECT COUNT(*)::int AS candidates, COUNT(DISTINCT (election_date,district))::int AS contests, COUNT(*) FILTER (WHERE winner)::int AS leading FROM mn_senate_election_raw_results WHERE election_type IN ('general','special')");
+            const snaps=await client.query("SELECT COUNT(*)::int AS count FROM mn_senate_election_source_snapshots");
+            if(r.rows[0].contests!==210||r.rows[0].leading!==210||
+                r.rows[0].candidates<350||r.rows[0].candidates>1000||
+                snaps.rows[0].count<19)
+              throw Error('Ephemeral Senate election migration/ingestion coverage did not match sources');
+            console.log('EPHEMERAL_SENATE_ELECTION_ROWS='+JSON.stringify({ ...r.rows[0], snapshots:snaps.rows[0].count }));
+          } finally { await client.end(); }
+          NODE
       - name: Store raw SOS downloads with source metadata and collection counts
         if: always()
         uses: actions/upload-artifact@v4
