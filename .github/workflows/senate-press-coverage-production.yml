@@ -1,0 +1,110 @@
+name: Repair Senate first-party archives and collect new raw statements
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-press-coverage-production.yml
+      - scripts/deploy-senate-press-neon.ts
+      - src/sources/minnesota/senate-press-raw.ts
+      - tests/senate-press-raw.test.ts
+
+permissions:
+  contents: read
+
+# Prevent overlap between the one-off historical repair and recurring collection.
+concurrency:
+  group: senate-first-party-coverage-production
+  cancel-in-progress: false
+
+jobs:
+  independent-reviewed-main:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event_name == 'push' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true && github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_COVERAGE_20261015')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require immutable checked main commit
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Test every migration on disposable PostgreSQL
+        run: npm run db:migrate
+      - name: Full typecheck, tests, and production build
+        run: npm run check
+      - name: Production dependency security gate
+        run: npm audit --omit=dev --audit-level=high
+      - name: Verify actual senator roster and author archives without Neon credentials
+        run: node --import tsx scripts/probe-senate-press-directories.ts
+
+  protected-production:
+    needs: [independent-reviewed-main]
+    if: >-
+      needs.independent-reviewed-main.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event_name == 'push' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true && github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_COVERAGE_20261015')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_PRESS_CI: ${{ needs.independent-reviewed-main.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_SENATE_PRESS_MODE: 'coverage'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm same independently verified commit
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Insert-only publication crawl, first-party member archives, exact GOP retry, and source/year readback
+        run: node --import tsx scripts/deploy-senate-press-neon.ts

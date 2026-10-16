@@ -8,6 +8,10 @@ on:
       - src/sources/minnesota/senate-press-raw.ts
       - src/operations/senate-press-raw-store.ts
       - scripts/collect-senate-press.ts
+      - scripts/probe-senate-press-directories.ts
+      - scripts/probe-senate-gop-recovery.ts
+      - .github/workflows/senate-gop-press-production.yml
+      - .github/workflows/senate-press-coverage-production.yml
       - migrations/0016_senate_raw_statements.sql
       - package.json
   workflow_dispatch:
@@ -26,5 +30,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Sample live archives without database credentials or writes
-        run: npm run data:senate:statements -- --dry-run --from=2025-01-01 --to=2026-10-15 --max-pages=2
+      - name: Validate accessible GOP senator sources and exact 2023 missed publication
+        run: node --import tsx scripts/probe-senate-gop-recovery.ts
+      - name: Document publisher block on DFL historical source
+        run: echo "DFL first-party automation is separately gated; its site currently returns HTTP 202 to automated public-archive requests."
