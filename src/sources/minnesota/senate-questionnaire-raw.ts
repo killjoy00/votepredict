@@ -444,7 +444,7 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
     if(activeName) {
       const meta=named.get(activeName)!;
       const qa=qaFromParts(parts.map(p=>({q:p.q,a:p.a.join('\n')})));
-      if(qa.length>=2 && eligibleSenateQuestionnaireCandidate(seed.cycle,activeName,meta.district))
+      if(qa.length>=2 && eligibleSenateQuestionnaireCandidate(seed.cycle,activeName,meta.district,seed.url))
         out.push({candidateName:activeName,district:meta.district,
           party:meta.party,displayedPublicationOn:sourceDate,qa});
     }
@@ -518,7 +518,7 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
 export function parseSd60PdfText(text:string,seed:QuestionnaireSource):
 Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   if(seed.cycle!==2025||seed.adapter!=='sd60_pdf'||seed.district!=='60'||!seed.candidate
-    ||!eligibleSenateQuestionnaireCandidate(seed.cycle,seed.candidate,seed.district))
+    ||!eligibleSenateQuestionnaireCandidate(seed.cycle,seed.candidate,seed.district,seed.url))
     throw Error('Unconfigured or nonwinning special-election candidate PDF');
   const lines=text.replace(/\r/g,'\n').split(/\n/).map(s=>s.trim())
     .filter(s=>!!s&&!/^--\s*\d+\s+of\s+\d+\s*--$/i.test(s));
@@ -743,7 +743,7 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
         const candidateDistrict=parsed.district??districtNumber(seed.district);
         // Current 2026 election: retain everyone. Completed earlier elections:
         // no historical losing candidate can reach onResponse or storage.
-        if(!eligibleSenateQuestionnaireCandidate(seed.cycle,parsed.candidateName,candidateDistrict)){
+        if(!eligibleSenateQuestionnaireCandidate(seed.cycle,parsed.candidateName,candidateDistrict,seed.url)){
           summary.skippedHistoricalNonWinners++;
           continue;
         }
