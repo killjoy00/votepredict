@@ -47,7 +47,7 @@ function assertReviewedMain():CheckedRun{
   if(e.GITHUB_EVENT_NAME==='push'){
     if(p.ref!=='refs/heads/main'||p.after!==e.GITHUB_SHA||
       p.deleted||p.forced||p.head_commit?.id!==e.GITHUB_SHA||
-      !p.head_commit.message?.includes(MARKER))
+      !p.head_commit?.message?.includes(MARKER))
       throw Error('Initial insert-only publisher sitemap backfill was not explicitly marked');
     return {kind:'initial-main-push',runNumber};
   }
