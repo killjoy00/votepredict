@@ -5,7 +5,7 @@
  */
 import { createHash } from 'node:crypto';
 
-export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia';
+export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia'|'wsp_reader';
 export interface QuestionnaireSource {
   id:string; publisher:string; cycle:number; adapter:Adapter; url:string; title:string;
   sourceKind:'publisher_response'|'candidate_copy'|'archived_response';
@@ -115,10 +115,14 @@ function parseMhp(html:string,seed:QuestionnaireSource):Array<Partial<CandidateR
 }
 function parseSnap(html:string):Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   const lines=visibleLines(html);
-  const header=lines.findIndex(s=>/^Minnesota\s+State Senate District\s+\d+/i.test(s));
+  // On real SNAP WordPress pages "Minnesota" is a link displayed on its
+  // own line, before "State Senate District 65".
+  const header=lines.findIndex(s=>/^(?:Minnesota\s+)?State Senate District\s+\d+/i.test(s));
   if(header<2||header>50)throw Error('Not a Minnesota State Senate respondent page');
   const district=districtNumber(lines[header]);
-  const candidateName=lines[header-2],party=lines[header-1];
+  const separateState=lines[header-1]==='Minnesota';
+  const party=lines[header-(separateState?2:1)];
+  const candidateName=lines[header-(separateState?3:2)];
   if(!candidateName||!district)throw Error('SNAP candidate metadata missing');
   if(lines.some(s=>/^This candidate did not respond to Stance on Science/i.test(s)))
     return [];
@@ -235,11 +239,66 @@ function parseBiofuels(html:string,seed:QuestionnaireSource):Array<Partial<Candi
   }
   return result;
 }
+
+/** Published local-news candidate questionnaires with multiple respondents per question. */
+function parseWestSaintPaulReader(html:string,seed:QuestionnaireSource):
+Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>{
+  if(!seed.candidates?.length||!seed.district)throw Error('Local Senate candidates/district not catalogued');
+  const lines=visibleLines(html);
+  const title='2026 Election: Minnesota Senate District '+Number(seed.district);
+  if(!lines.some(l=>l===title))throw Error('Not the original State Senate questionnaire article');
+  const start=lines.findIndex(x=>/^Candidate Questions$/i.test(x));
+  const end=lines.findIndex((x,i)=>i>start&&/^More Information$/i.test(x));
+  if(start<0||end<start+5)throw Error('No complete Senate candidate questionnaire section');
+  const candidates=seed.candidates;
+  const answers=new Map<string,Array<{question:string;answer:string[]}>>();
+  const parties=new Map<string,string>();
+  const candidateItems=[...html.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)]
+    .map(m=>visibleLines(m[1]).join(' '));
+  for(const name of candidates){
+    const item=candidateItems.find(x=>x.startsWith(name+' ')&&/\s[–—-]\s/.test(x));
+    const match=item?.match(/(?:–|—|-)\s*(DFL|GOP|Republican|Democratic|Independent)\b/i);
+    if(match)parties.set(name,match[1]);
+  }
+  let question:string|null=null;
+  let active:{question:string;answer:string[]}|null=null;
+  for(const line of lines.slice(start+1,end)){
+    if(/^(?:Help Inform Voters|Lightning Round|Support Local News|Join Now)$/i.test(line)){
+      question=null;active=null;continue;
+    }
+    if(/^(?:Priorities|Local funding|Fraud|Housing|Immigration|Transparency):\s*.+\?/i.test(line)
+      ||/^(?:[1-9]|10)\.\s+.+\?/i.test(line)){
+      question=line;active=null;continue;
+    }
+    if(!question)continue;
+    const named=candidates.find(name=>line.startsWith(name+':'));
+    if(named){
+      const answer=line.slice(named.length+1).trim();
+      const row={question,answer:answer?[answer]:[]};
+      const rows=answers.get(named)??[];rows.push(row);answers.set(named,rows);
+      active=row;
+    }else if(active && !/^Support:|^Local election coverage|^See our full voter|^Join now/i.test(line)){
+      active.answer.push(line);
+    }
+  }
+  const published=dateFrom(lines.find(x=>/^((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s*20\d{2})$/i.test(x))??'');
+  const records:Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>= [];
+  for(const candidateName of candidates) {
+    const qa=qaFromParts((answers.get(candidateName)??[]).map(x=>({q:x.question,a:x.answer.join('\n')})));
+    if(qa.length<2)continue;
+    records.push({candidateName,qa,district:districtNumber(seed.district),party:parties.get(candidateName)??null,
+      displayedPublicationOn:published});
+  }
+  if(!records.length)throw Error('No complete local Senate candidate questionnaires parsed');
+  return records;
+}
+
 export function parseResponses(html:string,seed:QuestionnaireSource):
 Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   if(seed.adapter==='mhp')return parseMhp(html,seed);
   if(seed.adapter==='snap')return parseSnap(html);
   if(seed.adapter==='kaxe')return parseKaxe(html,seed);
+  if(seed.adapter==='wsp_reader')return parseWestSaintPaulReader(html,seed);
   if(seed.adapter==='biofuels')return parseBiofuels(html,seed);
   // Historical Ballotpedia pages are fetched, but do not silently convert
   // article quote excerpts or survey indexes into full question/answer records.
@@ -290,6 +349,7 @@ export function validateCatalog(value:unknown):QuestionnaireSource[] {
   const allow:Record<Adapter,string[]>={
     mhp_index:['mhponline.org'],mhp:['mhponline.org'],
     snap:['snapcoalition.org'],kaxe:['www.kaxe.org'],
+    wsp_reader:['weststpaulreader.com'],
     biofuels:['mnbiofuels.org','www.mnbiofuels.org'],
     biofuels_index:['mnbiofuels.org','www.mnbiofuels.org'],
     ballotpedia:['ballotpedia.org'],
