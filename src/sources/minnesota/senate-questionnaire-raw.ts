@@ -4,6 +4,7 @@
  * historical feature eligibility. Publisher-only, bounded, fail-closed parsing.
  */
 import { createHash } from 'node:crypto';
+import { eligibleSenateQuestionnaireCandidate } from './senate-questionnaire-eligibility.js';
 
 export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia'|'wsp_reader'|'roseville_reader'|'mnrtl'|'startribune_2022'|'mpr_special_2024'|'sd60_pdf';
 export interface QuestionnaireSource {
@@ -25,7 +26,7 @@ export interface Failure { source:string;url:string;reason:string }
 export interface CollectionSummary {
   attempted:number; fetched:number; responses:number; pairs:number;
   byCyclePublisher:Record<string,{responses:number;pairs:number}>;
-  failed:Failure[]; explicitlyUnanswered:number;
+  failed:Failure[]; explicitlyUnanswered:number; skippedHistoricalNonWinners:number;
 }
 export interface CollectionOptions {
   sources:QuestionnaireSource[]; maxSources?:number; maxBytes?:number;
@@ -443,8 +444,9 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
     if(activeName) {
       const meta=named.get(activeName)!;
       const qa=qaFromParts(parts.map(p=>({q:p.q,a:p.a.join('\n')})));
-      if(qa.length>=2)out.push({candidateName:activeName,district:meta.district,
-        party:meta.party,displayedPublicationOn:sourceDate,qa});
+      if(qa.length>=2 && eligibleSenateQuestionnaireCandidate(seed.cycle,activeName,meta.district))
+        out.push({candidateName:activeName,district:meta.district,
+          party:meta.party,displayedPublicationOn:sourceDate,qa});
     }
     activeName=null;parts=[];answer=null;
   }
@@ -492,7 +494,7 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   const questionHeads=lines.filter(s=>/^(?:Question\s*[1-3]\s*[:.]|Why\s|What\s|How\s).+\?$/.test(s));
   if(questionHeads.length!==3)
     throw Error('2024 MPR special-election Q&A only appears in unavailable interactive content');
-  const candidates=['Ann Johnson Stewart','Kathleen Fowke'];
+  const candidates=['Ann Johnson Stewart']; // The 2024 SD45 special-election winner only.
   const answers=new Map(candidates.map(n=>[n,[] as QuestionAnswer[]]));
   let question:string|null=null;
   for(const line of lines){
@@ -515,8 +517,9 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
  * endorsement forms. The actual PDF bytes remain stored losslessly in base64. */
 export function parseSd60PdfText(text:string,seed:QuestionnaireSource):
 Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
-  if(seed.cycle!==2025||seed.adapter!=='sd60_pdf'||seed.district!=='60'||!seed.candidate)
-    throw Error('Unconfigured special-election candidate PDF');
+  if(seed.cycle!==2025||seed.adapter!=='sd60_pdf'||seed.district!=='60'||!seed.candidate
+    ||!eligibleSenateQuestionnaireCandidate(seed.cycle,seed.candidate,seed.district))
+    throw Error('Unconfigured or nonwinning special-election candidate PDF');
   const lines=text.replace(/\r/g,'\n').split(/\n/).map(s=>s.trim())
     .filter(s=>!!s&&!/^--\s*\d+\s+of\s+\d+\s*--$/i.test(s));
   const name=seed.candidate;
@@ -688,7 +691,7 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
     throw Error('Bounded source and size limits required');
   const queue=[...options.sources],visited=new Set<string>();
   const downloads=new Map<string,Promise<SourceDownload>>();
-  const summary:CollectionSummary={attempted:0,fetched:0,responses:0,pairs:0,byCyclePublisher:{},failed:[],explicitlyUnanswered:0};
+  const summary:CollectionSummary={attempted:0,fetched:0,responses:0,pairs:0,byCyclePublisher:{},failed:[],explicitlyUnanswered:0,skippedHistoricalNonWinners:0};
   while(queue.length && summary.attempted<max) {
     const seed=queue.shift()!;
     const visitKey=seed.cycle+'|'+seed.adapter+'|'+seed.url;
@@ -727,11 +730,18 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
       if(!records.length && /did not respond|no response from this candidate/i.test(html))
         summary.explicitlyUnanswered++;
       for(const parsed of records) {
+        const candidateDistrict=parsed.district??districtNumber(seed.district);
+        // Current 2026 election: retain everyone. Completed earlier elections:
+        // no historical losing candidate can reach onResponse or storage.
+        if(!eligibleSenateQuestionnaireCandidate(seed.cycle,parsed.candidateName,candidateDistrict)){
+          summary.skippedHistoricalNonWinners++;
+          continue;
+        }
         const item:CandidateResponse={
           sourceId:seed.id,publisher:seed.publisher,sourceKind:seed.sourceKind,
           sourceUrl:seed.url,electionCycle:seed.cycle,title:seed.title,
           candidateName:parsed.candidateName,office:'Minnesota State Senate',
-          district:parsed.district??districtNumber(seed.district),
+          district:candidateDistrict,
           party:parsed.party??seed.party??null,
           displayedPublicationOn:parsed.displayedPublicationOn??null,
           displayedSubmittedOn:parsed.displayedSubmittedOn??null,
