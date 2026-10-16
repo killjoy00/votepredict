@@ -35,6 +35,66 @@
     {
       "groupName": "Conservation Minnesota",
       "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/bonnie-westlin"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/doron-clark"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/erin-murphy"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/jim-abeler"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/mark-johnson"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/paul-j-utke"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/ron-latz"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/steve-drazkowski-0"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/steve-green-0"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/zaynab-mohamed"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
       "adapter": "raw_html",
       "url": "https://www.conservationminnesota.org/mn-legislator-votes/find-legislators"
     },
