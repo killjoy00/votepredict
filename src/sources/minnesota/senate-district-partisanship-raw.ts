@@ -170,10 +170,10 @@ export async function collectRawDistrictPartisanship(fetcher:PolitePublicFetcher
   const failed:Array<{year:number;office:string;reason:string}>=[];
   for(const spec of DISTRICT_OFFICIAL_SOURCES){
     try{
-      const [raw,stateRaw,mapRaw]=await Promise.all([
-        read(spec.resultUrl),read(spec.statewideUrl),
-        spec.precinctMapUrl?read(spec.precinctMapUrl):Promise.resolve(null),
-      ]);
+      // Serial requests share one host-wide one-request-per-second pacer.
+      const raw=await read(spec.resultUrl);
+      const stateRaw=await read(spec.statewideUrl);
+      const mapRaw=spec.precinctMapUrl?await read(spec.precinctMapUrl):null;
       const precinctMap=mapRaw?parseOfficialPrecinctDistrictCodes(mapRaw.text):null;
       const votes=precinctMap
         ?aggregateOfficialPrecinctVotes(raw.text,spec.office,precinctMap)
