@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import {SOURCE_MP3S,validateSourceMp3s,parseAudioCdx,researchOriginalCdnMp3s} from '../../scripts/probe-senate-media-mpr-cdn-original-mp3.mjs';
+import {SOURCE_MP3S,validateSourceMp3s,parseAudioCdx,researchOriginalCdnMp3s} from '../scripts/probe-senate-media-mpr-cdn-original-mp3.mjs';
 const bytes=Buffer.concat([Buffer.from('ID3'),Buffer.alloc(200)]);
 const base32=b=>{const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';let n=0,bits=0,result='';for(const v of b){n=n<<8|v;bits+=8;while(bits>=5){bits-=5;result+=alphabet[n>>>bits&31];}n&=(1<<bits)-1;}if(bits)result+=alphabet[n<<(5-bits)&31];return result;};
 const sha1=base32(createHash('sha1').update(bytes).digest());

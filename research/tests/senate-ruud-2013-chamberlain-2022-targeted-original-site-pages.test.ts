@@ -9,7 +9,7 @@ import {
  RUUD_2013_CHAMBERLAIN_2022_PINNED_HISTORIC_SOURCES_VERSION,
  authenticateFixed2013And2022OriginalRowsBeforeNetwork,
  replayPinned2013And2022OriginalCandidateSources,
-} from '../../scripts/acquire-ruud-2013-chamberlain-2022-targeted-cdx-originals.js';
+} from '../scripts/acquire-ruud-2013-chamberlain-2022-targeted-cdx-originals.js';
 import type {AuditedOfficialSenateDirectory}
  from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir',

@@ -5,7 +5,7 @@ import {
  FEED,PAGE,AUDIO,ALTERNATES,classifyMediaRedirect,findRelevantFeedItems,
  inspectPublisherPage,parseIndex,traceAudio,probeIndexAndOriginals,probeCurrentFeed,probeCurrentHauschildPage,
  researchMprHistoryBridge
-} from '../../scripts/probe-senate-media-mpr-history-bridge.mjs';
+} from '../scripts/probe-senate-media-mpr-history-bridge.mjs';
 const B32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 const b32=x=>{let v=0,b=0,s='';for(const y of x){v=(v<<8)|y;b+=8;while(b>=5){b-=5;s+=B32[v>>>b&31];}v&=(1<<b)-1;}if(b)s+=B32[v<<(5-b)&31];return s;};
 const header=['timestamp','original','mimetype','statuscode','digest','length'];

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import receipts from '../../docs/evaluation/senate-media-2022-benson-audio-six-publisher-originals-20261011.json' with {type:'json'};
 import earlier from '../../docs/evaluation/senate-media-2021-25-pinned-historical-original-phrase-review-queue.json' with {type:'json'};
-import {PRESS,AUDIO_PINNED_FINGERPRINTS,VERSION} from '../../scripts/probe-senate-media-benson-kunesh-audio-six-direct-originals.mjs';
+import {PRESS,AUDIO_PINNED_FINGERPRINTS,VERSION} from '../scripts/probe-senate-media-benson-kunesh-audio-six-direct-originals.mjs';
 
 const verified=[
   {

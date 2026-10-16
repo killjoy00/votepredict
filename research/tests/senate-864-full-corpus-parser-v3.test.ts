@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {safeReparseCountComparison,selectPinnedYearShard} from
- '../../scripts/audit-senate-864-original-1452-parser-v3.js';
+ '../scripts/audit-senate-864-original-1452-parser-v3.js';
 
 test('#864 source v3 comparison exposes counts only, not members or choice hashes',()=>{
  const old={document:{sourceUrl:'private-in-memory-only',

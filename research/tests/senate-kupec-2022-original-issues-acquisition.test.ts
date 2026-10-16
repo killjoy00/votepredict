@@ -7,7 +7,7 @@ import {base32Sha1Archive} from '../../scripts/acquire-senate-2022-ever-served-c
 import type {AuditedOfficialSenateDirectory} from '../../src/evidence/senate-official-ever-served-directory.js';
 import {
  kupecExactIssueCdxQuery,kupecExact2022IssueCandidates,acquireKupec2022OriginalIssuePages,
-} from '../../scripts/acquire-senate-kupec-2022-original-issues.js';
+} from '../scripts/acquire-senate-kupec-2022-original-issues.js';
 const original='https://www.kupec4mnsenate.com/issues';
 const header=['timestamp','original','mimetype','statuscode','digest','length'];
 const html=Buffer.from('<html><body><h1>Only a synthetic 2022 Senator Kupec platform test page</h1></body></html>');

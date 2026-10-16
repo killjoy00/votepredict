@@ -12,7 +12,7 @@ import {
  parseBillHistoricalExactIssuesCDX,
  selectBillIssueOriginalReplays,
  recoverBillIngebrigtsenHistoricExactIssuesPage,
-} from '../../scripts/acquire-bill-ingebrigtsen-historic-issues-page-original.js';
+} from '../scripts/acquire-bill-ingebrigtsen-historic-issues-page-original.js';
 import type {AuditedOfficialSenateDirectory} from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir', SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';
 function actualServing():AuditedOfficialSenateDirectory{

@@ -3,7 +3,7 @@ import test from 'node:test';
 import {
   TWO_SOURCE_RETRY,PREVIOUS_2023_PARTIAL_CAPTION_JSON_SHA,
   TWO_SOURCE_RETRY_SCHEMA,checkFailed2023OriginalArtifact,
-} from '../../scripts/retry-senate-2023-two-caption-http-failures.js';
+} from '../scripts/retry-senate-2023-two-caption-http-failures.js';
 
 test('pin ONLY the two previously failed 2023 Taxes committee source identities',()=>{
  assert.equal(TWO_SOURCE_RETRY_SCHEMA,

@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {
  VERSION,LEADS,validateLeads,inspectShortSpeakerCues,probeCurrentPublisher,runSixMprInterviews
-} from '../../scripts/probe-senate-media-mpr-six-interviews-originals.mjs';
+} from '../scripts/probe-senate-media-mpr-six-interviews-originals.mjs';
 import {probeWayback} from '../../scripts/probe-senate-media-mpr-five-year-commoncrawl-originals.mjs';
 import {
  RECON_VERSION,validatePublicInputs,reconcileSelectedPublicCoverage
-} from '../../scripts/reconcile-senate-media-mpr-interviews-public.mjs';
+} from '../scripts/reconcile-senate-media-mpr-interviews-public.mjs';
 
 const base32chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 function sha1b32(buf){let val=0,bits=0,s='';for(const b of createHash('sha1').update(buf).digest()){

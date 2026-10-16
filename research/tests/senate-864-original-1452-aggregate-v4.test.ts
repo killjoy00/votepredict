@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {aggregateSafeParserShards} from
- '../../scripts/audit-senate-864-parser-v3-shard-receipts.js';
+ '../scripts/audit-senate-864-parser-v3-shard-receipts.js';
 const yearCounts={2022:325,2023:454,2024:258,2025:415} as const;
 function sixteen(){
  return (Object.keys(yearCounts).map(Number) as (keyof typeof yearCounts)[])

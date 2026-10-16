@@ -13,7 +13,7 @@ import {
  parseSixSenators2022OriginalCDXIndex,
  selectFourOriginal2022PagesForOneOfSixNewSenators,
  acquireSixPreviouslyUncoveredSenators2022OriginalCampaignSites,
-} from '../../scripts/acquire-six-followup-2022-serving-originals.js';
+} from '../scripts/acquire-six-followup-2022-serving-originals.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';
 const SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';
 const official=[

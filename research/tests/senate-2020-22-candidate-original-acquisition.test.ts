@@ -7,7 +7,7 @@ import {join} from 'node:path';
 import {
  historicalSourceTargets,retrieveSmallPublicOriginal,base32Sha1,
  filteredCandidateQuestionnaireCdx,acquireSenateOriginal2020to2022Sources,
-} from '../../scripts/acquire-senate-2020-22-candidate-original-sources.js';
+} from '../scripts/acquire-senate-2020-22-candidate-original-sources.js';
 import {auditSos2020to2022OriginalGeneralCensus} from '../../src/evidence/senate-2020-22-official-general-census.js';
 const article=historicalSourceTargets()[0].url;
 const syntheticPage=Buffer.from('<html><body>Rob Kupec: Support education and rural health care.</body></html>');

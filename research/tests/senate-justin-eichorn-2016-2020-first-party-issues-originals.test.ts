@@ -12,7 +12,7 @@ import {
  parseExactEichornIssuesArchiveIndex,
  selectEichornOriginalIssuesPages,
  acquireAuthenticEichornHistoricalOriginalIssuesPages,
-} from '../../scripts/acquire-justin-eichorn-2016-2020-first-party-issues-originals.js';
+} from '../scripts/acquire-justin-eichorn-2016-2020-first-party-issues-originals.js';
 import type {AuditedOfficialSenateDirectory}
  from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';
