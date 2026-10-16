@@ -33,6 +33,72 @@
       "url": "https://www.conservationminnesota.org/voting-records"
     },
     {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/bonnie-westlin"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/doron-clark"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/erin-murphy"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/jim-abeler"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/mark-johnson"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/paul-j-utke"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/ron-latz"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/steve-drazkowski-0"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/steve-green-0"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "conservation_html",
+      "url": "https://www.conservationminnesota.org/legislators/zaynab-mohamed"
+    },
+    {
+      "groupName": "Conservation Minnesota",
+      "year": 2026,
+      "adapter": "raw_html",
+      "url": "https://www.conservationminnesota.org/mn-legislator-votes/find-legislators"
+    },
+    {
       "groupName": "CPAC Foundation",
       "year": 2025,
       "adapter": "generic_pdf",
@@ -99,6 +165,12 @@
       "year": 2025,
       "adapter": "raw_html",
       "url": "https://lea-mn.org/lea-annual-reports-on-the-legislature/"
+    },
+    {
+      "groupName": "MCCL",
+      "year": 2023,
+      "adapter": "generic_pdf",
+      "url": "https://www.mccl.org/_files/ugd/e95b3f_0cec4dd234c9435aa375fd040c306fdd.pdf?index=true"
     },
     {
       "groupName": "MCCL",

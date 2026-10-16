@@ -5,7 +5,8 @@ import {readFileSync} from 'node:fs';
 import {Pool} from 'pg';
 import {
   parseA4LSenatePdf,parseGunOwnersSenateHtml,parseEducationMinnesotaSenateEndorsements,parseNfibMinnesotaSenateEndorsements,parseNfibScorecardBillPositions,parseScorecardBillPositions,explicitPublishedOn,
-  parseChamberScorecardBillPositions,
+  parseChamberScorecardBillPositions,parseConservationSenateProfileLinks,
+  parseConservationProfilePagination,parseConservationSenatorVotes,
   parseRobots,validateScorecardManifest,parseScorecardContent,
   type ScorecardCapture,
 } from '../src/sources/minnesota/senate-scorecard-raw.js';
@@ -100,6 +101,48 @@ test('Keep the first-party 2026 education endorsement dateline separate from fet
 });
 
 
+test('Conservation directory excludes House district links and keeps original Senate paths',()=>{
+  const url='https://www.conservationminnesota.org/mn-legislator-votes/find-legislators';
+  const html='<div><a href="/legislators/jim-abeler">Jim Abeler</a><p>35</p></div>'+
+    '<div><a href="/legislators/patty-acomb">Patty Acomb</a><p>45B</p></div>'+
+    '<div><a href="/legislators/doron-clark">Doron Clark</a><p>60</p></div>';
+  assert.deepEqual(parseConservationSenateProfileLinks(html,url),[
+    'https://www.conservationminnesota.org/legislators/jim-abeler',
+    'https://www.conservationminnesota.org/legislators/doron-clark']);
+});
+test('Conservation original Senate profile holds personal votes, not organization grades',()=>{
+  const raw='Legislators\nSen. Mark Johnson\nRepublican\n01\n'+
+    'Outdoor Heritage Fund, Legacy & Lands Bill | SF2077\nMay 17, 2026\n'+
+    'Senator Johnson voted No\nSenate voted Yes\n'+
+    'Omnibus Energy Budget Bill | SF2 (Senate)\nJune 9, 2025\n'+
+    'Senator Johnson voted No\nSenate voted Yes\n'+
+    'Different legislator | SF31\nApril 9, 2026\nSenator Smith voted Yes';
+  const votes=parseConservationSenatorVotes(raw);
+  assert.deepEqual(votes.map(x=>[x.districtRaw,x.votedOn,x.billIdentifierRaw,x.voteRaw]),[
+    ['1','2026-05-17','SF2077','Senator Johnson voted No'],
+    ['1','2025-06-09','SF2','Senator Johnson voted No']]);
+  const parsed=parseScorecardContent({groupName:'Conservation Minnesota',year:2026,
+    adapter:'conservation_html',url:'https://www.conservationminnesota.org/legislators/mark-johnson'},raw);
+  assert.equal(parsed.entries.length,0);
+  assert.equal(parsed.memberVotes?.length,2);
+});
+test('Conservation profile pagination uses only discovered same-profile publisher links',()=>{
+  const url='https://www.conservationminnesota.org/legislators/doron-clark';
+  const html='<a href="?page=1">Page 2</a><a href="?page=2">Page 3</a>'+
+    '<a href="https://other.example/legislators/doron-clark?page=3">other</a>'+
+    '<a href="/legislators/jim-abeler?page=1">other senator</a>';
+  assert.deepEqual(parseConservationProfilePagination(html,url),[url+'?page=1',url+'?page=2']);
+});
+test('Education Minnesota deep CMS header does not hide 2025 SD60 special endorsement',()=>{
+  const body='Navigation links '.repeat(1000)+
+    'ST. PAUL, Minnesota. Jan. 27, 2025 – Education Minnesota announced its endorsement of Doron Clark in the special election on Tuesday for the Senate seat in Minneapolis.\n'+
+    'Educators support Clark in Senate District 60 because they agree about public education.\n';
+  const source={groupName:'Education Minnesota',year:2025,adapter:'edmn_html' as const,
+    url:'https://educationminnesota.org/news/press-release/education-minnesota-endorses-clark-in-special-election-for-state-senate/'};
+  assert.deepEqual(parseScorecardContent(source,body).entries.map(x=>[x.nameRaw,x.districtRaw]),
+    [['Doron Clark','60']]);
+  assert.equal(parseScorecardContent(source,body.replace('Senate District 60','House District 60A')).entries.length,0);
+});
 test('Stored Chamber PDFs yield only printed bill/issue positions, not fabricated grades',()=>{
   const raw='2025 Legislative Session Voting Record\nVote summaries\n'+
     'HHS Omnibus Finance bill, HF 2435 (Wiklund)\nBill passed, Chamber opposed\n'+
@@ -335,8 +378,11 @@ test('additive only, standalone production marker and model isolation are enforc
   const workflow=readFileSync('.github/workflows/senate-scorecards-partisanship-production.yml','utf8');
   assert.match(migration,/CREATE TABLE IF NOT EXISTS senate_scorecard_snapshots/);
   assert.match(migration,/CREATE TABLE IF NOT EXISTS mn_senate_district_partisanship_raw/);
+  assert.match(readFileSync('migrations/0029_senate_scorecard_member_votes_raw.sql','utf8'),
+    /CREATE TABLE IF NOT EXISTS senate_scorecard_member_votes_raw/);
   assert.doesNotMatch(migration,/^\s*(?:DROP|TRUNCATE|DELETE|UPDATE)\s/mi);
   assert.match(runner,/SENATE_SCORECARDS_PARTISANSHIP_PRODUCTION/);
+  assert.match(runner,/SENATE_SCORECARD_EXPAND_PUBLISHERS/);
   assert.match(runner,/scripts\/check-production-migration-drift\.ts/);
   assert.match(workflow,/independent-main/);
   assert.match(workflow,/evidence-readonly-sandbox/);
@@ -382,7 +428,9 @@ test('disposable Postgres: running the entire raw evidence suite twice keeps exa
     const capture:ScorecardCapture={
       source,sourceUrl:source.url,sha256:hash,fetchedAt:'2026-10-16T00:00:00Z',
       contentType:'application/pdf',rawText:'Published Senate scorecard fixture '+token,
-      publishedOn:null,entries:[{sourceOrdinal:1,nameRaw:name,districtRaw:'17',partyRaw:'R',
+      publishedOn:null,memberVotes:[{sourceOrdinal:1,nameRaw:name,districtRaw:'17',partyRaw:'R',
+        billIdentifierRaw:'SF99001',votedOn:'2025-06-09',voteRaw:'Senator Fixture voted Yes'}],
+      entries:[{sourceOrdinal:1,nameRaw:name,districtRaw:'17',partyRaw:'R',
         kind:'score',valueRaw:'72.73%',valueNumeric:72.73}],
       positions:[{sourceOrdinal:1,billIdentifierRaw:'SF99001',groupPositionRaw:'CORRECT VOTE: YES'}],
     };
@@ -403,16 +451,20 @@ test('disposable Postgres: running the entire raw evidence suite twice keeps exa
       const inserted=await storeRawDistrictPartisanship(client,election);
       assert.equal(score.entries,1);assert.equal(score.matchedMembers,1);
       assert.equal(score.matchedBills,1);
+      assert.equal(score.memberVotes,1);assert.equal(score.linkedMemberVotes,1);
+      assert.equal(score.linkedVoteBills,1);
       assert.equal(inserted,i===0?67:0);
-      const checked=await client.query<{snapshots:number;entries:number;positions:number;districts:number}>(
+      const checked=await client.query<{snapshots:number;entries:number;positions:number;member_votes:number;districts:number}>(
         'SELECT (SELECT count(*)::int FROM senate_scorecard_snapshots WHERE group_name=$1) AS snapshots,'+
         '(SELECT count(*)::int FROM senate_scorecard_entries WHERE group_name=$1) AS entries,'+
         '(SELECT count(*)::int FROM senate_scorecard_vote_positions WHERE group_name=$1) AS positions,'+
+        '(SELECT count(*)::int FROM senate_scorecard_member_votes_raw WHERE group_name=$1) AS member_votes,'+
         '(SELECT count(*)::int FROM mn_senate_district_partisanship_raw WHERE sha256=$2) AS districts',
         [group,hash]);
-      assert.deepEqual(checked.rows[0],{snapshots:1,entries:1,positions:1,districts:67});
+      assert.deepEqual(checked.rows[0],{snapshots:1,entries:1,positions:1,member_votes:1,districts:67});
       const report=await scorecardPartisanshipReadback(client);
-      assert.ok(report.linkedMembers>=1&&report.linkedBills>=1);
+      assert.ok(report.linkedMembers>=1&&report.linkedBills>=1&&
+        report.memberVotes>=1&&report.linkedMemberVotes>=1&&report.linkedVoteBills>=1);
     }
     const replay=await storeRawScorecardCapture(client,capture,catalog,true);
     assert.equal(replay.newSnapshot,false);
@@ -421,6 +473,7 @@ test('disposable Postgres: running the entire raw evidence suite twice keeps exa
     /Saved-only replay cannot create a new publisher snapshot/);
   }finally{
     // This fixture runs on disposable CI PostgreSQL. Preserve unrelated fixtures.
+    await client.query('DELETE FROM senate_scorecard_member_votes_raw WHERE group_name=$1',[group]);
     await client.query('DELETE FROM senate_scorecard_vote_positions WHERE group_name=$1',[group]);
     await client.query('DELETE FROM senate_scorecard_entries WHERE group_name=$1',[group]);
     await client.query('DELETE FROM senate_scorecard_snapshots WHERE group_name=$1',[group]);

@@ -5,7 +5,7 @@
  */
 import {createHash} from 'node:crypto';
 
-export type SourceAdapter = 'a4l_pdf'|'aflcio_pdf'|'generic_pdf'|'gunowners_html'|'edmn_html'|'nfib_html'|'nfib_pdf'|'raw_html';
+export type SourceAdapter = 'a4l_pdf'|'aflcio_pdf'|'generic_pdf'|'gunowners_html'|'edmn_html'|'nfib_html'|'nfib_pdf'|'conservation_html'|'raw_html';
 export interface ScorecardSource {
   groupName:string;year:number;adapter:SourceAdapter;url:string;electionCandidate?:boolean;
 }
@@ -19,14 +19,20 @@ export interface ScorecardEntry {
 export interface ScorecardPosition {
   sourceOrdinal:number;billIdentifierRaw:string;groupPositionRaw:string;
 }
+export interface PublisherSenatorVote {
+  sourceOrdinal:number;nameRaw:string;districtRaw:string;partyRaw:string|null;
+  billIdentifierRaw:string;votedOn:string;voteRaw:string;
+}
 export interface ScorecardCapture {
   source:ScorecardSource;sourceUrl:string;fetchedAt:string;
   sha256:string;contentType:string;rawText:string;publishedOn:string|null;
   entries:ScorecardEntry[];positions:ScorecardPosition[];
+  memberVotes?:PublisherSenatorVote[];
+  paginationUrls?:string[]; // ephemeral discovered links, never stored as raw evidence rows
 }
 export interface ScorecardFailure {group:string;year:number;url:string;reason:string}
 const SOURCE_ADAPTERS:SourceAdapter[]=[
-  'a4l_pdf','aflcio_pdf','generic_pdf','gunowners_html','edmn_html','nfib_html','nfib_pdf','raw_html',
+  'a4l_pdf','aflcio_pdf','generic_pdf','gunowners_html','edmn_html','nfib_html','nfib_pdf','conservation_html','raw_html',
 ];
 const MAX_BODY_BYTES=12_000_000;
 const AGENT='VotePredictSenateEvidenceBot/1.0 (+https://github.com/killjoy00/votepredict)';
@@ -213,13 +219,17 @@ export function parseEducationMinnesotaSenateEndorsements(html:string):Scorecard
         found.push(newEntry(name,String(n),cells[2]?.trim()||null,'endorsement','ENDORSED'));
     }
   }
-  // Jan. 27, 2025 first-party special-election release explicitly names
-  // one endorsed State Senate candidate and district in the publisher body.
+  // Scope the publisher's Jan. 27, 2025 special-election paragraph locally.
+  // A long CMS/navigation header must never hide the district at >4.5k chars.
+  // Do not pair with an unrelated district elsewhere on the page.
   const body=htmlToRawText(html);
-  const name=/announced its endorsement of\s+([A-Z][A-Za-z.'’-]+(?:\s+[A-Z][A-Za-z.'’-]+){1,3})\s+in the special election\b/i.exec(body);
-  const number=/\bSenate District\s+(\d{1,2})\b/.exec(body.slice(0,4500));
-  if(name&&number&&Number(number[1])>=1&&Number(number[1])<=67)
-    found.push(newEntry(name[1],String(Number(number[1])),null,'endorsement','ENDORSED'));
+  for(const match of body.matchAll(/announced its endorsement of\s+([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+){1,3})\s+in the special election\b/gi)){
+    const local=body.slice(match.index??0,(match.index??0)+1600).split(/About Education Minnesota/i)[0];
+    if(!/\bstate Senate\b|\bSenate seat\b/i.test(local))continue;
+    const district=/\bSenate District\s+(\d{1,2})\b/i.exec(local);
+    if(district&&Number(district[1])>=1&&Number(district[1])<=67)
+      found.push(newEntry(match[1],String(Number(district[1])),null,'endorsement','ENDORSED'));
+  }
   return noDuplicates(found);
 }
 
@@ -356,6 +366,86 @@ export function parseChamberScorecardBillPositions(rawText:string):ScorecardPosi
   return positions.slice(0,150);
 }
 
+/**
+ * Discover actual publisher profile links from the original directory HTML.
+ * Inspect each link's own following printed district; never construct slugs.
+ * Lettered House districts and federal legislative links are discarded.
+ */
+export function parseConservationSenateProfileLinks(html:string,baseUrl:string):string[] {
+  const links=[...html.matchAll(/<a\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)]
+    .filter(m=>/\/legislators\/[^/?#]+(?:[?#]|$)/i.test(m[1]));
+  const found:string[]=[];const seen=new Set<string>();
+  for(let i=0;i<links.length;i++){
+    const match=links[i];
+    const name=htmlToRawText(match[2]).replace(/\s+/g,' ').trim();
+    if(!/^[A-Z][A-Za-z.'’ -]+$/.test(name)||name.length>75)continue;
+    // Directory cards print their own district immediately after the name.
+    const between=htmlToRawText(html.slice((match.index??0)+match[0].length,
+      i+1<links.length?(links[i+1].index??html.length):html.length));
+    const first=between.split(/\n/).map(line=>line.trim()).filter(Boolean).slice(0,3);
+    const district=first.find(v=>/^(?:0?[1-9]|[1-5]\d|6[0-7])(?:[AB])?$/.test(v));
+    if(!district||/[AB]$/.test(district))continue;
+    const url=new URL(match[1],baseUrl);
+    if(url.origin!==new URL(baseUrl).origin||!/^\/legislators\/[^/]+$/.test(url.pathname))continue;
+    url.search='';url.hash='';
+    if(!seen.has(url.href)){seen.add(url.href);found.push(url.href);}
+  }
+  return found.slice(0,80);
+}
+/** Only follow actual numbered pagination anchors on this exact profile. */
+export function parseConservationProfilePagination(html:string,pageUrl:string):string[] {
+  const base=new URL(pageUrl),seen=new Set<string>();
+  for(const anchor of html.matchAll(/<a\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>/gi)){
+    const link=new URL(anchor[1],base);
+    const page=Number(link.searchParams.get('page'));
+    if(link.origin===base.origin&&link.pathname===base.pathname&&
+      link.searchParams.size===1&&link.searchParams.has('page')&&
+      Number.isInteger(page)&&page>=1&&page<=3)seen.add(link.href);
+  }
+  return [...seen].sort((a,b)=>Number(new URL(a).searchParams.get('page'))-
+    Number(new URL(b).searchParams.get('page'))).slice(0,2);
+}
+function namedPublisherDate(raw:string):string|null {
+  const m=/^(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(202[1-6])$/.exec(raw);
+  if(!m)return null;
+  const month=['January','February','March','April','May','June','July','August','September',
+    'October','November','December'].indexOf(m[1])+1;
+  const day=Number(m[2]),year=Number(m[3]);
+  const date=new Date(Date.UTC(year,month-1,day));
+  return month&&date.getUTCFullYear()===year&&date.getUTCMonth()===month-1&&date.getUTCDate()===day
+    ?year+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0'):null;
+}
+/** Raw personal votes as printed by Conservation Minnesota, never a group score. */
+export function parseConservationSenatorVotes(rawText:string):PublisherSenatorVote[] {
+  const lines=rawText.split(/\r?\n/).map(s=>s.trim().replace(/\s+/g,' ')).filter(Boolean);
+  const headline=lines.findIndex(x=>/^Sen\.\s+[A-Z]/.test(x));
+  if(headline<0)return [];
+  const name=/^Sen\.\s+(.+)$/.exec(lines[headline])?.[1]?.trim();
+  if(!name)return [];
+  const nearby=lines.slice(headline+1,headline+8);
+  const party=nearby.find(x=>/^(?:DFL|Republican|Democrat|Independent|R|D)$/i.test(x))??null;
+  const district=nearby.find(x=>/^(?:0?[1-9]|[1-5]\d|6[0-7])$/.test(x));
+  if(!district||!party)return [];
+  const surname=name.split(/\s+/).at(-1)!.replace(/[^a-zA-Z]/g,'').toLowerCase();
+  const found:PublisherSenatorVote[]=[];const seen=new Set<string>();
+  for(let i=headline+1;i<lines.length;i++){
+    const heading=/^.+?\|\s*((?:SF|HF)\s*\d{1,6})(?:\s*\(Senate\))?$/i.exec(lines[i]);
+    if(!heading)continue;
+    const near=lines.slice(i+1,i+7);
+    const date=near.map(namedPublisherDate).find(Boolean);
+    const printed=near.find(l=>/^Senator\s+.+\s+voted\s+(?:Yes|No)$/i.test(l));
+    if(!date||!printed)continue;
+    const vote=/^Senator\s+(.+?)\s+voted\s+(Yes|No)$/i.exec(printed);
+    if(!vote||!vote[1].split(/\s+/).at(-1)?.replace(/[^a-zA-Z]/g,'').toLowerCase().endsWith(surname))continue;
+    const key=[date,heading[1],printed].join('|');
+    if(seen.has(key))continue;seen.add(key);
+    found.push({sourceOrdinal:found.length+1,nameRaw:name,
+      districtRaw:String(Number(district)),partyRaw:party,
+      billIdentifierRaw:heading[1],votedOn:date,voteRaw:printed});
+  }
+  return found.slice(0,40);
+}
+
 /** Preserve explicitly printed organizational support/opposition words, not a stance judgment. */
 export function parseScorecardBillPositions(rawText:string,adapter:SourceAdapter):ScorecardPosition[] {
   if(adapter==='gunowners_html'||adapter==='edmn_html'||adapter==='nfib_html'||adapter==='raw_html')return [];
@@ -387,7 +477,7 @@ export function parseScorecardBillPositions(rawText:string,adapter:SourceAdapter
   return results.slice(0,500).map((x,i)=>({...x,sourceOrdinal:i+1}));
 }
 export function parseScorecardContent(source:ScorecardSource,rawText:string,html?:string):
-  {entries:ScorecardEntry[];positions:ScorecardPosition[]} {
+  {entries:ScorecardEntry[];positions:ScorecardPosition[];memberVotes:PublisherSenatorVote[]} {
   const entries=source.adapter==='a4l_pdf'?parseA4LSenatePdf(rawText):
     source.adapter==='gunowners_html'?parseGunOwnersSenateHtml(html??''):
     source.adapter==='edmn_html'?parseEducationMinnesotaSenateEndorsements(html??rawText):
@@ -396,7 +486,8 @@ export function parseScorecardContent(source:ScorecardSource,rawText:string,html
   const positions=source.groupName==='Minnesota Chamber of Commerce'&&source.adapter==='generic_pdf'
     ?parseChamberScorecardBillPositions(rawText)
     :parseScorecardBillPositions(rawText,source.adapter);
-  return {entries,positions};
+  return {entries,positions,
+    memberVotes:source.adapter==='conservation_html'?parseConservationSenatorVotes(rawText):[]};
 }
 interface RobotsRule {pattern:string;allow:boolean}
 interface RobotsPolicy {rules:RobotsRule[];crawlDelay:number}
@@ -508,5 +599,7 @@ export async function fetchScorecardCapture(
   if(rawText.length<35)throw Error('Publisher source lacks readable original text');
   const parsed=parseScorecardContent(source,rawText,html);
   return {source,sourceUrl:response.finalUrl,fetchedAt,sha256,
-    contentType:response.contentType,rawText,publishedOn:explicitPublishedOn(rawText),...parsed};
+    contentType:response.contentType,rawText,publishedOn:explicitPublishedOn(rawText),
+    paginationUrls:source.adapter==='conservation_html'?parseConservationProfilePagination(html!,response.finalUrl):[],
+    ...parsed};
 }
