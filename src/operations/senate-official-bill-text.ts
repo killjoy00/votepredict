@@ -42,7 +42,13 @@ export function discoverOfficialVersionLeads(html: string, statusUrl: string): O
   // not require the heading to consist of a bare H2/H3 text node.
   // The literal published section title is the boundary before the table.
   const heading = /\bBill\s+Text\s+Versions\b/i.exec(html);
-  const listingHtml = heading ? html.slice(heading.index + heading[0].length) : html;
+  const afterHeading = heading ? html.slice(heading.index + heading[0].length) : html;
+  // Status pages repeat the same version as "Intro" in later Actions rows.
+  // Only anchors in the actual version-list section are version receipts.
+  // Keep subgroup headings (engrossments, unofficial and CCR), but stop at
+  // the first Description, Authors or Actions section heading.
+  const sectionEnd = heading ? /<h[1-6]\b[^>]*>\s*(?:<[^>]+>\s*){0,3}(?:Description|Authors|Actions)\b/i.exec(afterHeading) : null;
+  const listingHtml = sectionEnd ? afterHeading.slice(0,sectionEnd.index) : afterHeading;
   const anchor = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
   const matches = [...listingHtml.matchAll(anchor)];
   const discovered = new Map<string, OfficialVersionLead>();
