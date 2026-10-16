@@ -198,6 +198,7 @@ const UPSERT_SQL = [
   'source_url text,fetched_at timestamptz,hearing_date date,source_content_type text,',
   'raw_content text,raw_content_url text,committee text,bill_identifier text,bill_id uuid,',
   'witness_name text,organization text,stated_position text,document_name text,document_kind text)',
+  'WHERE true',
   'ON CONFLICT (session_id,record_key) DO UPDATE SET fetched_at=EXCLUDED.fetched_at,',
   'raw_content=COALESCE(EXCLUDED.raw_content,senate_committee_testimony_raw.raw_content),',
   'raw_content_url=COALESCE(EXCLUDED.raw_content_url,senate_committee_testimony_raw.raw_content_url),',
