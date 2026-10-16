@@ -109,7 +109,7 @@ export function resolveSenator(
       && pieces.at(-1) === official.at(-1)
       && pieces.slice(1,-1).every((p,i) => p === official[i+1] || (p.length === 1 && p === official[i+1][0]));
     const familyOk = actualSuffix === suffix || actualSuffix.endsWith(' '+suffix) || partialMiddle ||
-      (pieces.length === 2 && oneTypo(suffix,official.at(-1) ?? ''));
+      oneTypo(suffix,actualSuffix);
     return firstOk && familyOk;
   });
   const near = unique(candidates);
