@@ -1,0 +1,111 @@
+name: Recover historical Senate DFL original raw statements from public Wayback (one-shot)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-dfl-wayback-production.yml
+      - scripts/deploy-senate-dfl-wayback-neon.ts
+      - src/operations/senate-dfl-archive-store.ts
+      - src/sources/minnesota/senate-dfl-wayback.ts
+      - migrations/0020_senate_raw_statement_archive_captures.sql
+      - data/senate-dfl-historical-originals.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-dfl-independent-archived-raw-backfill
+  cancel-in-progress: false
+
+jobs:
+  independent-reviewed-main:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_DFL_WAYBACK_RAW_20261016')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact reviewed main source checkout
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Require at least one complete archived first-party DFL source without Neon credentials
+        env:
+          VOTEPREDICT_DFL_ARCHIVE_REQUIRES_FULL: 'true'
+        run: node --import tsx scripts/probe-senate-dfl-wayback-replay.ts
+
+  protected-raw-archive-inserts:
+    needs: [independent-reviewed-main]
+    if: >-
+      needs.independent-reviewed-main.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_DFL_WAYBACK_RAW_20261016')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_ARCHIVE_CI: ${{ needs.independent-reviewed-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Use the exact independently reviewed main revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Insert-only 2023-2025 original Wayback documents with capture provenance and readback
+        run: node --import tsx scripts/deploy-senate-dfl-wayback-neon.ts
