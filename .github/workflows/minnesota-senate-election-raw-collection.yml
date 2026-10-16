@@ -1,11 +1,23 @@
 name: Minnesota Senate election raw collection
 
 on:
+  push:
+    branches: ['**']
+    paths:
+      - src/sources/minnesota/senate-election-results.ts
+      - scripts/collect-senate-election-results.ts
+      - scripts/deploy-mn-senate-elections-neon.ts
+      - migrations/0016_mn_senate_election_raw_results.sql
+      - data/mn-senate-election-legacy-official-rows.json
+      - package.json
+      - .github/workflows/minnesota-senate-election-raw-collection.yml
   pull_request:
     paths:
       - src/sources/minnesota/senate-election-results.ts
       - scripts/collect-senate-election-results.ts
+      - scripts/deploy-mn-senate-elections-neon.ts
       - migrations/0016_mn_senate_election_raw_results.sql
+      - data/mn-senate-election-legacy-official-rows.json
       - package.json
       - .github/workflows/minnesota-senate-election-raw-collection.yml
 
@@ -15,7 +27,24 @@ permissions:
 jobs:
   collect-raw:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
     steps:
       - uses: actions/checkout@v7
         with:
@@ -26,6 +55,8 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
       - name: Capture published Senate bulk files for every listed year
         shell: bash
         run: |
