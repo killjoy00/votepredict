@@ -646,19 +646,38 @@ export function validateCatalog(value:unknown):QuestionnaireSource[] {
   }).sort((a,b)=>b.cycle-a.cycle);
 }
 const agent='VotePredict research collector/1.0 (public Minnesota Senate questionnaire citations)';
-async function fetchBounded(url:string,limit:number,runFetch:typeof fetch):Promise<{html:string;contentType:string}> {
+type SourceDownload={html:string;contentType:string;pdfBytes?:Uint8Array};
+async function fetchBounded(
+  seed:QuestionnaireSource,limit:number,runFetch:typeof fetch,
+):Promise<SourceDownload> {
+  const source=new URL(seed.url);
+  const pdf=seed.adapter==='sd60_pdf';
+  // The publicly linked SD60 questionnaires are original Google Drive files.
+  // Anonymous /uc download is the documented standard public-file delivery
+  // endpoint; it is NOT a workaround for login or download restrictions.
+  const pdfId=pdf ? /^\/file\/d\/([a-zA-Z0-9_-]+)\/view\/?$/.exec(source.pathname)?.[1] : null;
+  if(pdf&&!pdfId)throw Error('Unexpected Drive original PDF link format');
+  const url=pdf?'https://drive.google.com/uc?export=download&id='+pdfId:seed.url;
   const response=await runFetch(url,{
-    redirect:'follow',signal:AbortSignal.timeout(20000),
-    headers:{'User-Agent':agent,Accept:'text/html,application/xhtml+xml;q=0.9'},
+    redirect:'follow',signal:AbortSignal.timeout(25000),
+    headers:{'User-Agent':agent,Accept:pdf?'application/pdf':'text/html,application/xhtml+xml;q=0.9'},
   });
   if(!response.ok)throw Error('HTTP '+response.status);
-  const effective=new URL(response.url||url),original=new URL(url);
-  if(effective.protocol!=='https:'||effective.hostname.replace(/^www\./,'')!==original.hostname.replace(/^www\./,''))
-    throw Error('Cross-host redirect is not a trusted publisher response');
+  const effective=new URL(response.url||url);
+  const samePublisher=effective.protocol==='https:' &&
+    effective.hostname.replace(/^www\./,'')===source.hostname.replace(/^www\./,'');
+  const googleDelivery=pdf && effective.protocol==='https:' &&
+    effective.hostname==='drive.usercontent.google.com';
+  if(!samePublisher&&!googleDelivery)throw Error('Cross-host redirect is not a trusted publisher response');
   if(Number(response.headers.get('content-length')||0)>limit)throw Error('Exceeded content byte cap');
   const bytes=new Uint8Array(await response.arrayBuffer());
   if(bytes.length>limit)throw Error('Exceeded content byte cap');
   const type=response.headers.get('content-type')||'';
+  if(pdf){
+    if(bytes.length<200||new TextDecoder('ascii').decode(bytes.subarray(0,5))!=='%PDF-')
+      throw Error('Google Drive did not publish a directly downloadable original PDF (no access bypass)');
+    return {html:'',contentType:'application/pdf;base64',pdfBytes:bytes};
+  }
   if(!/html|text\/plain/i.test(type))throw Error('Not a readable HTML response ('+type.slice(0,60)+')');
   return {html:new TextDecoder().decode(bytes),contentType:type};
 }
@@ -668,7 +687,7 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
   if(!Number.isInteger(max)||max<1||max>500||limit<1024||limit>5_000_000)
     throw Error('Bounded source and size limits required');
   const queue=[...options.sources],visited=new Set<string>();
-  const downloads=new Map<string,Promise<{html:string;contentType:string}>>();
+  const downloads=new Map<string,Promise<SourceDownload>>();
   const summary:CollectionSummary={attempted:0,fetched:0,responses:0,pairs:0,byCyclePublisher:{},failed:[],explicitlyUnanswered:0};
   while(queue.length && summary.attempted<max) {
     const seed=queue.shift()!;
@@ -678,10 +697,10 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
     try{
       let download=downloads.get(seed.url);
       if(!download){
-        download=fetchBounded(seed.url,limit,runFetch);
+        download=fetchBounded(seed,limit,runFetch);
         downloads.set(seed.url,download);
       }
-      const {html,contentType}=await download;
+      const {html,contentType,pdfBytes}=await download;
       summary.fetched++;
       if(seed.adapter==='mhp_index'||seed.adapter==='biofuels_index'){
         const children=seed.adapter==='mhp_index'?mhpLinks(html,seed):biofuelsLinks(html,seed);
@@ -690,7 +709,21 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
       }
       if(/JavaScript is disabled[\s\S]{0,500}verify that you.re not a robot/i.test(html))
         throw Error('Publisher anti-bot interstitial; no bypass attempted');
-      const records=parseResponses(html,seed);
+      let records:Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>;
+      let rawContent=html,contentSha256=sha256(html);
+      if(seed.adapter==='sd60_pdf'){
+        if(!pdfBytes)throw Error('No original publicly delivered PDF bytes');
+        // Preserve the EXACT original binary in a reversible base64 column,
+        // because the existing append-only raw_content field is PostgreSQL text.
+        // Hash before pdf-parse can transfer/detach its input ArrayBuffer.
+        rawContent=Buffer.from(pdfBytes).toString('base64');
+        contentSha256=createHash('sha256').update(pdfBytes).digest('hex');
+        const {PDFParse}=await import('pdf-parse');
+        const {CanvasFactory}=await import('pdf-parse/worker');
+        const parser=new PDFParse({data:pdfBytes.slice(),CanvasFactory});
+        try{records=parseSd60PdfText((await parser.getText()).text,seed);}
+        finally{await parser.destroy();}
+      }else records=parseResponses(html,seed);
       if(!records.length && /did not respond|no response from this candidate/i.test(html))
         summary.explicitlyUnanswered++;
       for(const parsed of records) {
@@ -704,7 +737,7 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
           displayedSubmittedOn:parsed.displayedSubmittedOn??null,
           archiveCapturedAt:seed.archiveCapturedAt??null,
           fetchedAt:new Date().toISOString(),contentType,
-          contentSha256:sha256(html),rawContent:html,qa:parsed.qa,
+          contentSha256,rawContent,qa:parsed.qa,
         };
         await options.onResponse(item);
         summary.responses++;
