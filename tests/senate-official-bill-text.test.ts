@@ -33,7 +33,7 @@ test('discovers numeric, UE, numeric CCR and alphabetic CCR exactly as printed',
 });
 test('the current-version banner does not conflict with the dated published version listing',()=>{
   const html='<a href="versions/12/">Current bill text: 12th Engrossment</a>'
-    +'<p>Bill status navigation</p><h2>Bill Text Versions</h2>'
+    +'<p>Bill status navigation</p><h2><span>Bill Text Versions</span></h2>'
     +'<a href="versions/0/">Introduction</a> Posted on 01/04/2023 | '
     +'<a href="versions/12/">12th Engrossment</a> Posted on 05/20/2023 | ';
   const versions=discoverOfficialVersionLeads(html,root);
