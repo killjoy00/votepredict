@@ -10,7 +10,8 @@ on:
       - src/sources/minnesota/senate-dfl-sitemap-archive.ts
       - tests/senate-dfl-sitemap-archive.test.ts
   schedule:
-    - cron: '18 * * * *'
+    - cron: '47 * * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -28,7 +29,8 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
       (
-        (github.event_name == 'schedule' && github.event.schedule == '18 * * * *') ||
+        (github.event_name == 'schedule' && github.event.schedule == '47 * * * *') ||
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
         (github.event_name == 'push' &&
           github.event.after == github.sha &&
           github.event.head_commit.id == github.sha &&
@@ -77,7 +79,7 @@ jobs:
       - name: Independently verify both complete archived publisher sitemaps without Neon secrets
         run: node --import tsx scripts/probe-senate-dfl-sitemap-inventory.ts
       - name: Check real 2023-2025 full article replay before initial archival backfill
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         env:
           VOTEPREDICT_DFL_ARCHIVE_REQUIRES_FULL: 'true'
         run: node --import tsx scripts/probe-senate-dfl-wayback-replay.ts
@@ -90,7 +92,8 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
       (
-        (github.event_name == 'schedule' && github.event.schedule == '18 * * * *') ||
+        (github.event_name == 'schedule' && github.event.schedule == '47 * * * *') ||
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
         (github.event_name == 'push' &&
           github.event.after == github.sha &&
           github.event.head_commit.id == github.sha &&
