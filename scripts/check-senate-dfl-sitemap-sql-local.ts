@@ -34,12 +34,17 @@ async function run():Promise<void>{
         "WHERE s.source_id='senate_dfl' GROUP BY year ORDER BY year");
       const c=await client.query<{source_url:string}>(
         'SELECT source_url FROM senate_raw_statements WHERE source_url = ANY($1::text[])',[[original]]);
+      const d=await client.query<{total:string}>(
+        "SELECT COUNT(*)::text AS total FROM senate_raw_statements "+
+        "WHERE source_id='senate_dfl' AND source_url = ANY($1::text[])",
+        [[original,'https://senatedfl.mn/senator-sql-progress-absent/']]);
       if(a.rows.find(x=>x.year==='2024')?.total!=='1'||
         b.rows.find(x=>x.year==='2024')?.total!=='1'||
-        c.rows[0]?.source_url!==original)
+        c.rows[0]?.source_url!==original||d.rows[0]?.total!=='1')
         throw Error('Protected historical DFL year counts or original URL deduplication differ');
       console.log('SENATE_DFL_SITEMAP_SQL_LOCAL='+JSON.stringify({
-        passed:true,sourceRows:a.rows.length,archiveRows:b.rows.length,found:c.rows.length,
+        passed:true,sourceRows:a.rows.length,archiveRows:b.rows.length,
+        found:c.rows.length,indexedCandidateOriginals:Number(d.rows[0]?.total),
       }));
     }finally{await client.query('ROLLBACK');}
   }finally{client.release();await pool.end();}
