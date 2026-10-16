@@ -1,44 +1,105 @@
 /** Raw-only, append-only questionnaire snapshot storage; no forecast/evidence writes. */
 import type { PoolClient } from 'pg';
 import type { CandidateResponse } from '../sources/minnesota/senate-questionnaire-raw.js';
-import { normalizeMemberName } from '../sources/minnesota/house-votes.js';
+import {resolveSenator,type SenateMember} from './senate-identity-bill-resolvers.js';
 
 type Link={legislatorId:string|null;membershipId:string|null};
+type CandidateIdentity=Pick<CandidateResponse,'candidateName'|'district'|'party'|'electionCycle'>;
 function normalizedParty(raw:string|null):string|null {
   if(!raw)return null;
   const s=raw.toLowerCase().trim();
-  if(['dfl','democratic','democrat','democratic-farmer-labor party','democratic-farmer-labor'].includes(s))return 'dfl';
-  if(['republican','r','republican party'].includes(s))return 'r';
+  if(['dfl','d','dem','democratic','democrat','democratic-farmer-labor party','democratic-farmer-labor'].includes(s))return 'dfl';
+  if(['republican','r','gop','republican party'].includes(s))return 'r';
   if(['independent','i','independence','independent party'].includes(s))return 'i';
   return s;
 }
-/** Never associate a challenger with the officeholder solely by election district. */
-export async function exactExistingSenateMembership(client:PoolClient,record:CandidateResponse):Promise<Link> {
-  const normalized=normalizeMemberName(record.candidateName);
-  if(!normalized||!record.district)return {legislatorId:null,membershipId:null};
-  const cycle=record.electionCycle;
-  const session=(cycle-1)+'-'+cycle;
+/** November 2022 general Senate races elect the 2023–2024 roster.
+ * Special 2024, 2025 and regular 2026 questionnaires are aligned with their
+ * relevant sitting-roster session, never with a candidate-only registry.
+ */
+export function questionnaireServiceSession(cycle:number):string|null {
+  if(cycle===2022||cycle===2024)return '2023-2024';
+  if(cycle===2025||cycle===2026)return '2025-2026';
+  return null; // Out of owner-requested historical scope.
+}
+/** Candidate linking is NOT Senate seat attribution: only a uniquely
+ * identified existing member can be linked, never a different challenger
+ * based on district alone. An unresolved candidate is valid raw evidence.
+ */
+export async function exactExistingSenateMembership(
+  client:PoolClient,record:CandidateIdentity,
+):Promise<Link>{
+  const session=questionnaireServiceSession(record.electionCycle);
+  if(!session||!record.candidateName.trim()||!record.district)
+    return {legislatorId:null,membershipId:null};
   const rows=await client.query<{
-    id:string;legislator_id:string;party:string;name:string;aliases:string[];
+    id:string;legislator_id:string;party:string|null;name:string;district:string;
+    starts_on:string|null;ends_on:string|null;aliases:string[];
   }>([
-    'SELECT m.id,m.legislator_id,m.party,l.name,',
-    "COALESCE(array_agg(a.source_name) FILTER (WHERE a.source_name IS NOT NULL),ARRAY[]::text[]) AS aliases",
+    'SELECT m.id,m.legislator_id,m.party,l.name,m.district,',
+    'm.starts_on::text,m.ends_on::text,',
+    "COALESCE(array_agg(DISTINCT a.source_name) FILTER (WHERE a.source_name IS NOT NULL),ARRAY[]::text[]) AS aliases",
     'FROM memberships m JOIN legislators l ON l.id=m.legislator_id',
     'JOIN legislative_sessions s ON s.id=m.session_id',
     "JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'",
     "JOIN chambers c ON c.id=m.chamber_id AND c.slug='senate'",
     'LEFT JOIN membership_source_aliases a ON a.membership_id=m.id',
-    'WHERE s.slug=$1 AND m.district=$2 GROUP BY m.id,m.legislator_id,m.party,l.name',
-  ].join(' '),[session,record.district]);
-  const matching=rows.rows.filter(m=>{
-    if(![m.name,...m.aliases].some(v=>normalizeMemberName(v)===normalized))return false;
-    const sourceParty=normalizedParty(record.party),officeParty=normalizedParty(m.party);
-    return sourceParty===null||sourceParty===officeParty;
-  });
-  return matching.length===1
-    ?{membershipId:matching[0].id,legislatorId:matching[0].legislator_id}
-    :{legislatorId:null,membershipId:null};
+    'WHERE s.slug=$1 GROUP BY m.id,m.legislator_id,m.party,l.name,m.district,m.starts_on,m.ends_on',
+  ].join(' '),[session]);
+  const publisherParty=normalizedParty(record.party);
+  const matchingMembers=rows.rows.filter(r=>
+    publisherParty===null||normalizedParty(r.party)===publisherParty);
+  const roster:SenateMember[]=matchingMembers.map(row=>({
+    id:row.id,sessionSlug:session,name:row.name,district:row.district,
+    startsOn:row.starts_on,endsOn:row.ends_on,aliases:row.aliases,
+  }));
+  const resolved=resolveSenator({
+    printedName:record.candidateName,sessionSlug:session,district:record.district,
+  },roster);
+  const exact=matchingMembers.find(m=>m.id===resolved.membershipId);
+  return exact?{legislatorId:exact.legislator_id,membershipId:exact.id}:
+    {legislatorId:null,membershipId:null};
 }
+/** Backfill ONLY null questionnaire identity links, with independent
+ * existing-membership uniqueness checks. Never mutate source Q&A or 2020.
+ * This is a bounded replay, safe if 0022 has already linked some captures.
+ */
+export async function reconcileUnmatchedQuestionnaireMemberships(
+  client:PoolClient,max=15000,
+):Promise<{scanned:number;linked:number;remaining:number}>{
+  if(!Number.isInteger(max)||max<1||max>15000)throw Error('Invalid bounded candidate link limit');
+  const rows=await client.query<{
+    id:string;candidate_name:string;district:string|null;party:string|null;election_cycle:number;
+  }>(
+    'SELECT id,candidate_name,district,party,election_cycle '+
+    'FROM mn_senate_questionnaire_captures '+
+    'WHERE membership_id IS NULL AND legislator_id IS NULL '+
+    'AND election_cycle=ANY($1::int[]) ORDER BY id LIMIT $2',
+    [[2022,2024,2025,2026],max],
+  );
+  let linked=0;
+  for(const row of rows.rows){
+    const resolved=await exactExistingSenateMembership(client,{
+      candidateName:row.candidate_name,district:row.district,
+      party:row.party,electionCycle:row.election_cycle,
+    });
+    if(!resolved.membershipId||!resolved.legislatorId)continue;
+    const result=await client.query(
+      'UPDATE mn_senate_questionnaire_captures '+
+      'SET membership_id=$1,legislator_id=$2 '+
+      'WHERE id=$3 AND membership_id IS NULL AND legislator_id IS NULL',
+      [resolved.membershipId,resolved.legislatorId,row.id],
+    );
+    linked+=result.rowCount??0;
+  }
+  const rem=await client.query<{count:string}>(
+    'SELECT COUNT(*)::text AS count FROM mn_senate_questionnaire_captures '+
+    'WHERE membership_id IS NULL AND election_cycle=ANY($1::int[])',
+    [[2022,2024,2025,2026]],
+  );
+  return {scanned:rows.rows.length,linked,remaining:Number(rem.rows[0]?.count??0)};
+}
+
 export async function insertQuestionnaire(client:PoolClient,item:CandidateResponse):
 Promise<{inserted:boolean;matched:boolean}> {
   if(!item.qa.length||!item.rawContent.length||!item.candidateName)throw Error('Empty raw candidate answer');
