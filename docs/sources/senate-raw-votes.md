@@ -12,7 +12,7 @@ unclear outcomes and name/tally mismatches are kept and labeled, not dropped or 
 | Floor | Senate Journal PDFs | Full journal text and every roll call (amendments, motions, procedural votes and passage), including roll calls whose parsed names don't add up to the tally |
 
 Not captured yet: floor voice votes (they are in the stored journal text but not parsed into
-records), and committee roll calls that exist only in scanned LRL PDFs.
+records), and broad coverage of committee roll calls that exist only in scanned LRL PDFs (the bounded recovery below covers eight documents).
 
 ## Running it
 
@@ -32,6 +32,7 @@ No new tables. Each fetched document is one `source_documents` row; everything r
 `metadata.rawPrepassageVotes`:
 
 - committee minutes: `source_kind = 'senate_committee_minutes_html'`, `content_sha256` = hash of the extracted minutes text
+- recovered LRL PDFs: `source_kind = 'senate_committee_minutes_pdf'`, SHA of the original PDF; full text and separate extraction provenance under the same raw metadata key
 - journals: `source_kind = 'senate_journal_pdf'`, `content_sha256` = hash of the PDF. This is the
   same row the strict journal ingest (`data:senate:ingest`) uses for that PDF; only the
   `rawPrepassageVotes` key is written, so that ingest's own metadata is left alone.
@@ -51,7 +52,8 @@ summary line, so a narrative record and an `action_summary` record can describe 
 ```sql
 SELECT sd.metadata->'rawPrepassageVotes'->>'sourceDate'               AS date,
        r->>'venue'                                                     AS venue,
-       sd.metadata->'rawPrepassageVotes'->'hearing'->>'committeeName'  AS committee,
+       coalesce(sd.metadata->'rawPrepassageVotes'->'hearing'->>'committeeName',
+                sd.metadata->'rawPrepassageVotes'->>'committeeName') AS committee,
        r->>'billIdentifier' AS bill, r->>'voteKind' AS kind, r->>'method' AS method,
        r->>'outcome' AS outcome, r->>'yeaCount' AS yeas, r->>'nayCount' AS nays,
        r->'memberVotes' AS member_votes, sd.source_url
@@ -63,3 +65,7 @@ SELECT sd.metadata->'rawPrepassageVotes'->>'sourceDate'               AS date,
 
 For as-of use, filter on `sourceDate` (the hearing or journal date); `fetchedAt` is when we
 collected it.
+
+## Targeted official LRL minute recovery (October 16, 2026)
+
+`data/collections/senate-minute-gap-recovery-20261016.json` preserves eight full-text PDFs missing from the older fourteen-date written-minute queue, including three OCR extractions. Original PDF/text hashes, explicit archive links, printed meeting dates and extraction provenance accompany the raw text. `scripts/recover-senate-minute-gaps.ts` imports these into the same raw metadata format, retaining existing captures and sibling source metadata. The one-shot protected workflow rechecks original PDF hashes before credential access, validates the current migration ledger, and verifies exact post-import text. No parsed raw record is automatically promoted to a legislative vote or forecasting feature. Six source dates remain unresolved; see the corpus `remainingGaps`.
