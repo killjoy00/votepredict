@@ -23,9 +23,11 @@ on:
 permissions:
   contents: read
 
+# Cancel only superseded, keyless PR checks. Protected main/Neon runs remain
+# serialized and can never be cancelled by PR activity or a new main push.
 concurrency:
-  group: senate-official-bill-text-neon-primary
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('senate-official-bill-text-pr-{0}', github.event.pull_request.number) || 'senate-official-bill-text-neon-primary' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   keyless-review:
