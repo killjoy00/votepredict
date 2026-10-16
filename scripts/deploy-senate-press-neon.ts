@@ -237,12 +237,24 @@ async function main(): Promise<void> {
       const window = { from: START, to: END, maxPages: MAX_PAGES, delayMs: 1500 };
       const result = await collectSource(source, window, store);
       record(result);
+      // The publisher currently exposes 2024 at archive page ~100 and 2023
+      // farther back. If the normal top-down route hits its intermittent
+      // blank 2026-page window, explicit bounded deep ranges recover history.
+      const dflPasses: SourceCounts[] = [result];
+      if(COVERAGE && source.id==='senate_dfl'){
+        for(const [startPage,maxPages] of [[25,110],[100,135]]) {
+          const older = await collectSource(source,{...window,startPage,maxPages},store);
+          record(older);
+          dflPasses.push(older);
+        }
+      }
       // Extra first-party publication pages, not arbitrary searches or inferred slugs.
       if(COVERAGE||DAILY) {
         if(source.id==='senate_dfl') {
-          if(!result.member_archives.length)
-            throw Error('DFL official archive returned no named author archives');
-          for(const url of result.member_archives) {
+          const linkedAuthors = [...new Set(dflPasses.flatMap(r=>r.member_archives))];
+          if(!linkedAuthors.length)
+            throw Error('DFL official archives returned no named author archives');
+          for(const url of linkedAuthors) {
             const member = { ...source, archive_url:url,
               pagination:{kind:'path' as const,segment:'page'} };
             record(await collectSource(member, {...window,maxPages:DAILY?1:200}, store));
