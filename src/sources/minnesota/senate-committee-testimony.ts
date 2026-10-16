@@ -40,6 +40,52 @@ export interface RawSenateTestimonyRecord {
   documentKind: 'agenda' | 'witness_list' | 'written_testimony' | 'other' | null;
 }
 
+/**
+ * PostgreSQL text and jsonb cannot store U+0000 or unpaired UTF-16 surrogates.
+ * PDF text extraction may include either. Preserve the entire original JS
+ * string losslessly as UTF-16LE base64 ONLY for those exceptional fields.
+ * The recognizable prefix is intentionally stored in raw_content; callers can
+ * recover the exact original text with decodeSenateRawStorageText().
+ * Normal HTML/PDF text is persisted verbatim.
+ */
+const UNSAFE_TEXT_PREFIX = 'raw-utf16le-base64:';
+
+function needsSafeEncoding(value: string): boolean {
+  for (let i = 0; i < value.length; i++) {
+    const code = value.charCodeAt(i);
+    if (code === 0) return true;
+    if (code >= 0xd800 && code <= 0xdbff) {
+      const next = value.charCodeAt(i + 1);
+      if (next >= 0xdc00 && next <= 0xdfff) { i++; continue; }
+      return true;
+    }
+    if (code >= 0xdc00 && code <= 0xdfff) return true;
+  }
+  return false;
+}
+
+export function senateSqlSafeText(value: string | null): string | null {
+  if (value === null || (!needsSafeEncoding(value) && !value.startsWith(UNSAFE_TEXT_PREFIX))) return value;
+  return UNSAFE_TEXT_PREFIX + Buffer.from(value, 'utf16le').toString('base64');
+}
+
+export function decodeSenateRawStorageText(value: string): string {
+  if (!value.startsWith(UNSAFE_TEXT_PREFIX)) return value;
+  return Buffer.from(value.slice(UNSAFE_TEXT_PREFIX.length), 'base64').toString('utf16le');
+}
+
+/** Normalize only SQL-hostile source strings. Source IDs and dates never change. */
+export function senateSqlSafeRecord(row: RawSenateTestimonyRecord): RawSenateTestimonyRecord {
+  return {
+    ...row,
+    rawContent: senateSqlSafeText(row.rawContent),
+    committee: senateSqlSafeText(row.committee),
+    witnessName: senateSqlSafeText(row.witnessName),
+    organization: senateSqlSafeText(row.organization),
+    documentName: senateSqlSafeText(row.documentName),
+  };
+}
+
 export interface RawSenateTestimonySummary {
   session: string;
   from: string;

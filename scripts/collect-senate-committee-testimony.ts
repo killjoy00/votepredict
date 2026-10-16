@@ -13,7 +13,7 @@
 import { appendFileSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
 import {
-  collectSenateCommitteeTestimony, normalizedBill, type RawSenateTestimonyRecord,
+  collectSenateCommitteeTestimony, normalizedBill, senateSqlSafeRecord, type RawSenateTestimonyRecord,
 } from '../src/sources/minnesota/senate-committee-testimony.js';
 import { getMinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
 
@@ -87,6 +87,7 @@ async function main(): Promise<void> {
       onRecord: async (row: RawSenateTestimonyRecord) => {
         if (out) appendFileSync(out, JSON.stringify(row) + '\n');
         if (!pool || !sessionId) return;
+        const safe = senateSqlSafeRecord(row);
         await pool.query(
           `INSERT INTO senate_committee_testimony_raw
              (session_id, hearing_id, record_key, source_type, source_url, fetched_at, hearing_date,
@@ -97,12 +98,12 @@ async function main(): Promise<void> {
              fetched_at=EXCLUDED.fetched_at,
              raw_content=COALESCE(EXCLUDED.raw_content, senate_committee_testimony_raw.raw_content),
              raw_content_url=COALESCE(EXCLUDED.raw_content_url, senate_committee_testimony_raw.raw_content_url),
-             bill_id=EXCLUDED.bill_id`,
+             bill_id=COALESCE(EXCLUDED.bill_id, senate_committee_testimony_raw.bill_id)`,
           [
-            sessionId, row.hearingId, row.recordKey, row.sourceType, row.sourceUrl, row.fetchedAt,
-            row.hearingDate, row.sourceContentType, row.rawContent, row.rawContentUrl,
-            row.committee, row.billIdentifier, row.billIdentifier ? billIds.get(row.billIdentifier) ?? null : null,
-            row.witnessName, row.organization, row.statedPosition, row.documentName, row.documentKind,
+            sessionId, safe.hearingId, safe.recordKey, safe.sourceType, safe.sourceUrl, safe.fetchedAt,
+            safe.hearingDate, safe.sourceContentType, safe.rawContent, safe.rawContentUrl,
+            safe.committee, safe.billIdentifier, safe.billIdentifier ? billIds.get(safe.billIdentifier) ?? null : null,
+            safe.witnessName, safe.organization, safe.statedPosition, safe.documentName, safe.documentKind,
           ],
         );
       },

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   normalizedBill, parseAgendaAttachments, parseAgendaWitnesses, parseWitnesses, statedPosition,
+  senateSqlSafeText, senateSqlSafeRecord, decodeSenateRawStorageText,
 } from '../src/sources/minnesota/senate-committee-testimony.js';
 
 test('raw Senate agenda collection keeps actual attachment URLs and bill context', () => {
@@ -50,4 +51,33 @@ test('agenda notes retain unnamed positions as null and link explicit testifiers
   assert.equal(normalizedBill('S.F. 03854'), 'SF3854');
   assert.equal(statedPosition('Letter of Opposition to SF1120'), 'against');
   assert.equal(statedPosition('submitted without a stated view'), null);
+});
+
+test('Postgres-safe raw storage leaves normal Unicode untouched and encodes only SQL-hostile source text', () => {
+  const ordinary = 'Normal Senate testimony 😊 with accent é';
+  assert.equal(senateSqlSafeText(ordinary), ordinary);
+
+  // PostgreSQL jsonb rejects escaped U+0000 and lone surrogates emitted by
+  // some PDF text decoders; the source bytes must still be recoverable.
+  const unusual = 'PDF heading' + String.fromCharCode(0) + 'next ' + String.fromCharCode(0xd800);
+  const stored = senateSqlSafeText(unusual);
+  assert.ok(stored?.startsWith('raw-utf16le-base64:'));
+  assert.equal(decodeSenateRawStorageText(stored!), unusual);
+  assert.equal(decodeSenateRawStorageText(ordinary), ordinary);
+
+  const source = {
+    recordKey: 'a'.repeat(64), session: '2023-2024', hearingId: 123,
+    sourceType: 'document' as const, sourceUrl: 'https://assets.senate.mn/example.pdf',
+    fetchedAt: '2026-10-16T00:00:00Z', hearingDate: '2024-03-06',
+    sourceContentType: 'application/pdf', rawContent: unusual,
+    rawContentUrl: 'https://assets.senate.mn/example.pdf', committee: 'Judiciary',
+    billIdentifier: 'SF1', witnessName: null, organization: null,
+    statedPosition: null, documentName: 'Agenda.pdf', documentKind: 'agenda' as const,
+  };
+  const converted = senateSqlSafeRecord(source);
+  assert.equal(converted.recordKey, source.recordKey);
+  assert.equal(converted.sourceUrl, source.sourceUrl);
+  assert.equal(converted.hearingDate, source.hearingDate);
+  assert.equal(decodeSenateRawStorageText(converted.rawContent!), unusual);
+  assert.equal(source.rawContent, unusual);
 });
