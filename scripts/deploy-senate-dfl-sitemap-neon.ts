@@ -87,6 +87,23 @@ async function countDFL(pool:Pool,kind:'raw'|'captures'):Promise<Count[]>{
     });
   });
 }
+/** Read-only progress across the complete pinned publisher URL inventory.
+ * Candidate URLs include non-statements and posts outside the 2023-2025
+ * recovery window: unresolved URLs are not equivalent to missing releases.
+ */
+async function countStoredSitemapOriginals(pool:Pool,urls:string[]):Promise<number>{
+  if(urls.length<300||urls.length>2000||new Set(urls).size!==urls.length)
+    throw Error('Unreviewed pinned publisher URL progress inventory');
+  return readonly(pool,async c=>{
+    const result=await c.query<{total:string}>(
+      "SELECT COUNT(*)::text AS total FROM senate_raw_statements "+
+      "WHERE source_id='senate_dfl' AND source_url = ANY($1::text[])",[urls]);
+    const count=Number(result.rows[0]?.total);
+    if(!Number.isSafeInteger(count)||count<0||count>urls.length)
+      throw Error('Invalid read-only publisher sitemap URL progress count');
+    return count;
+  });
+}
 function sum(rows:Count[]):number{return rows.reduce((total,item)=>total+item.total,0);}
 async function main():Promise<void>{
   let phase='reviewed_main_gate',pool:Pool|undefined;
@@ -104,6 +121,7 @@ async function main():Promise<void>{
     const batch=dflSitemapShard(candidates,run.runNumber);
     const manifest=historicalDFLSitemapManifest(pages);
     const selected=batch.selected;
+    const candidateUrls=candidates.map(c=>c.url);
     console.log('SENATE_DFL_SITEMAP_RUN='+JSON.stringify({
       mode:run.kind,runNumber:run.runNumber,shard:batch.shard,
       shardCount:batch.shardCount,sitemapCandidates:candidates.length,
@@ -153,6 +171,8 @@ async function main():Promise<void>{
     const before=await countDFL(pool,'raw');
     phase='read_only_before_archive_capture_year_counts';
     const captureBefore=await countDFL(pool,'captures');
+    phase='read_only_before_complete_publisher_url_progress';
+    const publisherStoredBefore=await countStoredSitemapOriginals(pool,candidateUrls);
     phase='read_only_original_url_deduplication';
     const store=new ArchivedSenateDFLStore(pool);
     const already=await store.existing(selected.map(s=>s.url));
@@ -212,13 +232,18 @@ async function main():Promise<void>{
     }
     phase='read_only_production_source_year_and_capture_lineage_readback';
     const after=await countDFL(pool,'raw'),captureAfter=await countDFL(pool,'captures');
-    if(sum(after)-sum(before)!==stats.inserted||
+    const publisherStoredAfter=await countStoredSitemapOriginals(pool,candidateUrls);
+    if(publisherStoredAfter-publisherStoredBefore!==stats.inserted||
+      sum(after)-sum(before)!==stats.inserted||
       sum(captureAfter)-sum(captureBefore)!==stats.inserted||
       sum(captureAfter)>sum(after))
       throw Error('Raw original and capture provenance inserts do not reconcile');
     const report={status:stopReason?'paused_archive_unavailable_or_rate_limited':'archived_sitemap_shard_raw_backfill',mode:run.kind,
       shard:batch.shard,shardCount:batch.shardCount,
       inventorySize:candidates.length,selectedCount:selected.length,
+      publisherUrlProgress:{storedBefore:publisherStoredBefore,storedAfter:publisherStoredAfter,
+        unresolvedCandidateUrls:candidates.length-publisherStoredAfter,
+        notAllCandidatesAreEligibleHistoricalStatements:true},
       publisherSitemapManifest:manifest,stats,byYearAdded,stopReason,
       before,after,captureBefore,captureAfter,
       publicationDateIsNotCaptureDate:true,noForecasterOrModelWrites:true,
@@ -229,6 +254,8 @@ async function main():Promise<void>{
       'Shard: '+(batch.shard+1)+'/'+batch.shardCount+
       '; candidates: '+selected.length+'; inserted: '+stats.inserted+
       '; archive pause: '+(stopReason??'none')+'\n\n'+
+      'Publisher sitemap URLs currently stored: '+publisherStoredAfter+'/'+candidates.length+
+      ' (remaining candidates are not all eligible historical statements)\\n\\n'+
       'Captured first-party original counts: '+captureAfter.map(r=>r.year+': '+r.total).join(', ')+
       '\n\nPublisher post sitemap manifest: '+manifest+
       '\n\nOriginal publication date and Wayback capture timestamp are distinct. No models or votes changed.\n');
