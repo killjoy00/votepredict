@@ -62,7 +62,7 @@ export async function importOfficialMinnesotaBillUniverse(
             });
           }catch(error){
             const message=error instanceof Error?error.message:String(error);
-            if(/\\b(?:429|503)\\b/.test(message)){
+            if(/\b(?:429|503)\b/.test(message)){
               result.stoppedForThrottle=true;
               return result;
             }
