@@ -12,6 +12,8 @@ import { collectSource, type SenatePressSource, type SourceCounts } from '../src
 
 const MIGRATION = '0016_senate_raw_statements.sql';
 const MARKER = 'SENATE_PRESS_RAW_PRODUCTION_20261015';
+const DFL_REPAIR_MARKER = 'SENATE_PRESS_DFL_REPAIR_20261015';
+const DFL_ONLY = process.env.VOTEPREDICT_SENATE_PRESS_DFL_ONLY === 'true';
 const START = '2023-01-01';
 const END = new Date().toISOString().slice(0, 10);
 const MAX_PAGES = 1000;
@@ -24,6 +26,9 @@ type Count = { source_id: string; year: string; items: number };
 
 function assertReviewedMain(): void {
   const env = process.env;
+  if (env.VOTEPREDICT_SENATE_PRESS_DFL_ONLY !== undefined
+    && env.VOTEPREDICT_SENATE_PRESS_DFL_ONLY !== 'true')
+    throw Error('Invalid source-scope flag');
   if (env.GITHUB_REPOSITORY !== 'killjoy00/votepredict'
     || env.GITHUB_EVENT_NAME !== 'push' || env.GITHUB_REF !== 'refs/heads/main'
     || env.GITHUB_RUN_ATTEMPT !== '1' || env.VOTEPREDICT_SENATE_PRESS_CI !== 'true'
@@ -37,7 +42,7 @@ function assertReviewedMain(): void {
     || event.deleted === true || event.forced === true
     || event.repository?.full_name !== env.GITHUB_REPOSITORY
     || event.head_commit?.id !== env.GITHUB_SHA
-    || !event.head_commit?.message?.includes(MARKER))
+    || !event.head_commit?.message?.includes(DFL_ONLY ? DFL_REPAIR_MARKER : MARKER))
     throw Error('One-shot production merge marker missing or mismatched');
 }
 function expectedMigrations(): Ledger[] {
@@ -110,7 +115,10 @@ async function main(): Promise<void> {
   try {
     if (process.argv.length !== 2) throw Error('Unexpected production arguments');
     assertReviewedMain();
-    const expected = expectedMigrations(), sources = configuredSources();
+    const expected = expectedMigrations();
+    const sources = configuredSources().filter(s => !DFL_ONLY || s.id === 'senate_dfl');
+    if (sources.length !== (DFL_ONLY ? 1 : 2))
+      throw Error('Expected reviewed first-party source subset not found');
     phase = 'existing_default_branch_primary';
     const target = await discoverExistingVotePredictNeonConnection({
       apiKey: process.env.NEON_API_KEY?.trim() ?? '',
@@ -219,7 +227,8 @@ async function main(): Promise<void> {
     const report = {
       status: 'migration_committed_raw_backfill_readback',
       migration: MIGRATION, migrationApplied,
-      dateFrom: START, dateTo: END, before: beforeTotals, after: afterTotals,
+      dateFrom: START, dateTo: END, dflOnlyRepair: DFL_ONLY,
+      before: beforeTotals, after: afterTotals,
       byYearAfter: after,
       sources: results.map(r => ({
         id: r.source, archivePages: r.pages, discovered: r.discovered,

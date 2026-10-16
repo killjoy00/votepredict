@@ -1,0 +1,110 @@
+name: Restore missing DFL first-party Senate statements (one-shot)
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-press-dfl-production-repair.yml
+      - scripts/deploy-senate-press-neon.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-press-dfl-production-repair.yml
+      - scripts/deploy-senate-press-neon.ts
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-dfl-press-production-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  independent-main:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_DFL_REPAIR_20261015')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert reviewed immutable main commit
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Confirm actual DFL pages remain accessible without Neon access
+        run: npm run data:senate:statements -- --source senate_dfl --dry-run --from=2025-01-01 --to=2026-10-15 --max-pages=2
+
+  protected-dfl-only-neon:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PRESS_DFL_REPAIR_20261015')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 280
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_PRESS_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_SENATE_PRESS_DFL_ONLY: 'true'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require same independently verified main checkout
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Insert only missing DFL statements from 2023 onward and read back
+        run: node --import tsx scripts/deploy-senate-press-neon.ts
