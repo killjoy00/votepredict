@@ -89,6 +89,16 @@ function narrativeAnswers(lines:readonly string[]):QuestionAnswer[]{
      ||/^Q\d+[a-z]?\./mi.test(answer))return [];
   return [{ordinal:1,question,answer}];
 }
+/** PDF text extraction sometimes yields U+0000 or lone UTF-16 surrogates.
+ * PostgreSQL jsonb cannot represent these invalid textual scalars.
+ * Preserve the COMPLETE original binary PDF separately, and use an explicit
+ * U+FFFD replacement only for invalid decoded Q&A text (never infer content).
+ */
+export function validExtractedUtf8(value:string):string{
+  const replacedNull=value.replace(/\u0000/g,'\uFFFD');
+  // TextEncoder preserves valid Unicode but replaces unpaired surrogates.
+  return new TextDecoder().decode(new TextEncoder().encode(replacedNull));
+}
 /** Parse only literal question/answer text; do not treat an unmarked cell
  * as opposition, agreement, refusal or a historically admissible position. */
 export function parseEducationMinnesotaPdfPages(
@@ -119,5 +129,6 @@ export function parseEducationMinnesotaPdfPages(
   const distinct=new Set(all.map(x=>/^Q\d+[a-z]?\./i.exec(x.question)?.[0]?.toLowerCase()));
   if(all.length<15||all.length>40||distinct.size!==all.length)
     throw Error('Education PDF missing enough unambiguous ordered responses');
-  return [{candidateName:printed,district,party:source.party??'DFL',displayedSubmittedOn:submitted,qa:all}];
+  return [{candidateName:printed,district,party:source.party??'DFL',displayedSubmittedOn:submitted,
+    qa:all.map(q=>({...q,question:validExtractedUtf8(q.question),answer:validExtractedUtf8(q.answer)}))}];
 }
