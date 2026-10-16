@@ -71,7 +71,8 @@ export async function importOfficialMinnesotaBillUniverse(
           }
           const session=getMinnesotaHouseSession(slug);
           const firstYear=Number(session.startsOn.slice(0,4));
-          if(doc.results.some(row=>{
+          const selected=doc.results.filter(row=>row.fileType===fileType);
+          if(selected.some(row=>{
             const uri=new URL(row.statusXmlUrl);
             const path=uri.pathname.match(/^\/bills\/v1\/(\d+)\/(\d{4})\/0\/(HF|SF)\/(\d+)\/$/);
             return row.fileType!==fileType || row.fileNumber<first || row.fileNumber>last ||
@@ -81,7 +82,7 @@ export async function importOfficialMinnesotaBillUniverse(
               path[3]!==fileType || Number(path[4])!==row.fileNumber;
           }))
             throw Error('Official catalog returned a foreign, out-of-range, or mismatched bill');
-          const unique=new Map(doc.results.map(row=>[row.identifier,row]));
+          const unique=new Map(selected.map(row=>[row.identifier,row]));
           const rows=[...unique.values()].map(row=>({
             session_id:chamber.session_id,
             originating_chamber_id:chamber.chamber_id,
