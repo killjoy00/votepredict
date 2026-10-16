@@ -9,6 +9,7 @@ on:
       - migrations/0023_senate_statement_session_provenance.sql
       - src/operations/senate-revisor-pacer.ts
       - src/operations/senate-bill-universe.ts
+      - src/sources/minnesota/revisor-bill-search.ts
       - scripts/deploy-senate-identity-bill-repair-neon.ts
       - tests/senate-identity-bill-repair.test.ts
       - .github/workflows/senate-identity-bill-repair-production.yml
@@ -28,6 +29,7 @@ on:
       - migrations/0023_senate_statement_session_provenance.sql
       - src/operations/senate-revisor-pacer.ts
       - src/operations/senate-bill-universe.ts
+      - src/sources/minnesota/revisor-bill-search.ts
       - scripts/deploy-senate-identity-bill-repair-neon.ts
       - tests/senate-identity-bill-repair.test.ts
       - .github/workflows/senate-identity-bill-repair-production.yml
