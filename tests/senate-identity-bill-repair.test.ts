@@ -40,7 +40,7 @@ test('protected repair runner is scheduled, main-verified, and migration 0023 on
   const workflow=readFileSync('.github/workflows/senate-identity-bill-repair-production.yml','utf8');
   assert.match(sql,/ADD COLUMN IF NOT EXISTS session_match_method/);
   assert.match(sql,/CREATE TABLE IF NOT EXISTS senate_revisor_bill_catalog_ranges/);
-  assert.doesNotMatch(sql,/\\b(?:DROP|TRUNCATE|DELETE)\\b/i);
+  assert.doesNotMatch(sql,/\b(?:DROP|TRUNCATE|DELETE)\b/i);
   assert.match(script,/SENATE_IDENTITY_BILL_REPAIR_PRODUCTION/);
   assert.match(script,/filenames.length!==23/);
   assert.match(workflow,/cron: '17 \\* \\* \\* \\*'/);
