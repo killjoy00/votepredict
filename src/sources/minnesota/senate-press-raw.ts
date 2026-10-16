@@ -2,7 +2,11 @@ import { setTimeout as sleep } from 'node:timers/promises';
 
 // Only raw first-party text. No stance, authorship authentication, or vote matching.
 export type Pagination = { kind: 'query'; key: string } | { kind: 'path'; segment: string };
-export interface SenatePressSource { id: string; source_type: string; archive_url: string; pagination: Pagination }
+export interface SenatePressSource {
+  id: string; source_type: string; archive_url: string; pagination: Pagination;
+  // Verified official member profile: its linked headlines use smaller headings.
+  member_archive?: boolean;
+}
 export interface RawSenateStatement {
   source_id: string; source_type: string; source_url: string; fetched_at: string;
   published_on: string | null; title: string; named_senators: string[];
@@ -13,6 +17,7 @@ export interface SourceCounts {
   source: string; source_type: string; from: string; to: string; pages: number;
   discovered: number; matched: number; inserted: number; previewed: number; already_present: number;
   outside_range: number; undated: number; by_year: Record<string, number>;
+  member_archives: string[]; archive_gaps: number[];
   failures: Array<{ url: string; reason: string }>;
 }
 export interface StatementSink {
@@ -107,7 +112,7 @@ function onSiteArticle(value:string,source:SenatePressSource):string|null {
 }
 export function articleUrlsFromListing(html:string,source:SenatePressSource):string[] {
   const root=htmlTree(html),urls=new Set<string>();
-  for(const heading of all(root,node=>/^h[2-4]$/.test(node.tag))) {
+  for(const heading of all(root,node=>source.member_archive ? /^h[2-6]$/.test(node.tag) : /^h[2-4]$/.test(node.tag))) {
     let parent=heading.parent,inChrome=false;
     while(parent){if(SKIP.has(parent.tag)){inChrome=true;break;}parent=parent.parent;}
     if(inChrome || plain(text(heading)).length<12)continue;
@@ -119,6 +124,67 @@ export function articleUrlsFromListing(html:string,source:SenatePressSource):str
     }
   }
   return [...urls];
+}
+/** Preserve the actual official DFL author links rather than inferring URLs from names. */
+export function authorArchivesFromListing(html:string,source:SenatePressSource):string[] {
+  if(source.id!=='senate_dfl')return [];
+  const root=htmlTree(html),origin=new URL(source.archive_url).origin;
+  const found=new Set<string>();
+  for(const link of all(root,n=>n.tag==='a')) {
+    const href=attr(link,'href');if(!href)continue;
+    try {
+      const u=new URL(href,source.archive_url);
+      if(u.origin===origin && u.protocol==='https:' && !u.search && !u.hash && !u.username &&
+        /^\/author\/[a-z0-9-]+\/?$/i.test(u.pathname)) {
+        u.pathname=u.pathname.replace(/\/?$/,'/');
+        found.add(u.href);
+      }
+    }catch{/* Ignore untrusted unrelated links. */}
+  }
+  return [...found];
+}
+/** Get the last advertised archive page, if the publisher publishes a pager. */
+export function lastArchivePageFromListing(html:string,source:SenatePressSource):number|null {
+  const root=htmlTree(html),base=new URL(source.archive_url);
+  let last=0;
+  for(const link of all(root,n=>n.tag==='a')) {
+    const href=attr(link,'href');if(!href)continue;
+    try {
+      const u=new URL(href,base);
+      if(u.origin!==base.origin)continue;
+      let page=0;
+      if(source.pagination.kind==='query') {
+        if(u.pathname!==base.pathname)continue;
+        const value=u.searchParams.get(source.pagination.key);
+        if(value && /^[1-9]\d{0,3}$/.test(value))page=Number(value);
+      }else {
+        const rootPath=base.pathname.replace(/\/+$/,'');
+        if(!u.pathname.startsWith(rootPath+'/'))continue;
+        const parts=u.pathname.slice(rootPath.length).split('/').filter(Boolean);
+        if(parts.length===2 && parts[0]===source.pagination.segment &&
+          /^[1-9]\d{0,3}$/.test(parts[1]))page=Number(parts[1]);
+      }
+      if(page>=1 && page<=1000)last=Math.max(last,page);
+    }catch{/* Ignore malformed pager hrefs. */}
+  }
+  return last||null;
+}
+/** Only links under senator-name headings on the official GOP /senators/ roster. */
+export function memberPagesFromDirectory(html:string,source:SenatePressSource):SenatePressSource[] {
+  if(source.id!=='senate_republicans')return [];
+  const root=htmlTree(html),base=new URL(source.archive_url),found=new Set<string>();
+  for(const heading of all(root,n=>n.tag==='h5'))for(const link of all(heading,n=>n.tag==='a')) {
+    const href=attr(link,'href');if(!href)continue;
+    try {
+      const u=new URL(href,base);
+      if(u.origin!==base.origin||u.protocol!=='https:'||u.search||u.hash||u.username||u.password)continue;
+      if(!/^\/[a-z0-9-]+\/?$/i.test(u.pathname))continue;
+      if(!/^[A-Z][a-z'-]+(?:\s+[A-Z][a-z'-]+){1,3}$/.test(plain(text(heading))))continue;
+      u.pathname=u.pathname.replace(/\/?$/,'/');
+      found.add(u.href);
+    }catch{/* Ignore malformed member links. */}
+  }
+  return [...found].map(url=>({...source,archive_url:url,member_archive:true}));
 }
 function isoDate(raw:string):string|null {
   const iso=/^(\d{4}-\d{2}-\d{2})/.exec(raw.trim());
@@ -280,21 +346,40 @@ export async function collectSource(
 ):Promise<SourceCounts> {
   const result:SourceCounts={source:source.id,source_type:source.source_type,from:window.from,to:window.to,
     pages:0,discovered:0,matched:0,inserted:0,previewed:0,already_present:0,outside_range:0,
-    undated:0,by_year:{},failures:[]};
+    undated:0,by_year:{},member_archives:[],archive_gaps:[],failures:[]};
   const failed=(url:string,error:unknown)=>result.failures.push({url,reason:error instanceof Error?error.message:String(error)});
-  const fetcher=new PoliteFetcher(new URL(source.archive_url).origin,Math.max(1250,window.delayMs??1500),request);
+  const fetcher=new PoliteFetcher(new URL(source.archive_url).origin,
+    request===fetch ? Math.max(1250,window.delayMs??1500) : Math.max(0,window.delayMs??0),request);
   try{await fetcher.init();}catch(error){failed(source.archive_url,error);return result;}
-  const visited=new Set<string>();let olderPages=0,stopForRateLimit=false;
+  const visited=new Set<string>(),authorArchives=new Set<string>();
+  let olderPages=0,stopForRateLimit=false,knownLastPage:number|null=null,consecutiveGaps=0;
   for(let page=1;page<=(window.maxPages??1000);page++){
     if(window.maxItems&&result.matched>=window.maxItems)break;
     const listing=archivePageUrl(source,page);let html:string;
     try{html=await fetcher.html(listing);}catch(error){
-      if(page>1 && error instanceof Error && error.message==='HTTP 404')break;
-      failed(listing,error);break;
+      // A page error before the publisher's announced last page is a gap, not exhaustion.
+      if(page>1 && error instanceof Error && error.message==='HTTP 404' &&
+        (knownLastPage===null || page>knownLastPage))break;
+      failed(listing,error);
+      if(knownLastPage!==null && page<knownLastPage && consecutiveGaps<2) {
+        result.archive_gaps.push(page);consecutiveGaps++;continue;
+      }
+      break;
     }
     result.pages++;
+    for(const url of authorArchivesFromListing(html,source))authorArchives.add(url);
+    const last=lastArchivePageFromListing(html,source);
+    if(last!==null)knownLastPage=Math.max(knownLastPage??0,last);
     const fresh=articleUrlsFromListing(html,source).filter(url=>!visited.has(url));
-    if(!fresh.length)break;
+    if(!fresh.length){
+      if(knownLastPage!==null && page<knownLastPage){
+        failed(listing,Error('Archive page unexpectedly omitted linked articles'));
+        result.archive_gaps.push(page);
+        if(++consecutiveGaps<=2)continue;
+      }
+      break;
+    }
+    consecutiveGaps=0;
     for(const url of fresh)visited.add(url);
     result.discovered+=fresh.length;
     let existing:ReadonlySet<string>;
@@ -329,5 +414,40 @@ export async function collectSource(
     olderPages=fresh.length===dated&&dated===older?olderPages+1:0;
     if(olderPages>=2)break;
   }
+  result.member_archives=[...authorArchives];
   return result;
+}
+
+/** Re-fetch one known missed publication with source allowlist, robots and insert-only sink. */
+export async function collectDirectArticle(
+  source:SenatePressSource,url:string,window:CollectionWindow,sink:StatementSink,
+  request:typeof fetch=fetch,
+):Promise<{inserted:number;already_present:number;failures:Array<{url:string;reason:string}>}> {
+  const result:{inserted:number;already_present:number;failures:Array<{url:string;reason:string}>}={
+    inserted:0,already_present:0,failures:[],
+  };
+  if(onSiteArticle(url,source)!==url)throw Error('Direct article URL outside first-party source allowlist');
+  const fetcher=new PoliteFetcher(new URL(source.archive_url).origin,
+    request===fetch ? Math.max(1250,window.delayMs??1500) : Math.max(0,window.delayMs??0),request);
+  try{
+    await fetcher.init();
+    if((await sink.existing([url])).has(url)){result.already_present=1;return result;}
+    const item=parseArticle(await fetcher.html(url),source,url,new Date().toISOString());
+    if(!item)throw Error('Full article text/title missing');
+    if(item.published_on && (item.published_on<window.from||item.published_on>window.to))
+      throw Error('Direct article publication date outside reviewed range');
+    if(window.dryRun)result.inserted=1;
+    else if(await sink.insert(item))result.inserted=1;
+    else result.already_present=1;
+  }catch(error){result.failures.push({url,reason:error instanceof Error?error.message:'Direct article failed'});}
+  return result;
+}
+export async function discoverRepublicanMemberPages(
+  source:SenatePressSource,request:typeof fetch=fetch,
+):Promise<SenatePressSource[]> {
+  if(source.id!=='senate_republicans')throw Error('Unexpected member-directory source');
+  const directory=new URL('/senators/',new URL(source.archive_url).origin);
+  const fetcher=new PoliteFetcher(directory.origin,request===fetch?1500:0,request);
+  await fetcher.init();
+  return memberPagesFromDirectory(await fetcher.html(directory.href),source);
 }
