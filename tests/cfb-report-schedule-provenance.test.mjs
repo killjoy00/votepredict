@@ -27,6 +27,8 @@ test('extract pages with stable page/line locators and separate families',()=>{
  assert.deepEqual(entries.map(x=>[x.page_number,x.line_number,x.schedule_family]),
   [[1,4,'candidate_contribution'],[1,6,'candidate_expenditure']]);
  assert.equal(entries[0].printed_amount_cents,25000);
+ assert.equal(entries[0].printed_counterparty,'Taylor Example');
+ assert.equal(entries[1].printed_counterparty,'Northstar Printing');
  assert.equal(entries[1].printed_transaction_date,'2025-10-03');
  assert.deepEqual(parseReportPeriod([page]),{start:'2025-01-01',end:'2025-12-31'});
 });
