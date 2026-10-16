@@ -102,7 +102,7 @@ function noDuplicates(entries:ScorecardEntry[]):ScorecardEntry[] {
 export function parseA4LSenatePdf(rawText:string):ScorecardEntry[] {
   const found:ScorecardEntry[]=[];
   for(const line of rawText.split(/\r?\n/)){
-    const m=/^\s*([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+){1,5})\s+(R|D|DFL|I)\s+(0?[1-9]|[1-5]\d|6[0-7])\s+(\d{1,3}(?:\.\d+)?%)\s+(\d{1,3}(?:\.\d+)?%)\b?/.exec(line);
+    const m=/^\s*([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+){1,5})\s+(R|D|DFL|I)\s+(0?[1-9]|[1-5]\d|6[0-7])\s+(\d{1,3}(?:\.\d+)?%)\s+(\d{1,3}(?:\.\d+)?%)(?:\s|$)/.exec(line);
     if(!m)continue;
     found.push(newEntry(m[1],String(Number(m[3])),m[2],'score',m[4]));
   }
