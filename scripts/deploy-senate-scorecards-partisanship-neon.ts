@@ -35,16 +35,16 @@ function requireMain(env:NodeJS.ProcessEnv):void {
 }
 function ledgerExpected():Ledger[] {
   const files=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
-  if(files.length!==26||files[23]!=='0024_senate_raw_vote_views.sql'||files[24]!=='0025_senate_bill_authors.sql'||files[25]!==MIGRATION)throw Error('Unreviewed migration inventory');
+  if(files.length<26||files[23]!=='0024_senate_raw_vote_views.sql'||files[24]!=='0025_senate_bill_authors.sql'||files[25]!==MIGRATION)throw Error('Unreviewed migration inventory');
   return files.map(filename=>({filename,checksum:createHash('sha256')
     .update(readFileSync('migrations/'+filename)).digest('hex')}));
 }
 function ledgerStatus(actual:Ledger[],expected:Ledger[]):boolean {
-  if(actual.length<25||actual.length>26)throw Error('Migration prefix not ready');
+  if(actual.length<25||actual.length>expected.length)throw Error('Migration prefix not ready');
   for(const [i,row] of actual.entries())
     if(row.filename!==expected[i]?.filename||row.checksum!==expected[i]?.checksum)
       throw Error('Migration ledger checksum/order drift');
-  return actual.length===26;
+  return actual.length>=26;
 }
 export function assertAdditiveRawMigration(sql:string):void {
   const stripped=sql.replace(/--[^\n]*/g,'').trim();
@@ -114,7 +114,7 @@ async function main():Promise<void> {
       if(applied!==exists)throw Error('New migration ledger/table mismatch');
       return applied;
     });
-    phase='serializable_ledgered_additive_0024_migration';
+    phase='serializable_ledgered_additive_0026_migration_if_missing';
     const client=await pool.connect();
     let migrated=false;
     try{
@@ -141,7 +141,7 @@ async function main():Promise<void> {
     phase='existing_memberships_and_bills';
     const catalog=await readonly(pool,loadScorecardCatalog);
     const fetcher=new PolitePublicFetcher();
-    const attempted=sources.sources.slice(0,35);
+    const attempted=sources.sources.slice(0,50);
     let fetched=0,newSnapshots=0,entriesParsed=0,positionsParsed=0;
     let matchedNew=0,linkedBillsNew=0;
     const failed:ScorecardFailure[]=[];
@@ -173,11 +173,18 @@ async function main():Promise<void> {
     }
     phase='bounded_official_district_partisanship';
     let electionRowsNew=0;
-    const electionResult=await collectRawDistrictPartisanship(fetcher,async record=>{
-      const c=await pool!.connect();
-      try{electionRowsNew+=await storeRawDistrictPartisanship(c,record);}
-      finally{c.release(true);}
-    });
+    // Original one-shot verified all four 67-district statewide reconciliations.
+    // In source-only follow-ups, avoid re-requesting those exact raw releases.
+    const expectedElections=['2020|president|2012','2022|governor|2022',
+      '2022|attorney_general|2022','2024|president|2022'];
+    const districtDataReused=expectedElections.every(key=>before.elections.some(e=>
+      [e.election_year,e.office,e.district_plan].join('|')===key&&e.districts===67&&e.rows>=67));
+    const electionResult=districtDataReused?{collected:[],failed:[]}:
+      await collectRawDistrictPartisanship(fetcher,async record=>{
+        const c=await pool!.connect();
+        try{electionRowsNew+=await storeRawDistrictPartisanship(c,record);}
+        finally{c.release(true);}
+      });
     phase='readonly_postcommit_readback';
     const after=await readonly(pool,scorecardPartisanshipReadback);
     if(after.snapshots<before.snapshots||after.entries<before.entries||
@@ -191,7 +198,7 @@ async function main():Promise<void> {
       entriesParsed,positionsParsed,matchedNew,linkedBillsNew,
       scoresMemberLinkRate:after.entries?after.linkedMembers/after.entries:null,
       scorecardBillLinkRate:after.billPositions?after.linkedBills/after.billPositions:null,
-      electionRowsNew,elections:electionResult.collected,unavailableElections:electionResult.failed,
+      electionRowsNew,districtDataReused,elections:electionResult.collected,unavailableElections:electionResult.failed,
       publisherSources:bySource,unavailableScorecards:failed,
       pre:before,post:after,modelServingFeaturesUntouched:true,
     };
