@@ -2,7 +2,7 @@ name: "Senate #864 CFB raw official report schedules and exact transaction prove
 on:
   pull_request:
     paths:
-      - "migrations/0025_cfb_finance_report_schedule_provenance.sql"
+      - "migrations/0026_cfb_finance_report_schedule_provenance.sql"
       - "src/evidence/cfb-report-schedule-raw.mjs"
       - "scripts/backfill-cfb-report-schedules-protected.mjs"
       - "scripts/verify-cfb-report-schedule-sql-local.mjs"
@@ -11,7 +11,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "migrations/0025_cfb_finance_report_schedule_provenance.sql"
+      - "migrations/0026_cfb_finance_report_schedule_provenance.sql"
       - "src/evidence/cfb-report-schedule-raw.mjs"
       - "scripts/backfill-cfb-report-schedules-protected.mjs"
       - "scripts/verify-cfb-report-schedule-sql-local.mjs"
