@@ -159,6 +159,12 @@ async function loadSourceBodyAndPages(client,record,sessionCache){
  }else{
   const fetched=await fetchVerifiedReportPdf(record);
   bytes=fetched.bytes;fetchedAt=fetched.fetchedAt;downloaded=true;
+  // Cache verified bytes before parsing; unreadable bodies need not be fetched again.
+  await client.query([
+   'INSERT INTO cfb_finance_pdf_body_captures',
+   '(pdf_sha256,byte_length,original_pdf,verified_from_url,fetched_at)',
+   'VALUES($1,$2,$3,$4,$5::timestamptz) ON CONFLICT DO NOTHING'
+  ].join(' '),[record.sha,record.bytes,Buffer.from(bytes),record.url,fetchedAt]);
  }
  const pages=await existingPages(client,record.sha)??await parseVerifiedPdfPages(bytes);
  const cached={bytes,pages,fetchedAt,downloaded};
@@ -312,13 +318,15 @@ export async function main(){
    ||Number(baseline.byYear.get(b.reg+'|'+b.year)?.length??0)
      -Number(baseline.byYear.get(a.reg+'|'+a.year)?.length??0)
    ||a.id.localeCompare(b.id));
-  const sessionCache=new Map();
+  const sessionCache=new Map(),seenBodyHashes=new Set();
   let processed=0,failed=0,downloaded=0,reused=0;
   // Bounded retry. Failures remain backlog and never receive guessed provenance.
   for(const record of outstanding.slice(0,batch)){
    try{
     const source=await loadSourceBodyAndPages(client,record,sessionCache);
-    if(source.downloaded)downloaded++;else reused++;
+    if(source.downloaded&&!seenBodyHashes.has(record.sha))downloaded++;
+    else reused++;
+    seenBodyHashes.add(record.sha);
     await persistReport(client,record,source,baseline.byYear.get(record.reg+'|'+record.year)??[]);
     processed++;
    }catch(_error){
