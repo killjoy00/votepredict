@@ -1,7 +1,7 @@
 /**
  * Raw-only Minnesota State Senate questionnaire collector.
  * npm run data:senate:questionnaires -- --dry-run --out /tmp/answers.jsonl
- * npm run data:senate:questionnaires -- --write  (database with 0019 applied)
+ * npm run data:senate:questionnaires -- --write  (database with 0021 applied)
  * Optional --cycle=2026 --source=mhp-housing-2026 --max-sources=5
  */
 import { readFileSync,writeFileSync,appendFileSync } from 'node:fs';
@@ -24,7 +24,7 @@ async function main():Promise<void> {
   const config=opt(args,'--catalog')??'data/senate-questionnaire-sources.json';
   const sources=validateCatalog(JSON.parse(readFileSync(config,'utf8')));
   const source=opt(args,'--source'),cycle=opt(args,'--cycle');
-  if(cycle&&!['2020','2022','2026'].includes(cycle))throw Error('Unknown requested cycle');
+  if(cycle&&!['2020','2022','2024','2025','2026'].includes(cycle))throw Error('Unknown requested cycle');
   const chosen=sources.filter(s=>(!source||s.id===source)&&(!cycle||String(s.cycle)===cycle));
   if(!chosen.length)throw Error('No matching questionnaire sources');
   const out=opt(args,'--out');
