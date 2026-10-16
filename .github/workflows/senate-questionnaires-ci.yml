@@ -4,6 +4,7 @@ on:
     paths:
       - src/sources/minnesota/senate-questionnaire-raw.ts
       - src/operations/senate-questionnaire-ingest.ts
+      - src/operations/senate-questionnaire-migration.ts
       - scripts/collect-senate-questionnaires.ts
       - scripts/deploy-senate-questionnaires-neon.ts
       - migrations/0021_mn_senate_questionnaire_raw.sql
