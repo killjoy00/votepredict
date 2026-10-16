@@ -414,6 +414,11 @@ test('disposable Postgres: running the entire raw evidence suite twice keeps exa
       const report=await scorecardPartisanshipReadback(client);
       assert.ok(report.linkedMembers>=1&&report.linkedBills>=1);
     }
+    const replay=await storeRawScorecardCapture(client,capture,catalog,true);
+    assert.equal(replay.newSnapshot,false);
+    await assert.rejects(()=>storeRawScorecardCapture(client,
+      {...capture,sha256:digest(token+'different-source-version')},catalog,true),
+    /Saved-only replay cannot create a new publisher snapshot/);
   }finally{
     // This fixture runs on disposable CI PostgreSQL. Preserve unrelated fixtures.
     await client.query('DELETE FROM senate_scorecard_vote_positions WHERE group_name=$1',[group]);
