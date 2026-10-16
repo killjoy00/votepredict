@@ -1,0 +1,204 @@
+name: Repair Minnesota Senate identity links and complete official bill catalog
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  pull_request:
+    paths:
+      - migrations/0022_senate_identity_bill_linking.sql
+      - migrations/0023_senate_statement_session_provenance.sql
+      - src/operations/senate-revisor-pacer.ts
+      - src/operations/senate-bill-universe.ts
+      - scripts/deploy-senate-identity-bill-repair-neon.ts
+      - tests/senate-identity-bill-repair.test.ts
+      - .github/workflows/senate-identity-bill-repair-production.yml
+      - src/operations/senate-identity-bill-resolvers.ts
+      - src/operations/senate-identity-bill-backfill.ts
+      - src/operations/senate-bill-companions.ts
+      - src/operations/senate-identity-bill-report.ts
+      - scripts/deploy-senate-identity-bill-linking-neon.ts
+      - tests/senate-identity-bill-linking.test.ts
+      - tests/senate-identity-bill-linking-db.test.ts
+      - docs/sources/senate-identity-and-bill-linking.md
+      - .github/workflows/senate-identity-bill-linking-production.yml
+  push:
+    branches: [main]
+    paths:
+      - migrations/0022_senate_identity_bill_linking.sql
+      - migrations/0023_senate_statement_session_provenance.sql
+      - src/operations/senate-revisor-pacer.ts
+      - src/operations/senate-bill-universe.ts
+      - scripts/deploy-senate-identity-bill-repair-neon.ts
+      - tests/senate-identity-bill-repair.test.ts
+      - .github/workflows/senate-identity-bill-repair-production.yml
+      - src/operations/senate-identity-bill-resolvers.ts
+      - src/operations/senate-identity-bill-backfill.ts
+      - src/operations/senate-bill-companions.ts
+      - src/operations/senate-identity-bill-report.ts
+      - scripts/deploy-senate-identity-bill-linking-neon.ts
+      - tests/senate-identity-bill-linking.test.ts
+      - tests/senate-identity-bill-linking-db.test.ts
+      - docs/sources/senate-identity-and-bill-linking.md
+      - .github/workflows/senate-identity-bill-linking-production.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-identity-bill-repair-neon-production
+  cancel-in-progress: false
+
+jobs:
+  pr-keyless:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply all migrations to disposable Postgres and verify drift gate
+        run: |
+          npm run db:migrate
+          node --import tsx scripts/check-production-migration-drift.ts
+      - name: Resolver, guarded runner, and local Postgres linking tests
+        run: node --import tsx --test tests/senate-identity-bill-linking.test.ts tests/senate-identity-bill-linking-db.test.ts
+      - name: Complete project check
+        run: npm run check
+      - name: Explicit complete test run
+        run: npm test
+
+  independent-main:
+    if: >-
+      (
+        github.event_name == 'schedule' &&
+        github.repository == 'killjoy00/votepredict' &&
+        github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1
+      ) || (
+        github.event_name == 'push' &&
+        github.repository == 'killjoy00/votepredict' &&
+        github.event.repository.full_name == 'killjoy00/votepredict' &&
+        github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        github.event.after == github.sha &&
+        github.event.head_commit.id == github.sha &&
+        github.event.deleted != true &&
+        github.event.forced != true &&
+        contains(github.event.head_commit.message, 'SENATE_IDENTITY_BILL_REPAIR_PRODUCTION')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Match exact independently reviewed main SHA
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply all migrations to disposable Postgres
+        run: npm run db:migrate
+      - name: Test migration drift gate on disposable Postgres
+        run: node --import tsx scripts/check-production-migration-drift.ts
+      - name: Complete project check, full test suite, production build
+        run: npm run check
+      - name: Explicit full test suite
+        run: npm test
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+  protected-production-neon:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      (
+        github.event_name == 'schedule' &&
+        github.repository == 'killjoy00/votepredict' &&
+        github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1
+      ) || (
+        github.event_name == 'push' &&
+        github.repository == 'killjoy00/votepredict' &&
+        github.event.repository.full_name == 'killjoy00/votepredict' &&
+        github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        github.event.after == github.sha &&
+        github.event.head_commit.id == github.sha &&
+        github.event.deleted != true &&
+        github.event.forced != true &&
+        contains(github.event.head_commit.message, 'SENATE_IDENTITY_BILL_REPAIR_PRODUCTION')
+      )
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_IDENTITY_BILL_INDEPENDENT_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm exact marker-bearing main SHA
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Preflight, additive ledger migration, bounded link backfill and read-only match-rate readback
+        run: node --import tsx scripts/deploy-senate-identity-bill-repair-neon.ts
