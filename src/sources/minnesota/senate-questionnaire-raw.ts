@@ -95,9 +95,18 @@ function parseMhp(html:string,seed:QuestionnaireSource):Array<Partial<CandidateR
   const marker=lines.findIndex(x=>/^Legislative District\s*:/i.test(x));
   const statedDistrict=marker>=0?lines.slice(marker,marker+4).join(' '):'';
   const senator=/\bSenate\s+District\s+([1-9]|[1-5]\d|6[0-7])\b/i.exec(statedDistrict);
-  const district=senator?String(Number(senator[1])):null;
+  // The publisher's public Senate-index row can provide district metadata
+  // when its individual answer page omits/reflows the repeated district label.
+  // Require the exact linked candidate name and actual Q1 answer page before
+  // using that publisher-index metadata; never infer a House response is Senate.
+  const candidateShown=!!name&&lines.some(line=>line===name||line.startsWith(name+' '));
+  const questionsShown=lines.some(line=>/^Q1\s*:/i.test(line));
+  const district=senator?String(Number(senator[1])):
+    (seed.candidate&&candidateShown&&questionsShown?districtNumber(seed.district):null);
   if(!name||!district||(seed.district&&districtNumber(seed.district)!==district))
-    throw Error('Not an explicitly labeled Minnesota Senate candidate response');
+    throw Error(questionsShown
+      ?'Candidate/district Senate label mismatch on published response'
+      :'No actual candidate questionnaire text in fetched publisher page');
   const party=candidateValue(lines,'Party')||seed.party||null;
   const start=lines.findIndex(x=>/^Q1\s*:/i.test(x));
   if(start<0)throw Error('No numbered candidate questions');
