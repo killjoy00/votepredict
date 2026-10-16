@@ -26,28 +26,6 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
-      - name: Inspect publicly hosted SOS PDF fallback structure (temporary)
-        run: |
-          node --input-type=module <<'NODE'
-          import { PDFParse } from 'pdf-parse';
-          for (const [url, pages] of [
-            ['https://www.sos.mn.gov/media/3002/mn-votes_2017.pdf', [31]],
-            ['https://www.sos.mn.gov/media/3854/10-minnesota-votes-2019.pdf', [13, 68, 177]],
-            ['https://sos.mn.gov/media/4608/minnesota-votes-2021.pdf', [13]],
-          ]) {
-            try {
-              const res = await fetch(url, { signal: AbortSignal.timeout(45000) });
-              console.log(JSON.stringify({pdfUrl:url,status:res.status,type:res.headers.get('content-type'),size:res.headers.get('content-length')}));
-              if (!res.ok) continue;
-              const buffer = new Uint8Array(await res.arrayBuffer());
-              const parser = new PDFParse({data:buffer});
-              try {
-                const text = (await parser.getText({partial:pages})).text;
-                console.log('PDF_PREVIEW '+JSON.stringify({url, pages, length:text.length, start:text.slice(0,2400), end:text.slice(-1000)}));
-              } finally { await parser.destroy(); }
-            } catch(e) { console.log('PDF_PROBE_FAILURE '+JSON.stringify({url,reason:String(e).slice(0,300)})); }
-          }
-          NODE
       - name: Capture published Senate bulk files for every listed year
         shell: bash
         run: |
