@@ -92,11 +92,14 @@ async function loadCanonicalRows(client,records){
  const regs=[...new Set(records.map(x=>x.reg))];
  const raw=(await client.query(ROW_SQL,[regs])).rows;
  const unique=new Map(),byYear=new Map(),archive=[];
+ const candidateFamilyCopies={candidate_contribution:0,candidate_expenditure:0};
+ const candidateFamilyUnique={candidate_contribution:0,candidate_expenditure:0};
  let evidenceCopies=0;
  for(const r of raw){
   if(!['candidate_contribution','candidate_expenditure'].includes(r.family))continue;
   if(!/^202[1-5]$/.test(r.year)||!/^[0-9]{3,8}$/.test(r.reg))continue;
   evidenceCopies++;
+  candidateFamilyCopies[r.family]++;
   const data={family:r.family,reg:r.reg,year:Number(r.year),rowKey:r.row_key,
    transactionDate:r.transaction_date,amount:Number(r.amount),
    contributor:r.contributor,vendorName:r.vendor_name};
@@ -120,11 +123,13 @@ async function loadCanonicalRows(client,records){
   }
  }
  for(const row of unique.values()){
+  candidateFamilyUnique[row.family]++;
   const key=row.reg+'|'+row.year;
   if(!byYear.has(key))byYear.set(key,[]);
   byYear.get(key).push(row);
  }
- return {byYear,uniqueTransactions:unique.size,evidenceCopies,archive};
+ return {byYear,uniqueTransactions:unique.size,evidenceCopies,archive,
+   candidateFamilyCopies,candidateFamilyUnique};
 }
 const BULK_ARCHIVE_SQL=[
  'INSERT INTO cfb_finance_bulk_archive_row_observations',
@@ -255,6 +260,20 @@ async function persistReport(client,record,source,canonicalRows){
  }
 }
 async function counts(client,baseline){
+ // IE is a separate, non-candidate family. Census only: no attempt to
+ // attribute spender/PAC activity to a candidate report.
+ const ie=(await client.query([
+  'SELECT count(*)::int AS copies,',
+  "count(DISTINCT NULLIF(ei.metadata->>'rowKey',''))::int AS unique_keys",
+  'FROM evidence_items ei JOIN source_documents sd ON sd.id=ei.source_document_id',
+  'LEFT JOIN memberships m ON m.id=ei.membership_id',
+  'LEFT JOIN chambers c ON c.id=m.chamber_id',
+  "WHERE sd.source_kind='campaign_finance_independent_expenditure_bulk'",
+  "AND ei.metadata->>'subtype'='independent_expenditure_record'",
+  "AND ei.metadata->>'year' IN ('2021','2022','2023','2024','2025')",
+  "AND (c.slug='senate' OR (c.slug IS NULL AND ei.metadata->>'chamber'='senate'))"
+ ].join(' '))).rows[0];
+ if(!safeInt(ie.copies)||!safeInt(ie.unique_keys))throw Error('IE census malformed');
  const rows=(await client.query([
   'SELECT',
   '(SELECT count(*)::int FROM cfb_finance_pdf_body_captures) AS unique_pdf_bodies,',
@@ -275,6 +294,21 @@ async function counts(client,baseline){
   officialDistinctPdfHashes:813,
   evidenceCopies:baseline.evidenceCopies,
   uniqueCanonicalTransactions:baseline.uniqueTransactions,
+  familyBreakdown:{
+   candidate_contribution:{
+    evidenceCopies:baseline.candidateFamilyCopies.candidate_contribution,
+    uniqueTransactions:baseline.candidateFamilyUnique.candidate_contribution
+   },
+   candidate_expenditure:{
+    evidenceCopies:baseline.candidateFamilyCopies.candidate_expenditure,
+    uniqueTransactions:baseline.candidateFamilyUnique.candidate_expenditure
+   },
+   independent_expenditure:{
+    evidenceCopies:ie.copies,uniqueTransactions:ie.unique_keys
+   }
+  },
+  totalFinanceEvidenceCopies:baseline.evidenceCopies+ie.copies,
+  totalUniqueFinanceTransactions:baseline.uniqueTransactions+ie.unique_keys,
   ...rows,
   reportBacklog:830-rows.reports_with_extraction,
   historicalEligibilityUnchanged:true,forecastsAndModelsUnchanged:true,
