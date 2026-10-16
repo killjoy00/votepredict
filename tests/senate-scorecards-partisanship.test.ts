@@ -193,6 +193,13 @@ test('Education Minnesota 2024 State Senate 45 special and 2025 SD60 release',()
     .map(x=>[x.nameRaw,x.districtRaw]),[['Doron Clark','60']]);
   assert.equal(parseEducationMinnesotaSenateEndorsements(press.replace('Senate District 60','U.S. Senate')).length,0);
 });
+test('publisher literal calendar-date extraction accepts NFIB index and MN special datelines',()=>{
+  assert.equal(explicitPublishedOn('August 17, 2022'),'2022-08-17');
+  assert.equal(explicitPublishedOn('ST. PAUL, Minnesota. Jan. 27, 2025 – endorsements'),'2025-01-27');
+  assert.equal(explicitPublishedOn('Published: September 3, 2026'),'2026-09-03');
+  assert.equal(explicitPublishedOn('Published: February 30, 2025'),null);
+  assert.equal(explicitPublishedOn('Fetched 2026-10-16; no printed publication date'),null);
+});
 test('Scorecard source catalog pinned 2021-2026 and robots grouping respects publisher restrictions',()=>{
   const cat=validateScorecardManifest(JSON.parse(readFileSync('data/senate-scorecard-sources.json','utf8')));
   assert.ok(cat.requestedGroups.includes('Minnesota AFL-CIO'));
