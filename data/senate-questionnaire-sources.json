@@ -512,32 +512,6 @@
       "sourceKind": "publisher_response"
     },
     {
-      "id": "mnbiofuels-2022-navitsky-brazelton",
-      "publisher": "Minnesota Bio-Fuels Association",
-      "cycle": 2022,
-      "adapter": "biofuels",
-      "url": "https://www.mnbiofuels.org/candidates-biofuels-navitsky-brazelton",
-      "title": "Candidates & Biofuels",
-      "candidates": [
-        "Ken Navitsky",
-        "Chris Brazelton"
-      ],
-      "sourceKind": "publisher_response"
-    },
-    {
-      "id": "mnbiofuels-2022-falvey-drenckhahn",
-      "publisher": "Minnesota Bio-Fuels Association",
-      "cycle": 2022,
-      "adapter": "biofuels",
-      "url": "https://www.mnbiofuels.org/media-mba/blog/item/3435-candidates-biofuels-falvey-drenckhahn",
-      "title": "Candidates & Biofuels",
-      "candidates": [
-        "Kate Falvey",
-        "Bradley Drenckhahn"
-      ],
-      "sourceKind": "publisher_response"
-    },
-    {
       "id": "mnbiofuels-2022-cwodzinski-craig",
       "publisher": "Minnesota Bio-Fuels Association",
       "cycle": 2022,
@@ -644,6 +618,104 @@
       "url": "https://www.mnrtl.org/elections/",
       "title": "2026 Primary Survey Results — State Legislature",
       "sourceKind": "publisher_response"
+    },
+    {
+      "id": "mhp-2026-krystyne-knutson",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/krystyne-knutson/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Krystyne Knutson",
+      "district": "09",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-aric-putnam",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/aric-putnam/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Aric Putnam",
+      "district": "14",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-krish-subrahmanian",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/krish-subrahmanian/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Krish Subrahmanian",
+      "district": "49",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-rick-olson",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/rick-olson/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Rick Olson",
+      "district": "54",
+      "party": "DFL"
+    },
+    {
+      "id": "mhp-2026-lindsey-port",
+      "publisher": "Minnesota Housing Partnership / Habitat Minnesota",
+      "cycle": 2026,
+      "adapter": "mhp",
+      "url": "https://mhponline.org/2026_questionnaire/lindsey-port/",
+      "title": "2026 Candidate Housing Questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Lindsey Port",
+      "district": "55",
+      "party": "DFL"
+    },
+    {
+      "id": "sd60dfl-2025-doron-clark",
+      "publisher": "Senate District 60 DFL",
+      "cycle": 2025,
+      "adapter": "sd60_pdf",
+      "url": "https://drive.google.com/file/d/1pbX-cHOKJFfMT4roJDXx-cNUdPs_-G46/view",
+      "title": "2025 SD60 DFL special-election candidate questionnaire",
+      "sourceKind": "publisher_response",
+      "candidate": "Doron Clark",
+      "district": "60",
+      "party": "DFL"
+    },
+    {
+      "id": "startribune-2022-duluth-senate",
+      "publisher": "Star Tribune",
+      "cycle": 2022,
+      "adapter": "startribune_2022",
+      "url": "https://www.startribune.com/questions-on-candidates-heres-a-guide-to-duluth-area-elections/600219506",
+      "title": "2022 Duluth-area Senate candidate questionnaire (publisher-edited for length)",
+      "sourceKind": "publisher_response",
+      "candidates": [
+        "Grant Hauschild",
+        "Jen McEwen"
+      ]
+    },
+    {
+      "id": "mpr-2024-special-sd45",
+      "publisher": "MPR News",
+      "cycle": 2024,
+      "adapter": "mpr_special_2024",
+      "url": "https://www.mprnews.org/state-senate-district-45-general-election",
+      "title": "2024 Senate District 45 special election three-question survey",
+      "sourceKind": "publisher_response",
+      "candidates": [
+        "Ann Johnson Stewart"
+      ],
+      "district": "45"
     }
   ]
 }

@@ -4,8 +4,9 @@
  * historical feature eligibility. Publisher-only, bounded, fail-closed parsing.
  */
 import { createHash } from 'node:crypto';
+import { eligibleSenateQuestionnaireCandidate,HISTORICAL_QUESTIONNAIRE_WINNERS } from './senate-questionnaire-eligibility.js';
 
-export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia'|'wsp_reader'|'roseville_reader'|'mnrtl';
+export type Adapter='mhp_index'|'mhp'|'snap'|'kaxe'|'biofuels'|'biofuels_index'|'ballotpedia'|'wsp_reader'|'roseville_reader'|'mnrtl'|'startribune_2022'|'mpr_special_2024'|'sd60_pdf';
 export interface QuestionnaireSource {
   id:string; publisher:string; cycle:number; adapter:Adapter; url:string; title:string;
   sourceKind:'publisher_response'|'candidate_copy'|'archived_response';
@@ -25,7 +26,7 @@ export interface Failure { source:string;url:string;reason:string }
 export interface CollectionSummary {
   attempted:number; fetched:number; responses:number; pairs:number;
   byCyclePublisher:Record<string,{responses:number;pairs:number}>;
-  failed:Failure[]; explicitlyUnanswered:number;
+  failed:Failure[]; explicitlyUnanswered:number; skippedHistoricalNonWinners:number;
 }
 export interface CollectionOptions {
   sources:QuestionnaireSource[]; maxSources?:number; maxBytes?:number;
@@ -408,6 +409,157 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   return result;
 }
 
+
+/**
+ * Publisher-edited answers exactly as printed in the original 2022 newspaper
+ * candidate guide. These are NOT represented as unedited survey submissions.
+ * Only Senate districts 3 and 8, never the House/County sections.
+ */
+function parseStarTribune2022(html:string,seed:QuestionnaireSource):
+Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
+  if(seed.cycle!==2022||seed.id!=='startribune-2022-duluth-senate')
+    throw Error('Not the identified original 2022 Duluth Senate guide');
+  const lines=visibleLines(html);
+  if(!lines.some(s=>/Questions on candidates\? Here.s a guide to Duluth area elections/i.test(s))
+    ||!lines.some(s=>/Answers were edited for length/i.test(s)))
+    throw Error('Publisher 2022 original article and edited-response disclosure unavailable');
+  const named=new Map<string,{district:string;party:string}>([
+    ['Grant Hauschild',{district:'3',party:'DFL'}],
+    ['Andrea Zupancich',{district:'3',party:'R'}],
+    ['Jen McEwen',{district:'8',party:'DFL'}],
+    ['Alex Moe',{district:'8',party:'R'}],
+  ]);
+  const answerStarts=[
+    'Why are you running?',
+    'Top three issues facing your district and plans to address them:',
+    'Top three issues facing your district?',
+    'Plans to address those issues?',
+  ];
+  const sourceDate=dateFrom(lines.find(s=>/\bOctober 27,\s*2022\b/i.test(s))??'');
+  const out:Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>= [];
+  let district:string|null=null,activeName:string|null=null;
+  let answer:{q:string;a:string[]}|null=null,parts:Array<{q:string;a:string[]}>=[],skipSidebar=false;
+  function flush():void {
+    if(answer)parts.push(answer);
+    if(activeName) {
+      const meta=named.get(activeName)!;
+      const qa=qaFromParts(parts.map(p=>({q:p.q,a:p.a.join('\n')})));
+      if(qa.length>=2 && eligibleSenateQuestionnaireCandidate(seed.cycle,activeName,meta.district,seed.url))
+        out.push({candidateName:activeName,district:meta.district,
+          party:meta.party,displayedPublicationOn:sourceDate,qa});
+    }
+    activeName=null;parts=[];answer=null;
+  }
+  for(const line of lines){
+    const section=/^(?:State\s+)?Senate District\s+(\d+)$/i.exec(line);
+    if(section){flush();district=section[1];continue;}
+    if(/^State House District\b|^House District\b|^County Board\b|^St\. Louis County\b/i.test(line)){
+      flush();district=null;continue;
+    }
+    if(!district||!['3','8'].includes(district))continue;
+    const namedEntry=[...named].find(([n,meta])=>meta.district===district &&
+      line.toLowerCase().startsWith(n.toLowerCase()+' ('));
+    if(namedEntry){flush();activeName=namedEntry[0];continue;}
+    if(!activeName)continue;
+    if(/^Did not respond to questionnaire\.?$/i.test(line)){flush();continue;}
+    if(/^Website\s*:/i.test(line)){flush();continue;}
+    if(/^Most Read$/i.test(line)){skipSidebar=true;continue;}
+    if(skipSidebar) {
+      if(/^Getting our Fair Share for the Northland:/i.test(line)){skipSidebar=false;}
+      else continue;
+    }
+    if(/^(?:Advertisement|Comment Gift Share|Listen Print|More Headlines|##)$/i.test(line))continue;
+    const prompt=answerStarts.find(s=>line.toLowerCase().startsWith(s.toLowerCase()));
+    if(prompt){
+      if(answer)parts.push(answer);
+      answer={q:prompt,a:[line.slice(prompt.length).trim()].filter(Boolean)};
+    } else if(answer && !/^(?:Age|Occupation|Education(?:al background)?|City of residence|Family|Experience)\s*:/i.test(line)){
+      answer.a.push(line);
+    }
+  }
+  flush();
+  if(!out.length)throw Error('No original edited 2022 Senate candidate answers readable from publisher');
+  return out;
+}
+
+/** MPR's 2024 special election page is often an unhydrated index. Never
+ * treat its candidate introduction as survey answers or infer missing text. */
+function parseMprSpecial2024(html:string,seed:QuestionnaireSource):
+Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
+  if(seed.cycle!==2024||seed.district!=='45')throw Error('Not SD45 special election');
+  const lines=visibleLines(html);
+  if(!lines.some(s=>/^State Senate:\s*District 45$/i.test(s)) ||
+    !lines.some(s=>/three-question survey/i.test(s)))
+    throw Error('Not the original SD45 MPR survey');
+  const questionHeads=lines.filter(s=>/^(?:Question\s*[1-3]\s*[:.]|Why\s|What\s|How\s).+\?$/.test(s));
+  if(questionHeads.length!==3)
+    throw Error('2024 MPR special-election Q&A only appears in unavailable interactive content');
+  const candidates=['Ann Johnson Stewart']; // The 2024 SD45 special-election winner only.
+  const answers=new Map(candidates.map(n=>[n,[] as QuestionAnswer[]]));
+  let question:string|null=null;
+  for(const line of lines){
+    if(questionHeads.includes(line)){question=line;continue;}
+    if(!question)continue;
+    for(const name of candidates)if(line.startsWith(name+':')){
+      const answer=line.slice(name.length+1).trim();
+      if(answer)answers.get(name)!.push({ordinal:answers.get(name)!.length+1,question,answer});
+    }
+  }
+  const records=candidates.map(candidateName=>({
+    candidateName,district:'45',party:candidateName==='Kathleen Fowke'?'R':'DFL',
+    displayedPublicationOn:null,qa:answers.get(candidateName)!,
+  })).filter(row=>row.qa.length>=2);
+  if(!records.length)throw Error('MPR source published no machine-readable complete special-election responses');
+  return records;
+}
+
+/** Strictly parse numbered, text-selectable, candidate-named original SD60
+ * endorsement forms. The actual PDF bytes remain stored losslessly in base64. */
+export function parseSd60PdfText(text:string,seed:QuestionnaireSource):
+Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
+  if(seed.cycle!==2025||seed.adapter!=='sd60_pdf'||seed.district!=='60'||!seed.candidate
+    ||!eligibleSenateQuestionnaireCandidate(seed.cycle,seed.candidate,seed.district,seed.url))
+    throw Error('Unconfigured or nonwinning special-election candidate PDF');
+  const lines=text.replace(/\r/g,'\n').split(/\n/).map(s=>s.trim())
+    .filter(s=>!!s&&!/^--\s*\d+\s+of\s+\d+\s*--$/i.test(s));
+  const name=seed.candidate;
+  const normalized=(x:string)=>x.normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().replace(/[^a-z]+/g,' ').trim();
+  // A link alone is not an identity proof; the published PDF must print its name.
+  if(!normalized(lines.slice(0,120).join(' ')).includes(normalized(name)))
+    throw Error('Public SD60 document does not name the configured candidate');
+  if(!/(?:endorsement|questionnaire|senate district\s*60|sd\s*60)/i.test(lines.join(' ').slice(0,2000)))
+    throw Error('Not a named SD60 candidate questionnaire');
+  const parts:Array<{q:string;a:string[]}>=[];
+  let current:{q:string;a:string[]}|null=null;
+  let waiting:{num:number;lines:string[]}|null=null;
+  function push():void{if(current){parts.push(current);current=null;}}
+  for(const line of lines){
+    const first=/^(?:Question\s*)?(\d{1,2})[.):]\s+(.+)$/i.exec(line);
+    if(first&&Number(first[1])>=1&&Number(first[1])<=30){
+      if(waiting){
+        // Another numbered prompt appeared before an unambiguous question mark.
+        waiting=null;
+      }
+      const body=first[2].trim();
+      if(body.includes('?')){push();current={q:body,a:[]};}
+      else {push();waiting={num:Number(first[1]),lines:[body]};}
+      continue;
+    }
+    if(waiting){
+      if(waiting.lines.length>=8){waiting=null;continue;}
+      waiting.lines.push(line);
+      if(line.includes('?')){current={q:waiting.lines.join('\n'),a:[]};waiting=null;}
+      continue;
+    }
+    if(current)current.a.push(line);
+  }
+  push();
+  const qa=qaFromParts(parts.map(p=>({q:p.q,a:p.a.join('\n')})));
+  if(qa.length<2)throw Error('PDF did not contain two or more legible numbered original question-and-answer pairs');
+  return [{candidateName:name,district:'60',party:seed.party??'DFL',qa}];
+}
+
 export function parseResponses(html:string,seed:QuestionnaireSource):
 Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   if(seed.adapter==='mhp')return parseMhp(html,seed);
@@ -416,6 +568,9 @@ Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}> {
   if(seed.adapter==='wsp_reader')return parseWestSaintPaulReader(html,seed);
   if(seed.adapter==='roseville_reader')return parseRosevilleReader(html,seed);
   if(seed.adapter==='mnrtl')return parseMnRightToLife(html,seed);
+  if(seed.adapter==='startribune_2022')return parseStarTribune2022(html,seed);
+  if(seed.adapter==='mpr_special_2024')return parseMprSpecial2024(html,seed);
+  if(seed.adapter==='sd60_pdf')throw Error('PDF documents must be parsed from the source bytes');
   if(seed.adapter==='biofuels')return parseBiofuels(html,seed);
   // Historical Ballotpedia pages are fetched, but do not silently convert
   // article quote excerpts or survey indexes into full question/answer records.
@@ -472,6 +627,9 @@ export function validateCatalog(value:unknown):QuestionnaireSource[] {
     biofuels:['mnbiofuels.org','www.mnbiofuels.org'],
     biofuels_index:['mnbiofuels.org','www.mnbiofuels.org'],
     ballotpedia:['ballotpedia.org'],
+    startribune_2022:['www.startribune.com'],
+    mpr_special_2024:['www.mprnews.org'],
+    sd60_pdf:['drive.google.com'],
   };
   return doc.sources.map((input:unknown)=>{
     if(!input||typeof input!=='object'||Array.isArray(input))throw Error('Malformed catalog item');
@@ -487,23 +645,52 @@ export function validateCatalog(value:unknown):QuestionnaireSource[] {
     ids.add(s.id);urls.add(s.cycle+'|'+u.href);
     if(s.archiveCapturedAt&&!/^\d{4}-\d\d-\d\dT/i.test(s.archiveCapturedAt))
       throw Error('Archive timestamp must be explicit original observation');
+    // Fail closed during source discovery too: a historical catalog cannot
+    // silently reintroduce losing candidates or rely on primary-only winners.
+    if([2022,2024,2025].includes(s.cycle)) {
+      const candidates=s.candidate?[s.candidate]:(s.candidates??[]);
+      if(!candidates.length||candidates.some(candidate=>
+        !HISTORICAL_QUESTIONNAIRE_WINNERS.some(w=>w.cycle===s.cycle
+          && eligibleSenateQuestionnaireCandidate(s.cycle,candidate,w.district)
+          && (!s.district||districtNumber(s.district)===w.district))))
+        throw Error('Historical questionnaire catalog includes an unconfirmed election loser');
+    }
     return s;
   }).sort((a,b)=>b.cycle-a.cycle);
 }
 const agent='VotePredict research collector/1.0 (public Minnesota Senate questionnaire citations)';
-async function fetchBounded(url:string,limit:number,runFetch:typeof fetch):Promise<{html:string;contentType:string}> {
+type SourceDownload={html:string;contentType:string;pdfBytes?:Uint8Array};
+async function fetchBounded(
+  seed:QuestionnaireSource,limit:number,runFetch:typeof fetch,
+):Promise<SourceDownload> {
+  const source=new URL(seed.url);
+  const pdf=seed.adapter==='sd60_pdf';
+  // The publicly linked SD60 questionnaires are original Google Drive files.
+  // Anonymous /uc download is the documented standard public-file delivery
+  // endpoint; it is NOT a workaround for login or download restrictions.
+  const pdfId=pdf ? /^\/file\/d\/([a-zA-Z0-9_-]+)\/view\/?$/.exec(source.pathname)?.[1] : null;
+  if(pdf&&!pdfId)throw Error('Unexpected Drive original PDF link format');
+  const url=pdf?'https://drive.google.com/uc?export=download&id='+pdfId:seed.url;
   const response=await runFetch(url,{
-    redirect:'follow',signal:AbortSignal.timeout(20000),
-    headers:{'User-Agent':agent,Accept:'text/html,application/xhtml+xml;q=0.9'},
+    redirect:'follow',signal:AbortSignal.timeout(25000),
+    headers:{'User-Agent':agent,Accept:pdf?'application/pdf':'text/html,application/xhtml+xml;q=0.9'},
   });
   if(!response.ok)throw Error('HTTP '+response.status);
-  const effective=new URL(response.url||url),original=new URL(url);
-  if(effective.protocol!=='https:'||effective.hostname.replace(/^www\./,'')!==original.hostname.replace(/^www\./,''))
-    throw Error('Cross-host redirect is not a trusted publisher response');
+  const effective=new URL(response.url||url);
+  const samePublisher=effective.protocol==='https:' &&
+    effective.hostname.replace(/^www\./,'')===source.hostname.replace(/^www\./,'');
+  const googleDelivery=pdf && effective.protocol==='https:' &&
+    effective.hostname==='drive.usercontent.google.com';
+  if(!samePublisher&&!googleDelivery)throw Error('Cross-host redirect is not a trusted publisher response');
   if(Number(response.headers.get('content-length')||0)>limit)throw Error('Exceeded content byte cap');
   const bytes=new Uint8Array(await response.arrayBuffer());
   if(bytes.length>limit)throw Error('Exceeded content byte cap');
   const type=response.headers.get('content-type')||'';
+  if(pdf){
+    if(bytes.length<200||new TextDecoder('ascii').decode(bytes.subarray(0,5))!=='%PDF-')
+      throw Error('Google Drive did not publish a directly downloadable original PDF (no access bypass)');
+    return {html:'',contentType:'application/pdf;base64',pdfBytes:bytes};
+  }
   if(!/html|text\/plain/i.test(type))throw Error('Not a readable HTML response ('+type.slice(0,60)+')');
   return {html:new TextDecoder().decode(bytes),contentType:type};
 }
@@ -513,8 +700,8 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
   if(!Number.isInteger(max)||max<1||max>500||limit<1024||limit>5_000_000)
     throw Error('Bounded source and size limits required');
   const queue=[...options.sources],visited=new Set<string>();
-  const downloads=new Map<string,Promise<{html:string;contentType:string}>>();
-  const summary:CollectionSummary={attempted:0,fetched:0,responses:0,pairs:0,byCyclePublisher:{},failed:[],explicitlyUnanswered:0};
+  const downloads=new Map<string,Promise<SourceDownload>>();
+  const summary:CollectionSummary={attempted:0,fetched:0,responses:0,pairs:0,byCyclePublisher:{},failed:[],explicitlyUnanswered:0,skippedHistoricalNonWinners:0};
   while(queue.length && summary.attempted<max) {
     const seed=queue.shift()!;
     const visitKey=seed.cycle+'|'+seed.adapter+'|'+seed.url;
@@ -523,10 +710,10 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
     try{
       let download=downloads.get(seed.url);
       if(!download){
-        download=fetchBounded(seed.url,limit,runFetch);
+        download=fetchBounded(seed,limit,runFetch);
         downloads.set(seed.url,download);
       }
-      const {html,contentType}=await download;
+      const {html,contentType,pdfBytes}=await download;
       summary.fetched++;
       if(seed.adapter==='mhp_index'||seed.adapter==='biofuels_index'){
         const children=seed.adapter==='mhp_index'?mhpLinks(html,seed):biofuelsLinks(html,seed);
@@ -535,21 +722,42 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
       }
       if(/JavaScript is disabled[\s\S]{0,500}verify that you.re not a robot/i.test(html))
         throw Error('Publisher anti-bot interstitial; no bypass attempted');
-      const records=parseResponses(html,seed);
+      let records:Array<Partial<CandidateResponse>&{candidateName:string;qa:QuestionAnswer[]}>;
+      let rawContent=html,contentSha256=sha256(html);
+      if(seed.adapter==='sd60_pdf'){
+        if(!pdfBytes)throw Error('No original publicly delivered PDF bytes');
+        // Preserve the EXACT original binary in a reversible base64 column,
+        // because the existing append-only raw_content field is PostgreSQL text.
+        // Hash before pdf-parse can transfer/detach its input ArrayBuffer.
+        rawContent=Buffer.from(pdfBytes).toString('base64');
+        contentSha256=createHash('sha256').update(pdfBytes).digest('hex');
+        const {PDFParse}=await import('pdf-parse');
+        const {CanvasFactory}=await import('pdf-parse/worker');
+        const parser=new PDFParse({data:pdfBytes.slice(),CanvasFactory});
+        try{records=parseSd60PdfText((await parser.getText()).text,seed);}
+        finally{await parser.destroy();}
+      }else records=parseResponses(html,seed);
       if(!records.length && /did not respond|no response from this candidate/i.test(html))
         summary.explicitlyUnanswered++;
       for(const parsed of records) {
+        const candidateDistrict=parsed.district??districtNumber(seed.district);
+        // Current 2026 election: retain everyone. Completed earlier elections:
+        // no historical losing candidate can reach onResponse or storage.
+        if(!eligibleSenateQuestionnaireCandidate(seed.cycle,parsed.candidateName,candidateDistrict,seed.url)){
+          summary.skippedHistoricalNonWinners++;
+          continue;
+        }
         const item:CandidateResponse={
           sourceId:seed.id,publisher:seed.publisher,sourceKind:seed.sourceKind,
           sourceUrl:seed.url,electionCycle:seed.cycle,title:seed.title,
           candidateName:parsed.candidateName,office:'Minnesota State Senate',
-          district:parsed.district??districtNumber(seed.district),
+          district:candidateDistrict,
           party:parsed.party??seed.party??null,
           displayedPublicationOn:parsed.displayedPublicationOn??null,
           displayedSubmittedOn:parsed.displayedSubmittedOn??null,
           archiveCapturedAt:seed.archiveCapturedAt??null,
           fetchedAt:new Date().toISOString(),contentType,
-          contentSha256:sha256(html),rawContent:html,qa:parsed.qa,
+          contentSha256,rawContent,qa:parsed.qa,
         };
         await options.onResponse(item);
         summary.responses++;

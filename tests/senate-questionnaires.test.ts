@@ -1,11 +1,12 @@
 import {readFileSync} from 'node:fs';
 import {assertAdditiveQuestionnaireMigration} from '../src/operations/senate-questionnaire-migration.js';
-import {insertQuestionnaire} from '../src/operations/senate-questionnaire-ingest.js';
+import {insertQuestionnaire,exactExistingSenateMembership,questionnaireServiceSession,reconcileUnmatchedQuestionnaireMemberships,questionnaireEligibleScopeReadback} from '../src/operations/senate-questionnaire-ingest.js';
+import {eligibleSenateQuestionnaireCandidate,HISTORICAL_QUESTIONNAIRE_WINNERS} from '../src/sources/minnesota/senate-questionnaire-eligibility.js';
 import type {PoolClient} from 'pg';
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
-  sha256,visibleLines,mhpLinks,biofuelsLinks,parseResponses,
+  sha256,visibleLines,mhpLinks,biofuelsLinks,parseResponses,parseSd60PdfText,
   validateCatalog,collectQuestionnaires,type QuestionnaireSource,type CandidateResponse,
 } from '../src/sources/minnesota/senate-questionnaire-raw.js';
 const base:QuestionnaireSource={
@@ -329,4 +330,246 @@ test('actual changed published answer appends raw capture and all Q&A in order',
     ['new-capture',2,'Why?','Fully quoted explanation'],
   ]);
   assert.equal(seen.at(-1),'COMMIT');
+});
+
+
+test('2022 Star Tribune keeps only printed Senate candidate Q&A; article edits are not original submissions',()=>{
+  const seed:QuestionnaireSource={id:'startribune-2022-duluth-senate',
+    publisher:'Star Tribune',cycle:2022,adapter:'startribune_2022',
+    url:'https://www.startribune.com/questions-on-candidates-heres-a-guide-to-duluth-area-elections/600219506',
+    title:'2022 Duluth Senate',sourceKind:'publisher_response'};
+  const html='<article><h1>Questions on candidates? Here’s a guide to Duluth area elections</h1>'+
+    '<p>October 27, 2022 at 9:29AM</p><p>Answers were edited for length.</p>'+
+    '<h2>Senate District 3</h2><h3>Grant Hauschild (DFL)</h3>'+
+    '<p>Age: 33</p><p>Why are you running? To help our region.</p>'+
+    '<p>Top three issues facing your district and plans to address them: Housing matters.</p>'+
+    '<h2>Most Read</h2><p>Celebrity news</p><p>Getting our Fair Share for the Northland: More money for roads.</p>'+
+    '<p>Website: https://example.org</p>'+
+    '<h3>Andrea Zupancich (R)</h3><p>Why are you running? Employment.</p>'+
+    '<p>Top three issues facing your district? Jobs and schools.</p>'+
+    '<p>Plans to address those issues? Invest locally.</p>'+
+    '<h2>State Senate District 8</h2><h3>Jen McEwen (incumbent, DFL)</h3>'+
+    '<p>Why are you running? Continue representing Duluth.</p>'+
+    '<p>Top three issues facing your district? Health care.</p>'+
+    '<p>Plans to address those issues? Support reform.</p>'+
+    '<h3>Alex Moe (R)</h3><p>Did not respond to questionnaire.</p>'+
+    '<h2>State House District 3B</h2><h3>Mary Murphy (DFL)</h3>'+
+    '<p>Why are you running? House response should be excluded.</p>';
+  const rows=parseResponses(html,seed);
+  assert.deepEqual(rows.map(r=>r.candidateName),['Grant Hauschild','Jen McEwen']);
+  assert.equal(rows[0].qa.length,2);
+  assert.equal(rows[0].qa[1].answer,'Housing matters.\nGetting our Fair Share for the Northland: More money for roads.');
+  assert.equal(rows[1].district,'8');
+  assert.equal(rows[0].displayedPublicationOn,'2022-10-27');
+  assert.ok(rows.every(r=>r.qa.every(x=>!x.answer.includes('House response'))));
+  assert.throws(()=>parseResponses(html.replace('Answers were edited for length.','No publisher edits disclosed.'),seed));
+});
+
+test('2024 MPR SD45 page is not mistaken for two complete published responses',()=>{
+  const seed:QuestionnaireSource={...base,adapter:'mpr_special_2024',cycle:2024,district:'45',
+    url:'https://www.mprnews.org/state-senate-district-45-general-election',
+    candidates:['Ann Johnson Stewart','Kathleen Fowke']};
+  assert.throws(()=>parseResponses('<h1>State Senate: District 45</h1>'+
+    '<p>We asked candidates to respond to a three-question survey.</p>'+
+    '<p>Ann Johnson Stewart</p><p>Kathleen Fowke</p>',seed));
+});
+
+test('2025 SD60 DFL original PDF extractor fails closed without named candidate and real numbered answers',()=>{
+  const seed:QuestionnaireSource={...base,adapter:'sd60_pdf',cycle:2025,
+    candidate:'Doron Clark',party:'DFL',district:'60',
+    url:'https://drive.google.com/file/d/1pbX-cHOKJFfMT4roJDXx-cNUdPs_-G46/view'};
+  const printed='Senate District 60 DFL Endorsement Questionnaire\nDoron Clark\n'+
+    '1. Why are you seeking this office?\nBecause I care about my community.\n'+
+    '2. What are your priorities?\nSchools and transit.\n';
+  const parsed=parseSd60PdfText(printed,seed);
+  assert.equal(parsed.length,1);
+  assert.deepEqual(parsed[0].qa.map(q=>q.answer),[
+    'Because I care about my community.','Schools and transit.',
+  ]);
+  assert.equal(parsed[0].qa[0].question,'Why are you seeking this office?');
+  assert.throws(()=>parseSd60PdfText(printed.replace('Doron Clark','Other Person'),seed));
+  assert.throws(()=>parseSd60PdfText(printed.replace('2. What are your priorities?', 'Unnumbered introduction'),seed));
+  assert.throws(()=>parseResponses(printed,seed));
+});
+
+test('2022 Senate questionnaires use 2023-2024 service roster, never 2021-2022 incumbents',async()=>{
+  assert.equal(questionnaireServiceSession(2022),'2023-2024');
+  assert.equal(questionnaireServiceSession(2024),'2023-2024');
+  assert.equal(questionnaireServiceSession(2025),'2025-2026');
+  assert.equal(questionnaireServiceSession(2026),'2025-2026');
+  assert.equal(questionnaireServiceSession(2020),null);
+  let serviceSession='';
+  const pg={query:async(_sql:string,args:unknown[])=>{
+    serviceSession=String(args[0]);
+    return {rows:[
+      {id:'member-a',legislator_id:'legislator-a',party:'DFL',
+       name:'Grant Hauschild',district:'3',starts_on:null,ends_on:null,aliases:[]},
+      {id:'member-b',legislator_id:'legislator-b',party:'R',
+       name:'Andrea Zupancich',district:'3',starts_on:null,ends_on:null,aliases:[]},
+    ]};
+  }} as unknown as PoolClient;
+  const found=await exactExistingSenateMembership(pg,{
+    electionCycle:2022,candidateName:'Grant Hauschild',district:'03',party:'D',
+  });
+  assert.equal(serviceSession,'2023-2024');
+  assert.deepEqual(found,{membershipId:'member-a',legislatorId:'legislator-a'});
+  const outsider=await exactExistingSenateMembership(pg,{
+    electionCycle:2022,candidateName:'Someone Else',district:'3',party:'DFL',
+  });
+  assert.deepEqual(outsider,{membershipId:null,legislatorId:null});
+  assert.deepEqual(await exactExistingSenateMembership(pg,{
+    electionCycle:2020,candidateName:'Grant Hauschild',district:'3',party:'DFL',
+  }),{membershipId:null,legislatorId:null});
+});
+
+test('null-only candidate reconciliation updates uniquely matched incumbents, not challengers',async()=>{
+  const calls:string[]=[];
+  const pg={query:async(sql:string,args:unknown[]=[])=>{
+    calls.push(sql);
+    if(sql.startsWith('SELECT id,candidate_name,district,party,election_cycle'))
+      return {rows:[
+        {id:'snapshot-1',election_cycle:2022,candidate_name:'Grant Hauschild',district:'3',party:'DFL'},
+        {id:'snapshot-2',election_cycle:2022,candidate_name:'Challenger Person',district:'3',party:'DFL'},
+      ]};
+    if(sql.startsWith('SELECT m.id,m.legislator_id,m.party'))
+      return {rows:[{id:'member-a',legislator_id:'legislator-a',party:'DFL',
+        name:'Grant Hauschild',district:'3',starts_on:null,ends_on:null,aliases:[]}]};
+    if(sql.startsWith('UPDATE mn_senate_questionnaire_captures')){
+      assert.deepEqual(args.slice(0,2),['member-a','legislator-a']);
+      assert.match(sql,/membership_id IS NULL AND legislator_id IS NULL/);
+      return {rowCount:1};
+    }
+    if(sql.startsWith('SELECT COUNT(*)::text'))
+      return {rows:[{count:'1'}]};
+    throw Error('Unexpected database query');
+  }} as unknown as PoolClient;
+  const report=await reconcileUnmatchedQuestionnaireMemberships(pg);
+  assert.deepEqual(report,{scanned:2,linked:1,remaining:1,skippedHistoricalNonWinners:1});
+  assert.equal(calls.filter(s=>s.startsWith('UPDATE mn_senate_questionnaire_captures')).length,1);
+});
+
+
+test('2026 Senate questionnaires accept every candidate without guessing November results',()=>{
+  for(const candidate of ['Rachel Japuntich','Dan Rogers','Doron Clark','Candidate Not Yet Elected'])
+    assert.equal(eligibleSenateQuestionnaireCandidate(2026,candidate,'40'),true);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2026,'Another Candidate',null),true);
+});
+
+test('2022, 2024 special and 2025 special questionnaires retain ONLY documented election winners',()=>{
+  assert.equal(HISTORICAL_QUESTIONNAIRE_WINNERS.length,7);
+  for(const winner of HISTORICAL_QUESTIONNAIRE_WINNERS){
+    assert.equal(eligibleSenateQuestionnaireCandidate(winner.cycle,winner.candidate,winner.district),true);
+    assert.match(winner.resultUrl,/^https:\/\/electionresults\.sos\.mn\.gov\//);
+    assert.match(winner.electionDate,/^20\d{2}-\d{2}-\d{2}$/);
+  }
+  for(const [cycle,name,district] of [
+    [2022,'Andrea Zupancich','3'],[2022,'Alex Moe','8'],
+    [2022,'Kate Falvey','19'],[2022,'Bradley Drenckhahn','20'],
+    [2022,'Ken Navitsky','25'],[2022,'Chris Brazelton','29'],
+    [2024,'Kathleen Fowke','45'],
+    [2025,'Monica Meyer','60'],[2025,'Peter Wagenius','60'],
+    [2025,'Amal Karim','60'],[2025,'Emilio Cesar Rodriguez','60'],
+  ] as const)
+    assert.equal(eligibleSenateQuestionnaireCandidate(cycle,name,district),false);
+  // Neither a prior primary vote total nor a same-name different-district race counts.
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Grant Hauschild','8'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2025,'Doron Clark','61'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2024,'Ann Johnson Stewart',null),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2020,'Bill Weber','22'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2027,'Candidate','40'),false);
+});
+
+test('publisher collection skips completed-election nonwinners before persistence or Q&A counts',async()=>{
+  const seed:QuestionnaireSource={id:'local2022',publisher:'Original 2022 News',
+    cycle:2022,adapter:'biofuels',url:'https://mnbiofuels.org/example-2022-respondents',
+    title:'Questionnaire',sourceKind:'publisher_response',
+    candidates:['Ken Navitsky','Bill Weber']};
+  const html='<h1>Original publisher</h1>'+
+    '<h3>Ken Navitsky (R) District 25</h3>'+
+    '<p>Q. What is one proposal?</p><p>A. A proposal.</p>'+
+    '<p>Q. Why propose it?</p><p>A. My reasons.</p>'+
+    '<h3>Bill Weber (R) District 21</h3>'+
+    '<p>Q. What is one proposal?</p><p>A. A different proposal.</p>'+
+    '<p>Q. Why propose it?</p><p>A. My own reasons.</p>';
+  const seen:string[]=[];
+  const fetcher=(async(url:string)=>({ok:true,url,headers:new Headers({'content-type':'text/html'}),
+    arrayBuffer:async()=>new TextEncoder().encode(html).buffer})) as typeof fetch;
+  const report=await collectQuestionnaires({sources:[seed],delayMs:0,fetcher,
+    onResponse:async x=>{seen.push(x.candidateName);}});
+  assert.deepEqual(seen,['Bill Weber']);
+  assert.equal(report.skippedHistoricalNonWinners,1);
+  assert.equal(report.responses,1);
+  assert.equal(report.pairs,2);
+});
+
+test('DB-level historical loser insertion rejects before opening any transaction',async()=>{
+  const item:CandidateResponse={
+    sourceId:'loser-2024',publisher:'MPR',sourceKind:'publisher_response',
+    sourceUrl:'https://www.mprnews.org/state-senate-district-45-general-election',
+    electionCycle:2024,title:'Senate District 45',candidateName:'Kathleen Fowke',
+    office:'Minnesota State Senate',district:'45',party:'R',
+    displayedPublicationOn:null,displayedSubmittedOn:null,archiveCapturedAt:null,
+    fetchedAt:'2026-10-16T12:00:00Z',contentType:'text/html',
+    contentSha256:'a'.repeat(64),rawContent:'<p>Raw original answer.</p>',
+    qa:[{ordinal:1,question:'What?',answer:'My answer.'}],
+  };
+  let queries=0;
+  const mock={query:async()=>{queries++;throw Error('No database writes allowed');}} as unknown as PoolClient;
+  await assert.rejects(()=>insertQuestionnaire(mock,item),/historical election-winner scope/);
+  assert.equal(queries,0);
+});
+
+test('legacy historical loser snapshots remain immutable but excluded from useful scope readback',async()=>{
+  const mock={query:async()=>({rows:[
+    {cycle:2026,candidate_name:'New 2026 Candidate',district:'1',captures:'3',pairs:'12'},
+    {cycle:2022,candidate_name:'Grant Hauschild',district:'3',captures:'2',pairs:'10'},
+    {cycle:2022,candidate_name:'Ken Navitsky',district:'25',captures:'2',pairs:'10'},
+    {cycle:2024,candidate_name:'Ann Johnson Stewart',district:'45',captures:'1',pairs:'5'},
+    {cycle:2025,candidate_name:'Monica Meyer',district:'60',captures:'1',pairs:'5'},
+  ]})} as unknown as PoolClient;
+  assert.deepEqual(await questionnaireEligibleScopeReadback(mock),{
+    includedCaptures:6,includedQas:27,included2026Captures:3,
+    includedHistoricalWinnerCaptures:3,
+    legacyHistoricalExcludedCaptures:3,legacyHistoricalExcludedQas:15,
+  });
+});
+
+
+test('historical source catalog rejects defeated candidates before HTTP fetch',()=>{
+  const winner:QuestionnaireSource={...base,id:'sd60-winning-pdf',
+    cycle:2025,adapter:'sd60_pdf',
+    url:'https://drive.google.com/file/d/1pbX-cHOKJFfMT4roJDXx-cNUdPs_-G46/view',
+    candidate:'Doron Clark',district:'60',party:'DFL'};
+  const loser={...winner,id:'sd60-nonwinning-pdf',candidate:'Monica Meyer',
+    url:'https://drive.google.com/file/d/1YgHwGlXg4coatqA211Nhhbl-q_gzO3Mu/view'};
+  assert.equal(validateCatalog({schemaVersion:1,sources:[winner]}).length,1);
+  assert.throws(()=>validateCatalog({schemaVersion:1,sources:[loser]}),/unconfirmed election loser/);
+  const two:QuestionnaireSource={...base,id:'st-2022',cycle:2022,
+    adapter:'startribune_2022',
+    url:'https://www.startribune.com/questions-on-candidates-heres-a-guide-to-duluth-area-elections/600219506',
+    candidates:['Grant Hauschild','Jen McEwen']};
+  assert.equal(validateCatalog({schemaVersion:1,sources:[two]}).length,1);
+  assert.throws(()=>validateCatalog({schemaVersion:1,
+    sources:[{...two,candidates:['Grant Hauschild','Andrea Zupancich']}]}),/unconfirmed election loser/);
+});
+
+
+test('2022 source typo Billl Weber is in scope ONLY at the original publisher URL and district',async()=>{
+  const url='https://mnbiofuels.org/candidates-biofuels-weber-dornink';
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Billl Weber','21'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Billl Weber','21',url),true);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Billl Weber','21',
+    'https://example.org/not-an-original-publisher'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Billl Weber','20',url),false);
+  const client={query:async(_sql:string,_args:unknown[])=>({rows:[
+    {id:'weber-membership',legislator_id:'weber-person',party:'R',
+     name:'Bill Weber',district:'21',starts_on:null,ends_on:null,aliases:[]},
+  ]})} as unknown as PoolClient;
+  assert.deepEqual(await exactExistingSenateMembership(client,{
+    candidateName:'Billl Weber',district:'21',party:'R',electionCycle:2022,sourceUrl:url,
+  }),{legislatorId:'weber-person',membershipId:'weber-membership'});
+  assert.deepEqual(await exactExistingSenateMembership(client,{
+    candidateName:'Billl Weber',district:'21',party:'R',electionCycle:2022,
+    sourceUrl:'https://example.org/not-an-original-publisher',
+  }),{legislatorId:null,membershipId:null});
 });
