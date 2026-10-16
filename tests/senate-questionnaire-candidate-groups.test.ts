@@ -95,8 +95,8 @@ test('conflicting party or member IDs never silently join; historical losers omi
 });
 
 test('original PDF raw Q&A extraction replaces ONLY non-storable Unicode scalars',()=>{
-  assert.equal(validExtractedUtf8('alpha\\u0000beta'),'alpha\uFFFDbeta');
-  assert.equal(validExtractedUtf8('alpha\\uD800beta'),'alpha\uFFFDbeta');
+  assert.equal(validExtractedUtf8('alpha'+String.fromCharCode(0)+'beta'),'alpha\uFFFDbeta');
+  assert.equal(validExtractedUtf8('alpha'+String.fromCharCode(0xD800)+'beta'),'alpha\uFFFDbeta');
   assert.equal(validExtractedUtf8('Crème, São Paulo – 2026'),'Crème, São Paulo – 2026');
   const malformed=pages.map(p=>p.replace('I support raising revenue fairly.',
     'I support raising'+String.fromCharCode(0)+' revenue fairly.'));
