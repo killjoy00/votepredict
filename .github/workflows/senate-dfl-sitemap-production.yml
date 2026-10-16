@@ -1,4 +1,6 @@
 name: Collect first-party historical Senate DFL from publisher Wayback sitemaps (hourly)
+# Make scheduled-vs-reviewed-push-vs-manual fallback visible in the Actions run list.
+run-name: "DFL raw ${{ github.event_name }} run #${{ github.run_number }}"
 
 on:
   push:
@@ -66,6 +68,15 @@ jobs:
         env:
           EXPECTED_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Report public trigger metadata for hourly scheduler diagnosis
+        env:
+          TRIGGER_EVENT: ${{ github.event_name }}
+          TRIGGER_CRON: ${{ github.event.schedule }}
+          TRIGGER_RUN: ${{ github.run_number }}
+          TRIGGER_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          printf 'SENATE_DFL_TRIGGER_DIAGNOSTIC=event:%s cron:%s run:%s attempt:%s utc:%s\n' \
+            "$TRIGGER_EVENT" "$TRIGGER_CRON" "$TRIGGER_RUN" "$TRIGGER_ATTEMPT" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
       - uses: actions/setup-node@v7
         with:
           node-version: 22
