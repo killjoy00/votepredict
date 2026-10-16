@@ -103,7 +103,8 @@ function parseMhp(html:string,seed:QuestionnaireSource):Array<Partial<CandidateR
   const questionsShown=lines.some(line=>/^Q1\s*:/i.test(line));
   const district=senator?String(Number(senator[1])):
     (seed.candidate&&candidateShown&&questionsShown?districtNumber(seed.district):null);
-  if(!name||!district||(seed.district&&districtNumber(seed.district)!==district))
+  if(!name||!district||/\bHouse\s+District\s+\d+/i.test(statedDistrict)
+    ||(seed.district&&districtNumber(seed.district)!==district))
     throw Error(questionsShown
       ?'Candidate/district Senate label mismatch on published response'
       :'No actual candidate questionnaire text in fetched publisher page');
