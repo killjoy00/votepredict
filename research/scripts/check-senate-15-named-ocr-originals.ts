@@ -8,7 +8,7 @@ import { fetchSenateCommitteeMinutePdf } from '../../src/evidence/minnesota-sena
 import { parseSenateCommitteeMinuteVotes } from '../../src/evidence/minnesota-senate-committee-minutes.js';
 import {
   checkNamedSenateRollIntegrity,getAllPreviouslyPinnedNamedOcrCandidateOriginals,
-} from '../../src/evidence/senate-committee-15-named-ocr-review.js';
+} from '../evidence/senate-committee-15-named-ocr-review.js';
 
 const sha=(x:string|Uint8Array)=>createHash('sha256').update(x).digest('hex');
 const MAX_BYTES=8_000_000,MAX_PAGES=8;

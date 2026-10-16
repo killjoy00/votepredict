@@ -6,7 +6,7 @@ import {
   EDUCATION_2024_REPEATED_ROLL_SOURCE,
   audit2024EducationRepeatedAmendmentRolls,
   selectPinned2024EducationSource,
-} from '../../src/evidence/senate-2024-education-repeated-amendment-rolls.js';
+} from '../evidence/senate-2024-education-repeated-amendment-rolls.js';
 
 const sha=(s:string)=>createHash('sha256').update(s).digest('hex');
 const slate='4/6 (Ayes: Alpha, Bravo, Charlie, Delta; Nays: Echo, Foxtrot, Golf, Hotel, India, Juliet) MOTION FAILED';

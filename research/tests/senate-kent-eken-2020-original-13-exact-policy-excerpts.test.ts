@@ -9,7 +9,7 @@ import {ISSUE_POSITION_FAMILIES} from '../../src/evidence/issue-position-extract
 import {
  KENT_EKEN_ORIGINAL_2020_CAPTURED_13_POLICY_QUOTES_VERSION,
  independentlyAuditKentEken13True2020ArchivedCampaignPolicyStatements,
-} from '../../src/evidence/senate-kent-eken-2020-13-historical-campaign-excerpt-proof.js';
+} from '../evidence/senate-kent-eken-2020-13-historical-campaign-excerpt-proof.js';
 import type {AuditedOfficialSenateDirectory}
  from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';

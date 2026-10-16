@@ -10,7 +10,7 @@ import {ISSUE_POSITION_FAMILIES} from '../../src/evidence/issue-position-extract
 import {
  RUUD_CHAMBERLAIN_26_ORIGINAL_ISSUE_QUOTE_PROOF_VERSION,
  independentlyProveRuudChamberlain26OriginalCampaignAndSenatorIssuesExcerpts,
-} from '../../src/evidence/senate-ruud-2013-chamberlain-2022-26-original-excerpts-proof.js';
+} from '../evidence/senate-ruud-2013-chamberlain-2022-26-original-excerpts-proof.js';
 import type {AuditedOfficialSenateDirectory}
  from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';

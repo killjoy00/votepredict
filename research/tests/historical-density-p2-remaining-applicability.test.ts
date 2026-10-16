@@ -4,7 +4,7 @@ import {
   P2_REMAINING_APPLICABILITY_RULES,
   remainingApplicabilityPatternHits,
   remainingApplicabilitySnippet,
-} from '../../src/evidence/historical-density-p2-remaining-applicability.js';
+} from '../evidence/historical-density-p2-remaining-applicability.js';
 
 const EXPECTED_KEYS = [
   'coleman_parental_education_control',

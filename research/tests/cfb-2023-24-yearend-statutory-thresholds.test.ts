@@ -9,7 +9,7 @@ import {
   cfbYearEndEarliestPossiblePublicDateFloor,
   classifyCfbYearendLegallyOwedFromIndependentFacts,
   CFB_OFFICIAL_PRIMARY_YEAR_END_CALENDAR_URLS,
-} from '../../src/evidence/cfb-2023-24-yearend-statutory-thresholds.js';
+} from '../evidence/cfb-2023-24-yearend-statutory-thresholds.js';
 
 test('2023 original CFB disclosure calendar: Jan 31 2024 due, not public before Feb 1 8am CST',()=>{
  const t=originalCfbYearEndLegalReleaseThreshold(2023);

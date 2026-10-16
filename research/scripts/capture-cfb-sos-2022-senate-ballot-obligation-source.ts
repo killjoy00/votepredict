@@ -18,7 +18,7 @@ import {
   cfbSos2022SourceSha256,deriveCfb2022OriginalSegmentRegistrationSet,
   parseSos2022SenateElectionResults,reconcileCfb2022SenateBallotPredicates,
   type CfbSenate2022Candidate,
-} from '../../src/evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
+} from '../evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
 
 const CHECKPOINT='docs/evaluation/source-proof/cfb-2021-25-senate-district-registration-source-checkpoint.json';
 function safeError(e:unknown):string {

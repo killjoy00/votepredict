@@ -11,7 +11,7 @@ import {
   type Cfb2025SpecialCalendarCapture,
   type Cfb2025SpecialOriginalTarget,
   type Cfb2025SpecialPdfCapture,
-} from '../../src/evidence/cfb-2025-senate-special-original-pdf-proof.js';
+} from '../evidence/cfb-2025-senate-special-original-pdf-proof.js';
 
 const LEDGER = 'docs/evaluation/source-proof/cfb-2025-dated-senate-85-reference-versions.psv';
 function targets() {

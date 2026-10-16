@@ -18,7 +18,7 @@ import {parseOfficialMnSenateServiceDirectory}
 import {
  auditFiveNewActuallyServedSenators97ArchiveDatedPolicyExcerpts,
  type EightNewSenatorOriginalSourceAcquisition,
-} from '../../src/evidence/senate-five-new-served-2022-97-capture-dated-exact-campaign-excerpts.js';
+} from '../evidence/senate-five-new-served-2022-97-capture-dated-exact-campaign-excerpts.js';
 
 function actualFullSource(f:string,min:number,max:number){
  const s=statSync(f);

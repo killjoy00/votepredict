@@ -12,7 +12,7 @@ import {dirname,resolve,sep} from 'node:path';
 import {
  select22AuthenticSenatorRegistrationTargets,
  inspectCurrentOfficialCfbCandidateHeading,
-} from '../../src/evidence/cfb-2023-24-official-committee-status-proof.js';
+} from '../evidence/cfb-2023-24-official-committee-status-proof.js';
 import {fetchCfbCandidateHistoricalReportReferenceSnapshot} from
  '../../src/evidence/cfb-candidate-report-history.js';
 import {fetchCfbReportViewerText,cfbReportViewerUrl} from
@@ -20,9 +20,9 @@ import {fetchCfbReportViewerText,cfbReportViewerUrl} from
 import {
  inspectPossibleOriginalCfbTerminationReportText,selectTwoTerminatedSenators,
  classifyTwoSenatorsInPublicCfbCurrentLists,
-} from '../../src/evidence/cfb-two-terminated-original-report-investigation.js';
+} from '../evidence/cfb-two-terminated-original-report-investigation.js';
 import {parseCfbCandidateRegistryGrid, type CfbCandidateRegistryListAction} from
- '../../src/evidence/cfb-current-candidate-registry-join.js';
+ '../evidence/cfb-current-candidate-registry-join.js';
 
 const SOURCE71='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 const UA='Mozilla/5.0 VotePredict/2.0 original Minnesota CFB finance historical committee status research';

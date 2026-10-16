@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {ORIGINAL_2022_FEB08_RETRY,checkActualFirstFailed2022CaptionCueRun}
- from '../../src/evidence/senate-2022-feb08-caption-source-retry.js';
+ from '../evidence/senate-2022-feb08-caption-source-retry.js';
 test('single original 2022 Feb8 Environment committee media identity cannot expand',()=>{
  const p=ORIGINAL_2022_FEB08_RETRY;
  assert.deepEqual([p.originalHearingYear,p.hearingDate,p.committeeName,p.mtgid],

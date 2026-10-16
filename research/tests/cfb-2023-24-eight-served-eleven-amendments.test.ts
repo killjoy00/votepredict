@@ -6,11 +6,11 @@ import {createHash} from 'node:crypto';
 import {
   selectElevenIndependentlyParentAuthenticatedAmendments,
   auditElevenAmendedPdfs,
-} from '../../src/evidence/cfb-2023-24-eight-served-eleven-amendments.js';
+} from '../evidence/cfb-2023-24-eight-served-eleven-amendments.js';
 import {
   sourceYeAmendmentReference,
   type CfbAmendedPdfSource,
-} from '../../src/evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
+} from '../evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
 import {cfbReportViewerUrl} from '../../src/evidence/cfb-current-report-acquisition.js';
 const P='docs/evaluation/source-proof/';
 const evidence={

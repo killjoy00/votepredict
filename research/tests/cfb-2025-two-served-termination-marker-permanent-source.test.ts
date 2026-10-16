@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {CFB_TWO_SERVED_SPECIAL_TERMINATION_PROBE_SCHEMA}
-  from '../../src/evidence/cfb-2025-served-special-final-termination-markers.js';
+  from '../evidence/cfb-2025-served-special-final-termination-markers.js';
 const ROOT='docs/evaluation/source-proof/';
 const CHECKPOINT=ROOT+'cfb-2025-two-served-special-final-termination-marker-original-source-checkpoint.json';
 const PSV=ROOT+'cfb-2025-two-served-special-final-termination-marker-original-psv.psv';

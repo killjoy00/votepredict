@@ -14,19 +14,19 @@ import {OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL,
   parseOfficialMnSenateServiceDirectory}
   from '../../src/evidence/senate-official-ever-served-directory.js';
 import {SOS_2022_OFFICIAL_SENATE_FILES,parseSos2022SenateElectionResults}
-  from '../../src/evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
+  from '../evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
 import {cfbSenateDistrictPageUrl,parseCfbSenateDistrictCandidatePage}
   from '../../src/evidence/cfb-senate-district-registration-inventory.js';
 import {
   SERVED_2022_GENERAL_SOURCE_SHA,SERVED_2022_D25_36_DISTRICTS,
   selectServed2022D25to36OriginalCe,
-} from '../../src/evidence/cfb-2022-served-d25-36-original-ce.js';
+} from '../evidence/cfb-2022-served-d25-36-original-ce.js';
 import {
   SERVED_2021_22_D25_36_YE_PROOF_VERSION,SERVED_2021_22_D25_36_YE_CALENDAR_URL,
   selectServedD25to36OriginalYearEndTargets,cfbServedD25to36YearEndReference,
   verifyServedD25to36YearEndCalendar,auditServedD25to36YearEnd,
   type YearEnd2022SourcePdf,
-} from '../../src/evidence/cfb-2021-22-served-d25-36-yearend-original-proof.js';
+} from '../evidence/cfb-2021-22-served-d25-36-yearend-original-proof.js';
 import {fetchCfbCandidateHistoricalReportReferenceSnapshot}
   from '../../src/evidence/cfb-candidate-report-history.js';
 import {fetchCfbReportViewerText}

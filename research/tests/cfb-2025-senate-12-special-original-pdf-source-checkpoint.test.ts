@@ -6,7 +6,7 @@ import { cfbElectronicReportAvailableOn } from '../../src/evidence/cfb-report-av
 import {
   CFB_2025_SPECIAL_CALENDAR_RULES,
   parsePinnedCfb2025SpecialOriginalTargets,
-} from '../../src/evidence/cfb-2025-senate-special-original-pdf-proof.js';
+} from '../evidence/cfb-2025-senate-special-original-pdf-proof.js';
 
 const ROOT='docs/evaluation/source-proof/';
 const LEDGER=ROOT+'cfb-2025-senate-12-special-original-pdf-source-ledger.psv';

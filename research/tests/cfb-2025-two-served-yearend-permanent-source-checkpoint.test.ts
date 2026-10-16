@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {cfbElectronicReportAvailableOn} from '../../src/evidence/cfb-report-availability.js';
-import {SERVED_2025_YE_ORIGINAL_VERSION} from '../../src/evidence/cfb-2025-served-two-ordinary-year-end-originals.js';
+import {SERVED_2025_YE_ORIGINAL_VERSION} from '../evidence/cfb-2025-served-two-ordinary-year-end-originals.js';
 import {SPECIAL_2025_SERVING_SENATORS_CONDITIONAL_DUTY_SCHEMA}
-  from '../../src/evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
+  from '../evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
 
 const PREFIX='docs/evaluation/source-proof/';
 const CHECKPOINT=PREFIX+'cfb-2025-two-served-senators-yearend-originals-conditional-duty-source-checkpoint.json';

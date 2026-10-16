@@ -7,7 +7,7 @@ import {
   selectSd29SevenAmendmentTargets,sd29AmendmentRef,
   parseSd29AmendmentPdfHeader,auditSd29Amendment,
   classifySd29AmendmentSequence,
-} from '../../src/evidence/cfb-2025-served-sd29-seven-amendments.js';
+} from '../evidence/cfb-2025-served-sd29-seven-amendments.js';
 const P='docs/evaluation/source-proof/';
 const data={
   queuePsv:readFileSync(P+'cfb-2021-25-served-senator-next-source-pdf-targets.psv','utf8'),

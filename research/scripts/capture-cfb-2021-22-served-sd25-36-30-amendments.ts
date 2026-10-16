@@ -20,7 +20,7 @@ import {
   classifySd25to36AmendmentReferences,
   verifyServedSd25to36AmendmentSourceOutcome,
   type CfbHistoricalAmendedPdfSource,
-} from '../../src/evidence/cfb-2021-22-served-sd25-36-30-amendments.js';
+} from '../evidence/cfb-2021-22-served-sd25-36-30-amendments.js';
 
 const ROOT='docs/evaluation/source-proof/';
 const CE=ROOT+'cfb-2022-served-d25-36-original-ce-pdfs.psv';

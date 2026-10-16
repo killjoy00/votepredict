@@ -7,7 +7,7 @@ import {execFileSync} from 'node:child_process';
 import ledger from '../../data/evaluation/senate-bill-ingebrigtsen-27-exact-historical-first-party-issues-2010-2012-v1.json' with {type:'json'};
 import {ISSUE_POSITION_FAMILIES} from '../../src/evidence/issue-position-extractor.js';
 import {independentlyAuditBillIngebrigtsen27OriginalHistoricalPolicyExcerpts}
- from '../../src/evidence/senate-bill-ingebrigtsen-historic-27-original-site-excerpts-proof.js';
+ from '../evidence/senate-bill-ingebrigtsen-historic-27-original-site-excerpts-proof.js';
 import type {AuditedOfficialSenateDirectory}
  from '../../src/evidence/senate-official-ever-served-directory.js';
 function gov():AuditedOfficialSenateDirectory{

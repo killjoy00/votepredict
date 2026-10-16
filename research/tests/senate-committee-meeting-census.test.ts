@@ -5,7 +5,7 @@ import {
   reconcileSenateCommitteeCensus,
   senateCensusSha256,
   type SenateCommitteeCensusYearInput,
-} from '../../src/evidence/senate-committee-meeting-census.js';
+} from '../evidence/senate-committee-meeting-census.js';
 
 const time = '2026-10-10T14:00:00.000Z';
 function year2022(): SenateCommitteeCensusYearInput {

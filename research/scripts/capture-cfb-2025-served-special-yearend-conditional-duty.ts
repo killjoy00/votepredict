@@ -18,9 +18,9 @@ import {
   audit2025SpecialConditionalYearEndDuties,
   SPECIAL_2025_SERVING_SENATORS_CONDITIONAL_DUTY_SCHEMA,
   type OriginalCalendar,type Original2025GeneralCalendar,
-} from '../../src/evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
+} from '../evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
 import {SERVED_2025_YE_CALENDAR}
-  from '../../src/evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
+  from '../evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
 
 const DIR='docs/evaluation/source-proof/';
 const LRL_SOURCES=[OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL,

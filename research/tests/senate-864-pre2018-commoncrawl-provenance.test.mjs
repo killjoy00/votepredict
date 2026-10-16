@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {gzipSync} from 'node:zlib';
-import {parseOriginalIndex,verifyOriginalWarc,sha1Base32} from '../../src/evidence/senate-864-pre2018-commoncrawl-provenance.mjs';
+import {parseOriginalIndex,verifyOriginalWarc,sha1Base32} from '../evidence/senate-864-pre2018-commoncrawl-provenance.mjs';
 const collection='CC-MAIN-2015-11';
 const url='http://www.tomassoni4senate.com/';
 const html=Buffer.from('<html><body><h1>Historical test candidate Senate archive</h1><p>Only synthetic words here; no candidate position is asserted.</p><p>'.padEnd(300,'x')+'</p></body></html>');

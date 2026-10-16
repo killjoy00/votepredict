@@ -11,7 +11,7 @@ import {parseOfficialMnSenateServiceDirectory}
 import {
  auditTwoNew2021ServedSenators2020Original47CampaignPolicyExcerpts,
  type OriginalFive2021ServingSenators2020SourceManifest,
-} from '../../src/evidence/senate-two-more-2021-serving-2020-campaign-47-original-quote-proof.js';
+} from '../evidence/senate-two-more-2021-serving-2020-campaign-47-original-quote-proof.js';
 function bounded(path:string,min:number,max:number){
  const st=statSync(path);
  if(!st.isFile()||st.size<min||st.size>max)

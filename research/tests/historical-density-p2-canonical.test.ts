@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   reviewedApplicabilityFeatureVector,
-} from '../../src/evidence/historical-density-p2-canonical.js';
+} from '../evidence/historical-density-p2-canonical.js';
 
 test('reviewed applicability features preserve quote direction without touching exact-bill features', () => {
   assert.deepEqual(

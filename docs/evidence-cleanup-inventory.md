@@ -1795,3 +1795,19 @@ The audit writeups below remain in docs/evaluation unchanged. They preserve the 
 ## Historical path compatibility
 
 Two minimal compatibility entrypoints remain at scripts/audit-senate-media-remarks-offline.ts and scripts/reconcile-senate-media-offline-private.ts, delegating to their research/scripts implementations. The first path is an existence contract in the unchanged historical source-proof readiness JSON and required CI test; changing it would modify an evaluation record. Neither compatibility entrypoint is scheduled or part of the Next.js bundle.
+
+## Follow-up: workflow retirement and code moves A–C (2026-10-16)
+
+The stop condition above was lifted by retiring dormant historical workflow triggers, then moving code that became unreachable.
+
+**Workflow retirement** (#1331, #1335, #1338, #1339): one-off historical workflows whose only automatic triggers were `push`/`pull_request` filtered to their own files, last changed on or before 2026-10-12 and referenced by nothing in tests, src, scripts, `package.json` or other workflows, moved to `research/workflows-archive/`. Kept active: CI and all operational workflows, every workflow changed on 2026-10-13 or later, every workflow with an `issue_comment`, `workflow_run` or `repository_dispatch` trigger (the ambiguous-event class), and every workflow that a test or live code reads. 308 workflows remain active.
+
+**Code moves:** a file is live when it is reachable through imports, literal dynamic imports, `require` or path strings from `src/app`, `src/forecasting`, `src/lib`, `src/operations`, `src/evaluation`, `src/features`, `src/sources`, an active workflow, a `package.json` script, or any script or module named in docs or data outside `research/` (and everything those import). Everything else moved with `git mv` and rewritten relative imports:
+
+| Move | Files | Destination |
+|---|---:|---|
+| A (#1340) | 240 tests | `research/tests/` |
+| B (#1341) | 315 scripts | `research/scripts/` |
+| C | 72 `src/evidence` modules | `research/evidence/` |
+
+After C, `src/evidence` holds 218 modules. The live list earlier in this document is superseded for moved modules. Each move kept `npx tsc --noEmit`, `npm test` and `tsc -p research` (0 unresolved modules) clean; C also passed `npm run build`.

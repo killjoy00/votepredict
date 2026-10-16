@@ -11,7 +11,7 @@ import {
   readOriginal2025CaptionAvailabilityProof,
   findAutoCaptionMotionCueWindows,retrieveVerifiedOfficialCaptionMarkup,
   SENATE_2025_UNLINKED_CAPTION_CUE_SCHEMA,PREVIOUS_2025_ORIGINAL_CAPTION_METADATA,
-} from '../../src/evidence/senate-committee-caption-motion-cues.js';
+} from '../evidence/senate-committee-caption-motion-cues.js';
 
 const args=process.argv.slice(2);
 if(args.length!==8||args[0]!=='--hrefs'||args[2]!=='--original-html'||

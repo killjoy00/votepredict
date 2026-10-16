@@ -14,7 +14,7 @@ import {fetchCfbReportViewerText}
   from '../../src/evidence/cfb-current-report-acquisition.js';
 import {selectEightRecoveredSenators16OriginalYearends,
   EIGHT_NEW_2023_24_ORIGINALS_VERSION,classifyEightRecovered16OriginalSourceRuns}
-  from '../../src/evidence/cfb-2023-24-eight-recovered-16-yearend-originals.js';
+  from '../evidence/cfb-2023-24-eight-recovered-16-yearend-originals.js';
 import {
   auditServed2023to24OriginalYearEnd,summarize28YearEndSource,
 } from '../../src/evidence/cfb-2023-24-served-28-yearend-originals.js';

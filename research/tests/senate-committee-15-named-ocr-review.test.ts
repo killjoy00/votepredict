@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   checkNamedSenateRollIntegrity,getAllPreviouslyPinnedNamedOcrCandidateOriginals,
-} from '../../src/evidence/senate-committee-15-named-ocr-review.js';
+} from '../evidence/senate-committee-15-named-ocr-review.js';
 
 test('all ten independently hashed original PDF sources account for fifteen candidate named rolls',()=>{
   const docs=getAllPreviouslyPinnedNamedOcrCandidateOriginals();

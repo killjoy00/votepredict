@@ -11,7 +11,7 @@ import {dirname} from 'node:path';
 import {APR08_ORIGINAL_MEDIA} from
  '../../src/evidence/senate-2021-apr08-original-media-source-gates.js';
 import {examinePinnedApril08LrlOriginalPlayerHTML} from
- '../../src/evidence/senate-2021-apr08-lrl-original-media-player-sources.js';
+ '../evidence/senate-2021-apr08-lrl-original-media-player-sources.js';
 
 const sha=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
 const bytesMax=2_000_000;

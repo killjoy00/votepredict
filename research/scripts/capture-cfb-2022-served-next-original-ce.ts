@@ -14,7 +14,7 @@ import {
 } from '../../src/evidence/senate-official-ever-served-directory.js';
 import {
   SOS_2022_OFFICIAL_SENATE_FILES,parseSos2022SenateElectionResults,
-} from '../../src/evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
+} from '../evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
 import {
   cfbSenateDistrictPageUrl,parseCfbSenateDistrictCandidatePage,
 } from '../../src/evidence/cfb-senate-district-registration-inventory.js';
@@ -22,7 +22,7 @@ import {
   SERVED_2022_NEXT_CE_VERSION,SERVED_2022_NEXT_DISTRICTS,
   SERVED_2022_GENERAL_SOURCE_SHA,selectServed2022NextOriginalCe,
   auditServed2022RedistrictedOriginalCe,
-} from '../../src/evidence/cfb-2022-served-senators-next-original-ce.js';
+} from '../evidence/cfb-2022-served-senators-next-original-ce.js';
 import {
   CFB_2022_CE_INDEPENDENT_CALENDAR_URL,
   diagnoseCfb2022CeCalendar,diagnoseCfb2022OriginalCeHeader,

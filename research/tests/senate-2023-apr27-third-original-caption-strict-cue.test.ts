@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {PROVEN_2023_APR27_THIRD_CAPTION,verifyProven2023Apr27ThirdCaptionJson}
- from '../../src/evidence/senate-2023-apr27-third-caption-strict-source.js';
+ from '../evidence/senate-2023-apr27-third-caption-strict-source.js';
 import {findStrict2025OriginalAutoCaptionMotionCues}
  from '../../src/evidence/senate-committee-caption-motion-cues-v2.js';
 test('original third April27 source response independently authenticated with complete ZIP and JSON hashes',()=>{

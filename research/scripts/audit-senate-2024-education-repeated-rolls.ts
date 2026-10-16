@@ -16,7 +16,7 @@ import {
   EDUCATION_2024_REPEATED_ROLL_SOURCE as SOURCE,
   audit2024EducationRepeatedAmendmentRolls,
   selectPinned2024EducationSource,
-} from '../../src/evidence/senate-2024-education-repeated-amendment-rolls.js';
+} from '../evidence/senate-2024-education-repeated-amendment-rolls.js';
 
 const sha=(s:string|Uint8Array)=>createHash('sha256').update(s).digest('hex');
 const MAX_BYTES=500_000,MAX_PAGES=3;

@@ -7,7 +7,7 @@ import {MN_2023_ELECTIONS_HISTORICAL_PUBLIC_ROSTER_LAST_NAMES as roster} from
 import {
   inspect2023OriginalElectionRollDateAndAttendance,
   parse2023ElectionsOriginalMeetingAttendance,
-} from '../../src/evidence/senate-committee-2023-elections-attendance-headers.js';
+} from '../evidence/senate-committee-2023-elections-attendance-headers.js';
 import type {CandidateNamedRoll} from '../../src/evidence/senate-committee-nine-no-label-counted-rolls.js';
 
 const sha=(s:string)=>createHash('sha256').update(s).digest('hex');

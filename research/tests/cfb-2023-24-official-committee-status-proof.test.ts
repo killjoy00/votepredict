@@ -8,7 +8,7 @@ import {
  select22AuthenticSenatorRegistrationTargets,
  inspectPutnam2024OfficialBoardConciliation,
  inspectCurrentOfficialCfbCandidateHeading,
-} from '../../src/evidence/cfb-2023-24-official-committee-status-proof.js';
+} from '../evidence/cfb-2023-24-official-committee-status-proof.js';
 const SRC='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 const ledger=readFileSync(SRC,'utf8');
 const originalPutnamConciliation=[

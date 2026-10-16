@@ -3,7 +3,7 @@ import test from 'node:test';
 import {
  APR08_A11_SOURCE_SCHEMA,SOURCE,inspectOriginalApr08A11Motion,
  inspectSyntheticApr08A11MotionTextCore
-} from '../../src/evidence/senate-2025-elections-apr08-a11-source.js';
+} from '../evidence/senate-2025-elections-apr08-a11-source.js';
 
 // FICTIONAL fixture people only. Not an original source-side member list.
 const fictionalRoster=[

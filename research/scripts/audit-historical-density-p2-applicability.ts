@@ -9,7 +9,7 @@ import {
   applicabilityPatternHits,
   applicabilitySnippet,
   type P2ApplicabilityClaimRule,
-} from '../../src/evidence/historical-density-p2-applicability.js';
+} from '../evidence/historical-density-p2-applicability.js';
 
 const TARGET_SESSION = '2021-2022';
 const EXPECTED_RAW_MEMBER_EVENT_ROWS = 3924;

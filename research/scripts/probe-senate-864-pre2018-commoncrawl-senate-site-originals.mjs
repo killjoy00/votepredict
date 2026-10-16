@@ -20,7 +20,7 @@ import {parseOfficialMnSenateServiceDirectory,validateActualSenateServiceForElec
 import {auditSos2020to2022OriginalGeneralCensus}
  from '../../src/evidence/senate-2020-22-official-general-census.js';
 import {sha256,parseOriginalIndex,verifyOriginalWarc}
- from '../../src/evidence/senate-864-pre2018-commoncrawl-provenance.mjs';
+ from '../evidence/senate-864-pre2018-commoncrawl-provenance.mjs';
 
 const argv=process.argv.slice(2);
 const arg=k=>{const i=argv.indexOf(k);assert.ok(i>=0&&argv[i+1]&&!argv[i+1].startsWith('--'),'Missing '+k);return resolve(argv[i+1]);};

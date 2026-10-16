@@ -7,7 +7,7 @@ import {
  auditTwoJournalistOriginalSpeakerPhrases,validateTwoJournalistOriginals,
  TWO_NEWS_ORIGINAL_VERSION,
  type DualReporterQueue,type ReporterArticleLead,type JournalistOriginalProof,
-} from '../../src/evidence/senate-media-independent-reporter-dual-original-phrase-audit.js';
+} from '../evidence/senate-media-independent-reporter-dual-original-phrase-audit.js';
 
 const read=(s:string)=>JSON.parse(readFileSync('docs/evaluation/'+s,'utf8')) as any;
 const queue=read('senate-media-2021-2024-independent-reporter-two-dual-speaker-original-phrase-queue.json') as DualReporterQueue;

@@ -29,7 +29,7 @@ import {mapActualRosterResolverReason} from
 import {serializeApprovedYeaV11SafeScalars} from
  '../../src/evidence/senate-864-2024-yea-v11-lrl-safe-scalars.js';
 import {acquireOriginalLrl2024SenateYearService} from
- '../../src/evidence/senate-864-2024-lrl-year-service-directory.js';
+ '../evidence/senate-864-2024-lrl-year-service-directory.js';
 
 export const ONE_YEA_2024_V11_MARKER=
  'SENATE_864_2024_MISSING_YEA_OFFICIAL_LRL_2024_SERVICE_20261012_V11' as const;

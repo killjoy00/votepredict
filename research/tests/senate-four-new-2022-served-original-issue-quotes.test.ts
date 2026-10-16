@@ -8,7 +8,7 @@ import excerptLedger from '../../data/evaluation/senate-four-new-2022-served-ori
 import {ISSUE_POSITION_FAMILIES} from '../../src/evidence/issue-position-extractor.js';
 import {FOUR_NEW_ACTUALLY_SERVED_2022_ORIGINAL_POLICY_QUOTES_VERSION,
  auditFour2023ServingSenators47GenuineArchived2022CandidateStatements}
- from '../../src/evidence/senate-four-new-2022-original-campaign-excerpt-proof.js';
+ from '../evidence/senate-four-new-2022-original-campaign-excerpt-proof.js';
 import type {AuditedOfficialSenateDirectory} from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';
 const SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';

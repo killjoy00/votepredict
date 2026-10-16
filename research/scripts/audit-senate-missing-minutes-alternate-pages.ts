@@ -9,7 +9,7 @@
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { findExactOfficialMeetingDateSection } from '../../src/evidence/senate-committee-date-section.js';
+import { findExactOfficialMeetingDateSection } from '../evidence/senate-committee-date-section.js';
 import {
   SENATE_MISSING_MINUTES_SOURCE,
   officialMissingMinutesMeetingPage,

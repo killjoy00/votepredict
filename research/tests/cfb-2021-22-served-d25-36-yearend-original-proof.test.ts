@@ -12,11 +12,11 @@ import {
   SERVED_2021_22_D25_36_YE_CALENDAR_URL,
   SERVED_2021_22_D25_36_YE_CALENDAR_PDF_SHA,
   type YearEnd2022SourcePdf,
-} from '../../src/evidence/cfb-2021-22-served-d25-36-yearend-original-proof.js';
+} from '../evidence/cfb-2021-22-served-d25-36-yearend-original-proof.js';
 import {CFB_2022_CE_RULES}
   from '../../src/evidence/cfb-2022-senate-original-ce-pdf-proof.js';
 import type {Served2022OriginalCeTarget}
-  from '../../src/evidence/cfb-2022-served-d25-36-original-ce.js';
+  from '../evidence/cfb-2022-served-d25-36-original-ce.js';
 import type {AuditedOfficialSenateDirectory}
   from '../../src/evidence/senate-official-ever-served-directory.js';
 import {cfbReportViewerUrl}

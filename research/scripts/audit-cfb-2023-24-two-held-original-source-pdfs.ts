@@ -19,7 +19,7 @@ import {
   analyzeHeldCfbSourceBinary,compareHeldCfbGetPost,
   type HeldSourceFetch,
   CFB_TWO_HELD_SOURCE_DIAGNOSTICS_SCHEMA,
-} from '../../src/evidence/cfb-2023-24-held-source-pdf-diagnostics.js';
+} from '../evidence/cfb-2023-24-held-source-pdf-diagnostics.js';
 const P='docs/evaluation/source-proof/';
 const names={
  lang16Psv:'cfb-2023-24-eight-more-16-original-yearend-pdf-source-ledger.psv',

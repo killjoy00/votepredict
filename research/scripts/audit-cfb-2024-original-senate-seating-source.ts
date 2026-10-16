@@ -15,7 +15,7 @@ import {
  ORIGINAL_SENATE_2024_SEATING_PDF,
  ORIGINAL_LRL_93RD_SENATE_SEATING_ARCHIVE,
  inspect2024OriginalSenateSeatingPdf,
-} from '../../src/evidence/cfb-2024-original-senate-seating-source.js';
+} from '../evidence/cfb-2024-original-senate-seating-source.js';
 const LEDGER='docs/evaluation/source-proof/cfb-2023-original-sos-22-real-senators-roster-independent-service-proof.psv';
 type SourceDoc={
  url:string;sha256:string;bytes:number;retrievedAt:string;

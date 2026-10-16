@@ -9,7 +9,7 @@ import {
  senatorOnlyDomain2022Targets,
  historicalSenatorDomainCdxUrl,
  senatorDomainPreGeneral2022Cdx,
-} from '../../src/evidence/senate-2022-verified-served-domain-archive.js';
+} from '../evidence/senate-2022-verified-served-domain-archive.js';
 import {acquire2022ServedSenatorDomainHistoricalPages}
  from '../scripts/acquire-senate-2022-served-domain-wide-pages.js';
 

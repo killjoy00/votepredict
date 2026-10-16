@@ -2,13 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import type {Served2025SpecialFinalTarget}
-  from '../../src/evidence/cfb-2025-served-special-final-pdf-proof.js';
+  from '../evidence/cfb-2025-served-special-final-pdf-proof.js';
 import {
   SERVED_2025_YE_CALENDAR,SERVED_2025_YE_CALENDAR_SHA,
   SERVED_2025_YE_DUE,selectServed2025YearEndTargets,
   served2025YearEndRef,parseServed2025YearEndHeader,
   validateServed2025YearEndCalendar,auditServed2025YearEndPdf,
-} from '../../src/evidence/cfb-2025-served-two-ordinary-year-end-originals.js';
+} from '../evidence/cfb-2025-served-two-ordinary-year-end-originals.js';
 import {cfbReportViewerUrl}
   from '../../src/evidence/cfb-current-report-acquisition.js';
 const root='docs/evaluation/source-proof/';

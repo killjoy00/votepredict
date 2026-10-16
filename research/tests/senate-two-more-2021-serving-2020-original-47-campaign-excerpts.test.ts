@@ -9,7 +9,7 @@ import {ISSUE_POSITION_FAMILIES} from '../../src/evidence/issue-position-extract
 import {
  TWO_MORE_2021_SERVING_SENATORS_2020_47_EXACT_QUOTES_VERSION,
  auditTwoNew2021ServedSenators2020Original47CampaignPolicyExcerpts,
-} from '../../src/evidence/senate-two-more-2021-serving-2020-campaign-47-original-quote-proof.js';
+} from '../evidence/senate-two-more-2021-serving-2020-campaign-47-original-quote-proof.js';
 import type {AuditedOfficialSenateDirectory}
  from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';

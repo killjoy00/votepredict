@@ -17,7 +17,7 @@ import {
   senateCensusSha256,
   type SenateCommitteeCensusPage,
   type SenateCommitteeCensusYearInput,
-} from '../../src/evidence/senate-committee-meeting-census.js';
+} from '../evidence/senate-committee-meeting-census.js';
 
 const YEARS = [2022, 2023, 2024, 2025] as const;
 type Year = typeof YEARS[number];

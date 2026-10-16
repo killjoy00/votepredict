@@ -4,7 +4,7 @@ import {
   HIGH_SIGNAL_PDF_EXPECTED,
   loadStrongRollSourceManifest,
   triageOriginalRollCueText,
-} from '../../src/evidence/senate-committee-41-strong-roll-original-review.js';
+} from '../evidence/senate-committee-41-strong-roll-original-review.js';
 
 test('pinned source proof denominators do not include attendance-only or 2021 print records',()=>{
   assert.deepEqual(HIGH_SIGNAL_PDF_EXPECTED,{2022:2,2023:14,2024:13,2025:12});

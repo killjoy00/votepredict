@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {HOFFMAN_2023_ORIGINAL_BOARD_AGREEMENT,inspectHoffman2023OriginalBoardAction}
- from '../../src/evidence/cfb-2023-hoffman-original-board-committee-proof.js';
+ from '../evidence/cfb-2023-hoffman-original-board-committee-proof.js';
 const original71=readFileSync(
  'docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv','utf8');
 const syntheticOriginal=[

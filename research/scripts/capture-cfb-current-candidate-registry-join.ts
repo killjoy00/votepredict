@@ -14,7 +14,7 @@ import {
   type CfbCandidateRegistryListAction,
   type CfbCandidateRegistrySource,
   type CfbObservedViewerRegistrationCheckpoint,
-} from '../../src/evidence/cfb-current-candidate-registry-join.js';
+} from '../evidence/cfb-current-candidate-registry-join.js';
 
 const appUrl = 'https://register.cfb.mn.gov/reports/current-lists/';
 const apiUrl = 'https://register.cfb.mn.gov/reports/api/';

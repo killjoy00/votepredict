@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {fetchSenateCommitteeMinutePdf}
  from '../../src/evidence/minnesota-senate-committee-source.js';
 import {SOURCE,APR08_A11_SOURCE_SCHEMA,inspectOriginalApr08A11Motion}
- from '../../src/evidence/senate-2025-elections-apr08-a11-source.js';
+ from '../evidence/senate-2025-elections-apr08-a11-source.js';
 
 const cap=3_000_000;
 async function bounded(input:string|URL|Request,init?:RequestInit):Promise<Response>{

@@ -13,7 +13,7 @@ import {
   P2_REMAINING_APPLICABILITY_RULES,
   remainingApplicabilityPatternHits,
   remainingApplicabilitySnippet,
-} from '../../src/evidence/historical-density-p2-remaining-applicability.js';
+} from '../evidence/historical-density-p2-remaining-applicability.js';
 
 const TARGET_SESSION = '2021-2022';
 const TARGET_UNIVERSE_ARTIFACT_ID = 11252079484;

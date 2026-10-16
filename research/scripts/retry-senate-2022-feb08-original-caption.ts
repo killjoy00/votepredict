@@ -9,13 +9,13 @@ import {readExactPriorMediaHtmlProof,inspectMediaPageCaptionSurface}
 import {fetchBoundedSenateMediaRecordHtml}
  from '../../src/evidence/senate-committee-138-record-html-metadata.js';
 import {retrieveVerifiedOfficialCaptionMarkup}
- from '../../src/evidence/senate-committee-caption-motion-cues.js';
+ from '../evidence/senate-committee-caption-motion-cues.js';
 import {findStrict2025OriginalAutoCaptionMotionCues}
  from '../../src/evidence/senate-committee-caption-motion-cues-v2.js';
 import {sourcePinned2022CaptionRecords}
- from '../../src/evidence/senate-committee-2022-caption-motion-source.js';
+ from '../evidence/senate-committee-2022-caption-motion-source.js';
 import {ORIGINAL_2022_FEB08_RETRY,checkActualFirstFailed2022CaptionCueRun}
- from '../../src/evidence/senate-2022-feb08-caption-source-retry.js';
+ from '../evidence/senate-2022-feb08-caption-source-retry.js';
 
 const args=process.argv.slice(2);
 if(args.length!==10||args[0]!=='--hrefs'||args[2]!=='--original-html'

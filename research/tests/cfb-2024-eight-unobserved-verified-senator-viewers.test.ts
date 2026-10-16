@@ -7,7 +7,7 @@ import {
   selectEightPreviouslyUnobservedActualSenators,
   auditPreviouslyUnobserved2024CfbViewer,
   CFB_EIGHT_2024_TARGETS,
-} from '../../src/evidence/cfb-2024-eight-unobserved-verified-senator-viewers.js';
+} from '../evidence/cfb-2024-eight-unobserved-verified-senator-viewers.js';
 const P='docs/evaluation/source-proof/';
 const fixture={
   firstCfbOriginalCePsv:readFileSync(P+'cfb-2022-served-d13-24-original-ce-pdfs.psv','utf8'),

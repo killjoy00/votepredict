@@ -3,7 +3,7 @@ import {createHash} from 'node:crypto';
 import {dirname,resolve} from 'node:path';
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {fetchSenateCommitteeMinutePdf} from '../../src/evidence/minnesota-senate-committee-source.js';
-import {APR12_2021_RULE1210,discoverOriginalApril12Rule1210Leads} from '../../src/evidence/senate-2021-apr12-rule1210-sf1159-sf970-lead-probe.js';
+import {APR12_2021_RULE1210,discoverOriginalApril12Rule1210Leads} from '../evidence/senate-2021-apr12-rule1210-sf1159-sf970-lead-probe.js';
 
 const sha=(s:string)=>createHash('sha256').update(s).digest('hex');
 const MAX=15_000_000;

@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {
  MAR30_2022_SF3882_COMMITTEE_SOURCE as SOURCE,
  inspectOriginalMar30SF3882SubcommitteeMinutes
-} from '../../src/evidence/senate-2022-propertytaxes-mar30-sf3882-online-roll.js';
+} from '../evidence/senate-2022-propertytaxes-mar30-sf3882-online-roll.js';
 
 const sha=(x:string)=>createHash('sha256').update(x).digest('hex');
 function safe(e:unknown){return String(e instanceof Error?e.message:e)

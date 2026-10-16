@@ -19,7 +19,7 @@ import {
   auditActualSenatorAmendmentPdf,checkAuthenticatedAmendmentChains,
   classifySourceVerified2021to22AmendmentBatch,
   type CfbHistoricalAmendedPdfSource,
-} from '../../src/evidence/cfb-2021-22-served-senator-amendments.js';
+} from '../evidence/cfb-2021-22-served-senator-amendments.js';
 
 const ROOT='docs/evaluation/source-proof/';
 const CE=ROOT+'cfb-2022-served-d13-24-original-ce-pdfs.psv';

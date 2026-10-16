@@ -10,7 +10,7 @@ import {
   selectServedSd25to36AmendmentVersions,
   amendmentViewerReference,
   REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS,
-} from '../../src/evidence/cfb-2021-22-served-sd25-36-30-amendments.js';
+} from '../evidence/cfb-2021-22-served-sd25-36-30-amendments.js';
 
 const BASE='docs/evaluation/source-proof/';
 const CKPT=JSON.parse(readFileSync(BASE+

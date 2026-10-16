@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {inspectOriginalApril12SourceLayout} from '../../src/evidence/senate-2021-apr12-original-committee-redacted-layout.js';
+import {inspectOriginalApril12SourceLayout} from '../evidence/senate-2021-apr12-original-committee-redacted-layout.js';
 function make(){
  return 'JOURNAL OF THE SENATE MONDAY, APRIL 12, 2021 '+('Unrelated context and journal entries. ').repeat(270)+
   'Senator PretendReporter from the Committee on Transportation Finance and Policy, S.F. No. 1159: '+

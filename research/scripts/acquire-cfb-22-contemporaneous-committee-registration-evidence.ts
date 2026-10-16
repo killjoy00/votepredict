@@ -16,7 +16,7 @@ import {
  select22AuthenticSenatorRegistrationTargets,
  inspectPutnam2024OfficialBoardConciliation,
  inspectCurrentOfficialCfbCandidateHeading,
-} from '../../src/evidence/cfb-2023-24-official-committee-status-proof.js';
+} from '../evidence/cfb-2023-24-official-committee-status-proof.js';
 const SOURCE_71='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 const UA='Mozilla/5.0 VotePredict/2.0 public original Minnesota CFB evidence research';
 const ALLOWED=['register.cfb.mn.gov','cfb.mn.gov','www.cfb.mn.gov'];

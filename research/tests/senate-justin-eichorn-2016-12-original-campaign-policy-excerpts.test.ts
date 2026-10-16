@@ -7,7 +7,7 @@ import {execFileSync} from 'node:child_process';
 import ledger from '../../data/evaluation/senate-justin-eichorn-2016-original-12-capture-dated-exact-issues-v1.json' with {type:'json'};
 import {ISSUE_POSITION_FAMILIES} from '../../src/evidence/issue-position-extractor.js';
 import {independentlyAuditJustinEichorn12ExactOriginal2016CampaignIssueStatements}
- from '../../src/evidence/senate-justin-eichorn-2016-original-12-quote-proof.js';
+ from '../evidence/senate-justin-eichorn-2016-original-12-quote-proof.js';
 import type {AuditedOfficialSenateDirectory}
  from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';

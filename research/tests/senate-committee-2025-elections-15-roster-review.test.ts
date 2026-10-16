@@ -7,7 +7,7 @@ import {
   MN_2025_ELECTIONS_SOURCE_PIN as proof,
   audit2025OriginalElectionsAgainstPublicRoster,
   validate2025OriginalElectionsSourceBlock,
-} from '../../src/evidence/senate-committee-2025-elections-15-roster-review.js';
+} from '../evidence/senate-committee-2025-elections-15-roster-review.js';
 
 const sha=(x:string)=>createHash('sha256').update(x).digest('hex');
 function syntheticMemberRoll(yea:number,nay:number){

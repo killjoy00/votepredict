@@ -6,11 +6,11 @@ import {
   auditServed2022RedistrictedOriginalCe,
   SERVED_2022_GENERAL_SOURCE_SHA,SERVED_2022_NEXT_DISTRICTS,
   SERVED_2022_396_SOURCE_PSV_SHA,
-} from '../../src/evidence/cfb-2022-served-senators-next-original-ce.js';
+} from '../evidence/cfb-2022-served-senators-next-original-ce.js';
 import type {AuditedOfficialSenateDirectory}
   from '../../src/evidence/senate-official-ever-served-directory.js';
 import type {SosSenate2022Result}
-  from '../../src/evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
+  from '../evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
 import type {CfbSenateDistrictPageObservation}
   from '../../src/evidence/cfb-senate-district-registration-inventory.js';
 import {cfbSenateDistrictPageUrl}

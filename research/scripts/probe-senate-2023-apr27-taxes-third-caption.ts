@@ -10,7 +10,7 @@ import {readExactPriorMediaHtmlProof,inspectMediaPageCaptionSurface,
 import {fetchBoundedSenateMediaRecordHtml}
  from '../../src/evidence/senate-committee-138-record-html-metadata.js';
 import {ORIGINAL_APR27_TAXES_CAPTION_SOURCE,verifyOriginalApr27ThirdCaptionLead}
- from '../../src/evidence/senate-2023-taxes-third-original-caption-source.js';
+ from '../evidence/senate-2023-taxes-third-original-caption-source.js';
 const args=process.argv.slice(2);
 if(args.length!==8||args[0]!=='--hrefs'||args[2]!=='--original-html'
   ||args[4]!=='--prior-caption'||args[6]!=='--output')

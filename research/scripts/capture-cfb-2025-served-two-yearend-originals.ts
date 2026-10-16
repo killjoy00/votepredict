@@ -19,12 +19,12 @@ import {
 } from '../../src/evidence/cfb-senate-district-registration-inventory.js';
 import {
   selectServed2025SpecialFinalTargets,
-} from '../../src/evidence/cfb-2025-served-special-final-pdf-proof.js';
+} from '../evidence/cfb-2025-served-special-final-pdf-proof.js';
 import {
   SERVED_2025_YE_ORIGINAL_VERSION,SERVED_2025_YE_CALENDAR,
   selectServed2025YearEndTargets,served2025YearEndRef,
   validateServed2025YearEndCalendar,auditServed2025YearEndPdf,
-} from '../../src/evidence/cfb-2025-served-two-ordinary-year-end-originals.js';
+} from '../evidence/cfb-2025-served-two-ordinary-year-end-originals.js';
 import {
   fetchCfbCandidateHistoricalReportReferenceSnapshot,
 } from '../../src/evidence/cfb-candidate-report-history.js';

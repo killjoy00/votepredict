@@ -9,11 +9,11 @@ import {mkdirSync,readFileSync,writeFileSync} from 'node:fs';
 import {dirname,resolve,sep} from 'node:path';
 import {
  select22AuthenticSenatorRegistrationTargets,
-} from '../../src/evidence/cfb-2023-24-official-committee-status-proof.js';
+} from '../evidence/cfb-2023-24-official-committee-status-proof.js';
 import {
  inspectOriginalRevenuePcrReport,ORIGINAL_REVENUE_PCR_ANNUAL_SOURCES,
  type OriginalPcrPeriod,
-} from '../../src/evidence/cfb-2023-24-original-revenue-pcr-proof.js';
+} from '../evidence/cfb-2023-24-original-revenue-pcr-proof.js';
 
 const LEDGER='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 const UA='VotePredict/2.0 original Minnesota government public finance source research';

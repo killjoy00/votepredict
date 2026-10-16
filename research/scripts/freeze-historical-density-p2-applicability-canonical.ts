@@ -3,7 +3,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   P2_ACCEPTED_CLAIM_FEATURE_METADATA,
-} from '../../src/evidence/historical-density-p2-canonical.js';
+} from '../evidence/historical-density-p2-canonical.js';
 
 const EXPECTED_ELIGIBLE_ROWS = 3923;
 const EXPECTED_CANDIDATE_PAIRS = 105;

@@ -7,7 +7,7 @@ import {
   selectSixteenParentAuthenticatedYeAmendments,sourceYeAmendmentReference,
   auditAuthenticatedParentYeAmendment,auditSixteenAmendmentSourceSequence,
   classifySixteenReviewed2023to24AmendedSourceReferences,
-} from '../../src/evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
+} from '../evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
 import {cfbReportViewerUrl}
   from '../../src/evidence/cfb-current-report-acquisition.js';
 

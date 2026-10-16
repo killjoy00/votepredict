@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {ORIGINAL_2022_CAPTION_SOURCE,sourcePinned2022CaptionRecords}
- from '../../src/evidence/senate-committee-2022-caption-motion-source.js';
+ from '../evidence/senate-committee-2022-caption-motion-source.js';
 import {findStrict2025OriginalAutoCaptionMotionCues}
  from '../../src/evidence/senate-committee-caption-motion-cues-v2.js';
 

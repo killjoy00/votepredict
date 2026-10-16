@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import {select22AuthenticSenatorRegistrationTargets} from
- '../../src/evidence/cfb-2023-24-official-committee-status-proof.js';
+ '../evidence/cfb-2023-24-official-committee-status-proof.js';
 import {selectTwoTerminatedSenators,inspectPossibleOriginalCfbTerminationReportText,
  classifyTwoSenatorsInPublicCfbCurrentLists} from
- '../../src/evidence/cfb-two-terminated-original-report-investigation.js';
+ '../evidence/cfb-two-terminated-original-report-investigation.js';
 
 const ORIGINAL='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 const people=select22AuthenticSenatorRegistrationTargets(readFileSync(ORIGINAL,'utf8'));
