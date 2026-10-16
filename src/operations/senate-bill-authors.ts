@@ -22,6 +22,15 @@ const INFO=[
 ] as const;
 const SESSIONS=INFO.map(x=>x.slug);
 const TIMEOUT_MS=16000;
+/** Stay comfortably within the protected 90-minute job while preserving a final readback. */
+export const SENATE_BILL_AUTHORS_MAX_LOOKUPS=3000;
+export const SENATE_BILL_AUTHORS_MAX_STORED_JOURNALS=500;
+export const SENATE_BILL_AUTHORS_TIME_BUDGET_MS=65*60*1000;
+export function senateBillAuthorTimeBudgetExceeded(
+  startedAtMs:number,nowMs:number,budgetMs=SENATE_BILL_AUTHORS_TIME_BUDGET_MS,
+):boolean{
+  return nowMs-startedAtMs>=budgetMs;
+}
 export interface AuthorBill {
   bill_id:string;session_id:string;session_slug:string;
   identifier:string;chamber:'senate'|'house';
@@ -32,7 +41,7 @@ export interface AuthorCapture {
 }
 export interface AuthorCollectionResult {
   attempted:number;successful:number;notFound:number;sourceErrors:number;
-  stoppedForThrottle:boolean;authorsStored:number;
+  stoppedForThrottle:boolean;stoppedForTimeBudget:boolean;elapsedMs:number;authorsStored:number;
   journalsScanned:number;journalChanges:number;journalLinked:number;
   remainingUnscanned:number;remainingJournals:number;
 }
@@ -297,22 +306,32 @@ export async function backfillStoredJournalAuthorChanges(
   return {scanned:docs.length,changes,linked};
 }
 export async function runSenateBillAuthorCollection(
-  pool:Pool,maximumLookups=350,pacer=new RevisorPacer(),
+  pool:Pool,maximumLookups=SENATE_BILL_AUTHORS_MAX_LOOKUPS,pacer=new RevisorPacer(),
 ):Promise<AuthorCollectionResult>{
-  const limit=Math.min(500,Math.max(1,Math.trunc(maximumLookups)));
+  // A bill limit of zero is an explicit, safe journal-only collection run.
+  const limit=Math.min(SENATE_BILL_AUTHORS_MAX_LOOKUPS,
+    Math.max(0,Number.isFinite(maximumLookups)?Math.trunc(maximumLookups):0));
+  const startedAtMs=Date.now();
   const client=await pool.connect();
   const report:AuthorCollectionResult={
     attempted:0,successful:0,notFound:0,sourceErrors:0,stoppedForThrottle:false,
+    stoppedForTimeBudget:false,elapsedMs:0,
     authorsStored:0,journalsScanned:0,journalChanges:0,journalLinked:0,
     remainingUnscanned:0,remainingJournals:0,
   };
   try{
     const cat=await loadCatalog(client);
-    const journal=await backfillStoredJournalAuthorChanges(client,cat,80);
+    // Complete every previously stored Senate journal first, without refetching.
+    const journal=await backfillStoredJournalAuthorChanges(client,cat,SENATE_BILL_AUTHORS_MAX_STORED_JOURNALS);
     report.journalsScanned=journal.scanned;
     report.journalChanges=journal.changes;
     report.journalLinked=journal.linked;
+    console.log('SENATE_BILL_AUTHORS_JOURNALS='+JSON.stringify(journal));
     for(const bill of await unscanned(client,limit)){
+      if(senateBillAuthorTimeBudgetExceeded(startedAtMs,Date.now())){
+        report.stoppedForTimeBudget=true;
+        break;
+      }
       const capture=await captureBillAuthors(bill,pacer);
       report.attempted++;
       if(capture.result==='throttled'){
@@ -331,6 +350,7 @@ export async function runSenateBillAuthorCollection(
     }
     report.remainingUnscanned=await remainingBills(client);
     report.remainingJournals=await remainingJournals(client);
+    report.elapsedMs=Date.now()-startedAtMs;
     return report;
   }finally{client.release(true);}
 }

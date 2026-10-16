@@ -7,6 +7,8 @@ import {
 } from '../src/operations/senate-bill-author-parser.js';
 import {
   persistOfficialAuthorCapture,type AuthorBill,type AuthorCapture,
+  SENATE_BILL_AUTHORS_MAX_LOOKUPS,SENATE_BILL_AUTHORS_MAX_STORED_JOURNALS,
+  SENATE_BILL_AUTHORS_TIME_BUDGET_MS,senateBillAuthorTimeBudgetExceeded,
 } from '../src/operations/senate-bill-authors.js';
 import {resolveSenator,type SenateMember} from '../src/operations/senate-identity-bill-resolvers.js';
 
@@ -70,11 +72,32 @@ test('0025 additive and guarded production uses independent-main, protected envi
   assert.match(migration,/senate_bill_author_snapshots/);
   assert.match(migration,/senate_bill_author_scans/);
   assert.doesNotMatch(migration,/\b(?:DROP|TRUNCATE|DELETE)\b/i);
-  assert.match(runner,/filenames.length!==25/);
+  assert.match(runner,/filenames\[24\]!==MIGRATION/);
   assert.match(runner,/SENATE_BILL_AUTHORS_PRODUCTION/);
   assert.match(workflow,/environment: evidence-readonly-sandbox/);
   assert.match(workflow,/needs.independent-main.result == 'success'/);
   assert.doesNotMatch(workflow,/schedule:|cron:/);
+});
+
+test('reviewed larger batches finish stored journals and leave readback time after Revisor work',()=>{
+  assert.equal(SENATE_BILL_AUTHORS_MAX_LOOKUPS,3000);
+  assert.ok(SENATE_BILL_AUTHORS_MAX_STORED_JOURNALS>=337);
+  assert.ok(SENATE_BILL_AUTHORS_MAX_STORED_JOURNALS<=500);
+  assert.equal(SENATE_BILL_AUTHORS_TIME_BUDGET_MS,65*60*1000);
+  const startedAt=10_000;
+  assert.equal(senateBillAuthorTimeBudgetExceeded(startedAt,startedAt+1000),false);
+  assert.equal(senateBillAuthorTimeBudgetExceeded(startedAt,
+    startedAt+SENATE_BILL_AUTHORS_TIME_BUDGET_MS-1),false);
+  assert.equal(senateBillAuthorTimeBudgetExceeded(startedAt,
+    startedAt+SENATE_BILL_AUTHORS_TIME_BUDGET_MS),true);
+  const runner=readFileSync('scripts/deploy-senate-bill-authors-neon.ts','utf8');
+  const collector=readFileSync('src/operations/senate-bill-authors.ts','utf8');
+  assert.match(runner,/SENATE_BILL_AUTHORS_JOURNALS_ONLY/);
+  assert.match(runner,/journalsOnly\?0:SENATE_BILL_AUTHORS_MAX_LOOKUPS/);
+  assert.match(runner,/validateSenateBillAuthorLedger/);
+  assert.doesNotMatch(runner,/filenames\.length!==25/);
+  assert.match(collector,/backfillStoredJournalAuthorChanges\(client,cat,SENATE_BILL_AUTHORS_MAX_STORED_JOURNALS\)/);
+  assert.match(collector,/Math\.max\(0,Number\.isFinite\(maximumLookups\)/);
 });
 
 const url=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
