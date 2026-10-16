@@ -61,6 +61,13 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - run: npm run db:migrate
       - run: npm run check
+      - name: Dry-run all 2020-2026 SOS election sources without writing
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run data:senate:elections -- --all --dry-run \
+            --out "$RUNNER_TEMP/mn-senate-elections-dry-run.jsonl" \
+            | tee "$RUNNER_TEMP/mn-senate-elections-dry-run-coverage.log"
       - name: Capture and insert published Senate raw files in disposable PostgreSQL
         shell: bash
         run: |
@@ -93,5 +100,7 @@ jobs:
           path: |
             ${{ runner.temp }}/mn-senate-elections-raw.jsonl
             ${{ runner.temp }}/mn-senate-elections-coverage.log
+            ${{ runner.temp }}/mn-senate-elections-dry-run.jsonl
+            ${{ runner.temp }}/mn-senate-elections-dry-run-coverage.log
           if-no-files-found: warn
           retention-days: 30
