@@ -5,6 +5,7 @@ import {Pool,type PoolClient} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {collectQuestionnaires,validateCatalog} from '../src/sources/minnesota/senate-questionnaire-raw.js';
 import {insertQuestionnaire,questionnaireReadback} from '../src/operations/senate-questionnaire-ingest.js';
+import {assertAdditiveQuestionnaireMigration} from '../src/operations/senate-questionnaire-migration.js';
 const MARKER='SENATE_QUESTIONNAIRE_RAW_PRODUCTION_20261015';
 const MIGRATION='0021_mn_senate_questionnaire_raw.sql';
 type Ledger={filename:string;checksum:string};
@@ -106,10 +107,11 @@ async function main():Promise<void>{
         throw Error('Concurrent migration changed during review');
       if(!applied){
         const sql=readFileSync('migrations/'+MIGRATION,'utf8');
-        if(/\b(DROP|TRUNCATE|DELETE|UPDATE|ALTER|REVOKE|GRANT|COPY|EXECUTE)\b/i.test(
-          sql.replace(/--[^\n]*/g,'')))
-          throw Error('Nonadditive migration refused');
+        phase='assert_only_additive_0021_schema';
+        assertAdditiveQuestionnaireMigration(sql);
+        phase='apply_only_0021_schema';
         await c.query(sql);
+        phase='insert_0021_schema_ledger_receipt';
         await c.query('INSERT INTO votepredict_schema_migrations(filename,checksum) VALUES($1,$2)',
           [MIGRATION,expected[20].checksum]);
         migrationApplied=true;
