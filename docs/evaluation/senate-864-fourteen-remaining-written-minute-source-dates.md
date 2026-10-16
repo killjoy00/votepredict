@@ -2,6 +2,16 @@
 
 **Scope:** 2022–2025 historically indexed Senate committee dates **without authenticated written committee Minutes after every existing original source recovery**. These are source-coverage holds, not recorded vote counts or proof that no motions occurred.
 
+## October 16 recovery: eight found, six still open
+
+The targeted [raw collection](../../data/collections/senate-minute-gap-recovery-20261016.json) now preserves full original extracted text for **eight** dates in the baseline below: 2023-04-27 Taxes; 2024-03-20 Energy; 2024-04-03 and 2024-05-01 Taxes; and 2025-04-02, 04-07, 04-09 and 04-28 Energy. Each PDF is explicitly linked from its official committee archive; the printed meeting date was checked against the original first page. Three scanned Taxes PDFs required all-page local OCR. OCR text remains literal output, including recognition errors. Source PDF SHA, text SHA, extraction method, fetched time and source index are retained separately from publication time (unknown).
+
+The source discovery filter previously accepted only `_Minutes.pdf`, omitting combined `Minutes-and-Attendance`, `Final-Meeting-Minutes` and `Signed-Minutes` files. Generated page counters also incorrectly satisfied the readable-text threshold in longer scans, suppressing OCR. Both defects are repaired. Previous-meeting attachments are excluded from upload-directory date assignment.
+
+This brings the source inventory to **1,586/1,592** indexed 2022–2025 meeting dates. **Six remain:** 2022-03-15 Housing; 2022-08-10 and 2022-10-03 Environment Finance; 2023-04-13 Environment/Climate/Legacy; 2024-05-16 Environment/Climate/Legacy; and 2025-05-12 Subcommittee on Committees. No written-minute PDF was found for these dates in this bounded archive pass. That does not establish source nonexistence or zero votes.
+
+The raw import uses the existing `source_documents.metadata.rawPrepassageVotes` format with exact-text readback, retaining preexisting metadata and snapshots. It does not add individual member choices to `member_votes`, update `vote_events`, or change forecasting. The original fourteen-date baseline and frozen reconciliation below remain intact as a historical snapshot; production import status must be read from the guarded workflow receipt.
+
 ## Independently reconciled denominator
 
 The original SHA-pinned Legislative Reference Library electronic committee index has **1,592** 2022–2025 committee/day entries. The 141 original no-linked-PDF dates were reconciled against **111 government Clerk HTML written Minutes** and one independent archived original LRL Housing PDF, leaving **29** unverified dates (1,563 written-minute days total). Two further original-LRL public source studies independently authenticated **4 meeting days in 8 original PDF files** and **11 more meeting days in 11 original PDF files**. Therefore **1,578/1,592** indexed meeting dates have authenticated written Minutes and **14** still do not.

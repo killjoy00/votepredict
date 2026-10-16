@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 export const MN_SENATE_COMMITTEE_SOURCE_VERSION =
-  'mn-senate-committee-source-v5' as const;
+  'mn-senate-committee-source-v6' as const;
 export const MN_LRL_MINUTES_BASE = 'https://www.lrl.mn.gov';
 
 export interface SenateCommitteePage {
@@ -105,7 +105,13 @@ export function parseSenateCommitteePageHtml(input:{
     const url=new URL(anchor.href);
     if(url.hostname!=='www.lrl.mn.gov'&&url.hostname!=='lrl.mn.gov')continue;
     if(!new RegExp(`^/archive/minutes/senate/${input.year}/`,'i').test(url.pathname))continue;
-    if(!/_minutes\.pdf$/i.test(url.pathname))continue;
+    // LRL also publishes e.g. Minutes-and-Attendance.pdf and
+    // Final-Meeting-Minutes.pdf. These links can be hidden in the collapsed
+    // "All Meeting Documents" list. Never assign a previous meeting's
+    // attachment to the date of the directory containing it.
+    const filename=url.pathname.split('/').at(-1)??'';
+    if(/previous[-_]meeting/i.test(filename)||
+      !/(?:^|[_-])minutes(?:[-_](?:and[-_])?attendance|\d{6,8})?\.pdf$/i.test(filename))continue;
     const dateMatch=url.pathname.match(/\/(20\d{6})\//);
     if(!dateMatch)continue;
     const raw=dateMatch[1];
@@ -151,14 +157,20 @@ function cleanPdfText(value:string):string{
   return value.replace(/\u0000/g,'').replace(/[ \t]+\n/g,'\n').trim();
 }
 
+function readablePdfTextLength(value:string):number{
+  // pdf-parse adds these synthetic page markers even to image-only PDFs.
+  // A many-page scan must not be considered readable because of counters.
+  return value.replace(/^\s*--\s*\d+\s+of\s+\d+\s*--\s*$/gm,'').trim().length;
+}
+
 export function chooseSenateCommitteeMinuteText(input:{
   embeddedText:string;
   ocrText?:string;
 }):{text:string;extractionMethod:'embedded_text'|'ocr_tesseract'}{
   const embedded=cleanPdfText(input.embeddedText);
-  if(embedded.length>=40)return {text:embedded,extractionMethod:'embedded_text'};
+  if(readablePdfTextLength(embedded)>=40)return {text:embedded,extractionMethod:'embedded_text'};
   const ocr=cleanPdfText(input.ocrText??'');
-  if(ocr.length>=40)return {text:ocr,extractionMethod:'ocr_tesseract'};
+  if(readablePdfTextLength(ocr)>=40)return {text:ocr,extractionMethod:'ocr_tesseract'};
   throw new Error('Minnesota Senate committee minutes PDF had too little extractable text');
 }
 
@@ -222,7 +234,7 @@ export async function fetchSenateCommitteeMinutePdf(input:{
     const embeddedText=cleanPdfText(parsed.text);
     const selected=chooseSenateCommitteeMinuteText({
       embeddedText,
-      ...(embeddedText.length<40?{ocrText:ocrSenateCommitteeMinutePdf(bytes)}:{}),
+      ...(readablePdfTextLength(embeddedText)<40?{ocrText:ocrSenateCommitteeMinutePdf(bytes)}:{}),
     });
     return {
       text:selected.text,

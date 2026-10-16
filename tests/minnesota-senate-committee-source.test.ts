@@ -59,6 +59,20 @@ test('Senate committee page parser deduplicates repeated Minutes links', () => {
   assert.equal(rows[0].meetingDate,'2025-02-03');
 });
 
+test('Senate archive discovery includes combined and final minutes without dating previous minutes to the upload directory', () => {
+  const root='https://www.lrl.mn.gov/archive/minutes/senate/2025/energy/20250402/';
+  const files=['energy_20250402_Minutes-and-Attendance.pdf',
+    'energy_20250402_Final-Meeting-Minutes.pdf',
+    'energy_20250402_Previous-Meeting-Minutes.pdf',
+    'energy_20250402_Agenda.pdf','energy_20250402_Attendance.pdf'];
+  const rows=parseSenateCommitteePageHtml({year:2025,committeeName:'Energy',
+    sourceUrl:'https://www.lrl.mn.gov/minutes/comm?commid=26188-0&year=2025',
+    html:files.map(f=>`<li class="d-none"><a href="${root+f}">Open</a></li>`).join(''),
+  });
+  assert.deepEqual(rows.map(r=>r.url),[root+files[1],root+files[0]]);
+  assert.ok(rows.every(r=>r.meetingDate==='2025-04-02'));
+});
+
 
 test('Senate committee minute text selection uses OCR only when embedded text is unavailable', () => {
   assert.deepEqual(
@@ -82,4 +96,12 @@ test('Senate committee minute text selection uses OCR only when embedded text is
     ()=>chooseSenateCommitteeMinuteText({embeddedText:'short',ocrText:'also short'}),
     /too little extractable text/,
   );
+});
+
+test('synthetic page counters from a multi-page scan do not suppress OCR', () => {
+  const counters=Array.from({length:13},(_,i)=>`-- ${i+1} of 13 --`).join('\n\n');
+  const ocr='Taxes Committee\nThursday, April 27th, 2023\nMinutes\nSenator Rest moved the bill. Motion prevailed.';
+  assert.deepEqual(chooseSenateCommitteeMinuteText({embeddedText:counters,ocrText:ocr}),
+    {text:ocr,extractionMethod:'ocr_tesseract'});
+  assert.throws(()=>chooseSenateCommitteeMinuteText({embeddedText:counters}),/too little/);
 });
