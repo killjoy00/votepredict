@@ -14,7 +14,7 @@ import {loadScorecardCatalog,storeRawScorecardCapture,
   storeRawDistrictPartisanship,scorecardPartisanshipReadback} from '../src/operations/senate-scorecard-partisanship-ingest.js';
 
 const MARKER='SENATE_SCORECARDS_PARTISANSHIP_PRODUCTION';
-const MIGRATION='0024_senate_scorecards_district_partisanship.sql';
+const MIGRATION='0025_senate_scorecards_district_partisanship.sql';
 interface Ledger {filename:string;checksum:string}
 function requireMain(env:NodeJS.ProcessEnv):void {
   if(process.argv.length!==2||env.GITHUB_REPOSITORY!=='killjoy00/votepredict'||
@@ -35,16 +35,16 @@ function requireMain(env:NodeJS.ProcessEnv):void {
 }
 function ledgerExpected():Ledger[] {
   const files=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
-  if(files.length!==24||files[23]!==MIGRATION)throw Error('Unreviewed migration inventory');
+  if(files.length!==25||files[23]!=='0024_senate_raw_vote_views.sql'||files[24]!==MIGRATION)throw Error('Unreviewed migration inventory');
   return files.map(filename=>({filename,checksum:createHash('sha256')
     .update(readFileSync('migrations/'+filename)).digest('hex')}));
 }
 function ledgerStatus(actual:Ledger[],expected:Ledger[]):boolean {
-  if(actual.length<23||actual.length>24)throw Error('Migration prefix not ready');
+  if(actual.length<24||actual.length>25)throw Error('Migration prefix not ready');
   for(const [i,row] of actual.entries())
     if(row.filename!==expected[i]?.filename||row.checksum!==expected[i]?.checksum)
       throw Error('Migration ledger checksum/order drift');
-  return actual.length===24;
+  return actual.length===25;
 }
 export function assertAdditiveRawMigration(sql:string):void {
   const stripped=sql.replace(/--[^\n]*/g,'').trim();
@@ -126,7 +126,7 @@ async function main():Promise<void> {
         if(!applied){
           await client.query(migrationSql);
           await client.query('INSERT INTO votepredict_schema_migrations(filename,checksum) VALUES($1,$2)',
-            [MIGRATION,expected[23].checksum]);migrated=true;
+            [MIGRATION,expected[24].checksum]);migrated=true;
         }
         await client.query('COMMIT');
       }catch(error){await client.query('ROLLBACK');throw error;}
