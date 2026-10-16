@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import receipts from '../../docs/evaluation/senate-media-mpr-six-interviews-public-reconciliation-20261011.json' with {type:'json'};
-import {LEADS} from '../../scripts/probe-senate-media-mpr-six-interviews-originals.mjs';
-import {validatePublicInputs} from '../../scripts/reconcile-senate-media-mpr-interviews-public.mjs';
+import {LEADS} from '../scripts/probe-senate-media-mpr-six-interviews-originals.mjs';
+import {validatePublicInputs} from '../scripts/reconcile-senate-media-mpr-interviews-public.mjs';
 test('real bounded GitHub Actions source artifact ZIP and decoded SHA256 are pinned, no raw copyrighted document persisted',()=>{
  assert.equal(receipts.sourceLiveRun.id,38186907288);
  assert.equal(receipts.sourceLiveRun.artifactId,11720490737);

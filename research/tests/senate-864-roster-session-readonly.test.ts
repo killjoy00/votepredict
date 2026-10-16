@@ -10,7 +10,7 @@ import {
  BY_SESSION,BY_YEAR,BY_PERSON_YEAR,
  SENATE_ROSTER_SESSION_ONESHOT_MARKER,
  validateIndependentV5RosterReceipt,auditProtectedRosterSessionMultiplicity,
-} from '../../scripts/audit-senate-864-roster-sessions-readonly.js';
+} from '../scripts/audit-senate-864-roster-sessions-readonly.js';
 
 const ID='blue-owl-12345',BR='br-quiet-moon-111',EP='ep-brisk-stream-123';
 const HOST=EP+'.us-east-2.aws.neon.tech',KEY='SYNTHETIC_PRIVATE_KEY',PW='SYNTHETIC_DB_PASSWORD';

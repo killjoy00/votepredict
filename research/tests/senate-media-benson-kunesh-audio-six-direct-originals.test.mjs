@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {
  PRESS,VERSION,AUDIO_PINNED_FINGERPRINTS,validatePress,
  approvedNamedAudioUrls,parseExactAudioCdx,run
-} from '../../scripts/probe-senate-media-benson-kunesh-audio-six-direct-originals.mjs';
+} from '../scripts/probe-senate-media-benson-kunesh-audio-six-direct-originals.mjs';
 
 const sh=x=>createHash('sha256').update(x).digest('hex');
 const one='https://play.publicradio.org/unreplaced_ua/o/minnesota/news/programs/2022/02/23/original_named_senator_64.mp3';

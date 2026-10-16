@@ -12,7 +12,7 @@ import {
  parseBoundedRuudChamberlainOriginalCDXIndex,
  selectWholeRuudChamberlainOriginalHtmlReplays,
  acquireTwoHistoricalOriginalCandidateDomainSources,
-} from '../../scripts/acquire-ruud-chamberlain-two-historical-first-party-originals.js';
+} from '../scripts/acquire-ruud-chamberlain-two-historical-first-party-originals.js';
 import type {AuditedOfficialSenateDirectory}
  from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir',

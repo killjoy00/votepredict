@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {SOURCE_ONLY_HOLD_CODES,classifySafeOriginalPdfHold,safeOriginalRetryPermitted,
- safeReparseCountComparison} from '../../scripts/audit-senate-864-original-1452-parser-v3.js';
+ safeReparseCountComparison} from '../scripts/audit-senate-864-original-1452-parser-v3.js';
 
 test('#864 original PDF errors produce only reviewed static category codes, never raw diagnostics',()=>{
  const cases=[

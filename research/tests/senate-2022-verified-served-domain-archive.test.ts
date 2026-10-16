@@ -11,7 +11,7 @@ import {
  senatorDomainPreGeneral2022Cdx,
 } from '../../src/evidence/senate-2022-verified-served-domain-archive.js';
 import {acquire2022ServedSenatorDomainHistoricalPages}
- from '../../scripts/acquire-senate-2022-served-domain-wide-pages.js';
+ from '../scripts/acquire-senate-2022-served-domain-wide-pages.js';
 
 const OBSERVED='2026-10-11T00:15:00.000Z';
 function official():AuditedOfficialSenateDirectory{

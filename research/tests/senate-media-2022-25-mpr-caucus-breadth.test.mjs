@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {
  VERSION,LEADS,validateLeads,probeLead,runMprAndCaucusSenateEvidenceBreadth
-} from '../../scripts/probe-senate-media-2022-25-mpr-caucus-breadth-originals.mjs';
+} from '../scripts/probe-senate-media-2022-25-mpr-caucus-breadth-originals.mjs';
 import {parseWaybackCdx,parseCommonCrawlIndex} from '../../scripts/probe-senate-media-mpr-five-year-commoncrawl-originals.mjs';
 const BASE32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 function b32(raw){let v=0,b=0,o='';for(const k of createHash('sha1').update(raw).digest()){

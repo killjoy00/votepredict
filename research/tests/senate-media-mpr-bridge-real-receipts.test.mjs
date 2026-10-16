@@ -4,7 +4,7 @@ import initial from '../../docs/evaluation/senate-media-mpr-2021-and-2024-origin
 import historical from '../../docs/evaluation/senate-media-mpr-hauschild-later-historical-transcript-cue-receipts-20261011.json' with {type:'json'};
 import bridge from '../../docs/evaluation/senate-media-mpr-feed-transcript-bridge-20261011.json' with {type:'json'};
 import cdn from '../../docs/evaluation/senate-media-mpr-cdn-original-audio-20261011.json' with {type:'json'};
-import {SOURCE_MP3S} from '../../scripts/probe-senate-media-mpr-cdn-original-mp3.mjs';
+import {SOURCE_MP3S} from '../scripts/probe-senate-media-mpr-cdn-original-mp3.mjs';
 
 test('real first-party MP3 source receipts pin two current CDN SHA256s, never original historic audio',()=>{
  assert.equal(bridge.publisherLinkedAudio.numberCurrentlySha256VerifiedPublisherAudioBodies,2);

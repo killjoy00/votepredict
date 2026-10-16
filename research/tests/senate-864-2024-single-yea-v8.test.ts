@@ -5,7 +5,7 @@ import {parseSenateCommitteeMinuteVotes} from
  '../../src/evidence/minnesota-senate-committee-minutes.js';
 import {MEMBERSHIP_SQL,YEA_V8_SAFE_PHASES,safeYeaV8Phase,recognizeMissing2024YeaNameInMemory,
   findUniqueMissing2024Choice} from
- '../../scripts/audit-senate-864-2024-one-yea-phased-readonly-v8.js';
+ '../scripts/audit-senate-864-2024-one-yea-phased-readonly-v8.js';
 
 const sha=(x:string)=>createHash('sha256').update(x).digest('hex');
 const text='S.F. 100 was before the committee.\n'+

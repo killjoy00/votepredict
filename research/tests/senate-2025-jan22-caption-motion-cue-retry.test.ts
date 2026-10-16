@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {ORIGINAL_2025_22_PARTIAL_CUE_SHA256,RETRY_TARGET,
  JAN22_RETRY_SCHEMA,verify2025FirstMotionCueSourceOutcome}
- from '../../scripts/retry-senate-2025-jan22-caption-motion-cues.js';
+ from '../scripts/retry-senate-2025-jan22-caption-motion-cues.js';
 
 test('one exact source identity; original partial 2025 cue artifact never changed to complete',()=>{
  assert.equal(JAN22_RETRY_SCHEMA,'senate-2025-jan22-one-original-caption-motion-cue-retry-v1');

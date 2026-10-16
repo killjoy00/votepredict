@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import receipts from '../../docs/evaluation/senate-media-2022-25-mpr-caucus-breadth-20261011.json' with {type:'json'};
-import {VERSION,LEADS,validateLeads} from '../../scripts/probe-senate-media-2022-25-mpr-caucus-breadth-originals.mjs';
+import {VERSION,LEADS,validateLeads} from '../scripts/probe-senate-media-2022-25-mpr-caucus-breadth-originals.mjs';
 const byId=new Map();
 for(const row of receipts.sourceOriginals){
  const prev=byId.get(row.id)||[];prev.push(row);byId.set(row.id,prev);

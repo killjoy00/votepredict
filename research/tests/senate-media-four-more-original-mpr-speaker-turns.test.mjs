@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import manifest from '../../docs/evaluation/senate-media-2022-25-mpr-caucus-breadth-20261011.json' with {type:'json'};
 import {
  VERSION,STUDIES,selectExactOriginalSpeakerStudyPins,checkPinnedOriginalSpeakerTurn,runFourSenatorOriginalSpeakerTurns
-} from '../../scripts/probe-senate-media-four-more-original-mpr-speaker-turns.mjs';
+} from '../scripts/probe-senate-media-four-more-original-mpr-speaker-turns.mjs';
 import {inspectBoundedNamedSpeakerTurn} from '../../scripts/probe-senate-media-mpr-kunesh-original-speaker-turns.mjs';
 const PINS=selectExactOriginalSpeakerStudyPins(manifest);
 const A='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';

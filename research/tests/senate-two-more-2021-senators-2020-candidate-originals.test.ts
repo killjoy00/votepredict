@@ -13,7 +13,7 @@ import {
  parseTwoFurtherSenators2020OriginalCDXIndex,
  selectFourOriginal2020PagesForOneOfTwoSenators,
  acquireTwoFurther2021ServingSenators2020Originals,
-} from '../../scripts/acquire-two-more-2021-senators-2020-candidate-html.js';
+} from '../scripts/acquire-two-more-2021-senators-2020-candidate-html.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';
 const SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';
 const official=[

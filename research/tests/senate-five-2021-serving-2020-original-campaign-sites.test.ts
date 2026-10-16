@@ -13,7 +13,7 @@ import {
  parseFiveSenators2020OriginalCDXIndex,
  selectFourOriginal2020PagesForOneOfFiveSenators,
  acquireFive2020OriginalCampaignSitesFor2021Senators,
-} from '../../scripts/acquire-five-2020-original-campaign-sites-for-2021-senators.js';
+} from '../scripts/acquire-five-2020-original-campaign-sites-for-2021-senators.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';
 const SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';
 const official=[

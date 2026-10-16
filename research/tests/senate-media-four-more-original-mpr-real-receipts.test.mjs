@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import source from '../../docs/evaluation/senate-media-2022-25-mpr-caucus-breadth-20261011.json' with {type:'json'};
 import receipt from '../../docs/evaluation/senate-media-four-more-original-mpr-speaker-turns-20261011.json' with {type:'json'};
-import {STUDIES,VERSION,selectExactOriginalSpeakerStudyPins} from '../../scripts/probe-senate-media-four-more-original-mpr-speaker-turns.mjs';
+import {STUDIES,VERSION,selectExactOriginalSpeakerStudyPins} from '../scripts/probe-senate-media-four-more-original-mpr-speaker-turns.mjs';
 
 const pins=selectExactOriginalSpeakerStudyPins(source);
 const actual=receipt.sourceOriginalSpeakerTurnCaptures;
