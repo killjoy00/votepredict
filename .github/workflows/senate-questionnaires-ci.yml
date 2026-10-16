@@ -14,6 +14,7 @@ on:
       - migrations/0021_mn_senate_questionnaire_raw.sql
       - data/senate-questionnaire-sources.json
       - tests/senate-questionnaires.test.ts
+      - tests/senate-questionnaire-candidate-groups.test.ts
       - .github/workflows/senate-questionnaires-ci.yml
   push:
     branches: ['collect/senate-candidate-questionnaires-20261015', 'collect/senate-questionnaires-more-publishers-20261016']
