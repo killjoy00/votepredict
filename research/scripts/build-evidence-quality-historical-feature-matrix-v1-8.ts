@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import {
   REVIEWED_APPLICABILITY_FEATURE_NAMES,
   reviewedApplicabilityFeatureVector,
-} from '../../src/evidence/historical-density-p2-canonical.js';
+} from '../evidence/historical-density-p2-canonical.js';
 
 const ISSUE = 718;
 const SESSION = '2025-2026';

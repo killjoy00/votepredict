@@ -5,7 +5,7 @@ import { gunzipSync, gzipSync } from 'node:zlib';
 import {
   REVIEWED_APPLICABILITY_FEATURE_NAMES,
   reviewedApplicabilityFeatureVector,
-} from '../../src/evidence/historical-density-p2-canonical.js';
+} from '../evidence/historical-density-p2-canonical.js';
 import { EVIDENCE_QUALITY_HISTORICAL_FEATURES } from '../../src/evaluation/evidence-quality-historical-features.js';
 
 const EXPECTED_ROWS = 135457;

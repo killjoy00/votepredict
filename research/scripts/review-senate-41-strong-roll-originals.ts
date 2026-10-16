@@ -20,7 +20,7 @@ import {
 import {
   HIGH_SIGNAL_PDF_EXPECTED,loadStrongRollSourceManifest,
   triageOriginalRollCueText,type ReviewYear,
-} from '../../src/evidence/senate-committee-41-strong-roll-original-review.js';
+} from '../evidence/senate-committee-41-strong-roll-original-review.js';
 
 const sha=(x:string|Uint8Array)=>createHash('sha256').update(x).digest('hex');
 const MAX_BYTES=3_000_000,MAX_PAGES=30;

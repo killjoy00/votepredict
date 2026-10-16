@@ -5,7 +5,7 @@ import {serializeApprovedYeaV11SafeScalars,V11_SAFE_SCHEMA_VERSION,
  '../../src/evidence/senate-864-2024-yea-v11-lrl-safe-scalars.js';
 import {acquireOriginalLrl2024SenateYearService,
  ORIGINAL_864_LRL_2024_DIRECTORY_URL} from
- '../../src/evidence/senate-864-2024-lrl-year-service-directory.js';
+ '../evidence/senate-864-2024-lrl-year-service-directory.js';
 import {YEA_V11_SAFE_PHASES} from
  '../scripts/audit-senate-864-2024-one-yea-lrl-service-v11.js';
 

@@ -14,7 +14,7 @@ import {
   CFB_YE_LEGAL_RELEASE_RESEARCH_VERSION,
   CFB_OFFICIAL_PRIMARY_YEAR_END_CALENDAR_URLS as URLS,
   originalCfbYearEndLegalReleaseThreshold,
-} from '../../src/evidence/cfb-2023-24-yearend-statutory-thresholds.js';
+} from '../evidence/cfb-2023-24-yearend-statutory-thresholds.js';
 const USER_AGENT='Mozilla/5.0 VotePredict public original CFB calendar and legal history only';
 type Snapshot={sourceUrl:string;sourceSha256:string;bytes:number;observedAt:string;
  sourceType:'official_board_calendar_pdf'|'original_mn_revisor_statute_html';

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { findExactOfficialMeetingDateSection } from '../../src/evidence/senate-committee-date-section.js';
+import { findExactOfficialMeetingDateSection } from '../evidence/senate-committee-date-section.js';
 
 test('dated LRL committee section excludes global media and unrelated Minutes links',()=>{
   const html=`<html><header><a href="/video">Senate Audio Video Archive</a>

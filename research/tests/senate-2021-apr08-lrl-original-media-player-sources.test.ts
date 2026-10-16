@@ -4,7 +4,7 @@ import {
  APR08_LRL_ORIGINAL_PLAYER_SOURCES as original,
  inspectApril08PlayerHTML,
  examinePinnedApril08LrlOriginalPlayerHTML
-} from '../../src/evidence/senate-2021-apr08-lrl-original-media-player-sources.js';
+} from '../evidence/senate-2021-apr08-lrl-original-media-player-sources.js';
 import {APR08_ORIGINAL_MEDIA} from
  '../../src/evidence/senate-2021-apr08-original-media-source-gates.js';
 

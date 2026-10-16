@@ -16,7 +16,7 @@ import {parseSenateCommitteeMinuteVotes,
  MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION} from
  '../../src/evidence/minnesota-senate-committee-minutes.js';
 import {EDUCATION_2024_REPEATED_ROLL_SOURCE} from
- '../../src/evidence/senate-2024-education-repeated-amendment-rolls.js';
+ '../evidence/senate-2024-education-repeated-amendment-rolls.js';
 
 const PIN=EDUCATION_2024_REPEATED_ROLL_SOURCE;
 const EXPECTED:{[key:number]:number}={2022:325,2023:454,2024:258,2025:415};

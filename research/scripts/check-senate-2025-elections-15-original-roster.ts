@@ -2,7 +2,7 @@
 import {mkdirSync,readFileSync,writeFileSync} from 'node:fs';
 import {dirname,resolve} from 'node:path';
 import {audit2025OriginalElectionsAgainstPublicRoster} from
-  '../../src/evidence/senate-committee-2025-elections-15-roster-review.js';
+  '../evidence/senate-committee-2025-elections-15-roster-review.js';
 function main(){
  const args=process.argv.slice(2);
  if(args.length!==6||args[0]!=='--source-json'||

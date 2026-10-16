@@ -7,7 +7,7 @@ import {
   EIGHT_2025_ELECTIONS_CONTEXT_VERSION,EIGHT_2025_ELECTIONS_EXPECTED_OFFSETS,
   FOUR_2025_ORIGINAL_SOURCE_LEDGER_GIT_BLOB,inspectEight2025ElectionMotionSource,
   type Eight2025Date,type SourceCandidateEight,
-} from '../../src/evidence/senate-2025-elections-eight-motion-context.js';
+} from '../evidence/senate-2025-elections-eight-motion-context.js';
 
 const sha=(b:string|Uint8Array)=>createHash('sha256').update(b).digest('hex');
 const blob=(b:Uint8Array)=>createHash('sha1').update('blob '+b.byteLength+'\0').update(b).digest('hex');

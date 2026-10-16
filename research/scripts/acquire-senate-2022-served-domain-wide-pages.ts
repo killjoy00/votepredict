@@ -17,7 +17,7 @@ import {
   HISTORICAL_SENATOR_2022_DOMAIN_ARCHIVE_VERSION,
   senatorOnlyDomain2022Targets,historicalSenatorDomainCdxUrl,
   senatorDomainPreGeneral2022Cdx,
-} from '../../src/evidence/senate-2022-verified-served-domain-archive.js';
+} from '../evidence/senate-2022-verified-served-domain-archive.js';
 
 const MAX_INDEX_BYTES=1_400_000,MAX_REPLAY_BYTES=2_500_000;
 function saveBytes(dir:string,name:string,content:Buffer|null):string|null{

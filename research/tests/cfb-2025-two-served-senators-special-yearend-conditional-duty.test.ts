@@ -7,11 +7,11 @@ import {OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL,
   OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL}
   from '../../src/evidence/senate-official-ever-served-directory.js';
 import {SERVED_2025_YE_CALENDAR,SERVED_2025_YE_CALENDAR_SHA}
-  from '../../src/evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
+  from '../evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
 import {
   audit2025SpecialConditionalYearEndDuties,
   verifyOriginalSpecialCalendarConditional,verifyOriginal2025GeneralCalendar,
-} from '../../src/evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
+} from '../evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
 const PREFIX='docs/evaluation/source-proof/';
 const checkpoint=JSON.parse(readFileSync(
   PREFIX+'cfb-2025-served-senators-2-special-cycle-final-original-source-checkpoint.json','utf8'));

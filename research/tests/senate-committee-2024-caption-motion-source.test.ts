@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import test from 'node:test';
 import {ORIGINAL_2024_CAPTION_PROOF,sourcePinned2024CaptionRecords}
- from '../../src/evidence/senate-committee-2024-caption-motion-source.js';
+ from '../evidence/senate-committee-2024-caption-motion-source.js';
 import {findStrict2025OriginalAutoCaptionMotionCues}
  from '../../src/evidence/senate-committee-caption-motion-cues-v2.js';
 

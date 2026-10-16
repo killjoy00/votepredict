@@ -10,12 +10,12 @@ import type {CfbSenateDistrictPageObservation}
 import {cfbSenateDistrictPageUrl}
   from '../../src/evidence/cfb-senate-district-registration-inventory.js';
 import {CFB_2025_SPECIAL_DISTRICT_ROSTER_SHA256}
-  from '../../src/evidence/cfb-2025-senate-special-original-pdf-proof.js';
+  from '../evidence/cfb-2025-senate-special-original-pdf-proof.js';
 import {
   selectServed2025SpecialFinalTargets,parseServed2025SpecialFinalHeader,
   verifyServed2025SpecialFinalCalendar,cfbServed2025FinalReference,
   auditServed2025SpecialFinalReport,SERVED_2025_SPECIAL_FINAL_DUE_ON,
-} from '../../src/evidence/cfb-2025-served-special-final-pdf-proof.js';
+} from '../evidence/cfb-2025-served-special-final-pdf-proof.js';
 import {cfbReportViewerUrl}
   from '../../src/evidence/cfb-current-report-acquisition.js';
 const ts='2026-10-10T23:51:10.000Z';

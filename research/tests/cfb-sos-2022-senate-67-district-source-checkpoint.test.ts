@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import test from 'node:test';
-import {deriveCfb2022OriginalSegmentRegistrationSet} from '../../src/evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
+import {deriveCfb2022OriginalSegmentRegistrationSet} from '../evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
 const PATH='docs/evaluation/source-proof/cfb-sos-2022-senate-ballot-67-district-source-checkpoint.json';
 const SOURCE='docs/evaluation/source-proof/cfb-2021-25-senate-district-registration-source-checkpoint.json';
 const p=JSON.parse(readFileSync(PATH,'utf8'));

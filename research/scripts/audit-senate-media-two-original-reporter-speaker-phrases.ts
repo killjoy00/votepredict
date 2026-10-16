@@ -13,7 +13,7 @@ import {fileURLToPath} from 'node:url';
 import {
  auditTwoJournalistOriginalSpeakerPhrases,
  type DualReporterQueue,type ReporterArticleLead,type JournalistOriginalProof,
-} from '../../src/evidence/senate-media-independent-reporter-dual-original-phrase-audit.js';
+} from '../evidence/senate-media-independent-reporter-dual-original-phrase-audit.js';
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const Q='docs/evaluation/senate-media-2021-2024-independent-reporter-two-dual-speaker-original-phrase-queue.json';
 const L='docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json';

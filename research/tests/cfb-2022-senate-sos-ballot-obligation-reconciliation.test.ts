@@ -8,7 +8,7 @@ import {
   reconcileCfb2022SenateBallotPredicates,
   type SosSenate2022Result,
   type CfbSenate2022Candidate,
-} from '../../src/evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
+} from '../evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
 
 const original=JSON.parse(readFileSync(
   'docs/evaluation/source-proof/cfb-2021-25-senate-district-registration-source-checkpoint.json','utf8'));

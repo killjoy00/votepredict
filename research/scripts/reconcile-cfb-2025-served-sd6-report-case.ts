@@ -15,7 +15,7 @@ import {
 import {
   SENATE_SD6_2025_REPORT_OBLIGATION_CASE_VERSION,
   SENATE_SD6_2025_PROOF_PATH,reconcileServedSenatorSd6ReportCase,
-} from '../../src/evidence/cfb-2025-served-sd6-report-obligation-case.js';
+} from '../evidence/cfb-2025-served-sd6-report-obligation-case.js';
 async function lrlHtml(url:string){
   const res=await fetch(url,{headers:{'user-agent':'VotePredict/2.0 historical-only-SD6-filer-obligation-audit'},
     redirect:'follow',signal:AbortSignal.timeout(45_000)});

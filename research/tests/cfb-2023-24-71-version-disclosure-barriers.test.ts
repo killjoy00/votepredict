@@ -7,7 +7,7 @@ import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {originalCfbYearEndLegalReleaseThreshold}
-  from '../../src/evidence/cfb-2023-24-yearend-statutory-thresholds.ts';
+  from '../evidence/cfb-2023-24-yearend-statutory-thresholds.ts';
 import {
   parseCfb2023to24SourceVersionStatutoryBounds,
   assessCfb2023to24HistoricalAvailability,

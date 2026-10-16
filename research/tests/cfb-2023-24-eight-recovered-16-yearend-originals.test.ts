@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 import {
   selectEightRecoveredSenators16OriginalYearends,
   classifyEightRecovered16OriginalSourceRuns,
-} from '../../src/evidence/cfb-2023-24-eight-recovered-16-yearend-originals.js';
+} from '../evidence/cfb-2023-24-eight-recovered-16-yearend-originals.js';
 import {
   served2023to24YearEndRef,auditServed2023to24OriginalYearEnd,
   summarize28YearEndSource,

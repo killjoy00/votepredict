@@ -10,11 +10,11 @@ import {readExactPriorMediaHtmlProof,inspectMediaPageCaptionSurface}
 import {fetchBoundedSenateMediaRecordHtml}
  from '../../src/evidence/senate-committee-138-record-html-metadata.js';
 import {retrieveVerifiedOfficialCaptionMarkup}
- from '../../src/evidence/senate-committee-caption-motion-cues.js';
+ from '../evidence/senate-committee-caption-motion-cues.js';
 import {findStrict2025OriginalAutoCaptionMotionCues}
  from '../../src/evidence/senate-committee-caption-motion-cues-v2.js';
 import {ORIGINAL_2023_CAPTION_PROOFS,sourcePinned2023CaptionRecords}
- from '../../src/evidence/senate-committee-2023-caption-motion-source.js';
+ from '../evidence/senate-committee-2023-caption-motion-source.js';
 
 const a=process.argv.slice(2);
 if(a.length!==10||a[0]!=='--hrefs'||a[2]!=='--original-html'

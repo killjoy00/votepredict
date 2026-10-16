@@ -10,7 +10,7 @@ import {fetchBoundedSenateMediaRecordHtml}
  from '../../src/evidence/senate-committee-138-record-html-metadata.js';
 import {readOriginal2025CaptionAvailabilityProof,findAutoCaptionMotionCueWindows,
  retrieveVerifiedOfficialCaptionMarkup}
- from '../../src/evidence/senate-committee-caption-motion-cues.js';
+ from '../evidence/senate-committee-caption-motion-cues.js';
 
 export const ORIGINAL_2025_22_PARTIAL_CUE_SHA256=
  '6c39b11830b2c3e53e0b14f037203cbbe85e0b0b4e07dc0a3f1610f0d56ff00c' as const;

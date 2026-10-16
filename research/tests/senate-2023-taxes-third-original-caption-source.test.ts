@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {ORIGINAL_APR27_TAXES_CAPTION_SOURCE,verifyOriginalApr27ThirdCaptionLead}
- from '../../src/evidence/senate-2023-taxes-third-original-caption-source.js';
+ from '../evidence/senate-2023-taxes-third-original-caption-source.js';
 test('previously uninspected caption stream exactly belongs to Senate Taxes hearing 2023-04-27',()=>{
  const x=ORIGINAL_APR27_TAXES_CAPTION_SOURCE;
  assert.equal(x.year,2023);

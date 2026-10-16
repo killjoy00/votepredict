@@ -14,7 +14,7 @@ import {parseOfficialMnSenateServiceDirectory}
 import {
  independentlyAuditBillIngebrigtsen27OriginalHistoricalPolicyExcerpts,
  type BillArchivedIssuePageSourceManifest,
-} from '../../src/evidence/senate-bill-ingebrigtsen-historic-27-original-site-excerpts-proof.js';
+} from '../evidence/senate-bill-ingebrigtsen-historic-27-original-site-excerpts-proof.js';
 const GOV_SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';
 function whole(path:string,min:number,max:number){
  const s=statSync(path);

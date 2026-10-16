@@ -5,7 +5,7 @@ import {
   parseCfbCandidateRegistryGrid,
   type CfbCandidateRegistrySource,
   type CfbCandidateRegistryListAction,
-} from '../../src/evidence/cfb-current-candidate-registry-join.js';
+} from '../evidence/cfb-current-candidate-registry-join.js';
 
 const allCols=[
   'RegisteredEntityID','RegisteredEntityFullName','OfficeSoughtFullName',

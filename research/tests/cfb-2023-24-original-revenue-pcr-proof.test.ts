@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {select22AuthenticSenatorRegistrationTargets} from
- '../../src/evidence/cfb-2023-24-official-committee-status-proof.js';
+ '../evidence/cfb-2023-24-official-committee-status-proof.js';
 import {inspectOriginalRevenuePcrReport,ORIGINAL_REVENUE_PCR_ANNUAL_SOURCES}
- from '../../src/evidence/cfb-2023-24-original-revenue-pcr-proof.js';
+ from '../evidence/cfb-2023-24-original-revenue-pcr-proof.js';
 const SOURCE='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 const originals=readFileSync(SOURCE,'utf8');
 const senators=select22AuthenticSenatorRegistrationTargets(originals);

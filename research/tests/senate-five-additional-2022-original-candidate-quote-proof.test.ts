@@ -9,7 +9,7 @@ import {ISSUE_POSITION_FAMILIES} from '../../src/evidence/issue-position-extract
 import {
  FIVE_MORE_ACTUAL_SENATORS_2022_CAPTURE_DATED_CAMPAIGN_QUOTES_VERSION,
  auditFiveNew2022CampaignSiteCandidateQuotes,
-} from '../../src/evidence/senate-five-additional-served-2022-original-candidate-quote-audit.js';
+} from '../evidence/senate-five-additional-served-2022-original-candidate-quote-audit.js';
 import type {AuditedOfficialSenateDirectory} from '../../src/evidence/senate-official-ever-served-directory.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';
 const SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';

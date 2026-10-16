@@ -10,13 +10,13 @@ import {readExactPriorMediaHtmlProof,inspectMediaPageCaptionSurface}
 import {fetchBoundedSenateMediaRecordHtml}
  from '../../src/evidence/senate-committee-138-record-html-metadata.js';
 import {retrieveVerifiedOfficialCaptionMarkup}
- from '../../src/evidence/senate-committee-caption-motion-cues.js';
+ from '../evidence/senate-committee-caption-motion-cues.js';
 import {findStrict2025OriginalAutoCaptionMotionCues}
  from '../../src/evidence/senate-committee-caption-motion-cues-v2.js';
 import {ORIGINAL_APR27_TAXES_CAPTION_SOURCE,verifyOriginalApr27ThirdCaptionLead}
- from '../../src/evidence/senate-2023-taxes-third-original-caption-source.js';
+ from '../evidence/senate-2023-taxes-third-original-caption-source.js';
 import {PROVEN_2023_APR27_THIRD_CAPTION,verifyProven2023Apr27ThirdCaptionJson}
- from '../../src/evidence/senate-2023-apr27-third-caption-strict-source.js';
+ from '../evidence/senate-2023-apr27-third-caption-strict-source.js';
 const argv=process.argv.slice(2);
 if(argv.length!==10||argv[0]!=='--hrefs'||argv[2]!=='--original-html'
  ||argv[4]!=='--first-caption'||argv[6]!=='--third-source'||argv[8]!=='--output')

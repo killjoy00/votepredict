@@ -11,7 +11,7 @@ import {
  ORIGINAL_REVISOR_TERMINATION_2023,
  ORIGINAL_REVISOR_TERMINATION_2024,
  auditOriginalSection10A245Source,
-} from '../../src/evidence/cfb-2023-24-original-10a245-committee-termination.js';
+} from '../evidence/cfb-2023-24-original-10a245-committee-termination.js';
 const SOURCES=[{year:2023 as const,url:ORIGINAL_REVISOR_TERMINATION_2023},
  {year:2024 as const,url:ORIGINAL_REVISOR_TERMINATION_2024}];
 async function fetchOfficialHistoricalStatute(input:(typeof SOURCES)[number]){

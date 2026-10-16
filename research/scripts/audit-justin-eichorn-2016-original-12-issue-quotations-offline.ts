@@ -14,7 +14,7 @@ import {parseOfficialMnSenateServiceDirectory}
 import {
  independentlyAuditJustinEichorn12ExactOriginal2016CampaignIssueStatements,
  type EichornOriginalIssuesSourceManifest,
-} from '../../src/evidence/senate-justin-eichorn-2016-original-12-quote-proof.js';
+} from '../evidence/senate-justin-eichorn-2016-original-12-quote-proof.js';
 const GOV='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';
 function bounded(path:string,min:number,max:number){
  const v=statSync(path);

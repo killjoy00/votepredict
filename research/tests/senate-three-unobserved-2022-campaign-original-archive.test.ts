@@ -4,7 +4,7 @@ import {
  UNOBSERVED_SENATE_SITE_2022_LEADS,
  parseOriginalThreeSenatorCdxResponse,
  sourceYear2022CitationLimit,
-} from '../../src/evidence/senate-three-unobserved-2022-campaign-original-archive.js';
+} from '../evidence/senate-three-unobserved-2022-campaign-original-archive.js';
 
 const header=['timestamp','original','mimetype','statuscode','digest','length'];
 const D='A'.repeat(32);

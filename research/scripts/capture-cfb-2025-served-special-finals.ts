@@ -18,7 +18,7 @@ import {
   SERVED_2025_SPECIAL_FINAL_VERSION,selectServed2025SpecialFinalTargets,
   verifyServed2025SpecialFinalCalendar,cfbServed2025FinalReference,
   auditServed2025SpecialFinalReport,
-} from '../../src/evidence/cfb-2025-served-special-final-pdf-proof.js';
+} from '../evidence/cfb-2025-served-special-final-pdf-proof.js';
 import {fetchCfbCandidateHistoricalReportReferenceSnapshot}
   from '../../src/evidence/cfb-candidate-report-history.js';
 import {fetchCfbReportViewerText}

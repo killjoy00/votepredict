@@ -13,7 +13,7 @@ import {resolve,dirname,sep} from 'node:path';
 import {
  SOS_2023_SENATE_ROSTER_SOURCE_VERSION,SOS_2023_SENATE_ROSTER_PDF,
  inspectOriginal2023SosSenateRoster,
-} from '../../src/evidence/cfb-2023-official-sos-senate-roster-service.js';
+} from '../evidence/cfb-2023-official-sos-senate-roster-service.js';
 const SOURCE='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 function errcode(e:unknown):string{
  const t=e instanceof Error?e.message:String(e);

@@ -4,7 +4,7 @@ import test from 'node:test';
 import {
   inspectCfbBoardContemporaryYearEndMemo,
   BOARD_YE_OPERATIONS_ORIGINAL_SOURCES,
-} from '../../src/evidence/cfb-2023-24-board-contemporaneous-yearend-filing-counts.js';
+} from '../evidence/cfb-2023-24-board-contemporaneous-yearend-filing-counts.js';
 const intro='State of Minnesota\nDate: January 31, 2024\nExecutive Director’s Report – Board Operations\nYear-end Reports\n';
 const y23=intro+'Campaign Finance Program. The year-end report of receipts and expenditures for 2023 is due on January 31, 2024. Reports are expected from 1,299 candidate committees, political party units, and political committees and funds. This is the first reporting period where CFRO is being used to file reports.';
 const y24=intro+'Campaign Finance Program. The year-end report of receipts and expenditures for 2024 was due on January 31, 2025. Of the 1,320 reports due from candidate committees, political party units, and political committees and funds, 1,212 (92%) were filed by the deadline. As of the date of this memo there are 64 reports still outstanding.';

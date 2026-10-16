@@ -6,7 +6,7 @@ import {mkdirSync,writeFileSync} from 'node:fs';
 import {resolve,dirname} from 'node:path';
 import {createHash} from 'node:crypto';
 import {fetchSenateCommitteeMinutePdf} from '../../src/evidence/minnesota-senate-committee-source.js';
-import {MN_ORIGINAL_RULE1210_THREE} from '../../src/evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
+import {MN_ORIGINAL_RULE1210_THREE} from '../evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
 const SOURCE=MN_ORIGINAL_RULE1210_THREE.sf9ss1;
 
 const sha=(s:string)=>createHash('sha256').update(s).digest('hex');

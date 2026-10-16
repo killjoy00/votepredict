@@ -17,7 +17,7 @@ import {
   selectSixteenParentAuthenticatedYeAmendments,
   auditAuthenticatedParentYeAmendment,auditSixteenAmendmentSourceSequence,
   classifySixteenReviewed2023to24AmendedSourceReferences,
-} from '../../src/evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
+} from '../evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
 
 const P='docs/evaluation/source-proof/';
 function kind(e:unknown){

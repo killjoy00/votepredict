@@ -8,7 +8,7 @@ import {createHash} from 'node:crypto';
 import {dirname,resolve,sep} from 'node:path';
 import {HOFFMAN_2023_ORIGINAL_BOARD_AGREEMENT,
  inspectHoffman2023OriginalBoardAction} from
- '../../src/evidence/cfb-2023-hoffman-original-board-committee-proof.js';
+ '../evidence/cfb-2023-hoffman-original-board-committee-proof.js';
 const FILE71='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 async function main(){
  const args=process.argv.slice(2);

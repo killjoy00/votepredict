@@ -5,7 +5,7 @@ import { normalizeMemberName } from '../../src/sources/minnesota/house-votes.js'
 import {
   inspectOfficialSenatePdfHeader,inspectProvisionalMatchedSenateMotion,
   sourceAbsenteeChoiceConflicts,
-} from '../../src/evidence/senate-committee-19-original-date-attendance-review.js';
+} from '../evidence/senate-committee-19-original-date-attendance-review.js';
 import type { SupplementalNamedVoteCandidate } from '../../src/evidence/senate-committee-supplemental-named-roll-review.js';
 const hash=(v:string)=>createHash('sha256').update(v).digest('hex');
 function candidate(sourceOffset:number,yes:string[],no:string[]):SupplementalNamedVoteCandidate{

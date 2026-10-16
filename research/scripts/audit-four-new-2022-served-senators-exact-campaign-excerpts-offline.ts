@@ -11,7 +11,7 @@ import {parseOfficialMnSenateServiceDirectory} from '../../src/evidence/senate-o
 import {
  auditFour2023ServingSenators47GenuineArchived2022CandidateStatements,
  type SixNewOriginalCampaignManifest,
-} from '../../src/evidence/senate-four-new-2022-original-campaign-excerpt-proof.js';
+} from '../evidence/senate-four-new-2022-original-campaign-excerpt-proof.js';
 function bounded(file:string,min:number,max:number){
  const stat=statSync(file);
  if(!stat.isFile()||stat.size<min||stat.size>max)

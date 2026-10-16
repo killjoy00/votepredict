@@ -7,7 +7,7 @@ import {
  ORIGINAL_REVISOR_TERMINATION_2023,ORIGINAL_REVISOR_TERMINATION_2024,
  auditOriginalSection10A245Source,
  classifyPrincipalCommitteeTerminatedOnHistoricalDate,
-} from '../../src/evidence/cfb-2023-24-original-10a245-committee-termination.js';
+} from '../evidence/cfb-2023-24-original-10a245-committee-termination.js';
 const fixture=[
  '<!doctype html><html><body>',
  '<h1>10A.245 ADMINISTRATIVE TERMINATION OF INACTIVE COMMITTEES AND FUNDS.</h1>',

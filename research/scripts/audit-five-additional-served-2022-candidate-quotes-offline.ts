@@ -12,7 +12,7 @@ import {parseOfficialMnSenateServiceDirectory}
 import {
  auditFiveNew2022CampaignSiteCandidateQuotes,
  type SixFollowupOriginalArchivedSourceManifest,
-} from '../../src/evidence/senate-five-additional-served-2022-original-candidate-quote-audit.js';
+} from '../evidence/senate-five-additional-served-2022-original-candidate-quote-audit.js';
 function bounded(path:string,min:number,max:number){
  const s=statSync(path);
  if(!s.isFile()||s.size<min||s.size>max)

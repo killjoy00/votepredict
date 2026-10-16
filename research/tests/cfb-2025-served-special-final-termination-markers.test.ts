@@ -4,11 +4,11 @@ import {readFileSync} from 'node:fs';
 import {cfbReportViewerUrl} from '../../src/evidence/cfb-current-report-acquisition.js';
 import {cfbServed2025FinalReference,
   type Served2025SpecialFinalTarget}
-  from '../../src/evidence/cfb-2025-served-special-final-pdf-proof.js';
+  from '../evidence/cfb-2025-served-special-final-pdf-proof.js';
 import {
   CFB_TWO_SERVED_SPECIAL_TERMINATION_PROBE_SCHEMA,
   probeServedSenatorSpecialFinalTerminationMarkers,
-} from '../../src/evidence/cfb-2025-served-special-final-termination-markers.js';
+} from '../evidence/cfb-2025-served-special-final-termination-markers.js';
 
 const CHECKPOINT=JSON.parse(readFileSync(
   'docs/evaluation/source-proof/cfb-2025-served-senators-2-special-cycle-final-original-source-checkpoint.json','utf8'));

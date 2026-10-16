@@ -13,7 +13,7 @@ import {
   extractNineSourceIndividualRolls,selectNinePinnedSourceRollOriginals,
 } from '../../src/evidence/senate-committee-nine-no-label-counted-rolls.js';
 import {inspect2023OriginalElectionRollDateAndAttendance,parse2023ElectionsOriginalMeetingAttendance}
- from '../../src/evidence/senate-committee-2023-elections-attendance-headers.js';
+ from '../evidence/senate-committee-2023-elections-attendance-headers.js';
 const sha=(v:string|Uint8Array)=>createHash('sha256').update(v).digest('hex');
 const MAX_BYTES=3_000_000,MAX_PAGES=30;
 function args(){

@@ -8,7 +8,7 @@ import {
 } from '../../src/evidence/senate-official-ever-served-directory.js';
 import {
   reconcileServedSenatorSd6ReportCase,
-} from '../../src/evidence/cfb-2025-served-sd6-report-obligation-case.js';
+} from '../evidence/cfb-2025-served-sd6-report-obligation-case.js';
 const path='docs/evaluation/source-proof/cfb-2025-senate-district6-report-pdfs.json';
 const pinned=JSON.parse(readFileSync(path,'utf8')) as Record<string,any>;
 const date='2026-10-10T23:54:21.000Z';

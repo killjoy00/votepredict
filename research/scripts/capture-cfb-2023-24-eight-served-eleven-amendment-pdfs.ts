@@ -13,12 +13,12 @@ import {fetchCfbCandidateHistoricalReportReferenceSnapshot}
 import {fetchCfbReportViewerText}
   from '../../src/evidence/cfb-current-report-acquisition.js';
 import {type CfbAmendedPdfSource}
-  from '../../src/evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
+  from '../evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
 import {
   ELEVEN_HISTORIC_YE_AMENDMENTS_VERSION,
   selectElevenIndependentlyParentAuthenticatedAmendments,
   auditElevenAmendedPdfs,
-} from '../../src/evidence/cfb-2023-24-eight-served-eleven-amendments.js';
+} from '../evidence/cfb-2023-24-eight-served-eleven-amendments.js';
 const P='docs/evaluation/source-proof/';
 const inputFiles={
  firstCePsv:'cfb-2022-served-d13-24-original-ce-pdfs.psv',

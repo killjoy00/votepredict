@@ -17,7 +17,7 @@ import {
   CFB_SENATE_SOURCE_VIEWER_CHECKPOINT_PATH,
   auditCfb2021to24SenateViewerReferenceCounts,
   deriveCfb2021to24SenateViewerCohort,
-} from '../../src/evidence/cfb-2021-24-senate-viewer-report-counts.js';
+} from '../evidence/cfb-2021-24-senate-viewer-report-counts.js';
 
 const BASE='https://register.cfb.mn.gov';
 function safeErrorType(error:unknown):string {

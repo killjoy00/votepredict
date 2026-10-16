@@ -6,7 +6,7 @@ import {
   HELD_ELECTIONS_TARGETS,inspect2025HeldOriginalElectionsRoll,
   parse2025ElectionsOriginalOpeningAttendance,
   type HeldElectionDate,
-} from '../../src/evidence/senate-2025-elections-two-held-original-attendance.js';
+} from '../evidence/senate-2025-elections-two-held-original-attendance.js';
 import type {SupplementalNamedVoteCandidate} from
   '../../src/evidence/senate-committee-supplemental-named-roll-review.js';
 

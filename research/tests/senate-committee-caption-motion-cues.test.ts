@@ -4,7 +4,7 @@ import {
  findAutoCaptionMotionCueWindows,readOriginal2025CaptionAvailabilityProof,
  retrieveVerifiedOfficialCaptionMarkup,SENATE_2025_UNLINKED_CAPTION_CUE_SCHEMA,
  PREVIOUS_2025_ORIGINAL_CAPTION_METADATA,
-} from '../../src/evidence/senate-committee-caption-motion-cues.js';
+} from '../evidence/senate-committee-caption-motion-cues.js';
 
 test('pins actual successful original 2025 22-record source metadata and required SHA',()=>{
  assert.equal(SENATE_2025_UNLINKED_CAPTION_CUE_SCHEMA,

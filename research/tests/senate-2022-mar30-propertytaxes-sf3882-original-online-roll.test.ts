@@ -4,7 +4,7 @@ import {
  MAR30_2022_SF3882_COMMITTEE_SOURCE as S,
  inspectOriginalMar30SF3882SubcommitteeMinutes,
  inspectFictionalMar30SF3882OnlineMinutes
-} from '../../src/evidence/senate-2022-propertytaxes-mar30-sf3882-online-roll.js';
+} from '../evidence/senate-2022-propertytaxes-mar30-sf3882-online-roll.js';
 const yes=['FictionalAlpha','FictionalBravo'];
 const no=['FictionalDelta','FictionalEcho'];
 const mock=()=>{

@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 import {
  ORIGINAL_SENATE_2024_SEATING_PDF,ORIGINAL_LRL_93RD_SENATE_SEATING_ARCHIVE,
  selectPrior2023SOSRosterCfbPeople,inspect2024OriginalSenateSeatingPdf,
-} from '../../src/evidence/cfb-2024-original-senate-seating-source.js';
+} from '../evidence/cfb-2024-original-senate-seating-source.js';
 const p='docs/evaluation/source-proof/cfb-2023-original-sos-22-real-senators-roster-independent-service-proof.psv';
 const source=readFileSync(p,'utf8');
 const members=selectPrior2023SOSRosterCfbPeople(source);

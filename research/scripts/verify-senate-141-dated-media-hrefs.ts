@@ -8,7 +8,7 @@ import {
   inspectPinnedDateMediaAnchors,
   loadPinnedDatedMissingMediaYear,type MissingMediaYear,
   type PriorMeetingSourceRow,
-} from '../../src/evidence/senate-committee-dated-media-link-proof.js';
+} from '../evidence/senate-committee-dated-media-link-proof.js';
 
 const sha=(x:string|Uint8Array)=>createHash('sha256').update(x).digest('hex');
 const CAP=2_000_000;

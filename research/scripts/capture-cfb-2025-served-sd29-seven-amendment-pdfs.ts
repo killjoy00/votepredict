@@ -16,7 +16,7 @@ import {
   SD29_2025_SEVEN_AMENDMENTS_SCHEMA,SD29_2025_SOURCE_RESPONSE_SHA,
   selectSd29SevenAmendmentTargets,auditSd29Amendment,
   classifySd29AmendmentSequence,
-} from '../../src/evidence/cfb-2025-served-sd29-seven-amendments.js';
+} from '../evidence/cfb-2025-served-sd29-seven-amendments.js';
 
 const P='docs/evaluation/source-proof/';
 const TARGET_QUEUE=P+'cfb-2021-25-served-senator-next-source-pdf-targets.psv';

@@ -14,7 +14,7 @@ import {
   BOARD_YE_OPERATIONS_ORIGINAL_SOURCES,
   inspectCfbBoardContemporaryYearEndMemo,
   type AuditYear,
-} from '../../src/evidence/cfb-2023-24-board-contemporaneous-yearend-filing-counts.js';
+} from '../evidence/cfb-2023-24-board-contemporaneous-yearend-filing-counts.js';
 function errorKind(e:unknown):string{
  const v=e instanceof Error?e.message:String(e);
  return /timeout|abort/i.test(v)?'official_board_original_pdf_timeout':

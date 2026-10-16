@@ -15,7 +15,7 @@ import audit from '../../data/evaluation/senate-ruud-2013-chamberlain-2022-origi
 import {
  independentlyProveRuudChamberlain26OriginalCampaignAndSenatorIssuesExcerpts,
  type RuudChamberlainExactOriginalAcquisition,
-} from '../../src/evidence/senate-ruud-2013-chamberlain-2022-26-original-excerpts-proof.js';
+} from '../evidence/senate-ruud-2013-chamberlain-2022-26-original-excerpts-proof.js';
 const GOV_SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';
 const sha=(b:Uint8Array)=>createHash('sha256').update(b).digest('hex');
 function readOriginal(path:string,min:number,max:number){

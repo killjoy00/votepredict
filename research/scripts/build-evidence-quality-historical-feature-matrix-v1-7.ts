@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { REVIEWED_APPLICABILITY_FEATURE_NAMES, reviewedApplicabilityFeatureVector } from '../../src/evidence/historical-density-p2-canonical.js';
+import { REVIEWED_APPLICABILITY_FEATURE_NAMES, reviewedApplicabilityFeatureVector } from '../evidence/historical-density-p2-canonical.js';
 
 const EXPECTED_ROWS = 135457;
 const EXPECTED_ROW_KEY_SHA = '3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72';

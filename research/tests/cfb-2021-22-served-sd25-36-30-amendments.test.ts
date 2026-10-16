@@ -9,7 +9,7 @@ import {
   REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS,
   verifyServedSd25to36AmendmentSourceOutcome,
   type CfbHistoricalAmendedPdfSource,
-} from '../../src/evidence/cfb-2021-22-served-sd25-36-30-amendments.js';
+} from '../evidence/cfb-2021-22-served-sd25-36-30-amendments.js';
 import {cfbReportViewerUrl}
   from '../../src/evidence/cfb-current-report-acquisition.js';
 import {createHash} from 'node:crypto';

@@ -12,7 +12,7 @@ import {historicalArchiveSha1Base32,originalCampaignVisibleText}
  from '../../src/evidence/senate-authenticated-campaign-excerpt-audit.js';
 import {UNOBSERVED_SENATE_SITE_2022_LEADS,PROBE_ISSUES,
  parseOriginalThreeSenatorCdxResponse} from
- '../../src/evidence/senate-three-unobserved-2022-campaign-original-archive.js';
+ '../evidence/senate-three-unobserved-2022-campaign-original-archive.js';
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const params=process.argv.slice(2);
 const flag=(key)=>{const i=params.indexOf(key);assert.ok(i>=0&&params[i+1]&&!params[i+1].startsWith('--'));return resolve(params[i+1]);};

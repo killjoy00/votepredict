@@ -6,7 +6,7 @@ import {
   REMAINING_2025_ELECTIONS_ORIGINAL_ROLL_OFFSETS as expected,
   inspectOther2025ElectionOriginalRoll,
   type OtherElections2025Date,
-} from '../../src/evidence/senate-2025-elections-remaining-thirteen-attendance.js';
+} from '../evidence/senate-2025-elections-remaining-thirteen-attendance.js';
 import type {SupplementalNamedVoteCandidate} from
   '../../src/evidence/senate-committee-supplemental-named-roll-review.js';
 

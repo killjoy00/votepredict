@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 import {cfbElectronicReportAvailableOn} from '../../src/evidence/cfb-report-availability.js';
 import {
   SERVED_2025_SPECIAL_FINAL_VERSION,
-} from '../../src/evidence/cfb-2025-served-special-final-pdf-proof.js';
+} from '../evidence/cfb-2025-served-special-final-pdf-proof.js';
 const ROOT='docs/evaluation/source-proof/';
 const LEDGER=ROOT+'cfb-2025-served-senators-2-special-cycle-final-original-pdf-ledger.psv';
 const PROOF=ROOT+'cfb-2025-served-senators-2-special-cycle-final-original-source-checkpoint.json';

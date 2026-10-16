@@ -10,13 +10,13 @@ import {tmpdir} from 'node:os';
 import {dirname,join,resolve} from 'node:path';
 import {fetchSenateCommitteeMinutePdf} from '../../src/evidence/minnesota-senate-committee-source.js';
 import {loadStrongRollSourceManifest} from
-  '../../src/evidence/senate-committee-41-strong-roll-original-review.js';
+  '../evidence/senate-committee-41-strong-roll-original-review.js';
 import {extractSupplementalNamedSenateRollCandidates} from
   '../../src/evidence/senate-committee-supplemental-named-roll-review.js';
 import {
   HELD_ELECTIONS_TARGETS,inspect2025HeldOriginalElectionsRoll,
   type HeldElectionDate,
-} from '../../src/evidence/senate-2025-elections-two-held-original-attendance.js';
+} from '../evidence/senate-2025-elections-two-held-original-attendance.js';
 
 const sha=(v:string|Uint8Array)=>createHash('sha256').update(v).digest('hex');
 const MAX_BYTES=3_000_000,MAX_PAGES=30;

@@ -5,7 +5,7 @@ import test from 'node:test';
 import {
  originalCfbYearEndLegalReleaseThreshold,
  CFB_OFFICIAL_PRIMARY_YEAR_END_CALENDAR_URLS,
-} from '../../src/evidence/cfb-2023-24-yearend-statutory-thresholds.js';
+} from '../evidence/cfb-2023-24-yearend-statutory-thresholds.js';
 const ck=JSON.parse(readFileSync(
  'docs/evaluation/source-proof/cfb-2023-24-original-board-yearend-calendar-and-revisor-release-checkpoint.json','utf8'));
 test('five original, source-SHA/byte-verified CFB/Revisor documents fix release floor and no false legal denominator',()=>{

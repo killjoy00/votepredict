@@ -4,8 +4,8 @@ import {
  MN_ORIGINAL_RULE1210_THREE as SOURCES,
  inspectOriginalThreeRule1210CommitteeRoll,
  inspectFictionalThreeRule1210CommitteeRoll
-} from '../../src/evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
-import type {ThreeRule1210Target} from '../../src/evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
+} from '../evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
+import type {ThreeRule1210Target} from '../evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
 
 const originalMotions={
  sf1:'Pursuant to Rule 12.10, upon the request of three members, a roll call was taken on the motion that S.F. No. 1, as amended, be recommended to pass.',

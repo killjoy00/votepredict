@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 import {
  selectTwoHeldOfficialCfbSourceDocuments,heldOfficialSourceRef,
  analyzeHeldCfbSourceBinary,compareHeldCfbGetPost,
-} from '../../src/evidence/cfb-2023-24-held-source-pdf-diagnostics.js';
+} from '../evidence/cfb-2023-24-held-source-pdf-diagnostics.js';
 import {cfbReportViewerUrl} from '../../src/evidence/cfb-current-report-acquisition.js';
 const P='docs/evaluation/source-proof/';
 const originals={

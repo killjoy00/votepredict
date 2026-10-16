@@ -6,7 +6,7 @@ import {
   SOS_2023_SENATE_ROSTER_PDF,
   select22Known2022SenatorsForOfficial2023Roster,
   inspectOriginal2023SosSenateRoster,
-} from '../../src/evidence/cfb-2023-official-sos-senate-roster-service.js';
+} from '../evidence/cfb-2023-official-sos-senate-roster-service.js';
 const p='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 const source71=readFileSync(p,'utf8');
 const people=select22Known2022SenatorsForOfficial2023Roster(source71);

@@ -14,7 +14,7 @@ import {parseOfficialMnSenateServiceDirectory}
 import {
  independentlyAuditKentEken13True2020ArchivedCampaignPolicyStatements,
  type Two2021ServingSenators2020OriginalSourceManifest,
-} from '../../src/evidence/senate-kent-eken-2020-13-historical-campaign-excerpt-proof.js';
+} from '../evidence/senate-kent-eken-2020-13-historical-campaign-excerpt-proof.js';
 const GOV_SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';
 function safeRead(path:string,min:number,max:number){
  const f=statSync(path);

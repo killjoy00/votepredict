@@ -10,7 +10,7 @@ import {ISSUE_POSITION_FAMILIES} from '../../src/evidence/issue-position-extract
 import {
  FIVE_NEW_ACTUALLY_SERVED_2022_ORIGINAL_97_ISSUES_VERSION,
  auditFiveNewActuallyServedSenators97ArchiveDatedPolicyExcerpts,
-} from '../../src/evidence/senate-five-new-served-2022-97-capture-dated-exact-campaign-excerpts.js';
+} from '../evidence/senate-five-new-served-2022-97-capture-dated-exact-campaign-excerpts.js';
 import type {AuditedOfficialSenateDirectory}
  from '../../src/evidence/senate-official-ever-served-directory.js';
 

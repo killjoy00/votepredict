@@ -4,7 +4,7 @@ import {
   P2_APPLICABILITY_CLAIM_RULES,
   applicabilityPatternHits,
   applicabilitySnippet,
-} from '../../src/evidence/historical-density-p2-applicability.js';
+} from '../evidence/historical-density-p2-applicability.js';
 
 test('frozen P2 applicability rules preserve 14 directional semantic groups and 17 source rows', () => {
   assert.equal(P2_APPLICABILITY_CLAIM_RULES.length, 14);

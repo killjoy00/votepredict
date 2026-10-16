@@ -14,9 +14,9 @@ import { dirname,join,resolve } from 'node:path';
 import { fetchSenateCommitteeMinutePdf } from '../../src/evidence/minnesota-senate-committee-source.js';
 import {
   loadStrongRollSourceManifest,type ReviewYear,
-} from '../../src/evidence/senate-committee-41-strong-roll-original-review.js';
+} from '../evidence/senate-committee-41-strong-roll-original-review.js';
 import { extractSupplementalNamedSenateRollCandidates } from '../../src/evidence/senate-committee-supplemental-named-roll-review.js';
-import { inspectProvisionalMatchedSenateMotion } from '../../src/evidence/senate-committee-19-original-date-attendance-review.js';
+import { inspectProvisionalMatchedSenateMotion } from '../evidence/senate-committee-19-original-date-attendance-review.js';
 
 const hash=(x:string|Uint8Array)=>createHash('sha256').update(x).digest('hex');
 const MAX_BYTES=3_000_000,MAX_PAGES=30;

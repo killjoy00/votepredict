@@ -3,8 +3,8 @@ import {createHash} from 'node:crypto';
 import {dirname,resolve} from 'node:path';
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {fetchSenateCommitteeMinutePdf} from '../../src/evidence/minnesota-senate-committee-source.js';
-import {MN_ORIGINAL_RULE1210_THREE,inspectOriginalThreeRule1210CommitteeRoll} from '../../src/evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
-import type {ThreeRule1210Target} from '../../src/evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
+import {MN_ORIGINAL_RULE1210_THREE,inspectOriginalThreeRule1210CommitteeRoll} from '../evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
+import type {ThreeRule1210Target} from '../evidence/senate-2021-22-rule1210-three-original-journal-rolls.js';
 
 const MAX=12_000_000;
 const sha=(s:string)=>createHash('sha256').update(s).digest('hex');

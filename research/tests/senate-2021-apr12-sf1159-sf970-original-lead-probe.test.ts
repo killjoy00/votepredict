@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {APR12_2021_RULE1210,discoverOriginalApril12Rule1210Leads} from
- '../../src/evidence/senate-2021-apr12-rule1210-sf1159-sf970-lead-probe.js';
+ '../evidence/senate-2021-apr12-rule1210-sf1159-sf970-lead-probe.js';
 
 function example(){
  const header='JOURNAL OF THE SENATE MONDAY, APRIL 12, 2021 '+

@@ -19,11 +19,11 @@ import {
 } from '../../src/evidence/cfb-senate-district-registration-inventory.js';
 import {
   selectServed2025SpecialFinalTargets,
-} from '../../src/evidence/cfb-2025-served-special-final-pdf-proof.js';
+} from '../evidence/cfb-2025-served-special-final-pdf-proof.js';
 import {
   CFB_TWO_SERVED_SPECIAL_TERMINATION_PROBE_SCHEMA,
   probeServedSenatorSpecialFinalTerminationMarkers,
-} from '../../src/evidence/cfb-2025-served-special-final-termination-markers.js';
+} from '../evidence/cfb-2025-served-special-final-termination-markers.js';
 import {
   fetchCfbCandidateHistoricalReportReferenceSnapshot,
 } from '../../src/evidence/cfb-candidate-report-history.js';

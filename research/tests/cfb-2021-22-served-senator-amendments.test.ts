@@ -6,7 +6,7 @@ import {
   auditActualSenatorAmendmentPdf,amendmentViewerReference,
   checkAuthenticatedAmendmentChains,classifySourceVerified2021to22AmendmentBatch,
   REVIEWED_2021_CFB_AMENDMENT_SOURCE_HOLD,type CfbHistoricalAmendedPdfSource,
-} from '../../src/evidence/cfb-2021-22-served-senator-amendments.js';
+} from '../evidence/cfb-2021-22-served-senator-amendments.js';
 import {cfbReportViewerUrl} from '../../src/evidence/cfb-current-report-acquisition.js';
 
 const PREFIX='docs/evaluation/source-proof/';
