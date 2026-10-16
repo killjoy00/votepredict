@@ -130,7 +130,7 @@ export async function fetchRevisorBillSearchRangeDocument(input: {
   });
   if (!response.ok) throw new Error(`Minnesota Revisor bill search returned ${response.status}: ${sourceUrl}`);
   const text = await response.text();
-  if (!/<SEARCH_RESULTS(?:\\s|>)/i.test(text)) {
+  if (!/<SEARCH_RESULTS(?:\s|>)/i.test(text)) {
     throw new Error('Minnesota Revisor search did not return the documented XML envelope');
   }
   return {
