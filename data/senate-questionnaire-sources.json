@@ -607,6 +607,43 @@
         "Robyn Gulley",
         "Rocco"
       ]
+    },
+    {
+      "id": "roseville-reader-2026-sd40",
+      "publisher": "Roseville Reader",
+      "cycle": 2026,
+      "adapter": "roseville_reader",
+      "url": "https://www.rosevillereader.com/minnesota-senate-district-40-candidate-guide-2026/",
+      "title": "2026 Minnesota Senate District 40 Candidate Guide — Questionnaire Responses",
+      "sourceKind": "publisher_response",
+      "district": "40",
+      "candidates": [
+        "Rachel Japuntich",
+        "John Marty"
+      ]
+    },
+    {
+      "id": "roseville-reader-2026-sd66",
+      "publisher": "Roseville Reader",
+      "cycle": 2026,
+      "adapter": "roseville_reader",
+      "url": "https://www.rosevillereader.com/minnesota-senate-district-66-candidate-guide/",
+      "title": "2026 Minnesota Senate District 66 Candidate Guide — Questionnaire Responses",
+      "sourceKind": "publisher_response",
+      "district": "66",
+      "candidates": [
+        "Kathleen Bart",
+        "Clare Oumou Verbeten"
+      ]
+    },
+    {
+      "id": "mnrtl-2026-primary",
+      "publisher": "Minnesota Right to Life",
+      "cycle": 2026,
+      "adapter": "mnrtl",
+      "url": "https://www.mnrtl.org/elections/",
+      "title": "2026 Primary Survey Results — State Legislature",
+      "sourceKind": "publisher_response"
     }
   ]
 }
