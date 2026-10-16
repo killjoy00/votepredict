@@ -12,7 +12,7 @@ import {backfillOfficialSenateBillCompanions} from '../src/operations/senate-bil
 import {senateLinkReadback} from '../src/operations/senate-identity-bill-report.js';
 
 const MARKER='SENATE_IDENTITY_BILL_LINK_PRODUCTION';
-const MIGRATION='0021_senate_identity_bill_linking.sql';
+const MIGRATION='0022_senate_identity_bill_linking.sql';
 interface LedgerRow {filename:string;checksum:string}
 function requireProtectedMain(env:NodeJS.ProcessEnv):void{
   if(env.GITHUB_REPOSITORY!=='killjoy00/votepredict' ||
@@ -33,7 +33,7 @@ function requireProtectedMain(env:NodeJS.ProcessEnv):void{
 }
 function expectedMigrations():LedgerRow[]{
   const filenames=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
-  if(filenames.length!==21 || filenames.at(-1)!==MIGRATION)
+  if(filenames.length!==22 || filenames.at(-1)!==MIGRATION)
     throw Error('Unexpected migration inventory or next free number');
   return filenames.map(filename=>({
     filename,checksum:createHash('sha256').update(readFileSync('migrations/'+filename)).digest('hex'),
