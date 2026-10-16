@@ -163,7 +163,7 @@ async function main():Promise<void> {
       }
       const c=await pool.connect();
       try{
-        const result=await storeRawScorecardCapture(c,capture,catalog,true);
+        const result=await storeRawScorecardCapture(c,capture,catalog);
         fetched++;if(result.newSnapshot)newSnapshots++;
         entriesParsed+=result.entries;matchedNew+=result.matchedMembers;
         positionsParsed+=result.billPositions;linkedBillsNew+=result.matchedBills;
@@ -203,7 +203,7 @@ async function main():Promise<void> {
           fetchedAt:snap.fetched_at,publishedOn:snap.published_on,...parsed};
         const c=await pool.connect();
         try{
-          const result=await storeRawScorecardCapture(c,capture,catalog);
+          const result=await storeRawScorecardCapture(c,capture,catalog,true);
           if(result.newSnapshot)throw Error('Replay unexpectedly inserted a new source version');
           entriesParsed+=result.entries;matchedNew+=result.matchedMembers;
           positionsParsed+=result.billPositions;linkedBillsNew+=result.matchedBills;
