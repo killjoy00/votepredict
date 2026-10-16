@@ -1,0 +1,50 @@
+name: Restore Senate DFL backfill after missed hourly collections
+run-name: "DFL recovery watchdog ${{ github.event_name }} #${{ github.run_number }}"
+
+# Main-branch pushes are independent of GitHub's unreliable schedule events.
+# Cron is only a secondary fallback; ChatGPT's independent hourly recovery
+# check also watches the same protected collector.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: senate-dfl-sitemap-idle-recovery-dispatch
+  cancel-in-progress: false
+
+jobs:
+  guarded-idle-recovery:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      (github.event_name == 'push' ||
+       (github.event_name == 'schedule' && github.event.schedule == '23 * * * *') ||
+       github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact, immutable main revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Independently test event provenance and duplicate protection
+        run: node --test tests/senate-dfl-sitemap-watchdog.test.mjs
+      - name: Dispatch existing protected DFL collector only after 75 minutes idle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/senate-dfl-sitemap-watchdog.mjs
