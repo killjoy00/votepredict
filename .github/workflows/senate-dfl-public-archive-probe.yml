@@ -30,7 +30,5 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Check source-preserving Common Crawl and Wayback captures without access to DFL server
-        run: node --import tsx scripts/probe-senate-dfl-public-archives.ts
-      - name: Attempt unchanged full-body 2023 Senate DFL Wayback replay
+      - name: Query archived 2023-2025 originals and attempt unchanged full-body Wayback replay
         run: node --import tsx scripts/probe-senate-dfl-wayback-replay.ts
