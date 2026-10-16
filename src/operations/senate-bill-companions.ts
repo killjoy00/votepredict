@@ -5,7 +5,7 @@
 import type { Pool,PoolClient } from 'pg';
 import {
   canonicalBillIdentifier,resolveBill,parseRevisorCompanionXml,
-  parseRevisorCompanion,type SessionBill,
+  type SessionBill,
 } from './senate-identity-bill-resolvers.js';
 
 const SESSION_INFO=[
@@ -22,36 +22,40 @@ interface StatusSummary {
   attempted:number;linked:number;noCompanion:number;targetMissing:number;
   sourceFailures:number;remainingUnscanned:number;sampleFailures:string[];
 }
-function statusUrl(row:Pending):string{
+function statusUrls(row:Pending):string[]{
   const session=SESSION_INFO.find(s=>s.slug===row.slug);
   const canonical=canonicalBillIdentifier(row.identifier);
-  if(!session || !canonical || !/^SF[1-9]\d{0,5}$/.test(canonical))
+  if(!session || !canonical || !/^SF[1-9]\\d{0,5}$/.test(canonical))
     throw Error('Unusable session Senate bill identifier');
   const number=Number(canonical.slice(2));
-  return 'https://api.revisor.mn.gov/bills/v1/'+session.legislature+'/'+session.year+'/0/SF/'+number+'/';
+  // Revisor indexes a biennium by its introduction year; 2026-introduced
+  // bills use /94/2026/, while 2025-introduced bills use /94/2025/.
+  return [session.year,session.year+1].map(year=>
+    'https://api.revisor.mn.gov/bills/v1/'+session.legislature+'/'+year+'/0/SF/'+number+'/');
 }
 async function fetchCapture(row:Pending):Promise<Capture>{
-  const url=statusUrl(row);
+  const urls=statusUrls(row);
   const now=new Date().toISOString();
-  try{
-    const r=await fetch(url,{
-      headers:{Accept:'application/xml,text/xml;q=0.9,*/*;q=0.1','User-Agent':'VotePredict/2.0 raw companion crosswalk'},
-      signal:AbortSignal.timeout(TIMEOUT_MS),cache:'no-store',
-    });
-    if(!r.ok)return {candidate:row,url,fetchedAt:now,companion:null,error:true};
-    const xml=await r.text();
-    const type=xml.match(/<FILE_TYPE>\s*(HF|SF)\s*<\/FILE_TYPE>/i)?.[1]?.toUpperCase();
-    const num=Number(xml.match(/<FILE_NUMBER>\s*(\d+)\s*<\/FILE_NUMBER>/i)?.[1]);
-    if(type!=='SF' || canonicalBillIdentifier(type+num)!==canonicalBillIdentifier(row.identifier)
-      || !/<BILL(?:\s|>)/i.test(xml))
-      return {candidate:row,url,fetchedAt:now,companion:null,error:true};
-    const companion=parseRevisorCompanionXml(xml);
-    // Missing XML companion fields mean 'none' only on a valid, identified
-    // official bill document. Do not infer an omitted target from actions.
-    return {candidate:row,url,fetchedAt:new Date().toISOString(),companion,error:false};
-  }catch{
-    return {candidate:row,url,fetchedAt:now,companion:null,error:true};
+  for(const url of urls){
+    try{
+      const r=await fetch(url,{
+        headers:{Accept:'application/xml,text/xml;q=0.9,*/*;q=0.1','User-Agent':'VotePredict/2.0 raw companion crosswalk'},
+        signal:AbortSignal.timeout(TIMEOUT_MS),cache:'no-store',
+      });
+      if(!r.ok) continue;
+      const xml=await r.text();
+      const type=xml.match(/<FILE_TYPE>\\s*(HF|SF)\\s*<\\/FILE_TYPE>/i)?.[1]?.toUpperCase();
+      const num=Number(xml.match(/<FILE_NUMBER>\\s*(\\d+)\\s*<\\/FILE_NUMBER>/i)?.[1]);
+      const year=Number(xml.match(/<SESSION_YEAR>\\s*(\\d{4})\\s*<\\/SESSION_YEAR>/i)?.[1]);
+      if(type!=='SF' || canonicalBillIdentifier(type+num)!==canonicalBillIdentifier(row.identifier)
+        || year!==Number(new URL(url).pathname.split('/')[4])
+        || !/<BILL(?:\\s|>)/i.test(xml) || !/<COMPANION_TYPE\\s*\\/?>(?:[\\s\\S]*?<\\/COMPANION_TYPE>)?/i.test(xml))
+        continue;
+      const companion=parseRevisorCompanionXml(xml);
+      return {candidate:row,url,fetchedAt:new Date().toISOString(),companion,error:false};
+    }catch{ /* Official status is unavailable: try the other biennial year. */ }
   }
+  return {candidate:row,url:urls[0],fetchedAt:now,companion:null,error:true};
 }
 async function pending(client:PoolClient):Promise<Pending[]>{
   const q=await client.query<Pending>(
