@@ -103,3 +103,44 @@ test('migration adds only new raw tables and candidate view in local Postgres',a
     assert.ok(v.rows[0].view);
   }finally{await db.end();}
 });
+
+test('SQL archive preserves two conflicting official revisions and ignores identical replay',async(t)=>{
+  const connectionString=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
+  if(!connectionString){t.skip('integration Postgres not configured');return;}
+  const db=new Client({connectionString});
+  await db.connect();
+  await db.query('BEGIN');
+  try{
+    const jurisdiction=(await db.query<{id:string}>(
+      "INSERT INTO jurisdictions(slug,name,country_code) "
+      +"VALUES('us-mn-official-text-test','Raw source integration fixture','US') RETURNING id")).rows[0].id;
+    const session=(await db.query<{id:string}>(
+      "INSERT INTO legislative_sessions(jurisdiction_id,slug,name) VALUES($1,'2025-2026','Fixture') RETURNING id",
+      [jurisdiction])).rows[0].id;
+    const bill=(await db.query<{id:string}>(
+      "INSERT INTO bills(session_id,identifier,title) VALUES($1,'SF42','Fixture') RETURNING id",
+      [session])).rows[0].id;
+    const first='Proposed original official numbered bill text, '.repeat(5);
+    const second='Conflicting original official numbered bill text, '.repeat(5);
+    const sql='INSERT INTO senate_official_bill_text_captures '
+      +'(session_id,bill_id,family,source_url,source_locator,printed_label,raw_text,'
+      +'original_body_sha256,body_hash_provenance,extracted_text_sha256,fetched_at) '
+      +"VALUES($1,$2,'numbered_version',$3,'versions/0/','Introduction',$4,$5,'fetched_original_bytes',$6,now()) "
+      +'ON CONFLICT(source_url,source_locator,original_body_sha256,extracted_text_sha256) DO NOTHING RETURNING id';
+    const args=(original:string)=>[session,bill,
+      'https://www.revisor.mn.gov/bills/94/2025/0/SF/42/versions/0/',
+      original,createHash('sha256').update('<body>'+original+'</body>').digest('hex'),
+      createHash('sha256').update(original).digest('hex')];
+    assert.equal((await db.query(sql,args(first))).rowCount,1);
+    assert.equal((await db.query(sql,args(first))).rowCount,0);
+    assert.equal((await db.query(sql,args(second))).rowCount,1);
+    const result=await db.query<{captures:number}>(
+      'SELECT count(*)::int AS captures FROM senate_official_bill_text_captures WHERE bill_id=$1',[bill]);
+    assert.equal(result.rows[0].captures,2);
+    const live=await db.query<{live:number}>('SELECT count(*)::int AS live FROM bill_versions WHERE bill_id=$1',[bill]);
+    assert.equal(live.rows[0].live,0);
+  }finally{
+    await db.query('ROLLBACK');
+    await db.end();
+  }
+});
