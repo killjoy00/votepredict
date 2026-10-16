@@ -6,7 +6,7 @@ import {discoverExistingVotePredictNeonConnection} from '../src/operations/senat
 import {collectQuestionnaires,validateCatalog} from '../src/sources/minnesota/senate-questionnaire-raw.js';
 import {insertQuestionnaire,questionnaireReadback} from '../src/operations/senate-questionnaire-ingest.js';
 const MARKER='SENATE_QUESTIONNAIRE_RAW_PRODUCTION_20261015';
-const MIGRATION='0020_mn_senate_questionnaire_raw.sql';
+const MIGRATION='0021_mn_senate_questionnaire_raw.sql';
 type Ledger={filename:string;checksum:string};
 function requireReviewedMain():void{
   const env=process.env;
@@ -29,19 +29,19 @@ function requireReviewedMain():void{
 }
 function expectedLedger():Ledger[]{
   const files=readdirSync('migrations').filter(f=>/^\d{4}_[a-z0-9_-]+\.sql$/.test(f)).sort();
-  if(files.length<20||files[19]!==MIGRATION)
-    throw Error('Questionnaire migration 0020 not in reviewed migration prefix');
+  if(files.length<21||files[20]!==MIGRATION)
+    throw Error('Questionnaire migration 0021 not in reviewed migration prefix');
   return files.map(filename=>({filename,checksum:createHash('sha256')
     .update(readFileSync('migrations/'+filename)).digest('hex')}));
 }
 function validateLedger(actual:Ledger[],expected:Ledger[]):boolean{
   // The 0018 election collector must deploy independently; never apply it here.
-  if(actual.length<19||actual.length>expected.length)
+  if(actual.length<20||actual.length>expected.length)
     throw Error('Concurrent production migration prefix incomplete or out of scope');
   for(const [i,row] of actual.entries())
     if(row.filename!==expected[i]?.filename||row.checksum!==expected[i]?.checksum)
       throw Error('Production migration checksum/order drift');
-  return actual.length>=20;
+  return actual.length>=21;
 }
 async function readonly<T>(pool:Pool,action:(client:PoolClient)=>Promise<T>):Promise<T>{
   const c=await pool.connect();
@@ -95,7 +95,7 @@ async function main():Promise<void>{
         throw Error('Questionnaire ledger/table mismatch');
       return isApplied;
     });
-    phase='serializable_additive_0020_migration';
+    phase='serializable_additive_0021_migration';
     let migrationApplied=false;const c=await pool.connect();let inTransaction=false;
     try{
       await c.query('BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE READ WRITE');
@@ -111,7 +111,7 @@ async function main():Promise<void>{
           throw Error('Nonadditive migration refused');
         await c.query(sql);
         await c.query('INSERT INTO votepredict_schema_migrations(filename,checksum) VALUES($1,$2)',
-          [MIGRATION,expected[19].checksum]);
+          [MIGRATION,expected[20].checksum]);
         migrationApplied=true;
       }
       await c.query('COMMIT');inTransaction=false;
@@ -149,7 +149,7 @@ async function main():Promise<void>{
     console.log('SENATE_QUESTIONNAIRE_RAW_PRODUCTION='+JSON.stringify(report));
     if(process.env.GITHUB_STEP_SUMMARY)appendFileSync(process.env.GITHUB_STEP_SUMMARY,
       '## Raw Minnesota Senate candidate questionnaires\n\n'
-      +'Migration 0020 applied: '+migrationApplied+', newly stored: '+inserted
+      +'Migration 0021 applied: '+migrationApplied+', newly stored: '+inserted
       +', previously stored: '+previous+'\n\n'
       +after.groups.map(x=>'- '+x.cycle+' '+x.publisher+': '+x.responses+' captures / '+x.qaPairs+' pairs').join('\n')
       +'\n\nDistinct candidates: '+after.totals.distinctCandidates
