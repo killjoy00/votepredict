@@ -411,12 +411,13 @@ export async function collectSource(
     }
     if(stopForRateLimit)break;
     if(!fresh.length){
-      if(page===1 && knownLastPage===null){
-        // The root page occasionally serves a blank HTTP 200 page. Do not let
-        // that silence an otherwise reachable 436-page historical archive.
+      if(source.id==='senate_dfl' && knownLastPage===null &&
+        page<startPage+Math.min(maxPages,3)-1){
+        // When the DFL site serves a blank HTTP 200 without its normal pager,
+        // sample the next couple of pages rather than treating it as exhaustion.
         result.archive_gaps.push(page);
-        failed(listing,Error('First archive page did not contain published headline links'));
-        consecutiveGaps=1;
+        failed(listing,Error('DFL archive page returned no headline links or pager'));
+        consecutiveGaps++;
         continue;
       }
       if(knownLastPage!==null && page<knownLastPage){
