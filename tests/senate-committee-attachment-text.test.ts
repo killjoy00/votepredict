@@ -67,6 +67,16 @@ test('genuine PDF parser retains the source text, without summarizing', async ()
   assert.equal(result.contentSha256, createHash('sha256').update(bytes).digest('hex'));
 });
 
+test('PDF with no selectable page text is explicitly scanned when OCR is disabled', async () => {
+  const bytes = pdfWithText(' ');
+  const result = await captureSenateAttachment('https://assets.senate.mn/committees/2025-2026/blank.pdf', {
+    fetcher: async () => new Response(Uint8Array.from(bytes).buffer, { headers: { 'content-type': 'application/pdf' } }),
+    allowOcr: false,
+  });
+  assert.equal(result.extractionStatus, 'scanned');
+  assert.equal(result.rawText, null);
+});
+
 test('HTML text preserves document prose and remains distinct from an unsupported file', async () => {
   const html = '<html><body><h1>Committee Letter</h1><p>All written testimony.</p><p>Footer</p></body></html>';
   const result = await captureSenateAttachment('https://www.senate.mn/committees/letter', {
