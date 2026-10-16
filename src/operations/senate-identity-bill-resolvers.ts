@@ -33,19 +33,20 @@ export interface InclusionMention {
 }
 
 export function normalizePrintedSenatorName(value: string): string {
-  return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+  const tokens = value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
     .replace(/^(?:(?:state|mn)\s+)?(?:senators?|sens?\.?)\s+/i, '')
+    // Possessives ("Mitchell's", "Rasmusson’s") name the senator, not a new person.
+    .replace(/['\u2019]s\b/gi, '')
     .replace(/\b(?:jr|sr)\.?\s*$/i, '')
-    .replace(/[^a-z0-9]+/gi, ' ').trim().toLowerCase().replace(/\s+/g, ' ');
+    .replace(/[^a-z0-9]+/gi, ' ').trim().toLowerCase().replace(/\s+/g, ' ').split(' ');
+  // Extraction sometimes repeats the surname ("Glenn Gruenhagen Gruenhagen").
+  if (tokens.length > 2 && tokens.at(-1) === tokens.at(-2)) tokens.pop();
+  return tokens.join(' ');
 }
 
 function withoutMiddleInitial(name: string): string {
   const tokens = name.split(' ');
   return tokens.length > 2 ? tokens.filter((token, i) => i === 0 || i === tokens.length - 1 || token.length > 1).join(' ') : name;
-}
-function surnameAligned(printed: string, official: string): boolean {
-  return official === printed || official.endsWith(' ' + printed)
-    || (printed.split(' ').length >= 2 && printed.split(' ').at(-1) === official.split(' ').at(-1));
 }
 function unique(rows: readonly SenateMember[]): SenateMember | null {
   const byId = new Map(rows.map(row => [row.id, row]));
@@ -56,7 +57,9 @@ const GIVEN_NAMES: Record<string, string> = {
   peggy:'margaret', meg:'margaret', mike:'michael', tom:'thomas',
   jim:'james', joe:'joseph', jeff:'jeffrey', tony:'anthony',
   nick:'nicholas', andy:'andrew', dan:'daniel', kate:'katherine',
-  kathy:'katherine', jack:'john',
+  kathy:'katherine', jack:'john', ron:'ronald', sandy:'sandra',
+  jen:'jennifer', jenn:'jennifer', cal:'calvin', matt:'matthew',
+  steve:'steven', rich:'richard', chris:'christopher', greg:'gregory',
 };
 function nickname(value: string): string { return GIVEN_NAMES[value] ?? value; }
 function oneTypo(a: string, b: string): boolean {
@@ -124,6 +127,14 @@ export function resolveSenator(
   const uniqueSurname = unique(suffixes);
   if (uniqueSurname && members.some(m => m.id===uniqueSurname.id))
     return {membershipId:uniqueSurname.id,matchMethod:'surname_unique_in_session'};
+  // A long bare surname one edit away from exactly one senator ("Ingebrightsen").
+  if (pieces.length === 1 && printed.length >= 7 && !suffixes.length) {
+    const typo = unique(members.filter(m => {
+      const last = normalizePrintedSenatorName(m.name).split(' ').at(-1) ?? '';
+      return last.length >= 7 && oneTypo(printed, last);
+    }));
+    if (typo) return {membershipId:typo.id,matchMethod:'surname_unique_in_session'};
+  }
   // A district disambiguates compatible, but not contradictory, surnames.
   if (district) {
     const surnameMatches = members.filter(m => {
@@ -147,6 +158,24 @@ export function canonicalBillIdentifier(value: string | null | undefined): strin
   if (!match || Number(match[3]) <= 0) return null;
   return (match[1] ?? match[2]).toUpperCase() + 'F' + String(Number(match[3]));
 }
+// Catalogs grow when full official SF/HF lists are imported. Index once per
+// immutable backfill snapshot so every printed reference stays O(1).
+const billIndexes=new WeakMap<readonly SessionBill[],Map<string,Set<string>>>();
+function billIndex(bills:readonly SessionBill[]):Map<string,Set<string>>{
+  const existing=billIndexes.get(bills);
+  if(existing)return existing;
+  const indexed=new Map<string,Set<string>>();
+  for(const bill of bills){
+    const identifier=canonicalBillIdentifier(bill.identifier);
+    if(!identifier)continue;
+    const key=bill.sessionSlug+':'+identifier;
+    const ids=indexed.get(key)??new Set<string>();
+    ids.add(bill.id);
+    indexed.set(key,ids);
+  }
+  billIndexes.set(bills,indexed);
+  return indexed;
+}
 export function resolveBill(
   input: { printedIdentifier: string | null | undefined; sessionSlug: string },
   bills: readonly SessionBill[],
@@ -154,12 +183,10 @@ export function resolveBill(
   const canonical = canonicalBillIdentifier(input.printedIdentifier);
   const unresolved: BillResolution = {billId:null,matchMethod:'unresolved',canonicalIdentifier:canonical};
   if (!canonical) return unresolved;
-  const found = bills.filter(b => b.sessionSlug === input.sessionSlug &&
-    canonicalBillIdentifier(b.identifier) === canonical);
-  const uniqueId = new Set(found.map(b => b.id));
-  if (uniqueId.size !== 1) return unresolved;
+  const uniqueIds=billIndex(bills).get(input.sessionSlug+':'+canonical);
+  if (uniqueIds?.size !== 1) return unresolved;
   return {
-    billId:[...uniqueId][0],
+    billId:[...uniqueIds][0],
     matchMethod:(input.printedIdentifier ?? '').trim().toUpperCase() === canonical ? 'exact' : 'normalized',
     canonicalIdentifier:canonical,
   };
