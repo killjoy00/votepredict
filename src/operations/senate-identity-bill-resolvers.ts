@@ -43,10 +43,6 @@ function withoutMiddleInitial(name: string): string {
   const tokens = name.split(' ');
   return tokens.length > 2 ? tokens.filter((token, i) => i === 0 || i === tokens.length - 1 || token.length > 1).join(' ') : name;
 }
-function surnameAligned(printed: string, official: string): boolean {
-  return official === printed || official.endsWith(' ' + printed)
-    || (printed.split(' ').length >= 2 && printed.split(' ').at(-1) === official.split(' ').at(-1));
-}
 function unique(rows: readonly SenateMember[]): SenateMember | null {
   const byId = new Map(rows.map(row => [row.id, row]));
   return byId.size === 1 ? [...byId.values()][0] : null;
@@ -147,6 +143,24 @@ export function canonicalBillIdentifier(value: string | null | undefined): strin
   if (!match || Number(match[3]) <= 0) return null;
   return (match[1] ?? match[2]).toUpperCase() + 'F' + String(Number(match[3]));
 }
+// Catalogs grow when full official SF/HF lists are imported. Index once per
+// immutable backfill snapshot so every printed reference stays O(1).
+const billIndexes=new WeakMap<readonly SessionBill[],Map<string,Set<string>>>();
+function billIndex(bills:readonly SessionBill[]):Map<string,Set<string>>{
+  const existing=billIndexes.get(bills);
+  if(existing)return existing;
+  const indexed=new Map<string,Set<string>>();
+  for(const bill of bills){
+    const identifier=canonicalBillIdentifier(bill.identifier);
+    if(!identifier)continue;
+    const key=bill.sessionSlug+':'+identifier;
+    const ids=indexed.get(key)??new Set<string>();
+    ids.add(bill.id);
+    indexed.set(key,ids);
+  }
+  billIndexes.set(bills,indexed);
+  return indexed;
+}
 export function resolveBill(
   input: { printedIdentifier: string | null | undefined; sessionSlug: string },
   bills: readonly SessionBill[],
@@ -154,12 +168,10 @@ export function resolveBill(
   const canonical = canonicalBillIdentifier(input.printedIdentifier);
   const unresolved: BillResolution = {billId:null,matchMethod:'unresolved',canonicalIdentifier:canonical};
   if (!canonical) return unresolved;
-  const found = bills.filter(b => b.sessionSlug === input.sessionSlug &&
-    canonicalBillIdentifier(b.identifier) === canonical);
-  const uniqueId = new Set(found.map(b => b.id));
-  if (uniqueId.size !== 1) return unresolved;
+  const uniqueIds=billIndex(bills).get(input.sessionSlug+':'+canonical);
+  if (uniqueIds?.size !== 1) return unresolved;
   return {
-    billId:[...uniqueId][0],
+    billId:[...uniqueIds][0],
     matchMethod:(input.printedIdentifier ?? '').trim().toUpperCase() === canonical ? 'exact' : 'normalized',
     canonicalIdentifier:canonical,
   };
