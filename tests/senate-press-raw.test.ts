@@ -145,3 +145,44 @@ test('GOP missed article can be retried by exact on-site URL without re-crawling
   await assert.rejects(()=>collectDirectArticle(gop,'https://other.site/a/',
     {from:'2023-01-01',to:'2026-10-15'},sink,request),/outside first-party/);
 });
+
+test('DFL root and second page may both be blank before a valid older page',async()=>{
+  const request:typeof fetch=async(input)=>{
+    const url=String(input);
+    if(url.endsWith('/robots.txt'))return new Response('User-agent: *\\nAllow: /');
+    if(url.endsWith('?_page=3'))return new Response(
+      '<a href="/press-releases/?_page=436">436</a>'+
+      '<h3><a href="/historical-statement/">Senator Boldon Announces Historic Statement</a></h3>'+
+      '<a href="/author/senboldon/">Senator Liz Boldon</a>');
+    if(url.endsWith('/historical-statement/'))return new Response(
+      '<html><head><meta property="article:published_time" content="2024-04-02"></head>'+
+      '<main><article><h1>Senator Boldon Announces Historic Statement</h1>'+
+      '<div class="entry-content">Senator Liz Boldon issues a full 2024 statement about SF 420.</div>'+
+      '</article></main></html>');
+    return new Response('<html><p>Temporarily empty</p></html>');
+  };
+  const out=await collectSource(dfl,{from:'2023-01-01',to:'2026-10-15',maxPages:3,dryRun:true},
+    {existing:async()=>new Set<string>(),insert:async()=>true},request);
+  assert.equal(out.discovered,1);
+  assert.equal(out.previewed,1);
+  assert.deepEqual(out.by_year,{'2024':1});
+  assert.deepEqual(out.archive_gaps,[1,2]);
+  assert.deepEqual(out.member_archives,['https://senatedfl.mn/author/senboldon/']);
+  assert.equal(out.failures.length,2);
+});
+
+test('long Retry-After does not trigger repeated immediate 503 requests',async()=>{
+  const url='https://www.mnsenaterepublicans.com/article-returns-503/';
+  let calls=0;
+  const request:typeof fetch=async(input)=>{
+    if(String(input).endsWith('/robots.txt'))return new Response('User-agent: *\\nAllow: /');
+    calls++;
+    return new Response('Unavailable',{status:503,headers:{'retry-after':'120'}});
+  };
+  const out=await collectDirectArticle(gop,url,{from:'2023-01-01',to:'2026-10-15'},
+    {existing:async()=>new Set<string>(),insert:async()=>true},request);
+  assert.equal(calls,1);
+  assert.equal(out.inserted,0);
+  assert.equal(out.failures.length,1);
+  assert.match(out.failures[0].reason,/rate-limited/);
+});
