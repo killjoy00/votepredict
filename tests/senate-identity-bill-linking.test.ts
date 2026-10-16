@@ -134,8 +134,8 @@ test('official Revisor status XML companion is explicit and None stays absent',(
   assert.equal(parseRevisorCompanion('<h2>Companion: None</h2>'),null);
 });
 
-test('0021 is additive, preserves preexisting identity/bill IDs, and limits target tables',()=>{
-  const sql=readFileSync('migrations/0021_senate_identity_bill_linking.sql','utf8');
+test('0022 is additive, preserves preexisting identity/bill IDs, and limits target tables',()=>{
+  const sql=readFileSync('migrations/0022_senate_identity_bill_linking.sql','utf8');
   assert.match(sql,/ADD COLUMN IF NOT EXISTS membership_match_method/);
   assert.match(sql,/ADD COLUMN IF NOT EXISTS bill_match_method/);
   assert.match(sql,/CREATE TABLE IF NOT EXISTS bill_companions/);
