@@ -327,7 +327,7 @@ class PoliteFetcher {
       // One briefly unavailable page is not archive exhaustion. Retry slowly,
       // but do not ignore the publisher's longer Retry-After instruction.
       const retryAfter=response.headers.get('retry-after');
-      const seconds=retryAfter && /^\\d{1,5}$/.test(retryAfter) ? Number(retryAfter) : 0;
+      const seconds=retryAfter && /^\d{1,5}$/.test(retryAfter) ? Number(retryAfter) : 0;
       if(seconds<=30) {
         await sleep(Math.max(10000*(attempt+1),seconds*1000));
         return this.send(url,hops,attempt+1);
