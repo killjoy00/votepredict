@@ -552,3 +552,24 @@ test('historical source catalog rejects defeated candidates before HTTP fetch',(
   assert.throws(()=>validateCatalog({schemaVersion:1,
     sources:[{...two,candidates:['Grant Hauschild','Andrea Zupancich']}]}),/unconfirmed election loser/);
 });
+
+
+test('2022 source typo Billl Weber is in scope ONLY at the original publisher URL and district',async()=>{
+  const url='https://mnbiofuels.org/candidates-biofuels-weber-dornink';
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Billl Weber','21'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Billl Weber','21',url),true);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Billl Weber','21',
+    'https://example.org/not-an-original-publisher'),false);
+  assert.equal(eligibleSenateQuestionnaireCandidate(2022,'Billl Weber','20',url),false);
+  const client={query:async(_sql:string,_args:unknown[])=>({rows:[
+    {id:'weber-membership',legislator_id:'weber-person',party:'R',
+     name:'Bill Weber',district:'21',starts_on:null,ends_on:null,aliases:[]},
+  ]})} as unknown as PoolClient;
+  assert.deepEqual(await exactExistingSenateMembership(client,{
+    candidateName:'Billl Weber',district:'21',party:'R',electionCycle:2022,sourceUrl:url,
+  }),{legislatorId:'weber-person',membershipId:'weber-membership'});
+  assert.deepEqual(await exactExistingSenateMembership(client,{
+    candidateName:'Billl Weber',district:'21',party:'R',electionCycle:2022,
+    sourceUrl:'https://example.org/not-an-original-publisher',
+  }),{legislatorId:null,membershipId:null});
+});
