@@ -149,8 +149,11 @@ async function main():Promise<void>{
       if(!privilege.rows[0]?.raw||!privilege.rows[0]?.captures)
         throw Error('Missing scoped raw statement or archival provenance insert privileges');
     });
-    phase='read_only_before_counts_and_url_deduplication';
-    const before=await countDFL(pool,'raw'),captureBefore=await countDFL(pool,'captures');
+    phase='read_only_before_original_statement_counts';
+    const before=await countDFL(pool,'raw');
+    phase='read_only_before_archive_capture_counts';
+    const captureBefore=await countDFL(pool,'captures');
+    phase='read_only_existing_original_urls';
     const store=new ArchivedSenateDFLStore(pool);
     const already=await store.existing(selected.map(s=>s.url));
     phase='bounded_insert_only_first_party_archive_restoration';
@@ -229,8 +232,19 @@ async function main():Promise<void>{
       '\n\nPublisher post sitemap manifest: '+manifest+
       '\n\nOriginal publication date and Wayback capture timestamp are distinct. No models or votes changed.\n');
     if(stopReason)throw Error('Archive rate-limit/unavailability after verified partial safe insert');
-  }catch{
+  }catch(error){
     console.error('SENATE_DFL_SITEMAP_PRODUCTION_HELD_AT='+phase);
+    const e=error as {name?:unknown;code?:unknown;message?:unknown};
+    // Never print request args, full queries, Neon connection credentials or URL tokens.
+    const message=typeof e.message==='string'?e.message:'unknown';
+    const clean=message.replace(/(?:postgres(?:ql)?:\/\/|https?:\/\/)\S+/gi,'[redacted URL]')
+      .replace(/\b(?:password|secret|token|api[_-]?key)\s*[:=]\s*\S+/gi,'[redacted credential]')
+      .replace(/[\r\n]/g,' ').slice(0,200);
+    console.error('SENATE_DFL_SITEMAP_PRODUCTION_ERROR='+JSON.stringify({
+      errorName:typeof e.name==='string'?e.name.slice(0,50):'unknown',
+      sqlState:typeof e.code==='string'&&/^[A-Z0-9]{5}$/.test(e.code)?e.code:null,
+      message:clean,
+    }));
     process.exitCode=1;
   }finally{
     if(pool)try{await pool.end();}catch{process.exitCode=1;}
