@@ -12,7 +12,7 @@ export interface RawSenateStatement {
   published_on: string | null; title: string; named_senators: string[];
   bill_identifiers: string[]; raw_text: string;
 }
-export interface CollectionWindow { from: string; to: string; maxPages?: number; maxItems?: number; delayMs?: number; dryRun?: boolean }
+export interface CollectionWindow { from: string; to: string; startPage?: number; maxPages?: number; maxItems?: number; delayMs?: number; dryRun?: boolean }
 export interface SourceCounts {
   source: string; source_type: string; from: string; to: string; pages: number;
   discovered: number; matched: number; inserted: number; previewed: number; already_present: number;
@@ -367,8 +367,12 @@ export async function collectSource(
   try{await fetcher.init();}catch(error){failed(source.archive_url,error);return result;}
   const visited=new Set<string>(),authorArchives=new Set<string>();
   const maxConsecutiveGaps = 25; // Allows recovery when a run of older DFL pages is unavailable.
+  const startPage=window.startPage??1;
+  if(!Number.isSafeInteger(startPage)||startPage<1||startPage>1000)throw Error('Invalid start archive page');
+  const maxPages=window.maxPages??1000;
+  if(!Number.isSafeInteger(maxPages)||maxPages<1||maxPages>1000)throw Error('Invalid archive page limit');
   let olderPages=0,stopForRateLimit=false,knownLastPage:number|null=null,consecutiveGaps=0;
-  for(let page=1;page<=(window.maxPages??1000);page++){
+  for(let page=startPage;page<startPage+maxPages&&page<=1000;page++){
     if(window.maxItems&&result.matched>=window.maxItems)break;
     const listing=archivePageUrl(source,page);let html:string;
     try{html=await fetcher.html(listing);}catch(error){
@@ -407,7 +411,14 @@ export async function collectSource(
     }
     if(stopForRateLimit)break;
     if(!fresh.length){
-      if(page===1)failed(listing,Error('First archive page did not contain any published headline links'));
+      if(page===1 && knownLastPage===null){
+        // The root page occasionally serves a blank HTTP 200 page. Do not let
+        // that silence an otherwise reachable 436-page historical archive.
+        result.archive_gaps.push(page);
+        failed(listing,Error('First archive page did not contain published headline links'));
+        consecutiveGaps=1;
+        continue;
+      }
       if(knownLastPage!==null && page<knownLastPage){
         failed(listing,Error('Archive page unexpectedly omitted linked articles'));
         result.archive_gaps.push(page);
