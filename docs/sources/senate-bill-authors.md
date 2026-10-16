@@ -169,7 +169,16 @@ It will not apply another agent's migrations, rewrite applied checksums,
 or suppress a drift mismatch. If the production ledger is behind the current
 release, the protected run is held for that migration's own guarded deploy.
 
-To continue the remaining official catalog, review a fresh marker-bearing
-main change, pass CI and merge. The next bounded run resumes from existing
-scan receipts. Never trigger an unreviewed direct dispatch, a forced empty
-push or an uncontrolled parallel Revisor crawl.
+### First large Revisor continuation
+
+The reviewed marker-bearing continuation following the journal-only run
+requests up to **3,000 official bill lookups** without repeating any finished
+journal or Revisor scan receipt. The 65-minute hard time budget, 1,150-ms
+serial pacing, and 429/503 hard stop remain in force. A terminal run prints
+the actual successful bill count and `remaining_unscanned`, rather than
+assuming the full requested maximum was completed.
+
+For each further batch, review a fresh marker-bearing main change, pass CI
+and merge. The next bounded run resumes from existing scan receipts. Never
+trigger an unreviewed direct dispatch, a forced empty push, overlapping
+Revisor jobs or an uncontrolled parallel crawl.
