@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - scripts/probe-senate-dfl-broad-discovery.ts
+      - scripts/probe-senate-dfl-sitemap-inventory.ts
+      - src/sources/minnesota/senate-dfl-sitemap-archive.ts
+      - tests/senate-dfl-sitemap-archive.test.ts
       - .github/workflows/senate-dfl-broad-discovery-probe.yml
   push:
     branches: [main]
@@ -28,5 +31,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - name: Count all original publisher sitemap URLs from two pinned archived XML copies
+        run: node --import tsx scripts/probe-senate-dfl-sitemap-inventory.ts
       - name: Read-only Wayback domain CDX and archived publisher sitemap capability checks
         run: node --import tsx scripts/probe-senate-dfl-broad-discovery.ts
