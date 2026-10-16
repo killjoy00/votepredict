@@ -20,3 +20,7 @@ See [PR 3 consolidation details](../../docs/evidence-workflow-consolidation.md) 
 ## Historical workflow retirement, batch 3: `senate-media-*`, `senate-committee-*`, `senate-20xx-*` (2026-10-16)
 
 108 one-off Senate media, committee-minutes and dated Senate source workflows, last modified on or before 2026-10-12, moved here unchanged. Four stay active because tests read them: `senate-media-neon-api-readonly-counts.yml`, `senate-media-neon-readonly-preflight.yml`, `senate-media-new-public-remarks-wayback.yml` and `senate-2021-apr08-judiciary-acoustic-overlap-source.yml`. The `senate-committee-testimony-*` workflows are current collectors and were never candidates.
+
+### Correction: deliberately triggered workflows restored
+
+Retirement only covers workflows whose automatic triggers are dormant (push/pull_request filtered to their own files). Workflows that someone can still start on purpose through `issue_comment`, `workflow_run` or `repository_dispatch` belong to the original "ambiguous-event" class and stay active. Fifteen such workflows archived in batches 1–3 were moved back to `.github/workflows/`: two `senate-media-*` proofs from batch 3 and thirteen `historical-density-*`, `audit-*`, `cfb-*` and `acquire-*` workflows from batches 1–2.
