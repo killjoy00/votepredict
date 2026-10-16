@@ -70,7 +70,7 @@ export function htmlToRawText(html:string):string {
 }
 export function explicitPublishedOn(text:string):string|null {
   const head=text.slice(0,3500);
-  const m=/\b(?:Last\s+Updated|Published(?:\s+on)?|Updated\s+on)\s*:?\s*(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(202[1-6])\b/i.exec(head);
+  const m=/\b(?:Last\s+Updated|Published(?:\s+on)?|Updated\s+on|ST\.?\s+PAUL,\s*Minnesota\.)\s*:?\s*(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(202[1-6])\b/i.exec(head);
   if(!m)return null;
   const months=['january','february','march','april','may','june','july','august','september','october','november','december'];
   const mm=months.indexOf(m[1].toLowerCase())+1,day=Number(m[2]),year=Number(m[3]);
