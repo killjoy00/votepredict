@@ -42,12 +42,16 @@ test('stored Senate journal: only prevailing named author motions become rows',(
     'Senator Boldon moved that the name of Senator Oumou Verbeten be added as a co-author to S.F. No. 983. The motion prevailed.',
     'Senator Bahr moved that his name be stricken as a co-author to S.F. No. 1464. The motion prevailed.',
     'Senator Test moved that the name of Senator Someone be added as a co-author to S.F. No. 10. The motion did not prevail.',
+    'Senator Robin Smith was added as a co-author to S.F. No. 120.',
+    'Senator John Doe was stricken as chief author from S.F. No. 121.',
   ].join('\n');
   assert.deepEqual(parseSenateJournalAuthorChanges(journal),[
     {billIdentifier:'SF821',nameRaw:'Bahr',operation:'add',role:'coauthor'},
     {billIdentifier:'SF821',nameRaw:'Hoffman',operation:'add',role:'coauthor'},
     {billIdentifier:'SF983',nameRaw:'Oumou Verbeten',operation:'add',role:'coauthor'},
     {billIdentifier:'SF1464',nameRaw:'Bahr',operation:'strike',role:'coauthor'},
+    {billIdentifier:'SF120',nameRaw:'Robin Smith',operation:'add',role:'coauthor'},
+    {billIdentifier:'SF121',nameRaw:'John Doe',operation:'strike',role:'chief'},
   ]);
 });
 test('shared resolver leaves ambiguous names unresolved',()=>{
