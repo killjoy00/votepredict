@@ -477,7 +477,7 @@ export function parseScorecardBillPositions(rawText:string,adapter:SourceAdapter
   return results.slice(0,500).map((x,i)=>({...x,sourceOrdinal:i+1}));
 }
 export function parseScorecardContent(source:ScorecardSource,rawText:string,html?:string):
-  {entries:ScorecardEntry[];positions:ScorecardPosition[]} {
+  {entries:ScorecardEntry[];positions:ScorecardPosition[];memberVotes:PublisherSenatorVote[]} {
   const entries=source.adapter==='a4l_pdf'?parseA4LSenatePdf(rawText):
     source.adapter==='gunowners_html'?parseGunOwnersSenateHtml(html??''):
     source.adapter==='edmn_html'?parseEducationMinnesotaSenateEndorsements(html??rawText):
