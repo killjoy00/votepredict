@@ -82,12 +82,12 @@ async function sitemap(path:string):Promise<void>{
       .filter(x=>x.length>8&&x.length<750):[];
     const locs=rawLocs.map(originalDFLUrl).filter((x):x is string=>!!x);
     const years:Record<string,number>={};
-    const urlEntries=xml?[...xml.matchAll(/<url\\b[^>]*>([\\s\\S]*?)<\\/url>/gi)]:[];
+    const urlEntries=xml?[...xml.matchAll(/<url\b[^>]*>([\s\S]*?)<\/url>/gi)]:[];
     const previewLastmod:Array<{url:string;lastmod:string|null}>=[];
     for(const entry of urlEntries){
-      const loc=entry[1].match(/<loc\\b[^>]*>([\\s\\S]*?)<\\/loc>/i)?.[1]
-        .replace(/<!\\[CDATA\\[|\\]\\]>/g,'').trim()??'';
-      const lastmod=entry[1].match(/<lastmod\\b[^>]*>([\\s\\S]*?)<\\/lastmod>/i)?.[1]?.trim()??null;
+      const loc=entry[1].match(/<loc\b[^>]*>([\s\S]*?)<\/loc>/i)?.[1]
+        .replace(/<!\[CDATA\[|\]\]>/g,'').trim()??'';
+      const lastmod=entry[1].match(/<lastmod\b[^>]*>([\s\S]*?)<\/lastmod>/i)?.[1]?.trim()??null;
       const year=lastmod?.slice(0,4)??'none';
       years[year]=(years[year]??0)+1;
       if(previewLastmod.length<8&&originalDFLUrl(loc))
