@@ -38,7 +38,10 @@ export function discoverOfficialVersionLeads(html: string, statusUrl: string): O
   // The status-page banner repeats the current version URL before the
   // authoritative "Bill Text Versions" table, but omits its printed date.
   // Limit discovery to the actual published version listing when identifiable.
-  const heading = /<h[1-6]\b[^>]*>\s*Bill Text Versions\s*<\/h[1-6]>/i.exec(html);
+  // The Revisor heading sometimes wraps words in nested markup, so do
+  // not require the heading to consist of a bare H2/H3 text node.
+  // The literal published section title is the boundary before the table.
+  const heading = /\bBill\s+Text\s+Versions\b/i.exec(html);
   const listingHtml = heading ? html.slice(heading.index + heading[0].length) : html;
   const anchor = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
   const matches = [...listingHtml.matchAll(anchor)];
