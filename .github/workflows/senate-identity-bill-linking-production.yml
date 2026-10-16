@@ -10,6 +10,7 @@ on:
       - src/operations/senate-identity-bill-report.ts
       - scripts/deploy-senate-identity-bill-linking-neon.ts
       - tests/senate-identity-bill-linking.test.ts
+      - tests/senate-identity-bill-linking-db.test.ts
       - docs/sources/senate-identity-and-bill-linking.md
       - .github/workflows/senate-identity-bill-linking-production.yml
   push:
@@ -22,6 +23,7 @@ on:
       - src/operations/senate-identity-bill-report.ts
       - scripts/deploy-senate-identity-bill-linking-neon.ts
       - tests/senate-identity-bill-linking.test.ts
+      - tests/senate-identity-bill-linking-db.test.ts
       - docs/sources/senate-identity-and-bill-linking.md
       - .github/workflows/senate-identity-bill-linking-production.yml
 
@@ -39,7 +41,24 @@ jobs:
       github.repository == 'killjoy00/votepredict' &&
       github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 55
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
     steps:
       - uses: actions/checkout@v7
         with:
@@ -50,8 +69,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Resolver and deployment guard unit tests
-        run: node --import tsx --test tests/senate-identity-bill-linking.test.ts
+      - name: Apply all migrations to disposable Postgres and verify drift gate
+        run: |
+          npm run db:migrate
+          node --import tsx scripts/check-production-migration-drift.ts
+      - name: Resolver, guarded runner, and local Postgres linking tests
+        run: node --import tsx --test tests/senate-identity-bill-linking.test.ts tests/senate-identity-bill-linking-db.test.ts
       - name: Complete project check
         run: npm run check
       - name: Explicit complete test run
