@@ -153,7 +153,7 @@ test('2020 president remains 2012 district plan; House A+B aggregation covers ex
   assert.equal(sum.matches,true);
 });
 test('additive only, standalone production marker and model isolation are enforced',()=>{
-  const migration=readFileSync('migrations/0025_senate_scorecards_district_partisanship.sql','utf8');
+  const migration=readFileSync('migrations/0026_senate_scorecards_district_partisanship.sql','utf8');
   const runner=readFileSync('scripts/deploy-senate-scorecards-partisanship-neon.ts','utf8');
   const workflow=readFileSync('.github/workflows/senate-scorecards-partisanship-production.yml','utf8');
   assert.match(migration,/CREATE TABLE IF NOT EXISTS senate_scorecard_snapshots/);
