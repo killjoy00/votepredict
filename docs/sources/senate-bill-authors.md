@@ -135,6 +135,33 @@ coauthorShare and senateLinkRate. These figures may change as new evidence
 is collected or the catalog changes. Do not extrapolate the coauthor share
 to all 28,938 target bills.
 
+### Verified journal-only protected collection: October 16, 2026
+
+[Production run #38962989650](https://github.com/killjoy00/votepredict/actions/runs/38962989650)
+successfully processed **all 257 stored Senate journals outstanding after the
+first batch**, with zero official Revisor HTTP requests, no throttle and no
+source errors. It found **5,650 literal author-change mentions and linked all
+5,650 to existing bills**. The run recorded `remaining_journals: 0`.
+
+Across the two runs, **337 / 337 currently indexed journal documents** have
+receipts. The raw authorship layer contains the following distinct author rows
+after journal processing, including 350 previously scanned SF bills:
+
+| Session | Raw Senate author rows | Linked existing memberships | Official bill XML success scans |
+| --- | ---: | ---: | ---: |
+| 2021-2022 | 2,937 | 2,936 | 0 |
+| 2023-2024 | 2,133 | 2,133 | 0 |
+| 2025-2026 | 2,781 | 2,781 | 350 |
+| **Total** | **7,851** | **7,850 (99.99%)** | **350** |
+
+The **28,588 remaining bill lookups** did not change in this journal-only run.
+The single unresolved Senate membership stays unresolved; no identity is
+inferred. A journal receipt means the document was processed by the existing
+literal parser, not that every possible author-change construction was
+successfully recognized. The counters above are a point-in-time production
+observation; if new source documents arrive they may require a new reviewed
+scan.
+
 Definitions: coauthor share is distinct successfully scanned bills with at
 least one coauthor, divided by successfully scanned bills. Senate link rate is
 resolved Senate membership author rows divided by all Senate author rows;
@@ -169,7 +196,16 @@ It will not apply another agent's migrations, rewrite applied checksums,
 or suppress a drift mismatch. If the production ledger is behind the current
 release, the protected run is held for that migration's own guarded deploy.
 
-To continue the remaining official catalog, review a fresh marker-bearing
-main change, pass CI and merge. The next bounded run resumes from existing
-scan receipts. Never trigger an unreviewed direct dispatch, a forced empty
-push or an uncontrolled parallel Revisor crawl.
+### First large Revisor continuation
+
+The reviewed marker-bearing continuation following the journal-only run
+requests up to **3,000 official bill lookups** without repeating any finished
+journal or Revisor scan receipt. The 65-minute hard time budget, 1,150-ms
+serial pacing, and 429/503 hard stop remain in force. A terminal run prints
+the actual successful bill count and `remaining_unscanned`, rather than
+assuming the full requested maximum was completed.
+
+For each further batch, review a fresh marker-bearing main change, pass CI
+and merge. The next bounded run resumes from existing scan receipts. Never
+trigger an unreviewed direct dispatch, a forced empty push, overlapping
+Revisor jobs or an uncontrolled parallel crawl.
