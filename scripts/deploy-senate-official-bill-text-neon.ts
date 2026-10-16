@@ -275,7 +275,7 @@ async function nextDocuments(db:PoolClient):Promise<RawDocument[]>{
     +"WHERE s.slug=ANY($1::text[]) AND d.metadata->'rawPrepassageVotes'->>'sourceType' "
     +"IN ('mn_senate_journal','mn_senate_committee_minutes_html') "
     +'AND (scanned.source_document_id IS NULL OR '
-    +"(scanned.status='failed' AND scanned.scanned_at<now()-interval '6 hours')) "
+    +"(scanned.status='failed' AND scanned.scanned_at<now()-interval '6 hours' AND scanned.attempts<3)) "
     +'AND EXISTS (SELECT 1 FROM senate_raw_vote_bill_mentions m '
     +'WHERE m.source_document_id=d.id AND m.bill_id IS NOT NULL) '
     +'ORDER BY s.slug DESC,d.fetched_at,d.id LIMIT $2',[SESSIONS,MAX_JOURNALS]);
@@ -306,11 +306,11 @@ async function scanDocument(db:PoolClient,d:RawDocument):Promise<{found:number;l
         'INSERT INTO senate_official_bill_text_captures'
         +' (session_id,bill_id,source_document_id,family,source_url,source_locator,printed_label,raw_text,'
         +'original_body_sha256,body_hash_provenance,extracted_text_sha256,fetched_at,proceeding_on)'
-        +" VALUES($1,$2,$3,'amendment',$4,$5,$6,$7,$8,'existing_source_document_fingerprint',$9,now(),$10)"
+        +" VALUES($1,$2,$3,'amendment',$4,$5,$6,$7,$8,'existing_source_document_fingerprint',$9,$10,$11)"
         +' ON CONFLICT(source_url,source_locator,original_body_sha256,extracted_text_sha256) '
         +'DO NOTHING RETURNING id',
         [d.session_id,billId,d.id,d.source_url,snippet.sourceLocator,snippet.printedLabel,
-        snippet.rawText,d.content_sha256,snippet.extractedTextSha256,
+        snippet.rawText,d.content_sha256,snippet.extractedTextSha256,d.fetched_at,
         typeof d.raw.sourceDate==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d.raw.sourceDate)
           ? d.raw.sourceDate:null]);
       const receiptId=capture.rows[0]?.id ?? (await db.query<{id:string}>(
@@ -338,9 +338,9 @@ async function scanDocument(db:PoolClient,d:RawDocument):Promise<{found:number;l
     }
     await db.query(
       'INSERT INTO senate_official_bill_text_journal_scans'
-      +' (source_document_id,scanned_at,status,snippets_found,exact_record_links,unresolved_snippets)'
-      +" VALUES($1,now(),$2,$3,$4,$5) ON CONFLICT(source_document_id) DO UPDATE "
-      +'SET scanned_at=EXCLUDED.scanned_at,status=EXCLUDED.status,'
+      +' (source_document_id,scanned_at,status,snippets_found,exact_record_links,unresolved_snippets,attempts)'
+      +" VALUES($1,now(),$2,$3,$4,$5,1) ON CONFLICT(source_document_id) DO UPDATE "
+      +'SET scanned_at=EXCLUDED.scanned_at,status=EXCLUDED.status,attempts=senate_official_bill_text_journal_scans.attempts+1,'
       +'snippets_found=EXCLUDED.snippets_found,exact_record_links=EXCLUDED.exact_record_links,'
       +'unresolved_snippets=EXCLUDED.unresolved_snippets,failure_kind=NULL',
       [d.id,snippets.length?'extracted':'none',snippets.length,exactLinks,snippets.length-exactLinks]);
@@ -353,7 +353,7 @@ async function noteDocumentFailure(db:PoolClient,sourceId:string){
     'INSERT INTO senate_official_bill_text_journal_scans'
     +" (source_document_id,scanned_at,status,snippets_found,exact_record_links,unresolved_snippets,failure_kind)"
     +" VALUES($1,now(),'failed',0,0,0,'extract_or_store_failed')"
-    +' ON CONFLICT(source_document_id) DO UPDATE SET scanned_at=now(),'
+    +' ON CONFLICT(source_document_id) DO UPDATE SET scanned_at=now(),attempts=senate_official_bill_text_journal_scans.attempts+1,'
     +"status='failed',failure_kind='extract_or_store_failed'",[sourceId]);
 }
 async function report(db:PoolClient){
