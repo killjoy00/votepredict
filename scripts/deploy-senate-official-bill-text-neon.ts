@@ -383,6 +383,14 @@ async function report(db:PoolClient){
       'SELECT s.slug AS session,d.status,count(*)::int AS count '
       +'FROM senate_official_bill_text_discovery d JOIN legislative_sessions s ON s.id=d.session_id '
       +'GROUP BY s.slug,d.status ORDER BY s.slug DESC,d.status')).rows;
+    // Error rollups are first-party operational receipts. Report categories only:
+    // never emit bill titles, HTML bodies, URLs, SQL parameters or secrets.
+    const discoveryFailureKinds=(await db.query(
+      'SELECT s.slug AS session,coalesce(d.last_http_status::text,\'none\') AS http_status,'
+      +"coalesce(nullif(d.last_error_kind,''),'none') AS error_kind,count(*)::int AS count "
+      +'FROM senate_official_bill_text_discovery d JOIN legislative_sessions s ON s.id=d.session_id '
+      +"WHERE d.status='failed' GROUP BY s.slug,d.last_http_status,d.last_error_kind "
+      +'ORDER BY count(*) DESC,s.slug LIMIT 25')).rows;
     const journals=(await db.query(
       'SELECT s.slug AS session,j.status,count(*)::int AS documents,'
       +'coalesce(sum(j.snippets_found),0)::int AS snippets,'
@@ -430,7 +438,7 @@ async function report(db:PoolClient){
       ' WHERE m.source_document_id=d.id AND m.bill_id IS NOT NULL)',
       ' GROUP BY s.slug ORDER BY s.slug DESC'
     ].join('\n'))).rows;
-    return {families,queue,discovery,journals,eligible,rawDocuments,outstanding};
+    return {families,queue,discovery,discoveryFailureKinds,journals,eligible,rawDocuments,outstanding};
   });
 }
 async function main():Promise<void>{

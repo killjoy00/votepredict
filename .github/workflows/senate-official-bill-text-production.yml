@@ -76,6 +76,34 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - name: Diagnose public Revisor access from keyless runner
+        run: |
+          node --input-type=module <<'NODE'
+          const url = 'https://www.revisor.mn.gov/bills/94/2025/0/SF/1/';
+          try {
+            const response = await fetch(url, {
+              headers: {
+                'User-Agent': 'VotePredict/2.0 official Senate raw bill text research',
+                Accept: 'text/html,application/xhtml+xml;q=0.9',
+              },
+              signal: AbortSignal.timeout(20000),
+            });
+            const html = await response.text();
+            const result = {
+              status: response.status,
+              finalHost: new URL(response.url).hostname,
+              bytes: Buffer.byteLength(html),
+              hasVersionHeading: /Bill Text Versions/i.test(html),
+              versionAnchorCount: (html.match(/href\s*=\s*["'][^"']*versions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\//gi) ?? []).length,
+              contentType: response.headers.get('content-type')?.slice(0,60) ?? null,
+            };
+            console.log('SENATE_REVISOR_PUBLIC_PROBE=' + JSON.stringify(result));
+          } catch (error) {
+            console.log('SENATE_REVISOR_PUBLIC_PROBE=' + JSON.stringify({
+              failure: error instanceof Error ? error.name : 'unknown',
+            }));
+          }
+          NODE
       - name: Apply all migrations to disposable Postgres
         run: npm run db:migrate
       - name: Check migration ledger on disposable Postgres
