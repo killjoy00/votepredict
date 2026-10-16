@@ -12,3 +12,7 @@ See [PR 3 consolidation details](../../docs/evidence-workflow-consolidation.md) 
 ## Historical workflow retirement, batch 1: `historical-density-*` (2026-10-16)
 
 102 `historical-density-*` workflow files were moved here unchanged. All were one-off historical research pipelines last modified on or before 2026-10-12, with no references from tests, source, scripts, `package.json` or other workflows. Restore any of them with `git mv research/workflows-archive/<file> .github/workflows/`.
+
+## Historical workflow retirement, batch 2: `acquire-*`, `audit-*`, `cfb-*` (2026-10-16)
+
+122 one-off historical acquisition, audit and Campaign Finance Board workflows, last modified on or before 2026-10-12, moved here unchanged. Three workflows matching these prefixes stay active because live code or tests reference them: `audit-cfb-availability-debt.yml` and `audit-senate-2021-publication-recovery.yml` (listed in `src/operations/evidence-operating-posture.ts`) and `audit-senate-campaign-neon-readonly-once.yml` (read by a test).
