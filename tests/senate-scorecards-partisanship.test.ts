@@ -4,7 +4,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {Pool} from 'pg';
 import {
-  parseA4LSenatePdf,parseGunOwnersSenateHtml,parseEducationMinnesotaSenateEndorsements,parseScorecardBillPositions,
+  parseA4LSenatePdf,parseGunOwnersSenateHtml,parseEducationMinnesotaSenateEndorsements,parseScorecardBillPositions,explicitPublishedOn,
   parseRobots,validateScorecardManifest,parseScorecardContent,
   type ScorecardCapture,
 } from '../src/sources/minnesota/senate-scorecard-raw.js';
@@ -91,6 +91,11 @@ test('Education Minnesota 2026 Senate-specific release retains endorsement and p
   assert.equal(rows[0].nameRaw,'Simon Glaser');
   assert.equal(rows[0].partyRaw,'DFL');
   assert.equal(rows[0].valueNumeric,null);
+});
+test('Keep the first-party 2026 education endorsement dateline separate from fetched_at',()=>{
+  assert.equal(explicitPublishedOn('ST. PAUL, Minnesota. July 31, 2026 – Education Minnesota endorsed senators.'),'2026-07-31');
+  assert.equal(explicitPublishedOn('Last Updated: August 10, 2022'),'2022-08-10');
+  assert.equal(explicitPublishedOn('No displayed publication date'),null);
 });
 test('Scorecard source catalog pinned 2021-2026 and robots grouping respects publisher restrictions',()=>{
   const cat=validateScorecardManifest(JSON.parse(readFileSync('data/senate-scorecard-sources.json','utf8')));
