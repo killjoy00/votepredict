@@ -74,6 +74,8 @@ jobs:
         run: npm run check
       - name: Production dependency security gate
         run: npm audit --omit=dev --audit-level=high
+      - name: Verify actual senator roster and author archives without Neon credentials
+        run: node --import tsx scripts/probe-senate-press-directories.ts
       - name: Confirm live Senate DFL publisher without accessing Neon
         run: npm run data:senate:statements -- --source senate_dfl --from=2025-01-01 --dry-run --max-pages=2
 
