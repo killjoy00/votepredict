@@ -25,7 +25,7 @@ interface StatusSummary {
 function statusUrls(row:Pending):string[]{
   const session=SESSION_INFO.find(s=>s.slug===row.slug);
   const canonical=canonicalBillIdentifier(row.identifier);
-  if(!session || !canonical || !/^SF[1-9]\\d{0,5}$/.test(canonical))
+  if(!session || !canonical || !/^SF[1-9]\d{0,5}$/.test(canonical))
     throw Error('Unusable session Senate bill identifier');
   const number=Number(canonical.slice(2));
   // Revisor indexes a biennium by its introduction year; 2026-introduced
@@ -44,12 +44,12 @@ async function fetchCapture(row:Pending):Promise<Capture>{
       });
       if(!r.ok) continue;
       const xml=await r.text();
-      const type=xml.match(/<FILE_TYPE>\\s*(HF|SF)\\s*<\\/FILE_TYPE>/i)?.[1]?.toUpperCase();
-      const num=Number(xml.match(/<FILE_NUMBER>\\s*(\\d+)\\s*<\\/FILE_NUMBER>/i)?.[1]);
-      const year=Number(xml.match(/<SESSION_YEAR>\\s*(\\d{4})\\s*<\\/SESSION_YEAR>/i)?.[1]);
+      const type=xml.match(/<FILE_TYPE>\s*(HF|SF)\s*<\/FILE_TYPE>/i)?.[1]?.toUpperCase();
+      const num=Number(xml.match(/<FILE_NUMBER>\s*(\d+)\s*<\/FILE_NUMBER>/i)?.[1]);
+      const year=Number(xml.match(/<SESSION_YEAR>\s*(\d{4})\s*<\/SESSION_YEAR>/i)?.[1]);
       if(type!=='SF' || canonicalBillIdentifier(type+num)!==canonicalBillIdentifier(row.identifier)
         || year!==Number(new URL(url).pathname.split('/')[4])
-        || !/<BILL(?:\\s|>)/i.test(xml) || !/<COMPANION_TYPE\\s*\\/?>(?:[\\s\\S]*?<\\/COMPANION_TYPE>)?/i.test(xml))
+        || !/<BILL(?:\s|>)/i.test(xml) || !/<COMPANION_TYPE\s*\/?>(?:[\s\S]*?<\/COMPANION_TYPE>)?/i.test(xml))
         continue;
       const companion=parseRevisorCompanionXml(xml);
       return {candidate:row,url,fetchedAt:new Date().toISOString(),companion,error:false};
