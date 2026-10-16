@@ -6,6 +6,7 @@ on:
       - migrations/0024_senate_raw_vote_views.sql
       - migrations/0025_senate_bill_authors.sql
       - migrations/0026_senate_scorecards_district_partisanship.sql
+      - migrations/0029_senate_scorecard_member_votes_raw.sql
       - data/senate-scorecard-sources.json
       - src/sources/minnesota/senate-scorecard-raw.ts
       - src/sources/minnesota/senate-district-partisanship-raw.ts
@@ -20,6 +21,7 @@ on:
       - migrations/0024_senate_raw_vote_views.sql
       - migrations/0025_senate_bill_authors.sql
       - migrations/0026_senate_scorecards_district_partisanship.sql
+      - migrations/0029_senate_scorecard_member_votes_raw.sql
       - data/senate-scorecard-sources.json
       - src/sources/minnesota/senate-scorecard-raw.ts
       - src/sources/minnesota/senate-district-partisanship-raw.ts
