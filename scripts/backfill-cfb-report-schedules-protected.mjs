@@ -172,7 +172,7 @@ async function loadSourceBodyAndPages(client,record,sessionCache){
   ].join(' '),[record.sha,record.bytes,Buffer.from(bytes),record.url,fetchedAt]);
  }
  const pages=await existingPages(client,record.sha)??await parseVerifiedPdfPages(bytes);
- const cached={bytes,pages,fetchedAt,downloaded};
+ const cached={pages,fetchedAt,downloaded};
  sessionCache.set(record.sha,cached);
  return cached;
 }
@@ -184,13 +184,9 @@ async function persistReport(client,record,source,canonicalRows){
  try{
   await client.query('BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED READ WRITE');
   transaction=true;
-  // Hash verified on first network acquisition and again when cache was read.
-  storeStage='pdf_body';
-  await client.query([
-   'INSERT INTO cfb_finance_pdf_body_captures',
-   '(pdf_sha256,byte_length,original_pdf,verified_from_url,fetched_at)',
-   'VALUES ($1,$2,$3,$4,$5::timestamptz) ON CONFLICT DO NOTHING'
-  ].join(' '),[record.sha,record.bytes,Buffer.from(source.bytes),record.url,source.fetchedAt]);
+  // loadSourceBodyAndPages has already SHA-verified and persisted the body.
+  // PDF parsing may transfer/detach its input bytes. Never reinsert bytes
+  // here after extraction; doing so can violate the original byte-length check.
   const pages=source.pages;
   const pagePayload=pages.map((raw_page_text,i)=>({page_number:i+1,raw_page_text}));
   storeStage='pages';

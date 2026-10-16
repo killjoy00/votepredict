@@ -1,4 +1,5 @@
 /** Public no-secret source smoke test. Only emits aggregate counts; never donor text. */
+import {createHash} from 'node:crypto';
 import {registry830} from '../src/evidence/cfb-864-pdf-registry-eligibility-v48.mjs';
 import {fetchVerifiedReportPdf,parseVerifiedPdfPages,extractScheduleEntries}
  from '../src/evidence/cfb-report-schedule-raw.mjs';
@@ -19,6 +20,11 @@ async function main(){
    const binary=await fetchVerifiedReportPdf(record);
    verified++;
    const pages=await parseVerifiedPdfPages(binary.bytes);
+   // Regression: PDF.js workers must not detach/mutate the caller's exact
+   // SHA-pinned source body before it is reused by the production collector.
+   if(binary.bytes.length!==record.bytes ||
+     createHash('sha256').update(binary.bytes).digest('hex')!==record.sha)
+    throw Error('Parser mutated or detached original verified PDF bytes');
    extracted++;
    rawLines+=extractScheduleEntries(pages,2025).length;
   }catch{

@@ -193,7 +193,9 @@ export async function fetchVerifiedReportPdf(record,request=fetch){
 export async function parseVerifiedPdfPages(bytes){
  const {CanvasFactory}=await import('pdf-parse/worker');
  const {PDFParse}=await import('pdf-parse');
- const parser=new PDFParse({data:bytes,CanvasFactory});
+ // PDF.js may transfer the worker input ArrayBuffer. Keep the verified
+ // caller-owned PDF body intact; send the parser its own byte copy.
+ const parser=new PDFParse({data:new Uint8Array(bytes),CanvasFactory});
  try{
   const separator='\n<<<CFB_SCHEDULE_PAGE_BREAK>>>\n';
   const result=await parser.getText({pageJoiner:separator});
