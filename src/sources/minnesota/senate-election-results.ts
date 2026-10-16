@@ -7,7 +7,6 @@
  * Catalog: https://www.sos.mn.gov/elections-voting/election-results/
  */
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
 import { PDFParse } from 'pdf-parse';
 
 export type SenateElectionType = 'general' | 'special' | 'primary' | 'special_primary';
@@ -40,7 +39,7 @@ export interface SenateElectionDownload {
   contentSha256: string;
   rawContent: string;
   rawBase64: string;
-  sourceKind: 'official_bulk_text' | 'official_archived_rows_copy' | 'official_sos_pdf';
+  sourceKind: 'official_bulk_text' | 'official_sos_pdf' | 'university_election_archive_html';
   originalObservedOn: string | null;
   post2022Redistricting: boolean;
   candidates: SenateElectionCandidate[];
@@ -230,37 +229,126 @@ async function waitForArchivedHost(): Promise<void> {
   lastArchiveRequestAt = Date.now();
 }
 
-interface LegacyOfficialRows {
-  observationDate: string;
-  sources: Array<{resultsId: number;rows: string[]}>;
-}
 /**
- * The old results host challenges automated requests. These seven literal
- * official published source text exports have been recorded separately as
- * source DATA. They are normalized copies (not a claim of byte-exact remote
- * transfer), with the original official archival download URL preserved.
+ * The Secretary of State's official Minnesota Votes publication includes
+ * district totals for the 2016 general and the 2018/2019 Senate specials.
+ * Preserve the ORIGINAL PDF bytes rather than re-creating fake text exports.
  */
-async function readArchivedPublishedRows(event: SenateElectionEvent): Promise<SenateElectionDownload | null> {
-  const buffer = await readFile(new URL('../../../data/mn-senate-election-legacy-official-rows.json', import.meta.url), 'utf8');
-  const bundled = JSON.parse(buffer) as LegacyOfficialRows;
-  const item = bundled.sources.find((item) => item.resultsId === event.resultsId);
-  if (!item) return null;
-  const rawContent = item.rows.join('\n') + '\n';
-  const bytes = Buffer.from(rawContent,'utf8');
-  const officialUrl = directSenateDistrictFileUrl(event);
-  if (!officialUrl) return null;
+const OFFICIAL_2019_ELECTION_BOOK = 'https://www.sos.mn.gov/media/3854/10-minnesota-votes-2019.pdf';
+const HISTORICAL_BOOK_EVENTS: Readonly<Record<number,{page:number;district:string;useLastBlock:boolean}>> = {
+  110: {page:13,district:'54',useLastBlock:false},
+  115: {page:68,district:'13',useLastBlock:true},
+  119: {page:177,district:'11',useLastBlock:false},
+};
+function publishedBookCandidateLine(line:string): {candidate:string;party:string;votes:number;voteShare:number}|null {
+  const m=line.trim().match(/^(.+?)\s+\(([A-Za-z]{1,5})\)\s+([\d,]+)\s+\((\d+(?:\.\d+)?)%\)\s*$/);
+  if(!m)return null;
+  return {candidate:m[1].trim(),party:m[2],votes:integerField(m[3],'published vote'),voteShare:Number(m[4])};
+}
+export function parsePublishedSpecialSenateBook(
+  text:string, type:SenateElectionType, district:string,useLastBlock:boolean,
+):SenateElectionCandidate[]{
+  const lines=text.split(/\r\n|\r|\n/);
+  const blocks:SenateElectionCandidate[][]=[];
+  for(let i=0;i<lines.length-2;i++){
+    if(lines[i].trim()!=='Senate District'||lines[i+1].trim()!==district)continue;
+    const rows:SenateElectionCandidate[]=[];
+    for(let j=i+2;j<Math.min(i+14,lines.length);j++){
+      const parsed=publishedBookCandidateLine(lines[j]);
+      if(!parsed)break;
+      rows.push({...parsed,sourceOrdinal:j+1,district,totalVotes:null,winner:false,rawLine:lines[j]});
+    }
+    if(rows.length>=2)blocks.push(rows);
+  }
+  const chosen=useLastBlock?blocks.at(-1):blocks[0];
+  if(!chosen)throw new Error('Official special election PDF district result table unavailable');
+  return markRawElectionLeaders(chosen,type);
+}
+async function fetchPublishedOfficialPDF(
+  event:SenateElectionEvent, url:string,pages:number[],parse:(text:string)=>SenateElectionCandidate[],
+):Promise<SenateElectionDownload>{
+  const response=await fetch(url,{
+    redirect:'error',headers:{'user-agent':'VotePredict/2.0 Minnesota Senate original PDF collection'},
+    signal:AbortSignal.timeout(40_000),
+  });
+  if(!response.ok||!['www.sos.mn.gov','sos.mn.gov'].includes(new URL(response.url).hostname))
+    throw new Error('Official SOS original publication unavailable: '+url);
+  const bytes=new Uint8Array(await response.arrayBuffer());
+  if(bytes.byteLength<100_000||bytes.byteLength>5_000_000)
+    throw new Error('Official SOS PDF original bytes missing or oversized');
+  const pdf=new PDFParse({data:bytes});
+  let text:string;
+  try {text=(await pdf.getText({partial:pages})).text;}
+  finally {await pdf.destroy();}
+  const candidates=parse(text);
   return {
-    event,
-    indexUrl: senateElectionMediaIndexUrl(event.resultsId),
-    sourceUrl: officialUrl,
-    fetchedAt: new Date().toISOString(),
-    sourceKind: 'official_archived_rows_copy',
-    originalObservedOn: bundled.observationDate,
-    contentType:'text/plain; charset=utf-8',
-    contentSha256: createHash('sha256').update(bytes).digest('hex'),
-    rawContent,rawBase64: bytes.toString('base64'),
-    post2022Redistricting:false,
-    candidates:parseSenateDistrictFile(rawContent,event.type),
+    event,indexUrl:senateElectionMediaIndexUrl(event.resultsId),
+    sourceUrl:url,fetchedAt:new Date().toISOString(),contentType:'application/pdf',
+    contentSha256:createHash('sha256').update(bytes).digest('hex'),
+    rawContent:text,rawBase64:Buffer.from(bytes).toString('base64'),
+    post2022Redistricting:false,candidates,sourceKind:'official_sos_pdf',
+    originalObservedOn:null,
+  };
+}
+async function publishedSpecialPDFElection(event:SenateElectionEvent):Promise<SenateElectionDownload>{
+  const spec=HISTORICAL_BOOK_EVENTS[event.resultsId];
+  if(!spec)throw new Error('No Secretary of State PDF for this historical election');
+  return fetchPublishedOfficialPDF(event,OFFICIAL_2019_ELECTION_BOOK,[spec.page],
+    (text)=>parsePublishedSpecialSenateBook(text,event.type,spec.district,spec.useLastBlock));
+}
+
+/**
+ * U of Minnesota's Minnesota Historical Election Archive preserves 2016 SD35
+ * official-result-derived data; this is explicitly SECONDARY provenance.
+ * The entire genuine HTML response is saved as the raw source, never a
+ * synthesized stand-in for an unreachable SOS archival export.
+ */
+const ACADEMIC_2016_SPECIAL='https://mn.electionarchives.lib.umn.edu/election/232016209997035/';
+function htmlEntityDecode(s:string):string{
+  return s.replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&quot;/gi,'"')
+    .replace(/&#39;|&apos;/gi,"'").replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+}
+export function parse2016SpecialAcademicArchive(html:string):SenateElectionCandidate[]{
+  if(!html.includes('February 9, 2016')||!html.includes('State Senate')||!html.includes('District 35'))
+    throw new Error('University archive is not the 2016 Senate District 35 special');
+  const allRows=[...html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)];
+  const candidates:SenateElectionCandidate[]=[];
+  for(let i=0;i<allRows.length;i++){
+    const cells=[...allRows[i][1].matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)]
+      .map(x=>htmlEntityDecode(x[1]));
+    if(cells.length<5)continue;
+    const party={'Republican':'R','Democratic-Farmer-Labor':'DFL','Legal Marijuana Now':'LMN','Write-In':'WI'}[cells[2]];
+    const votes=cells[3].replace(/,/g,'');
+    const percent=cells[4].replace('%','');
+    if(!party||! /^\d+$/.test(votes)||! /^\d+(?:\.\d+)?$/.test(percent))continue;
+    candidates.push({
+      sourceOrdinal:i+1,district:'35',candidate:cells[0]||'Write-in',
+      party,votes:Number(votes),totalVotes:null,voteShare:Number(percent),
+      winner:false,rawLine:allRows[i][0],
+    });
+  }
+  if(candidates.length!==4)throw new Error('University archive special district 35 table incomplete');
+  return markRawElectionLeaders(candidates,'special');
+}
+async function academic2016SpecialElection(event:SenateElectionEvent):Promise<SenateElectionDownload>{
+  const response=await fetch(ACADEMIC_2016_SPECIAL,{redirect:'follow',
+    headers:{'user-agent':'VotePredict/2.0 Minnesota Senate election collection'},
+    signal:AbortSignal.timeout(20_000)});
+  if(!response.ok||!['mn.electionarchives.lib.umn.edu','mnelectionarchive.datamade.us']
+    .includes(new URL(response.url).hostname))
+    throw new Error('Original university election archive unavailable');
+  const bytes=new Uint8Array(await response.arrayBuffer());
+  if(bytes.length<300||bytes.length>500_000)
+    throw new Error('University archive body missing or oversized');
+  const html=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+  return {
+    event,indexUrl:senateElectionMediaIndexUrl(event.resultsId),
+    sourceUrl:response.url,fetchedAt:new Date().toISOString(),
+    contentType:response.headers.get('content-type')??'text/html',
+    contentSha256:createHash('sha256').update(bytes).digest('hex'),rawContent:html,
+    rawBase64:Buffer.from(bytes).toString('base64'),post2022Redistricting:false,
+    candidates:parse2016SpecialAcademicArchive(html),
+    sourceKind:'university_election_archive_html',originalObservedOn:null,
   };
 }
 
@@ -308,29 +396,11 @@ export function parse2016SenateBookDistricts(text: string): SenateElectionCandid
 }
 
 async function official2016BookElection(event: SenateElectionEvent): Promise<SenateElectionDownload> {
-  const response = await fetch(OFFICIAL_2016_ELECTION_BOOK,{
-    redirect:'error',
-    headers:{'user-agent':'VotePredict/2.0 Minnesota Senate original source collector'},
-    signal:AbortSignal.timeout(40_000),
-  });
-  if (!response.ok || new URL(response.url).hostname !== 'www.sos.mn.gov') {
-    throw new Error('Official 2016 Minnesota Votes PDF not accessible');
-  }
-  const bytes=new Uint8Array(await response.arrayBuffer());
-  if(bytes.byteLength<100_000||bytes.byteLength>5_000_000) throw new Error('SOS 2016 published book size unexpected');
-  const pdf=new PDFParse({data:bytes});
-  let text:string;
-  try {text=(await pdf.getText({partial:Array.from({length:68},(_,i)=>i+31)})).text;}
-  finally {await pdf.destroy();}
-  const candidates=parse2016SenateBookDistricts(text);
-  return {
-    event,indexUrl:senateElectionMediaIndexUrl(event.resultsId),
-    sourceUrl:OFFICIAL_2016_ELECTION_BOOK,fetchedAt:new Date().toISOString(),
-    contentType:'application/pdf',contentSha256:createHash('sha256').update(bytes).digest('hex'),
-    rawContent:text,rawBase64:Buffer.from(bytes).toString('base64'),
-    post2022Redistricting:false,candidates,sourceKind:'official_sos_pdf',
-    originalObservedOn:null,
-  };
+  return fetchPublishedOfficialPDF(
+    event, OFFICIAL_2016_ELECTION_BOOK,
+    Array.from({length:68},(_,i)=>i+31),
+    parse2016SenateBookDistricts,
+  );
 }
 
 export async function fetchSenateElection(event: SenateElectionEvent): Promise<SenateElectionDownload> {
@@ -347,8 +417,8 @@ export async function fetchSenateElection(event: SenateElectionEvent): Promise<S
     // original published SOS sources that remain openly accessible.
     if (Number(event.date.slice(0, 4)) < 2020) {
       if (event.resultsId === 100) return official2016BookElection(event);
-      const archiveCopy = await readArchivedPublishedRows(event);
-      if (archiveCopy) return archiveCopy;
+      if (event.resultsId === 94) return academic2016SpecialElection(event);
+      if (HISTORICAL_BOOK_EVENTS[event.resultsId]) return publishedSpecialPDFElection(event);
       throw directError;
     }
     // For modern files, the index is discovery fallback, not a routine GET.
