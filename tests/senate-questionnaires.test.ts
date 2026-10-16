@@ -1,3 +1,5 @@
+import {readFileSync} from 'node:fs';
+import {assertAdditiveQuestionnaireMigration} from '../src/operations/senate-questionnaire-migration.js';
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
@@ -170,4 +172,15 @@ test('MHP index metadata fallback requires named real question page, not form/Ho
   assert.equal(parsed[0].qa.length,2);
   assert.throws(()=>parseResponses(original.replace('Dan Rogers','House Candidate'),candidate));
   assert.throws(()=>parseResponses(original.replace('Q1:','Form:'),candidate));
+});
+
+test('production guard accepts real 0021 additive DDL with FK ON DELETE but rejects DML',()=>{
+  const sql=readFileSync('migrations/0021_mn_senate_questionnaire_raw.sql','utf8');
+  assert.match(sql,/ON DELETE SET NULL/);
+  assert.match(sql,/ON DELETE CASCADE/);
+  assert.doesNotThrow(()=>assertAdditiveQuestionnaireMigration(sql));
+  assert.throws(()=>assertAdditiveQuestionnaireMigration('DELETE FROM memberships;'));
+  assert.throws(()=>assertAdditiveQuestionnaireMigration('CREATE TABLE kept(x integer); UPDATE forecasts SET status = null;'));
+  assert.throws(()=>assertAdditiveQuestionnaireMigration('CREATE TABLE test(x integer); DROP TABLE memberships;'));
+  assert.throws(()=>assertAdditiveQuestionnaireMigration('ALTER TABLE memberships DROP COLUMN party;'));
 });
