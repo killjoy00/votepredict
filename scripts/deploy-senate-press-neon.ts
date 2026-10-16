@@ -301,9 +301,16 @@ async function main(): Promise<void> {
       after.map(row => '- ' + row.source_id + ' ' + row.year + ': ' + row.items).join('\n') +
       '\n\nAll counts are raw items. No forecasting tables were touched.\n',
     );
+    if(COVERAGE && ['2023','2024','2025'].some(year=>
+      !after.some(row=>row.source_id==='senate_dfl' && row.year===year && row.items>0))) {
+      phase='dfl_historical_2023_2025_missing_after_insert_only_readback';
+      throw Error('DFL historical raw statements still incomplete');
+    }
     if (results.some(r => r.failures.length > 0 || r.pages === 0 ||
-      (!DAILY && r.pages >= MAX_PAGES)))
+      (!DAILY && r.pages >= MAX_PAGES))) {
+      phase='publisher_archive_gaps_after_safe_partial_insert';
       throw Error('Public source crawl incomplete; safe counts and failures reported');
+    }
   } catch {
     console.error('SENATE_RAW_STATEMENTS_PRODUCTION_HELD_AT=' + phase);
     process.exitCode = 1;
