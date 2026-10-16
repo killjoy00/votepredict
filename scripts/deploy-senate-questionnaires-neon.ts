@@ -4,7 +4,7 @@ import {readFileSync,readdirSync,appendFileSync} from 'node:fs';
 import {Pool,type PoolClient} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {collectQuestionnaires,validateCatalog} from '../src/sources/minnesota/senate-questionnaire-raw.js';
-import {insertQuestionnaire,questionnaireReadback,reconcileUnmatchedQuestionnaireMemberships} from '../src/operations/senate-questionnaire-ingest.js';
+import {insertQuestionnaire,questionnaireReadback,questionnaireEligibleScopeReadback,reconcileUnmatchedQuestionnaireMemberships} from '../src/operations/senate-questionnaire-ingest.js';
 import {assertAdditiveQuestionnaireMigration} from '../src/operations/senate-questionnaire-migration.js';
 const MARKER='SENATE_QUESTIONNAIRE_RAW_PRODUCTION_20261015';
 const MIGRATION='0021_mn_senate_questionnaire_raw.sql';
@@ -140,7 +140,9 @@ async function main():Promise<void>{
     finally{identityDb.release(true);}
     phase='readonly_postcommit_readback';
     const after=await readonly(pool,questionnaireReadback);
-    if(after.totals.captures!==before.totals.captures+inserted
+    const eligibilityScoped=await readonly(pool,questionnaireEligibleScopeReadback);
+    if(eligibilityScoped.includedCaptures+eligibilityScoped.legacyHistoricalExcludedCaptures!==after.totals.captures
+      ||after.totals.captures!==before.totals.captures+inserted
       ||after.totals.qaPairs<before.totals.qaPairs
       ||after.totals.distinctCandidates<before.totals.distinctCandidates
       ||after.totals.captures>100000||!after.groups.some(g=>g.cycle===2026&&g.responses>0))
@@ -148,8 +150,10 @@ async function main():Promise<void>{
     const report={
       status:summary.failed.length?'committed_with_unavailable_or_unparsed_sources':'committed_readback_verified',
       migrationApplied,sourceCatalogEntries:sources.length,excludedCycles:[2020],identityBackfill,
+      eligibilityScoped,
       fetchedSourceDocuments:summary.fetched,fetchedResponses:summary.responses,
-      fetchedPairs:summary.pairs,inserted,previous,matchedNew,
+      fetchedPairs:summary.pairs,skippedHistoricalNonWinners:summary.skippedHistoricalNonWinners,
+      inserted,previous,matchedNew,
       failures:summary.failed,explicitlyUnanswered:summary.explicitlyUnanswered,
       before:before.totals,after,forecastsAndModelsUntouched:true,
     };
@@ -164,6 +168,9 @@ async function main():Promise<void>{
       +', distinct Q&A pairs: '+after.totals.uniqueQaPairs
       +', repeated raw-page snapshots of identical Q&A: '+after.totals.repeatQaSnapshots
       +', unmatched captures: '+after.totals.unmatched
+      +', in-scope 2026/previous-winner captures: '+eligibilityScoped.includedCaptures
+      +', legacy historical nonwinner/unknown captures excluded: '+eligibilityScoped.legacyHistoricalExcludedCaptures
+      +', historical nonwinner answers skipped this run: '+summary.skippedHistoricalNonWinners
       +', candidate links filled in this backfill: '+identityBackfill.linked
       +', missing explicit publication dates: '+after.totals.missingDates
       +', failed sources: '+summary.failed.length
