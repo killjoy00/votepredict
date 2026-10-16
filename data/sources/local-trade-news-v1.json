@@ -1,0 +1,465 @@
+{
+  "schemaVersion": "source-catalog-v1",
+  "kind": "local_trade_news",
+  "sources": [
+    {
+      "id": "star-tribune-minnesota-politics-archive",
+      "publisher": "Minnesota Star Tribune",
+      "publisherKind": "local_news",
+      "url": "https://www.startribune.com/minnesota",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "axios-twin-cities-archive",
+      "publisher": "Axios Twin Cities",
+      "publisherKind": "local_news",
+      "url": "https://www.axios.com/local/twin-cities/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "cbs-minnesota-news-archive",
+      "publisher": "CBS Minnesota",
+      "publisherKind": "local_news",
+      "url": "https://www.cbsnews.com/minnesota/news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "kstp-news-archive",
+      "publisher": "KSTP 5 Eyewitness News",
+      "publisherKind": "local_news",
+      "url": "https://kstp.com/kstp-news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "fox9-minnesota-news-archive",
+      "publisher": "FOX 9 Minneapolis-St. Paul",
+      "publisherKind": "local_news",
+      "url": "https://www.fox9.com/news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "duluth-news-tribune-minnesota-archive",
+      "publisher": "Duluth News Tribune",
+      "publisherKind": "local_news",
+      "url": "https://www.duluthnewstribune.com/news/minnesota/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "minnesota-lawyer-article-archive",
+      "publisher": "Minnesota Lawyer",
+      "publisherKind": "trade_news",
+      "url": "https://minnlawyer.com/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "mpr-news-story-archive",
+      "publisher": "MPR News",
+      "publisherKind": "local_news",
+      "url": "https://www.mprnews.org/story/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "minnesota-reformer-article-archive",
+      "publisher": "Minnesota Reformer",
+      "publisherKind": "local_news",
+      "url": "https://minnesotareformer.com/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "minnpost-state-government-archive",
+      "publisher": "MinnPost",
+      "publisherKind": "local_news",
+      "url": "https://www.minnpost.com/state-government/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "finance-commerce-article-archive",
+      "publisher": "Finance & Commerce",
+      "publisherKind": "trade_news",
+      "url": "https://finance-commerce.com/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "mankato-free-press-local-news-archive",
+      "publisher": "Mankato Free Press",
+      "publisherKind": "local_news",
+      "url": "https://www.mankatofreepress.com/news/local_news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "post-bulletin-local-news-archive",
+      "publisher": "Post Bulletin",
+      "publisherKind": "local_news",
+      "url": "https://www.postbulletin.com/news/local/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "agweek-policy-archive",
+      "publisher": "Agweek",
+      "publisherKind": "trade_news",
+      "url": "https://www.agweek.com/news/policy/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "brainerd-dispatch-minnesota-archive",
+      "publisher": "Brainerd Dispatch",
+      "publisherKind": "local_news",
+      "url": "https://www.brainerddispatch.com/news/minnesota/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "bring-me-the-news-minnesota-archive",
+      "publisher": "Bring Me The News",
+      "publisherKind": "local_news",
+      "url": "https://bringmethenews.com/minnesota-news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "bemidji-pioneer-minnesota-archive",
+      "publisher": "Bemidji Pioneer",
+      "publisherKind": "local_news",
+      "url": "https://www.bemidjipioneer.com/news/minnesota/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "west-central-tribune-minnesota-archive",
+      "publisher": "West Central Tribune",
+      "publisherKind": "local_news",
+      "url": "https://www.wctrib.com/news/minnesota/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "pioneer-press-dated-archive",
+      "publisher": "Pioneer Press",
+      "publisherKind": "local_news",
+      "url": "https://www.twincities.com/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "kare11-politics-archive",
+      "publisher": "KARE 11",
+      "publisherKind": "local_news",
+      "url": "https://www.kare11.com/article/news/politics/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "sahan-journal-democracy-politics-archive",
+      "publisher": "Sahan Journal",
+      "publisherKind": "local_news",
+      "url": "https://sahanjournal.com/democracy-politics/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "msp-business-journal-government-archive",
+      "publisher": "Minneapolis/St. Paul Business Journal",
+      "publisherKind": "trade_news",
+      "url": "https://www.bizjournals.com/twincities/news/government-and-regulations/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "mn-spokesman-recorder-dated-archive",
+      "publisher": "Minnesota Spokesman-Recorder",
+      "publisherKind": "local_news",
+      "url": "https://spokesman-recorder.com/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "mesabi-tribune-news-archive",
+      "publisher": "Mesabi Tribune",
+      "publisherKind": "local_news",
+      "url": "https://www.mesabitribune.com/news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "marshall-independent-local-news-archive",
+      "publisher": "Marshall Independent",
+      "publisherKind": "local_news",
+      "url": "https://www.marshallindependent.com/news/local-news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "winona-daily-news-local-archive",
+      "publisher": "Winona Daily News",
+      "publisherKind": "local_news",
+      "url": "https://www.winonadailynews.com/news/local/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "st-cloud-times-politics-archive",
+      "publisher": "St. Cloud Times",
+      "publisherKind": "local_news",
+      "url": "https://www.sctimes.com/story/news/politics/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "twin-cities-business-news-archive",
+      "publisher": "Twin Cities Business",
+      "publisherKind": "trade_news",
+      "url": "https://tcbmag.com/news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "kaxe-local-news-archive",
+      "publisher": "KAXE",
+      "publisherKind": "local_news",
+      "url": "https://www.kaxe.org/local-news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "sun-thisweek-archive",
+      "publisher": "Sun Thisweek / HometownSource",
+      "publisherKind": "local_news",
+      "url": "https://www.hometownsource.com/sun_thisweek/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "republican-eagle-news-archive",
+      "publisher": "Republican Eagle",
+      "publisherKind": "local_news",
+      "url": "https://www.republicaneagle.com/news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "northern-news-now-dated-archive",
+      "publisher": "Northern News Now",
+      "publisherKind": "local_news",
+      "url": "https://www.northernnewsnow.com/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true
+    },
+    {
+      "id": "minnesota-daily-article-archive",
+      "publisher": "The Minnesota Daily",
+      "publisherKind": "local_news",
+      "url": "https://mndaily.com/2",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "/city/",
+        "/news/",
+        "legislat",
+        "capitol",
+        "politic",
+        "state-house",
+        "state-senate"
+      ]
+    },
+    {
+      "id": "minnesota-news-network-headlines-archive",
+      "publisher": "Minnesota News Network",
+      "publisherKind": "local_news",
+      "url": "https://minnesotanewsnetwork.com/morning-headlines",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "morning-headlines"
+      ]
+    },
+    {
+      "id": "knsi-central-minnesota-archive",
+      "publisher": "KNSI",
+      "publisherKind": "local_news",
+      "url": "https://knsiradio.com/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "minnesota-",
+        "legislat",
+        "lawmaker",
+        "capitol",
+        "politic",
+        "election",
+        "state-house",
+        "state-senate"
+      ]
+    },
+    {
+      "id": "tpt-almanac-capitol-archive",
+      "publisher": "Twin Cities PBS / Almanac at the Capitol",
+      "publisherKind": "local_news",
+      "url": "https://www.tpt.org/almanac-at-the-capitol/video/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "/almanac-at-the-capitol/video/"
+      ]
+    },
+    {
+      "id": "inforum-minnesota-archive",
+      "publisher": "InForum / Forum News Service",
+      "publisherKind": "local_news",
+      "url": "https://www.inforum.com/news/minnesota/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "/news/minnesota/"
+      ]
+    },
+    {
+      "id": "grand-forks-herald-minnesota-archive",
+      "publisher": "Grand Forks Herald / Forum News Service",
+      "publisherKind": "local_news",
+      "url": "https://www.grandforksherald.com/news/minnesota/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "/news/minnesota/"
+      ]
+    },
+    {
+      "id": "mshale-politics-archive",
+      "publisher": "Mshale",
+      "publisherKind": "local_news",
+      "url": "https://mshale.com/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "state-lawmaker",
+        "minnesota-house",
+        "minnesota-senate",
+        "legislat",
+        "state-funding",
+        "district-"
+      ]
+    },
+    {
+      "id": "uptake-politics-archive",
+      "publisher": "The UpTake",
+      "publisherKind": "local_news",
+      "url": "https://theuptake.org/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "legislat",
+        "senate",
+        "house",
+        "capitol",
+        "policy"
+      ]
+    },
+    {
+      "id": "north-news-stories-archive",
+      "publisher": "North News",
+      "publisherKind": "local_news",
+      "url": "https://mynorthnews.org/stories/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "/stories/"
+      ]
+    },
+    {
+      "id": "roseau-times-region-story-archive",
+      "publisher": "Roseau Times-Region",
+      "publisherKind": "local_news",
+      "url": "https://www.roseautimes.com/story/202",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "/news/",
+        "legislat",
+        "house-",
+        "senate-",
+        "bill-",
+        "capitol"
+      ]
+    },
+    {
+      "id": "mille-lacs-messenger-news-archive",
+      "publisher": "Mille Lacs Messenger",
+      "publisherKind": "local_news",
+      "url": "https://www.messagemedia.co/millelacs/news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "/millelacs/news/"
+      ]
+    },
+    {
+      "id": "isanti-chisago-star-news-archive",
+      "publisher": "Isanti-Chisago County Star",
+      "publisherKind": "local_news",
+      "url": "https://www.hometownsource.com/isanti_chisago/news/",
+      "from": "20210101",
+      "to": "20261231",
+      "prefix": true,
+      "pathHints": [
+        "/isanti_chisago/news/"
+      ]
+    }
+  ]
+}
