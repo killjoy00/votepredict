@@ -83,8 +83,9 @@ export function resolveSenator(
   const printed = normalizePrintedSenatorName(input.printedName ?? '');
   const unresolved: SenatorResolution = {membershipId:null,matchMethod:'unresolved'};
   if (!printed || !/^[a-z]/.test(printed)) return unresolved;
-  const members = roster.filter(m => m.sessionSlug === input.sessionSlug && inDate(m,input.date));
-  const district = input.district?.replace(/^0+/,'').trim() || null;
+  const district = input.district?.replace(/\D+/g,'').replace(/^0+/,'').trim() || null;
+  const members = roster.filter(m => m.sessionSlug === input.sessionSlug && inDate(m,input.date)
+    && (!district || m.district?.replace(/\D+/g,'').replace(/^0+/,'') === district));
   const exact = members.filter(m => withoutMiddleInitial(normalizePrintedSenatorName(m.name)) === withoutMiddleInitial(printed));
   const direct = unique(exact);
   if (direct) return {membershipId:direct.id,matchMethod:'exact'};
@@ -103,7 +104,10 @@ export function resolveSenator(
       (given.length === 1 && given[0] === actualGiven[0]);
     const suffix = pieces.slice(1).join(' ');
     const actualSuffix = official.slice(1).join(' ');
-    const familyOk = actualSuffix === suffix || actualSuffix.endsWith(' '+suffix) ||
+    const partialMiddle = pieces.length === official.length && pieces.length > 2
+      && pieces.at(-1) === official.at(-1)
+      && pieces.slice(1,-1).every((p,i) => p === official[i+1] || (p.length === 1 && p === official[i+1][0]));
+    const familyOk = actualSuffix === suffix || actualSuffix.endsWith(' '+suffix) || partialMiddle ||
       (pieces.length === 2 && oneTypo(suffix,official.at(-1) ?? ''));
     return firstOk && familyOk;
   });
@@ -124,7 +128,7 @@ export function resolveSenator(
       const official = normalizePrintedSenatorName(m.name);
       const lastPrinted = pieces.at(-1);
       const lastOfficial = official.split(' ').at(-1);
-      return String(Number(m.district)) === String(Number(district)) &&
+      return m.district?.replace(/\D+/g,'').replace(/^0+/,'') === district &&
         (official.endsWith(' '+printed) || lastPrinted === lastOfficial) &&
         (pieces.length === 1 || official.startsWith(pieces[0]+' ') ||
          official.startsWith(pieces[0][0]) || pieces.length > 2);
@@ -220,4 +224,12 @@ export function parseRevisorCompanion(html: string): string | null {
     .replace(/\s+/g,' ');
   const match = plain.match(/\bCompanion\s*:\s*(HF\s*0*\d{1,6}|None)\b/i);
   return match && !/^none$/i.test(match[1]) ? canonicalBillIdentifier(match[1]) : null;
+}
+
+
+/** Prefer the documented official Revisor Bill Status XML API over HTML scraping. */
+export function parseRevisorCompanionXml(xml: string): string | null {
+  const type = xml.match(/<COMPANION_TYPE>\s*([HS]F)\s*<\/COMPANION_TYPE>/i)?.[1];
+  const number = xml.match(/<COMPANION_NUMBER>\s*(\d{1,6})\s*<\/COMPANION_NUMBER>/i)?.[1];
+  return type && number ? canonicalBillIdentifier(type + number) : null;
 }
