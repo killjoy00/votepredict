@@ -42,7 +42,7 @@ export function discoverOfficialVersionLeads(html: string, statusUrl: string): O
   for (let i=0; i<matches.length; i++) {
     const m = matches[i];
     const href = m[1].match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2];
-    if (!href || !href.includes('/versions/')) continue;
+    if (!href || !href.includes('versions/')) continue;
     let u: URL;
     try { u = new URL(href,root); } catch { continue; }
     if (u.origin !== root.origin || u.search || u.hash || !u.pathname.startsWith(root.pathname)) continue;
@@ -56,7 +56,7 @@ export function discoverOfficialVersionLeads(html: string, statusUrl: string): O
     // A PDF link can follow the text anchor before "Posted on".
     // End at the next version anchor, never consume another version's date.
     const nextVersion = matches.slice(i+1).find(next =>
-      /href\s*=\s*["'][^"']*\/versions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\/["']/i.test(next[1]));
+      /href\s*=\s*["'][^"']*\bversions\/(?:\d+|ue\/\d+|ccr\/[a-z0-9]+)\/["']/i.test(next[1]));
     const gapEnd = nextVersion?.index ?? (m.index!+m[0].length+500);
     const gap = html.slice(m.index!+m[0].length,Math.min(gapEnd,m.index!+m[0].length+500));
     const date = gap.match(/\bPosted on\s*(\d{2})\/(\d{2})\/(\d{4})/i);
