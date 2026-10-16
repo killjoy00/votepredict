@@ -2,12 +2,12 @@
 -- Separate collection lane; no forecast, vote-history, or person identity updates.
 CREATE TABLE mn_senate_election_source_snapshots (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  election_date date NOT NULL,
+  election_date date NOT NULL CHECK (election_date >= DATE '2020-01-01'),
   election_type text NOT NULL CHECK (election_type IN ('general', 'special', 'primary', 'special_primary')),
   post_2022_redistricting boolean NOT NULL,
   source_url text NOT NULL,
   source_index_url text NOT NULL,
-  source_kind text NOT NULL CHECK (source_kind IN ('official_bulk_text','official_sos_pdf','university_election_archive_html')),
+  source_kind text NOT NULL CHECK (source_kind = 'official_bulk_text'),
   original_observed_on date,
   fetched_at timestamptz NOT NULL,
   content_type text NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE mn_senate_election_raw_results (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   source_snapshot_id uuid NOT NULL REFERENCES mn_senate_election_source_snapshots(id) ON DELETE CASCADE,
   source_ordinal integer NOT NULL CHECK (source_ordinal > 0),
-  election_date date NOT NULL,
+  election_date date NOT NULL CHECK (election_date >= DATE '2020-01-01'),
   election_type text NOT NULL CHECK (election_type IN ('general', 'special', 'primary', 'special_primary')),
   post_2022_redistricting boolean NOT NULL,
   district text NOT NULL,
