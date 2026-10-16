@@ -27,8 +27,12 @@ function dateShown(text:string):string|null{
   if(month<1||d.getUTCMonth()+1!==month||d.getUTCDate()!==day)return null;
   return year+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0');
 }
+function candidateFooter(line:string,candidate:string,district:string):boolean{
+  const match=/^(.+?)\s+(0?[1-9]|[1-5]\d|6[0-7])\s*$/.exec(line.trim());
+  return !!match&&normName(match[1])===normName(candidate)
+    &&String(Number(match[2]))===String(Number(district));
+}
 function preparedLines(page:string,candidate:string,district:string):string[]{
-  const target=normName(candidate)+' '+String(Number(district));
   return page.replace(/\r/g,'\n').replace(/\t/g,'\n').split('\n')
     .map(x=>x.trim()).filter(x=>!!x)
     .filter(x=>{
@@ -39,7 +43,7 @@ function preparedLines(page:string,candidate:string,district:string):string[]{
       if(/^Senate$/i.test(x))return false;
       if(normName(x)===normName(candidate))return false;
       // The footer repeats candidate + district; never treat it as an answer.
-      if(normName(x)===target)return false;
+      if(candidateFooter(x,candidate,district))return false;
       return true;
     });
 }
@@ -103,7 +107,7 @@ export function parseEducationMinnesotaPdfPages(
   // Independently check the PDF footer's printed district, as layout text in
   // the header sometimes reorders "02" into "20".
   const footer=pages.some(p=>p.split(/\r?\n/).some(s=>
-    normName(s.trim())===normName(printed)+' '+district));
+    candidateFooter(s,printed,district)));
   if(!footer)throw Error('PDF district footer conflicts with publisher Senate index');
   const submitted=dateShown(first.slice(label+1,label+8).join(' '));
   const all:QuestionAnswer[]=[];
