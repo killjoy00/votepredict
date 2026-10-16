@@ -34,7 +34,7 @@ test('Revisor courtesy pacer spaces every request and rejects sub-second budgets
   assert.throws(()=>new RevisorPacer({intervalMs:100}),/at least one second/);
 });
 
-test('protected repair runner is scheduled, main-verified, and migration 0023 only adds raw metadata',()=>{
+test('protected repair runner is one-shot, main-verified, and migration 0023 only adds raw metadata',()=>{
   const sql=readFileSync('migrations/0023_senate_statement_session_provenance.sql','utf8');
   const script=readFileSync('scripts/deploy-senate-identity-bill-repair-neon.ts','utf8');
   const workflow=readFileSync('.github/workflows/senate-identity-bill-repair-production.yml','utf8');
@@ -43,7 +43,7 @@ test('protected repair runner is scheduled, main-verified, and migration 0023 on
   assert.doesNotMatch(sql,/\b(?:DROP|TRUNCATE|DELETE)\b/i);
   assert.match(script,/SENATE_IDENTITY_BILL_REPAIR_PRODUCTION/);
   assert.match(script,/filenames.length!==23/);
-  assert.ok(workflow.includes("cron: '17 * * * *'"));
+  assert.doesNotMatch(workflow,/schedule|cron/);
   assert.match(workflow,/needs.independent-main.result == 'success'/);
   assert.match(workflow,/environment: evidence-readonly-sandbox/);
 });
@@ -81,6 +81,15 @@ test('Postgres: official SF/HF range import is bounded, resumable, additive; mis
       )).rows[0].id;
       if(slug==='2025-2026')sessionId=id;
     }
+    // CI runs the suite twice on one disposable database (npm run check, then
+    // npm test). Remove this test's own fixtures so every run starts clean.
+    const fixtureBills="SELECT b.id FROM bills b JOIN legislative_sessions s ON s.id=b.session_id "+
+      "WHERE s.jurisdiction_id=$1 AND b.identifier IN ('SF7821','HF7822')";
+    await root.query('DELETE FROM bill_companions WHERE senate_bill_id IN ('+fixtureBills+
+      ') OR house_bill_id IN ('+fixtureBills+')',[juris]);
+    await root.query('DELETE FROM senate_bill_companion_scans WHERE senate_bill_id IN ('+fixtureBills+')',[juris]);
+    await root.query('DELETE FROM bills WHERE id IN ('+fixtureBills+')',[juris]);
+    await root.query('DELETE FROM senate_revisor_bill_catalog_ranges');
     billId=(await root.query<{id:string}>(
       "INSERT INTO bills(session_id,originating_chamber_id,identifier,title) "+
       "VALUES($1,$2,'SF7821','Preexisting source bill') "+

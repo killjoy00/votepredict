@@ -33,10 +33,15 @@ export interface InclusionMention {
 }
 
 export function normalizePrintedSenatorName(value: string): string {
-  return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+  const tokens = value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
     .replace(/^(?:(?:state|mn)\s+)?(?:senators?|sens?\.?)\s+/i, '')
+    // Possessives ("Mitchell's", "Rasmusson’s") name the senator, not a new person.
+    .replace(/['\u2019]s\b/gi, '')
     .replace(/\b(?:jr|sr)\.?\s*$/i, '')
-    .replace(/[^a-z0-9]+/gi, ' ').trim().toLowerCase().replace(/\s+/g, ' ');
+    .replace(/[^a-z0-9]+/gi, ' ').trim().toLowerCase().replace(/\s+/g, ' ').split(' ');
+  // Extraction sometimes repeats the surname ("Glenn Gruenhagen Gruenhagen").
+  if (tokens.length > 2 && tokens.at(-1) === tokens.at(-2)) tokens.pop();
+  return tokens.join(' ');
 }
 
 function withoutMiddleInitial(name: string): string {
@@ -52,7 +57,9 @@ const GIVEN_NAMES: Record<string, string> = {
   peggy:'margaret', meg:'margaret', mike:'michael', tom:'thomas',
   jim:'james', joe:'joseph', jeff:'jeffrey', tony:'anthony',
   nick:'nicholas', andy:'andrew', dan:'daniel', kate:'katherine',
-  kathy:'katherine', jack:'john',
+  kathy:'katherine', jack:'john', ron:'ronald', sandy:'sandra',
+  jen:'jennifer', jenn:'jennifer', cal:'calvin', matt:'matthew',
+  steve:'steven', rich:'richard', chris:'christopher', greg:'gregory',
 };
 function nickname(value: string): string { return GIVEN_NAMES[value] ?? value; }
 function oneTypo(a: string, b: string): boolean {
@@ -120,6 +127,14 @@ export function resolveSenator(
   const uniqueSurname = unique(suffixes);
   if (uniqueSurname && members.some(m => m.id===uniqueSurname.id))
     return {membershipId:uniqueSurname.id,matchMethod:'surname_unique_in_session'};
+  // A long bare surname one edit away from exactly one senator ("Ingebrightsen").
+  if (pieces.length === 1 && printed.length >= 7 && !suffixes.length) {
+    const typo = unique(members.filter(m => {
+      const last = normalizePrintedSenatorName(m.name).split(' ').at(-1) ?? '';
+      return last.length >= 7 && oneTypo(printed, last);
+    }));
+    if (typo) return {membershipId:typo.id,matchMethod:'surname_unique_in_session'};
+  }
   // A district disambiguates compatible, but not contradictory, surnames.
   if (district) {
     const surnameMatches = members.filter(m => {

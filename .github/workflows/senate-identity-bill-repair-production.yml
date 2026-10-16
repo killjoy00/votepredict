@@ -1,8 +1,6 @@
 name: Repair Minnesota Senate identity links and complete official bill catalog
 
 on:
-  schedule:
-    - cron: '17 * * * *'
   pull_request:
     paths:
       - migrations/0022_senate_identity_bill_linking.sql
@@ -99,11 +97,6 @@ jobs:
   independent-main:
     if: >-
       (
-        github.event_name == 'schedule' &&
-        github.repository == 'killjoy00/votepredict' &&
-        github.ref == 'refs/heads/main' &&
-        github.run_attempt == 1
-      ) || (
         github.event_name == 'push' &&
         github.repository == 'killjoy00/votepredict' &&
         github.event.repository.full_name == 'killjoy00/votepredict' &&
@@ -164,11 +157,6 @@ jobs:
     if: >-
       needs.independent-main.result == 'success' &&
       ((
-        github.event_name == 'schedule' &&
-        github.repository == 'killjoy00/votepredict' &&
-        github.ref == 'refs/heads/main' &&
-        github.run_attempt == 1
-      ) || (
         github.event_name == 'push' &&
         github.repository == 'killjoy00/votepredict' &&
         github.event.repository.full_name == 'killjoy00/votepredict' &&

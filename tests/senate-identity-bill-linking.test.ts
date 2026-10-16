@@ -154,3 +154,33 @@ test('production workflow remains protected by main push SHA, marker and indepen
   assert.match(yaml,/environment: evidence-readonly-sandbox/);
   assert.doesNotMatch(yaml,/workflow_dispatch:/);
 });
+
+test('possessives, doubled surnames, common nicknames and one-typo bare surnames resolve uniquely',()=>{
+  const people:SenateMember[]=[
+    {id:'m',sessionSlug:'2025-2026',name:'Nicole Mitchell',district:'47'},
+    {id:'g',sessionSlug:'2025-2026',name:'Glenn H. Gruenhagen',district:'17'},
+    {id:'l',sessionSlug:'2025-2026',name:'Ronald Latz',district:'46'},
+    {id:'i',sessionSlug:'2025-2026',name:'Rich Draheim',district:'22'},
+    {id:'n',sessionSlug:'2025-2026',name:'Gene Dornink',district:'23'},
+    {id:'t',sessionSlug:'2025-2026',name:'Torrey Westrom',district:'12'},
+    {id:'v',sessionSlug:'2025-2026',name:'Steve Ingebrigtsen',district:'8'},
+  ];
+  assert.equal(normalizePrintedSenatorName('Mitchell’s'),'mitchell');
+  assert.equal(normalizePrintedSenatorName("Sen. Mitchell's"),'mitchell');
+  assert.equal(normalizePrintedSenatorName('Glenn Gruenhagen Gruenhagen'),'glenn gruenhagen');
+  assert.deepEqual(resolveSenator({printedName:'Mitchell’s',sessionSlug:'2025-2026'},people),
+    {membershipId:'m',matchMethod:'surname_unique_in_session'});
+  assert.deepEqual(resolveSenator({printedName:'Glenn Gruenhagen Gruenhagen',sessionSlug:'2025-2026'},people),
+    {membershipId:'g',matchMethod:'exact'});
+  assert.deepEqual(resolveSenator({printedName:'Ron Latz',sessionSlug:'2025-2026'},people),
+    {membershipId:'l',matchMethod:'alias'});
+  assert.deepEqual(resolveSenator({printedName:'Ingebrightsen',sessionSlug:'2025-2026'},people),
+    {membershipId:'v',matchMethod:'surname_unique_in_session'});
+  assert.deepEqual(resolveSenator({printedName:'Westrum',sessionSlug:'2025-2026'},people),
+    {membershipId:'t',matchMethod:'surname_unique_in_session'});
+  // Short surnames and two-name roll-call fragments stay unresolved.
+  assert.deepEqual(resolveSenator({printedName:'Dorink',sessionSlug:'2025-2026'},people),
+    {membershipId:null,matchMethod:'unresolved'});
+  assert.deepEqual(resolveSenator({printedName:'Draheim Dornink',sessionSlug:'2025-2026'},people),
+    {membershipId:null,matchMethod:'unresolved'});
+});

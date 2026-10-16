@@ -72,13 +72,14 @@ the marker **SENATE_IDENTITY_BILL_LINK_PRODUCTION**, a keyless independently
 successful main job, and the existing evidence-readonly-sandbox environment.
 Both runners require exact migration-ledger checksums and use the drift gate.
 The original runner applies 0022; the repair runner applies 0023 and uses the
-new marker `SENATE_IDENTITY_BILL_REPAIR_PRODUCTION`. On reviewed first-attempt
-main pushes and independently checked hourly scheduled continuations, the
-repair job completes the catalog, raw identity links, missing-companion repair
-and a bounded Revisor companion scan. All Revisor requests share a serial
-minimum 1150-ms pacing budget; HTTP 429/503 halts that external work for the
-run rather than accelerating retries. Up to 600 unscanned SF records are
-attempted each run; unfinished work continues on subsequent scheduled runs.
+new marker `SENATE_IDENTITY_BILL_REPAIR_PRODUCTION`. It runs once, on a
+reviewed first-attempt main push carrying that marker (there is no recurring
+schedule). The repair job completes the catalog if coverage is low, re-runs the
+raw identity links, repairs missing companions and runs a bounded Revisor
+companion scan. All Revisor requests share a serial minimum 1150-ms pacing
+budget; HTTP 429/503 halts that external work for the run rather than
+accelerating retries. Up to 600 unscanned SF records are attempted per run;
+any unfinished work is retried with a fresh reviewed marker commit.
 Match-rate readback executes in a REPEATABLE READ READ ONLY transaction with
 ROLLBACK. Forecasting, serving, votes and feature tables are not changed.
 

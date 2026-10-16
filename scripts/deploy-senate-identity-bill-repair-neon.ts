@@ -18,25 +18,21 @@ const MIGRATION='0023_senate_statement_session_provenance.sql';
 interface LedgerRow {filename:string;checksum:string}
 function requireProtectedMain(env:NodeJS.ProcessEnv):void{
   if(env.GITHUB_REPOSITORY!=='killjoy00/votepredict' ||
-    !['push','schedule'].includes(env.GITHUB_EVENT_NAME??'') || env.GITHUB_REF!=='refs/heads/main' ||
+    env.GITHUB_EVENT_NAME!=='push' || env.GITHUB_REF!=='refs/heads/main' ||
     env.GITHUB_RUN_ATTEMPT!=='1' ||
     env.VOTEPREDICT_SENATE_IDENTITY_BILL_INDEPENDENT_CI!=='true' ||
     !/^[a-f0-9]{40}$/.test(env.GITHUB_SHA??'') || !env.GITHUB_EVENT_PATH)
     throw Error('Exact main push gate missing');
   const event=JSON.parse(readFileSync(env.GITHUB_EVENT_PATH,'utf8')) as {
-    ref?:string;after?:string;deleted?:boolean;forced?:boolean;schedule?:string;
+    ref?:string;after?:string;deleted?:boolean;forced?:boolean;
     repository?:{full_name?:string};head_commit?:{id?:string;message?:string};
   };
   if(event.repository?.full_name!=='killjoy00/votepredict')
     throw Error('Wrong GitHub event repository');
-  if(env.GITHUB_EVENT_NAME==='push'){
-    if(event.ref!=='refs/heads/main' || event.after!==env.GITHUB_SHA ||
-      event.head_commit?.id!==env.GITHUB_SHA || event.deleted===true ||
-      event.forced===true || !event.head_commit?.message?.includes(MARKER))
-      throw Error('Not the exact independently reviewed marker-bearing main commit');
-  }else if(event.schedule!=='17 * * * *'){
-    throw Error('Not the reviewed hourly production continuation schedule');
-  }
+  if(event.ref!=='refs/heads/main' || event.after!==env.GITHUB_SHA ||
+    event.head_commit?.id!==env.GITHUB_SHA || event.deleted===true ||
+    event.forced===true || !event.head_commit?.message?.includes(MARKER))
+    throw Error('Not the exact independently reviewed marker-bearing main commit');
 }
 function expectedMigrations():LedgerRow[]{
   const filenames=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
@@ -150,7 +146,7 @@ async function main():Promise<void>{
       )).rows[0]?.n??0;
       if(other>0){
         console.log('SENATE_IDENTITY_BILL_REPAIR_DEFERRED='+JSON.stringify({
-          reason:'initial_production_run_still_active',retry:'next_scheduled_run',
+          reason:'initial_production_run_still_active',retry:'fresh_reviewed_marker_commit',
         }));
         return;
       }
