@@ -308,7 +308,7 @@ class PoliteFetcher {
   private last=0;
   private policy?:ReturnType<typeof robotsPolicy>;
   constructor(private readonly origin:string,private readonly delayMs:number,private readonly request:typeof fetch){}
-  private async send(url:URL,hops=0):Promise<Response> {
+  private async send(url:URL,hops=0,attempt=0):Promise<Response> {
     if(url.origin!==this.origin||url.protocol!=='https:'||hops>4)throw Error('Off-site or redirect-loop URL refused');
     const remaining=Math.max(0,this.last+Math.max(this.delayMs,this.policy?.crawlDelayMs??0)-Date.now());
     if(remaining)await sleep(remaining);
@@ -321,10 +321,20 @@ class PoliteFetcher {
       const location=response.headers.get('location');if(!location)throw Error('Redirect without location');
       const next=new URL(location,url);
       if(next.origin!==this.origin||next.href===url.href||this.policy&&!this.policy.allows(next))throw Error('Unsafe or disallowed redirect');
-      return this.send(next,hops+1);
+      return this.send(next,hops+1,0);
+    }
+    if(response.status===503 && attempt<2) {
+      // One briefly unavailable page is not archive exhaustion. Retry slowly,
+      // but do not ignore the publisher's longer Retry-After instruction.
+      const retryAfter=response.headers.get('retry-after');
+      const seconds=retryAfter && /^\\d{1,5}$/.test(retryAfter) ? Number(retryAfter) : 0;
+      if(seconds<=30) {
+        await sleep(Math.max(10000*(attempt+1),seconds*1000));
+        return this.send(url,hops,attempt+1);
+      }
     }
     if([429,503].includes(response.status)){
-      // Treat rate limiting as an unavailable page, never hammer the publisher.
+      // Never keep crawling once the publisher is signaling sustained rate limiting.
       throw Error('Publisher rate-limited collection (HTTP '+response.status+')');
     }
     return response;
@@ -380,7 +390,7 @@ export async function collectSource(
     const last=lastArchivePageFromListing(html,source);
     if(last!==null)knownLastPage=Math.max(knownLastPage??0,last);
     let fresh=articleUrlsFromListing(html,source).filter(url=>!visited.has(url));
-    if(!fresh.length && knownLastPage!==null && page<knownLastPage) {
+    if(!fresh.length && (page===1 || (knownLastPage!==null && page<knownLastPage))) {
       // A transient blank/challenge page was the original silent 2026-only backfill cause.
       // Retry twice with the same robots-protected, paced fetcher before recording a gap.
       for(let retry=0;retry<2 && !fresh.length;retry++) {
@@ -397,6 +407,7 @@ export async function collectSource(
     }
     if(stopForRateLimit)break;
     if(!fresh.length){
+      if(page===1)failed(listing,Error('First archive page did not contain any published headline links'));
       if(knownLastPage!==null && page<knownLastPage){
         failed(listing,Error('Archive page unexpectedly omitted linked articles'));
         result.archive_gaps.push(page);
