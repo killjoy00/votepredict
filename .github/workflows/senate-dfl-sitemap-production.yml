@@ -6,6 +6,7 @@ on:
     paths:
       - .github/workflows/senate-dfl-sitemap-production.yml
       - scripts/deploy-senate-dfl-sitemap-neon.ts
+      - scripts/check-senate-dfl-sitemap-sql-local.ts
       - src/sources/minnesota/senate-dfl-sitemap-archive.ts
       - tests/senate-dfl-sitemap-archive.test.ts
   schedule:
@@ -69,6 +70,8 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
       - run: npm run db:migrate
+      - name: Reproduce exact production count and URL-dedupe SQL on disposable Postgres
+        run: node --import tsx scripts/check-senate-dfl-sitemap-sql-local.ts
       - run: npm run check
       - run: npm audit --omit=dev --audit-level=high
       - name: Independently verify both complete archived publisher sitemaps without Neon secrets
