@@ -65,7 +65,29 @@ The PR workflow `.github/workflows/senate-scorecards-partisanship-production.yml
 
 **Missing on this run:** four Action 4 Liberty originals (2021, 2022, 2024, 2025), CPAC 2025 original, and Minnesota AFL-CIO 2021–22 originals were prohibited by publisher robots rules; Legislative Evaluation Assembly's index returned a publisher HTTP error. **No workaround/bypass was attempted.** The other 19 snapshots were saved, though Chamber, MCCL, Conservation Minnesota and the 2026 Gun Owners index yielded no structured senator entries. The 2023–25 AFL-CIO reports supplied 38 explicit printed bill positions; the 2022/2024/2025 Gun Owners pages and 2022/2026 Education Minnesota releases supplied 313 entries in total. These are literal candidate-level raw values, not methodology assessments.
 
-**Source-only follow-up (this branch):** the manifest grows from 27 to **40 first-party URLs**, adding NFIB Minnesota and two separate Education Minnesota special-election releases. The follow-up is not credited as captured until its own protected collection readback confirms counts. No schema or bill/roster changes. All four already-verified district election source versions are reused without re-downloading.
+**Second production receipt, 2026-10-16:** [PR #1380](https://github.com/killjoy00/votepredict/pull/1380) merged with the reviewed one-shot marker; [protected run #38964243367](https://github.com/killjoy00/votepredict/actions/runs/38964243367) passed independent-main and protected Neon readback. Its evidence status remains **`bounded_partial`**, not complete scorecard coverage. The catalog contains **40 public source URLs** (13 newly cataloged), and the follow-up attempted all 40. It fetched 21, saved **11 new snapshot versions**, and added **108 entry rows**. Before → after: **19 → 30 snapshots; 313 → 421 entries; 158 → 205 senator links**. The present senator link rate is **205/421 = 48.69%**. Bill positions and links stayed **38/38 (100%)**.
+
+**Do not mistake versioned rows for distinct endorsements.** Changed/re-fetched Education Minnesota pages account for most of the 108 extra rows. The new first-party 2024 **Senate District 45** special-election source produced one parsed endorsement. The 2025 Senate District 60 special release was captured with **zero** structured senator entries. Original source text and SHA-256 remain preserved.
+
+**NFIB follow-up outcome:** all three biennial voting-record PDFs (2021–22, 2023–24, 2025–26) and multiple original endorsement pages were cataloged, but **zero NFIB snapshot or senator/bill entries were inserted**. Nine NFIB pages/PDF links were prohibited by publisher robots policies; two historical NFIB PDF URLs failed retrieval or parsing. These failures were recorded without bypassing access restrictions. Other unavailable sources remain four Action 4 Liberty originals, CPAC 2025 and AFL-CIO 2021–22 (robots), and Legislative Evaluation Assembly's index (publisher HTTP error). **19 of 40** attempted URLs were unavailable during the follow-up.
+
+**Unstructured but saved:** Minnesota Chamber of Commerce's four historical source versions, MCCL 2023, Conservation Minnesota 2025 and the 2026 Minnesota Gun Owners index still lack conservatively extracted structured scores. These are publisher-body snapshots, not proof that a score exists for every senator.
+
+**Part B remains verified without repeat fetching:** the follow-up reported `districtDataReused=true`, **0 new district rows**, and exactly the original **268 district results** (67 for each of 2020 president on 2012 lines, 2022 governor and attorney general on 2022 lines, and 2024 president on 2022 lines). Original same-release statewide total checks all passed. The follow-up did not reapply migration 0026 or modify forecasting/serving.
+
+### Current versioned publisher readback
+
+| Group / publication years | Snapshot versions | Scorecard entry rows |
+| --- | ---: | ---: |
+| Education Minnesota 2022, 2024, 2025, 2026 | 4, 1, 1, 8 | 92, 1, 0, 122 |
+| Minnesota Gun Owners Caucus 2022, 2024, 2025, 2026 | 1, 1, 1, 2 | 190, 2, 14, 0 |
+| Minnesota Chamber of Commerce 2021, 2024, 2025, 2026 | 1 each | 0 |
+| Minnesota AFL-CIO 2023, 2024, 2025 | 1 each | 0 entries; 38 literal bill positions across 3 snapshots |
+| Conservation Minnesota 2025 | 2 | 0 |
+| MCCL 2023 | 2 | 0 |
+| NFIB and all unavailable groups | 0 | 0 |
+
+Totals: **30 snapshot versions, 421 senator entry rows and 38 linked bill positions**. The publisher snapshots can repeat the same name/value across refreshed versions; these versioned rows are not a unique candidate-endorsement count. Further NFIB capture requires a publisher-permitted, technically reliable original source path; do not evade robots rules.
 
 Read-only production SQL after deployment:
 
