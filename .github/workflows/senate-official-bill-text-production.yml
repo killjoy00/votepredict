@@ -3,7 +3,7 @@ name: Collect official Minnesota Senate raw bill-version and amendment text
 on:
   pull_request:
     paths:
-      - migrations/0025_senate_official_bill_text_raw.sql
+      - migrations/0027_senate_official_bill_text_raw.sql
       - src/operations/senate-official-bill-text.ts
       - scripts/deploy-senate-official-bill-text-neon.ts
       - tests/senate-official-bill-text.test.ts
@@ -11,7 +11,7 @@ on:
   push:
     branches: [main]
     paths:
-      - migrations/0025_senate_official_bill_text_raw.sql
+      - migrations/0027_senate_official_bill_text_raw.sql
       - src/operations/senate-official-bill-text.ts
       - scripts/deploy-senate-official-bill-text-neon.ts
       - tests/senate-official-bill-text.test.ts

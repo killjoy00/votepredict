@@ -16,7 +16,7 @@ import {
 } from '../src/operations/senate-official-bill-text.js';
 
 const MARKER='SENATE_OFFICIAL_TEXT_RAW_20261016';
-const MIGRATION='0025_senate_official_bill_text_raw.sql';
+const MIGRATION='0027_senate_official_bill_text_raw.sql';
 const REPO='killjoy00/votepredict';
 const SESSIONS=['2025-2026','2023-2024','2021-2022'];
 const MAX_NEW_BILLS=100, MAX_DISCOVER=100, MAX_VERSIONS=550, MAX_JOURNALS=30;
@@ -52,12 +52,12 @@ function guard(e:NodeJS.ProcessEnv):void{
 }
 function expectedMigrations():Ledger[]{
   const files=readdirSync('migrations').filter(n=>/^\d{4}_[\w-]+\.sql$/.test(n)).sort();
-  if(files.length<25 || files[24]!==MIGRATION)
+  if(files.length!==27 || files[26]!==MIGRATION || !files[25]?.startsWith('0026_'))
     throw Error('migration_number_or_concurrent_inventory_changed');
   return files.map(filename=>({filename,checksum:digest(readFileSync('migrations/'+filename,'utf8'))}));
 }
 function prefix(rows:Ledger[],expected:Ledger[]):boolean{
-  if(rows.length!==24 && rows.length!==expected.length)
+  if(rows.length!==expected.length-1 && rows.length!==expected.length)
     throw Error('production_migration_prerequisite_or_order_mismatch');
   for(let i=0;i<rows.length;i++)
     if(rows[i].filename!==expected[i].filename||rows[i].checksum!==expected[i].checksum)
