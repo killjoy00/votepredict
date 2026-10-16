@@ -81,7 +81,7 @@ export function aggregateOfficialPrecinctVotes(raw:string,office:DistrictOffice,
     const district=precinctMap.get(precinctKey);
     if(!district)throw Error('Missing 2022 Senate district for official precinct '+precinctKey);
     const votes=safeInt(v[13],'precinct candidate votes');
-    accumulate(district,v[10]??'',votes);
+    accumulate(districts,district,v[10]??'',votes);
     precinctsSeen.add(precinctKey);sourceLines++;
   }
   if(!sourceLines||precinctsSeen.size<20)throw Error('Not enough official precinct votes');
@@ -99,7 +99,7 @@ export function aggregateOfficialHouseDistrictPresidentialVotes(raw:string):
     const district=districtFromHouse(house);
     if(!district)throw Error('Official presidential legislative-district row has bad House district');
     const votes=safeInt(v[13],'House-district candidate votes');
-    accumulate(district,v[10]??'',votes);
+    accumulate(districts,district,v[10]??'',votes);
     seenHouse.add(house);
   }
   if(seenHouse.size!==134)throw Error('Expected exactly 134 published House districts');
