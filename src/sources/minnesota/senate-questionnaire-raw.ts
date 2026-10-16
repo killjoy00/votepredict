@@ -101,10 +101,14 @@ function parseMhp(html:string,seed:QuestionnaireSource):Array<Partial<CandidateR
     else if(segment.length && !/^\*\s+\*\s+\*$/.test(line))segment[segment.length-1].push(line);
   }
   const qa=qaFromParts(segment.map(parts=>{
-    const joined=parts.join('\n').trim();
-    const qend=joined.indexOf('?');
-    if(qend>=0) return {q:joined.slice(0,qend+1),a:joined.slice(qend+1).trim()};
-    return {q:parts[0],a:parts.slice(1).join('\n')};
+    // Some publisher questions omit their terminal question mark. Never
+    // search the candidate's answers for '?' to determine question bounds.
+    const first=parts[0],mark=first.indexOf('?');
+    if(mark>=0)return {q:first.slice(0,mark+1),a:[first.slice(mark+1),...parts.slice(1)].filter(Boolean).join('\n')};
+    const continued=parts[1]&&/^(?:What|How|Which|Why|When|Will|Would|Could|Should|Do|Does|Are|If)\b/i.test(parts[1])
+      &&parts[1].includes('?');
+    if(continued)return {q:first+'\n'+parts[1],a:parts.slice(2).join('\n')};
+    return {q:first,a:parts.slice(1).join('\n')};
   }));
   if(qa.length<2)throw Error('MHP questionnaire missing multiple complete Q&A pairs');
   return [{candidateName:name,party,district,qa}];
@@ -216,8 +220,10 @@ function parseBiofuels(html:string,seed:QuestionnaireSource):Array<Partial<Candi
       } else if(/^A\.\s*/i.test(line)&&qaPieces.length) {
         qaPieces[qaPieces.length-1].a.push(line.replace(/^A\.\s*/i,''));phase='a';
       } else if(qaPieces.length && phase==='q')qaPieces[qaPieces.length-1].q.push(line);
-      else if(qaPieces.length && phase==='a' && !/^Read more|^Published in|^Tagged under|^Share this/i.test(line))
+      else if(qaPieces.length && phase==='a') {
+        if(/^Read more|^Published in|^Tagged under|^Share this|^Related stories|^©/i.test(line))break;
         qaPieces[qaPieces.length-1].a.push(line);
+      }
     }
     const qa=qaFromParts(qaPieces.map(p=>({q:p.q.join('\n'),a:p.a.join('\n')})));
     if(qa.length>=2)result.push({candidateName:c.name,district:c.district,party:c.party,qa});
