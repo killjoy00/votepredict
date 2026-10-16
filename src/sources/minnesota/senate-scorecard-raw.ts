@@ -69,11 +69,19 @@ export function htmlToRawText(html:string):string {
     .replace(/[ \t\f\v]+/g,' ').replace(/[ \t]*\n[ \t]*/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
 }
 export function explicitPublishedOn(text:string):string|null {
-  const head=text.slice(0,3500);
-  const m=/\b(?:Last\s+Updated|Published(?:\s+on)?|Updated\s+on|ST\.?\s+PAUL,\s*Minnesota\.)\s*:?\s*(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(202[1-6])\b/i.exec(head);
+  // Require an actual printed publisher date. This is never fetched_at.
+  // CMS pages can print a bare line "August 17, 2022"; press releases
+  // print "ST. PAUL, Minnesota. Jan. 27, 2025".
+  const head=text.slice(0,8000);
+  const months='Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?';
+  const tagged=new RegExp('\\b(?:Last\\s+Updated|Published(?:\\s+on)?|Updated\\s+on|ST\\.?\\s+PAUL,\\s*Minnesota\\.)\\s*:?\\s*('+months+')\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(202[1-6])\\b','i');
+  const bare=new RegExp('^\\s*('+months+')\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(202[1-6])\\s*$','im');
+  const m=tagged.exec(head)??bare.exec(head);
   if(!m)return null;
-  const months=['january','february','march','april','may','june','july','august','september','october','november','december'];
-  const mm=months.indexOf(m[1].toLowerCase())+1,day=Number(m[2]),year=Number(m[3]);
+  const stems=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  const mm=stems.indexOf(m[1].slice(0,3).toLowerCase())+1,
+    day=Number(m[2]),year=Number(m[3]);
+  if(mm<1||day<1||day>31)return null;
   const valid=new Date(Date.UTC(year,mm-1,day));
   return valid.getUTCMonth()===mm-1&&valid.getUTCDate()===day
     ?[year,String(mm).padStart(2,'0'),String(day).padStart(2,'0')].join('-'):null;
