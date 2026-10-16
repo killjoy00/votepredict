@@ -95,8 +95,8 @@ async function main(): Promise<void> {
            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
            ON CONFLICT (session_id, record_key) DO UPDATE SET
              fetched_at=EXCLUDED.fetched_at,
-             raw_content=EXCLUDED.raw_content,
-             raw_content_url=EXCLUDED.raw_content_url,
+             raw_content=COALESCE(EXCLUDED.raw_content, senate_committee_testimony_raw.raw_content),
+             raw_content_url=COALESCE(EXCLUDED.raw_content_url, senate_committee_testimony_raw.raw_content_url),
              bill_id=EXCLUDED.bill_id`,
           [
             sessionId, row.hearingId, row.recordKey, row.sourceType, row.sourceUrl, row.fetchedAt,
