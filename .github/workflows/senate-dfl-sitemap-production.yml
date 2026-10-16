@@ -1,0 +1,121 @@
+name: Collect first-party historical Senate DFL from publisher Wayback sitemaps (hourly)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-dfl-sitemap-production.yml
+      - scripts/deploy-senate-dfl-sitemap-neon.ts
+      - src/sources/minnesota/senate-dfl-sitemap-archive.ts
+      - tests/senate-dfl-sitemap-archive.test.ts
+  schedule:
+    - cron: '18 * * * *'
+
+permissions:
+  contents: read
+
+# Existing first-party Wayback imports use this group; never overlap writes.
+concurrency:
+  group: senate-dfl-independent-archived-raw-backfill
+  cancel-in-progress: false
+
+jobs:
+  independently-reviewed-main:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      (
+        (github.event_name == 'schedule' && github.event.schedule == '18 * * * *') ||
+        (github.event_name == 'push' &&
+          github.event.after == github.sha &&
+          github.event.head_commit.id == github.sha &&
+          github.event.deleted != true &&
+          github.event.forced != true &&
+          contains(github.event.head_commit.message, 'SENATE_DFL_SITEMAP_RAW_20261016'))
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify immutable and reviewed main revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Independently verify both complete archived publisher sitemaps without Neon secrets
+        run: node --import tsx scripts/probe-senate-dfl-sitemap-inventory.ts
+      - name: Check real 2023-2025 full article replay before initial archival backfill
+        if: github.event_name == 'push'
+        env:
+          VOTEPREDICT_DFL_ARCHIVE_REQUIRES_FULL: 'true'
+        run: node --import tsx scripts/probe-senate-dfl-wayback-replay.ts
+
+  protected-raw-archive-shard:
+    needs: [independently-reviewed-main]
+    if: >-
+      needs.independently-reviewed-main.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      (
+        (github.event_name == 'schedule' && github.event.schedule == '18 * * * *') ||
+        (github.event_name == 'push' &&
+          github.event.after == github.sha &&
+          github.event.head_commit.id == github.sha &&
+          github.event.deleted != true &&
+          github.event.forced != true &&
+          contains(github.event.head_commit.message, 'SENATE_DFL_SITEMAP_RAW_20261016'))
+      )
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 140
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_SITEMAP_CI: ${{ needs.independently-reviewed-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Use the exact independent keyless-reviewed main revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Restore bounded DFL originals and verify source-year counts and capture lineage
+        run: node --import tsx scripts/deploy-senate-dfl-sitemap-neon.ts
