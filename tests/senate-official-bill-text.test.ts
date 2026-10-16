@@ -42,6 +42,21 @@ test('the current-version banner does not conflict with the dated published vers
     ['versions/12/','12th Engrossment','2023-05-20'],
   ]);
 });
+test('action-history Intro links do not reclassify the official Introduction version',()=>{
+  const html='<h2>Bill Text Versions</h2><h3>Engrossments</h3>'
+    +'<a href="versions/0/">Introduction</a> '
+    +'<a href="versions/0/pdf/">PDF</a> | Posted on 01/16/2025 | '
+    +'<h2>Description</h2><p>Public bill summary</p>'
+    +'<h2>Actions</h2>'
+    +'<p>01/16/2025 Introduction and first reading '
+    +'<a href="versions/0/">Intro</a></p>'
+    +'<p>Further actions <a href="versions/0/">Intro</a></p>';
+  const versions=discoverOfficialVersionLeads(html,root);
+  assert.equal(versions.length,1);
+  assert.equal(versions[0].locator,'versions/0/');
+  assert.equal(versions[0].printedLabel,'Introduction');
+  assert.equal(versions[0].postedOn,'2025-01-16');
+});
 test('without a heading a dated listing wins over date-free duplicate links',()=>{
   const html='<a href="versions/12/">Current bill text</a>'
     +'<a href="versions/12/">12th Engrossment</a> Posted on 05/20/2023';
