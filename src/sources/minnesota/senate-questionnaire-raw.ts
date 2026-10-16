@@ -4,6 +4,7 @@
  * historical feature eligibility. Publisher-only, bounded, fail-closed parsing.
  */
 import { createHash } from 'node:crypto';
+import {execFileSync} from 'node:child_process';
 import { eligibleSenateQuestionnaireCandidate,HISTORICAL_QUESTIONNAIRE_WINNERS } from './senate-questionnaire-eligibility.js';
 import {parseEducationMinnesotaPdfPages} from './senate-questionnaire-edmn-pdf.js';
 
@@ -740,14 +741,36 @@ export async function collectQuestionnaires(options:CollectionOptions):Promise<C
         contentSha256=createHash('sha256').update(pdfBytes).digest('hex');
         const {PDFParse}=await import('pdf-parse');
         const {CanvasFactory}=await import('pdf-parse/worker');
-        const parser=new PDFParse({data:pdfBytes.slice(),CanvasFactory});
-        try{
-          const pageText=await parser.getText();
-          records=seed.adapter==='edmn_pdf'
-            ? parseEducationMinnesotaPdfPages(pageText.pages.map(p=>p.text),seed)
-            : parseSd60PdfText(pageText.text,seed);
+        if(seed.adapter==='edmn_pdf'){
+          let pageTexts:string[];
+          try{
+            const parser=new PDFParse({data:pdfBytes.slice(),CanvasFactory});
+            try{pageTexts=(await parser.getText()).pages.map(p=>p.text);}
+            finally{await parser.destroy();}
+          }catch(error){
+            // A single publisher's original PDF contains a malformed Unicode
+            // escape sequence unsupported by PDF.js. Fallback ONLY for that
+            // specific parse error; never silently replace another failed
+            // source or use a third-party text/transcription.
+            const cause=error instanceof Error?error.message:'';
+            if(!/unsupported Unicode escape sequence/i.test(cause))throw error;
+            let extracted:string;
+            try{
+              extracted=execFileSync('pdftotext',['-layout','-','-'],{
+                input:Buffer.from(pdfBytes),encoding:'utf8',timeout:20000,
+                maxBuffer:5_000_000,windowsHide:true,
+              });
+            }catch{
+              throw Error('Original publisher PDF cannot be decoded by either bounded PDF text extractor');
+            }
+            pageTexts=extracted.split(/\f/).map(p=>p.trim()).filter(Boolean);
+          }
+          records=parseEducationMinnesotaPdfPages(pageTexts,seed);
+        }else{
+          const parser=new PDFParse({data:pdfBytes.slice(),CanvasFactory});
+          try{records=parseSd60PdfText((await parser.getText()).text,seed);}
+          finally{await parser.destroy();}
         }
-        finally{await parser.destroy();}
       }else records=parseResponses(html,seed);
       if(!records.length && /did not respond|no response from this candidate/i.test(html))
         summary.explicitlyUnanswered++;
