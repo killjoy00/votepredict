@@ -53,6 +53,7 @@ async function main():Promise<void>{
   const to=date(arg(args,'--to')??new Date().toISOString().slice(0,10),'--to');
   if(from>to)throw Error('--from must be no later than --to');
   const maxPages=limit(arg(args,'--max-pages'),'--max-pages');
+  const startPage=limit(arg(args,'--start-page'),'--start-page');
   const maxItems=limit(arg(args,'--max-items'),'--max-items');
   const delayMs=limit(arg(args,'--delay-ms'),'--delay-ms');
   const selected=arg(args,'--source');
@@ -76,7 +77,7 @@ async function main():Promise<void>{
   let failed=false;
   try{
     for(const source of sources){
-      const result=await collectSource(source,{from,to,maxPages,maxItems,delayMs,dryRun},sink);
+      const result=await collectSource(source,{from,to,startPage,maxPages,maxItems,delayMs,dryRun},sink);
       console.log(JSON.stringify(result));
       if(result.failures.length||!result.pages)failed=true;
     }
