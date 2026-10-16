@@ -163,7 +163,7 @@ async function main():Promise<void> {
       }
       const c=await pool.connect();
       try{
-        const result=await storeRawScorecardCapture(c,capture,catalog);
+        const result=await storeRawScorecardCapture(c,capture,catalog,true);
         fetched++;if(result.newSnapshot)newSnapshots++;
         entriesParsed+=result.entries;matchedNew+=result.matchedMembers;
         positionsParsed+=result.billPositions;linkedBillsNew+=result.matchedBills;
