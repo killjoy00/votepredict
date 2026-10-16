@@ -512,32 +512,6 @@
       "sourceKind": "publisher_response"
     },
     {
-      "id": "mnbiofuels-2022-navitsky-brazelton",
-      "publisher": "Minnesota Bio-Fuels Association",
-      "cycle": 2022,
-      "adapter": "biofuels",
-      "url": "https://www.mnbiofuels.org/candidates-biofuels-navitsky-brazelton",
-      "title": "Candidates & Biofuels",
-      "candidates": [
-        "Ken Navitsky",
-        "Chris Brazelton"
-      ],
-      "sourceKind": "publisher_response"
-    },
-    {
-      "id": "mnbiofuels-2022-falvey-drenckhahn",
-      "publisher": "Minnesota Bio-Fuels Association",
-      "cycle": 2022,
-      "adapter": "biofuels",
-      "url": "https://www.mnbiofuels.org/media-mba/blog/item/3435-candidates-biofuels-falvey-drenckhahn",
-      "title": "Candidates & Biofuels",
-      "candidates": [
-        "Kate Falvey",
-        "Bradley Drenckhahn"
-      ],
-      "sourceKind": "publisher_response"
-    },
-    {
       "id": "mnbiofuels-2022-cwodzinski-craig",
       "publisher": "Minnesota Bio-Fuels Association",
       "cycle": 2022,
@@ -718,54 +692,6 @@
       "party": "DFL"
     },
     {
-      "id": "sd60dfl-2025-peter-wagenius",
-      "publisher": "Senate District 60 DFL",
-      "cycle": 2025,
-      "adapter": "sd60_pdf",
-      "url": "https://drive.google.com/file/d/1px-sSM0Hn4B1sQVDRSVuYGRH1tAg4twg/view",
-      "title": "2025 SD60 DFL special-election candidate questionnaire",
-      "sourceKind": "publisher_response",
-      "candidate": "Peter Wagenius",
-      "district": "60",
-      "party": "DFL"
-    },
-    {
-      "id": "sd60dfl-2025-monica-meyer",
-      "publisher": "Senate District 60 DFL",
-      "cycle": 2025,
-      "adapter": "sd60_pdf",
-      "url": "https://drive.google.com/file/d/1YgHwGlXg4coatqA211Nhhbl-q_gzO3Mu/view",
-      "title": "2025 SD60 DFL special-election candidate questionnaire",
-      "sourceKind": "publisher_response",
-      "candidate": "Monica Meyer",
-      "district": "60",
-      "party": "DFL"
-    },
-    {
-      "id": "sd60dfl-2025-amal-karim",
-      "publisher": "Senate District 60 DFL",
-      "cycle": 2025,
-      "adapter": "sd60_pdf",
-      "url": "https://drive.google.com/file/d/1fbReY1CfIqRC_uGeGebRu1mOKMwN8cJu/view",
-      "title": "2025 SD60 DFL special-election candidate questionnaire",
-      "sourceKind": "publisher_response",
-      "candidate": "Amal Karim",
-      "district": "60",
-      "party": "DFL"
-    },
-    {
-      "id": "sd60dfl-2025-emilio-cesar-rodriguez",
-      "publisher": "Senate District 60 DFL",
-      "cycle": 2025,
-      "adapter": "sd60_pdf",
-      "url": "https://drive.google.com/file/d/1hTsiRh8v8HDsuPLTMlQCfyiKCY8r-1vs/view",
-      "title": "2025 SD60 DFL special-election candidate questionnaire",
-      "sourceKind": "publisher_response",
-      "candidate": "Emilio César Rodríguez",
-      "district": "60",
-      "party": "DFL"
-    },
-    {
       "id": "startribune-2022-duluth-senate",
       "publisher": "Star Tribune",
       "cycle": 2022,
@@ -775,9 +701,7 @@
       "sourceKind": "publisher_response",
       "candidates": [
         "Grant Hauschild",
-        "Andrea Zupancich",
-        "Jen McEwen",
-        "Alex Moe"
+        "Jen McEwen"
       ]
     },
     {
@@ -789,8 +713,7 @@
       "title": "2024 Senate District 45 special election three-question survey",
       "sourceKind": "publisher_response",
       "candidates": [
-        "Ann Johnson Stewart",
-        "Kathleen Fowke"
+        "Ann Johnson Stewart"
       ],
       "district": "45"
     }
