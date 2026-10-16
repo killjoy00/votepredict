@@ -83,6 +83,17 @@ The motion prevailed. So the amendment was adopted.`;
   assert.ok(blocks[0].sourceLocator.startsWith('extracted-text:char:'));
   assert.notEqual(blocks[0].extractedTextSha256,blocks[1].extractedTextSha256);
 });
+test('preserves complete printed compound A-reference for exact record matching',()=>{
+  const printed='Senator Smith moved to amend S.F. No. 42, amendment A23-0207, as follows:\\n'
+    +'Page 9, line 12, delete \\"a provision\\" and insert \\"a specific provision\\". '
+    +'Page 10, line 3, delete the existing amount and insert a replacement amount. '
+    +'The motion did not prevail.';
+  const blocks=extractLiteralAmendmentBlocks(printed);
+  assert.equal(blocks.length,1);
+  assert.equal(blocks[0].amendmentRef,'A23-0207');
+  assert.equal(blocks[0].billIdentifier,'SF42');
+  assert.ok(!blocks[0].rawText.includes('The motion did not prevail.'));
+});
 test('does not generate amendment evidence from a bare motion summary',()=>{
   assert.deepEqual(extractLiteralAmendmentBlocks(
     'Senator Smith moved to amend S.F. No. 42. The motion prevailed.'),[]);
