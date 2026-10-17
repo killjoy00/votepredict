@@ -12,6 +12,8 @@ import {discoverExistingVotePredictNeonConnection}
 import {
  validateCfbIssueSourceManifest,fetchCfbIssueSource
 } from '../src/evidence/cfb-issue-source-observation-v1.mjs';
+import {discoverCfbIssueFirstPartyPages}
+ from '../src/evidence/cfb-issue-first-party-discovery-v3.mjs';
 
 const MIGRATION='0031_cfb_issue_finance_source_observations.sql';
 const MARKER='SENATE_864_CFB_ISSUE_SOURCE_CAPTURE_V1';
@@ -71,6 +73,8 @@ export async function main(){
  const manifest=JSON.parse(readFileSync(
   'data/evidence/cfb-issue-finance-source-observation-manifest-v1.json','utf8'));
  const sources=validateCfbIssueSourceManifest(manifest);
+ const discoveryPolicy=JSON.parse(readFileSync(
+  'data/evidence/cfb-issue-first-party-discovery-v3.json','utf8'));
  const existing=await discoverExistingVotePredictNeonConnection({
   apiKey:process.env.NEON_API_KEY,
   projectId:process.env.VOTEPREDICT_NEON_PROJECT_ID,
@@ -95,9 +99,23 @@ export async function main(){
    throw Error('Unexpected existing primary Neon database identity');
   await ensureMigration(client);
   const outcomes=[];
-  // Keep source ordering deterministic, at least one second per request pair.
+  // First fetch only the pinned originals. Discover URLs from the FRESH
+  // verified first-party archive bytes, never from old stored page datelines.
   for(const source of sources)
    outcomes.push(await fetchCfbIssueSource(source));
+  const freshIndexes=outcomes.filter(x=>x.status==='captured')
+   .map(x=>x.snapshot);
+  const discovered=discoverCfbIssueFirstPartyPages({
+   indexSnapshots:freshIndexes,manifest:sources,policy:discoveryPolicy
+  });
+  // Each newly discovered article still goes through the same host, robots,
+  // strict redirect, maximum body, rate-limit and raw-original checks.
+  const discoveryOutcomes=[];
+  for(const source of discovered){
+   const outcome=await fetchCfbIssueSource(source);
+   discoveryOutcomes.push(outcome);
+   outcomes.push(outcome);
+  }
   let newVersions=0,unchangedVersions=0;
   const captures=outcomes.filter(x=>x.status==='captured').map(x=>x.snapshot);
   if(captures.length){
@@ -131,11 +149,18 @@ export async function main(){
    'OR model_weight <> 0)::int AS unsafe_rows',
    'FROM cfb_issue_finance_source_observations'
   ].join(' '))).rows[0];
+  // Prospective discovery legitimately accumulates NEW stable source IDs
+  // across runs. The explicit per-run discovery bound is validated above.
   if(saved.unsafe_rows!==0||saved.versions<newVersions||
-   saved.sources>sources.length)throw Error('Source observation invariant failed');
+   saved.sources>saved.versions)throw Error('Source observation invariant failed');
   const report={
    schema:PUBLISHED_SNAPSHOT_SCHEMA,
    sourceManifestSize:sources.length,
+   firstPartyReleaseIndexCaptured:freshIndexes.some(
+    x=>x.sourceId==='education-mn-media-releases-index'),
+   firstPartyReleaseUrlsDiscovered:discovered.length,
+   discoveredOriginalReleasesCaptured:discoveryOutcomes
+    .filter(x=>x.status==='captured').length,
    attemptedOriginalSourceRequests:outcomes.length,
    byDisposition:safeSourceCaptureCounts(outcomes),
    capturedOriginalHtmlThisRun:captures.length,
