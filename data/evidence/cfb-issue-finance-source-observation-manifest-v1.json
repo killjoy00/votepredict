@@ -61,6 +61,12 @@
       "organizationGroup": "Education Minnesota",
       "role": "first_party_historical_context",
       "url": "https://educationminnesota.org/news/media-resources/"
+    },
+    {
+      "id": "education-mn-2026-sf2909-hf2904-original-release",
+      "organizationGroup": "Education Minnesota",
+      "role": "first_party_issue_publication",
+      "url": "https://educationminnesota.org/news/press-release/educators-demand-action-on-the-health-care-cost-crisis/"
     }
   ]
 }
