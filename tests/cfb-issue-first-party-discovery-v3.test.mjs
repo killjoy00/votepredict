@@ -6,6 +6,8 @@ import {validateCfbIssueSourceManifest}
  from '../src/evidence/cfb-issue-source-observation-v1.mjs';
 import {validateCfbIssueDiscoveryPolicy,discoverCfbIssueFirstPartyPages}
  from '../src/evidence/cfb-issue-first-party-discovery-v3.mjs';
+import {literalBillMentionLeads}
+ from '../src/evidence/cfb-issue-pac-original-attestations-v2.mjs';
 
 const manifest=validateCfbIssueSourceManifest(JSON.parse(readFileSync(
  'data/evidence/cfb-issue-finance-source-observation-manifest-v1.json','utf8')));
@@ -100,4 +102,19 @@ test('source discovery supplies RAW observation candidates, never classified pos
  assert.equal(p.organizationGroup,'Education Minnesota');
  assert.ok(!JSON.stringify(p).includes('support'));
  assert.ok(!JSON.stringify(p).includes('historicalAsOfEligible'));
+});
+
+test('discovered original may generate neutral HF/SF tokens, never a stance',()=>{
+ const discovered=discover(snapshot(
+  '<a href="/news/press-release/educator-insurance-hearing/">Release</a>'))[0];
+ const original=snapshot('Publisher mentioned S.F. 2909 / H.F. 2904 in a bill discussion.');
+ const linked={
+  ...original,sourceId:discovered.id,sourceUrl:discovered.url,
+  finalUrl:discovered.url,sourceRole:'first_party_issue_publication'
+ };
+ const leads=literalBillMentionLeads([linked],[...manifest,discovered]);
+ assert.deepEqual(leads.map(x=>x.billIdentifier),['SF2909','HF2904']);
+ assert.ok(leads.every(x=>x.groupVotePosition===null));
+ assert.ok(leads.every(x=>x.historicalAsOfEligible===false));
+ assert.ok(leads.every(x=>x.modelWeight===0));
 });
