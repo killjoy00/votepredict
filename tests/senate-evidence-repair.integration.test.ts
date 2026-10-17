@@ -82,9 +82,10 @@ export async function exerciseRepair(pool:Pool){
  const introSource=await source('/intro');
  await pool.query(`INSERT INTO senate_bill_introduction_authors(bill_id,session_id,author_order,name_raw,membership_id,match_method,introduced_on,source_document_id,source_url)
    VALUES($1,$2,1,$3,$4,'exact','2023-02-01',$5,$6)`,[bill,session,tag+' Alpha',member,introSource,url+'/intro']);
+ const journalSources:string[]=[];
  for(const [date,operation] of [['2023-03-10','added'],['2023-05-20','stricken']]){
    const text=`Senator ${tag} Alpha was ${operation} as a chief author to S.F. No. ${number}.`;
-   await source('/journal-'+date,{rawPrepassageVotes:{sourceType:'mn_senate_journal',sessionSlug:'2023-2024',sourceDate:date,text,records:[]}});
+   journalSources.push(await source('/journal-'+date,{rawPrepassageVotes:{sourceType:'mn_senate_journal',sessionSlug:'2023-2024',sourceDate:date,text,records:[]}}));
  }
  const pdf=await source('/recovered.pdf',{rawPrepassageVotes:{sourceType:'mn_senate_committee_minutes_pdf',sessionSlug:'2023-2024',sourceDate:'2023-04-01',
    text:'Public committee minutes with a named mover and a bill, preserved as printed.',records:[{ordinal:1,venue:'committee',method:'roll_call',voteKind:'committee_recommendation',billIdentifier:identifier,mover:tag+' Alpha',outcome:'passed',memberVotes:[{name:tag+' Alpha',choice:'yea'}]}]}});
@@ -145,6 +146,10 @@ export async function exerciseRepair(pool:Pool){
  await pool.query(`UPDATE source_documents SET metadata=jsonb_set(metadata,
    '{rawPrepassageVotes,records,0,memberVotes,0,name}','"An Unresolved Different Person"'::jsonb) WHERE id=$1`,[pdf]);
  assert.equal((await one('SELECT membership_id FROM senate_raw_member_votes_v WHERE source_document_id=$1',[pdf])).membership_id,null);
+ // Derived journal rows must not block an explicit source deletion or fixture replay.
+ await pool.query('DELETE FROM source_documents WHERE id=ANY($1::uuid[])',[journalSources]);
+ for(const table of ['senate_author_journal_events','senate_author_journal_event_scans'])
+   assert.equal((await one(`SELECT count(*)::int AS n FROM ${table} WHERE source_document_id=ANY($1::uuid[])`,[journalSources])).n,0);
  assert.ok(person);
 }
 

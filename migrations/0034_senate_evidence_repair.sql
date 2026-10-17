@@ -22,7 +22,7 @@ CREATE TABLE senate_scorecard_observation_attempts (
  checked_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE TABLE senate_author_journal_events (
- source_document_id uuid NOT NULL REFERENCES source_documents(id),
+ source_document_id uuid NOT NULL REFERENCES source_documents(id) ON DELETE CASCADE,
  event_key char(64) NOT NULL,
  source_ordinal integer NOT NULL,
  bill_id uuid NOT NULL REFERENCES bills(id),
@@ -35,7 +35,7 @@ CREATE TABLE senate_author_journal_events (
  PRIMARY KEY(source_document_id,event_key)
 );
 CREATE TABLE senate_author_journal_event_scans (
- source_document_id uuid PRIMARY KEY REFERENCES source_documents(id),
+ source_document_id uuid PRIMARY KEY REFERENCES source_documents(id) ON DELETE CASCADE,
  fingerprint char(64) NOT NULL,
  scanned_at timestamptz NOT NULL DEFAULT now()
 );
