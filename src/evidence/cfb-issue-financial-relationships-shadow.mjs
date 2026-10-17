@@ -10,8 +10,8 @@
  */
 export const CFB_ISSUE_FINANCE_SHADOW_VERSION='cfb-issue-financial-relationships-shadow-v1';
 export const ISSUE_FINANCE_MODES=Object.freeze(['strict_public_as_of','retrospective_activity']);
-const POSITIVE=/^(?:support|for|chamber supported|a ['"\u201c]yes['"\u201d] vote supports the nfib position)\b/i;
-const NEGATIVE=/^(?:oppose|against|chamber opposed|a ['"\u201c]no['"\u201d] vote supports the nfib position)\b/i;
+const POSITIVE=/^(?:support|for|(?:bill (?:passed|failed),? )?chamber supported|a ['"\u201c]yes['"\u201d] vote supports the nfib position)\b/i;
+const NEGATIVE=/^(?:oppose|against|(?:bill (?:passed|failed),? )?chamber opposed|a ['"\u201c]no['"\u201d] vote supports the nfib position)\b/i;
 const HASH=/^[a-f0-9]{64}$/i;
 const REG=/^[0-9]{3,8}$/;
 const DATE=/^20\d{2}-\d{2}-\d{2}$/;
@@ -43,7 +43,9 @@ export function validAffiliation(record){
   typeof record.groupName==='string'&&record.groupName.trim().length>4&&
   URL.test(record.officialCfbUrl??'')&&URL.test(record.firstPartyAffiliationUrl??'')&&
   HASH.test(record.officialCfbSha256??'')&&HASH.test(record.firstPartySha256??'')&&
-  sourceDate(record.validatedOn));
+  sourceDate(record.validatedOn)&&sourceDate(record.relationshipPublicByOn)&&
+  sourceDate(record.affiliationEffectiveOn)&&
+  record.relationshipOriginalProof===true);
 }
 const key=(...parts)=>parts.join('|');
 const fixedCents=value=>{
@@ -92,8 +94,11 @@ function eligibleGroupPosition(position,mode,cutoff){
   if(!published||published>=cutoff||position.dateIsVerifiedPublication!==true)
    return null;
  }
- // In retrospective mode the issue-position source is only a *present-day
- // annotation* of the historical legislative bill, not an observable position.
+ // Retrospective activity may use later-disclosed contributions, but NEVER
+ // learn a group's issue position from a post-vote scorecard: that is direct
+ // target leakage and is not defensible for prediction research.
+ if(!published||published>=cutoff||position.dateIsVerifiedPublication!==true)
+  return null;
  return stance;
 }
 export function issueFinancialRelationshipFeatures(input){
@@ -108,6 +113,9 @@ export function issueFinancialRelationshipFeatures(input){
  const affiliationsByReg=new Map(),conflictedRegs=new Set();
  for(const x of affiliations){
   if(!validAffiliation(x))continue;
+  // A retrospective analyst may confirm an entity identity later, but may
+  // not retroject an undated or newly-established affiliation into the past.
+  if(x.relationshipPublicByOn>=cutoff||x.affiliationEffectiveOn>=cutoff)continue;
   const reg=x.contributorRegistrationNumber,group=x.groupName.trim();
   if(affiliationsByReg.has(reg)&&affiliationsByReg.get(reg)!==group)
    conflictedRegs.add(reg);
