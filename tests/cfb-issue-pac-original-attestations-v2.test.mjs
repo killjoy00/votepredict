@@ -128,3 +128,32 @@ test('unsafe historical source capture may not supply present-day attestation',(
   cutoffOn:'2026-10-19'});
  assert.equal(a.affiliations.length,1);
 });
+
+test('production summary contains aggregate-only donor overlaps and zero stance inference',async()=>{
+ const {safePacAttestationSummary}=await import(
+  '../scripts/audit-cfb-pac-original-attestations-readonly.mjs');
+ const a={
+  statuses:[
+   {registration:'70001',status:'current_dual_original_source_attested'},
+   {registration:'30558',status:'current_dual_original_source_attested'},
+   {registration:'30025',status:'held_no_explicit_first_party_pac_proof'}
+  ],
+  affiliations:[{registration:'70001'},{registration:'30558'}]
+ };
+ const m=[{billIdentifier:'HF2904'},{billIdentifier:'HF2904'}];
+ const rows=[{reg:'70001',distinct_rows:12},{reg:'30558',distinct_rows:19},
+  {reg:'30025',distinct_rows:5}];
+ const s=safePacAttestationSummary(a,m,rows,9);
+ assert.equal(s.sourceAnchoredCurrentPacIdentities,2);
+ assert.equal(s.currentAsOfDateOnlyEligibleRegisteredEntities,2);
+ assert.equal(s.historicalSenateContributionRowsBySourceAttestedContemporaryEntities,31);
+ assert.equal(s.historicalSenateContributionRowsByHeldIdentityEntity,5);
+ assert.equal(s.distinctLiteralBillNumbersInOriginalFirstPartyIssuePublications,1);
+ assert.equal(s.literalBillMentionsCertifiedAsPublisherVoteStances,0);
+ assert.equal(s.historicalPreVotePublisherPositionsCertified,0);
+ assert.equal(s.servingChanged,false);
+ assert.ok(!JSON.stringify(s).includes('70001'));
+ assert.ok(!JSON.stringify(s).includes('30558'));
+ assert.ok(!JSON.stringify(s).includes('2904'));
+ assert.ok(!JSON.stringify(s).includes('original HTML'));
+});
