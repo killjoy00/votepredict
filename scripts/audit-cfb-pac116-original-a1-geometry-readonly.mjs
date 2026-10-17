@@ -20,11 +20,12 @@ import {assertPac116FinanceReadOnlyGuard}
 import {independentlyRehashCfbPdf}
  from '../src/evidence/cfb-pac-contribution-provenance-v1.mjs';
 import {
- isOriginalA1PacPage,exactPrintedPacReg,verifyOriginalA1PacTable,
+ isOriginalA1PacPage,isOriginalA1RegisteredPacPage,
+ exactPrintedPacReg,verifyOriginalA1PacTable,
  safeOriginalA1PacCohortSummary
 } from '../src/evidence/cfb-pac116-original-a1-geometry-v4.mjs';
 
-const MAX_ORIGINAL_TABLE_PAGES=160;
+const MAX_ORIGINAL_TABLE_PAGES=240;
 const SQL_ORIGINALS=[
  'SELECT source_id,organization_group,source_role,source_url,final_url,',
  'html_sha256,raw_html_bytes,observed_at,claim_status,',
@@ -188,16 +189,13 @@ export function geometryPagesForSource({
   for(const p of bySha.get(report.pdfSha)??[]){
    if(!printable(p.raw_page_text)||p.raw_page_text.trim().length<15)
     imageOrUnrenderedPages++;
-   if(!isOriginalA1PacPage(p.raw_page_text))continue;
+   // Source-observed production reports use generic A1 labels. Select
+   // only an A1 original that ALSO literally displays one of the two
+   // independently identified registered PAC numbers and committee context.
+   if(!isOriginalA1RegisteredPacPage(
+    p.raw_page_text,pacs.map(item=>item.registration)))continue;
    pacA1PageCount++;
-   const direct=pacs.some(item=>
-    exactPrintedPacReg(p.raw_page_text,item.registration));
-   if(direct)originalPagesWithPACRegistration++;
-   // Discovery-only lexical backstop for a shortened or wrapped PDF PAC
-   // name. Certification still requires exact number in the original
-   // registration COLUMN, not merely this page-level hint.
-   const expected=/\b(?:education|chamber)\b/i.test(p.raw_page_text);
-   if(!direct&&!expected)continue;
+   originalPagesWithPACRegistration++;
    const key=report.pdfSha+'|'+p.page_number;
    if(seen.has(key))continue;
    seen.add(key);
@@ -369,7 +367,7 @@ export async function main(){
    pagesEligibleForGeometry:selection.allEligible,
    pagesSkippedByLimit:selection.deferred,parseFailedPages:parseFailures
   });
-  summary.originalSourcePagesWithA1PacHeading=selection.pacA1PageCount;
+  summary.originalSourcePagesWithGenericA1AndRegisteredPAC=selection.pacA1PageCount;
   summary.originalA1PacPagesWithLiteralRegisteredPAC=selection.originalPagesWithPACRegistration;
   summary.originalCachedPagesWithoutReadableText=selection.imageOrUnrenderedPages;
   Object.assign(summary,formatCensus);
