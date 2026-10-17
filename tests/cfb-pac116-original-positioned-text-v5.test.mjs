@@ -257,3 +257,24 @@ test('25-cohort source candidates remain per-report-version and comparator-held 
  assert.equal(collision.provisionalRowsHeldForDuplicateSignature,1);
  assert.equal(collision.provisionalRowsPromotedToExactSourceByLayoutIsolation,0);
 });
+
+test('PAC25 comparator root-cause buckets distinguish missing donor registration from same-date competition',()=>{
+ const sample=check({items:[
+  item('30558',140,672),item('Education Minn PAC',260,664),
+  item('04/10/2024',40,648),item('$300.00',520,636)
+ ]});
+ const noId=score([sample],{allRows:[
+  ...cohort,receipt(500,{contributorReg:'',transactionDate:'2024-01-01',amount:'875.00'})
+ ]});
+ assert.equal(noId.provisionalRowsHeldForIncompleteComparator,1);
+ assert.equal(noId.provisionalHeldGroupsWithMissingDonorRegistration,1);
+ assert.equal(noId.provisionalHeldGroupsWithoutDateOrAmountCompetition,1);
+ assert.equal(noId.provisionalHeldGroupsWithSameDateInvalidRow,0);
+ const dateCollision=score([sample],{allRows:[
+  ...cohort,receipt(501,{contributorReg:'',transactionDate:'2024-04-10',amount:'300.00'})
+ ]});
+ assert.equal(dateCollision.provisionalHeldGroupsWithSameDateInvalidRow,1);
+ assert.equal(dateCollision.provisionalHeldGroupsWithSameAmountInvalidRow,1);
+ assert.equal(dateCollision.provisionalHeldGroupsWithSameDateAndAmountInvalidRow,1);
+ assert.equal(dateCollision.provisionalRowsPromotedToExactSourceByLayoutIsolation,0);
+});
