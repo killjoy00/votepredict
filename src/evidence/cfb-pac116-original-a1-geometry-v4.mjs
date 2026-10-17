@@ -42,7 +42,7 @@ export function isOriginalA1RegisteredPacPage(text,registrations){
  if(/\bINSTRUCTIONS?\s+FOR\s+(?:SCHEDULE|SCH[.])\s*A\s*1\b/i.test(page))
   return false;
  return /\b(?:SCHEDULE|SCH[.])\s*A\s*1\b/i.test(page)&&
-  /\b(?:PAC|political committee|political fund|P[.]?C[.]?F[.]?)\b/i.test(page)&&
+  /\b(?:PAC|political committees?|political funds?|P[.]?C[.]?F[.]?)\b/i.test(page)&&
   registrations.some(x=>exactPrintedPacReg(page,x));
 }
 
