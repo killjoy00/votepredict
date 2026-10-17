@@ -8,6 +8,7 @@ import {createHash} from 'node:crypto';
 import {Pool} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {extractScheduleEntries,parsePrintedAmounts,parsePrintedDates} from '../src/evidence/cfb-report-schedule-raw.mjs';
+import {extractLayoutShadowCandidates} from '../src/evidence/cfb-report-schedule-layout-shadow-v2.mjs';
 
 const MARKER='SENATE_864_CFB_LAYOUT_AUDIT_V1';
 const STATUS=['machine_readable','no_schedule_text','ocr_needed'];
@@ -51,7 +52,10 @@ const empty=()=>({
  single_date_amount_lines:0,multiple_amount_lines:0,date_only_lines:0,
  amount_only_lines:0,nearby_split_date_amount_lines:0,
  schedule_heading_lines:0,contribution_headings:0,expenditure_headings:0,
- extracted_v1_lines:0,source_text_characters:0
+ extracted_v1_lines:0,source_text_characters:0,
+ shadow_v2_candidates:0,shadow_v2_single_amount_with_name:0,
+ shadow_v2_multiline_candidates:0,shadow_v2_multiple_amount_columns:0,
+ shadow_v2_insufficient_fields:0
 });
 const add=(dst,src)=>{
  for(const key of Object.keys(dst))dst[key]+=src[key];
@@ -59,7 +63,6 @@ const add=(dst,src)=>{
 };
 export function pageLayoutFeatures(pages,year){
  const result=empty();result.reports=1;result.pages=pages.length;
- const all=[];
  for(const page of pages){
   const lines=String(page??'').replace(/\u0000/g,'').split(/\r?\n/);
   if(lines.some(x=>x.trim().length>0))result.nonempty_pages++;
@@ -90,9 +93,14 @@ export function pageLayoutFeatures(pages,year){
    if(!local[i].dates||local[i].amounts)continue;
    if(local.slice(i+1,i+4).some(x=>x.amounts>0))result.nearby_split_date_amount_lines++;
   }
-  all.push(...local);
  }
  result.extracted_v1_lines=extractScheduleEntries(pages,year).length;
+ const shadow=extractLayoutShadowCandidates(pages,year);
+ result.shadow_v2_candidates=shadow.length;
+ result.shadow_v2_single_amount_with_name=shadow.filter(x=>x.readiness==='single_amount_name_visible').length;
+ result.shadow_v2_multiline_candidates=shadow.filter(x=>x.reconstruction_method==='adjacent_page_lines').length;
+ result.shadow_v2_multiple_amount_columns=shadow.filter(x=>x.readiness==='multiple_amount_columns').length;
+ result.shadow_v2_insufficient_fields=shadow.filter(x=>x.readiness==='insufficient_printed_fields').length;
  return result;
 }
 function safeSummary(selected,pagesBySha){
