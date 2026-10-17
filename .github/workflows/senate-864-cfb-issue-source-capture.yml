@@ -1,0 +1,158 @@
+name: "Senate #864 future-dated official and publisher issue-finance source observations"
+on:
+  pull_request:
+    paths:
+      - "migrations/0031_cfb_issue_finance_source_observations.sql"
+      - "data/evidence/cfb-issue-finance-source-observation-manifest-v1.json"
+      - "src/evidence/cfb-issue-source-observation-v1.mjs"
+      - "scripts/capture-cfb-issue-source-observations-protected.mjs"
+      - "scripts/verify-cfb-issue-source-sql-local.mjs"
+      - "tests/cfb-issue-source-observation-v1.test.mjs"
+      - ".github/workflows/senate-864-cfb-issue-source-capture.yml"
+  push:
+    branches: [main]
+    paths:
+      - "migrations/0031_cfb_issue_finance_source_observations.sql"
+      - "data/evidence/cfb-issue-finance-source-observation-manifest-v1.json"
+      - "src/evidence/cfb-issue-source-observation-v1.mjs"
+      - "scripts/capture-cfb-issue-source-observations-protected.mjs"
+      - "scripts/verify-cfb-issue-source-sql-local.mjs"
+      - "tests/cfb-issue-source-observation-v1.test.mjs"
+      - ".github/workflows/senate-864-cfb-issue-source-capture.yml"
+  schedule:
+    - cron: "19 14 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: "cfb-864-issue-source-prospective-serial-main"
+  cancel-in-progress: false
+jobs:
+  pr-keyless-original-source-tests:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Prepare disposable PostgreSQL for new additive raw-only ledger
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+          sudo -u postgres createdb votepredict
+      - name: Migrate twice and test rollback, dedupe and permanent non-serving constraints
+        run: |
+          npm run db:migrate
+          npm run db:migrate
+          node --import tsx scripts/verify-cfb-issue-source-sql-local.mjs
+      - name: Source discovery policy, anti-leakage contracts and repository checks
+        run: |
+          node --check src/evidence/cfb-issue-source-observation-v1.mjs
+          node --check scripts/capture-cfb-issue-source-observations-protected.mjs
+          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs
+          npm run check
+  reviewed-main-presecret:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      (
+        github.event_name == 'schedule' ||
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event_name == 'push' &&
+          github.event.after == github.sha &&
+          github.event.head_commit.id == github.sha &&
+          github.event.deleted != true &&
+          github.event.forced != true &&
+          contains(github.event.head_commit.message, 'SENATE_864_CFB_ISSUE_SOURCE_CAPTURE_V1')
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify the exact reviewed main commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Migrate disposable PostgreSQL and rehearse guarded raw-only source insert
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+          sudo -u postgres createdb votepredict
+          npm run db:migrate
+          npm run db:migrate
+          node --import tsx scripts/verify-cfb-issue-source-sql-local.mjs
+      - name: Independent source handling, app checks and dependency policy
+        run: |
+          node --check src/evidence/cfb-issue-source-observation-v1.mjs
+          node --check scripts/capture-cfb-issue-source-observations-protected.mjs
+          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs
+          npm run check
+          npm audit --omit=dev --audit-level=high
+  guarded-existing-neon-prospective-snapshots:
+    needs: [reviewed-main-presecret]
+    if: >-
+      needs.reviewed-main-presecret.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      (
+        github.event_name == 'schedule' ||
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event_name == 'push' &&
+          github.event.after == github.sha &&
+          github.event.head_commit.id == github.sha &&
+          github.event.deleted != true &&
+          github.event.forced != true &&
+          contains(github.event.head_commit.message, 'SENATE_864_CFB_ISSUE_SOURCE_CAPTURE_V1')
+        )
+      )
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_CFB_ISSUE_CAPTURE_KEYLESS_PASSED: ${{ needs.reviewed-main-presecret.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_CFB_ISSUE_CAPTURE_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_ISSUE_SOURCE_CAPTURE_V1') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify the exact independently tested main commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Capture raw first-party HTML to append-only Neon ledger, obey source robots
+        run: node --import tsx scripts/capture-cfb-issue-source-observations-protected.mjs

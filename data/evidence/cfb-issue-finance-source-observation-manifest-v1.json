@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "cfb-issue-finance-observation-manifest-v1",
+  "scope": "First-party/official original HTML only, raw prospective capture; no inferred position, historical public-by or entity identity",
+  "sources": [
+    {
+      "id": "cfb-political-fund-registration-index",
+      "organizationGroup": "CFB official committee registry",
+      "role": "cfb_registry_index",
+      "url": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/large-contribution-notices/"
+    },
+    {
+      "id": "mn-chamber-leadership-fund-pac",
+      "organizationGroup": "Minnesota Chamber of Commerce",
+      "role": "first_party_pac_affiliation",
+      "url": "https://www.mnchamber.com/your-voice/elections"
+    },
+    {
+      "id": "mn-chamber-political-programs-2020",
+      "organizationGroup": "Minnesota Chamber of Commerce",
+      "role": "first_party_historical_context",
+      "url": "https://www.mnchamber.com/blog/chamber-political-programs-find-success"
+    },
+    {
+      "id": "mn-chamber-legislative-voting-record",
+      "organizationGroup": "Minnesota Chamber of Commerce",
+      "role": "retrospective_scorecard_index",
+      "url": "https://www.mnchamber.com/2025-2026-legislative-voting-record"
+    },
+    {
+      "id": "education-minnesota-pac",
+      "organizationGroup": "Education Minnesota",
+      "role": "first_party_pac_affiliation",
+      "url": "https://educationminnesota.org/advocacy/edmnvotes/political-action-committee/"
+    },
+    {
+      "id": "mn-aflcio-first-party-news",
+      "organizationGroup": "Minnesota AFL-CIO",
+      "role": "first_party_issue_publication",
+      "url": "https://mnaflcio.org/news"
+    },
+    {
+      "id": "mn-aflcio-2023-priorities",
+      "organizationGroup": "Minnesota AFL-CIO",
+      "role": "first_party_historical_context",
+      "url": "https://mnaflcio.org/news/2023-legislative-priorities"
+    },
+    {
+      "id": "mn-aflcio-2026-priorities",
+      "organizationGroup": "Minnesota AFL-CIO",
+      "role": "first_party_issue_publication",
+      "url": "https://mnaflcio.org/news/2026-legislative-priorities"
+    }
+  ]
+}
