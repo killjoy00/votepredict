@@ -28,6 +28,7 @@ export interface PaperAction {
  kind:'amendment'|'passage'|'conference'|'procedural';motionText:string;questionText:string;
  proposedText:string|null;baseLocator:string|null;outcome:'adopted'|'rejected'|'unknown';
  priorAdoptedKeys:string[];yeas:number|null;nays:number|null;ballotSignature:string|null;
+ rollStart:number|null;
 }
 /** Preserve original extracted-character locators. Unknown/truncated proposals are never full papers. */
 export function parseJournalPaperActions(text:string,knownNames:readonly string[]):PaperAction[]{
@@ -41,13 +42,17 @@ export function parseJournalPaperActions(text:string,knownNames:readonly string[
   if(!stop)continue; // Never call a truncated block the complete proposal.
   const literal=span.slice(0,stop.index).trimEnd();
   if(literal.length<95||!/\b(?:as follows|page\s+\d+,\s*line|delete|insert|strike)\b/i.test(literal))continue;
+  // Nested amendments and withdrawal motions require their own question/paper
+  // sequence; never label the combined block as one exact proposed paper.
+  if(/\bmoved\s+(?:to\s+(?:amend|withdraw)|that)\b|\bwithdrew (?:the|his|her) amendment\b|\bamendment was withdrawn\b/i.test(literal.slice(heads[i][0].length)))continue;
   const bill=billIdentifier(heads[i][0]);if(!bill)continue;
   const following=span.slice(stop.index);
   // The next explicit motion/third reading bounds this proposal's outcome.
-  const next=/\n(?:Senator\s+\S+[^\n]*\s+moved|[HS]\.F\. No\. \d+ was read)/.exec(following);
+  const next=/\b(?:Senator\s+)?[A-ZÀ-ž][A-Za-zÀ-ž'’.-]*(?:\s+[A-ZÀ-ž][A-Za-zÀ-ž'’.-]*){0,3}\s+moved\b|\b[HS]\.F\. No\. \d+ was read/.exec(following);
   const tail=following.slice(0,next?.index??following.length);
   const question=tail.match(/The question (?:was taken|recurred)[\s\S]*?(?=The roll was called|\n\s*The motion)/i)?.[0]??'';
   const roll=tail.match(/The roll was called,\s*and there were yeas\s+(\d+)\s+and nays\s+(\d+)/i);
+  if(/\b(?:passage|repassage|withdraw|amendment to (?:the |an? )?amendment)\b/i.test(question))continue;
   const parsed=roll?parseSenateJournalText({text:heads[i][0]+'\n'+tail,sessionKey:'source-only',sourceUrl:'https://example.test/source',knownMemberNames:knownNames,allowRosterMismatch:true}):[];
   const votes=parsed.length===1?parsed[0].memberVotes.map(v=>({name:v.sourceName,choice:v.choice})):[];
   const outcome=/\b(?:motion did not prevail|amendment was not adopted)\b/i.test(tail)?'rejected'
@@ -56,7 +61,8 @@ export function parseJournalPaperActions(text:string,knownNames:readonly string[
   results.push({key,sequence:0,start,end,billIdentifier:bill,kind:'amendment',motionText:compact(literal.split(/\bas follows\b/i)[0]),
    questionText:compact(question),proposedText:literal,baseLocator:explicitVersionLocator(literal.slice(0,500)),outcome,
    priorAdoptedKeys:[],yeas:roll?Number(roll[1]):null,nays:roll?Number(roll[2]):null,
-   ballotSignature:roll?ballotSignature(votes,Number(roll[1]),Number(roll[2])):null});
+   ballotSignature:roll?ballotSignature(votes,Number(roll[1]),Number(roll[2])):null,
+   rollStart:roll?start+stop.index+(roll.index??0):null});
  }
  // Other named questions keep distinct actions, even if tallies and ballots repeat.
  const rolls=[...text.matchAll(/The roll was called,\s*and there were yeas\s+(\d+)\s+and nays\s+(\d+)/gi)];
@@ -68,7 +74,7 @@ export function parseJournalPaperActions(text:string,knownNames:readonly string[
   // matchAll with a trailing wildcard finds the first marker; take the last explicitly.
   const markers=[...context.matchAll(/The question (?:was taken|recurred)/gi)];
   const qStart=markers.at(-1)!.index!,question=compact(context.slice(qStart));
-  if(/adoption of (?:the |an? )?amendment/i.test(question))continue; // linked through the literal above
+  if(results.some(a=>a.rollStart===at)||/\bamendment\b/i.test(question))continue; // linked through a literal, or explicitly unresolved
   const lastBill=[...context.matchAll(/\b[HS]\s*\.?\s*F\s*\.?\s*(?:No\.?\s*)?\d{1,6}\b/gi)].at(-1);
   const bill=lastBill?billIdentifier(lastBill[0]):null;if(!bill)continue;
   const kind=/\b(?:final passage|repassage|passage of (?:the )?bill)\b/i.test(question)?'passage'
@@ -81,7 +87,7 @@ export function parseJournalPaperActions(text:string,knownNames:readonly string[
   results.push({key,sequence:0,start,end:at,billIdentifier:bill,kind,motionText:question,questionText:question,
    proposedText:null,baseLocator:explicitVersionLocator(context.slice(qStart)),outcome:'unknown',
    priorAdoptedKeys:[],yeas:Number(roll[1]),nays:Number(roll[2]),
-   ballotSignature:event?ballotSignature(event.memberVotes.map(v=>({name:v.sourceName,choice:v.choice})),Number(roll[1]),Number(roll[2])):null});
+   ballotSignature:event?ballotSignature(event.memberVotes.map(v=>({name:v.sourceName,choice:v.choice})),Number(roll[1]),Number(roll[2])):null,rollStart:at});
  }
  results.sort((a,b)=>a.start-b.start);
  const adopted=new Map<string,string[]>();

@@ -101,9 +101,9 @@ export async function stageHistoryJobs(pool:Pool){
   FROM senate_official_bill_text_captures c JOIN legislative_sessions s ON s.id=c.session_id WHERE c.family<>'amendment'
   UNION SELECT DISTINCT s.id,s.slug,b.id,coalesce(v.text_url,v.source_url),'bill_text' FROM bill_versions v JOIN bills b ON b.id=v.bill_id
   JOIN legislative_sessions s ON s.id=b.session_id JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn' WHERE s.slug=ANY($1::text[])
-  UNION SELECT DISTINCT s.id,s.slug,NULL,o.source_url,CASE WHEN o.content_type='application/pdf' THEN 'role_pdf' ELSE 'role_html' END
+  UNION SELECT DISTINCT s.id,s.slug,NULL::uuid,o.source_url,CASE WHEN o.content_type='application/pdf' THEN 'role_pdf' ELSE 'role_html' END
   FROM senate_role_source_snapshots o JOIN legislative_sessions s ON s.id=o.session_id WHERE s.slug=ANY($1::text[])
-  UNION SELECT s.id,s.slug,NULL,'https://www.senate.mn/members?id=leadership','role_html' FROM legislative_sessions s
+  UNION SELECT s.id,s.slug,NULL::uuid,'https://www.senate.mn/members?id=leadership','role_html' FROM legislative_sessions s
   JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn' WHERE s.slug=ANY($1::text[])`,[HISTORY_SESSIONS])).rows;
  const aliases=candidates.flatMap(c=>{
   if(c.kind==='bill_text'&&c.source_url&&validHistorySource(c.kind,c.source_url)&&!c.source_url.endsWith('/pdf/'))return [c,{...c,source_url:c.source_url+'pdf/'}];
@@ -176,8 +176,8 @@ export async function captureArchivedHistory(pool:Pool,job:Job,stamp:string,byte
   if(isPdf)parsed={rawText:raw,originalBody:null,extractedTextSha256:hash(raw)};
   else try{parsed=captureOfficialRevisorHtml(bytes)}catch{return 0}
   if(parsed.rawText.length<100||!/(?:A bill for an act|Section 1\.|Be it enacted)/i.test(parsed.rawText))return 0;
-  const u=new URL(job.source_url),parts=u.pathname.match(/(versions\/(?:\d+|ue\/\d+|ccr\/[A-Za-z0-9]+)\/)(?:pdf\/)?$/)!;
-  const locator=parts[1],family=locator.includes('/ue/')?'unofficial_engrossment':locator.includes('/ccr/')?'conference_report':'numbered_version';
+  const u=new URL(job.source_url),parts=u.pathname.match(/(versions\/(?:\d+|ue\/\d+|ccr\/[A-Za-z0-9]+)\/)(?:pdf\/)?$/i)!;
+  const locator=parts[1],family=/\/ue\//i.test(locator)?'unofficial_engrossment':/\/ccr\//i.test(locator)?'conference_report':'numbered_version';
   // If an identical body was already captured, retain the independent archive receipt and earliest observation too.
   await pool.query(`INSERT INTO senate_official_bill_text_captures(session_id,bill_id,family,source_url,source_locator,printed_label,original_body,raw_text,
    original_body_sha256,body_hash_provenance,extracted_text_sha256,original_byte_length,content_type,fetched_at,archived_observed_at,http_status)
@@ -204,7 +204,8 @@ export async function recoverHistoricalArchives(pool:Pool,options:{maxJobs?:numb
    ORDER BY CASE WHEN q.kind='role_pdf' THEN 0 WHEN q.source_url LIKE '%/members%' THEN 1
     WHEN q.source_url LIKE '%/committees/%' THEN 2 ELSE 3 END,q.attempts,q.job_key) AS rank
   FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id LEFT JOIN bills b ON b.id=q.bill_id
-  WHERE q.status='pending' OR(q.status='failed' AND q.attempts<3 AND q.checked_at<now()-interval '6 hours'))
+  WHERE q.status='pending' OR(q.status='failed' AND q.attempts<3 AND q.checked_at<now()-interval '6 hours')
+   OR(q.status='unavailable' AND q.attempts<3 AND q.checked_at<now()-interval '30 days'))
   SELECT * FROM ranked ORDER BY rank,kind,slug LIMIT $1`,[max])).rows;
  const summary={jobs:0,archiveBodies:0,billTexts:0,roleItems:0,unparsed:0,unavailable:0,throttled:false};
  class ArchiveUnavailable extends Error{}
@@ -221,11 +222,11 @@ export async function recoverHistoricalArchives(pool:Pool,options:{maxJobs?:numb
    const indexBytes=await read(index,200000);let payload:unknown;
    try{payload=JSON.parse(Buffer.from(indexBytes).toString('utf8'))}catch{throw new ArchiveUnavailable()}
    const stamps=archiveCaptures(payload,job.source_url,job.slug);
-   if(!stamps.length)status='unavailable';
+   if(!stamps.length){status='unavailable';summary.unavailable++;}
    for(const {stamp,original} of stamps){
     const observed=archiveTimestamp(stamp);if(!observed)continue;
     const archiveUrl=`https://web.archive.org/web/${stamp}id_/${original}`;
-    if((await pool.query('SELECT 1 FROM senate_historical_archive_attempts WHERE job_key=$1 AND archive_url=$2',[job.job_key,archiveUrl])).rows.length)continue;
+    if((await pool.query("SELECT 1 FROM senate_historical_archive_attempts WHERE job_key=$1 AND archive_url=$2 AND outcome IN ('captured','unparsed')",[job.job_key,archiveUrl])).rows.length)continue;
     const response=await get(archiveUrl);
     if([429,503].includes(response.status)){summary.throttled=true;break;}
     let bodySha:string|null=null,outcome='unavailable';
@@ -236,9 +237,9 @@ export async function recoverHistoricalArchives(pool:Pool,options:{maxJobs?:numb
      outcome=count?'captured':'unparsed';captured+=count;summary.archiveBodies++;
      if(job.kind==='bill_text')summary.billTexts+=count;else summary.roleItems+=count;
      if(!count)summary.unparsed++;
-    }else summary.unavailable++;
+    }else{summary.unavailable++;status='failed';error='archive_replay_unavailable_or_clock_mismatch';}
     await pool.query(`INSERT INTO senate_historical_archive_attempts(job_key,archive_url,observed_at,outcome,body_sha256)
-     VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`,[job.job_key,archiveUrl,observed,outcome,bodySha]);
+     VALUES($1,$2,$3,$4,$5) ON CONFLICT(job_key,archive_url) DO UPDATE SET outcome=EXCLUDED.outcome,body_sha256=EXCLUDED.body_sha256,checked_at=now()`,[job.job_key,archiveUrl,observed,outcome,bodySha]);
    }
    if(summary.throttled)break;
   }catch(errorCaught){

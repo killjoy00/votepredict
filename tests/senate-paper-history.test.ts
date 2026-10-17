@@ -4,7 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {Pool} from 'pg';
 import {parseJournalPaperActions,rollMatches,hash,explicitVersionLocator} from '../src/operations/senate-vote-paper-parser.js';
 import {backfillVotePapers,historyRoster,parseDatedRoleActs,verifyPaperSources,connectExplicitBaseCaptures} from '../src/operations/senate-vote-paper-backfill.js';
-import {archiveCaptures,archiveTimestamp,validHistorySource,captureArchivedHistory,recoverHistoricalArchives,statedAssignmentDate} from '../src/operations/senate-history-archive.js';
+import {archiveCaptures,archiveTimestamp,validHistorySource,captureArchivedHistory,recoverHistoricalArchives,statedAssignmentDate,stageHistoryJobs} from '../src/operations/senate-history-archive.js';
 import {assertPaperHistoryRun,PAPER_HISTORY_MARKER} from '../src/operations/senate-paper-history-gate.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
 import {senateJournalEventsToRaw} from '../src/sources/minnesota/senate-raw-votes.js';
@@ -45,6 +45,10 @@ test('unnumbered proposals preserve voice action, rejected text, order and expli
  assert.equal(explicitVersionLocator('latest version'),null);
  const huge='Senator Alpha moved to amend S.F. No. 123, as follows:\nPage 1, line 1, insert '+('x'.repeat(1_500_100));
  assert.deepEqual(parseJournalPaperActions(huge,['Alpha']),[],'truncated proposal never becomes a complete paper');
+ const nested='Senator Alpha moved to amend S.F. No. 123, as follows:\nPage 1, line 1, insert "proposal words".\nSenator Beta moved to amend the Alpha amendment, as follows:\nPage 1, line 1, delete "words".\nThe question was taken on adoption of the amendment to the amendment.\n'+roll('Alpha','Beta')+'The motion prevailed.';
+ assert.equal(parseJournalPaperActions(nested,['Alpha','Beta']).some(a=>a.proposedText),false,'nested papers are held rather than merged');
+ const withdrawn='Senator Alpha moved to amend S.F. No. 123, as follows:\nPage 1, line 1, insert "proposal words".\nSenator Alpha moved to withdraw the amendment.\nThe motion prevailed.';
+ assert.equal(parseJournalPaperActions(withdrawn,['Alpha','Beta']).some(a=>a.outcome==='adopted'),false);
 });
 
 test('dated roles require an enacted leadership declaration or explicit minutes role, not a nomination or biennium',()=>{
@@ -155,6 +159,8 @@ export async function exercisePaperHistory(pool:Pool){
  const coverage=(await pool.query("SELECT * FROM senate_vote_paper_coverage_v WHERE session='2023-2024'")).rows;
  assert.ok(coverage.some(r=>r.vote_kind==='passage'&&Number(r.exact_question_links)>=1));
  assert.ok(coverage.some(r=>r.vote_kind==='amendment'&&Number(r.exact_base_observed_before_day)>=1));
+ assert.ok(await stageHistoryJobs(pool)>0);
+ await recoverHistoricalArchives(pool,{maxJobs:3,sleep:async()=>{},fetchImpl:async()=>Response.json([])});
  const link=await q('SELECT vote_event_id FROM senate_vote_paper_exact_event_v WHERE bill_id=$1 LIMIT 1',[bill]);
  await pool.query("UPDATE vote_events SET motion_text='changed question' WHERE id=$1",[link.vote_event_id]);
  assert.equal((await q('SELECT count(*)::int AS n FROM senate_vote_paper_exact_event_v WHERE bill_id=$1',[bill])).n,1);

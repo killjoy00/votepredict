@@ -80,7 +80,7 @@ CREATE FUNCTION senate_vote_paper_event_fingerprint(target uuid) RETURNS text LA
 $$;
 CREATE VIEW senate_vote_paper_current_v AS
 WITH documents AS MATERIALIZED (
- SELECT d.*,encode(sha256(convert_to((d.metadata->'rawPrepassageVotes')::text,'UTF8')),'hex') AS payload_sha,
+ SELECT d.id,d.source_url,d.session_id,encode(sha256(convert_to((d.metadata->'rawPrepassageVotes')::text,'UTF8')),'hex') AS payload_sha,
   encode(sha256(convert_to(d.metadata#>>'{rawPrepassageVotes,text}','UTF8')),'hex') AS text_sha
  FROM source_documents d WHERE EXISTS(SELECT 1 FROM senate_vote_paper_actions a WHERE a.source_document_id=d.id)
 )
@@ -193,11 +193,13 @@ SELECT h.id,h.membership_id,h.session_id,h.role,h.committee,h.starts_on,h.ends_o
 FROM senate_role_history_v h;
 
 CREATE VIEW senate_vote_paper_coverage_v AS
-WITH links AS MATERIALIZED (
+WITH base_dates AS MATERIALIZED (
+ SELECT c.action_id,min(t.archived_observed_at)::date AS first_observed
+ FROM senate_vote_paper_components_current_v c JOIN senate_official_bill_text_captures t ON t.id=c.capture_id GROUP BY c.action_id
+), links AS MATERIALIZED (
  SELECT x.vote_event_id,bool_or(x.proposed_text IS NOT NULL) AS proposal,bool_or(x.original_source_verified) AS verified,
- bool_or(EXISTS(SELECT 1 FROM senate_vote_paper_components_current_v c JOIN senate_official_bill_text_captures t ON t.id=c.capture_id
-  WHERE c.action_id=x.id AND t.archived_observed_at::date<x.action_on)) AS base_before
- FROM senate_vote_paper_exact_event_v x GROUP BY x.vote_event_id
+ bool_or(b.first_observed<x.action_on) AS base_before
+ FROM senate_vote_paper_exact_event_v x LEFT JOIN base_dates b ON b.action_id=x.id GROUP BY x.vote_event_id
 ), text_dates AS MATERIALIZED (
  SELECT bill_id,min(archived_observed_at)::date AS first_observed FROM senate_official_bill_text_captures GROUP BY bill_id
 )

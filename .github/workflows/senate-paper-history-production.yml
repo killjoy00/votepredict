@@ -9,6 +9,8 @@ on:
       - scripts/deploy-senate-paper-history-neon.ts
       - scripts/verify-senate-paper-history-original.ts
       - docs/sources/senate-vote-papers-history.md
+      - src/sources/minnesota/senate-assignment-pdf.ts
+      - tests/senate-role-collection.test.ts
       - src/operations/senate-vote-paper-parser.ts
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-history-archive.ts
@@ -24,6 +26,8 @@ on:
       - scripts/deploy-senate-paper-history-neon.ts
       - scripts/verify-senate-paper-history-original.ts
       - docs/sources/senate-vote-papers-history.md
+      - src/sources/minnesota/senate-assignment-pdf.ts
+      - tests/senate-role-collection.test.ts
       - src/operations/senate-vote-paper-parser.ts
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-history-archive.ts

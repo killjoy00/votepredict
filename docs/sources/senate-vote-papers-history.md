@@ -10,6 +10,8 @@ Migration 0035 adds a research layer for the 2021–22, 2023–24 and 2025–26 
 
 Changing source payloads hides their old derived actions/links. Changing an accepted event or its ballot invalidates its link fingerprint. Source scans and failed verification attempts are fingerprinted and bounded so unavailable sources do not permanently crowd out the remaining work.
 
+Nested amendment/withdrawal sequences that are not fully separated are held rather than combined into an exact proposal. Source-local prior-adoption lists include recovered actions only; they are not exhaustive when a source sequence remains unresolved.
+
 `senate_vote_paper_components_current_v` connects an explicitly named base locator to captured text for that bill. Conflicting retained text hashes at the same version URL hold that representation rather than selecting a latest body. HTML and PDF representations preserve their separate original bytes and extracted-text hashes. Full assembled amended-bill text remains explicitly **unverified**. A linked question or amendment is not automatically a complete final-passage paper.
 
 ## Historical text and role dates
@@ -17,6 +19,8 @@ Changing source payloads hides their old derived actions/links. Changing an acce
 The collector stages exact numbered, unofficial-engrossment and conference-report URLs, including official PDF representations, from existing text stores and explicit journal references. Exact base references are also queued for current original-body acquisition. A current download proves current wording, not historical availability.
 
 Historical jobs acquire actual original archived bodies, not just CDX timestamps. They keep original URLs, replay URLs, capture clocks, body hashes and parsing outcomes. Source host/path, bill identity and historical session are checked. An archive response with a contradictory Memento clock is held. Bill text is captured only from the requested version with legislative body content; latest-version and wrong-bill pages are rejected. Matching old bodies can supply `archived_observed_at` without overwriting retained wording. Archive attempts and source jobs preserve unavailable/unparsed outcomes; those are evidence gaps, not successful historical captures.
+
+The assignment parser preserves wrapped committee headings and PDF column boundaries, so neighboring surnames are not combined. Regular members are recovered only from explicit column cells or unambiguous single-name rows.
 
 Role recovery has three explicit bases:
 
