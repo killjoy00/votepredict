@@ -51,5 +51,5 @@ export function authorizeSenateBillAuthorsRun(
     event.deleted===true || event.forced===true ||
     !event.head_commit.message?.includes(MARKER))
     throw Error('Commit is not exact reviewed first main push with required marker');
-  return event.head_commit.message.includes(JOURNAL_ONLY_MARKER);
+  return event.head_commit?.message?.includes(JOURNAL_ONLY_MARKER)===true;
 }
