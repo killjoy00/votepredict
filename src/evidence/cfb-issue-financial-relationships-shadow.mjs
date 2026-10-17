@@ -30,6 +30,8 @@ export function classifyLiteralPublisherBillPosition(value){
  // "correct vote". Those may have a different stance from whole-bill passage.
  if(!s||/\bamendment\b|\bmotion\b|\bprocedural\b/i.test(s)||
   /\bcorrect vote\b/i.test(s)||s.length>240)return null;
+ const explicit=/^(?:support|oppose|against|for|(?:bill (?:passed|failed),? )?chamber (?:supported|opposed)|a ['\"\u201c](?:yes|no)['\"\u201d] vote supports the nfib position)[.]?$/i;
+ if(!explicit.test(s))return null;
  if(POSITIVE.test(s)&&!NEGATIVE.test(s))return 'support';
  if(NEGATIVE.test(s)&&!POSITIVE.test(s))return 'oppose';
  return null;
