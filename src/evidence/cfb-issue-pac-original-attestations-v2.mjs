@@ -143,7 +143,7 @@ export function attestCurrentPacSourcePairs({snapshots,manifest,config,cutoffOn}
  return {schema:CFB_PAC_ATTESTATION_SCHEMA,cutoffOn,statuses,affiliations,
   newHistoricalEligibility:0,modelWeight:0,contemporaneousEvidenceOnly:true};
 }
-const BILL=/(?:^|\W)(HF|SF|House\s+File|Senate\s+File)\s*#?\s*([1-9]\d{0,4})\b/gi;
+const BILL=/(?:^|\W)(H\.?\s*F\.?|S\.?\s*F\.?|House\s+File|Senate\s+File)\s*#?\s*([1-9]\d{0,4})\b/gi;
 export function literalBillMentionLeads(snapshots,manifest){
  if(!Array.isArray(snapshots)||snapshots.length>100)
   throw Error('Bounded source pages required');
