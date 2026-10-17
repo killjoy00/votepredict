@@ -180,8 +180,12 @@ export async function main(){
     process.exitCode=1;return;
   }
   let inspected={kind:'no_completed_run',receipt:null};
-  if(newest?.status==='completed')
-    inspected=await readbackForCompleted(newest);
+  if(newest?.status==='completed') {
+    // A missing/unavailable GitHub log may not disable recovery. Treat it as
+    // unverified, then still dispatch after the safe 75-minute idle window.
+    try{inspected=await readbackForCompleted(newest);}
+    catch{inspected={kind:'protected_receipt_api_unavailable',receipt:null};}
+  }
   const resolved=applyReceiptGuard(decision,inspected.receipt,now,newest);
   const observation={
     reason:resolved.reason,latestId:resolved.latestId??null,
@@ -193,7 +197,14 @@ export async function main(){
     backlogJournals:inspected.receipt?.backlogJournals??null,
   };
   if(!resolved.dispatch){
-    report({status:inspected.kind==='verified'?'healthy':'degraded',...observation});
+    const noNewText=inspected.receipt&&inspected.receipt.versionsRecovered===0
+      &&inspected.receipt.backlogBills>0
+      &&resolved.reason!=='official_source_throttle_cooldown';
+    const degraded=inspected.kind!=='verified'||noNewText;
+    report({status:degraded?'degraded':'healthy',
+      ...observation,
+      ...(noNewText?{progressWarning:'no_new_official_versions_with_bill_backlog'}:{})});
+    if(degraded)process.exitCode=1;
     return;
   }
   await github('POST','/actions/workflows/'+TEXT_WORKFLOW_ID+'/dispatches',{ref:'main'});
