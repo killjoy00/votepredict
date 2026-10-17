@@ -49,7 +49,7 @@ export function authorizeSenateBillAuthorsRun(
     event.after!==env.GITHUB_SHA ||
     event.head_commit?.id!==env.GITHUB_SHA ||
     event.deleted===true || event.forced===true ||
-    !event.head_commit.message?.includes(MARKER))
+    !event.head_commit?.message?.includes(MARKER))
     throw Error('Commit is not exact reviewed first main push with required marker');
   return event.head_commit?.message?.includes(JOURNAL_ONLY_MARKER)===true;
 }
