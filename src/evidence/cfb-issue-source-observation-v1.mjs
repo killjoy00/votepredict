@@ -116,7 +116,7 @@ async function boundedBuffer(response,maxBytes){
  }finally{await reader.cancel().catch(()=>{});}
  return Buffer.concat(parts);
 }
-async function controlledFetch(url,fetcher,maxBytes){
+async function controlledFetch(url,fetcher,maxBytes,canFollow=()=>true){
  // Redirects to a different hostname are never followed. A later manifest
  // update must explicitly authorize any new origin after source review.
  for(let attempt=0;attempt<2;attempt++){
@@ -131,7 +131,8 @@ async function controlledFetch(url,fetcher,maxBytes){
    if(!location)throw Error('source_redirect');
    const next=new URL(location,url);
    if(!validPublicUrl(next.toString())||
-    next.hostname!==new URL(url).hostname)throw Error('source_redirect');
+    next.hostname!==new URL(url).hostname||!canFollow(next))
+    throw Error('source_redirect');
    url=next.toString();continue;
   }
   if(response.status===404)return {status:404,response,url};
@@ -160,7 +161,8 @@ export async function fetchCfbIssueSource(item,options={}){
  // source is fetched at a time; manifest origins are kept in order.
  await (options.sleep??(ms=>new Promise(resolve=>setTimeout(resolve,ms))))(1000);
  let fetched;
- try{fetched=await controlledFetch(item.url,fetcher,MAX_BODY_BYTES);}
+ try{fetched=await controlledFetch(item.url,fetcher,MAX_BODY_BYTES,
+   next=>robotsAllows(policy,next.pathname+next.search));}
  catch(e){return {status:e?.message==='source_oversize'?
   'source_oversize':'fetch_unavailable'};}
  if(fetched.status!==200)return {status:'fetch_unavailable'};
@@ -179,7 +181,7 @@ export async function fetchCfbIssueSource(item,options={}){
   sourceId:item.id,organizationGroup:item.organizationGroup,
   sourceRole:item.role,sourceUrl:item.url,finalUrl:fetched.url,
   htmlSha256:createHash('sha256').update(fetched.buffer).digest('hex'),
-  contentType:'text/html',rawHtml:body,observedAt:capturedAt,
+  contentType:'text/html',rawHtmlBytes:fetched.buffer,observedAt:capturedAt,
   claimStatus:'unverified_raw_observation',
   historicalAsOfEligible:false,mechanicallyActionable:false,modelWeight:0
  }};
