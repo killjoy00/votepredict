@@ -8,6 +8,10 @@ on:
       - "scripts/capture-cfb-issue-source-observations-protected.mjs"
       - "scripts/verify-cfb-issue-source-sql-local.mjs"
       - "tests/cfb-issue-source-observation-v1.test.mjs"
+      - "data/evidence/cfb-issue-pac-attestation-candidates-v2.json"
+      - "src/evidence/cfb-issue-pac-original-attestations-v2.mjs"
+      - "scripts/audit-cfb-pac-original-attestations-readonly.mjs"
+      - "tests/cfb-issue-pac-original-attestations-v2.test.mjs"
       - ".github/workflows/senate-864-cfb-issue-source-capture.yml"
   push:
     branches: [main]
@@ -18,6 +22,10 @@ on:
       - "scripts/capture-cfb-issue-source-observations-protected.mjs"
       - "scripts/verify-cfb-issue-source-sql-local.mjs"
       - "tests/cfb-issue-source-observation-v1.test.mjs"
+      - "data/evidence/cfb-issue-pac-attestation-candidates-v2.json"
+      - "src/evidence/cfb-issue-pac-original-attestations-v2.mjs"
+      - "scripts/audit-cfb-pac-original-attestations-readonly.mjs"
+      - "tests/cfb-issue-pac-original-attestations-v2.test.mjs"
       - ".github/workflows/senate-864-cfb-issue-source-capture.yml"
   schedule:
     - cron: "19 14 * * 1"
@@ -61,7 +69,9 @@ jobs:
         run: |
           node --check src/evidence/cfb-issue-source-observation-v1.mjs
           node --check scripts/capture-cfb-issue-source-observations-protected.mjs
-          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs
+          node --check src/evidence/cfb-issue-pac-original-attestations-v2.mjs
+          node --check scripts/audit-cfb-pac-original-attestations-readonly.mjs
+          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs tests/cfb-issue-pac-original-attestations-v2.test.mjs
           npm run check
   reviewed-main-presecret:
     if: >-
@@ -110,7 +120,9 @@ jobs:
         run: |
           node --check src/evidence/cfb-issue-source-observation-v1.mjs
           node --check scripts/capture-cfb-issue-source-observations-protected.mjs
-          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs
+          node --check src/evidence/cfb-issue-pac-original-attestations-v2.mjs
+          node --check scripts/audit-cfb-pac-original-attestations-readonly.mjs
+          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs tests/cfb-issue-pac-original-attestations-v2.test.mjs
           npm run check
           npm audit --omit=dev --audit-level=high
   guarded-existing-neon-prospective-snapshots:
@@ -156,3 +168,5 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Capture raw first-party HTML to append-only Neon ledger, obey source robots
         run: node --import tsx scripts/capture-cfb-issue-source-observations-protected.mjs
+      - name: Audit exact CFB PAC registration ↔ publisher sources and neutral bill mentions, READ ONLY
+        run: node --import tsx scripts/audit-cfb-pac-original-attestations-readonly.mjs
