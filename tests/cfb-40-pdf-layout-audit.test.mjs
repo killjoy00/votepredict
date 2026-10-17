@@ -46,5 +46,9 @@ test('audit counts split row and multi-column patterns without emitting text',()
  assert.equal(s.extracted_v1_lines,1);
  assert.equal(s.contribution_headings,1);
  assert.equal(s.expenditure_headings,1);
+ assert.equal(s.shadow_v2_candidates,3);
+ assert.equal(s.shadow_v2_single_amount_with_name,2);
+ assert.equal(s.shadow_v2_multiline_candidates,1);
+ assert.equal(s.shadow_v2_multiple_amount_columns,1);
  assert.ok(!Object.hasOwn(s,'sourceText'));
 });
