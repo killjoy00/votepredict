@@ -41,14 +41,28 @@ function guard(e:NodeJS.ProcessEnv):void{
     || e.VOTEPREDICT_SENATE_TEXT_INDEPENDENT_CI!=='true'
     || !/^[a-f0-9]{40}$/.test(e.GITHUB_SHA??''))
     throw Error('checked_main_gate_missing');
-  if(e.GITHUB_EVENT_NAME==='schedule')return;
-  if(e.GITHUB_EVENT_NAME!=='push' || !e.GITHUB_EVENT_PATH)
-    throw Error('unsupported_production_trigger');
+  if(!e.GITHUB_EVENT_PATH)throw Error('production_event_payload_missing');
   const event=JSON.parse(readFileSync(e.GITHUB_EVENT_PATH,'utf8')) as {
-    ref?:string;after?:string;deleted?:boolean;forced?:boolean;
+    ref?:string;after?:string;deleted?:boolean;forced?:boolean;schedule?:string;
     repository?:{full_name?:string};head_commit?:{id?:string;message?:string};
   };
-  if(event.ref!=='refs/heads/main'||event.repository?.full_name!==REPO
+  if(event.repository?.full_name!==REPO)
+    throw Error('production_event_repository_mismatch');
+  if(e.GITHUB_EVENT_NAME==='schedule'){
+    if(event.schedule!=='37 * * * *')
+      throw Error('unexpected_official_text_collection_cron');
+    return;
+  }
+  if(e.GITHUB_EVENT_NAME==='workflow_dispatch'){
+    // The only supported recovery action is dispatch of the exact reviewed
+    // main commit; GitHub's existing protected Neon environment remains gated.
+    if(event.ref&&!['main','refs/heads/main'].includes(event.ref))
+      throw Error('official_text_dispatch_not_main');
+    return;
+  }
+  if(e.GITHUB_EVENT_NAME!=='push')
+    throw Error('unsupported_production_trigger');
+  if(event.ref!=='refs/heads/main'
     ||event.after!==e.GITHUB_SHA||event.head_commit?.id!==e.GITHUB_SHA
     ||event.forced===true||event.deleted===true
     ||!event.head_commit?.message?.includes(MARKER))

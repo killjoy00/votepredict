@@ -1,0 +1,54 @@
+name: Recover missed Minnesota Senate official bill-text collection
+run-name: "Official text recovery ${{ github.event_name }} #${{ github.run_number }}"
+
+# The event-driven path keeps collection moving when GitHub drops scheduled
+# events. The separate hourly cron is a fallback, not the sole trigger.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '13 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: senate-official-text-idle-recovery-dispatch
+  cancel-in-progress: false
+
+jobs:
+  guarded-idle-recovery:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      (
+        github.event_name == 'push' ||
+        (github.event_name == 'schedule' && github.event.schedule == '13 * * * *') ||
+        github.event_name == 'workflow_dispatch'
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Pin exact reviewed main commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Validate recovery policy with no protected Neon access
+        run: |
+          node --test tests/senate-dfl-sitemap-watchdog.test.mjs
+          node --test tests/senate-official-bill-text-watchdog.test.mjs
+      - name: Check live collection receipts and dispatch only after idle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/senate-official-bill-text-watchdog.mjs
