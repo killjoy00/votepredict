@@ -55,7 +55,11 @@ const empty=()=>({
  extracted_v1_lines:0,source_text_characters:0,
  shadow_v2_candidates:0,shadow_v2_single_amount_with_name:0,
  shadow_v2_multiline_candidates:0,shadow_v2_multiple_amount_columns:0,
- shadow_v2_insufficient_fields:0
+ shadow_v2_insufficient_fields:0,
+ shadow_v2_two_amount_columns:0,shadow_v2_three_amount_columns:0,
+ shadow_v2_four_plus_amount_columns:0,shadow_v2_tab_delimited_multi:0,
+ shadow_v2_last_equals_sum_of_prior:0,
+ pages_with_cash_in_kind_total_labels:0
 });
 const add=(dst,src)=>{
  for(const key of Object.keys(dst))dst[key]+=src[key];
@@ -101,6 +105,19 @@ export function pageLayoutFeatures(pages,year){
  result.shadow_v2_multiline_candidates=shadow.filter(x=>x.reconstruction_method==='adjacent_page_lines').length;
  result.shadow_v2_multiple_amount_columns=shadow.filter(x=>x.readiness==='multiple_amount_columns').length;
  result.shadow_v2_insufficient_fields=shadow.filter(x=>x.readiness==='insufficient_printed_fields').length;
+ for(const span of shadow){
+  if(span.readiness!=='multiple_amount_columns')continue;
+  const amounts=parsePrintedAmounts(span.raw_span);
+  if(amounts.length===2)result.shadow_v2_two_amount_columns++;
+  else if(amounts.length===3)result.shadow_v2_three_amount_columns++;
+  else if(amounts.length>=4)result.shadow_v2_four_plus_amount_columns++;
+  if(span.raw_span.includes('\t'))result.shadow_v2_tab_delimited_multi++;
+  if(amounts.length>=3&&amounts.slice(0,-1).reduce((x,y)=>x+y,0)===amounts.at(-1))
+   result.shadow_v2_last_equals_sum_of_prior++;
+ }
+ result.pages_with_cash_in_kind_total_labels=pages.filter(p=>
+  /\bcash\b/i.test(p)&&/\bin[ -]?kind\b/i.test(p)&&/\btotal\b/i.test(p)
+ ).length;
  return result;
 }
 function safeSummary(selected,pagesBySha){
