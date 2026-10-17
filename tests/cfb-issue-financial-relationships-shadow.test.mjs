@@ -74,6 +74,7 @@ test('unverified donors, employer coincidences and PAC names cannot create group
   {affiliations:[]},
   {affiliations:[{...affiliated,relationship:'name_similarity'}]},
   {affiliations:[{...affiliated,firstPartySha256:'unverified'}]},
+  {affiliations:[{...affiliated,officialCfbUrl:'https://unofficial.example.org/reports/123456'}]},
   {affiliations:[{...affiliated,relationshipOriginalProof:false}]},
   {affiliations:[{...affiliated,relationshipPublicByOn:'2025-01-01'}]},
   {financeRows:[row({contributorRegistrationNumber:null,
