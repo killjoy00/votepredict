@@ -30,8 +30,17 @@ function safeRecordKey(x){
  const family=x.family;
  const k=x.row_key;
  const reg=x.reg;
- return family&&HASH.test(k??'')&&REG.test(reg??'')?
-  family+'|'+reg+'|'+k:null;
+ if(!family||!HASH.test(k??''))return null;
+ if(family==='candidate_contribution')
+  return REG.test(reg??'')?family+'|'+reg+'|'+k:null;
+ // Independent expenditures affect a candidate; their filer is the SPENDER,
+ // never a contribution received by the candidate. Preserve resolved member
+ // identity when the affected candidate's committee registration is absent.
+ if(family==='independent_expenditure'){
+  const target=REG.test(reg??'')?reg:x.member_id;
+  return target?family+'|'+target+'|'+k:null;
+ }
+ return null;
 }
 export function scoreFinanceIssueFeasibility(financeRows,positions,knownExactCount){
  if(!Number.isSafeInteger(knownExactCount)||knownExactCount<0||
@@ -152,7 +161,9 @@ export function scoreFinanceIssueFeasibility(financeRows,positions,knownExactCou
 
 const SQL_FINANCE=[
  "SELECT ei.metadata->>'rowKey' AS row_key,",
- "ei.metadata->>'filerRegistrationNumber' AS reg,",
+ "CASE WHEN ei.metadata->>'subtype'='independent_expenditure_record'",
+ "THEN ei.metadata->>'affectedCommitteeRegistrationNumber'",
+ "ELSE ei.metadata->>'filerRegistrationNumber' END AS reg,",
  'ei.membership_id::text AS member_id,',
  "ei.metadata->>'contributorRegistrationNumber' AS contributor_reg,",
  "ei.metadata->>'contributor' AS contributor_name,",
