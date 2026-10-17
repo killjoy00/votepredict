@@ -55,6 +55,12 @@
       "organizationGroup": "Education Minnesota",
       "role": "first_party_issue_publication",
       "url": "https://educationminnesota.org/news/press-release/educators-call-on-legislature-to-create-statewide-health-insurance-pool-for-school-employees/"
+    },
+    {
+      "id": "education-mn-media-releases-index",
+      "organizationGroup": "Education Minnesota",
+      "role": "first_party_historical_context",
+      "url": "https://educationminnesota.org/news/media-resources/"
     }
   ]
 }
