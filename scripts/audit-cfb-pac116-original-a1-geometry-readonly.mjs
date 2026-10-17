@@ -9,6 +9,10 @@ import {readFileSync} from 'node:fs';
 import {Pool} from 'pg';
 import {PDFParse} from 'pdf-parse';
 import {CanvasFactory} from 'pdf-parse/worker';
+import {getDocument} from 'pdfjs-dist/legacy/build/pdf.mjs';
+import {
+ reconcilePositionedOriginalA1Page,safePositionedOriginalSummary
+} from '../src/evidence/cfb-pac116-original-positioned-text-v5.mjs';
 import {discoverExistingVotePredictNeonConnection}
  from '../src/operations/senate-media-neon-api-readonly.js';
 import {validateCfbIssueSourceManifest}
@@ -318,7 +322,8 @@ export async function main(){
    pagesByHash.get(p.pdfSha).push(p);
   }
   const registeredNames=new Map(pacs.map(p=>[p.registration,p.officialName]));
-  const outcomes=[];let bodiesChecked=0,parseFailures=0;
+  const outcomes=[],positionedOutcomes=[];
+  let bodiesChecked=0,parseFailures=0,positionedFailures=0;
   for(const [sha,chosenPages] of pagesByHash){
    const originals=(await client.query(SQL_BODY,[sha])).rows;
    const reportsForHash=byHash.get(sha)??[];
@@ -329,36 +334,76 @@ export async function main(){
     !independentlyRehashCfbPdf(body,sha))
     throw Error('Original government PDF whole-body SHA invalid');
    bodiesChecked++;
+   // Preserve the previous strict vector-table readout, but its absence
+   // cannot block independent positioned TEXT diagnostics of this same
+   // exact byte-for-byte verified government source PDF.
    const parser=new PDFParse({
     data:new Uint8Array(body),CanvasFactory
    });
-   let tablePageResult;
+   let tablePageResult=null;
    try{
     const parsed=await parser.getTable({
      partial:chosenPages.map(p=>p.pageNumber)
     });
-    if(!parsed||!Array.isArray(parsed.pages))
-     throw Error('Original-PDF geometry parse unavailable');
-    tablePageResult=parsed.pages;
+    if(parsed&&Array.isArray(parsed.pages))tablePageResult=parsed.pages;
+    else parseFailures+=chosenPages.length;
    }catch{
     parseFailures+=chosenPages.length;
-    continue;
    }finally{await parser.destroy().catch(()=>{});}
-   const sourceTables=new Map(tablePageResult.map(p=>[
-    Number(p.num??p.pageNumber),
-    Array.isArray(p.tables)?p.tables:[]
-   ]));
-   for(const p of chosenPages){
-    const tables=sourceTables.get(p.pageNumber);
-    if(!tables){parseFailures++;continue;}
-    for(const report of reportsForHash){
-     const result=verifyOriginalA1PacTable({
-      report:{...report,pageNumber:p.pageNumber},
-      pageText:p.rawPageText,tablePages:tables,allRows,
-      registeredNames,sourceHashVerified:true
-     });
-     outcomes.push(result);
+   if(tablePageResult){
+    const sourceTables=new Map(tablePageResult.map(p=>[
+     Number(p.num??p.pageNumber),
+     Array.isArray(p.tables)?p.tables:[]
+    ]));
+    for(const p of chosenPages){
+     const tables=sourceTables.get(p.pageNumber);
+     if(!tables){parseFailures++;continue;}
+     for(const report of reportsForHash){
+      outcomes.push(verifyOriginalA1PacTable({
+       report:{...report,pageNumber:p.pageNumber},
+       pageText:p.rawPageText,tablePages:tables,allRows,
+       registeredNames,sourceHashVerified:true
+      }));
+     }
     }
+   }
+   // PDF.js accesses actual positioned text spans (x/y/width), not the
+   // table-grid recognition that returned zero readable headers on 173
+   // authenticated source bodies. Keep the row-level details private.
+   const loading=getDocument({
+    data:new Uint8Array(body),verbosity:0,disableFontFace:true,
+    useSystemFonts:false
+   });
+   let pdf=null;
+   try{
+    pdf=await loading.promise;
+    for(const p of chosenPages){
+     if(p.pageNumber<1||p.pageNumber>pdf.numPages){
+      positionedFailures++;continue;
+     }
+     try{
+      const sourcePage=await pdf.getPage(p.pageNumber);
+      const text=await sourcePage.getTextContent({
+       disableCombineTextItems:true,includeMarkedContent:false
+      });
+      for(const report of reportsForHash){
+       positionedOutcomes.push(reconcilePositionedOriginalA1Page({
+        items:text.items,cachedPageText:p.rawPageText,
+        report:{...report,pageNumber:p.pageNumber},
+        allRows,registeredNames,sourceHashVerified:true
+       }));
+      }
+      sourcePage.cleanup?.();
+     }catch{
+      // Never print untrusted PDF text or stack traces to public logs.
+      positionedFailures++;
+     }
+    }
+   }catch{
+    positionedFailures+=chosenPages.length;
+   }finally{
+    if(pdf)await pdf.destroy().catch(()=>{});
+    else await loading.destroy().catch(()=>{});
    }
   }
   const summary=safeOriginalA1PacCohortSummary({
@@ -367,12 +412,20 @@ export async function main(){
    pagesEligibleForGeometry:selection.allEligible,
    pagesSkippedByLimit:selection.deferred,parseFailedPages:parseFailures
   });
+  const positionedSummary=safePositionedOriginalSummary({
+   cohort,allRows,reports,pageOutcomes:positionedOutcomes,
+   originalBodiesRehashed:bodiesChecked,
+   selectedUniquePages:selection.allEligible,
+   sourcePagesDeferred:selection.deferred,
+   parseErrors:positionedFailures
+  });
   summary.originalSourcePagesWithGenericA1AndRegisteredPAC=selection.pacA1PageCount;
   summary.originalA1PacPagesWithLiteralRegisteredPAC=selection.originalPagesWithPACRegistration;
   summary.originalCachedPagesWithoutReadableText=selection.imageOrUnrenderedPages;
   Object.assign(summary,formatCensus);
   await client.query('ROLLBACK');opened=false;
   console.log('CFB_864_PAC116_ORIGINAL_A1_GEOMETRY_SAFE_COUNTS '+JSON.stringify(summary));
+  console.log('CFB_864_PAC116_POSITIONED_TEXT_SAFE_COUNTS '+JSON.stringify(positionedSummary));
  }finally{
   if(opened)await client.query('ROLLBACK').catch(()=>{});
   client.release(true);await pool.end();
