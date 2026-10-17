@@ -1,0 +1,182 @@
+name: Recover exact Senate vote papers and historical role/text evidence
+
+on:
+  pull_request:
+    paths:
+      - data/senate-research/historical-capture-leads-v1.json
+      - src/operations/senate-paper-history-gate.ts
+      - migrations/0035_senate_vote_papers_history.sql
+      - tests/senate-paper-history.test.ts
+      - scripts/deploy-senate-paper-history-neon.ts
+      - scripts/verify-senate-paper-history-original.ts
+      - docs/sources/senate-vote-papers-history.md
+      - src/sources/minnesota/senate-assignment-pdf.ts
+      - tests/senate-role-collection.test.ts
+      - src/operations/senate-vote-paper-parser.ts
+      - src/operations/senate-vote-paper-backfill.ts
+      - src/operations/senate-history-archive.ts
+      - .github/workflows/senate-paper-history-production.yml
+  schedule:
+    - cron: '11 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - data/senate-research/historical-capture-leads-v1.json
+      - src/operations/senate-paper-history-gate.ts
+      - migrations/0035_senate_vote_papers_history.sql
+      - tests/senate-paper-history.test.ts
+      - scripts/deploy-senate-paper-history-neon.ts
+      - scripts/verify-senate-paper-history-original.ts
+      - docs/sources/senate-vote-papers-history.md
+      - src/sources/minnesota/senate-assignment-pdf.ts
+      - tests/senate-role-collection.test.ts
+      - src/operations/senate-vote-paper-parser.ts
+      - src/operations/senate-vote-paper-backfill.ts
+      - src/operations/senate-history-archive.ts
+      - .github/workflows/senate-paper-history-production.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-paper-history-neon-production
+  cancel-in-progress: false
+
+jobs:
+  pr-keyless:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply all migrations to disposable Postgres and verify drift gate
+        run: |
+          npm run db:migrate
+          node --import tsx scripts/check-production-migration-drift.ts
+      - name: Focused evidence-dates integration and guard tests
+        run: node --import tsx --test tests/senate-paper-history.test.ts
+      - name: Full typecheck, tests and production build
+        run: npm run check
+
+  independent-main:
+    if: >-
+      (github.event_name == 'push' || github.event_name == 'schedule') &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'schedule' && github.event.schedule == '11 * * * *') ||
+       (github.event_name == 'push' && github.event.after == github.sha &&
+        github.event.head_commit.id == github.sha && github.event.deleted != true &&
+        github.event.forced != true &&
+        contains(github.event.head_commit.message, 'SENATE_PAPER_HISTORY_PRODUCTION')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Match exact independently reviewed main SHA
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply all migrations to disposable Postgres
+        run: npm run db:migrate
+      - name: Test exact migration drift gate
+        run: node --import tsx scripts/check-production-migration-drift.ts
+      - name: Full typecheck, tests and production build
+        run: npm run check
+      - name: Verify original HF100 papers and dated leadership transitions
+        run: node --import tsx scripts/verify-senate-paper-history-original.ts
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+  protected-production-neon:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      (github.event_name == 'push' || github.event_name == 'schedule') &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'schedule' && github.event.schedule == '11 * * * *') ||
+       (github.event_name == 'push' && github.event.after == github.sha &&
+        github.event.head_commit.id == github.sha && github.event.deleted != true &&
+        github.event.forced != true &&
+        contains(github.event.head_commit.message, 'SENATE_PAPER_HISTORY_PRODUCTION')))
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_SENATE_PAPER_HISTORY_INDEPENDENT_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm exact marker-bearing main SHA
+        env:
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Preflight, migration, exact question/paper repair, historical recovery and coverage readback
+        run: node --import tsx scripts/deploy-senate-paper-history-neon.ts

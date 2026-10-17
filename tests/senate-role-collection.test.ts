@@ -67,3 +67,26 @@ Westrom (L) Anderson Dahms`;
   assert.ok(result.roles.some((role) => role.role === 'Ranking Minority Member' && role.senatorName === 'Westrom'));
   assert.ok(result.roles.every((role) => role.startsOn === null && role.endsOn === null));
 });
+
+test('historical assignment PDF keeps wrapped committee titles and tab-separated ranking surnames', () => {
+  const text = `Minnesota Senate
+2022 Committee Assignments
+02/02/2022
+Commerce and Consumer Protection Finance and
+Policy
+Chair: Dahms\tVice Chair: Howe
+Members:
+Eichorn\tKent (L)
+Environment and Natural Resources Policy and
+Legacy Finance
+Chair: Ruud\tVice Chair: Weber
+Members:
+Eaton\tLang\tTorres Ray (L)`;
+  const result = parseSenateAssignmentPdfText(text, getMinnesotaHouseSession('2021-2022'));
+  assert.equal(result.sourceDate, '2022-02-02');
+  assert.ok(result.roles.some(r => r.committee === 'Commerce and Consumer Protection Finance and Policy' && r.senatorName === 'Kent'));
+  assert.ok(result.roles.some(r => r.committee === 'Environment and Natural Resources Policy and Legacy Finance' && r.senatorName === 'Torres Ray'));
+  assert.ok(result.roles.some(r => r.role === 'Committee Member' && r.senatorName === 'Eichorn'));
+  assert.ok(result.roles.some(r => r.role === 'Committee Member' && r.senatorName === 'Torres Ray'));
+  assert.equal(result.roles.some(r => r.senatorName === 'Lang Torres Ray' || r.committee === 'Policy' || r.committee === 'Legacy Finance'), false);
+});

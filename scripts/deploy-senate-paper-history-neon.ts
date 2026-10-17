@@ -1,0 +1,115 @@
+/** Guarded, research-only paper identity and historical source recovery. */
+import {createHash} from 'node:crypto';
+import {readFileSync,readdirSync,appendFileSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import {Pool,type PoolClient} from 'pg';
+import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
+import {assertPaperHistoryRun} from '../src/operations/senate-paper-history-gate.js';
+import {backfillVotePapers,verifyPaperSources,connectExplicitBaseCaptures} from '../src/operations/senate-vote-paper-backfill.js';
+import {stageHistoryJobs,recoverHistoricalArchives,recoverExplicitBaseBodies,collectDatedAssignmentFacts} from '../src/operations/senate-history-archive.js';
+const MIGRATION='0035_senate_vote_papers_history.sql';
+type Ledger={filename:string;checksum:string};
+function inventory():Ledger[]{
+ const files=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
+ if(files[34]!==MIGRATION)throw Error('Unexpected paper-history migration position');
+ return files.map(filename=>({filename,checksum:createHash('sha256').update(readFileSync('migrations/'+filename)).digest('hex')}));
+}
+function present(rows:Ledger[],expected:Ledger[]):boolean{
+ const same=(want:Ledger[])=>rows.length===want.length&&rows.every((r,i)=>r.filename===want[i]?.filename&&r.checksum===want[i]?.checksum);
+ if(same(expected))return true;if(same(expected.filter(r=>r.filename!==MIGRATION)))return false;
+ throw Error('Production migration checksum drift or another pending migration');
+}
+async function readOnly<T>(pool:Pool,identity:{database:string;role:string},fn:(db:PoolClient)=>Promise<T>){
+ const db=await pool.connect();try{
+  await db.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
+  try{const who=(await db.query("SELECT current_database() AS db,current_user AS role,current_setting('transaction_read_only') AS ro")).rows[0];
+   if(who.db!==identity.database||who.role!==identity.role||who.ro!=='on')throw Error('Read-only primary identity mismatch');
+   return await fn(db);
+  }finally{await db.query('ROLLBACK')}
+ }finally{db.release(true)}
+}
+async function migrate(pool:Pool,expected:Ledger[]){
+ const db=await pool.connect();try{
+  await db.query('BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE READ WRITE');
+  try{
+   await db.query("SET LOCAL lock_timeout='5s'");
+   await db.query("SELECT pg_advisory_xact_lock(hashtext('votepredict-schema-migrations'))");
+   const rows=(await db.query<Ledger>('SELECT filename,checksum FROM votepredict_schema_migrations ORDER BY filename FOR UPDATE')).rows;
+   const already=present(rows,expected);
+   if(!already){await db.query(readFileSync('migrations/'+MIGRATION,'utf8'));
+    await db.query('INSERT INTO votepredict_schema_migrations(filename,checksum) VALUES($1,$2)',[MIGRATION,expected.find(r=>r.filename===MIGRATION)!.checksum]);}
+   await db.query('COMMIT');return !already;
+  }catch(error){await db.query('ROLLBACK');throw error}
+ }finally{db.release(true)}
+}
+async function main(){
+ let phase='guard',pool:Pool|null=null;
+ try{
+  if(process.argv.length!==2||!process.env.GITHUB_EVENT_PATH)throw Error('No arguments; event payload required');
+  assertPaperHistoryRun(process.env,JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH,'utf8')));
+  const expected=inventory(),push=process.env.GITHUB_EVENT_NAME==='push';
+  phase='existing_primary';
+  const target=await discoverExistingVotePredictNeonConnection({apiKey:process.env.NEON_API_KEY?.trim()??'',
+   projectId:process.env.VOTEPREDICT_NEON_PROJECT_ID?.trim()??'',preferredDatabase:process.env.VOTEPREDICT_MEDIA_EXISTING_DATABASE?.trim()||undefined,requirePrimary:true});
+  pool=new Pool({host:target.host,port:target.port,user:target.role,password:target.password,database:target.database,
+   ssl:{rejectUnauthorized:true},max:2,connectionTimeoutMillis:15000,statement_timeout:180000,query_timeout:195000,
+   options:'-c statement_timeout=180000 -c lock_timeout=5000',application_name:'votepredict-senate-paper-history'});
+  phase='preflight';await readOnly(pool,target,async db=>{present((await db.query<Ledger>('SELECT filename,checksum FROM votepredict_schema_migrations ORDER BY filename')).rows,expected)});
+  phase='migration';const migrationApplied=await migrate(pool,expected);
+  const url=new URL('postgresql://placeholder/none');url.hostname=target.host;url.port=String(target.port);url.username=target.role;url.password=target.password;url.pathname='/'+target.database;url.searchParams.set('sslmode','verify-full');
+  const drift=spawnSync('node',['--import','tsx','scripts/check-production-migration-drift.ts'],{env:{...process.env,DATABASE_URL_UNPOOLED:url.toString(),VOTEPREDICT_REQUIRE_MIGRATION_LEDGER:'1'},encoding:'utf8',maxBuffer:1024*1024});
+  if(drift.error||drift.status!==0)throw Error('Production drift gate failed');
+  const progress=(step:string,counts:unknown)=>console.log('SENATE_PAPER_HISTORY_PROGRESS='+JSON.stringify({step,counts}));
+  progress('migration',{migrationApplied,driftPassed:true});
+  phase='source_local_papers_and_dated_roles';const batches=[];
+  for(let i=0;i<(push?4:1);i++){const batch=await backfillVotePapers(pool,push?1000:500);batches.push(batch);progress('paper_batch',batch);if(batch.documents===0)break;}
+  phase='original_source_verification';const sourceVerification=await verifyPaperSources(pool,push?12:6);progress(phase,sourceVerification);
+  phase='explicit_base_bodies';const baseBodies=await recoverExplicitBaseBodies(pool,{max:push?60:30});progress(phase,baseBodies);
+  phase='dated_assignment_facts';const datedAssignments=await collectDatedAssignmentFacts(pool);progress(phase,datedAssignments);
+  phase='stage_historical_sources';const historyJobs=await stageHistoryJobs(pool);progress(phase,{eligibleUrls:historyJobs});
+  phase='historical_archived_bodies';const archives=await recoverHistoricalArchives(pool,{maxJobs:push?30:18});progress(phase,archives);
+  phase='exact_base_connections';const baseConnections=await connectExplicitBaseCaptures(pool);
+  phase='read_only_coverage';
+  const coverage=await readOnly(pool,target,async db=>{
+   const events=(await db.query('SELECT * FROM senate_vote_paper_coverage_v ORDER BY session,vote_kind')).rows;
+   const actions=(await db.query(`SELECT session_slug,kind,count(*)::int AS actions,count(proposed_text)::int AS literal_papers,
+    count(*) FILTER(WHERE original_source_verified)::int AS original_verified,
+    count(*) FILTER(WHERE explicit_base_locator IS NOT NULL)::int AS explicit_bases FROM senate_vote_paper_current_v GROUP BY session_slug,kind ORDER BY session_slug,kind`)).rows;
+   const links=(await db.query(`SELECT (SELECT count(*)::int FROM senate_vote_paper_exact_raw_v) AS exact_raw_questions,
+    (SELECT count(*)::int FROM senate_vote_paper_exact_event_v) AS exact_official_questions,
+    (SELECT count(*)::int FROM senate_vote_paper_components_current_v) AS exact_base_components,
+    (SELECT count(*)::int FROM senate_vote_paper_current_v WHERE complete_assembled_bill_text) AS complete_assembled_states,
+    (SELECT count(*)::int FROM senate_role_history_v) AS historical_roles`)).rows[0];
+   const roles=(await db.query(`SELECT s.slug AS session,h.observed_basis,count(*)::int AS observations,count(h.membership_id)::int AS linked_members,
+    min(h.observed_on)::text AS first_observed,max(h.observed_on)::text AS last_observed
+    FROM senate_role_history_v h JOIN legislative_sessions s ON s.id=h.session_id GROUP BY s.slug,h.observed_basis ORDER BY s.slug,h.observed_basis`)).rows;
+   const roleCoverage=(await db.query(`WITH first_role AS MATERIALIZED(
+    SELECT m.legislator_id,min(h.observed_on) AS first_seen,
+    min(h.role_observed_on) FILTER(WHERE h.observed_basis='role.dated_roster_fetched_at') AS first_dated_fact
+    FROM senate_role_history_v h JOIN memberships m ON m.id=h.membership_id GROUP BY m.legislator_id
+   ), targets AS MATERIALIZED(SELECT DISTINCT v.session_id,m.id AS membership_id,m.legislator_id,v.occurred_on
+    FROM member_votes mv JOIN vote_events v ON v.id=mv.vote_event_id JOIN memberships m ON m.id=mv.membership_id
+    JOIN chambers c ON c.id=v.chamber_id AND c.slug='senate')
+   SELECT s.slug AS session,count(*)::int AS senator_vote_days,count(*) FILTER(WHERE f.first_seen<t.occurred_on)::int AS with_earlier_dated_role_observation,
+   count(*) FILTER(WHERE f.first_dated_fact<t.occurred_on)::int AS with_earlier_stated_roster_fact_without_publication_proof
+   FROM targets t JOIN legislative_sessions s ON s.id=t.session_id JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
+   LEFT JOIN first_role f ON f.legislator_id=t.legislator_id WHERE s.slug IN ('2021-2022','2023-2024','2025-2026') GROUP BY s.slug ORDER BY s.slug`)).rows;
+   const texts=(await db.query(`SELECT s.slug AS session,c.family,count(*)::int AS captures,
+    count(*) FILTER(WHERE c.archived_observed_at IS NOT NULL)::int AS archived_bodies,count(DISTINCT c.bill_id)::int AS bills
+    FROM senate_official_bill_text_captures c JOIN legislative_sessions s ON s.id=c.session_id GROUP BY s.slug,c.family ORDER BY s.slug,c.family`)).rows;
+   const archiveQueue=(await db.query(`SELECT s.slug AS session,q.kind,q.status,count(*)::int AS jobs,sum(q.captures)::int AS items
+    FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id GROUP BY s.slug,q.kind,q.status ORDER BY s.slug,q.kind,q.status`)).rows;
+   const sourceAttempts=(await db.query('SELECT result,count(*)::int AS documents FROM senate_paper_source_attempts GROUP BY result ORDER BY result')).rows;
+   if(!links.exact_raw_questions||!actions.some(a=>a.literal_papers>0)||!links.historical_roles)throw Error('Paper/history acceptance counts are empty');
+   return {events,actions,links,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
+  });
+  const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,baseBodies,datedAssignments,historyJobs,archives,baseConnections,coverage,
+   officialVotesUnchanged:true,sourceBodiesUnchanged:true,servingModelsUnchanged:true,completeStateClaims:false};
+  console.log('SENATE_PAPER_HISTORY_PRODUCTION='+JSON.stringify(report));
+  if(process.env.GITHUB_STEP_SUMMARY)appendFileSync(process.env.GITHUB_STEP_SUMMARY,'Senate paper identity and historical evidence coverage\n'+JSON.stringify(report,null,2)+'\n');
+ }catch(error){
+  const code=(error as {code?:unknown}).code;
+  console.error('SENATE_PAPER_HISTORY_HELD='+JSON.stringify({phase,sqlState:typeof code==='string'&&/^[A-Z0-9]{5}$/.test(code)?code:'none'}));process.exitCode=1;
+ }finally{if(pool)try{await pool.end()}catch{process.exitCode=1}}
+}
+void main();

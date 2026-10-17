@@ -11,7 +11,6 @@ import {assertEvidenceRepairRun} from '../src/operations/senate-evidence-repair-
 
 const MARKER = 'SENATE_EVIDENCE_REPAIR_PRODUCTION';
 const MIGRATION = '0034_senate_evidence_repair.sql';
-const EXPECTED_COUNT = 34;
 
 interface LedgerRow {filename: string; checksum: string}
 interface TypeCount {
@@ -32,7 +31,7 @@ function requireProtectedMain(env:NodeJS.ProcessEnv):void {
 function expectedMigrations(): LedgerRow[] {
   const filenames = readdirSync('migrations')
     .filter(f => /^\d{4}_[\w-]+\.sql$/.test(f)).sort();
-  if (filenames.length !== EXPECTED_COUNT || filenames.at(-1) !== MIGRATION)
+  if (filenames[33] !== MIGRATION)
     throw Error('Unexpected migration inventory or next free number');
   return filenames.map(filename => ({
     filename,
@@ -40,13 +39,11 @@ function expectedMigrations(): LedgerRow[] {
   }));
 }
 function validatePrefix(rows: LedgerRow[], expected: LedgerRow[]): boolean {
-  if (rows.length < expected.length - 1 || rows.length > expected.length)
-    throw Error('Missing prerequisites or unexpected production migration ledger');
-  for (const [i, row] of rows.entries()) {
-    if (row.filename !== expected[i]?.filename || row.checksum !== expected[i]?.checksum)
-      throw Error('Production migration checksum or ordering drift');
-  }
-  return rows.length === expected.length;
+  const matches=(wanted:LedgerRow[])=>rows.length===wanted.length&&rows.every((row,i)=>
+    row.filename===wanted[i]?.filename&&row.checksum===wanted[i]?.checksum);
+  if(matches(expected))return true;
+  if(matches(expected.filter(row=>row.filename!==MIGRATION)))return false;
+  throw Error('Missing prerequisites or production migration checksum drift');
 }
 
 async function preflight(client: PoolClient,
@@ -114,7 +111,7 @@ async function migrate(client: PoolClient, expected: LedgerRow[]): Promise<boole
     await client.query(readFileSync('migrations/' + MIGRATION, 'utf8'));
     await client.query(
       'INSERT INTO votepredict_schema_migrations(filename,checksum) VALUES ($1,$2)',
-      [MIGRATION, expected.at(-1)!.checksum]);
+      [MIGRATION, expected.find(row=>row.filename===MIGRATION)!.checksum]);
     await client.query('COMMIT');
     return true;
   } catch (error) {

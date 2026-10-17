@@ -1,0 +1,13 @@
+{
+  "captures": [
+    {
+      "sessionSlug": "2023-2024",
+      "billIdentifier": "HF100",
+      "sourceUrl": "https://www.revisor.mn.gov/bills/text.php?number=HF100&type=bill&version=0&session=ls93&session_year=2023&session_number=0",
+      "timestamp": "20230105184108",
+      "bodySha256": "a5f59f5881f77536b86424495127298ed041a5259aca3d62402fe41dcd53a64c",
+      "originalBytes": 2340418,
+      "verification": "Exact archived original body fetched with matching Memento-Datetime; metadata is a discovery/proof lead, never a substitute for reacquiring the body."
+    }
+  ]
+}
