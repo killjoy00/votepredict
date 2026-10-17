@@ -68,7 +68,9 @@ function linksFromOriginal(html){
  // Only actual anchor href attributes. No plain text, script strings,
  // third-party URLs or synthetic site-search permutations become sources.
  const links=[];
- for(const tag of html.match(/<a\b[^>]{0,2048}>/gi)??[]){
+ const markup=html.replace(/<!--[\s\S]*?-->/g,' ')
+  .replace(/<(?:script|style|noscript)\b[^>]*>[\s\S]*?<\/(?:script|style|noscript)\s*>/gi,' ');
+ for(const tag of markup.match(/<a\b[^>]{0,2048}>/gi)??[]){
   const m=/(?:^|\s)href\s*=\s*(?:"([^"]{1,1024})"|'([^']{1,1024})')/i.exec(tag);
   if(m)links.push(m[1]??m[2]);
   if(links.length>=1500)break;
