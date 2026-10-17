@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "cfb-issue-first-party-discovery-v3",
+  "scope": "Prospective raw first-party press-release observations only. The archive is a URL discovery source, not a position, historical publication proof or source of votes.",
+  "discoverySources": [
+    {
+      "indexSourceId": "education-mn-media-releases-index",
+      "indexUrl": "https://educationminnesota.org/news/media-resources/",
+      "organizationGroup": "Education Minnesota",
+      "articlePathPrefix": "/news/press-release/",
+      "articleSourceIdPrefix": "education-mn-release-",
+      "maxArticlesPerRun": 8
+    }
+  ]
+}
