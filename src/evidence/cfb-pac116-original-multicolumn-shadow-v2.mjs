@@ -16,11 +16,10 @@ const billKey=r=>[r.reg,r.year,r.rowKey].join('|');
 const yearReg=(reg,year)=>reg+'|'+year;
 const emptyYear=()=>({
  canonicalContributions:0,
- indexedPdfVersionsWithOriginalV2Spans:0,
- indexedPdfVersionsWithoutOriginalV2Spans:0,
+ indexedPdfVersionsWithV2Extraction:0,
+ indexedPdfVersionsWithoutV2Extraction:0,
  sourceQualifiedProvisionalReportRowPairs:0,
- distinctCanonicalRowsWithProvisionalOriginalCandidate:0,
- ambiguousCohortRowsOnReport:0
+ distinctCanonicalRowsWithProvisionalOriginalCandidate:0
 });
 
 export function auditPac116OriginalMultiColumnShadow({
@@ -89,11 +88,11 @@ export function auditPac116OriginalMultiColumnShadow({
   const relevant=allByYearReg.get(yearReg(r.committee_registration,y))??[];
   const sourceSpans=spansByReport.get(r.report_version_id)??[];
   if(!r.v2_extraction_present){
-   missingV2++;byYear[y].indexedPdfVersionsWithoutOriginalV2Spans++;
+   missingV2++;byYear[y].indexedPdfVersionsWithoutV2Extraction++;
    if(sourceSpans.length)throw Error('Orphan extracted row spans');
    continue;
   }
-  reportedVersions++;byYear[y].indexedPdfVersionsWithOriginalV2Spans++;
+  reportedVersions++;byYear[y].indexedPdfVersionsWithV2Extraction++;
   const flags=new Map();
   for(const s of sourceSpans){
    const f=signals.get(r.pdf_sha256+'|'+s.page_number);
@@ -131,8 +130,8 @@ export function auditPac116OriginalMultiColumnShadow({
   interpretation:'strictly_provisional_original_report_candidates_not_containment',
   scopedCanonicalPACContributions:keys.size,
   sourceReportVersionsExamined:reports.length,
-  sourceVersionsWithV2OriginalSpans:reportedVersions,
-  sourceVersionsWithoutV2OriginalSpans:missingV2,
+  sourceVersionsWithV2Extraction:reportedVersions,
+  sourceVersionsWithoutV2Extraction:missingV2,
   allCandidateCommitteeYearRowComparisons:comparatorRows,
   sourceHeaderArithmeticSupportedSpans:supportedSpans,
   sourceMultiAmountSpansWithoutArithmeticHeaderProof:unsupportedMultiSpans,
