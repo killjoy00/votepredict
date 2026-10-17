@@ -115,6 +115,59 @@ function hashedRows(rows,{allowConflicts=false}={}){
 }
 const printable=x=>typeof x==='string'&&x.trim().length>0;
 
+export function safeOriginalPacPageFormatCensus(pages,registrations){
+ if(!Array.isArray(pages)||pages.length>30000||
+  !Array.isArray(registrations)||registrations.length!==2||
+  registrations.some(x=>!(/^[0-9]{3,8}$/.test(x))))
+  throw Error('Bounded original PAC source-format census required');
+ const counts={
+  originalCachedPdfPages:0,
+  cachedPagesWithoutReadableText:0,
+  originalPagesWithAnyA1ScheduleHeading:0,
+  originalPagesWithStrictA1PacHeading:0,
+  originalPagesWithGenericA1AndPoliticalCommitteeWords:0,
+  originalPagesWithAnyContributionOrReceiptHeading:0,
+  originalPagesWithAnyContributionRegistrationColumnHeading:0,
+  originalPagesWithAnyCashKindTotalColumns:0,
+  originalPagesWithExactRegisteredPACNumber:0,
+  originalPagesWithRegisteredPACNumberAndAnyA1:0,
+  originalPagesWithRegisteredPACNumberAndPACOrCommitteeWords:0,
+  originalPagesWithRegisteredPACNumberAndDateAndMoney:0,
+  originalPagesWithEducationOrChamberNameTokens:0,
+  originalPagesWithNamedPACAndAnyA1:0,
+  originalPagesWithPACNumberOrNameWithoutA1:0
+ };
+ for(const row of pages){
+  const p=String(row.raw_page_text??'').replace(/\s+/g,' ');
+  counts.originalCachedPdfPages++;
+  if(p.trim().length<15)counts.cachedPagesWithoutReadableText++;
+  const a1=/\b(?:SCHEDULE|SCH[.])\s*A\s*1\b/i.test(p);
+  const strict=isOriginalA1PacPage(p);
+  const pac=/\b(?:PAC|political committee|political fund|P\.?C\.?F\.?)\b/i.test(p);
+  const receipts=/\b(?:contributions received|receipts received|itemized (?:receipts|contributions)|contributions from)\b/i.test(p);
+  const regCol=/\b(?:registration number|reg[.]?\s*#|registered committee|committee registration)\b/i.test(p);
+  const money=/\bcash\b/i.test(p)&&/\bin[- ]?kind\b/i.test(p)&&/\btotal\b/i.test(p);
+  const exact=registrations.some(x=>exactPrintedPacReg(p,x));
+  const named=/\b(?:education|chamber)\b/i.test(p);
+  const dateMoney=/(?:\d{1,2}\/\d{1,2}\/\d{2,4}|20\d{2}-\d\d-\d\d)/.test(p)&&
+   /\b\d{1,3}(?:,\d{3})*\.\d{2}\b/.test(p);
+  counts.originalPagesWithAnyA1ScheduleHeading+=Number(a1);
+  counts.originalPagesWithStrictA1PacHeading+=Number(strict);
+  counts.originalPagesWithGenericA1AndPoliticalCommitteeWords+=Number(a1&&pac);
+  counts.originalPagesWithAnyContributionOrReceiptHeading+=Number(receipts);
+  counts.originalPagesWithAnyContributionRegistrationColumnHeading+=Number(regCol);
+  counts.originalPagesWithAnyCashKindTotalColumns+=Number(money);
+  counts.originalPagesWithExactRegisteredPACNumber+=Number(exact);
+  counts.originalPagesWithRegisteredPACNumberAndAnyA1+=Number(exact&&a1);
+  counts.originalPagesWithRegisteredPACNumberAndPACOrCommitteeWords+=Number(exact&&pac);
+  counts.originalPagesWithRegisteredPACNumberAndDateAndMoney+=Number(exact&&dateMoney);
+  counts.originalPagesWithEducationOrChamberNameTokens+=Number(named);
+  counts.originalPagesWithNamedPACAndAnyA1+=Number(named&&a1);
+  counts.originalPagesWithPACNumberOrNameWithoutA1+=Number((exact||named)&&!a1);
+ }
+ return counts;
+}
+
 export function geometryPagesForSource({
  reports,pages,pacs,maxPages=MAX_ORIGINAL_TABLE_PAGES
 }){
@@ -255,6 +308,7 @@ export async function main(){
     name:x.exactFirstPartyPacPhrase};
   });
   const selection=geometryPagesForSource({reports,pages,pacs});
+  const formatCensus=safeOriginalPacPageFormatCensus(pages,regs);
   const byHash=new Map();
   for(const r of reports){
    if(!byHash.has(r.pdfSha))byHash.set(r.pdfSha,[]);
@@ -318,6 +372,7 @@ export async function main(){
   summary.originalSourcePagesWithA1PacHeading=selection.pacA1PageCount;
   summary.originalA1PacPagesWithLiteralRegisteredPAC=selection.originalPagesWithPACRegistration;
   summary.originalCachedPagesWithoutReadableText=selection.imageOrUnrenderedPages;
+  Object.assign(summary,formatCensus);
   await client.query('ROLLBACK');opened=false;
   console.log('CFB_864_PAC116_ORIGINAL_A1_GEOMETRY_SAFE_COUNTS '+JSON.stringify(summary));
  }finally{
