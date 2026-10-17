@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS cfb_issue_finance_source_observations (
  final_url text NOT NULL CHECK (final_url ~ '^https://'),
  html_sha256 char(64) NOT NULL CHECK (html_sha256 ~ '^[a-f0-9]{64}$'),
  content_type text NOT NULL CHECK (content_type = 'text/html'),
- raw_html text NOT NULL CHECK (length(raw_html) BETWEEN 100 AND 850000),
+ raw_html_bytes bytea NOT NULL CHECK (octet_length(raw_html_bytes) BETWEEN 100 AND 800000),
  observed_at timestamptz NOT NULL,
  claim_status text NOT NULL DEFAULT 'unverified_raw_observation'
   CHECK (claim_status='unverified_raw_observation'),
