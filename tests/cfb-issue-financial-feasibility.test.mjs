@@ -72,3 +72,17 @@ test('same row hash conflicting across evidence copies quarantines row',()=>{
  assert.equal(s.canonicalRowKeyConflicts,1);
  assert.equal(s.uniqueCandidateContributionRows,0);
 });
+
+test('official current PAC IDs are leads only, never proof of historical affiliation',()=>{
+ const s=scoreFinanceIssueFeasibility([
+  {family:'candidate_contribution',row_key:'a'.repeat(64),reg:'12345',
+   contributor_reg:'70001',amount:'250.00'},
+  {family:'candidate_contribution',row_key:'b'.repeat(64),reg:'12345',
+   contributor_reg:'30558',amount:'125.00'},
+  {family:'candidate_contribution',row_key:'c'.repeat(64),reg:'12345',
+   contributor_reg:'30025',amount:'75.00'}
+ ],[],0);
+ assert.equal(s.candidateRowsFromThreePublicPacResearchLeads,3);
+ assert.equal(s.distinctPublicPacResearchLeadRegistrationsObserved,3);
+ assert.equal(s.candidateRowsWithCertifiedOrganizationIssueCrosswalk,0);
+});
