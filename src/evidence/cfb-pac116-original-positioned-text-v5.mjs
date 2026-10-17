@@ -391,6 +391,20 @@ export function safePositionedOriginalSummary({
   if(anchors.size===1)privateSingleAnchorVersionCount++;
   else privateRepeatedAnchorVersionCount++;
  }
+ const allComparatorGroups=new Map();
+ for(const r of allRows){
+  const group=r.filerReg+'|'+r.year;
+  if(!allComparatorGroups.has(group))allComparatorGroups.set(group,[]);
+  allComparatorGroups.get(group).push(r);
+ }
+ let blockedDueToMissingDonorRegistration=0,
+  blockedDueToOtherInvalidFields=0,
+  blockedDueToSourceCopyConflict=0,
+  blockedOnlyByOutOfWindowInvalidRows=0,
+  blockedWithSameDateInvalidRow=0,
+  blockedWithSameAmountInvalidRow=0,
+  blockedWithSameDateAndAmountInvalidRow=0,
+  cleanCandidateOriginalVersionRows=0;
  let provisionalWithFullComparator=0,
   provisionalHeldForIncompleteComparator=0,
   provisionalHeldForDuplicateSameSignature=0,
@@ -401,8 +415,27 @@ export function safePositionedOriginalSummary({
   const group=receipt.filerReg+'|'+receipt.year;
   const sig=[receipt.filerReg,receipt.year,receipt.contributorReg,
    receipt.transactionDate,moneyToCents(receipt.amount)].join('|');
-  if(unsafeReceiving.has(group))
+  if(unsafeReceiving.has(group)){
    provisionalHeldForIncompleteComparator++;
+   const broken=(allComparatorGroups.get(group)??[]).filter(r=>
+    r.sourceConflict===true||!rowValid(r));
+   if(broken.some(r=>!REG.test(r.contributorReg??'')))
+    blockedDueToMissingDonorRegistration++;
+   if(broken.some(r=>r.sourceConflict===true))
+    blockedDueToSourceCopyConflict++;
+   if(broken.some(r=>r.sourceConflict!==true&&
+    REG.test(r.contributorReg??'')&&!rowValid(r)))
+    blockedDueToOtherInvalidFields++;
+   const sameDate=broken.some(r=>r.transactionDate===receipt.transactionDate);
+   const sameAmount=broken.some(r=>moneyToCents(r.amount)!==null&&
+    moneyToCents(r.amount)===moneyToCents(receipt.amount));
+   if(sameDate)blockedWithSameDateInvalidRow++;
+   if(sameAmount)blockedWithSameAmountInvalidRow++;
+   if(broken.some(r=>r.transactionDate===receipt.transactionDate&&
+    moneyToCents(r.amount)===moneyToCents(receipt.amount)))
+    blockedWithSameDateAndAmountInvalidRow++;
+   if(!sameDate&&!sameAmount)blockedOnlyByOutOfWindowInvalidRows++;
+  }
   else if((signatures.get(sig)?.size??0)!==1)
    provisionalHeldForDuplicateSameSignature++;
   else provisionalWithFullComparator++;
@@ -434,6 +467,14 @@ export function safePositionedOriginalSummary({
   provisionalRowsWithCompleteComparator:provisionalWithFullComparator,
   provisionalRowsHeldForIncompleteComparator:provisionalHeldForIncompleteComparator,
   provisionalRowsHeldForDuplicateSignature:provisionalHeldForDuplicateSameSignature,
+  provisionalHeldGroupsWithMissingDonorRegistration:blockedDueToMissingDonorRegistration,
+  provisionalHeldGroupsWithSourceCopyConflict:blockedDueToSourceCopyConflict,
+  provisionalHeldGroupsWithOtherInvalidComparatorFields:blockedDueToOtherInvalidFields,
+  provisionalHeldGroupsWithoutDateOrAmountCompetition:blockedOnlyByOutOfWindowInvalidRows,
+  provisionalHeldGroupsWithSameDateInvalidRow:blockedWithSameDateInvalidRow,
+  provisionalHeldGroupsWithSameAmountInvalidRow:blockedWithSameAmountInvalidRow,
+  provisionalHeldGroupsWithSameDateAndAmountInvalidRow:blockedWithSameDateAndAmountInvalidRow,
+  comparatorCompleteRowsStillRequiringOriginalPrintedRowBoundary:provisionalWithFullComparator,
   provisionalRowsPromotedToExactSourceByLayoutIsolation:0,
   sameBaselinePairsWithExplicitColumnsAndComparator:positionQualifiedPairs,
   distinctPACContributionsWithPositionedVerifiedOriginalRow:strictByRow.size,
