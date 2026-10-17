@@ -15,6 +15,11 @@ const MARKER='SENATE_864_CFB_ISSUE_FINANCE_FEASIBILITY_V1';
 const MAX_FINANCE=250000;
 const HASH=/^[a-f0-9]{64}$/;
 const REG=/^[0-9]{3,8}$/;
+// Contemporary CFB publicly registered committee IDs: 70001 Chamber
+// Leadership Fund, 30558 Education Minn PAC, 30025 MN AFL-CIO.
+// Official CFB list + publisher links in the v1 research document. These are
+// *source-verification leads*, NOT a PAC↔publisher affiliation crosswalk.
+const PUBLIC_ORGANIZATION_PAC_LEAD_REGISTRATIONS=new Set(['70001','30558','30025']);
 const moneyString=x=>Number.isFinite(Number(x))&&Number(x)>0;
 export function organizationNameHint(value){
  // Candidate lead ONLY. The exact same spelling does not establish legal
@@ -50,6 +55,8 @@ export function scoreFinanceIssueFeasibility(financeRows,positions,knownExactCou
   distinctContributorRegistrations:0,
   distinctSpenderRegistrations:0,
   candidateContributionNamesExactlyMatchingPublisherGroups:0,
+  candidateRowsFromThreePublicPacResearchLeads:0,
+  distinctPublicPacResearchLeadRegistrationsObserved:0,
   uniquePotentialDonorEntityNameHints:0,
   organizationPublisherGroups:0,
   groupBillPositionRows:positions.length,
@@ -93,13 +100,17 @@ export function scoreFinanceIssueFeasibility(financeRows,positions,knownExactCou
  }
  for(const k of conflict)unique.delete(k);
  stats.canonicalRowKeyConflicts=conflict.size;
- const donorRegs=new Set(),spenderRegs=new Set(),nameHints=new Set();
+ const donorRegs=new Set(),spenderRegs=new Set(),nameHints=new Set(),leadRegs=new Set();
  for(const row of unique.values()){
   if(row.family==='candidate_contribution'){
    stats.uniqueCandidateContributionRows++;
    if(REG.test(row.contributor_reg??'')){
     stats.candidateContributionRowsWithContributorRegistration++;
     donorRegs.add(row.contributor_reg);
+    if(PUBLIC_ORGANIZATION_PAC_LEAD_REGISTRATIONS.has(row.contributor_reg)){
+     stats.candidateRowsFromThreePublicPacResearchLeads++;
+     leadRegs.add(row.contributor_reg);
+    }
    }
    if(row.contributor_name)stats.candidateContributionRowsWithNamedContributor++;
    if(row.employer)stats.candidateContributionRowsWithEmployer++;
@@ -128,6 +139,7 @@ export function scoreFinanceIssueFeasibility(financeRows,positions,knownExactCou
   }
  }
  stats.distinctContributorRegistrations=donorRegs.size;
+ stats.distinctPublicPacResearchLeadRegistrationsObserved=leadRegs.size;
  stats.distinctSpenderRegistrations=spenderRegs.size;
  stats.uniquePotentialDonorEntityNameHints=nameHints.size;
  // No official affiliation crosswalk is assumed merely because two names
