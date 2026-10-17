@@ -14,6 +14,8 @@ import {
 } from '../src/evidence/cfb-issue-source-observation-v1.mjs';
 import {discoverCfbIssueFirstPartyPages}
  from '../src/evidence/cfb-issue-first-party-discovery-v3.mjs';
+import {literalBillMentionLeads}
+ from '../src/evidence/cfb-issue-pac-original-attestations-v2.mjs';
 
 const MIGRATION='0031_cfb_issue_finance_source_observations.sql';
 const MARKER='SENATE_864_CFB_ISSUE_SOURCE_CAPTURE_V1';
@@ -118,6 +120,10 @@ export async function main(){
   }
   let newVersions=0,unchangedVersions=0;
   const captures=outcomes.filter(x=>x.status==='captured').map(x=>x.snapshot);
+  // Only literal neutral bill identifiers. This cannot infer any position,
+  // past public-by time or finance relationship.
+  const neutralMentions=literalBillMentionLeads(captures,[...sources,...discovered]);
+  const discoveredIds=new Set(discovered.map(x=>x.id));
   if(captures.length){
    let opened=false;
    try{
@@ -161,6 +167,10 @@ export async function main(){
    firstPartyReleaseUrlsDiscovered:discovered.length,
    discoveredOriginalReleasesCaptured:discoveryOutcomes
     .filter(x=>x.status==='captured').length,
+   neutralLiteralBillMentionsObservedThisRun:neutralMentions.length,
+   neutralLiteralBillMentionsOnDiscoveredReleasesThisRun:neutralMentions
+    .filter(x=>discoveredIds.has(x.sourceId)).length,
+   verifiedDirectionalPublisherPositions:0,
    attemptedOriginalSourceRequests:outcomes.length,
    byDisposition:safeSourceCaptureCounts(outcomes),
    capturedOriginalHtmlThisRun:captures.length,
