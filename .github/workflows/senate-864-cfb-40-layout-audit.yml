@@ -1,0 +1,110 @@
+name: "Senate #864 CFB 40 official PDF schedule layout audit (read-only)"
+on:
+  pull_request:
+    paths:
+      - "scripts/audit-cfb-40-report-layout-readonly.mjs"
+      - "tests/cfb-40-pdf-layout-audit.test.mjs"
+      - ".github/workflows/senate-864-cfb-40-layout-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/audit-cfb-40-report-layout-readonly.mjs"
+      - "tests/cfb-40-pdf-layout-audit.test.mjs"
+      - ".github/workflows/senate-864-cfb-40-layout-audit.yml"
+permissions:
+  contents: read
+concurrency:
+  group: "cfb-864-40-layout-${{ github.sha }}"
+  cancel-in-progress: false
+jobs:
+  pr-no-secret-layout-tests:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Verify source and safe deterministic audit unit cases
+        run: |
+          node --check scripts/audit-cfb-40-report-layout-readonly.mjs
+          node --import tsx --test tests/cfb-40-pdf-layout-audit.test.mjs
+      - name: Full app static and test suite
+        run: npm run check
+  main-independent-presecret:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_LAYOUT_AUDIT_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify reviewed main commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Verify collector scope and standalone deterministic tests
+        run: |
+          node --check scripts/audit-cfb-40-report-layout-readonly.mjs
+          node --import tsx --test tests/cfb-40-pdf-layout-audit.test.mjs
+          npm run check
+          npm audit --omit=dev --audit-level=high
+  guarded-existing-neon-layout-readonly:
+    needs: [main-independent-presecret]
+    if: >-
+      needs.main-independent-presecret.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_LAYOUT_AUDIT_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_CFB_LAYOUT_KEYLESS_PASSED: ${{ needs.main-independent-presecret.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_CFB_LAYOUT_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_LAYOUT_AUDIT_V1') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact independent reviewed main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Run 40-report cached-layout sample in read-only rollback
+        run: node --import tsx scripts/audit-cfb-40-report-layout-readonly.mjs
