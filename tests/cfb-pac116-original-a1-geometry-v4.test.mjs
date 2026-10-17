@@ -60,6 +60,7 @@ test('complete CFB A1-PAC table row registers donor, date, name and TOTAL within
  assert.equal(s.schema,PAC116_A1_GEOMETRY_SCHEMA);
  assert.equal(s.distinctContributionsWithExactSourceTableRow,1);
  assert.equal(s.uniqueSourceTableVersionRowPairs,1);
+ assert.equal(s.sourceTablePACSameRowHitsBeforeComparator,1);
  assert.equal(s.unresolvedAmong116,115);
  assert.equal(s.historicalQualifiedPACFinanceFeatures,0);
  assert.equal(s.historicalOriginalVersionFirstPublicByProven,0);
@@ -102,6 +103,7 @@ test('a second canonical contribution competing for the same date, amount and re
  const s=summary([verify()],{allRows:[...cohort,same]});
  assert.equal(s.distinctContributionsWithExactSourceTableRow,0);
  assert.equal(s.collisionsWithOtherCanonicalContributionRows,1);
+ assert.equal(s.sourceTablePACSameRowHitsBeforeComparator,1);
 });
 test('unknown contributor registration in same committee/year cannot disappear from comparator',()=>{
  const other={...row(999),contributorReg:'',sourceConflict:false};
