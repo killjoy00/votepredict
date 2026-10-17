@@ -4,7 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {Pool} from 'pg';
 import {parseJournalPaperActions,rollMatches,hash,explicitVersionLocator} from '../src/operations/senate-vote-paper-parser.js';
 import {backfillVotePapers,historyRoster,parseDatedRoleActs,verifyPaperSources,connectExplicitBaseCaptures,storeHistoricalRoles} from '../src/operations/senate-vote-paper-backfill.js';
-import {archiveCaptures,archiveTimestamp,validHistorySource,captureArchivedHistory,recoverHistoricalArchives,statedAssignmentDate,stageHistoryJobs} from '../src/operations/senate-history-archive.js';
+import {archiveCaptures,archiveTimestamp,validHistorySource,captureArchivedHistory,recoverHistoricalArchives,statedAssignmentDate,stageHistoryJobs,historyPaperIdentity,legacyHistoryAliases} from '../src/operations/senate-history-archive.js';
 import {assertPaperHistoryRun,PAPER_HISTORY_MARKER} from '../src/operations/senate-paper-history-gate.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
 import {senateJournalEventsToRaw} from '../src/sources/minnesota/senate-raw-votes.js';
@@ -69,6 +69,14 @@ test('archives require exact original URLs, valid capture clocks, historical win
  const url='https://www.revisor.mn.gov/bills/93/2023/0/SF/123/versions/ue/1/';
  assert.equal(validHistorySource('bill_text',url),true);assert.equal(validHistorySource('bill_text',url.replace('ue/1','latest')),false);
  assert.equal(validHistorySource('bill_text',url+'pdf/'),true);
+ const legacy=legacyHistoryAliases(url)[0];assert.equal(historyPaperIdentity(legacy)?.locator,'versions/ue/1/');
+ assert.equal(historyPaperIdentity(legacy)?.slug,'2023-2024');
+ assert.equal(validHistorySource('bill_text',legacy),true);
+ assert.equal(validHistorySource('bill_text',legacy.replace('version=1','version=latest')),false);
+ assert.equal(validHistorySource('bill_text',legacy.replace('session_number=0','session_number=1')),false);
+ assert.equal(validHistorySource('bill_text',legacy+'&version=2'),false);
+ assert.equal(validHistorySource('bill_text',legacy.replace('type=ue','type=ccr').replace('version=1','version=latest')),false);
+ assert.equal(validHistorySource('bill_text',url.replace('/93/2023/','/93/2025/')),false);
  assert.equal(validHistorySource('bill_text',url.replace('www.revisor.mn.gov','example.test')),false);
  const selected=archiveCaptures([['timestamp','original','statuscode'],['20230301000000',url,'200'],['20230401000000',url.replace('https:','http:'),'200'],
   ['20230501000000',url.replace('SF/123','SF/124'),'200'],['20260101000000',url,'200']],url,'2023-2024');
@@ -160,6 +168,9 @@ export async function exercisePaperHistory(pool:Pool){
  assert.equal((await q('SELECT count(*)::int AS n FROM senate_vote_paper_components_current_v c JOIN senate_vote_paper_current_v a ON a.id=c.action_id WHERE a.bill_id=$1',[bill])).n,8,'HTML and PDF are separately sourced representations');
  await captureArchivedHistory(pool,billJob,'20230302000000',Buffer.from(billHtml.replace('official legislative','changed legislative')),roster);
  assert.equal((await q('SELECT count(*)::int AS n FROM senate_vote_paper_components_current_v c JOIN senate_vote_paper_current_v a ON a.id=c.action_id WHERE a.bill_id=$1',[bill])).n,4,'conflicting bodies at one URL hold only that representation');
+ assert.equal(await captureArchivedHistory(pool,{...billJob,source_url:legacyHistoryAliases(versionUrl)[0]},'20230303000000',Buffer.from(billHtml),roster),1);
+ await connectExplicitBaseCaptures(pool);
+ assert.equal((await q('SELECT count(*)::int AS n FROM senate_vote_paper_components_current_v c JOIN senate_vote_paper_current_v a ON a.id=c.action_id WHERE a.bill_id=$1',[bill])).n,8,'verified legacy endpoint retains the same explicit edition identity');
  await verifyPaperSources(pool,30,async sourceUrl=>{if(sourceUrl!==url)throw Error('fixture-only');return {text,pdfSha256:'f'.repeat(64),byteLength:2000}});
  assert.equal((await q('SELECT count(*)::int AS n FROM senate_vote_paper_current_v WHERE bill_id=$1 AND original_source_verified',[bill])).n,5);
  const coverage=(await pool.query("SELECT * FROM senate_vote_paper_coverage_v WHERE session='2023-2024'")).rows;

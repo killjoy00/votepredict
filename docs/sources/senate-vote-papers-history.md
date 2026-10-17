@@ -20,6 +20,8 @@ The collector stages exact numbered, unofficial-engrossment and conference-repor
 
 Historical jobs acquire actual original archived bodies, not just CDX timestamps. They keep original URLs, replay URLs, capture clocks, body hashes and parsing outcomes. Source host/path, bill identity and historical session are checked. An archive response with a contradictory Memento clock is held. Bill text is captured only from the requested version with legislative body content; latest-version and wrong-bill pages are rejected. Matching old bodies can supply `archived_observed_at` without overwriting retained wording. Archive attempts and source jobs preserve unavailable/unparsed outcomes; those are evidence gaps, not successful historical captures.
 
+Both modern version paths and the original Revisor `text.php` URLs are searched. Legacy query fields must identify the same regular-session bill and explicit edition; latest, duplicate parameters and special sessions are excluded. Introduction URLs for Senate-voted/heard bills are staged even when the legacy text store retained only a mutable latest body. The small metadata-only `historical-capture-leads-v1.json` preserves one independently downloaded positive canary: HF100's January 5, 2023 introduction capture. Its exact archived body SHA/size must be independently matched again before ingestion. This verifies an observation upper bound, not the first publication moment or statewide coverage.
+
 The assignment parser preserves wrapped committee headings and PDF column boundaries, so neighboring surnames are not combined. Regular members are recovered only from explicit column cells or unambiguous single-name rows.
 
 Role recovery has three explicit bases:

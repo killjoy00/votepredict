@@ -3,6 +3,7 @@ name: Recover exact Senate vote papers and historical role/text evidence
 on:
   pull_request:
     paths:
+      - data/senate-research/historical-capture-leads-v1.json
       - src/operations/senate-paper-history-gate.ts
       - migrations/0035_senate_vote_papers_history.sql
       - tests/senate-paper-history.test.ts
@@ -20,6 +21,7 @@ on:
   push:
     branches: [main]
     paths:
+      - data/senate-research/historical-capture-leads-v1.json
       - src/operations/senate-paper-history-gate.ts
       - migrations/0035_senate_vote_papers_history.sql
       - tests/senate-paper-history.test.ts

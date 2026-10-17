@@ -1,13 +1,48 @@
 /** Bounded historical-body acquisition. An index timestamp alone never dates current words. */
 import type {Pool} from 'pg';
 import {captureOfficialRevisorHtml} from './senate-official-bill-text.js';
-import {hash,compact,billIdentifier} from './senate-vote-paper-parser.js';
+import {hash,compact,billIdentifier,explicitVersionLocator} from './senate-vote-paper-parser.js';
 import {historyRoster,HISTORY_SESSIONS,storeHistoricalRoles} from './senate-vote-paper-backfill.js';
 import {getMinnesotaHouseSession} from '../sources/minnesota/sessions.js';
 import {parseSenateCommitteeRoles,parseSenateLeadershipRoles} from '../sources/minnesota/senate-roles.js';
 import {parseLrlSenateRoles} from '../sources/minnesota/lrl-members.js';
 import {parseSenateAssignmentPdfText} from '../sources/minnesota/senate-assignment-pdf.js';
 import {buildRevisorBillCandidateUrls} from '../sources/minnesota/revisor.js';
+import historicalLeads from '../../data/senate-research/historical-capture-leads-v1.json';
+
+/** Both publisher URL generations identify immutable papers. Latest and special sessions are excluded. */
+export function historyPaperIdentity(value:string):{identifier:string;slug:string;locator:string;family:string;pdf:boolean;legacy:boolean;year:string;legislature:string}|null{
+ try{
+  const u=new URL(value);if(u.protocol!=='https:'||u.hostname!=='www.revisor.mn.gov'||u.username||u.password||u.hash)return null;
+  const m=u.pathname.match(/^\/bills\/(92|93|94)\/(202[1-6])\/0\/(HF|SF)\/([1-9]\d{0,5})\/versions\/(\d+|ue\/\d+|ccr\/[A-Za-z0-9]+)\/(pdf\/)?$/i);
+  if(m&&!u.search){
+   if(m[5].split('/').at(-1)?.toLowerCase()==='latest')return null;
+   const start=2021+2*(Number(m[1])-92);if(Number(m[2])<start||Number(m[2])>start+1)return null;
+   const version=m[5].replace(/^UE\//i,'ue/').replace(/^CCR\//i,'ccr/');
+   return {identifier:m[3].toUpperCase()+Number(m[4]),slug:start+'-'+(start+1),locator:'versions/'+version+'/',
+    family:version.startsWith('ue/')?'unofficial_engrossment':version.startsWith('ccr/')?'conference_report':'numbered_version',pdf:!!m[6],legacy:false,year:m[2],legislature:m[1]};
+  }
+  if(u.pathname!=='/bills/text.php')return null;
+  const allowed=new Set(['number','type','version','session','session_year','session_number','format']);
+  for(const key of u.searchParams.keys())if(!allowed.has(key)||u.searchParams.getAll(key).length!==1)return null;
+  const number=u.searchParams.get('number')?.match(/^(HF|SF)0*([1-9]\d{0,5})$/i),session=u.searchParams.get('session')?.match(/^ls(92|93|94)(?:\.0)?$/),year=u.searchParams.get('session_year');
+  const type=u.searchParams.get('type')??'bill',version=u.searchParams.get('version')??'',format=u.searchParams.get('format');
+  if(!number||!session||!year||u.searchParams.get('session_number')!=='0'||!['bill','ue','ccr'].includes(type)
+   ||(format!==null&&!['html','pdf'].includes(format))||version.toLowerCase()==='latest'||!new RegExp(type==='ccr'?'^[A-Za-z0-9]+$':'^\\d+$').test(version))return null;
+  const start=2021+2*(Number(session[1])-92);if(![String(start),String(start+1)].includes(year))return null;
+  return {identifier:number[1].toUpperCase()+Number(number[2]),slug:start+'-'+(start+1),locator:'versions/'+(type==='bill'?'':type+'/')+(type==='ccr'?version:Number(version))+'/',
+   family:type==='ue'?'unofficial_engrossment':type==='ccr'?'conference_report':'numbered_version',pdf:format==='pdf',legacy:true,year,legislature:session[1]};
+ }catch{return null}
+}
+export function legacyHistoryAliases(value:string):string[]{
+ const p=historyPaperIdentity(value);if(!p)return [];
+ const type=p.family==='unofficial_engrossment'?'ue':p.family==='conference_report'?'ccr':'bill',version=p.locator.split('/').filter(Boolean).at(-1)!;
+ const u=new URL('https://www.revisor.mn.gov/bills/text.php');
+ for(const [k,v] of Object.entries({number:p.identifier,type,version,session:'ls'+p.legislature,session_year:p.year,session_number:'0'}))u.searchParams.set(k,v);
+ const urls=new Set<string>();for(const pdf of [false,true]){const copy=new URL(u);if(pdf)copy.searchParams.set('format','pdf');urls.add(copy.toString());
+  if(type==='bill'){copy.searchParams.delete('type');urls.add(copy.toString());}}
+ return [...urls];
+}
 
 /** Recover only papers explicitly named in a journal, rather than choosing a latest version. */
 export async function recoverExplicitBaseBodies(pool:Pool,options:{max?:number;fetchImpl?:typeof fetch;sleep?:(ms:number)=>Promise<void>}={}){
@@ -60,7 +95,7 @@ export async function recoverExplicitBaseBodies(pool:Pool,options:{max?:number;f
 export function validHistorySource(kind:string,url:string):boolean {
  try{
   const u=new URL(url);if(u.protocol!=='https:'||u.username||u.password||u.hash)return false;
-  if(kind==='bill_text')return u.hostname==='www.revisor.mn.gov'&&!u.search&&/^\/bills\/(92|93|94)\/202[1-6]\/0\/(HF|SF)\/[1-9]\d{0,5}\/versions\/(?:\d+|ue\/\d+|ccr\/[A-Za-z0-9]+)\/(?:pdf\/)?$/i.test(u.pathname);
+  if(kind==='bill_text')return historyPaperIdentity(url)!==null;
   if(kind==='role_pdf')return u.hostname==='www.senate.mn'&&!u.search&&/^\/committees\/202[135]-202[246]\/info\/comlegal\.pdf$/.test(u.pathname);
   if(kind==='role_html')return (u.hostname==='www.senate.mn'&&['/members','/members/','/committees/committee_bio.html','/committees/committee_bio.php'].includes(u.pathname))
    ||(u.hostname==='www.lrl.mn.gov'&&/^\/legdb\/fulldetail(?:\?)?$/.test(u.pathname)&&/^\d+$/.test(u.searchParams.get('ID')??u.searchParams.get('id')??''));
@@ -107,8 +142,23 @@ export async function stageHistoryJobs(pool:Pool){
   FROM senate_role_source_snapshots o JOIN legislative_sessions s ON s.id=o.session_id WHERE s.slug=ANY($1::text[])
   UNION SELECT s.id,s.slug,NULL::uuid,'https://www.senate.mn/members?id=leadership','role_html' FROM legislative_sessions s
   JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn' WHERE s.slug=ANY($1::text[])`,[HISTORY_SESSIONS])).rows;
+ const relevant=(await pool.query(`SELECT b.id,b.session_id,b.identifier,b.introduced_at::date::text AS introduced,s.slug FROM bills b
+  JOIN legislative_sessions s ON s.id=b.session_id JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
+  WHERE s.slug=ANY($1::text[]) AND b.identifier ~* '^(HF|SF)[1-9][0-9]{0,5}$' AND(EXISTS(SELECT 1 FROM vote_events v JOIN chambers c ON c.id=v.chamber_id AND c.slug='senate' WHERE v.bill_id=b.id)
+   OR EXISTS(SELECT 1 FROM senate_raw_vote_bill_mentions rm WHERE rm.bill_id=b.id))`,[HISTORY_SESSIONS])).rows;
+ for(const b of relevant){
+  for(const root of buildRevisorBillCandidateUrls(b.slug,b.identifier)){
+   if(b.introduced&&b.slug.split('-').includes(b.introduced.slice(0,4))&&!root.includes('/'+b.introduced.slice(0,4)+'/'))continue;
+   candidates.push({session_id:b.session_id,slug:b.slug,bill_id:b.id,source_url:root+'versions/0/',kind:'bill_text'});
+  }
+ }
+ for(const lead of historicalLeads.captures){const b=relevant.find(b=>b.slug===lead.sessionSlug&&b.identifier===lead.billIdentifier);
+  if(b)candidates.push({session_id:b.session_id,slug:b.slug,bill_id:b.id,source_url:lead.sourceUrl,kind:'bill_text'});}
  const aliases=candidates.flatMap(c=>{
-  if(c.kind==='bill_text'&&c.source_url&&validHistorySource(c.kind,c.source_url)&&!c.source_url.endsWith('/pdf/'))return [c,{...c,source_url:c.source_url+'pdf/'}];
+  if(c.kind==='bill_text'&&c.source_url&&validHistorySource(c.kind,c.source_url)){
+   const p=historyPaperIdentity(c.source_url)!;
+   return [c,...(!p.legacy&&!p.pdf?[{...c,source_url:c.source_url+'pdf/'}]:[]),...legacyHistoryAliases(c.source_url).map(source_url=>({...c,source_url}))];
+  }
   if(c.kind!=='role_html'||!c.source_url?.includes('/committees/committee_bio.'))return [c];
   const u=new URL(c.source_url),urls=new Set<string>([c.source_url]);
   for(const extension of ['html','php'])for(const includeSession of [true,false]){
@@ -167,19 +217,24 @@ export async function captureArchivedHistory(pool:Pool,job:Job,stamp:string,byte
  if(!sameOriginal(original,job.source_url))throw Error('Archived original URL mismatch');
  const archiveUrl=`https://web.archive.org/web/${stamp}id_/${original}`,originalSha=hash(bytes);
  if(job.kind==='bill_text'){
-  const isPdf=job.source_url.endsWith('/pdf/');let raw:string;
+  const paper=historyPaperIdentity(job.source_url);if(!paper||paper.identifier!==job.identifier||paper.slug!==job.slug)return 0;
+  const isPdf=paper.pdf;let raw:string;
   if(isPdf){if(Buffer.from(bytes.slice(0,5)).toString()!=='%PDF-')return 0;try{raw=await pdfText(bytes)}catch{return 0}}
   else raw=Buffer.from(bytes).toString('utf8');
   // Reject archive error/challenge pages and wrong-bill replays, including a valid status banner without legislative body.
   const title=isPdf?raw.slice(0,4000):raw.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]??'';
   const titleBill=compact(title).match(/\b(HF|SF)\s*0*(\d+)\b/i);
   if((isPdf?billIdentifier(title):titleBill?titleBill[1].toUpperCase()+Number(titleBill[2]):null)!==job.identifier)return 0;
+  if(paper.legacy&&!isPdf){
+   const edition=paper.locator==='versions/0/'?/\b(?:as introduced|Introduction)\b/i.test(title)
+    :paper.family==='conference_report'?/\bconference\b/i.test(title):explicitVersionLocator(title)===paper.locator;
+   if(!edition)return 0;
+  }
   let parsed;
   if(isPdf)parsed={rawText:raw,originalBody:null,extractedTextSha256:hash(raw)};
   else try{parsed=captureOfficialRevisorHtml(bytes)}catch{return 0}
   if(parsed.rawText.length<100||!/(?:A bill for an act|Section 1\.|Be it enacted)/i.test(parsed.rawText))return 0;
-  const u=new URL(job.source_url),parts=u.pathname.match(/(versions\/(?:\d+|ue\/\d+|ccr\/[A-Za-z0-9]+)\/)(?:pdf\/)?$/i)!;
-  const locator=parts[1],family=/\/ue\//i.test(locator)?'unofficial_engrossment':/\/ccr\//i.test(locator)?'conference_report':'numbered_version';
+  const locator=paper.locator,family=paper.family;
   // If an identical body was already captured, retain the independent archive receipt and earliest observation too.
   await pool.query(`INSERT INTO senate_official_bill_text_captures(session_id,bill_id,family,source_url,source_locator,printed_label,original_body,raw_text,
    original_body_sha256,body_hash_provenance,extracted_text_sha256,original_byte_length,content_type,fetched_at,archived_observed_at,http_status)
@@ -203,13 +258,14 @@ export async function recoverHistoricalArchives(pool:Pool,options:{maxJobs?:numb
  const fetcher=options.fetchImpl??fetch,sleep=options.sleep??(ms=>new Promise(r=>setTimeout(r,ms))),roster=await historyRoster(pool);
  const jobs=(await pool.query<Job>(`WITH ranked AS(SELECT q.*,s.slug,b.identifier,
   row_number() OVER(PARTITION BY s.slug,CASE WHEN q.kind='bill_text' THEN 'text' ELSE 'role' END
-   ORDER BY CASE WHEN q.kind='role_pdf' THEN 0 WHEN q.source_url LIKE '%/members%' THEN 1
+   ORDER BY CASE WHEN q.source_url=ANY($2::text[]) THEN -1 WHEN q.source_url LIKE '%/bills/text.php?%' THEN 0
+    WHEN q.kind='role_pdf' THEN 0 WHEN q.source_url LIKE '%/members%' THEN 1
     WHEN q.source_url LIKE '%/committees/%' THEN 2 ELSE 3 END,q.attempts,q.job_key) AS rank
   FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id LEFT JOIN bills b ON b.id=q.bill_id
   WHERE q.status='pending' OR(q.status='failed' AND q.attempts<3 AND q.checked_at<now()-interval '6 hours')
    OR(q.status='unavailable' AND q.attempts<3 AND q.checked_at<now()-interval '30 days'))
-  SELECT * FROM ranked ORDER BY rank,kind,slug LIMIT $1`,[max])).rows;
- const summary={jobs:0,archiveBodies:0,billTexts:0,roleItems:0,unparsed:0,unavailable:0,throttled:false};
+  SELECT * FROM ranked ORDER BY rank,kind,slug LIMIT $1`,[max,historicalLeads.captures.map(c=>c.sourceUrl)])).rows;
+ const summary={jobs:0,archiveBodies:0,billTexts:0,roleItems:0,knownBodiesVerified:0,unparsed:0,unavailable:0,throttled:false};
  class ArchiveUnavailable extends Error{}
  const get=async(url:string)=>{await sleep(1250);try{return await fetcher(url,{redirect:'error',headers:{'User-Agent':'VotePredict/2.0 historical Senate source research'},signal:AbortSignal.timeout(20000)})}catch{throw new ArchiveUnavailable()}};
  const read=async(response:Response,cap:number)=>{try{return await boundedBody(response,cap)}catch{throw new ArchiveUnavailable()}};
@@ -217,13 +273,16 @@ export async function recoverHistoricalArchives(pool:Pool,options:{maxJobs?:numb
   if(!validHistorySource(job.kind,job.source_url))throw Error('Untrusted queued history URL');
   let status='complete',error:string|null=null,captured=0;
   try{
-   const index=await get('https://web.archive.org/cdx/search/cdx?url='+encodeURIComponent(job.source_url)+
+   const known=historicalLeads.captures.find(c=>c.sourceUrl===job.source_url&&c.sessionSlug===job.slug&&c.billIdentifier===job.identifier);
+   const index=known?null:await get('https://web.archive.org/cdx/search/cdx?url='+encodeURIComponent(job.source_url)+
     '&matchType=exact&from='+job.slug.slice(0,4)+'&to='+job.slug.slice(5)+'&output=json&fl=timestamp,original,statuscode&filter=statuscode:200&collapse=timestamp:6&limit=48');
-   if([429,503].includes(index.status)){summary.throttled=true;break;}
-   if(!index.ok)throw new ArchiveUnavailable();
-   const indexBytes=await read(index,200000);let payload:unknown;
-   try{payload=JSON.parse(Buffer.from(indexBytes).toString('utf8'))}catch{throw new ArchiveUnavailable()}
-   const stamps=archiveCaptures(payload,job.source_url,job.slug);
+   if(index&&[429,503].includes(index.status)){summary.throttled=true;break;}
+   if(index&&!index.ok)throw new ArchiveUnavailable();
+   let stamps:Array<{stamp:string;original:string}>;
+   if(known)stamps=[{stamp:known.timestamp,original:known.sourceUrl}];
+   else{const indexBytes=await read(index!,200000);let payload:unknown;
+    try{payload=JSON.parse(Buffer.from(indexBytes).toString('utf8'))}catch{throw new ArchiveUnavailable()}
+    stamps=archiveCaptures(payload,job.source_url,job.slug);}
    if(!stamps.length){status='unavailable';summary.unavailable++;}
    for(const {stamp,original} of stamps){
     const observed=archiveTimestamp(stamp);if(!observed)continue;
@@ -234,8 +293,10 @@ export async function recoverHistoricalArchives(pool:Pool,options:{maxJobs?:numb
     let bodySha:string|null=null,outcome='unavailable';
     const memento=response.headers.get('memento-datetime');
     if(response.ok&&(!memento||Date.parse(memento)===Date.parse(observed))){
-     const bytes=await read(response,job.kind==='role_pdf'||job.source_url.endsWith('/pdf/')?30_000_000:8_000_000);bodySha=hash(bytes);
+     const bytes=await read(response,job.kind==='role_pdf'||historyPaperIdentity(job.source_url)?.pdf?30_000_000:8_000_000);bodySha=hash(bytes);
+     if(known&&(bodySha!==known.bodySha256||bytes.length!==known.originalBytes))throw new ArchiveUnavailable();
      const count=await captureArchivedHistory(pool,job,stamp,bytes,roster,original);
+     if(known&&count)summary.knownBodiesVerified++;
      outcome=count?'captured':'unparsed';captured+=count;summary.archiveBodies++;
      if(job.kind==='bill_text')summary.billTexts+=count;else summary.roleItems+=count;
      if(!count)summary.unparsed++;
