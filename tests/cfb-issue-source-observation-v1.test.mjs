@@ -30,8 +30,8 @@ test('manifest stays bounded to original approved HTTPS domains and roles',()=>{
  const m=JSON.parse(readFileSync(
   'data/evidence/cfb-issue-finance-source-observation-manifest-v1.json','utf8'));
  const sources=validateCfbIssueSourceManifest(m);
- assert.equal(sources.length,8);
- assert.equal(new Set(sources.map(x=>x.url)).size,8);
+ assert.equal(sources.length,9);
+ assert.equal(new Set(sources.map(x=>x.url)).size,9);
  assert.throws(()=>validateCfbIssueSourceManifest({...m,sources:[
   {...fixture,url:'https://evil.example/source'},...sources
  ]}),/Unsafe/);

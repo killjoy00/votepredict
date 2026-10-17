@@ -49,6 +49,12 @@
       "organizationGroup": "Minnesota AFL-CIO",
       "role": "first_party_issue_publication",
       "url": "https://mnaflcio.org/news/2026-legislative-priorities"
+    },
+    {
+      "id": "education-mn-2026-hf2904-original-release",
+      "organizationGroup": "Education Minnesota",
+      "role": "first_party_issue_publication",
+      "url": "https://educationminnesota.org/news/press-release/educators-call-on-legislature-to-create-statewide-health-insurance-pool-for-school-employees/"
     }
   ]
 }

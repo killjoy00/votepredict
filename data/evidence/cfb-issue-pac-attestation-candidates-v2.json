@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "cfb-issue-pac-attestation-candidates-v2",
+  "scope": "Pinned exact current first-party PAC description + official CFB registered-name identification; no retrospective historical public-by and no candidate vote stance",
+  "candidates": [
+    {
+      "contributorRegistrationNumber": "70001",
+      "officialSourceId": "cfb-political-fund-registration-index",
+      "officialRegisteredName": "MN Chamber of Commerce Leadership Fd",
+      "publisherSourceId": "mn-chamber-leadership-fund-pac",
+      "organizationGroup": "Minnesota Chamber of Commerce",
+      "exactFirstPartyPacPhrase": "Minnesota Chamber Leadership Fund PAC",
+      "originalSourceProofRequirement": "exact_two_source_current_pac_identity"
+    },
+    {
+      "contributorRegistrationNumber": "30558",
+      "officialSourceId": "cfb-political-fund-registration-index",
+      "officialRegisteredName": "Education Minn PAC",
+      "publisherSourceId": "education-minnesota-pac",
+      "organizationGroup": "Education Minnesota",
+      "exactFirstPartyPacPhrase": "Education Minnesota Political Action Committee",
+      "originalSourceProofRequirement": "exact_two_source_current_pac_identity"
+    },
+    {
+      "contributorRegistrationNumber": "30025",
+      "officialSourceId": "cfb-political-fund-registration-index",
+      "officialRegisteredName": "MN AFL-CIO",
+      "publisherSourceId": "mn-aflcio-first-party-news",
+      "organizationGroup": "Minnesota AFL-CIO",
+      "exactFirstPartyPacPhrase": null,
+      "originalSourceProofRequirement": "held_no_explicit_first_party_pac_legal_affiliation"
+    }
+  ]
+}
