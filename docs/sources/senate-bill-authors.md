@@ -186,16 +186,41 @@ journals**. There were 2,099 distinct scanned bills with a coauthor across
 representative of other biennia. House authors remained uncollected because
 the existing Senate-first order had not exhausted the Senate catalog.
 
-### Second reviewed 3,000-lookup Revisor continuation
+### Verified second bounded Revisor batch: October 16, 2026
 
-The next first-attempt protected run resumes from the successful/not-found
-receipts above, processing **at most 3,000 additional targets** at the
-existing minimum 1,150 ms serial request interval. It uses the same 65-minute
-collector budget, immediate 429/503 stop, exact-main CI gate and existing
-protected Neon database. The two source-error entries may be retried after
-fresh targets. Actual successful counts and remaining targets will be
-reported by the next protected production readback; do not treat a run
-request as proof of completion.
+[Production run #38980045574](https://github.com/killjoy00/votepredict/actions/runs/38980045574)
+concluded **success**. The collector attempted **1,787** of a requested maximum
+3,000 official bill lookups; **1,785 succeeded**, two incurred retryable source
+errors, none returned not-found, and no throttle stop occurred. It correctly
+stopped at the enforced **65-minute collection budget**, rather than claiming
+all 3,000 requests or allowing an unbounded production job. The latest run
+stored **3,922 extracted XML author entries**, which can overlap journal rows.
+
+The protected production readback confirms:
+
+| Session | Successful official XML scans, cumulative | Distinct raw Senate author rows | Existing membership links |
+| --- | ---: | ---: | ---: |
+| 2021-2022 | 0 | 2,937 | 2,936 |
+| 2023-2024 | 0 | 2,133 | 2,133 |
+| 2025-2026 | 5,133 | 12,509 | 12,509 |
+| **Total** | **5,133 / 28,938 (17.74%)** | **17,579** | **17,578** |
+
+**23,805 bill targets remain without success/not-found receipts**, including
+retryable source errors. Exactly **zero stored journals** remain unprocessed.
+The scanner still prioritizes 2025-2026 Senate files; no HF bill has been
+scanned, and older biennia are still awaiting Revisor XML status scans. A
+successful workflow is not a claim that overall collection is complete.
+
+### Third reviewed Revisor continuation
+
+A fresh marker-bearing, independently tested and reviewed `main` merge
+requests another **bounded batch of at most 3,000** official bill lookups.
+The collector starts from stored successful/not-found receipts, retains
+1,150-ms minimum serial Revisor pacing, 429/503 halt and 65-minute cutoff,
+and uses the existing protected Neon deployment path. It does **not**
+refetch the 337 completed journal documents or change forecasting, serving,
+or features. Read the exact result from the next protected production
+receipt; do not infer 3,000 successful scans from a requested limit.
 
 Definitions: coauthor share is distinct successfully scanned bills with at
 least one coauthor, divided by successfully scanned bills. Senate link rate is
