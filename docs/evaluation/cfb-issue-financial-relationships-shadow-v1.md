@@ -57,3 +57,63 @@ Before treating this feature as predictive:
 5. Keep all financial relationships neutral context with **zero serving weight** unless the separate prospective evaluation protocol explicitly authorizes promotion.
 
 Prototype: `src/evidence/cfb-issue-financial-relationships-shadow.mjs`. Unit tests: `tests/cfb-issue-financial-relationships-shadow.test.mjs`. Source feasibility: `scripts/audit-cfb-issue-financial-feasibility-readonly.mjs`.
+
+## V1 prospective original-source capture (2026-10-16)
+
+The first protected feasibility audit had 4,194 Senate candidate-contribution
+rows with registered donor IDs and 472 distinct registrations. The three
+publicly observed current PAC registration leads appeared on 133 rows.
+The scorecards have 62 explicit whole-bill positions on 46 bills **but zero
+stored publication dates**. Thus no historically qualifying financial
+relationship feature was demonstrated.
+
+This follow-up adds a separate **raw source observation** lane, not historical
+publication-date repairs. See:
+- data/evidence/cfb-issue-finance-source-observation-manifest-v1.json
+- src/evidence/cfb-issue-source-observation-v1.mjs
+- migrations/0031_cfb_issue_finance_source_observations.sql
+- .github/workflows/senate-864-cfb-issue-source-capture.yml
+
+The pinned eight public official/first-party HTML sources cover the current CFB
+committee list, the Chamber Leadership Fund PAC, a 2020 dated Chamber publisher
+page, a retrospective Chamber scorecard index, the Education Minnesota PAC,
+the AFL-CIO publisher news directory and 2023/2026 legislative priorities.
+Fetching is HTTPS-allowlisted, robots-aware, serial, content-length-capped
+and rate-limited. Independent disposable Postgres and CI checks precede
+protected main-only source capture, once on merge and then **weekly on Monday
+at 14:19 UTC**. A guarded manual recovery action is available.
+
+The separate appendix-only table holds original HTML bytes, SHA-256,
+source URL, final URL, source role and *observed_at* timestamp. Repeated
+identical bytes preserve their earliest observed timestamp. New rows are
+enforced at DB level as unverified_raw_observation, historically ineligible,
+non-mechanical and zero-weight. Source datelines, archived publication
+claims, 2020 or 2023 historical contexts, and 2025/2026 post-vote
+scorecards can NEVER be silently reinterpreted as pre-vote observations.
+No source/evidence/position/forecast table is updated by this collector.
+
+### Public original organization research leads
+
+- https://www.mnchamber.com/blog/chamber-political-programs-find-success
+  has a publisher date November 9, 2020 and describes Leadership Fund PAC
+  separately from Pro Jobs Majority independent expenditures. A current HTML
+  fetch does not verify that today's identical bytes existed in 2020.
+- https://mnaflcio.org/news/2023-legislative-priorities
+  has an original-publisher date January 20, 2023, preceding some later votes.
+  It names policy priorities but NOT an exact bill number.
+- https://mnaflcio.org/news/2026-legislative-priorities
+  is contemporary policy context, not proof a group supported any particular
+  bill or the fact that a financial PAC represented the organization.
+- https://www.mnchamber.com/2025-2026-legislative-voting-record
+  is retrospective voting evaluation, not a historical pre-vote position.
+
+The contemporary CFB registrations 70001 (Chamber Leadership Fund),
+30558 (Education Minnesota PAC) and 30025 (MN AFL-CIO) remain **research
+leads**, not a verified historical PAC ↔ publisher crosswalk. A future
+separate original source-supported identity review must prove legal entity
+and relationship temporal validity before feeding the v1 finance shadow.
+
+Prospective feature use requires genuine original exact-bill publications
+observed before 2027-28 votes, an independently verified financial entity
+affiliation, transaction row-specific public-by proof, and held-out/prospective
+scoring. No historical 2021-26 replay or serving forecast was changed.
