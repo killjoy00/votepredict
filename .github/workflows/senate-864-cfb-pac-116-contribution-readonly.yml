@@ -8,6 +8,9 @@ on:
       - "src/evidence/cfb-pac116-original-multicolumn-shadow-v2.mjs"
       - "scripts/audit-cfb-pac116-original-multicolumn-readonly.mjs"
       - "tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs"
+      - "src/evidence/cfb-pac116-original-a1-geometry-v4.mjs"
+      - "scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs"
+      - "tests/cfb-pac116-original-a1-geometry-v4.test.mjs"
       - ".github/workflows/senate-864-cfb-pac-116-contribution-readonly.yml"
   push:
     branches: [main]
@@ -18,6 +21,9 @@ on:
       - "src/evidence/cfb-pac116-original-multicolumn-shadow-v2.mjs"
       - "scripts/audit-cfb-pac116-original-multicolumn-readonly.mjs"
       - "tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs"
+      - "src/evidence/cfb-pac116-original-a1-geometry-v4.mjs"
+      - "scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs"
+      - "tests/cfb-pac116-original-a1-geometry-v4.test.mjs"
       - ".github/workflows/senate-864-cfb-pac-116-contribution-readonly.yml"
 permissions:
   contents: read
@@ -47,7 +53,9 @@ jobs:
           node --check scripts/audit-cfb-pac-116-contribution-provenance-readonly.mjs
           node --check src/evidence/cfb-pac116-original-multicolumn-shadow-v2.mjs
           node --check scripts/audit-cfb-pac116-original-multicolumn-readonly.mjs
-          node --import tsx --test tests/cfb-pac-contribution-provenance-v1.test.mjs tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs
+          node --check src/evidence/cfb-pac116-original-a1-geometry-v4.mjs
+          node --check scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs
+          node --import tsx --test tests/cfb-pac-contribution-provenance-v1.test.mjs tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs tests/cfb-pac116-original-a1-geometry-v4.test.mjs
           npm run check
   reviewed-main-presecret:
     if: >-
@@ -81,7 +89,9 @@ jobs:
           node --check scripts/audit-cfb-pac-116-contribution-provenance-readonly.mjs
           node --check src/evidence/cfb-pac116-original-multicolumn-shadow-v2.mjs
           node --check scripts/audit-cfb-pac116-original-multicolumn-readonly.mjs
-          node --import tsx --test tests/cfb-pac-contribution-provenance-v1.test.mjs tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs
+          node --check src/evidence/cfb-pac116-original-a1-geometry-v4.mjs
+          node --check scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs
+          node --import tsx --test tests/cfb-pac-contribution-provenance-v1.test.mjs tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs tests/cfb-pac116-original-a1-geometry-v4.test.mjs
           npm run check
           npm audit --omit=dev --audit-level=high
   existing-neon-pac116-finance-readonly:
@@ -123,3 +133,5 @@ jobs:
         run: node --import tsx scripts/audit-cfb-pac-116-contribution-provenance-readonly.mjs
       - name: Reconcile original CFB multicolumn PDF candidate spans across all receiving-committee contributions; READ ONLY
         run: node --import tsx scripts/audit-cfb-pac116-original-multicolumn-readonly.mjs
+      - name: Verify original CFB A1-PAC PDF vector-table geometry, legal registration column, dates and totals; READ ONLY
+        run: node --import tsx scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs
