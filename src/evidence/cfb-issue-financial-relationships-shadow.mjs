@@ -36,6 +36,12 @@ export function classifyLiteralPublisherBillPosition(value){
  if(NEGATIVE.test(s)&&!POSITIVE.test(s))return 'oppose';
  return null;
 }
+function officialCfbSourceUrl(url){
+ if(!URL.test(url??''))return false;
+ const hostname=new URL(url).hostname.toLowerCase();
+ return ['cfb.mn.gov','register.cfb.mn.gov',
+  'cfb.state.mn.us','register.cfb.state.mn.us'].includes(hostname);
+}
 export function validAffiliation(record){
  // Explicitly source-supported registry crosswalk only. A string match,
  // shared employer or donor name is never sufficient to join two legal entities.
@@ -43,7 +49,8 @@ export function validAffiliation(record){
   record.relationship==='verified_organizational_affiliation'&&
   REG.test(record.contributorRegistrationNumber??'')&&
   typeof record.groupName==='string'&&record.groupName.trim().length>4&&
-  URL.test(record.officialCfbUrl??'')&&URL.test(record.firstPartyAffiliationUrl??'')&&
+  officialCfbSourceUrl(record.officialCfbUrl)&&
+  URL.test(record.firstPartyAffiliationUrl??'')&&
   HASH.test(record.officialCfbSha256??'')&&HASH.test(record.firstPartySha256??'')&&
   sourceDate(record.validatedOn)&&sourceDate(record.relationshipPublicByOn)&&
   sourceDate(record.affiliationEffectiveOn)&&
