@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
- isOriginalA1PacPage,exactPrintedPacReg,verifyOriginalA1PacTable,
+ isOriginalA1PacPage,isOriginalA1RegisteredPacPage,
+ exactPrintedPacReg,verifyOriginalA1PacTable,
  safeOriginalA1PacCohortSummary,PAC116_A1_GEOMETRY_SCHEMA
 } from '../src/evidence/cfb-pac116-original-a1-geometry-v4.mjs';
 import {geometryPagesForSource,safeOriginalPacPageFormatCensus}
@@ -123,7 +124,7 @@ test('candidate page selection is a lexical triage, not a source identity proof'
  const pages=[
   {pdf_sha256:SHA,page_number:2,raw_page_text:'SCHEDULE A1 - IND 30558'},
   {pdf_sha256:SHA,page_number:3,raw_page_text:page},
-  {pdf_sha256:SHA,page_number:4,raw_page_text:'SCHEDULE A1 - PAC Education Minn PAC'},
+  {pdf_sha256:SHA,page_number:4,raw_page_text:'SCHEDULE A1 - PAC Education Minn PAC 30558'},
   {pdf_sha256:SHA,page_number:5,raw_page_text:'Other source page'}
  ];
  const p=geometryPagesForSource({reports,pages,pacs:[
@@ -156,4 +157,18 @@ test('source-page format census distinguishes A1, generic donation and unseen re
  assert.ok(!JSON.stringify(got).includes('70001'));
  assert.ok(!JSON.stringify(got).includes('30558'));
  assert.throws(()=>safeOriginalPacPageFormatCensus(pages,['30558']),/Bounded/);
+});
+
+test('real original generic Schedule A1 pages admit PAC proof only with literal registered PAC ID',()=>{
+ const original='SCHEDULE A1 - Contributions from Political Committees and Funds 30558 Date Received';
+ assert.equal(isOriginalA1PacPage(original),false);
+ assert.equal(isOriginalA1RegisteredPacPage(original,['30558','70001']),true);
+ const r=verify({pageText:original});
+ assert.equal(r.privateHits.length,1);
+ for(const bad of [
+  'SCHEDULE A1 - IND individuals 30558',
+  'SCHEDULE B1 political committee 30558',
+  'INSTRUCTIONS FOR SCHEDULE A1 contributions from Political Committees 30558',
+  'SCHEDULE A1 Contributions from political committees 305581'
+ ])assert.equal(isOriginalA1RegisteredPacPage(bad,['30558','70001']),false);
 });
