@@ -67,9 +67,12 @@ function nameCorroborates(printed,canonical,registered){
  // printed legal name, rather than accepting arbitrary adjacent text.
  return overlaps.length>=1;
 }
+function validRowIdentity(r){
+ return REG.test(r?.filerReg??'')&&
+  YEAR.test(String(r?.year??''))&&HEX.test(r?.rowKey??'');
+}
 function validRow(r){
- return REG.test(r?.filerReg??'')&&REG.test(r?.contributorReg??'')&&
-  YEAR.test(String(r?.year??''))&&HEX.test(r?.rowKey??'')&&
+ return validRowIdentity(r)&&REG.test(r?.contributorReg??'')&&
   validDay(r?.transactionDate)&&amountCents(r?.amount)!==null&&
   typeof r?.contributor==='string'&&r.contributor.length>=6;
 }
@@ -80,21 +83,31 @@ const fingerprint=r=>[
 ].join('|');
 function assertRows(allRows,cohortKeys){
  if(!Array.isArray(allRows)||allRows.length>50000)throw Error('Unbounded committee-year comparator');
- const byKey=new Map(),signatureIndex=new Map();
+ const byKey=new Map(),signatureIndex=new Map(),
+  uncertainCommittees=new Set();
  for(const r of allRows){
-  if(!validRow(r))throw Error('Unsafe original PDF comparator contribution');
+  if(!validRowIdentity(r))
+   throw Error('Unsafe original PDF comparator identity');
   const k=keyFor(r),finger=fingerprint(r);
   if(byKey.has(k)&&fingerprint(byKey.get(k))!==finger)
-   throw Error('Conflicting canonical copy cannot verify a financial row');
+   uncertainCommittees.add(r.filerReg+'|'+r.year);
   byKey.set(k,r);
+  // Malformed or unidentified comparator contributions cannot simply be
+  // filtered away: their unknown fields may hide a competing PDF row.
+  if(!validRow(r)){
+   uncertainCommittees.add(r.filerReg+'|'+r.year);
+   continue;
+  }
   const group=[r.filerReg,String(r.year),r.contributorReg,
    r.transactionDate,amountCents(r.amount)].join('|');
   if(!signatureIndex.has(group))signatureIndex.set(group,new Set());
   signatureIndex.get(group).add(k);
  }
- for(const key of cohortKeys)if(!byKey.has(key))
-  throw Error('Full receiving committee comparator missing selected PAC row');
- return {byKey,signatureIndex};
+ for(const key of cohortKeys){
+  if(!byKey.has(key)||!validRow(byKey.get(key)))
+   throw Error('Full receiving committee comparator missing valid PAC contribution');
+ }
+ return {byKey,signatureIndex,uncertainCommittees};
 }
 function tableHeaders(table){
  if(!Array.isArray(table)||table.length<2||table.length>2000)return null;
@@ -205,7 +218,7 @@ export function safeOriginalA1PacCohortSummary({
   throw Error('Bounded source page proof required');
  const scoped=new Set(cohort.map(keyFor));
  if(scoped.size!==116)throw Error('Expected 116 distinct PAC finance records');
- const {signatureIndex}=assertRows(allRows,scoped);
+ const {signatureIndex,uncertainCommittees}=assertRows(allRows,scoped);
  const sourceReports=new Set(reports.map(r=>r.reportVersionId));
  const grouped=new Map(),collision=new Set();
  let candidatePairs=0,unselectedCandidateHits=0,withA1Header=0,
@@ -223,7 +236,8 @@ export function safeOriginalA1PacCohortSummary({
     r.filerReg,r.year,r.contributorReg,r.transactionDate,
     amountCents(r.amount)
    ].join('|');
-   if((signatureIndex.get(collisionKey)?.size??0)!==1){
+   if(uncertainCommittees.has(r.filerReg+'|'+r.year)||
+    (signatureIndex.get(collisionKey)?.size??0)!==1){
     collision.add(hit.key);continue;
    }
    if(!grouped.has(hit.key))grouped.set(hit.key,new Map());
@@ -260,6 +274,7 @@ export function safeOriginalA1PacCohortSummary({
   withMultipleOriginalOrAmendedVersions:amendmentAmbiguous,
   collisionsWithOtherCanonicalContributionRows:collision.size,
   comparatorRowsOutsidePAC116AlsoMatched:unselectedCandidateHits,
+  receivingCommitteeYearsWithUnusableComparator:uncertainCommittees.size,
   unresolvedAmong116:116-distinctRows,
   historicalOriginalVersionFirstPublicByProven:0,
   historicalQualifiedPACFinanceFeatures:0,
