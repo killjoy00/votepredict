@@ -4,7 +4,7 @@ import {
  isOriginalA1PacPage,exactPrintedPacReg,verifyOriginalA1PacTable,
  safeOriginalA1PacCohortSummary,PAC116_A1_GEOMETRY_SCHEMA
 } from '../src/evidence/cfb-pac116-original-a1-geometry-v4.mjs';
-import {geometryPagesForSource}
+import {geometryPagesForSource,safeOriginalPacPageFormatCensus}
  from '../scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs';
 
 const SHA='c'.repeat(64),NAME='Education Minn PAC';
@@ -134,4 +134,26 @@ test('candidate page selection is a lexical triage, not a source identity proof'
  assert.equal(p.allEligible,2);
  assert.equal(p.deferred,1);
  assert.equal(p.originalPagesWithPACRegistration,1);
+});
+
+test('source-page format census distinguishes A1, generic donation and unseen registrations safely',()=>{
+ const pages=[
+  {raw_page_text:'SCHEDULE A1 - PAC - Contributions from Political Committees\n Date Received 30558 Education PAC CASH IN-KIND TOTAL 04/10/2024 $300.00'},
+  {raw_page_text:'SCHEDULE A1 - IND - Individuals 04/10/2024 $300.00'},
+  {raw_page_text:'Contributions received Registration number 70001 Political Committee Cash in-kind total 04/10/2024 $300.00'},
+  {raw_page_text:'Reference Education chamber year end (no A1 schedule)'},
+  {raw_page_text:' '},
+ ];
+ const got=safeOriginalPacPageFormatCensus(pages,['30558','70001']);
+ assert.equal(got.originalCachedPdfPages,5);
+ assert.equal(got.cachedPagesWithoutReadableText,1);
+ assert.equal(got.originalPagesWithAnyA1ScheduleHeading,2);
+ assert.equal(got.originalPagesWithStrictA1PacHeading,1);
+ assert.equal(got.originalPagesWithExactRegisteredPACNumber,2);
+ assert.equal(got.originalPagesWithRegisteredPACNumberAndAnyA1,1);
+ assert.equal(got.originalPagesWithRegisteredPACNumberAndDateAndMoney,2);
+ assert.equal(got.originalPagesWithPACNumberOrNameWithoutA1,2);
+ assert.ok(!JSON.stringify(got).includes('70001'));
+ assert.ok(!JSON.stringify(got).includes('30558'));
+ assert.throws(()=>safeOriginalPacPageFormatCensus(pages,['30558']),/Bounded/);
 });
