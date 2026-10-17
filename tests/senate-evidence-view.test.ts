@@ -97,17 +97,15 @@ test('Postgres: evidence rows carry member, bill and a conservative as-of date',
         [byType.get('official_floor_vote')?.membership_id, byType.get('official_floor_vote')?.observed_on,
           byType.get('official_floor_vote')?.value_text],
         [membership, '2023-05-10', 'yea']);
-      // A chief author with no printed added date is public at introduction.
-      assert.deepEqual([byType.get('bill_chief_author')?.observed_on, byType.get('bill_chief_author')?.observed_basis],
-        ['2023-02-01', 'bills.introduced_at']);
-      // A coauthor with no printed date falls back to the (later) fetch date, never earlier.
-      assert.deepEqual([byType.get('bill_coauthor')?.observed_on, byType.get('bill_coauthor')?.observed_basis],
+      // Current XML roles cannot be backdated to introduction without a journal author event.
+      assert.deepEqual([byType.get('bill_author_snapshot')?.observed_on, byType.get('bill_author_snapshot')?.observed_basis],
         ['2026-10-16', 'author_snapshot.fetched_at']);
+      assert.equal(rows.filter(r=>r.evidence_type==='bill_author_snapshot').length,2);
 
-      // As-of filtering: before the floor vote only the chief authorship is visible.
+      // Neither current XML author state was observed before this floor vote.
       const asOf = (await pool.query<{ evidence_type: string }>(
         "SELECT evidence_type FROM senate_evidence_v WHERE bill_id=$1 AND observed_on <= '2023-05-09' ORDER BY 1", [bill])).rows;
-      assert.deepEqual(asOf.map((row) => row.evidence_type), ['bill_chief_author']);
+      assert.deepEqual(asOf.map((row) => row.evidence_type), []);
     } finally {
       await pool.end();
     }

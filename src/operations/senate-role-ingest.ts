@@ -86,7 +86,7 @@ export async function persistSenateRoleCollection(collection: SenateRoleCollecti
              (session_id, source_url, fetched_at, source_session, source_date, content_type, raw_content, content_sha256)
            VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
            ON CONFLICT (session_id, source_url, content_sha256) DO UPDATE
-             SET fetched_at=EXCLUDED.fetched_at
+             SET fetched_at=LEAST(senate_role_source_snapshots.fetched_at,EXCLUDED.fetched_at)
            RETURNING id`,
           [sessionId, entry.sourceUrl, entry.fetchedAt, entry.sourceSession, entry.sourceDate, entry.contentType, entry.rawContent, entry.contentSha256],
         );
@@ -102,7 +102,7 @@ export async function persistSenateRoleCollection(collection: SenateRoleCollecti
                membership_id=EXCLUDED.membership_id, senator_name=EXCLUDED.senator_name,
                role=EXCLUDED.role, committee=EXCLUDED.committee,
                starts_on=EXCLUDED.starts_on, ends_on=EXCLUDED.ends_on,
-               fetched_at=EXCLUDED.fetched_at, raw_content=EXCLUDED.raw_content`,
+               fetched_at=LEAST(senate_role_observations.fetched_at,EXCLUDED.fetched_at), raw_content=EXCLUDED.raw_content`,
             [sessionId, snapshot.rows[0].id, ordinal, membershipId, role.senatorName, role.role, role.committee,
               role.startsOn, role.endsOn, entry.sourceUrl, entry.fetchedAt, entry.sourceSession, entry.sourceDate, role.rawContent],
           );
