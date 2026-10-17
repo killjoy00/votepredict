@@ -99,6 +99,15 @@ export function robotsAllows(robots,path,agent=BOT){
  }
  return found?found.allow:true;
 }
+function conservativeCrawlDelayMs(robots){
+ let max=1000;
+ for(const match of String(robots).matchAll(/^\s*crawl-delay:\s*(\d+(?:\.\d+)?)\s*$/gim)){
+  const ms=Math.ceil(Number(match[1])*1000);
+  if(!Number.isSafeInteger(ms)||ms>60000)return null;
+  max=Math.max(max,ms);
+ }
+ return max;
+}
 async function boundedBuffer(response,maxBytes){
  const declared=Number(response.headers.get('content-length'));
  if(Number.isFinite(declared)&&declared>maxBytes)throw Error('source_oversize');
@@ -157,9 +166,11 @@ export async function fetchCfbIssueSource(item,options={}){
  try{policy=new TextDecoder('utf-8',{fatal:true}).decode(robots.buffer);}
  catch{return {status:'robots_unavailable'};}
  if(!robotsAllows(policy,url.pathname+url.search))return {status:'robots_disallowed'};
- // One-second delay after robots before fetching the original. Only one
- // source is fetched at a time; manifest origins are kept in order.
- await (options.sleep??(ms=>new Promise(resolve=>setTimeout(resolve,ms))))(1000);
+ const crawlDelay=conservativeCrawlDelayMs(policy);
+ if(crawlDelay===null)return {status:'robots_unavailable'};
+ // Honor the most restrictive declared crawl-delay on the domain. Only
+ // one source is fetched at a time, never parallel requests by origin.
+ await (options.sleep??(ms=>new Promise(resolve=>setTimeout(resolve,ms))))(crawlDelay);
  let fetched;
  try{fetched=await controlledFetch(item.url,fetcher,MAX_BODY_BYTES,
    next=>robotsAllows(policy,next.pathname+next.search));}
