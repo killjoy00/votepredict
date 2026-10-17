@@ -86,3 +86,15 @@ test('official current PAC IDs are leads only, never proof of historical affilia
  assert.equal(s.distinctPublicPacResearchLeadRegistrationsObserved,3);
  assert.equal(s.candidateRowsWithCertifiedOrganizationIssueCrosswalk,0);
 });
+
+test('independent expenditures use affected committee/member identity, not spender-as-recipient',()=>{
+ const x=scoreFinanceIssueFeasibility([{
+  family:'independent_expenditure',row_key:'d'.repeat(64),
+  reg:null,member_id:'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+  spender_reg:'70001',direction:'against',amount:'900.00'
+ }],[],0);
+ assert.equal(x.uniqueIndependentExpenditureRows,1);
+ assert.equal(x.independentExpenditureRowsWithSpenderRegistration,1);
+ assert.equal(x.independentExpenditureRowsWithSupportOpposeDirection,1);
+ assert.equal(x.uniqueCandidateContributionRows,0);
+});
