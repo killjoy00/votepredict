@@ -1,4 +1,5 @@
 name: Collect official Minnesota Senate raw bill-version and amendment text
+run-name: "Official text raw ${{ github.event_name }} run #${{ github.run_number }}"
 
 on:
   pull_request:
@@ -8,6 +9,9 @@ on:
       - scripts/deploy-senate-official-bill-text-neon.ts
       - tests/senate-official-bill-text.test.ts
       - .github/workflows/senate-official-bill-text-production.yml
+      - .github/workflows/senate-official-bill-text-watchdog.yml
+      - scripts/senate-official-bill-text-watchdog.mjs
+      - tests/senate-official-bill-text-watchdog.test.mjs
   push:
     branches: [main]
     paths:
@@ -16,9 +20,10 @@ on:
       - scripts/deploy-senate-official-bill-text-neon.ts
       - tests/senate-official-bill-text.test.ts
       - .github/workflows/senate-official-bill-text-production.yml
-  # Continue bounded idempotent batches without owner dispatch or Vercel.
+  # Incremental hourly backfill; independent watchdog recovers missed runs.
   schedule:
-    - cron: '27 */6 * * *'
+    - cron: '37 * * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -33,9 +38,11 @@ jobs:
   keyless-review:
     if: >-
       github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
       (
         github.event_name == 'pull_request' ||
-        github.event_name == 'schedule' ||
+        (github.event_name == 'schedule' && github.event.schedule == '37 * * * *') ||
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
         (
           github.event_name == 'push' &&
           github.ref == 'refs/heads/main' &&
@@ -140,7 +147,9 @@ jobs:
       - name: Check migration ledger on disposable Postgres
         run: node --import tsx scripts/check-production-migration-drift.ts
       - name: Run focused raw source and schema regressions
-        run: node --import tsx --test tests/senate-official-bill-text.test.ts
+        run: |
+          node --import tsx --test tests/senate-official-bill-text.test.ts
+          node --test tests/senate-official-bill-text-watchdog.test.mjs
       - name: Typecheck, full tests and build
         run: npm run check
       - name: Production dependency audit
@@ -151,10 +160,12 @@ jobs:
     if: >-
       needs.keyless-review.result == 'success' &&
       github.repository == 'killjoy00/votepredict' &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
       (
-        github.event_name == 'schedule' ||
+        (github.event_name == 'schedule' && github.event.schedule == '37 * * * *') ||
+        github.event_name == 'workflow_dispatch' ||
         (
           github.event_name == 'push' &&
           github.event.after == github.sha &&
