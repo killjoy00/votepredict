@@ -172,3 +172,47 @@ collector**, and leaves issue-specific financial features unavailable for
 retrospective replay pending independent old disclosure/organization
 position proofs. Predictive validation remains a separate prospective
 read-only shadow experiment.
+
+
+## V3 bounded prospective first-party release discovery (2026-10-17)
+
+The nine fixed originals proved a working append-only collector, but a weekly
+refetch of fixed pages alone cannot discover new issue-specific publication URLs
+before future Senate votes. V3 adds one pinned first-party index:
+
+- Education Minnesota's [media-resources news release archive](https://educationminnesota.org/news/media-resources/) is captured as a RAW
+  `first_party_historical_context` source under the existing 0031 ledger.
+- Only links literally present as anchor hrefs in the freshly captured and
+  SHA-reverified original HTML may be discovered. The allowed article origin
+  is exactly `educationminnesota.org`; the path must match a publisher
+  `/news/press-release/<article-slug>/` URL. Off-host, scheme-changing, search
+  query, fragment, encoded path, script and comment links are rejected.
+- At most **8 article URLs per run** are followed. Each one is subject to
+  the same independent robots policy, serial polite rate limit, strict HTTPS
+  redirect/content checks and raw UTF-8 byte+SHA snapshot process as the
+  original pinned sources. Stable URL-derived IDs and the existing
+  `(source_id,html_sha256)` unique constraint retain changed versions
+  without duplicating unchanged originals.
+- The reviewed-main protected workflow now runs **weekdays at 14:19 UTC**,
+  with the existing manual recovery entry point and protected CI checks.
+  Discovery configuration, implementation and safety tests are keyless checked
+  before the existing credential-bearing source capture.
+- A missing or unavailable archive page yields no discovered URLs and an
+  aggregate status, not a claim that no publisher positions were made.
+  Safe report fields count pinned/index/discovered attempts and captures;
+  source text, URLs, contributor details and individual matches are never logged.
+
+**Most important limitation:** discovery is raw archiving, **not** a
+publisher position classifier. A captured article's original website dateline
+is not authenticated as that page's earliest public date. This collector only
+proves that the exact captured HTML bytes were seen by our collector on their
+`observed_at` timestamp. No 2021-26 retrospective vote features are opened.
+Captured article URLs must still be independently mapped to an exact Senate
+bill, an unambiguous original pre-vote support/oppose statement, and verified
+financial disclosure. Publisher summary scorecards and post-vote releases
+remain ineligible for past-vote forecast replay. No serving model, materialized
+as-of eligibility, transaction row evidence or forecast is touched.
+
+The archive is not a complete enumeration of every future release: only the
+first eight eligible URLs in its publisher-provided link order are observed
+on a run. Count gaps and any robot/HTTP failures before asserting coverage.
