@@ -75,7 +75,7 @@ test('same-body original+amendment versions are counted distinctly but one canon
 });
 test('raw original extraction gap remains a gap, not a zero contribution',()=>{
  const s=run({reports:[report({v2_extraction_present:false})],spans:[]});
- assert.equal(s.sourceVersionsWithoutV2OriginalSpans,1);
+ assert.equal(s.sourceVersionsWithoutV2Extraction,1);
  assert.equal(s.distinctPacContributionRowsWithProvisionalCandidate,0);
  assert.equal(s.scopedCanonicalPACContributions,1);
 });
