@@ -11,6 +11,8 @@ on:
       - "src/evidence/cfb-pac116-original-a1-geometry-v4.mjs"
       - "scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs"
       - "tests/cfb-pac116-original-a1-geometry-v4.test.mjs"
+      - "src/evidence/cfb-pac116-original-positioned-text-v5.mjs"
+      - "tests/cfb-pac116-original-positioned-text-v5.test.mjs"
       - ".github/workflows/senate-864-cfb-pac-116-contribution-readonly.yml"
   push:
     branches: [main]
@@ -24,6 +26,8 @@ on:
       - "src/evidence/cfb-pac116-original-a1-geometry-v4.mjs"
       - "scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs"
       - "tests/cfb-pac116-original-a1-geometry-v4.test.mjs"
+      - "src/evidence/cfb-pac116-original-positioned-text-v5.mjs"
+      - "tests/cfb-pac116-original-positioned-text-v5.test.mjs"
       - ".github/workflows/senate-864-cfb-pac-116-contribution-readonly.yml"
 permissions:
   contents: read
@@ -55,7 +59,8 @@ jobs:
           node --check scripts/audit-cfb-pac116-original-multicolumn-readonly.mjs
           node --check src/evidence/cfb-pac116-original-a1-geometry-v4.mjs
           node --check scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs
-          node --import tsx --test tests/cfb-pac-contribution-provenance-v1.test.mjs tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs tests/cfb-pac116-original-a1-geometry-v4.test.mjs
+          node --check src/evidence/cfb-pac116-original-positioned-text-v5.mjs
+          node --import tsx --test tests/cfb-pac-contribution-provenance-v1.test.mjs tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs tests/cfb-pac116-original-a1-geometry-v4.test.mjs tests/cfb-pac116-original-positioned-text-v5.test.mjs
           npm run check
   reviewed-main-presecret:
     if: >-
@@ -91,7 +96,8 @@ jobs:
           node --check scripts/audit-cfb-pac116-original-multicolumn-readonly.mjs
           node --check src/evidence/cfb-pac116-original-a1-geometry-v4.mjs
           node --check scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs
-          node --import tsx --test tests/cfb-pac-contribution-provenance-v1.test.mjs tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs tests/cfb-pac116-original-a1-geometry-v4.test.mjs
+          node --check src/evidence/cfb-pac116-original-positioned-text-v5.mjs
+          node --import tsx --test tests/cfb-pac-contribution-provenance-v1.test.mjs tests/cfb-pac116-original-multicolumn-shadow-v2.test.mjs tests/cfb-pac116-original-a1-geometry-v4.test.mjs tests/cfb-pac116-original-positioned-text-v5.test.mjs
           npm run check
           npm audit --omit=dev --audit-level=high
   existing-neon-pac116-finance-readonly:
