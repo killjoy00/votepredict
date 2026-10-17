@@ -89,7 +89,8 @@ function assertRows(allRows,cohortKeys){
   if(!validRowIdentity(r))
    throw Error('Unsafe original PDF comparator identity');
   const k=keyFor(r),finger=fingerprint(r);
-  if(byKey.has(k)&&fingerprint(byKey.get(k))!==finger)
+  if(r.sourceConflict===true||
+   (byKey.has(k)&&fingerprint(byKey.get(k))!==finger))
    uncertainCommittees.add(r.filerReg+'|'+r.year);
   byKey.set(k,r);
   // Malformed or unidentified comparator contributions cannot simply be
