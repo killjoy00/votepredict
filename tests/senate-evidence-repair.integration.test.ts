@@ -141,6 +141,10 @@ export async function exerciseRepair(pool:Pool){
  await runSenateEvidenceLinkBackfill(pool,10000);
  assert.deepEqual(await one('SELECT count(*)::int AS n FROM senate_statement_member_mentions WHERE statement_id=$1',[press]),linkedBefore);
  assert.equal((await one('SELECT count(*)::int AS n FROM senate_author_journal_events WHERE bill_id=$1',[bill])).n,2);
+ // A changed/reordered raw record cannot inherit an old positional identity.
+ await pool.query(`UPDATE source_documents SET metadata=jsonb_set(metadata,
+   '{rawPrepassageVotes,records,0,memberVotes,0,name}','"An Unresolved Different Person"'::jsonb) WHERE id=$1`,[pdf]);
+ assert.equal((await one('SELECT membership_id FROM senate_raw_member_votes_v WHERE source_document_id=$1',[pdf])).membership_id,null);
  assert.ok(person);
 }
 

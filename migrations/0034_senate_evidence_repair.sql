@@ -118,9 +118,11 @@ CROSS JOIN LATERAL (
 ) AS ord
 LEFT JOIN public.senate_raw_vote_bill_mentions AS bm
   ON bm.source_document_id = d.id AND bm.record_ordinal = ord.record_ordinal
+  AND bm.printed_identifier = rec.item->>'billIdentifier'
 LEFT JOIN public.senate_raw_vote_member_mentions AS mm
   ON mm.source_document_id = d.id AND mm.record_ordinal = ord.record_ordinal
   AND mm.role = 'mover' AND mm.name_ordinal = 0
+  AND mm.printed_name = rec.item->>'mover'
 WHERE raw->>'sourceType' IN ('mn_senate_committee_minutes_html', 'mn_senate_committee_minutes_pdf', 'mn_senate_journal');
 
 CREATE OR REPLACE VIEW public.senate_raw_member_votes_v AS
@@ -152,6 +154,7 @@ CROSS JOIN LATERAL jsonb_array_elements(
 LEFT JOIN public.senate_raw_vote_member_mentions AS vm
   ON vm.source_document_id = d.id AND vm.record_ordinal = ord.record_ordinal
   AND vm.role = 'voter' AND vm.name_ordinal = (voter.position - 1)::integer
+  AND vm.printed_name = voter.item->>'name'
 WHERE raw->>'sourceType' IN ('mn_senate_committee_minutes_html', 'mn_senate_committee_minutes_pdf', 'mn_senate_journal');
 
 CREATE OR REPLACE VIEW public.senate_evidence_v AS

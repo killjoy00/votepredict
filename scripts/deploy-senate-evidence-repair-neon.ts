@@ -259,6 +259,10 @@ async function main(): Promise<void> {
           (SELECT count(*)::int FROM senate_role_evidence_v WHERE committee IS NOT NULL) AS committee_roles,
           (SELECT count(*)::int FROM senate_role_evidence_v WHERE committee IS NULL) AS leadership_roles,
           (SELECT count(*)::int FROM senate_evidence_link_receipts) AS link_receipts,
+          (SELECT count(*)::int FROM senate_raw_statements t WHERE NOT EXISTS (
+            SELECT 1 FROM senate_evidence_link_receipts lr WHERE lr.source_table='senate_raw_statements'
+             AND lr.source_row=t.id AND lr.parser_version='senate-evidence-links-v1'
+             AND lr.fingerprint=md5(concat_ws('|',t.named_senators::text,t.bill_identifiers::text,t.published_on::text)))) AS statement_link_backlog,
           (SELECT count(*)::int FROM senate_evidence_v WHERE evidence_type='candidate_website_text') AS website_excerpts,
           (SELECT count(*)::int FROM senate_evidence_v WHERE observed_basis='questionnaire.displayed_submitted_on') AS submission_dated_rows,
           (SELECT count(*)::int FROM senate_bill_text_inventory_v WHERE length(raw_text)>0) AS bill_text_records,
