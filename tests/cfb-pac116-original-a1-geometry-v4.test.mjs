@@ -26,7 +26,7 @@ const table=[
   'Col. 1 Cash','Col. 2 In-kind','Col. 3 Total (cash & in-kind)'],
  ['04/10/2024','30558','Education Minn PAC','300.00','','300.00']
 ];
-const registeredNames=new Map([['30558',NAME]]);
+const registeredNames=new Map([['30558',NAME],['70001','MN Chamber of Commerce Leadership Fd']]);
 function verify(over={}){
  return verifyOriginalA1PacTable({
   report:report(),pageText:page,tablePages:[table],
@@ -136,7 +136,7 @@ test('candidate page selection is a lexical triage, not a source identity proof'
  assert.equal(p.selected.length,1);
  assert.equal(p.allEligible,2);
  assert.equal(p.deferred,1);
- assert.equal(p.originalPagesWithPACRegistration,1);
+ assert.equal(p.originalPagesWithPACRegistration,2);
 });
 
 test('source-page format census distinguishes A1, generic donation and unseen registrations safely',()=>{
