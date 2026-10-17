@@ -9,29 +9,14 @@ import {Pool,type PoolClient} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {runSenateBillAuthorCollection,senateBillAuthorReadback,SENATE_BILL_AUTHORS_MAX_LOOKUPS} from '../src/operations/senate-bill-authors.js';
 import {RevisorPacer} from '../src/operations/senate-revisor-pacer.js';
+import {authorizeSenateBillAuthorsRun,type SenateBillAuthorsGitHubEvent} from '../src/operations/senate-bill-author-run-guard.js';
 
-const MARKER='SENATE_BILL_AUTHORS_PRODUCTION';
-const JOURNAL_ONLY_MARKER='SENATE_BILL_AUTHORS_JOURNALS_ONLY';
 const MIGRATION='0025_senate_bill_authors.sql';
 interface LedgerRow {filename:string;checksum:string}
 function guard(env:NodeJS.ProcessEnv):boolean{
-  if(env.GITHUB_REPOSITORY!=='killjoy00/votepredict' ||
-    env.GITHUB_EVENT_NAME!=='push' || env.GITHUB_REF!=='refs/heads/main' ||
-    env.GITHUB_RUN_ATTEMPT!=='1' ||
-    env.VOTEPREDICT_SENATE_BILL_AUTHORS_INDEPENDENT_CI!=='true' ||
-    !/^[a-f0-9]{40}$/.test(env.GITHUB_SHA??'') || !env.GITHUB_EVENT_PATH)
-    throw Error('Exact marker main-push and independent CI are required');
-  const event=JSON.parse(readFileSync(env.GITHUB_EVENT_PATH,'utf8')) as {
-    ref?:string;after?:string;deleted?:boolean;forced?:boolean;
-    repository?:{full_name?:string};head_commit?:{id?:string;message?:string};
-  };
-  if(event.repository?.full_name!=='killjoy00/votepredict' ||
-    event.ref!=='refs/heads/main' || event.after!==env.GITHUB_SHA ||
-    event.head_commit?.id!==env.GITHUB_SHA ||
-    event.deleted===true || event.forced===true ||
-    !event.head_commit?.message?.includes(MARKER))
-    throw Error('Commit is not exact reviewed first main push with required marker');
-  return event.head_commit.message.includes(JOURNAL_ONLY_MARKER);
+  if(!env.GITHUB_EVENT_PATH)throw Error('Missing authenticated GitHub event payload');
+  const event=JSON.parse(readFileSync(env.GITHUB_EVENT_PATH,'utf8')) as SenateBillAuthorsGitHubEvent;
+  return authorizeSenateBillAuthorsRun(env,event);
 }
 function expectedMigrations():LedgerRow[]{
   const filenames=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort();
@@ -171,7 +156,7 @@ async function main():Promise<void>{
       requestedBillLookups:billLookupLimit,collection:result,sessions,
       remaining_unscanned:result.remainingUnscanned,
       remaining_journals:result.remainingJournals,
-      continuation:'Fresh reviewed main merge commit containing SENATE_BILL_AUTHORS_PRODUCTION',
+      continuation:'Reviewed main marker merge or protected recurring schedule after independent CI',
       servingForecastFeaturesUntouched:true,
     };
     console.log('SENATE_BILL_AUTHORS_PRODUCTION='+JSON.stringify(output));

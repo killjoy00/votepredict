@@ -211,16 +211,60 @@ The scanner still prioritizes 2025-2026 Senate files; no HF bill has been
 scanned, and older biennia are still awaiting Revisor XML status scans. A
 successful workflow is not a claim that overall collection is complete.
 
-### Third reviewed Revisor continuation
+### Verified third bounded Revisor batch: October 16, 2026
 
-A fresh marker-bearing, independently tested and reviewed `main` merge
-requests another **bounded batch of at most 3,000** official bill lookups.
-The collector starts from stored successful/not-found receipts, retains
-1,150-ms minimum serial Revisor pacing, 429/503 halt and 65-minute cutoff,
-and uses the existing protected Neon deployment path. It does **not**
-refetch the 337 completed journal documents or change forecasting, serving,
-or features. Read the exact result from the next protected production
-receipt; do not infer 3,000 successful scans from a requested limit.
+[Production run #38987337164](https://github.com/killjoy00/votepredict/actions/runs/38987337164)
+concluded successfully at 8:44 PM Central. It attempted all **3,000** official
+Revisor bill lookups, with **2,998 successes**, two retryable source errors,
+no source throttling, and no time-budget cutoff. The run stored 7,865 author
+entries, many of which can overlap earlier official or journal captures.
+The protected readback reports:
+
+| Session | Cumulative successful Revisor XML scans | Distinct raw Senate author rows | Membership-linked |
+| --- | ---: | ---: | ---: |
+| 2021-2022 | 0 | 2,937 | 2,936 |
+| 2023-2024 | 2,825 | 8,549 | 8,546 |
+| 2025-2026 | 5,306 | 12,797 | 12,797 |
+| **Total** | **8,131 / 28,938 (28.10%)** | **24,283** | **24,279** |
+
+At that verified readback, **20,807 SF and linked-HF targets** still needed
+successful/not-found receipts; **zero stored Senate journals** were pending.
+House authors and 2021-2022 SF XML had not yet been processed. A successful
+bounded batch is not the same as completing the whole collection.
+
+### Automatically guarded continuation from reviewed main
+
+Owner-authorized ongoing collection is now configured to run **once every two
+hours**, on the approved repository default branch only, using GitHub's
+`schedule` trigger at `37 */2 * * *` (UTC). An ordinary, separately
+reviewed merge commit containing `SENATE_BILL_AUTHORS_PRODUCTION` can also
+start one immediate run. **Unreviewed `workflow_dispatch` remains forbidden.**
+Scheduling simply reuses the same exact workflow and code already reviewed
+on `main`; it cannot point to a feature branch or bypass PR protection.
+
+Both routes first run independent, keyless main verification: exact SHA,
+disposable database migrations, full project check/tests, and high-severity
+production dependency audit. Only successful checks permit the existing
+protected `evidence-readonly-sandbox` Neon job, with exact roster/catalog
+preflight, immutable complete migration-ledger checksum validation, guarded
+production drift gate, and read-only repeatable-read readback.
+
+The scheduled event is checked for exact cron text, repository, default
+branch, authorized workflow ref, main ref, SHA, first attempt, and successful
+independent checks before database connection discovery. Scheduled runs never
+enable the separate journal-only mode. Existing single-concurrency queue
+with `cancel-in-progress: false` prevents overlapping writes, and every
+batch keeps a maximum of 3,000 official bill lookups, a 65-minute collector
+budget, minimum 1,150ms serial request spacing, hard 429/503 stop, and
+idempotent receipts. Nothing writes forecasts, vote serving, models, or
+features.
+
+GitHub scheduled events may be delayed or missed; a separate periodic
+continuation check can review actual Actions runs and, if needed, submit
+a minimal new reviewed marker PR rather than skip safety gates. A run is
+**fully complete only if its protected readback reports**
+`remaining_unscanned: 0` **and** `remaining_journals: 0`. Successful
+bounded runs normally report `bounded_partial`.
 
 Definitions: coauthor share is distinct successfully scanned bills with at
 least one coauthor, divided by successfully scanned bills. Senate link rate is
@@ -238,9 +282,9 @@ journal motions. A fetch date is never substituted for author-added date.
 ## Protected deployment and continuation
 
 Production workflow: .github/workflows/senate-bill-authors-production.yml.
-A first-attempt, non-forced main merge commit must include the marker
-**SENATE_BILL_AUTHORS_PRODUCTION**, after independent-main CI has passed,
-and then run within existing evidence-readonly-sandbox. The runner performs
+A scheduled default-branch event or a first-attempt, non-forced main merge
+commit containing the marker **SENATE_BILL_AUTHORS_PRODUCTION** must pass
+independent-main CI before running in existing evidence-readonly-sandbox. The runner performs
 read-only preflight, ledgered 0025 migration, migration drift gate, bounded
 collection and read-only repeatable-read readback with ROLLBACK.
 GitHub Actions reuses the existing protected Neon credentials and marked
@@ -265,7 +309,7 @@ serial pacing, and 429/503 hard stop remain in force. A terminal run prints
 the actual successful bill count and `remaining_unscanned`, rather than
 assuming the full requested maximum was completed.
 
-For each further batch, review a fresh marker-bearing main change, pass CI
-and merge. The next bounded run resumes from existing scan receipts. Never
-trigger an unreviewed direct dispatch, a forced empty push, overlapping
-Revisor jobs or an uncontrolled parallel crawl.
+A GitHub scheduled run on reviewed main or a fresh reviewed marker-bearing
+merge can continue from existing successful/not-found scan receipts.
+Never trigger an unreviewed direct dispatch, a forced empty push,
+overlapping Revisor jobs or an uncontrolled parallel crawl.
