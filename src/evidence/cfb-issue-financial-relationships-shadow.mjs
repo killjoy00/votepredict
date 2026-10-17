@@ -78,6 +78,10 @@ function safeMemberMoney(record,mode,cutoff){
   // original row-to-disclosure mapping is not independently demonstrated.
   if(record.rowSpecificDisclosureProof!==true||
    record.asOfEligible!==true||
+   !['original_report_exact_row_public_by','independent_archive_capture_exact_row']
+    .includes(record.rowSpecificProofKind)||
+   !HASH.test(record.rowSpecificProofSha256??'')||
+   !URL.test(record.rowSpecificProofUrl??'')||
    !sourceDate(record.availableOn)||record.availableOn>=cutoff||
    record.availableOn<record.transactionDate)return null;
  }
