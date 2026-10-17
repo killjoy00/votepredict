@@ -31,6 +31,21 @@ export function isOriginalA1PacPage(text){
  return /\b(?:SCHEDULE|SCH[.])\s*A\s*1\s*[-–:]?\s*(?:PAC|POLITICAL\s+COMMITTEES?\b|POLITICAL\s+FUNDS?\b)/i
   .test(page);
 }
+export function isOriginalA1RegisteredPacPage(text,registrations){
+ if(typeof text!=='string'||text.length>1000000||
+  !Array.isArray(registrations)||registrations.length!==2||
+  registrations.some(x=>!REG.test(x??'')))return false;
+ const page=text.replace(/\s+/g,' ');
+ // The production official PDF pages use generic "Schedule A1" headings,
+ // not the blank paper form's "Schedule A1 - PAC" suffix. A literal
+ // independently attested PAC registration is REQUIRED to consider them.
+ if(/\bINSTRUCTIONS?\s+FOR\s+(?:SCHEDULE|SCH[.])\s*A\s*1\b/i.test(page))
+  return false;
+ return /\b(?:SCHEDULE|SCH[.])\s*A\s*1\b/i.test(page)&&
+  /\b(?:PAC|political committee|political fund|P[.]?C[.]?F[.]?)\b/i.test(page)&&
+  registrations.some(x=>exactPrintedPacReg(page,x));
+}
+
 export function exactPrintedPacReg(text,registration){
  return REG.test(registration??'')&&typeof text==='string'&&
   new RegExp('(?:^|[^0-9])'+registration+'(?=$|[^0-9])').test(text);
@@ -183,7 +198,8 @@ export function verifyOriginalA1PacTable({
   !HEX.test(report.pdfSha??'')||!Number.isInteger(report.pageNumber)||
   report.pageNumber<1||report.pageNumber>2000)
   throw Error('Unverified PDF version, original body or page identity');
- if(!isOriginalA1PacPage(pageText))
+ if(!isOriginalA1RegisteredPacPage(
+  pageText,[...registeredNames.keys()]))
   return {a1Page:false,tableCount:0,verifiedTableHeaders:0,
    visibleIdentityRowCandidates:0,privateHits:[]};
  if(!Array.isArray(tablePages)||tablePages.length>300)
