@@ -50,5 +50,21 @@ test('audit counts split row and multi-column patterns without emitting text',()
  assert.equal(s.shadow_v2_single_amount_with_name,2);
  assert.equal(s.shadow_v2_multiline_candidates,1);
  assert.equal(s.shadow_v2_multiple_amount_columns,1);
+ assert.equal(s.shadow_v2_two_amount_columns,1);
+ assert.equal(s.shadow_v2_three_amount_columns,0);
+ assert.equal(s.shadow_v2_last_equals_sum_of_prior,0);
  assert.ok(!Object.hasOwn(s,'sourceText'));
+});
+
+test('audit distinguishes arithmetic totals from mere adjacent money amounts',()=>{
+ const page=[
+  'SCHEDULE A1 - CONTRIBUTIONS RECEIVED',
+  'Date \t Cash \t In-kind \t Total',
+  '10/02/2025 Taylor Example \t $100.00 \t $50.00 \t $150.00'
+ ].join('\n');
+ const result=pageLayoutFeatures([page],2025);
+ assert.equal(result.shadow_v2_three_amount_columns,1);
+ assert.equal(result.shadow_v2_last_equals_sum_of_prior,1);
+ assert.equal(result.shadow_v2_tab_delimited_multi,1);
+ assert.equal(result.pages_with_cash_in_kind_total_labels,1);
 });
