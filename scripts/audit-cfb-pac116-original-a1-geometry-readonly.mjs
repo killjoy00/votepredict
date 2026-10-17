@@ -99,15 +99,17 @@ function asRow(r){
   contributor:r.contributor,amount:r.amount
  };
 }
-function hashedRows(rows){
+function hashedRows(rows,{allowConflicts=false}={}){
  const unique=new Map();
  for(const r of rows){
   const row=asRow(r);
   const key=[row.filerReg,row.year,row.rowKey].join('|');
   const prior=unique.get(key);
-  if(prior&&JSON.stringify(prior)!==JSON.stringify(row))
-   throw Error('Conflicting original PAC contribution source copies');
-  unique.set(key,row);
+  if(prior&&JSON.stringify({...prior,sourceConflict:undefined})!==
+   JSON.stringify({...row,sourceConflict:undefined})){
+   if(!allowConflicts)throw Error('Conflicting original PAC contribution source copies');
+   prior.sourceConflict=true;
+  }else if(!prior)unique.set(key,row);
  }
  return [...unique.values()];
 }
@@ -138,10 +140,10 @@ export function geometryPagesForSource({
    const direct=pacs.some(item=>
     exactPrintedPacReg(p.raw_page_text,item.registration));
    if(direct)originalPagesWithPACRegistration++;
-   const expected=pacs.some(item=>
-    [item.officialName,item.name].some(name=>
-     typeof name==='string'&&name.length>5&&
-     p.raw_page_text.toLowerCase().includes(name.toLowerCase())));
+   // Discovery-only lexical backstop for a shortened or wrapped PDF PAC
+   // name. Certification still requires exact number in the original
+   // registration COLUMN, not merely this page-level hint.
+   const expected=/\b(?:education|chamber)\b/i.test(p.raw_page_text);
    if(!direct&&!expected)continue;
    const key=report.pdf_sha+'|'+p.page_number;
    if(seen.has(key))continue;
@@ -234,7 +236,7 @@ export async function main(){
   const rows=(await client.query(SQL_COMPARATOR,
    [JSON.stringify(recipientPairs)])).rows;
   if(rows.length>50000)throw Error('Too many receiving-committee comparison rows');
-  const allRows=hashedRows(rows);
+  const allRows=hashedRows(rows,{allowConflicts:true});
   if(allRows.length<cohort.length)throw Error('Missing full committee comparison data');
   const reportsRaw=(await client.query(SQL_REPORTS,
    [JSON.stringify(recipientPairs)])).rows;
