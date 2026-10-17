@@ -12,6 +12,9 @@ on:
       - "src/evidence/cfb-issue-pac-original-attestations-v2.mjs"
       - "scripts/audit-cfb-pac-original-attestations-readonly.mjs"
       - "tests/cfb-issue-pac-original-attestations-v2.test.mjs"
+      - "data/evidence/cfb-issue-first-party-discovery-v3.json"
+      - "src/evidence/cfb-issue-first-party-discovery-v3.mjs"
+      - "tests/cfb-issue-first-party-discovery-v3.test.mjs"
       - ".github/workflows/senate-864-cfb-issue-source-capture.yml"
   push:
     branches: [main]
@@ -26,9 +29,12 @@ on:
       - "src/evidence/cfb-issue-pac-original-attestations-v2.mjs"
       - "scripts/audit-cfb-pac-original-attestations-readonly.mjs"
       - "tests/cfb-issue-pac-original-attestations-v2.test.mjs"
+      - "data/evidence/cfb-issue-first-party-discovery-v3.json"
+      - "src/evidence/cfb-issue-first-party-discovery-v3.mjs"
+      - "tests/cfb-issue-first-party-discovery-v3.test.mjs"
       - ".github/workflows/senate-864-cfb-issue-source-capture.yml"
   schedule:
-    - cron: "19 14 * * 1"
+    - cron: "19 14 * * 1-5"
   workflow_dispatch:
 permissions:
   contents: read
@@ -70,8 +76,9 @@ jobs:
           node --check src/evidence/cfb-issue-source-observation-v1.mjs
           node --check scripts/capture-cfb-issue-source-observations-protected.mjs
           node --check src/evidence/cfb-issue-pac-original-attestations-v2.mjs
+          node --check src/evidence/cfb-issue-first-party-discovery-v3.mjs
           node --check scripts/audit-cfb-pac-original-attestations-readonly.mjs
-          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs tests/cfb-issue-pac-original-attestations-v2.test.mjs
+          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs tests/cfb-issue-pac-original-attestations-v2.test.mjs tests/cfb-issue-first-party-discovery-v3.test.mjs
           npm run check
   reviewed-main-presecret:
     if: >-
@@ -121,8 +128,9 @@ jobs:
           node --check src/evidence/cfb-issue-source-observation-v1.mjs
           node --check scripts/capture-cfb-issue-source-observations-protected.mjs
           node --check src/evidence/cfb-issue-pac-original-attestations-v2.mjs
+          node --check src/evidence/cfb-issue-first-party-discovery-v3.mjs
           node --check scripts/audit-cfb-pac-original-attestations-readonly.mjs
-          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs tests/cfb-issue-pac-original-attestations-v2.test.mjs
+          node --import tsx --test tests/cfb-issue-source-observation-v1.test.mjs tests/cfb-issue-pac-original-attestations-v2.test.mjs tests/cfb-issue-first-party-discovery-v3.test.mjs
           npm run check
           npm audit --omit=dev --audit-level=high
   guarded-existing-neon-prospective-snapshots:
