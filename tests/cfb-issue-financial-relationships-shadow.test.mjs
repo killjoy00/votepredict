@@ -33,7 +33,11 @@ const row=(changes={})=>({
  employer:'A claimed hospital',
  amount:150,transactionDate:'2024-03-01',
  availableOn:'2024-03-10',asOfEligible:true,
- rowSpecificDisclosureProof:true, ...changes
+ rowSpecificDisclosureProof:true,
+ rowSpecificProofKind:'independent_archive_capture_exact_row',
+ rowSpecificProofSha256:SH,
+ rowSpecificProofUrl:'https://cfb.mn.gov/official/archived-source',
+ ...changes
 });
 const base={
  billId:pos.billId,
@@ -83,6 +87,7 @@ test('unverified donors, employer coincidences and PAC names cannot create group
 test('unknown availability, same-day and post-vote original positions fail closed',()=>{
  for(const changes of [
   {availableOn:null},{asOfEligible:false},{rowSpecificDisclosureProof:false},
+  {rowSpecificProofSha256:null},{rowSpecificProofKind:'filing_estimate'},
   {availableOn:'2024-08-01'},{transactionDate:'2024-08-01'},
   {availableOn:'2024-02-01'}
  ])assert.equal(issueFinancialRelationshipFeatures({...base,financeRows:[row(changes)]}).features,null);
