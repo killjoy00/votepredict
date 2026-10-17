@@ -237,7 +237,8 @@ export function safeOriginalA1PacCohortSummary({
  if(scoped.size!==116)throw Error('Expected 116 distinct PAC finance records');
  const {signatureIndex,uncertainCommittees}=assertRows(allRows,scoped);
  const sourceReports=new Set(reports.map(r=>r.reportVersionId));
- const grouped=new Map(),collision=new Set();
+ const grouped=new Map(),collision=new Set(),rawScopedSourceHits=new Set(),
+  rawSourceRows=new Set();
  let candidatePairs=0,unselectedCandidateHits=0,withA1Header=0,
   withGeometry=0,printedIdentityRows=0;
  for(const p of pageOutcomes){
@@ -248,6 +249,9 @@ export function safeOriginalA1PacCohortSummary({
    if(!sourceReports.has(hit.reportVersionId))
     throw Error('Original PDF proof outside indexed report cohort');
    if(!scoped.has(hit.key)){unselectedCandidateHits++;continue;}
+   rawScopedSourceHits.add(hit.key+'|'+hit.reportVersionId+'|'+
+    hit.pageNumber+'|'+hit.tableRow);
+   rawSourceRows.add(hit.key);
    const r=cohort.find(row=>keyFor(row)===hit.key);
    const collisionKey=[
     r.filerReg,r.year,r.contributorReg,r.transactionDate,
@@ -285,6 +289,8 @@ export function safeOriginalA1PacCohortSummary({
   geometryPagesExtractorFailed:parseFailedPages,
   a1PagesPresent:withA1Header,
   sameRowRegisteredEntityCandidates:printedIdentityRows,
+  sourceTablePACSameRowHitsBeforeComparator:rawScopedSourceHits.size,
+  distinctPACContributionsWithSourceTableHitBeforeComparator:rawSourceRows.size,
   uniqueSourceTableVersionRowPairs:uniquePairs,
   distinctContributionsWithExactSourceTableRow:distinctRows,
   ambiguousDuplicateRowsWithinVersion:duplicateOriginalRows,
