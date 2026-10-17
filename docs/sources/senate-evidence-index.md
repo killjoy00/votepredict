@@ -1,93 +1,55 @@
-# Senate evidence index (`senate_evidence_v`)
+# Senate research evidence: clocks, text and connections
 
-One read-only view over every raw Minnesota Senate evidence body, built so a
-forecast model has a single, as-of-safe place to read evidence from. It does no
-inference, scoring or stance classification. Values are as printed in the
-source.
+Migration `0034_senate_evidence_repair.sql` repairs the research interface. It does not change serving probabilities, historical official votes, immutable forecast revisions, source bodies or the frozen evaluation matrices.
 
-Migrations: `migrations/0032_senate_evidence_v.sql` (the view) and
-`migrations/0033_senate_evidence_dates.sql` (earlier dates, below).
-
-## Columns
-
-| Column | Meaning |
-| --- | --- |
-| `evidence_type` | What kind of evidence the row is (see below) |
-| `membership_id` | The senator's session membership, when the evidence is about a senator |
-| `bill_id` | The bill, when the evidence is about a bill |
-| `observed_on` | Earliest date the evidence is known to have been public |
-| `observed_basis` | Which source column `observed_on` came from |
-| `value_text` | Raw value: vote choice, author role, stated position, score, title, and so on |
-| `value_numeric` | Raw number where one exists: vote share, score, author order, two-party share |
-| `detail` | Context: committee, organization, scorecard group and year, vote kind |
-| `source_table`, `source_row` | Pointer back to the original row |
-| `source_url` | Original source URL where stored |
-
-## As-of rule
-
-To use only evidence available before a vote on date `D`:
+## Safe research entrypoint
 
 ```sql
-SELECT * FROM senate_evidence_v WHERE observed_on < :D;
+SELECT * FROM senate_evidence_asof(:cutoff_date, :target_membership_id);
 ```
 
-`observed_on` is conservative. When a source prints no publication date, the
-view uses the date this project fetched it. That date is later than the true
-publication date, so the filter never lets future evidence leak in; at worst it
-drops some evidence that was really available earlier. Rows with no usable
-date have `observed_on` NULL and are excluded by any cutoff. `observed_basis`
-lets a consumer choose to be stricter, for example by ignoring rows dated only
-by `*.fetched_at`.
+The function uses `observed_on < cutoff_date`: the entire target day is excluded. It carries a person's earlier-session evidence across stable `legislator_id`; it never assigns a challenger to an incumbent. Bill-level context is also returned, so callers must select relevant bills/topics and resolve overlapping official/raw observations before creating a feature matrix. A member mention is not a speaker or stance assertion. The unrestricted `senate_evidence_v` remains a source index, not an automatically deduplicated training dataset.
 
-## Evidence types
+## Content availability versus event dates
 
-| `evidence_type` | Senator | Bill | `observed_on` from |
-| --- | --- | --- | --- |
-| `official_floor_vote` | yes | yes | vote date (official `vote_events`) |
-| `committee_vote`, `raw_floor_vote` | yes | yes | minutes or journal date |
-| `committee_motion`, `raw_floor_motion` | mover | yes | minutes or journal date |
-| `bill_chief_author` | yes (Senate) | yes | earliest of date added and journal introduction line, else bill introduction, else fetch date |
-| `bill_coauthor` | yes (Senate) | yes | earliest of date added and journal introduction line, else fetch date |
-| `committee_testimony` | Senator witnesses only | yes | hearing date |
-| `press_statement_member` | yes | single-bill statements | published date |
-| `press_statement_bill` | single-senator statements | yes | published date |
-| `election_result` | winners | no | election date |
-| `candidate_questionnaire` | yes | no | displayed publication, submission, archive or fetch date |
-| `scorecard_score` / `_grade` / `_rating` / `_endorsement` | yes | no | scorecard publication date, else year-specific archive capture, else fetch date |
-| `scorecard_bill_position` | no | yes | scorecard publication date, else year-specific archive capture, else fetch date |
-| `scorecard_member_vote` | yes | yes | vote date printed on the scorecard |
-| `district_partisanship` | each senator serving that district on the matching plan | no | November 30 of the election year |
-| `bill_text_version` | no | yes | posted date, else Revisor XML posting time, else archive or fetch date |
-| `omnibus_inclusion_mention` | no | yes | minutes or journal date |
+| Family | Research clock and text |
+| --- | --- |
+| Official floor and raw committee/journal actions | Official event/hearing date, with date-exclusive cutoff. Keep amendment/procedural/passage meanings distinct; no inferred individual choices from voice votes. |
+| Introduction authors | Every original journal introduction author, including authors absent from the current XML table. Journal date and printed order only. |
+| Author changes | Separate dated `bill_author_added` / `bill_author_removed` journal events. A future removal never appears as a suffix on an earlier row. Semantic source keys, not positional vote-event rewrites. |
+| Current XML author state | `bill_author_snapshot` at snapshot fetch date. Current role/order is never backdated to an earlier add or introduction. |
+| Press articles | Full `raw_text`. Use the stored original archive observation where available, otherwise original fetch; a displayed article dateline does not date every word. |
+| Questionnaires | Full ordered question/answer text. Use archived-response observation or fetch, never submission or an unverified publication assertion. |
+| Scorecards, grades, organizational positions and publisher-reported votes | First matching original archived **body** or source fetch. A year in a URL, old CDX date, printed vote date or displayed publication date alone cannot date the snapshot. |
+| Bill text captures | Full `raw_text` at capture/archived observation; posting assertions and Revisor XML insertion dates remain source metadata, not proof of current-body availability. |
+| Testimony attachments | Use the earliest retained extracted body and its capture clock; never date newly fetched document wording to an older hearing. Original witness/hearing actions retain their hearing dates. |
+| Candidate website words | Explicitly provenance-qualified literal website research lane and authenticated archive observation, without subjective stance certification. |
+| Other stored public excerpts | Full excerpts from Senate member-linked durable evidence, conservatively dated to stored content observation. Legacy eligibility flags do not backdate them; finance is excluded. |
+| Election results / district returns | Official recorded election facts under their existing event-date policy. District plans remain distinct. |
 
-## Earlier dates (migration 0033)
+Current source rows remain intact. More conservative research dates can reduce historical coverage; that is preferable to silently leaking newer words. Missing first-public evidence remains unknown. Nullable or date-only provenance is never promoted into a precise timestamp.
 
-Three sources used to be dated only by when this project fetched them. Each now
-has an earlier date that is still never before the evidence was public:
+## Committee and leadership roles
 
-- **Authors at introduction** (`senate_bill_introduction_authors`). Senate
-  journals print "Senators A, B, and C introduced-- S.F. No. N" on the day a
-  bill is introduced. Each named senator is dated to that journal
-  (`observed_basis = 'journal.introduction'`). The data is parsed from journal
-  text already stored by the raw-vote collector.
-- **Bill text versions** (`senate_bill_text_version_dates_v`). The Revisor bill
-  status XML stores each text version's posting time (`DATE_INSERT`), and the
-  authors pipeline already stores that XML. Captured versions are matched by
-  bill and `/versions/N` (`'revisor_xml.date_insert'`).
-- **Scorecards** (`senate_scorecard_archive_dates`). The earliest Internet
-  Archive capture of the scorecard URL is used only when the URL names the
-  scorecard's year, so the capture holds that year's scorecard, and only when
-  the capture is not before that year (`'scorecard.archive_first_capture'`).
-  A generic URL such as `/scorecard/` keeps the fetch date.
+`senate_role_evidence_v` exposes the existing official/LRL source observations with member, session, role, committee, original words, source hash, observation date, stated source date and separately nullable effective start/end dates. The shared index includes `committee_role` and `leadership_role`. Unknown tenure is **not** expanded to the whole biennium. A historical page observed today does not establish when its wording was public. These are role observations, not a promise that a role remains current forever. Repeated same-body role ingestion now preserves the earliest retained fetch timestamp.
 
-## Notes
+## Collection-to-consumer connection
 
-- `official_floor_vote` rows are also the forecast target. Filter them by date
-  like any other evidence, so a model only sees votes before the one it
-  predicts.
-- Raw journal floor votes (`raw_floor_vote`) overlap the official floor votes.
-  They are kept so committee and floor records from the same raw source line
-  up; deduplicate on `bill_id`, date and senator if needed.
-- Companion bills are structural rather than dated evidence. Join
-  `bill_companions` to carry evidence across an SF/HF pair.
-- Campaign finance (issue #864 tables) is not included yet.
+The flat raw-vote views and official-text scanner include recovered `mn_senate_committee_minutes_pdf` documents. The incremental link repair connects raw statement/member/bill mentions and raw vote identities using the existing session-scoped resolver. Original text, non-null identities and official vote tables are preserved. Fingerprinted receipts include successful no-mention sources, avoid rescanning completed batches, and are not recorded if the underlying source changes during processing. Unresolved identities remain unresolved.
+
+`.github/workflows/senate-evidence-repair-production.yml` runs on a reviewed marker-bearing main merge and bounded hourly continuation (`23 * * * *` UTC). Every run independently checks main, migrations, full CI and production dependency audit before the existing protected Neon environment. It applies only migration 0034 against the verified predecessor ledger, then performs idempotent bounded linking, journal author-event recovery and capped exact-body scorecard archive proof checks. SQL readbacks use READ ONLY / ROLLBACK; logs contain counts, not source words, people, UUIDs or credentials. No Vercel activation occurs.
+
+## We have bill text; exact vote-paper identity is separate
+
+```sql
+SELECT text_source, count(*), count(DISTINCT bill_id)
+FROM senate_bill_text_inventory_v GROUP BY text_source;
+```
+
+This inventory exposes both `bill_versions.raw_text` and append-only official raw captures. Legacy mutable bill-version bodies have NULL `observed_on` because their current words cannot safely inherit a creation or printed posting date after possible overwrites. The official raw store preserves numbered versions, unofficial engrossments, conference reports and any recovered proposed amendment blocks.
+
+Having full text for a bill does **not** prove which paper a particular vote considered. Existing exact amendment-reference links remain explicit; same-bill candidates, companions, nearest dates and latest versions are not silently converted into exact vote-to-text matches. Complete event-to-version/adopted-amendment lineage remains separately measurable work.
+
+## Historical lineage
+
+Migrations 0032 and 0033 and their original frozen artifacts remain unchanged. The old scorecard CDX-date table is discovery metadata only; the repaired view no longer consumes it. New `senate_scorecard_content_observations` must match snapshot SHA before an earlier date is accepted. Historical candidate finance eligibility and model-promotion policies are unchanged.

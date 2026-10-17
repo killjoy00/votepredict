@@ -27,6 +27,7 @@ interface Catalog {
 interface LinkTally { scanned:number; memberEdges:number; billEdges:number; inclusionEdges:number; aliasesLearned:number; archiveSessionFallbacks:number; unresolvedSessions:number }
 interface Statement {
   id:string; source_url:string; published_on:string|null; archive_captured_at:string|null;
+  fingerprint?:string;
   named_senators:string[]; bill_identifiers:string[];
 }
 interface Testimony {
@@ -40,7 +41,7 @@ interface Election {
   membership_id:string|null;
 }
 interface RawDocument {
-  id:string; source_url:string; fetched_at:string; raw: {
+  id:string; source_url:string; fetched_at:string; fingerprint?:string; raw: {
     sessionSlug?:unknown;sourceDate?:unknown;fetchedAt?:unknown;
     text?:unknown;records?:unknown;
   };
@@ -166,15 +167,19 @@ class AliasBuffer {
     return values.length;
   }
 }
-async function statements(client:PoolClient,cat:Catalog,aliases:AliasBuffer,tally:LinkTally):Promise<void>{
+async function statements(client:PoolClient,cat:Catalog,aliases:AliasBuffer,tally:LinkTally, incrementalLimit?:number):Promise<void>{
   let cursor='';
-  while(tally.scanned<MAX_STATEMENTS) {
+  const limit=incrementalLimit??MAX_STATEMENTS;
+  while(tally.scanned<limit) {
     const q=await client.query<Statement>(
       "SELECT t.id,t.source_url,t.published_on::text,t.named_senators,t.bill_identifiers,"+
+      "md5(concat_ws('|',t.named_senators::text,t.bill_identifiers::text,t.published_on::text)) AS fingerprint,"+
       "a.captured_at::text AS archive_captured_at FROM senate_raw_statements t "+
       "LEFT JOIN senate_raw_statement_archive_captures a ON a.source_url=t.source_url "+
-      "WHERE ($1::text='' OR t.id>NULLIF($1,'')::uuid) ORDER BY t.id LIMIT $2",
-      [cursor,Math.min(250,MAX_STATEMENTS-tally.scanned)]);
+      "WHERE ($1::text='' OR t.id>NULLIF($1,'')::uuid) "+
+      (incrementalLimit ? "AND NOT EXISTS (SELECT 1 FROM senate_evidence_link_receipts lr WHERE lr.source_table='senate_raw_statements' AND lr.source_row=t.id AND lr.parser_version='senate-evidence-links-v1' AND lr.fingerprint=md5(concat_ws('|',t.named_senators::text,t.bill_identifiers::text,t.published_on::text))) " : '')+
+      "ORDER BY t.id LIMIT $2",
+      [cursor,Math.min(250,limit-tally.scanned)]);
     if(!q.rows.length)break;
     const memberRows:Record<string,unknown>[]=[];
     const billRows:Record<string,unknown>[]=[];
@@ -244,6 +249,13 @@ async function statements(client:PoolClient,cat:Catalog,aliases:AliasBuffer,tall
       "FROM jsonb_to_recordset($1::jsonb) AS v(id uuid,session_id uuid,session_match_method text,membership_id uuid,"+
       "membership_match_method text,bill_id uuid,bill_match_method text) WHERE t.id=v.id",
       parentRows);
+    if(incrementalLimit)await client.query(
+      "INSERT INTO senate_evidence_link_receipts(source_table,source_row,fingerprint,parser_version) "+
+      "SELECT 'senate_raw_statements',t.id,v.fingerprint,'senate-evidence-links-v1' "+
+      "FROM senate_raw_statements t JOIN jsonb_to_recordset($1::jsonb) v(id uuid,fingerprint text) ON v.id=t.id "+
+      "WHERE md5(concat_ws('|',t.named_senators::text,t.bill_identifiers::text,t.published_on::text))=v.fingerprint "+
+      "ON CONFLICT(source_table,source_row) DO UPDATE SET "+
+      "fingerprint=EXCLUDED.fingerprint,parser_version=EXCLUDED.parser_version,linked_at=now()",[JSON.stringify(q.rows.map(r=>({id:r.id,fingerprint:r.fingerprint})))]);
     tally.scanned+=q.rows.length;
     tally.memberEdges+=memberRows.length;tally.billEdges+=billRows.length;
     cursor=q.rows.at(-1)!.id;
@@ -371,16 +383,19 @@ async function questionnaires(client:PoolClient,cat:Catalog,aliases:AliasBuffer)
   }
   return {scanned};
 }
-async function rawVotes(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Promise<{
+async function rawVotes(client:PoolClient,cat:Catalog,aliases:AliasBuffer,incrementalLimit?:number):Promise<{
   scanned:number;members:number;bills:number;inclusions:number;
 }>{
   let cursor='',scanned=0,members=0,bills=0,inclusions=0;
-  while(scanned<MAX_VOTE_DOCUMENTS){
+  const limit=incrementalLimit??MAX_VOTE_DOCUMENTS;
+  while(scanned<limit){
     const q=await client.query<RawDocument>(
-      "SELECT id,source_url,fetched_at::text,metadata->'rawPrepassageVotes' AS raw "+
+      "SELECT id,source_url,fetched_at::text,metadata->'rawPrepassageVotes' AS raw,md5((metadata->'rawPrepassageVotes')::text) AS fingerprint "+
       "FROM source_documents WHERE metadata->'rawPrepassageVotes'->>'sessionSlug'=ANY($2::text[]) "+
-      "AND ($1::text='' OR id>NULLIF($1,'')::uuid) ORDER BY id LIMIT $3",
-      [cursor,SESSIONS,Math.min(30,MAX_VOTE_DOCUMENTS-scanned)]);
+      "AND ($1::text='' OR id>NULLIF($1,'')::uuid) "+
+      (incrementalLimit ? "AND NOT EXISTS (SELECT 1 FROM senate_evidence_link_receipts lr WHERE lr.source_table='source_documents' AND lr.source_row=source_documents.id AND lr.parser_version='senate-evidence-links-v1' AND lr.fingerprint=md5((metadata->'rawPrepassageVotes')::text)) " : '')+
+      "ORDER BY id LIMIT $3",
+      [cursor,SESSIONS,Math.min(30,limit-scanned)]);
     if(!q.rows.length)break;
     const memberRows:Record<string,unknown>[]=[];
     const billRows:Record<string,unknown>[]=[];
@@ -477,10 +492,33 @@ async function rawVotes(client:PoolClient,cat:Catalog,aliases:AliasBuffer):Promi
       'ON CONFLICT (mention_key) DO UPDATE SET '+
       'source_bill_id=COALESCE(bill_inclusion_mentions.source_bill_id,EXCLUDED.source_bill_id),'+
       'possible_target_bill_id=COALESCE(bill_inclusion_mentions.possible_target_bill_id,EXCLUDED.possible_target_bill_id)');
+    if(incrementalLimit)await client.query(
+      "INSERT INTO senate_evidence_link_receipts(source_table,source_row,fingerprint,parser_version) "+
+      "SELECT 'source_documents',d.id,v.fingerprint,'senate-evidence-links-v1' "+
+      "FROM source_documents d JOIN jsonb_to_recordset($1::jsonb) v(id uuid,fingerprint text) ON v.id=d.id "+
+      "WHERE md5((d.metadata->'rawPrepassageVotes')::text)=v.fingerprint "+
+      "ON CONFLICT(source_table,source_row) DO UPDATE SET "+
+      "fingerprint=EXCLUDED.fingerprint,parser_version=EXCLUDED.parser_version,linked_at=now()",[JSON.stringify(q.rows.map(r=>({id:r.id,fingerprint:r.fingerprint})))]);
     members+=memberRows.length;bills+=billRows.length;inclusions+=inclusionRows.length;
     scanned+=q.rows.length;cursor=q.rows.at(-1)!.id;
   }
   return {scanned,members,bills,inclusions};
+}
+/** Incremental connection repair, including newly collected articles and recovered PDFs.
+ * Receipts cover successfully processed no-mention sources too, preventing starvation.
+ * Existing source words, official choices, and non-null identities are preserved.
+ */
+export async function runSenateEvidenceLinkBackfill(pool:Pool,max=500){
+  if(!Number.isInteger(max)||max<1||max>10000)throw Error('Invalid evidence link batch limit');
+  const client=await pool.connect();
+  try{
+    const cat=await catalog(client),aliases=new AliasBuffer();
+    const tally:LinkTally={scanned:0,memberEdges:0,billEdges:0,inclusionEdges:0,aliasesLearned:0,archiveSessionFallbacks:0,unresolvedSessions:0};
+    await statements(client,cat,aliases,tally,max);
+    const votes=await rawVotes(client,cat,aliases,max);
+    tally.aliasesLearned=await aliases.flush(client);
+    return {statements:tally,rawVotes:votes};
+  }finally{client.release(true)}
 }
 export async function runSenateRawIdentityBillBackfill(pool:Pool):Promise<{
   statements:LinkTally;testimony:{scanned:number;senatorWitnesses:number;billReferences:number};

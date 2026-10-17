@@ -172,10 +172,12 @@ test('Postgres: journal, Revisor XML and archive dates replace fetch dates in se
           WHERE bill_id=$1 OR (evidence_type LIKE 'scorecard_%' AND source_url LIKE 'https://example.test/${tag}%')
           ORDER BY evidence_type, source_url`, [bill])).rows;
       const pick = (type: string) => rows.filter((r) => r.evidence_type === type).map((r) => [r.observed_on, r.observed_basis]);
-      assert.deepEqual(pick('bill_coauthor'), [['2023-01-12', 'journal.introduction']]);
-      assert.deepEqual(pick('bill_text_version'), [['2023-03-02', 'revisor_xml.date_insert']]);
+      // All four journal coauthors are now exposed independently of the XML scan.
+      assert.deepEqual(pick('bill_coauthor'), Array.from({length:4},()=>['2023-01-12', 'journal.introduction']));
+      // An XML posting assertion cannot date the currently captured body.
+      assert.deepEqual(pick('bill_text_version'), [['2026-10-16', 'bill_text.fetched_at']]);
       assert.deepEqual(pick('scorecard_score'), [
-        ['2023-07-15', 'scorecard.archive_first_capture'],
+        ['2026-10-16', 'scorecard.fetched_at'],
         ['2026-10-16', 'scorecard.fetched_at'],
       ]);
     } finally {

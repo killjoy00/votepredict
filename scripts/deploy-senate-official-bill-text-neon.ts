@@ -299,7 +299,7 @@ async function nextDocuments(db:PoolClient):Promise<RawDocument[]>{
     +"JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn' "
     +'LEFT JOIN senate_official_bill_text_journal_scans scanned ON scanned.source_document_id=d.id '
     +"WHERE s.slug=ANY($1::text[]) AND d.metadata->'rawPrepassageVotes'->>'sourceType' "
-    +"IN ('mn_senate_journal','mn_senate_committee_minutes_html') "
+    +"IN ('mn_senate_journal','mn_senate_committee_minutes_html','mn_senate_committee_minutes_pdf') "
     +'AND (scanned.source_document_id IS NULL OR '
     +"(scanned.status='failed' AND scanned.scanned_at<now()-interval '6 hours' AND scanned.attempts<3)) "
     +'AND EXISTS (SELECT 1 FROM senate_raw_vote_bill_mentions m '
@@ -451,7 +451,7 @@ async function report(db:PoolClient){
       ' LEFT JOIN senate_official_bill_text_journal_scans j ON j.source_document_id=d.id',
       " WHERE s.slug IN ('2025-2026','2023-2024','2021-2022')",
       " AND d.metadata->'rawPrepassageVotes'->>'sourceType'",
-      " IN ('mn_senate_journal','mn_senate_committee_minutes_html')",
+      " IN ('mn_senate_journal','mn_senate_committee_minutes_html','mn_senate_committee_minutes_pdf')",
       ' AND EXISTS (SELECT 1 FROM senate_raw_vote_bill_mentions m',
       ' WHERE m.source_document_id=d.id AND m.bill_id IS NOT NULL)',
       ' GROUP BY s.slug ORDER BY s.slug DESC'
