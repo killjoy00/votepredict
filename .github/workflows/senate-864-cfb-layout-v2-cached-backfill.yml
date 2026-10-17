@@ -1,0 +1,136 @@
+name: "Senate #864 append-only cached official CFB PDF v2 raw candidate spans"
+on:
+  pull_request:
+    paths:
+      - "migrations/0030_cfb_finance_report_v2_raw_spans.sql"
+      - "src/evidence/cfb-report-schedule-layout-shadow-v2.mjs"
+      - "scripts/backfill-cfb-layout-v2-cached-protected.mjs"
+      - "scripts/verify-cfb-layout-v2-sql-local.mjs"
+      - ".github/workflows/senate-864-cfb-layout-v2-cached-backfill.yml"
+  push:
+    branches: [main]
+    paths:
+      - "migrations/0030_cfb_finance_report_v2_raw_spans.sql"
+      - "src/evidence/cfb-report-schedule-layout-shadow-v2.mjs"
+      - "scripts/backfill-cfb-layout-v2-cached-protected.mjs"
+      - "scripts/verify-cfb-layout-v2-sql-local.mjs"
+      - ".github/workflows/senate-864-cfb-layout-v2-cached-backfill.yml"
+permissions:
+  contents: read
+concurrency:
+  group: "cfb-864-v2-versioned-source-${{ github.sha }}"
+  cancel-in-progress: false
+jobs:
+  pr-no-secret-sql-tests:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Prepare disposable PostgreSQL (no production secrets)
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+          sudo -u postgres createdb votepredict
+      - name: Apply all checked-in migrations then ROLLBACK synthetic v2 source span fixture
+        run: |
+          npm run db:migrate
+          node --import tsx scripts/verify-cfb-layout-v2-sql-local.mjs
+      - name: Source-span contract, app tests and build
+        run: |
+          node --check scripts/backfill-cfb-layout-v2-cached-protected.mjs
+          node --import tsx --test tests/cfb-report-schedule-layout-shadow-v2.test.mjs
+          npm run check
+  main-independent-presecret:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_LAYOUT_V2_APPEND_ONLY_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact reviewed main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Prepare disposable local PostgreSQL and verify additive extraction schema
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+          sudo -u postgres createdb votepredict
+          npm run db:migrate
+          node --import tsx scripts/verify-cfb-layout-v2-sql-local.mjs
+      - name: Source-span contracts and complete app tests
+        run: |
+          node --check scripts/backfill-cfb-layout-v2-cached-protected.mjs
+          node --import tsx --test tests/cfb-report-schedule-layout-shadow-v2.test.mjs
+          npm run check
+          npm audit --omit=dev --audit-level=high
+  guarded-existing-neon-append-only-v2:
+    needs: [main-independent-presecret]
+    if: >-
+      needs.main-independent-presecret.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_LAYOUT_V2_APPEND_ONLY_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_CFB_LAYOUT_V2_KEYLESS_PASSED: ${{ needs.main-independent-presecret.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_CFB_LAYOUT_V2_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_LAYOUT_V2_APPEND_ONLY_V1') && 'true' || 'false' }}
+      VOTEPREDICT_CFB_LAYOUT_V2_BATCH_LIMIT: "830"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact independent main revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Append v2 source candidates from existing 830 verified cached report versions
+        run: node --import tsx scripts/backfill-cfb-layout-v2-cached-protected.mjs
