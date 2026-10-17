@@ -107,13 +107,20 @@ function tableHeaders(table){
   return null;
  // A1-PAC form's last monetary column is explicitly "Col. 3 Total".
  // Fail closed if more than one column could be the total column.
- const indices=new Set();
+ const totals=new Set(),regs=new Set(),dates=new Set(),names=new Set();
  for(const row of headers)row.forEach((s,i)=>{
-  if(/(?:col[. ]*3\b|total\s*(?:\(?cash|contribution|\(?in.kind|$))/i.test(s))
-   indices.add(i);
+  if(/\b(?:col[. ]*3\b|total\b)/i.test(s))totals.add(i);
+  if(/\bregistration\b|(?:^|\s)reg(?:istration)?\s*(?:#|number)\b/i.test(s))
+   regs.add(i);
+  if(/\bdate\b/i.test(s)&&/\b(?:received|date)\b/i.test(s))dates.add(i);
+  if(/\bname\b/i.test(s)&&/\b(?:committee|fund|contributor|address)\b/i.test(s))
+   names.add(i);
  });
- if(indices.size!==1)return null;
- return {totalIndex:[...indices][0]};
+ if(totals.size!==1||regs.size!==1||dates.size!==1||
+  names.size!==1)return null;
+ const [totalIndex]=totals,[regIndex]=regs,[dateIndex]=dates,[nameIndex]=names;
+ if(new Set([totalIndex,regIndex,dateIndex,nameIndex]).size!==4)return null;
+ return {totalIndex,regIndex,dateIndex,nameIndex};
 }
 function scanTable({table,rows,report,pageNumber,registeredNames}){
  const headers=tableHeaders(table);
@@ -124,18 +131,18 @@ function scanTable({table,rows,report,pageNumber,registeredNames}){
   const cells=table[i];
   if(!Array.isArray(cells)||cells.length<headers.totalIndex+1)continue;
   const flat=cells.map(v=>String(v??'').trim());
-  const all=flat.join(' ');
-  const dates=[...new Set(flat.flatMap(parsePrintedDates))];
+  const dates=[...new Set(parsePrintedDates(flat[headers.dateIndex]))];
   if(dates.length!==1)continue;
   const amount=printedTotal(flat[headers.totalIndex]);
   if(amount===null)continue;
   for(const r of rows){
-   if(!exactPrintedPacReg(all,r.contributorReg))continue;
+   // The regulated committee number must be in its actual original
+   // registration-number COLUMN, never in a zip, footer or page header.
+   if(!exactPrintedPacReg(flat[headers.regIndex],r.contributorReg))continue;
    identityCandidates++;
    if(dates[0]!==r.transactionDate||amount!==amountCents(r.amount))
     continue;
-   const nameParts=flat.filter((_,idx)=>idx!==headers.totalIndex);
-   if(!nameCorroborates(nameParts.join(' '),r.contributor,
+   if(!nameCorroborates(flat[headers.nameIndex],r.contributor,
     registeredNames.get(r.contributorReg)??''))continue;
    const hitKey=keyFor(r)+'|'+report.reportVersionId+'|'+pageNumber+'|'+i;
    if(seenRows.has(hitKey))continue;
