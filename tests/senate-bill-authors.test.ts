@@ -77,8 +77,8 @@ test('0025 additive, protected independent-main CI and trust-bound recurring sch
   assert.match(runner,/SENATE_BILL_AUTHORS_PRODUCTION/);
   assert.match(workflow,/environment: evidence-readonly-sandbox/);
   assert.match(workflow,/needs.independent-main.result == 'success'/);
-  assert.match(workflow,/cron: '37 \\*\\/2 \\* \\* \\*'/);
-  assert.match(workflow,/github\\.event\\.schedule == '37 \\*\\/2 \\* \\* \\*'/);
+  assert.match(workflow,/cron: '37 \*\/2 \* \* \*'/);
+  assert.match(workflow,/github\.event\.schedule == '37 \*\/2 \* \* \*'/);
   assert.match(workflow,/cancel-in-progress: false/);
   assert.doesNotMatch(workflow,/workflow_dispatch:/);
   assert.match(runner,/authorizeSenateBillAuthorsRun/);
@@ -144,7 +144,8 @@ test('reviewed larger batches finish stored journals and leave readback time aft
     startedAt+SENATE_BILL_AUTHORS_TIME_BUDGET_MS),true);
   const runner=readFileSync('scripts/deploy-senate-bill-authors-neon.ts','utf8');
   const collector=readFileSync('src/operations/senate-bill-authors.ts','utf8');
-  assert.match(runner,/SENATE_BILL_AUTHORS_JOURNALS_ONLY/);
+  const gate=readFileSync('src/operations/senate-bill-author-run-guard.ts','utf8');
+  assert.match(gate,/SENATE_BILL_AUTHORS_JOURNALS_ONLY/);
   assert.match(runner,/journalsOnly\?0:SENATE_BILL_AUTHORS_MAX_LOOKUPS/);
   assert.match(runner,/validateSenateBillAuthorLedger/);
   assert.doesNotMatch(runner,/filenames\.length!==25/);
