@@ -183,3 +183,45 @@ test('locked PDF.js returns real x/y items from a miniature original-PDF fixture
   else await task.destroy();
  }
 });
+
+test('multiline original-PDF PAC block is a provisional source candidate only',()=>{
+ const received=check({items:[
+  item('SCHEDULE A1 Contributions from Political Committees',40,755),
+  item('30558',140,672),
+  item('Education Minn PAC',260,664),
+  item('04/10/2024',40,648),
+  item('$300.00',520,636)
+ ]});
+ assert.equal(received.pacIdLines,1);
+ assert.equal(received.regAndDateLines,0);
+ assert.equal(received.regAndMoneyLines,0);
+ assert.equal(received.nearestPACDateWithin12,0);
+ assert.equal(received.nearestPACDateWithin32,1);
+ assert.equal(received.nearestPACMoneyWithin80,1);
+ assert.equal(received.nearestPACNameWithin12,1);
+ assert.equal(received.source4FieldCandidates,0);
+ assert.equal(received.provisionalMultiBaselinePairsBeforeCollision,1);
+ assert.equal(received.privateQualifiedHits.length,0);
+ const s=score([received]);
+ assert.equal(s.distinctPACContributionsWithProvisionalMultilineBlock,1);
+ assert.equal(s.sourceProvisionalMultilineBlockPairs,1);
+ assert.equal(s.distinctPACContributionsWithPositionedVerifiedOriginalRow,0);
+ assert.equal(s.independentlyProvenHistoricalExactVersionPublicBy,0);
+ assert.ok(!JSON.stringify(s).includes('30558'));
+ assert.ok(!JSON.stringify(s).includes('Education'));
+});
+test('multi-date, other PAC ID or distant transaction cannot cross source row envelope',()=>{
+ const basis=[item('30558',140,672),item('Education Minn PAC',260,664),
+  item('04/10/2024',40,648),item('$300.00',520,636)];
+ const secondDate=check({items:[...basis,item('04/11/2024',40,654)]});
+ assert.equal(secondDate.provisionalMultiBaselinePairsBeforeCollision,0);
+ assert.ok(secondDate.blockDateConflictHolds>0);
+ const secondPAC=check({items:[...basis,item('70001',140,645)]});
+ assert.equal(secondPAC.provisionalMultiBaselinePairsBeforeCollision,0);
+ assert.ok(secondPAC.blockMultiplePACRegistrationHolds>0);
+ const distant=check({items:[item('30558',140,672),
+  item('Education Minn PAC',260,664),
+  item('04/10/2024',40,600),item('$300.00',520,596)]});
+ assert.equal(distant.provisionalMultiBaselinePairsBeforeCollision,0);
+ assert.equal(score([distant]).distinctPACContributionsWithProvisionalMultilineBlock,0);
+});
