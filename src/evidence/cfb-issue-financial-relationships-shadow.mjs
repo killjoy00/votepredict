@@ -15,7 +15,7 @@ const NEGATIVE=/^(?:oppose|against|(?:bill (?:passed|failed),? )?chamber opposed
 const HASH=/^[a-f0-9]{64}$/i;
 const REG=/^[0-9]{3,8}$/;
 const DATE=/^20\d{2}-\d{2}-\d{2}$/;
-const URL=/^https:\/\/[^?#\s]+(?:[/?#][^\s]*)?$/i;
+const HTTPS_URL=/^https:\/\/[^?#\s]+(?:[/?#][^\s]*)?$/i;
 
 export function sourceDate(value){
  if(typeof value!=='string'||!DATE.test(value))return null;
@@ -37,7 +37,7 @@ export function classifyLiteralPublisherBillPosition(value){
  return null;
 }
 function officialCfbSourceUrl(url){
- if(!URL.test(url??''))return false;
+ if(!HTTPS_URL.test(url??''))return false;
  const hostname=new URL(url).hostname.toLowerCase();
  return ['cfb.mn.gov','register.cfb.mn.gov',
   'cfb.state.mn.us','register.cfb.state.mn.us'].includes(hostname);
@@ -50,7 +50,7 @@ export function validAffiliation(record){
   REG.test(record.contributorRegistrationNumber??'')&&
   typeof record.groupName==='string'&&record.groupName.trim().length>4&&
   officialCfbSourceUrl(record.officialCfbUrl)&&
-  URL.test(record.firstPartyAffiliationUrl??'')&&
+  HTTPS_URL.test(record.firstPartyAffiliationUrl??'')&&
   HASH.test(record.officialCfbSha256??'')&&HASH.test(record.firstPartySha256??'')&&
   sourceDate(record.validatedOn)&&sourceDate(record.relationshipPublicByOn)&&
   sourceDate(record.affiliationEffectiveOn)&&
@@ -88,7 +88,7 @@ function safeMemberMoney(record,mode,cutoff){
    !['original_report_exact_row_public_by','independent_archive_capture_exact_row']
     .includes(record.rowSpecificProofKind)||
    !HASH.test(record.rowSpecificProofSha256??'')||
-   !URL.test(record.rowSpecificProofUrl??'')||
+   !HTTPS_URL.test(record.rowSpecificProofUrl??'')||
    !sourceDate(record.availableOn)||record.availableOn>=cutoff||
    record.availableOn<record.transactionDate)return null;
  }
@@ -99,7 +99,7 @@ function eligibleGroupPosition(position,mode,cutoff){
  const stance=classifyLiteralPublisherBillPosition(position.groupPositionRaw);
  if(!stance)return null;
  if(!HASH.test(position.snapshotSha256??'')||
-  !URL.test(position.sourceUrl??''))return null;
+  !HTTPS_URL.test(position.sourceUrl??''))return null;
  const published=sourceDate(position.publishedOn);
  if(mode==='strict_public_as_of'){
   // Original issue position must have been publicly available before vote.
