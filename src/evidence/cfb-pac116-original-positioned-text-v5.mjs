@@ -312,7 +312,8 @@ export function safePositionedOriginalSummary({
  const selected=new Set(cohort.map(key)),reportIds=new Set(reports.map(x=>
   x.reportVersionId));
  if(selected.size!==116)throw Error('PAC cohort source dedupe mismatch');
- const byRow=new Map(),blockByRow=new Map(),strictByRow=new Map();
+ const byRow=new Map(),blockByRow=new Map(),strictByRow=new Map(),
+  candidateAnchorsByVersion=new Map();
  const scalar=['positionedItems','discardedItems','sourceLines','pacIdLines',
   'regAndDateLines','regAndMoneyLines','regDateMoneyLines',
   'regDateMoneyNameLines','candidateRowsWith4ColumnHeader',
@@ -353,6 +354,11 @@ export function safePositionedOriginalSummary({
    if(!blockByRow.has(hit.key))blockByRow.set(hit.key,new Set());
    blockByRow.get(hit.key).add(hit.reportVersionId+'|'+
     hit.pageNumber+'|'+hit.anchorLine);
+   const versionKey=hit.key+'|'+hit.reportVersionId;
+   if(!candidateAnchorsByVersion.has(versionKey))
+    candidateAnchorsByVersion.set(versionKey,new Set());
+   candidateAnchorsByVersion.get(versionKey).add(
+    hit.pageNumber+'|'+hit.anchorLine);
   }
   for(const hit of outcome.privatePositionedCandidates??[]){
    if(!reportIds.has(hit.reportVersionId))
@@ -378,6 +384,33 @@ export function safePositionedOriginalSummary({
     hit.tableRow);
   }
  }
+ const uniqueSourceVersionsByRow=new Map();
+ let privateSingleAnchorVersionCount=0,
+  privateRepeatedAnchorVersionCount=0;
+ for(const [versionKey,anchors] of candidateAnchorsByVersion){
+  if(anchors.size===1)privateSingleAnchorVersionCount++;
+  else privateRepeatedAnchorVersionCount++;
+ }
+ let provisionalWithFullComparator=0,
+  provisionalHeldForIncompleteComparator=0,
+  provisionalHeldForDuplicateSameSignature=0,
+  provisionalWithMultipleVersions=0,
+  provisionalWithOneVersion=0;
+ for(const [rowKey,locations] of blockByRow){
+  const receipt=cohort.find(x=>key(x)===rowKey);
+  const group=receipt.filerReg+'|'+receipt.year;
+  const sig=[receipt.filerReg,receipt.year,receipt.contributorReg,
+   receipt.transactionDate,moneyToCents(receipt.amount)].join('|');
+  if(unsafeReceiving.has(group))
+   provisionalHeldForIncompleteComparator++;
+  else if((signatures.get(sig)?.size??0)!==1)
+   provisionalHeldForDuplicateSameSignature++;
+  else provisionalWithFullComparator++;
+  const versions=new Set([...locations].map(x=>x.split('|')[0]));
+  uniqueSourceVersionsByRow.set(rowKey,versions.size);
+  if(versions.size>1)provisionalWithMultipleVersions++;
+  else provisionalWithOneVersion++;
+ }
  const summary={
   schema:POSITIONED_A1_PAC_VERSION,
   originalReportsInCandidateCohort:reports.length,
@@ -393,6 +426,15 @@ export function safePositionedOriginalSummary({
   distinctPACContributionsWithProvisionalMultilineBlock:blockByRow.size,
   sourceProvisionalMultilineBlockPairs:[...blockByRow.values()]
    .reduce((sum,values)=>sum+values.size,0),
+  provisionalOriginalReportVersionPairs:candidateAnchorsByVersion.size,
+  provisionalOriginalVersionsWithOneAnchor:privateSingleAnchorVersionCount,
+  provisionalOriginalVersionsWithMultipleAnchors:privateRepeatedAnchorVersionCount,
+  provisionalRowsWithOneCandidateVersion:provisionalWithOneVersion,
+  provisionalRowsWithMultipleCandidateVersions:provisionalWithMultipleVersions,
+  provisionalRowsWithCompleteComparator:provisionalWithFullComparator,
+  provisionalRowsHeldForIncompleteComparator:provisionalHeldForIncompleteComparator,
+  provisionalRowsHeldForDuplicateSignature:provisionalHeldForDuplicateSameSignature,
+  provisionalRowsPromotedToExactSourceByLayoutIsolation:0,
   sameBaselinePairsWithExplicitColumnsAndComparator:positionQualifiedPairs,
   distinctPACContributionsWithPositionedVerifiedOriginalRow:strictByRow.size,
   canonicalCompetitionOrIncompleteRecipientRowsHeld:collisions,

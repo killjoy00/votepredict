@@ -225,3 +225,35 @@ test('multi-date, other PAC ID or distant transaction cannot cross source row en
  assert.equal(distant.provisionalMultiBaselinePairsBeforeCollision,0);
  assert.equal(score([distant]).distinctPACContributionsWithProvisionalMultilineBlock,0);
 });
+
+test('25-cohort source candidates remain per-report-version and comparator-held before visual row proof',()=>{
+ const a=check({items:[
+  item('30558',140,672),item('Education Minn PAC',260,664),
+  item('04/10/2024',40,648),item('$300.00',520,636)
+ ]});
+ const b=check({items:[
+  item('30558',140,672),item('Education Minn PAC',260,664),
+  item('04/10/2024',40,648),item('$300.00',520,636)
+ ],report:report({reportVersionId:'18888:24:pcc:YE:0:1'})});
+ const one=score([a]);
+ assert.equal(one.provisionalOriginalReportVersionPairs,1);
+ assert.equal(one.provisionalRowsWithOneCandidateVersion,1);
+ assert.equal(one.provisionalRowsWithCompleteComparator,1);
+ assert.equal(one.provisionalRowsPromotedToExactSourceByLayoutIsolation,0);
+ const amended=score([a,b],{
+  reports:[report(),report({reportVersionId:'18888:24:pcc:YE:0:1'})]
+ });
+ assert.equal(amended.provisionalOriginalReportVersionPairs,2);
+ assert.equal(amended.provisionalRowsWithMultipleCandidateVersions,1);
+ assert.equal(amended.distinctPACContributionsWithPositionedVerifiedOriginalRow,0);
+ const held=score([a],{
+  allRows:[...cohort,receipt(200,{contributorReg:''})]
+ });
+ assert.equal(held.provisionalRowsHeldForIncompleteComparator,1);
+ assert.equal(held.provisionalRowsWithCompleteComparator,0);
+ const collision=score([a],{
+  allRows:[...cohort,receipt(200,{amount:'300.00'})]
+ });
+ assert.equal(collision.provisionalRowsHeldForDuplicateSignature,1);
+ assert.equal(collision.provisionalRowsPromotedToExactSourceByLayoutIsolation,0);
+});
