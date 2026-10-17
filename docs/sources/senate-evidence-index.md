@@ -5,7 +5,8 @@ forecast model has a single, as-of-safe place to read evidence from. It does no
 inference, scoring or stance classification. Values are as printed in the
 source.
 
-Migration: `migrations/0032_senate_evidence_v.sql` (view only, no data copied).
+Migrations: `migrations/0032_senate_evidence_v.sql` (the view) and
+`migrations/0033_senate_evidence_dates.sql` (earlier dates, below).
 
 ## Columns
 
@@ -45,19 +46,39 @@ by `*.fetched_at`.
 | `official_floor_vote` | yes | yes | vote date (official `vote_events`) |
 | `committee_vote`, `raw_floor_vote` | yes | yes | minutes or journal date |
 | `committee_motion`, `raw_floor_motion` | mover | yes | minutes or journal date |
-| `bill_chief_author` | yes (Senate) | yes | date added, else bill introduction, else fetch date |
-| `bill_coauthor` | yes (Senate) | yes | date added, else fetch date |
+| `bill_chief_author` | yes (Senate) | yes | earliest of date added and journal introduction line, else bill introduction, else fetch date |
+| `bill_coauthor` | yes (Senate) | yes | earliest of date added and journal introduction line, else fetch date |
 | `committee_testimony` | Senator witnesses only | yes | hearing date |
 | `press_statement_member` | yes | single-bill statements | published date |
 | `press_statement_bill` | single-senator statements | yes | published date |
 | `election_result` | winners | no | election date |
 | `candidate_questionnaire` | yes | no | displayed publication, submission, archive or fetch date |
-| `scorecard_score` / `_grade` / `_rating` / `_endorsement` | yes | no | scorecard publication date, else fetch date |
-| `scorecard_bill_position` | no | yes | scorecard publication date, else fetch date |
+| `scorecard_score` / `_grade` / `_rating` / `_endorsement` | yes | no | scorecard publication date, else year-specific archive capture, else fetch date |
+| `scorecard_bill_position` | no | yes | scorecard publication date, else year-specific archive capture, else fetch date |
 | `scorecard_member_vote` | yes | yes | vote date printed on the scorecard |
 | `district_partisanship` | each senator serving that district on the matching plan | no | November 30 of the election year |
-| `bill_text_version` | no | yes | posted date, else archive or fetch date |
+| `bill_text_version` | no | yes | posted date, else Revisor XML posting time, else archive or fetch date |
 | `omnibus_inclusion_mention` | no | yes | minutes or journal date |
+
+## Earlier dates (migration 0033)
+
+Three sources used to be dated only by when this project fetched them. Each now
+has an earlier date that is still never before the evidence was public:
+
+- **Authors at introduction** (`senate_bill_introduction_authors`). Senate
+  journals print "Senators A, B, and C introduced-- S.F. No. N" on the day a
+  bill is introduced. Each named senator is dated to that journal
+  (`observed_basis = 'journal.introduction'`). The data is parsed from journal
+  text already stored by the raw-vote collector.
+- **Bill text versions** (`senate_bill_text_version_dates_v`). The Revisor bill
+  status XML stores each text version's posting time (`DATE_INSERT`), and the
+  authors pipeline already stores that XML. Captured versions are matched by
+  bill and `/versions/N` (`'revisor_xml.date_insert'`).
+- **Scorecards** (`senate_scorecard_archive_dates`). The earliest Internet
+  Archive capture of the scorecard URL is used only when the URL names the
+  scorecard's year, so the capture holds that year's scorecard, and only when
+  the capture is not before that year (`'scorecard.archive_first_capture'`).
+  A generic URL such as `/scorecard/` keeps the fetch date.
 
 ## Notes
 
