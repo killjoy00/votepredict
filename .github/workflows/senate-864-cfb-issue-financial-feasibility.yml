@@ -1,0 +1,116 @@
+name: "Senate #864 CFB source-backed issue-specific financial relationship feasibility"
+on:
+  pull_request:
+    paths:
+      - "src/evidence/cfb-issue-financial-relationships-shadow.mjs"
+      - "scripts/audit-cfb-issue-financial-feasibility-readonly.mjs"
+      - "tests/cfb-issue-financial-relationships-shadow.test.mjs"
+      - "tests/cfb-issue-financial-feasibility.test.mjs"
+      - ".github/workflows/senate-864-cfb-issue-financial-feasibility.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/evidence/cfb-issue-financial-relationships-shadow.mjs"
+      - "scripts/audit-cfb-issue-financial-feasibility-readonly.mjs"
+      - "tests/cfb-issue-financial-relationships-shadow.test.mjs"
+      - "tests/cfb-issue-financial-feasibility.test.mjs"
+      - ".github/workflows/senate-864-cfb-issue-financial-feasibility.yml"
+permissions:
+  contents: read
+concurrency:
+  group: "cfb-864-issue-finance-readonly-${{ github.sha }}"
+  cancel-in-progress: false
+jobs:
+  no-secret-pr-contracts:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Test explicit affiliation, two clocks and safe aggregates
+        run: |
+          node --check src/evidence/cfb-issue-financial-relationships-shadow.mjs
+          node --check scripts/audit-cfb-issue-financial-feasibility-readonly.mjs
+          node --import tsx --test tests/cfb-issue-financial-relationships-shadow.test.mjs tests/cfb-issue-financial-feasibility.test.mjs
+      - name: Full source contracts
+        run: npm run check
+  reviewed-main-presecret:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_ISSUE_FINANCE_FEASIBILITY_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact reviewed main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Independent keyless policy and repository tests
+        run: |
+          node --check src/evidence/cfb-issue-financial-relationships-shadow.mjs
+          node --check scripts/audit-cfb-issue-financial-feasibility-readonly.mjs
+          node --import tsx --test tests/cfb-issue-financial-relationships-shadow.test.mjs tests/cfb-issue-financial-feasibility.test.mjs
+          npm run check
+          npm audit --omit=dev --audit-level=high
+  protected-neon-issue-feasibility-readonly:
+    needs: [reviewed-main-presecret]
+    if: >-
+      needs.reviewed-main-presecret.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_ISSUE_FINANCE_FEASIBILITY_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_CFB_ISSUE_FEASIBILITY_KEYLESS_PASSED: ${{ needs.reviewed-main-presecret.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_CFB_ISSUE_FEASIBILITY_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_ISSUE_FINANCE_FEASIBILITY_V1') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact approved main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Count existing canonical donor identity and original publisher bill-position overlap
+        run: node --import tsx scripts/audit-cfb-issue-financial-feasibility-readonly.mjs
