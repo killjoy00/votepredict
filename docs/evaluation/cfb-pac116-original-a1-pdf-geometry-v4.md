@@ -27,3 +27,31 @@ This is a **read-only diagnosis of currently available original PDF contents**. 
 The additive research-only geometry module and test run in no-secret PR CI and again in a separate main SHA preflight. Only a first-attempt reviewed `main` merge bearing the existing marker `SENATE_864_CFB_PAC_116_FINANCE_READONLY_V1` can start the protected existing-Neon audit, using the existing `evidence-readonly-sandbox` credentials and independently resolved production-primary identity. Work executes in a bounded `REPEATABLE READ READ ONLY` transaction with explicit `ROLLBACK`. No migration, source ingestion, financial evidence update, stored eligibility rewrite, prediction, model change, Vercel deployment or additional scheduled collector is authorized.
 
 **Remaining:** For any row the PDF vector extractor cannot resolve, actual human reading/rendered page inspection or separately verified official exact-transaction bulk archival evidence would still be required; this automated job should report that gap rather than pretend a text/table machine has visually authenticated handwriting.
+
+## V5 input layout correction (2026-10-17)
+
+Protected production #39041761234 correctly reproduced 116 target PAC receipt
+rows but found zero source pages titled `SCHEDULE A1 - PAC` and therefore did
+not decode any PDF vector tables. This is **not negative row evidence**.
+
+Protected format audit #39042350682 demonstrated **3,636** already stored
+source PDF pages across **243** relevant report versions, with **1,557**
+pages carrying generic `Schedule A1` headings; **182** pages have an exact
+registered PAC ID; **173** have *both* an A1 heading and a literal registered
+PAC ID. **Zero** use the paper-blank-form `Schedule A1 - PAC` suffix.
+
+The follow-on verifier therefore selects generic **Schedule A1 + political
+committee/fund context + exactly one of the two original-source-attested
+PAC registration numbers**. The production-validated original government PDF
+SHA, distinct registration/date/legal-name/total *vector-table columns*
+and full receiving-committee/year collision checks remain mandatory.
+No page can become a verified hit from a PAC name, topic, report-year guess,
+flat text mention, or generic A1 header alone. There is a source-only
+240-page cap with separate deferred counts; no falsely claimed full
+coverage when the cap is exceeded.
+
+Source-table same-row hits **before** canonical competitor checks are
+counted separately from conflict-free source-qualified pairs; a held
+canonical comparator must never be treated as zero source evidence.
+This remains a current original-body row audit only, never historical
+first-public proof or source activation for past votes.

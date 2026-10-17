@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
- isOriginalA1PacPage,exactPrintedPacReg,verifyOriginalA1PacTable,
+ isOriginalA1PacPage,isOriginalA1RegisteredPacPage,
+ exactPrintedPacReg,verifyOriginalA1PacTable,
  safeOriginalA1PacCohortSummary,PAC116_A1_GEOMETRY_SCHEMA
 } from '../src/evidence/cfb-pac116-original-a1-geometry-v4.mjs';
 import {geometryPagesForSource,safeOriginalPacPageFormatCensus}
@@ -25,7 +26,7 @@ const table=[
   'Col. 1 Cash','Col. 2 In-kind','Col. 3 Total (cash & in-kind)'],
  ['04/10/2024','30558','Education Minn PAC','300.00','','300.00']
 ];
-const registeredNames=new Map([['30558',NAME]]);
+const registeredNames=new Map([['30558',NAME],['70001','MN Chamber of Commerce Leadership Fd']]);
 function verify(over={}){
  return verifyOriginalA1PacTable({
   report:report(),pageText:page,tablePages:[table],
@@ -59,6 +60,7 @@ test('complete CFB A1-PAC table row registers donor, date, name and TOTAL within
  assert.equal(s.schema,PAC116_A1_GEOMETRY_SCHEMA);
  assert.equal(s.distinctContributionsWithExactSourceTableRow,1);
  assert.equal(s.uniqueSourceTableVersionRowPairs,1);
+ assert.equal(s.sourceTablePACSameRowHitsBeforeComparator,1);
  assert.equal(s.unresolvedAmong116,115);
  assert.equal(s.historicalQualifiedPACFinanceFeatures,0);
  assert.equal(s.historicalOriginalVersionFirstPublicByProven,0);
@@ -101,6 +103,7 @@ test('a second canonical contribution competing for the same date, amount and re
  const s=summary([verify()],{allRows:[...cohort,same]});
  assert.equal(s.distinctContributionsWithExactSourceTableRow,0);
  assert.equal(s.collisionsWithOtherCanonicalContributionRows,1);
+ assert.equal(s.sourceTablePACSameRowHitsBeforeComparator,1);
 });
 test('unknown contributor registration in same committee/year cannot disappear from comparator',()=>{
  const other={...row(999),contributorReg:'',sourceConflict:false};
@@ -123,7 +126,7 @@ test('candidate page selection is a lexical triage, not a source identity proof'
  const pages=[
   {pdf_sha256:SHA,page_number:2,raw_page_text:'SCHEDULE A1 - IND 30558'},
   {pdf_sha256:SHA,page_number:3,raw_page_text:page},
-  {pdf_sha256:SHA,page_number:4,raw_page_text:'SCHEDULE A1 - PAC Education Minn PAC'},
+  {pdf_sha256:SHA,page_number:4,raw_page_text:'SCHEDULE A1 - PAC Education Minn PAC 30558'},
   {pdf_sha256:SHA,page_number:5,raw_page_text:'Other source page'}
  ];
  const p=geometryPagesForSource({reports,pages,pacs:[
@@ -133,7 +136,7 @@ test('candidate page selection is a lexical triage, not a source identity proof'
  assert.equal(p.selected.length,1);
  assert.equal(p.allEligible,2);
  assert.equal(p.deferred,1);
- assert.equal(p.originalPagesWithPACRegistration,1);
+ assert.equal(p.originalPagesWithPACRegistration,2);
 });
 
 test('source-page format census distinguishes A1, generic donation and unseen registrations safely',()=>{
@@ -156,4 +159,18 @@ test('source-page format census distinguishes A1, generic donation and unseen re
  assert.ok(!JSON.stringify(got).includes('70001'));
  assert.ok(!JSON.stringify(got).includes('30558'));
  assert.throws(()=>safeOriginalPacPageFormatCensus(pages,['30558']),/Bounded/);
+});
+
+test('real original generic Schedule A1 pages admit PAC proof only with literal registered PAC ID',()=>{
+ const original='SCHEDULE A1 - Contributions from Political Committees and Funds 30558 Date Received';
+ assert.equal(isOriginalA1PacPage(original),false);
+ assert.equal(isOriginalA1RegisteredPacPage(original,['30558','70001']),true);
+ const r=verify({pageText:original});
+ assert.equal(r.privateHits.length,1);
+ for(const bad of [
+  'SCHEDULE A1 - IND individuals 30558',
+  'SCHEDULE B1 political committee 30558',
+  'INSTRUCTIONS FOR SCHEDULE A1 contributions from Political Committees 30558',
+  'SCHEDULE A1 Contributions from political committees 305581'
+ ])assert.equal(isOriginalA1RegisteredPacPage(bad,['30558','70001']),false);
 });
