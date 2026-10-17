@@ -101,6 +101,8 @@ export async function stageHistoryJobs(pool:Pool){
   FROM senate_official_bill_text_captures c JOIN legislative_sessions s ON s.id=c.session_id WHERE c.family<>'amendment'
   UNION SELECT DISTINCT s.id,s.slug,b.id,coalesce(v.text_url,v.source_url),'bill_text' FROM bill_versions v JOIN bills b ON b.id=v.bill_id
   JOIN legislative_sessions s ON s.id=b.session_id JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn' WHERE s.slug=ANY($1::text[])
+  AND(EXISTS(SELECT 1 FROM vote_events ve JOIN chambers ch ON ch.id=ve.chamber_id AND ch.slug='senate' WHERE ve.bill_id=b.id)
+    OR EXISTS(SELECT 1 FROM senate_raw_vote_bill_mentions rm WHERE rm.bill_id=b.id))
   UNION SELECT DISTINCT s.id,s.slug,NULL::uuid,o.source_url,CASE WHEN o.content_type='application/pdf' THEN 'role_pdf' ELSE 'role_html' END
   FROM senate_role_source_snapshots o JOIN legislative_sessions s ON s.id=o.session_id WHERE s.slug=ANY($1::text[])
   UNION SELECT s.id,s.slug,NULL::uuid,'https://www.senate.mn/members?id=leadership','role_html' FROM legislative_sessions s
