@@ -97,7 +97,7 @@ test('PAC number in legal name or amount column does not satisfy registration ge
 test('wrong date, money or legal counterparty cannot create verified row',()=>{
  for(const altered of [
   [item('04/11/2024',40,670),...source.slice(1)],
-  [...source.slice(0,3),item('$301.00',525,670)],
+  [...source.slice(0,3),item('$999.00',525,670)],
   [source[0],source[1],item('Completely Different Fund',265,670),source[3]]
  ]){
   const a=check({items:[...header,...altered]});
