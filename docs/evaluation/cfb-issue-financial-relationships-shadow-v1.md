@@ -117,3 +117,58 @@ Prospective feature use requires genuine original exact-bill publications
 observed before 2027-28 votes, an independently verified financial entity
 affiliation, transaction row-specific public-by proof, and held-out/prospective
 scoring. No historical 2021-26 replay or serving forecast was changed.
+
+
+## V2 exact contemporary PAC registration evidence (next protected shadow)
+
+Source verification for PAC attribution is now a separate, testable research
+step rather than a name-matching heuristic. The official CFB
+[large-contribution-notice index](https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/large-contribution-notices/)
+publicly prints 70001 (MN Chamber of Commerce Leadership Fd), 30558
+(Education Minn PAC), and 30025 (MN AFL-CIO). The
+[Minnesota Chamber elections page](https://www.mnchamber.com/your-voice/elections)
+explicitly describes its *Leadership Fund PAC* and keeps Pro Jobs Majority
+**independent expenditures** separate. The
+[Education Minnesota PAC page](https://educationminnesota.org/advocacy/edmnvotes/political-action-committee/)
+explicitly identifies its union PAC. The captured AFL-CIO news index alone
+does **not** establish an exact analogous legal PAC identity, so 30025
+remains held rather than matched by coincidental organization name.
+
+Pinned, explicit registration-name and first-party PAC-phrase requirements
+are in `data/evidence/cfb-issue-pac-attestation-candidates-v2.json`.
+`src/evidence/cfb-issue-pac-original-attestations-v2.mjs`
+re-hashes the *actual* previously stored 0031 original HTML bytes, verifies
+approved origin, role, expected source ID and original observed timestamp,
+then requires both the exact regulator printed name/registration and
+first-party identification of a PAC. It yields **current-only** candidate
+affiliation records no earlier than the later of both source observation
+dates. No affiliation can be materialized for a replay cutoff on or before
+the date those bytes were observed, even if the webpage carries a 2020 or
+2023 publisher dateline. Any invalid hash, contradicting source version or
+missing original PAC statement fails closed.
+
+A ninth original source is pinned: the
+[Education Minnesota February 25, 2026 press release on HF 2904](https://educationminnesota.org/news/press-release/educators-call-on-legislature-to-create-statewide-health-insurance-pool-for-school-employees/).
+A deterministic neutral parser captures a literal **HF 2904** bill mention
+with its original source hash and observed date; it does not infer a
+legislative vote, direction, or historically pre-vote published position.
+It also excludes retrospective publisher scorecard indexes from neutral
+issue-publication discovery, preventing post-vote records being treated as
+timely forecasts.
+
+After each protected original-source capture (including weekly Mondays),
+the workflow runs
+`scripts/audit-cfb-pac-original-attestations-readonly.mjs` strictly within
+the *existing* Neon database under `REPEATABLE READ READ ONLY` and explicit
+`ROLLBACK`. It logs only aggregate counts of contemporary source-matched
+PACs, unresolved PAC identities, historical contribution rows involving
+currently identified entities, and neutral publisher bill mentions.
+The last metric is not a pre-vote signal; historical money rows do not become
+eligible merely because a current PAC identity was verified.
+
+This stage intentionally requires **no new migration**, makes **no writes
+to the v1 0031 source observations outside the existing append-only
+collector**, and leaves issue-specific financial features unavailable for
+retrospective replay pending independent old disclosure/organization
+position proofs. Predictive validation remains a separate prospective
+read-only shadow experiment.
