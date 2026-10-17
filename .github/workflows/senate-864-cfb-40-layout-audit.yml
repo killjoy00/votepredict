@@ -3,12 +3,16 @@ on:
   pull_request:
     paths:
       - "scripts/audit-cfb-40-report-layout-readonly.mjs"
+      - "src/evidence/cfb-report-schedule-layout-shadow-v2.mjs"
+      - "tests/cfb-report-schedule-layout-shadow-v2.test.mjs"
       - "tests/cfb-40-pdf-layout-audit.test.mjs"
       - ".github/workflows/senate-864-cfb-40-layout-audit.yml"
   push:
     branches: [main]
     paths:
       - "scripts/audit-cfb-40-report-layout-readonly.mjs"
+      - "src/evidence/cfb-report-schedule-layout-shadow-v2.mjs"
+      - "tests/cfb-report-schedule-layout-shadow-v2.test.mjs"
       - "tests/cfb-40-pdf-layout-audit.test.mjs"
       - ".github/workflows/senate-864-cfb-40-layout-audit.yml"
 permissions:
@@ -36,7 +40,8 @@ jobs:
       - name: Verify source and safe deterministic audit unit cases
         run: |
           node --check scripts/audit-cfb-40-report-layout-readonly.mjs
-          node --import tsx --test tests/cfb-40-pdf-layout-audit.test.mjs
+          node --check src/evidence/cfb-report-schedule-layout-shadow-v2.mjs
+          node --import tsx --test tests/cfb-40-pdf-layout-audit.test.mjs tests/cfb-report-schedule-layout-shadow-v2.test.mjs
       - name: Full app static and test suite
         run: npm run check
   main-independent-presecret:
@@ -68,7 +73,8 @@ jobs:
       - name: Verify collector scope and standalone deterministic tests
         run: |
           node --check scripts/audit-cfb-40-report-layout-readonly.mjs
-          node --import tsx --test tests/cfb-40-pdf-layout-audit.test.mjs
+          node --check src/evidence/cfb-report-schedule-layout-shadow-v2.mjs
+          node --import tsx --test tests/cfb-40-pdf-layout-audit.test.mjs tests/cfb-report-schedule-layout-shadow-v2.test.mjs
           npm run check
           npm audit --omit=dev --audit-level=high
   guarded-existing-neon-layout-readonly:
