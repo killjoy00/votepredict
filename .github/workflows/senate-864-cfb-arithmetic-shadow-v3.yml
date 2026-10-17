@@ -1,0 +1,116 @@
+name: "Senate #864 CFB provisional arithmetic total-column matching audit (read-only)"
+on:
+  pull_request:
+    paths:
+      - "src/evidence/cfb-report-schedule-arithmetic-shadow-v3.mjs"
+      - "scripts/audit-cfb-v3-arithmetic-canonical-readonly.mjs"
+      - "tests/cfb-report-schedule-arithmetic-shadow-v3.test.mjs"
+      - "tests/cfb-arithmetic-audit-v3.test.mjs"
+      - ".github/workflows/senate-864-cfb-arithmetic-shadow-v3.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/evidence/cfb-report-schedule-arithmetic-shadow-v3.mjs"
+      - "scripts/audit-cfb-v3-arithmetic-canonical-readonly.mjs"
+      - "tests/cfb-report-schedule-arithmetic-shadow-v3.test.mjs"
+      - "tests/cfb-arithmetic-audit-v3.test.mjs"
+      - ".github/workflows/senate-864-cfb-arithmetic-shadow-v3.yml"
+permissions:
+  contents: read
+concurrency:
+  group: "cfb-864-v3-arithmetic-shadow-${{ github.sha }}"
+  cancel-in-progress: false
+jobs:
+  pr-no-secret-candidate-tests:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Synthetic source-header and unique-name guarded shadow matching
+        run: |
+          node --check src/evidence/cfb-report-schedule-arithmetic-shadow-v3.mjs
+          node --check scripts/audit-cfb-v3-arithmetic-canonical-readonly.mjs
+          node --import tsx --test tests/cfb-report-schedule-arithmetic-shadow-v3.test.mjs tests/cfb-arithmetic-audit-v3.test.mjs
+      - name: Full repository CI, no production credentials
+        run: npm run check
+  main-independent-presecret:
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_ARITHMETIC_SHADOW_V3')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exactly the reviewed main revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Re-test source geometry matching before opening credentials
+        run: |
+          node --check src/evidence/cfb-report-schedule-arithmetic-shadow-v3.mjs
+          node --check scripts/audit-cfb-v3-arithmetic-canonical-readonly.mjs
+          node --import tsx --test tests/cfb-report-schedule-arithmetic-shadow-v3.test.mjs tests/cfb-arithmetic-audit-v3.test.mjs
+          npm run check
+          npm audit --omit=dev --audit-level=high
+  guarded-existing-neon-readonly:
+    needs: [main-independent-presecret]
+    if: >-
+      needs.main-independent-presecret.result == 'success' &&
+      github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_CFB_ARITHMETIC_SHADOW_V3')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_CFB_ARITHMETIC_KEYLESS_PASSED: ${{ needs.main-independent-presecret.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_CFB_ARITHMETIC_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_ARITHMETIC_SHADOW_V3') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact reviewed main revision before secret-bearing read-only job
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --no-fund --no-audit
+      - name: Compare original report arithmetic candidates with existing canonical rows in rollback transaction
+        run: node --import tsx scripts/audit-cfb-v3-arithmetic-canonical-readonly.mjs
