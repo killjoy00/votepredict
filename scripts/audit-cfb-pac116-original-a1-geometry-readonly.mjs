@@ -132,7 +132,7 @@ export function geometryPagesForSource({
  let pacA1PageCount=0,originalPagesWithPACRegistration=0,
   imageOrUnrenderedPages=0;
  for(const report of reports){
-  for(const p of bySha.get(report.pdf_sha)??[]){
+  for(const p of bySha.get(report.pdfSha)??[]){
    if(!printable(p.raw_page_text)||p.raw_page_text.trim().length<15)
     imageOrUnrenderedPages++;
    if(!isOriginalA1PacPage(p.raw_page_text))continue;
@@ -145,11 +145,11 @@ export function geometryPagesForSource({
    // registration COLUMN, not merely this page-level hint.
    const expected=/\b(?:education|chamber)\b/i.test(p.raw_page_text);
    if(!direct&&!expected)continue;
-   const key=report.pdf_sha+'|'+p.page_number;
+   const key=report.pdfSha+'|'+p.page_number;
    if(seen.has(key))continue;
    seen.add(key);
    selected.push({
-    pdfSha:report.pdf_sha,pageNumber:Number(p.page_number),
+    pdfSha:report.pdfSha,pageNumber:Number(p.page_number),
     rawPageText:p.raw_page_text
    });
   }
