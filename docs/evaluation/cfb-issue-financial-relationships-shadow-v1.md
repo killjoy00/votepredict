@@ -176,7 +176,7 @@ read-only shadow experiment.
 
 ## V3 bounded prospective first-party release discovery (2026-10-17)
 
-The nine fixed originals proved a working append-only collector, but a weekly
+The nine original captures proved a working append-only collector, but a weekly
 refetch of fixed pages alone cannot discover new issue-specific publication URLs
 before future Senate votes. V3 adds one pinned first-party index:
 
@@ -216,3 +216,11 @@ as-of eligibility, transaction row evidence or forecast is touched.
 The archive is not a complete enumeration of every future release: only the
 first eight eligible URLs in its publisher-provided link order are observed
 on a run. Count gaps and any robot/HTTP failures before asserting coverage.
+
+One additional pinned issue-source page was independently located at the publisher:
+[Education Minnesota, March 18 2026 health care cost crisis](https://educationminnesota.org/news/press-release/educators-demand-action-on-the-health-care-cost-crisis/).
+Its text literally names **S.F. 2909 / H.F. 2904**; the neutral bill parser now
+recognizes such dotted abbreviations. The source's 2026 dateline is not a
+historical archive capture and cannot be used to backdate its observed bytes,
+or certify a pre-vote stance. All captured original positions remain unverified
+as to source-qualified pre-vote admissibility.
