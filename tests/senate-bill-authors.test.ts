@@ -88,6 +88,7 @@ test('0025 additive, protected independent-main CI and trust-bound recurring sch
 test('scheduled or reviewed main launch requires exact independent CI and denies dispatch/replay',()=>{
   const sha='a'.repeat(40);
   const env:NodeJS.ProcessEnv={
+    NODE_ENV:'test',
     GITHUB_REPOSITORY:'killjoy00/votepredict',
     GITHUB_EVENT_NAME:'push',GITHUB_REF:'refs/heads/main',
     GITHUB_RUN_ATTEMPT:'1',GITHUB_SHA:sha,
