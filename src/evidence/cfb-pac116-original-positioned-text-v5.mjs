@@ -145,14 +145,70 @@ function rowValid(r){
   typeof r.contributor==='string'&&r.contributor.length>=5&&
   validDay(r.transactionDate)&&moneyToCents(r.amount)!==null;
 }
+function shortestDistance(lines,y,predicate){
+ let d=Infinity;
+ for(const l of lines){
+  if(predicate(l))d=Math.min(d,Math.abs(l.y-y));
+ }
+ return d;
+}
+function sourcePACAnchorBlock(lines,lineIndex,registeredNames,candidates,report){
+ const anchor=lines[lineIndex],regs=[...registeredNames.keys()];
+ const hasReg=regs.filter(id=>exactPrintedPacReg(anchor.text,id));
+ if(!hasReg.length)return null;
+ const nearest={
+  date:shortestDistance(lines,anchor.y,l=>parsePrintedDates(l.text).length>0),
+  money:shortestDistance(lines,anchor.y,l=>numericDollars(l.text).length>0),
+  name:shortestDistance(lines,anchor.y,l=>hasReg.some(id=>
+   distinctNameEvidence(l.text,registeredNames.get(id),
+    registeredNames.get(id))))
+ };
+ // A bounded *diagnostic* extraction envelope, not an invented printed
+ // table. A qualifying name/date/total in neighbouring lines is never
+ // upgraded to exact original table containment by this helper.
+ const nearby=lines.filter(l=>Math.abs(l.y-anchor.y)<=48);
+ const dates=new Set(nearby.flatMap(l=>parsePrintedDates(l.text)));
+ const amounts=new Set(nearby.flatMap(l=>numericDollars(l.text)));
+ const otherRegs=new Set();
+ for(const line of nearby)for(const id of regs)
+  if(exactPrintedPacReg(line.text,id))otherRegs.add(id);
+ const candidateRows=[];
+ let rejectedCompetingDate=0,rejectedMultipleRegs=0;
+ for(const row of candidates){
+  if(!hasReg.includes(row.contributorReg))continue;
+  if(!dates.has(row.transactionDate)||
+   !amounts.has(moneyToCents(row.amount)))continue;
+  const named=nearby.some(l=>distinctNameEvidence(
+   l.text,row.contributor,registeredNames.get(row.contributorReg)));
+  if(!named)continue;
+  // Two distinct transaction dates or different PAC registrations in one
+  // proximity envelope may straddle multiple actual report rows.
+  if(dates.size!==1){rejectedCompetingDate++;continue;}
+  if(otherRegs.size!==1){rejectedMultipleRegs++;continue;}
+  candidateRows.push({
+   key:key(row),reportVersionId:report.reportVersionId,
+   pageNumber:report.pageNumber,anchorLine:lineIndex
+  });
+ }
+ return {nearest,candidateRows,rejectedCompetingDate,
+  rejectedMultipleRegs};
+}
+
 function sourceStats(){
  return {a1SourcePositioned:false,positionedItems:0,discardedItems:0,
   sourceLines:0,pacIdLines:0,regAndDateLines:0,regAndMoneyLines:0,
   regDateMoneyLines:0,regDateMoneyNameLines:0,
   cohortCandidateRecords:0,source4FieldCandidates:0,
   candidateRowsWith4ColumnHeader:0,positionedGeometryOriginalHitPairs:0,
+  nearestPACDateWithin12:0,nearestPACDateWithin32:0,
+  nearestPACDateWithin80:0,nearestPACMoneyWithin12:0,
+  nearestPACMoneyWithin32:0,nearestPACMoneyWithin80:0,
+  nearestPACNameWithin12:0,nearestPACNameWithin32:0,
+  nearestPACNameWithin80:0,
+  provisionalMultiBaselinePairsBeforeCollision:0,
+  blockDateConflictHolds:0,blockMultiplePACRegistrationHolds:0,
   textLayerTooSparse:false,privatePositionedCandidates:[],
-  privateQualifiedHits:[]};
+  privateQualifiedHits:[],privateBlockCandidates:[]};
 }
 export function reconcilePositionedOriginalA1Page({
  items,cachedPageText,report,allRows,registeredNames,sourceHashVerified
@@ -184,6 +240,22 @@ export function reconcilePositionedOriginalA1Page({
   if(![...registeredNames.keys()].some(reg=>exactPrintedPacReg(line.text,reg)))
    continue;
   outcome.pacIdLines++;
+  const block=sourcePACAnchorBlock(
+   lines,li,registeredNames,candidates,report);
+  if(block){
+   for(const [kind,label] of [
+    ['date','Date'],['money','Money'],['name','Name']
+   ]){
+    for(const limit of [12,32,80]){
+     if(block.nearest[kind]<=limit)
+      outcome['nearestPAC'+label+'Within'+limit]++;
+    }
+   }
+   outcome.blockDateConflictHolds+=block.rejectedCompetingDate;
+   outcome.blockMultiplePACRegistrationHolds+=block.rejectedMultipleRegs;
+   outcome.privateBlockCandidates.push(...block.candidateRows);
+   outcome.provisionalMultiBaselinePairsBeforeCollision+=block.candidateRows.length;
+  }
   const dates=parsePrintedDates(line.text);
   const dollars=numericDollars(line.text);
   if(dates.length)outcome.regAndDateLines++;
@@ -240,10 +312,16 @@ export function safePositionedOriginalSummary({
  const selected=new Set(cohort.map(key)),reportIds=new Set(reports.map(x=>
   x.reportVersionId));
  if(selected.size!==116)throw Error('PAC cohort source dedupe mismatch');
- const byRow=new Map(),strictByRow=new Map();
+ const byRow=new Map(),blockByRow=new Map(),strictByRow=new Map();
  const scalar=['positionedItems','discardedItems','sourceLines','pacIdLines',
   'regAndDateLines','regAndMoneyLines','regDateMoneyLines',
-  'regDateMoneyNameLines','candidateRowsWith4ColumnHeader'];
+  'regDateMoneyNameLines','candidateRowsWith4ColumnHeader',
+  'nearestPACDateWithin12','nearestPACDateWithin32',
+  'nearestPACDateWithin80','nearestPACMoneyWithin12',
+  'nearestPACMoneyWithin32','nearestPACMoneyWithin80',
+  'nearestPACNameWithin12','nearestPACNameWithin32',
+  'nearestPACNameWithin80','provisionalMultiBaselinePairsBeforeCollision',
+  'blockDateConflictHolds','blockMultiplePACRegistrationHolds'];
  const totals=Object.fromEntries(scalar.map(s=>[s,0]));
  let pagesPositioned=0,pagesSparse=0,privateCandidatePairs=0,
   positionQualifiedPairs=0,competingSourceRows=0,
@@ -267,6 +345,14 @@ export function safePositionedOriginalSummary({
    if(!Number.isSafeInteger(outcome[f])||outcome[f]<0||outcome[f]>100000)
     throw Error('Unsafe original PDF aggregate diagnostic');
    totals[f]+=outcome[f];
+  }
+  for(const hit of outcome.privateBlockCandidates??[]){
+   if(!reportIds.has(hit.reportVersionId))
+    throw Error('Original multiline block outside PDF report registry');
+   if(!selected.has(hit.key))continue;
+   if(!blockByRow.has(hit.key))blockByRow.set(hit.key,new Set());
+   blockByRow.get(hit.key).add(hit.reportVersionId+'|'+
+    hit.pageNumber+'|'+hit.anchorLine);
   }
   for(const hit of outcome.privatePositionedCandidates??[]){
    if(!reportIds.has(hit.reportVersionId))
@@ -304,6 +390,9 @@ export function safePositionedOriginalSummary({
   ...totals,
   originalSameBaselineSourceCandidatePairs:privateCandidatePairs,
   distinctPACContributionsWithPositionedCandidate:byRow.size,
+  distinctPACContributionsWithProvisionalMultilineBlock:blockByRow.size,
+  sourceProvisionalMultilineBlockPairs:[...blockByRow.values()]
+   .reduce((sum,values)=>sum+values.size,0),
   sameBaselinePairsWithExplicitColumnsAndComparator:positionQualifiedPairs,
   distinctPACContributionsWithPositionedVerifiedOriginalRow:strictByRow.size,
   canonicalCompetitionOrIncompleteRecipientRowsHeld:collisions,

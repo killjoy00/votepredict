@@ -62,3 +62,29 @@ Synthetic tests verify the actual locked PDF.js coordinate API using a
 generated valid one-page PDF fixture, plus fail-closed cases for neighbouring
 baseline, wrong amount/date/registered PAC/name/column, fused text, canonical
 collision, incomplete registered donor identity, and amendment alias.
+
+
+## V6: source-only multi-baseline block audit (no eligibility promotion)
+
+Production source run #39063654212 passed all guards and read 22,259
+positioned items from 173 rehashed original CFB PDFs; 176 individual
+PDF text baselines have PAC registration numbers, but **none**
+contains the PAC ID, date and amount together on the same baseline.
+This falsifies a single-line geometry assumption; it does **not** prove
+the source never itemized these contributions.
+
+The bounded v6 check measures the nearest actual printed date, amount
+and independently registered legal name to each original PAC ID at
+12/32/80 PDF coordinate point thresholds. It also constructs
+**provisional only** original multi-baseline source candidates using
+a tight 48-point envelope; it must observe the same exact registered
+PAC ID, contribution date, canonical amount and corroborating name,
+plus **one distinct date** and **one exact PAC identity** in that
+envelope. A second printed date, different PAC number or fields
+outside that bound prevent this diagnostic match. No block matching
+result can ever assert an independently checked original printed
+table-row, historical public-by or new issue-finance feature.
+
+The source-positioned v5 same-baseline classifier and stringent
+date/registration/name/total-column source proofs remain in place,
+and the resulting safe aggregate output labels each result separately.
