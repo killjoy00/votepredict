@@ -26,7 +26,7 @@ Role recovery has three explicit bases:
 
 - `role.authenticated_archive_observation`: the literal historical committee/leadership page or assignment PDF was observed at the retained archive capture.
 - `role.official_action_date`: a dated official journal records an actual election/adopted leadership declaration, or official minutes explicitly identify a chair/vice chair. Nominations, witnesses' outside titles and generic reporting senators are not promoted into roles. This is a historical legislative-act fact, not a claim that a web page was published that day.
-- `role.official_stated_roster_date`: a freshly downloaded original official assignment PDF explicitly dates its list within the requested biennium. Its stated role-fact date and the actual download clock are retained separately. A bare biennium/year is insufficient. This does not establish when that PDF body became public.
+- `role.dated_roster_fetched_at`: a freshly downloaded original official assignment PDF explicitly dates its list within the requested biennium. Its stated role-fact date and the actual download clock are retained separately. A bare biennium/year is insufficient. The printed date does not backdate current wording in the strict as-of interface. `role_observed_on` remains available for an explicitly selected retrospective factual-role experiment, without pretending the PDF's historical public availability was proved.
 
 `senate_role_history_v` retains both clocks, original words and nullable stated tenure dates. These observations also enter `senate_role_evidence_v` and the shared `senate_evidence_asof` interface. The date-exclusive cutoff excludes the entire target day. Point observations do not silently become whole-biennium or indefinite tenures. A prior role observation can be a historical feature; it does not establish that the member still held that role on a later vote date.
 
@@ -40,7 +40,7 @@ SELECT observed_basis, count(*), count(membership_id)
 FROM senate_role_history_v GROUP BY observed_basis;
 ```
 
-The coverage denominator is accepted official Senate **events**, split by session and motion kind. Separate columns measure exact question identity, exact proposal text, original-source verification, any same-bill text observed before the vote day, and an explicit exact base observed before that day. None substitutes for complete amended state. Pipeline readback additionally reports senator/vote-day pairs with an earlier dated role observation; this is not a count of proven continuous tenures.
+The coverage denominator is accepted official Senate **events**, split by session and motion kind. Separate columns measure exact question identity, exact proposal text, original-source verification, any same-bill text observed before the vote day, and an explicit exact base observed before that day. None substitutes for complete amended state. Pipeline readback additionally separates senator/vote-day pairs with an earlier admissible role observation from those with only a retrospective dated-roster fact. Neither counts proven continuous tenures.
 
 `complete_assembled_bill_text` is false and `availability_relation` is `at_vote_identity_not_pre_vote_publication_proof`. Officially considered wording, historical web availability, and introduction-time availability are different questions. An exhaustive modeling exercise must select the intended prediction horizon and eligibility rules explicitly. These views are not a deduplicated training matrix and do not change forecast weights.
 

@@ -84,11 +84,14 @@ async function main(){
     min(h.observed_on)::text AS first_observed,max(h.observed_on)::text AS last_observed
     FROM senate_role_history_v h JOIN legislative_sessions s ON s.id=h.session_id GROUP BY s.slug,h.observed_basis ORDER BY s.slug,h.observed_basis`)).rows;
    const roleCoverage=(await db.query(`WITH first_role AS MATERIALIZED(
-    SELECT m.legislator_id,min(h.observed_on) AS first_seen FROM senate_role_history_v h JOIN memberships m ON m.id=h.membership_id GROUP BY m.legislator_id
+    SELECT m.legislator_id,min(h.observed_on) AS first_seen,
+    min(h.role_observed_on) FILTER(WHERE h.observed_basis='role.dated_roster_fetched_at') AS first_dated_fact
+    FROM senate_role_history_v h JOIN memberships m ON m.id=h.membership_id GROUP BY m.legislator_id
    ), targets AS MATERIALIZED(SELECT DISTINCT v.session_id,m.id AS membership_id,m.legislator_id,v.occurred_on
     FROM member_votes mv JOIN vote_events v ON v.id=mv.vote_event_id JOIN memberships m ON m.id=mv.membership_id
     JOIN chambers c ON c.id=v.chamber_id AND c.slug='senate')
-   SELECT s.slug AS session,count(*)::int AS senator_vote_days,count(*) FILTER(WHERE f.first_seen<t.occurred_on)::int AS with_earlier_dated_role_observation
+   SELECT s.slug AS session,count(*)::int AS senator_vote_days,count(*) FILTER(WHERE f.first_seen<t.occurred_on)::int AS with_earlier_dated_role_observation,
+   count(*) FILTER(WHERE f.first_dated_fact<t.occurred_on)::int AS with_earlier_stated_roster_fact_without_publication_proof
    FROM targets t JOIN legislative_sessions s ON s.id=t.session_id JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
    LEFT JOIN first_role f ON f.legislator_id=t.legislator_id WHERE s.slug IN ('2021-2022','2023-2024','2025-2026') GROUP BY s.slug ORDER BY s.slug`)).rows;
    const texts=(await db.query(`SELECT s.slug AS session,c.family,count(*)::int AS captures,

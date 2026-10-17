@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {Pool} from 'pg';
 import {parseJournalPaperActions,rollMatches,hash,explicitVersionLocator} from '../src/operations/senate-vote-paper-parser.js';
-import {backfillVotePapers,historyRoster,parseDatedRoleActs,verifyPaperSources,connectExplicitBaseCaptures} from '../src/operations/senate-vote-paper-backfill.js';
+import {backfillVotePapers,historyRoster,parseDatedRoleActs,verifyPaperSources,connectExplicitBaseCaptures,storeHistoricalRoles} from '../src/operations/senate-vote-paper-backfill.js';
 import {archiveCaptures,archiveTimestamp,validHistorySource,captureArchivedHistory,recoverHistoricalArchives,statedAssignmentDate,stageHistoryJobs} from '../src/operations/senate-history-archive.js';
 import {assertPaperHistoryRun,PAPER_HISTORY_MARKER} from '../src/operations/senate-paper-history-gate.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
@@ -140,6 +140,12 @@ export async function exercisePaperHistory(pool:Pool){
  assert.equal((await q("SELECT count(*)::int AS n FROM senate_role_history_v WHERE membership_id=$1 AND observed_on<'2023-02-01'",[members[0]])).n,0);
  const roleHtml=`<h1>2023 - 2024 Biennium</h1><h2>Finance Committee</h2><h3>Committee Leadership</h3><p>Chair</p><p>${a}, 1, DFL</p><h3>Committee Members</h3><p>${b}, 2, R</p>`;
  const roster=await historyRoster(pool),job={job_key:'e'.repeat(64),kind:'role_html' as const,session_id:session,bill_id:null,slug:'2023-2024',identifier:null,source_url:'https://www.senate.mn/committees/committee_bio.html?cmte_id=3120&ls=93'};
+ const statedUrl='https://example.test/'+tag+'/dated-roster';
+ await storeHistoricalRoles(pool,roster,{sessionId:session,slug:'2023-2024',sourceUrl:statedUrl,body:'Official dated source retained today',originalSha:'e'.repeat(64),
+  occurredOn:'2023-01-01',kind:'official_dated_roster',roles:[{senatorName:a,role:'Chair',committee:'Finance',startsOn:null,endsOn:null,rawContent:'Historical role fact'}]});
+ const stated=await q("SELECT role_observed_on::text AS fact_date,observed_on=fetched_at::date AS actual_clock FROM senate_role_history_v WHERE source_url=$1",[statedUrl]);
+ assert.equal(stated.fact_date,'2023-01-01');assert.equal(stated.actual_clock,true);
+ assert.equal((await q("SELECT count(*)::int AS n FROM senate_evidence_asof('2023-04-01',$1) WHERE source_url=$2",[members[0],statedUrl])).n,0,'a printed roster date does not backdate current words');
  assert.ok(await captureArchivedHistory(pool,job,'20230301000000',Buffer.from(roleHtml),roster)>0);
  assert.equal((await q("SELECT count(*)::int AS n FROM senate_role_history_v WHERE membership_id=$1 AND observed_basis='role.authenticated_archive_observation' AND observed_on='2023-03-01'",[members[0]])).n,2);
  const versionUrl=`https://www.revisor.mn.gov/bills/93/2023/0/SF/${number}/versions/ue/1/`;

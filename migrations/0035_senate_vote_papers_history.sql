@@ -170,11 +170,13 @@ CREATE TABLE senate_role_history_items (
 CREATE INDEX senate_role_history_member_idx ON senate_role_history_items(membership_id);
 CREATE VIEW senate_role_history_v AS
 SELECT i.*,h.session_id,h.source_url,h.archive_url,h.content_sha256,
- coalesce(h.observed_at::date,h.occurred_on) AS observed_on,
+ CASE WHEN h.source_kind='official_dated_roster' THEN h.fetched_at::date
+  ELSE coalesce(h.observed_at::date,h.occurred_on) END AS observed_on,
  CASE WHEN h.source_kind='official_action' THEN 'role.official_action_date'
-  WHEN h.source_kind='official_dated_roster' THEN 'role.official_stated_roster_date'
+  WHEN h.source_kind='official_dated_roster' THEN 'role.dated_roster_fetched_at'
   ELSE 'role.authenticated_archive_observation' END::text AS observed_basis,
- h.observed_at AS content_observed_at,h.occurred_on AS role_observed_on,h.fetched_at,
+ CASE WHEN h.source_kind='official_dated_roster' THEN h.fetched_at ELSE h.observed_at END AS content_observed_at,
+ h.occurred_on AS role_observed_on,h.fetched_at,
  'point_observation_no_unstated_tenure'::text AS tenure_scope
 FROM senate_role_history_items i JOIN senate_role_history_sources h ON h.id=i.source_id
 LEFT JOIN source_documents d ON d.id=h.source_document_id
