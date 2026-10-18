@@ -1,14 +1,10 @@
 name: Restore Senate DFL backfill after missed hourly collections
 run-name: "DFL recovery watchdog ${{ github.event_name }} #${{ github.run_number }}"
 
-# Main-branch pushes are independent of GitHub's unreliable schedule events.
-# Cron is only a secondary fallback; ChatGPT's independent hourly recovery
-# check also watches the same protected collector.
+# Historical 2023-2025 DFL URL backfill complete. Automatic watchdog
+# dispatch is retired to avoid repeated archive requests. Explicit manual
+# recovery remains available when separately reviewed.
 on:
-  push:
-    branches: [main]
-  schedule:
-    - cron: '23 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -25,9 +21,7 @@ jobs:
       github.repository == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      (github.event_name == 'push' ||
-       (github.event_name == 'schedule' && github.event.schedule == '23 * * * *') ||
-       github.event_name == 'workflow_dispatch')
+      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
