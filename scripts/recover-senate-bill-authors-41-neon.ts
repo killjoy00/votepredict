@@ -300,7 +300,28 @@ async function main():Promise<void>{
       const pacer=new RevisorPacer({intervalMs:1300});
       const captures:OfficialHtmlCapture[]=[];
       for(const item of AUTHOR_HTML_RECOVERY_CASES){
-        const capture=await fetchOfficialHtmlForCase(item,pacer);
+        let capture:OfficialHtmlCapture;
+        try {
+          capture=await fetchOfficialHtmlForCase(item,pacer);
+        } catch(error) {
+          const msg=error instanceof Error?error.message:'unknown';
+          const known=[
+            'Incomplete or oversized official bill status HTML',
+            'HTML bill heading does not match exact requested identifier',
+            'Revisor legislature / two-year session does not match bill',
+            'No exact public Authors (N) heading',
+            'Invalid public author count',
+            'Authors list not bounded by actions heading',
+            'Listed current authors do not match Authors (N) count',
+            'Non-author / malformed name in official author list',
+            'Ambiguous or repeated official author names',
+          ];
+          const code=known.find(v=>msg===v)??'fetch_or_unknown_source_validation';
+          console.error('SENATE_BILL_AUTHORS_41_PAGE_HELD='+JSON.stringify({
+            session:item.session,identifier:item.identifier,reason:code,
+          }));
+          throw error;
+        }
         captures.push(capture);
         console.log('SENATE_BILL_AUTHORS_41_HTML_PARSED='+JSON.stringify({
           session:item.session,identifier:item.identifier,
