@@ -36,7 +36,10 @@ export function validateGitHubEvent(env, payload) {
 export function decideRecovery(runs, now=Date.now(), minIdleMs=MIN_IDLE_MS) {
   if(!Array.isArray(runs) || !Number.isFinite(now) || minIdleMs < 60*60*1000)
     throw Error('Invalid bounded DFL watchdog inputs');
-  const checked = runs.map(run => {
+  // GitHub can create a workflow run whose guarded jobs are all skipped on
+  // an unmarked main push. That is not a collector attempt: counting it as
+  // fresh suppresses a needed recovery after missed scheduled runs.
+  const checked = runs.filter(run => run.conclusion !== 'skipped').map(run => {
     const time = Date.parse(run.created_at ?? '');
     if(!Number.isFinite(time) || time > now + 60_000 || !run.status)
       throw Error('Unknown GitHub DFL workflow run timestamp or status');
