@@ -1,0 +1,78 @@
+name: '#863 SF3534 independently source-named 6-4 versus protected stored 5-4'
+on:
+  pull_request:
+    paths:
+      - src/evaluation/historical-roster-863-sf3534-named-proof.ts
+      - scripts/audit-historical-roster-863-sf3534-named-readonly.ts
+      - tests/historical-roster-863-sf3534-named-proof.test.ts
+      - .github/workflows/historical-roster-863-sf3534-named-readonly.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: historical-roster-863-sf3534-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  keyless-review:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+      (github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'ROSTER_863_SF3534_ORIGINAL_NAMED_VS_STORED_V1_20261018')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Test source-side public name match and protected read-only SQL bounds
+        run: |
+          node --import tsx --test tests/historical-roster-863-sf3534-named-proof.test.ts
+          node --import tsx scripts/audit-historical-roster-863-sf3534-named-readonly.ts --preflight
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  protected-original-identity-readback:
+    needs: [keyless-review]
+    if: >-
+      needs.keyless-review.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'ROSTER_863_SF3534_ORIGINAL_NAMED_VS_STORED_V1_20261018')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      SF3534_863_APPROVAL: READ_ONLY_PUBLIC_NAMED_20240221
+      SF3534_863_MAIN_CI_PASSED: ${{ needs.keyless-review.result == 'success' && 'true' || 'false' }}
+      SF3534_863_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'ROSTER_863_SF3534_ORIGINAL_NAMED_VS_STORED_V1_20261018') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert reviewed exact main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Independently verify pinned original 2024 LRL PDF then compare protected raw names READ ONLY/ROLLBACK
+        run: node --import tsx scripts/audit-historical-roster-863-sf3534-named-readonly.ts --protected
