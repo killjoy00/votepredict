@@ -148,3 +148,18 @@ export function dflSitemapShard(candidates:DflSitemapCandidate[],runNumber:numbe
   const selected=[...inShard.slice(offset),...inShard.slice(0,offset)];
   return {shard,shardCount:DFL_SITEMAP_SHARD_COUNT,selected};
 }
+
+/** One reviewed backfill may visit all genuinely unstored publisher originals
+ * without wasting requests on completed 24-shard entries. This is bounded,
+ * deterministic and uses original publisher sitemap order (2025/24/23 first).
+ * Last-modified date is only a queue hint, never proof of publication date.
+ */
+export function dflOutstandingReviewBatch(
+  candidates:DflSitemapCandidate[],stored:ReadonlySet<string>,cap=225,
+):DflSitemapCandidate[]{
+  if(candidates.length<300||candidates.length>2000||
+    new Set(candidates.map(c=>c.url)).size!==candidates.length||
+    !Number.isSafeInteger(cap)||cap<1||cap>225)
+    throw Error('Unreviewed publisher inventory or oversized DFL one-shot');
+  return candidates.filter(c=>!stored.has(c.url)).slice(0,cap);
+}
