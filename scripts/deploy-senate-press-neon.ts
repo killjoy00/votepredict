@@ -19,7 +19,7 @@ import {
 const MIGRATION = '0016_senate_raw_statements.sql';
 const MARKER = 'SENATE_PRESS_RAW_PRODUCTION_20261015';
 const DFL_REPAIR_MARKER = 'SENATE_PRESS_DFL_REPAIR_20261015';
-const DFL_CURRENT_MARKER = 'SENATE_DFL_2026_MISSING_RAW_20261018';
+const DFL_MURPHY_MARKER = 'SENATE_DFL_ERIN_MURPHY_2025_20261018';
 const DFL_ONLY = process.env.VOTEPREDICT_SENATE_PRESS_DFL_ONLY === 'true';
 const COVERAGE_MARKER = 'SENATE_PRESS_COVERAGE_20261015';
 const GOP_MARKER = 'SENATE_GOP_RAW_REPAIR_20261015';
@@ -68,7 +68,7 @@ function assertReviewedMain(): boolean {
     || event.head_commit?.id !== env.GITHUB_SHA
     || !event.head_commit?.message?.includes(COVERAGE ? COVERAGE_MARKER : GOP_ONLY ? GOP_MARKER : DFL_ONLY ? DFL_REPAIR_MARKER : MARKER))
     throw Error('One-shot protected production merge marker missing or mismatched');
-  return DFL_ONLY && event.head_commit?.message?.includes(DFL_CURRENT_MARKER)===true;
+  return DFL_ONLY && event.head_commit?.message?.includes(DFL_MURPHY_MARKER)===true;
 }
 function expectedMigrations(): Ledger[] {
   const files = readdirSync('migrations').filter(x => /^\d{4}_[a-z0-9_-]+\.sql$/.test(x)).sort();
@@ -139,35 +139,25 @@ async function main(): Promise<void> {
   let pool: Pool | undefined;
   try {
     if (process.argv.length !== 2) throw Error('Unexpected production arguments');
-    const current2026Review=assertReviewedMain();
+    const recoverHistoricalMurphy=assertReviewedMain();
     const expected = expectedMigrations();
     const sources = configuredSources().filter(s =>
       GOP_ONLY ? s.id==='senate_republicans' : !DFL_ONLY || s.id==='senate_dfl');
     if (sources.length !== ((DFL_ONLY||GOP_ONLY) ? 1 : 2))
       throw Error('Expected reviewed first-party source subset not found');
-    let reviewedCurrentUrls:string[]=[];
-    const unavailable2025Original=
+    const murphySourceUrl=
       'https://senatedfl.mn/senate-majority-leader-erin-murphy-responds-to-house-power-sharing-agreement/';
-    if(current2026Review){
-      phase='pinned_2026_first_party_publisher_url_selection';
+    if(recoverHistoricalMurphy){
+      phase='pinned_first_party_2025_erinn_murphy_original';
       const pages=[];
       for(const pinned of HISTORICAL_DFL_SITEMAPS){
         pages.push(await fetchArchivedDFLSitemap(pinned));
         await sleep(1400);
       }
       const originals=orderedHistoricalDFLCandidates(pages);
-      const current=originals
-        .filter(c=>c.lastModifiedOn?.slice(0,4)==='2026').map(c=>c.url);
-      if(current.length!==33||
-        !originals.some(c=>c.url===unavailable2025Original&&
-          c.lastModifiedOn?.slice(0,4)==='2025'))
-        throw Error('Unexpected pinned DFL 2026 originals or missing 2025 exception');
-      // The sole remaining original 2025 archival HTML replay is unusable;
-      // the actual February 2025 publication is still first-party live HTML.
-      // Last-modified hints select the URL only, not its publication date.
-      reviewedCurrentUrls=[...current,unavailable2025Original];
-      if(new Set(reviewedCurrentUrls).size!==34)
-        throw Error('Reviewed first-party current plus historical exception URL count differs');
+      if(originals.length!==1150 ||
+        originals.filter(c=>c.url===murphySourceUrl&&c.lastModifiedOn?.slice(0,4)==='2025').length!==1)
+        throw Error('Requested Murphy historical original not exactly pinned in the publisher sitemap');
     }
     phase = 'existing_default_branch_primary';
     const target = await discoverExistingVotePredictNeonConnection({
@@ -266,26 +256,35 @@ async function main(): Promise<void> {
       }));
     };
     for (const source of sources) {
-      if(current2026Review){
-        for(const url of reviewedCurrentUrls){
-          // Exact official URL allowlist, robots.txt and per-request courtesy
-          // rate-limits are enforced by the existing direct-article collector.
-          const lowerBound=url===unavailable2025Original?'2025-01-01':'2026-01-01';
-          const upperBound=url===unavailable2025Original?'2025-12-31':END;
-          const item=await collectDirectArticle(source,url,
-            {from:lowerBound,to:upperBound,delayMs:1500},store);
-          record({
-            source:source.id,source_type:source.source_type,
-            from:lowerBound,to:upperBound,pages:1,discovered:1,
-            matched:item.inserted,inserted:item.inserted,previewed:0,
-            already_present:item.already_present,outside_range:0,
-            undated:0,by_year:{},member_archives:[],archive_gaps:[],
-            failures:item.failures,
-          });
-          await sleep(1800);
-          if(item.failures.some(f=>/Publisher rate-limited collection/.test(f.reason)))
-            break;
-        }
+      if(recoverHistoricalMurphy){
+        // A first-party 2025 page whose Wayback replay is unavailable.
+        // Recover its current publisher-original text without inventing a
+        // historical archive capture or a pre-vote observation timestamp.
+        const guardedOriginal={
+          existing:(urls:string[])=>store.existing(urls),
+          insert:async(item:import('../src/sources/minnesota/senate-press-raw.js').RawSenateStatement)=>{
+            if(item.source_id!=='senate_dfl'||item.source_url!==murphySourceUrl||
+              item.published_on!=='2025-02-06'||item.raw_text.length<100||
+              !/Erin Murphy/i.test(item.title))
+              throw Error('Murphy original, publication date or full text did not match review');
+            return store.insert(item);
+          },
+        };
+        const recovered=await collectDirectArticle(source,murphySourceUrl,
+          {from:'2025-02-06',to:'2025-02-06',delayMs:1500},guardedOriginal);
+        record({
+          source:source.id,source_type:source.source_type,
+          from:'2025-02-06',to:'2025-02-06',pages:1,discovered:1,
+          matched:recovered.inserted,inserted:recovered.inserted,previewed:0,
+          already_present:recovered.already_present,outside_range:0,
+          undated:0,by_year:recovered.inserted?{'2025':recovered.inserted}:{},
+          member_archives:[],archive_gaps:[],failures:recovered.failures,
+        });
+        // A successful GitHub job must prove that the exact official article
+        // exists as complete RAW text, even if a parallel collector inserted it
+        // before this deduplicated one-shot.
+        if(recovered.failures.length || recovered.inserted+recovered.already_present!==1)
+          throw Error('The exact Murphy original could not be recovered');
         continue;
       }
       const window = { from: START, to: END, maxPages: MAX_PAGES, delayMs: 1500 };
@@ -342,10 +341,36 @@ async function main(): Promise<void> {
       if (n < prior || n - prior !== inserted || n > 200000 || n === 0)
         throw Error('Production raw statement source count inconsistent with inserts');
     }
+    let murphyVerified:null|{sourceUrl:string;publishedOn:string;rawTextLength:number;archivedCaptureCount:number}=null;
+    if(recoverHistoricalMurphy){
+      phase='verify_exact_first_party_murphy_2025_raw_and_provenance';
+      murphyVerified=await readonly(pool,async c=>{
+        const raw=await c.query<{source_url:string;published_on:string;title:string;raw_text_length:number}>(
+          "SELECT source_url,to_char(published_on,'YYYY-MM-DD') AS published_on,title,"+
+          "length(raw_text)::integer AS raw_text_length FROM senate_raw_statements "+
+          "WHERE source_id='senate_dfl' AND source_url=$1",[murphySourceUrl]);
+        const row=raw.rows[0];
+        if(raw.rows.length!==1||row.source_url!==murphySourceUrl||
+          row.published_on!=='2025-02-06'||row.raw_text_length<100||
+          !/Erin Murphy/i.test(row.title))
+          throw Error('Exact Murphy 2025 raw statement failed protected readback');
+        const captures=await c.query<{total:string}>(
+          "SELECT count(*)::text AS total FROM senate_raw_statement_archive_captures WHERE source_url=$1",
+          [murphySourceUrl]);
+        return {sourceUrl:row.source_url,publishedOn:row.published_on,
+          rawTextLength:row.raw_text_length,archivedCaptureCount:Number(captures.rows[0].total)};
+      });
+      console.log('SENATE_DFL_ERIN_MURPHY_HISTORICAL_RAW_VERIFIED='+JSON.stringify({
+        ...murphyVerified,
+        originalFirstPartyArticleRecovered:true,
+        provenanceOfThisRecovery:'live_first_party_page_fetch',
+        doesNotEstablishContemporaneousArchivedObservation:true,
+      }));
+    }
     const report = {
       status: 'migration_committed_raw_backfill_readback',
-      current2026PinnedSitemapReview:current2026Review,
-      targetedCurrentUrls:reviewedCurrentUrls.length,
+      targetedHistoricalMurphy2025:recoverHistoricalMurphy,
+      murphyRawVerified:murphyVerified!==null,
       migration: MIGRATION, migrationApplied,
       dateFrom: START, dateTo: END, mode: MODE, dflOnlyRepair: DFL_ONLY,
       before: beforeTotals, after: afterTotals,
