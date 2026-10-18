@@ -9,9 +9,10 @@ import {
 import {execFileSync} from 'node:child_process';
 import type {SenateCommitteeVoteObservation} from
  '../src/evidence/minnesota-senate-committee-minutes.js';
-const targets=(JSON.parse(readFileSync(
- 'data/evaluation/historical-roster-863-senate-50-public-source-targets.json','utf8'))
- as {targets:OfficialSourceTarget863[]}).targets;
+const frozenTargets=JSON.parse(readFileSync(
+ 'data/evaluation/historical-roster-863-senate-50-public-source-targets.json','utf8')) as
+ {targets:OfficialSourceTarget863[]};
+const targets=frozenTargets.targets;
 test('exact 50 original mismatch events and 30 official source documents frozen',()=>{
  assert.equal(validateSenate863SourceTargets(targets),true);
  assert.equal(targets.filter(x=>x.named.yea+x.named.nay===0).length,49);
