@@ -1,0 +1,82 @@
+name: '#863 50 Senate mismatches exact 30 public original LRL PDFs'
+on:
+  pull_request:
+    paths:
+      - data/evaluation/historical-roster-863-senate-50-public-source-targets.json
+      - src/evaluation/historical-roster-863-official-minutes-proof.ts
+      - scripts/audit-roster-863-fifty-originals.ts
+      - tests/historical-roster-863-official-minutes-proof.test.ts
+      - .github/workflows/historical-roster-863-50-original-pdfs.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: historical-roster-863-public-originals-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  keyless-review:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+       (github.event_name == 'push' &&
+        github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        contains(github.event.head_commit.message, 'ROSTER_863_FIFTY_PUBLIC_ORIGINALS_V1_20261018')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: 50 fixed events, 30 exact official URL checks and source proof tests
+        run: |
+          node --import tsx --test tests/historical-roster-863-official-minutes-proof.test.ts
+          node --import tsx scripts/audit-roster-863-fifty-originals.ts --preflight
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  public-original-pdf-proof:
+    needs: [keyless-review]
+    if: >-
+      needs.keyless-review.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'ROSTER_863_FIFTY_PUBLIC_ORIGINALS_V1_20261018')
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    env:
+      SENATE863_PUBLIC_MAIN_CI_PASSED: ${{ needs.keyless-review.result == 'success' && 'true' || 'false' }}
+      SENATE863_PUBLIC_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'ROSTER_863_FIFTY_PUBLIC_ORIGINALS_V1_20261018') && 'true' || 'false' }}
+      ROSTER863_ORIGINAL_OUTPUT: ${{ github.workspace }}/roster-863-official-source-audit
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify same reviewed main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Bounded original official PDF download, hash and distinct named-vote analysis
+        run: node --import tsx scripts/audit-roster-863-fifty-originals.ts --run
+      - name: Retain original source link/hash and all 50 decision rows
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-roster-863-50-original-official-source-proof
+          path: ${{ github.workspace }}/roster-863-official-source-audit/*
+          if-no-files-found: error
+          retention-days: 60

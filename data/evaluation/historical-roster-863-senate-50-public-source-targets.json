@@ -1,0 +1,1013 @@
+{
+  "schemaVersion": "historical-roster-863-senate-50-public-source-targets-v1",
+  "issue": 863,
+  "exactProductionReadOnlyRun": 39172012304,
+  "sourceMainSha": "017805a9ba606496c0a4fc78640293123fc2f699",
+  "recording": "internal_stored_tally_parity_not_official_original_source_proof",
+  "eventCount": 50,
+  "uniqueOriginalPdfUrls": 30,
+  "outcomesUsed": false,
+  "voteDataModified": false,
+  "targets": [
+    {
+      "publicEventReference": "1adfcbb93cadd2c865db",
+      "session": "2021-2022",
+      "occurredOn": "2022-02-10",
+      "bill": "SF2848",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 4,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220210/Fin_20220210_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "3d142362d6b4e8be7aae",
+      "session": "2021-2022",
+      "occurredOn": "2022-02-21",
+      "bill": "SF2011",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 5,
+        "nay": 4,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fineduc/20220221/fineduc_20220221_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "a5b2cf4d95ad8412e6d4",
+      "session": "2021-2022",
+      "occurredOn": "2022-03-02",
+      "bill": "SF2302",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 4,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220302/Fin_20220302_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "fc74557e5d3375a436a7",
+      "session": "2021-2022",
+      "occurredOn": "2022-03-09",
+      "bill": "SF3065",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 3,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Env/20220309/env_20220309_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "206bf048fbfe8551d6de",
+      "session": "2021-2022",
+      "occurredOn": "2022-04-07",
+      "bill": "SF4091",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220407/Fin_20220407_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "2bc0189f54af0527cf9b",
+      "session": "2021-2022",
+      "occurredOn": "2022-04-07",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220407/Fin_20220407_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "5e66e240e12c7b8e3c61",
+      "session": "2021-2022",
+      "occurredOn": "2022-04-19",
+      "bill": "SF4113",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 3,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220419/Fin_20220419_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "d137adec5c47ef74bdb9",
+      "session": "2021-2022",
+      "occurredOn": "2022-04-19",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220419/Fin_20220419_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "c963727322d76a79a255",
+      "session": "2021-2022",
+      "occurredOn": "2022-04-19",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220419/Fin_20220419_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "a67145ccc248c670b4a4",
+      "session": "2021-2022",
+      "occurredOn": "2022-05-19",
+      "bill": "HF3346",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 5,
+        "nay": 4,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220519/Fin_20220519_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "3987a1160fae24207888",
+      "session": "2023-2024",
+      "occurredOn": "2023-01-10",
+      "bill": "SF1",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 2,
+        "nay": 7,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/health/20230110/Health_20230110_MINUTES.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "62b91c8c286b4a1099b8",
+      "session": "2023-2024",
+      "occurredOn": "2023-01-10",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 2,
+        "nay": 7,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/health/20230110/Health_20230110_MINUTES.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "0ff9717fec335776fa4a",
+      "session": "2023-2024",
+      "occurredOn": "2023-01-12",
+      "bill": "SF46",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 7,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/fin/20230112/Fin_20230112_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "faeb104fe5f4deb45bd8",
+      "session": "2023-2024",
+      "occurredOn": "2023-01-23",
+      "bill": "SF33",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 7,
+        "nay": 3,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jud/20230123/Jud_20230123_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "0523dfc993eadfc596a6",
+      "session": "2023-2024",
+      "occurredOn": "2023-01-23",
+      "bill": "SF33",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jud/20230123/Jud_20230123_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "75571aa382d9b3220a9c",
+      "session": "2023-2024",
+      "occurredOn": "2023-01-24",
+      "bill": "SF2",
+      "voteKind": "motion",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 2,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/health/20230124/Health_20230124_MINUTES.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "8465ae91579a862ad152",
+      "session": "2023-2024",
+      "occurredOn": "2023-02-08",
+      "bill": "SF294",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jud/20230208/Jud_20230208_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "681c9cf6618cfe842264",
+      "session": "2023-2024",
+      "occurredOn": "2023-02-08",
+      "bill": "SF1038",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 10,
+        "nay": 0,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jud/20230208/Jud_20230208_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "ae24b4f3d1fbabdc1a2c",
+      "session": "2023-2024",
+      "occurredOn": "2023-03-29",
+      "bill": "HF16",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 4,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/fin/20230329/Fin_20230329_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "63454ab53a942032628a",
+      "session": "2023-2024",
+      "occurredOn": "2023-03-29",
+      "bill": "HF19",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 7,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/fin/20230329/Fin_20230329_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "53bd8232b1534490f083",
+      "session": "2023-2024",
+      "occurredOn": "2023-03-29",
+      "bill": "HF19",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 5,
+        "nay": 7,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/fin/20230329/Fin_20230329_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "5ea4e6fd2c4f4c1af971",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-20",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 7,
+        "nay": 7,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240220/Elections_20240220_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "934229a520d05087863e",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-20",
+      "bill": "SF3942",
+      "voteKind": "motion",
+      "committeeVote": true,
+      "declared": {
+        "yea": 8,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240220/Elections_20240220_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "a63399fdf0c4bdead3cb",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-20",
+      "bill": "SF3616",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 10,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240220/Elections_20240220_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "fe44e574e651927415b9",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-20",
+      "bill": "SF3616",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 7,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240220/Elections_20240220_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "be31812a75bc9afa2416",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-21",
+      "bill": "SF3534",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 4,
+        "other": 0
+      },
+      "named": {
+        "yea": 5,
+        "nay": 4,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/jud/20240221/Jud_20240221_minutes.pdf",
+      "internalMismatchClass": "declared_exceeds_named_choices"
+    },
+    {
+      "publicEventReference": "8bf119876204a620aa18",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-22",
+      "bill": "SF3868",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 8,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240222/Elections_20240222_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "9a5abcdec8814f2637b4",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-22",
+      "bill": "SF3868",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 8,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240222/Elections_20240222_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "dc660faa1d177a1f4859",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-29",
+      "bill": "SF4039",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 7,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240229/Elections_20240229_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "f90144be9dd857b95bb3",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-29",
+      "bill": "SF3534",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/fin/20240229/Fin_20240229_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "6ef1ae77cce8dad02b0e",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-29",
+      "bill": "SF3818",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 7,
+        "nay": 7,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240229/Elections_20240229_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "8c09b71103567723ee91",
+      "session": "2023-2024",
+      "occurredOn": "2024-02-29",
+      "bill": "SF3818",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 8,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240229/Elections_20240229_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "74254d9403907af5509e",
+      "session": "2023-2024",
+      "occurredOn": "2024-03-14",
+      "bill": "SF4951",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 7,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240314/Elections_20240314_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "7a81cc68b5da00b895d8",
+      "session": "2023-2024",
+      "occurredOn": "2024-03-18",
+      "bill": "SF3748",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 10,
+        "nay": 0,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/jud/20240318/Jud_20240318_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "3d0b2e39aa52d44872b2",
+      "session": "2023-2024",
+      "occurredOn": "2024-03-21",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 8,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "976b2c893076fe2ae0b5",
+      "session": "2023-2024",
+      "occurredOn": "2024-03-21",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 7,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "3cb5089b5b39615743fe",
+      "session": "2023-2024",
+      "occurredOn": "2024-03-21",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 7,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "9f7b8a9ccce2c5bacd4a",
+      "session": "2023-2024",
+      "occurredOn": "2024-03-21",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 8,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "7d583218e06c6fa04ee2",
+      "session": "2023-2024",
+      "occurredOn": "2024-03-21",
+      "bill": "SF4729",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 7,
+        "nay": 7,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "e2947e1fe2161e304115",
+      "session": "2023-2024",
+      "occurredOn": "2024-03-21",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 8,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "1176006a0a9c9745a964",
+      "session": "2023-2024",
+      "occurredOn": "2024-04-09",
+      "bill": "SF4784",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 5,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/fin/20240409/Fin_20240409_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "661489db75ba858f5a53",
+      "session": "2023-2024",
+      "occurredOn": "2024-04-16",
+      "bill": "SF5301",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/comm/20240416/Comm_20240416_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "3930dc51ed05e71e4ead",
+      "session": "2023-2024",
+      "occurredOn": "2024-04-18",
+      "bill": "SF5153",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/fin/20240418/Fin_20240418_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "311bb1afd3ecbf56770b",
+      "session": "2023-2024",
+      "occurredOn": "2024-04-26",
+      "bill": "SF5266",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/fin/20240426/Fin_20240426_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "9447b6b1b31527d07a18",
+      "session": "2023-2024",
+      "occurredOn": "2024-04-29",
+      "bill": "SF5284",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/fin/20240429/Fin_20240429_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "76e6ba7329a8df849f5b",
+      "session": "2023-2024",
+      "occurredOn": "2024-04-30",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/comm/20240430/Comm_20240430_Minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "c5a832d4181a7a232a95",
+      "session": "2025-2026",
+      "occurredOn": "2025-03-03",
+      "bill": "SF1894",
+      "voteKind": "motion",
+      "committeeVote": true,
+      "declared": {
+        "yea": 5,
+        "nay": 4,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/vets/20250303/vets_20250303_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "2dae2934c19abdb386c6",
+      "session": "2025-2026",
+      "occurredOn": "2025-04-10",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 6,
+        "nay": 4,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/health/20250410/Health_20250410_MINUTES.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "56a005fa6c3884a5148a",
+      "session": "2025-2026",
+      "occurredOn": "2025-04-10",
+      "bill": "NO_BILL",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 3,
+        "nay": 5,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/health/20250410/Health_20250410_MINUTES.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    },
+    {
+      "publicEventReference": "b8b89f39ccc8a324fa97",
+      "session": "2025-2026",
+      "occurredOn": "2025-04-10",
+      "bill": "SF2373",
+      "voteKind": "amendment",
+      "committeeVote": true,
+      "declared": {
+        "yea": 4,
+        "nay": 6,
+        "other": 0
+      },
+      "named": {
+        "yea": 0,
+        "nay": 0,
+        "other": 0
+      },
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/labor/20250410/labor_20250410_minutes.pdf",
+      "internalMismatchClass": "declared_tally_without_named_roll"
+    }
+  ]
+}
