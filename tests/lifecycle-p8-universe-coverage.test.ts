@@ -72,18 +72,19 @@ test('externally supplied universe is sealed deterministically and visibly uncer
 });
 test('a changed, duplicate or future-sourced manifest fails rather than improving coverage',()=>{
   const m=manifest();
+  const {contentSha256: _ignored, ...unsigned}=m;
   assert.throws(()=>verifyP8SuppliedUniverseIndex({...m,contentSha256:'0'.repeat(64)}),
     /Modified/);
   assert.throws(()=>sealP8SuppliedUniverseIndex({
-    ...m,bills:[bills[0],{...bills[0],billId:'other'}],
+    ...unsigned,bills:[bills[0],{...bills[0],billId:'other'}],
   }),/Duplicate/);
   assert.throws(()=>sealP8SuppliedUniverseIndex({
-    ...m,bills:[{...bills[0],firstObservedAt:'2027-01-10T00:00:00.000Z'}],
+    ...unsigned,bills:[{...bills[0],firstObservedAt:'2027-01-10T00:00:00.000Z'}],
   }),/future-observed|earlier universe/);
-  assert.throws(()=>sealP8SuppliedUniverseIndex({...m,
+  assert.throws(()=>sealP8SuppliedUniverseIndex({...unsigned,
     source:{...m.source,observedAt:'2027-01-10T18:00:00.000Z'},
   }),/post-cutoff/);
-  assert.throws(()=>sealP8SuppliedUniverseIndex({...m,
+  assert.throws(()=>sealP8SuppliedUniverseIndex({...unsigned,
     actualOutcome:true,
   } as unknown as Omit<P8SuppliedUniverseIndex,'contentSha256'>),/Unexpected/);
 });
