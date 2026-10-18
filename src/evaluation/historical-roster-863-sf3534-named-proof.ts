@@ -51,6 +51,43 @@ export interface StoredSF3534Named {
  membership_ends_on:string|null;
 }
 const sha=(value:string)=>createHash('sha256').update(value).digest('hex');
+/** Pure side-aware exact identity comparison; no surname-only guessing. */
+export function matchSF3534OriginalVoters(
+ official:readonly {sourceName:string;choice:'yea'|'nay'}[],
+ stored:readonly Pick<StoredSF3534Named,'choice'|'source_member_name'|'legislator_name'>[],
+){
+ if(official.length!==10||stored.length!==9)
+  throw Error('Must compare complete ten original names and nine stored names');
+ const keys=official.map(o=>o.choice+'|'+normalizeMemberName(o.sourceName));
+ if(new Set(keys).size!==10)throw Error('Original roll contains nonunique source-side identities');
+ const storedChoiceKeys=stored.map(r=>({
+  choice:r.choice,
+  keys:[r.source_member_name,r.legislator_name].filter((x):x is string=>
+   typeof x==='string'&&!!x.trim()).map(normalizeMemberName),
+ }));
+ const claimedRows=new Set<number>();
+ const exactMatches:number[]=[];
+ const missingPublicSourceNames:string[]=[];
+ const unmatchedOfficialVoteSides:string[]=[];
+ for(const o of official){
+  const name=normalizeMemberName(o.sourceName);
+  const candidates=storedChoiceKeys
+    .map((r,i)=>({r,i}))
+    .filter(x=>x.r.choice===o.choice&&!claimedRows.has(x.i)&&
+      x.r.keys.includes(name));
+  if(candidates.length===1){
+   const i=candidates[0]!.i;claimedRows.add(i);exactMatches.push(i);
+  }else {
+   missingPublicSourceNames.push(o.sourceName);
+   unmatchedOfficialVoteSides.push(o.choice);
+  }
+ }
+ const unmatchedStoredCount=storedChoiceKeys.length-claimedRows.size;
+ const allMatching=missingPublicSourceNames.length===1 &&
+  unmatchedStoredCount===0 && unmatchedOfficialVoteSides[0]==='yea';
+ return {exactMatches,missingPublicSourceNames,
+  unmatchedOfficialVoteSides,unmatchedStoredCount,allMatching};
+}
 export function classifySF3534_863NamedOriginal(
  original:readonly SenateCommitteeVoteObservation[],
  stored:readonly StoredSF3534Named[],
@@ -78,33 +115,14 @@ export function classifySF3534_863NamedOriginal(
     selected.filter(x=>x.choice==='yea').length!==5||
     selected.filter(x=>x.choice==='nay').length!==4)
    throw Error('Original or stored vote counts differ from protected finding');
- const officialKeys=official.map(o=>o.choice+'|'+normalizeMemberName(o.sourceName));
- if(new Set(officialKeys).size!==10)throw Error('Original roll contains nonunique source-side identities');
  const storedChoiceKeys=selected.map(r=>({
   choice:r.choice as 'yea'|'nay',
   keys:[r.source_member_name,r.legislator_name].filter((x):x is string=>
    typeof x==='string'&&!!x.trim()).map(normalizeMemberName),
  }));
- const claimedRows=new Set<number>();
- const exactMatches:number[]=[];
- const missingPublicSourceNames:string[]=[];
- const unmatchedOfficialVoteSides:string[]=[];
- for(const o of official){
-  const name=normalizeMemberName(o.sourceName);
-  const candidates=storedChoiceKeys
-    .map((r,i)=>({r,i}))
-    .filter(x=>x.r.choice===o.choice&&!claimedRows.has(x.i)&&
-      x.r.keys.includes(name));
-  if(candidates.length===1){
-   const i=candidates[0]!.i;claimedRows.add(i);exactMatches.push(i);
-  }else {
-   missingPublicSourceNames.push(o.sourceName);
-   unmatchedOfficialVoteSides.push(o.choice);
-  }
- }
- const unmatchedStoredCount=storedChoiceKeys.length-claimedRows.size;
- const allMatching=missingPublicSourceNames.length===1 &&
-   unmatchedStoredCount===0 && unmatchedOfficialVoteSides[0]==='yea';
+ const matched=matchSF3534OriginalVoters(official,selected);
+ const {exactMatches,missingPublicSourceNames,unmatchedOfficialVoteSides,
+  unmatchedStoredCount,allMatching}=matched;
  const report={
   marker:SF3534_863_MARKER,
   officialSourceUrl:SF3534_863_SOURCE_URL,
