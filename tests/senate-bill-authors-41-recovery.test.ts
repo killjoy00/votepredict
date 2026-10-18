@@ -23,9 +23,9 @@ const fixture=(input:{
     '<h2>Status in the House - '+legislature+'th Legislature ('+
       session.replace('-', ' - ')+')</h2>'+
     '<h2>Description</h2><p>Only public source text is parsed</p>'+
-    '<h2>Authors ('+names.length+')</h2><ul class="authors">'+
+    '<h2>Authors <span class="author_count">('+names.length+')</span></h2><div class="author"><ul>'+
     names.map(name=>'<li><a href="https://www.house.mn.gov/Members/Profile">'+name+'</a>;</li>').join('')+
-    '</ul><h2>Actions</h2><h3>House</h3><table>'+
+    '</ul></div><h2>Actions</h2><h3>House</h3><table class="actions table">'+
     row.join('')+'</table></body></html>';
 };
 const hf=AUTHOR_HTML_RECOVERY_CASES.find(x=>x.identifier==='HF1269')!;
@@ -61,13 +61,25 @@ test('strictly rejects wrong bill, session and author count before any DB writes
   assert.throws(()=>parseOfficialBillAuthorHtml(fixture({session:'2023-2024'}),hf),
     /Legislature/);
   assert.throws(()=>parseOfficialBillAuthorHtml(
-    fixture().replace('Authors (3)','Authors (4)'),hf),
+    fixture().replace('(3)</span>','(4)</span>'),hf),
     /do not match/);
   assert.throws(()=>parseOfficialBillAuthorHtml(
     fixture({authors:['Reyer','Reyer']}),hf),
     /repeated/);
   assert.throws(()=>parseOfficialBillAuthorHtml('<h1>HF 1269</h1>',hf),
     /Incomplete/);
+});
+test('current re-added author retains printed latest add date but not a stale removed state',()=>{
+  const item=AUTHOR_HTML_RECOVERY_CASES.find(x=>x.identifier==='HF3605')!;
+  const page=fixture({session:'2021-2022',legislature:92,chamber:'HF',number:3605,
+    authors:['Rasmusson','Ecklund'],
+    actionRows:[
+      '<tr><td>04/24/2022</td><td>Author stricken Ecklund pg. 10987</td></tr>',
+      '<tr><td>05/05/2022</td><td>Author added Ecklund pg. 13028</td></tr>',
+    ]});
+  const authors=parseOfficialBillAuthorHtml(page,item).authors;
+  assert.equal(authors[1].addedOn,'2022-05-05');
+  assert.equal(authors[1].removedOn,null);
 });
 test('two-year Senate 2025 bill correctly accepts only exactly matching official document',()=>{
   const page=fixture({chamber:'SF',number:2042,authors:['Hoffman','Abeler'],
