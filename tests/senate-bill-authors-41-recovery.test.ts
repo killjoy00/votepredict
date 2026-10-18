@@ -21,7 +21,7 @@ const fixture=(input:{
   return '<!DOCTYPE html><html><title>Official Minnesota Revisor Status</title>'+
     '<body>'+(' '.repeat(3200))+
     '<h1>'+chamber+' '+number+'</h1>'+
-    '<h2>Status in the House - '+legislature+'+ordinal+' Legislature ('+
+    '<h2>Status in the House - '+legislature+ordinal+' Legislature ('+
       session.replace('-', ' - ')+')</h2>'+
     '<h2>Description</h2><p>Only public source text is parsed</p>'+
     '<h2>Authors <span class="author_count">('+names.length+')</span></h2><div class="author"><ul>'+
