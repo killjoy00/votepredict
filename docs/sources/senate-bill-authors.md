@@ -313,3 +313,33 @@ A GitHub scheduled run on reviewed main or a fresh reviewed marker-bearing
 merge can continue from existing successful/not-found scan receipts.
 Never trigger an unreviewed direct dispatch, a forced empty push,
 overlapping Revisor jobs or an uncontrolled parallel crawl.
+
+### Verified October 18 finish-line checkpoint and guarded final continuation
+
+[Scheduled protected production run #39123928861](https://github.com/killjoy00/votepredict/actions/runs/39123928861)
+completed at 7:46 AM Central on October 18, 2026. Its *actual protected
+readback* found **27,082 successful first-party Revisor bill XML scans out of
+28,938 SF and linked-HF targets (93.59%)**, with **1,856 unscanned/retryable
+targets** and **zero pending stored Senate journals**. The bounded batch
+attempted 2,802 official lookups: 2,795 succeeded, seven encountered retryable
+source errors, none were a hard 429/503 throttle, and the collector correctly
+stopped at the 65-minute time budget. These are bill receipts, not counts of
+unique authors, and **bounded_partial** remains the correct status.
+
+| Session | Target SF + companion HF bills | Successful XML scans | Remaining targets / retryable failures |
+| --- | ---: | ---: | ---: |
+| 2021-2022 | 8,652 | 6,826 | 1,826 |
+| 2023-2024 | 10,481 | 10,467 | 14 |
+| 2025-2026 | 9,805 | 9,789 | 16 |
+| **Total** | **28,938** | **27,082** | **1,856** |
+
+The owner requested an immediate final bounded continuation rather than
+waiting for a potentially delayed GitHub cron. A **fresh reviewed main merge**
+containing the workflow's exact **SENATE_BILL_AUTHORS_PRODUCTION** commit
+marker may launch one more batch through independent main CI and existing
+protected Neon gates. Keep the 3,000-request cap, 65-minute cutoff, serial
+1,150-ms source pacing, ledger/drift checks, source-throttle stops and
+idempotent receipts. No change to forecasting, serving, votes or features.
+**Do not claim completion until the new protected receipt explicitly shows
+remaining_unscanned: 0 AND remaining_journals: 0.** Retry any
+persistent source errors in a subsequent separately safeguarded pass.
