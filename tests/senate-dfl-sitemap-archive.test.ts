@@ -64,6 +64,35 @@ test('read-only sitemap snapshots reject redirects and non-XML responses',async(
   assert.equal(result.candidateUrls.length,105);
   assert.equal(result.sha256.length,64);
 });
+test('transient sitemap fetch errors retry twice without bypassing HTTP 429',async()=>{
+  const xml=sitemap(fixture('2025'));
+  const item={...HISTORICAL_DFL_SITEMAPS[0],
+    sha256:createHash('sha256').update(xml).digest('hex')};
+  let calls=0;
+  const flaky:typeof fetch=async()=>{
+    calls++;
+    if(calls<3)throw new TypeError('fetch failed');
+    return new Response(xml,{status:200,headers:{'content-type':'text/xml'}});
+  };
+  const restored=await fetchArchivedDFLSitemap(item,flaky);
+  assert.equal(restored.candidateUrls.length,105);
+  assert.equal(calls,3);
+  calls=0;
+  const throttled:typeof fetch=async()=>{
+    calls++;
+    return new Response(null,{status:429});
+  };
+  await assert.rejects(()=>fetchArchivedDFLSitemap(item,throttled),/HTTP 429/);
+  assert.equal(calls,1);
+  calls=0;
+  const permanentlyDown:typeof fetch=async()=>{
+    calls++;
+    throw new TypeError('fetch failed');
+  };
+  await assert.rejects(()=>fetchArchivedDFLSitemap(item,permanentlyDown),/fetch failed/);
+  assert.equal(calls,3);
+});
+
 test('deterministic inventory orders by lastmod, deduplicates, and hashes snapshots',()=>{
   const first=parseArchivedDFLSitemap(sitemap(fixture('2023')),'aioseo-post-1-20260128');
   const second=parseArchivedDFLSitemap(sitemap(fixture('2024')
