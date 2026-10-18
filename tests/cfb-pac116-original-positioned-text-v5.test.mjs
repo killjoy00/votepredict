@@ -278,3 +278,23 @@ test('PAC25 comparator root-cause buckets distinguish missing donor registration
  assert.equal(dateCollision.provisionalHeldGroupsWithSameDateAndAmountInvalidRow,1);
  assert.equal(dateCollision.provisionalRowsPromotedToExactSourceByLayoutIsolation,0);
 });
+
+test('four PAC25 same-date/amount unknown donor conflicts retain printed names without identity promotion',()=>{
+ const candidate=check({items:[
+  item('30558',140,672),item('Education Minn PAC',260,664),
+  item('04/10/2024',40,648),item('$300.00',520,636)
+ ]});
+ const other=receipt(890,{contributorReg:'',amount:'300.00',
+  contributor:'Different donor company'});
+ const held=score([candidate],{allRows:[...cohort,other]});
+ assert.equal(held.directConflictTargetRows,1);
+ assert.equal(held.directConflictUnknownDonorRows,1);
+ assert.equal(held.directConflictNamesDifferentFromRegisteredPAC,1);
+ assert.equal(held.provisionalRowsWithCompleteComparator,0);
+ assert.equal(held.distinctPACContributionsWithPositionedVerifiedOriginalRow,0);
+ const same=score([candidate],{allRows:[...cohort,
+  {...other,contributor:PAC}]});
+ assert.equal(same.directConflictNamesIdenticalToRegisteredPAC,1);
+ assert.equal(same.provisionalRowsPromotedToExactSourceByLayoutIsolation,0);
+ assert.ok(!JSON.stringify(same).includes('Different donor company'));
+});
