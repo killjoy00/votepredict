@@ -1,0 +1,104 @@
+name: Manual read-only review of 41 Senate bill authorship exceptions
+
+on:
+  pull_request:
+    paths:
+      - scripts/audit-senate-bill-authors-41-readonly.ts
+      - .github/workflows/senate-bill-authors-41-manual-readonly.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit-senate-bill-authors-41-readonly.ts
+      - .github/workflows/senate-bill-authors-41-manual-readonly.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-bill-authors-41-readonly
+  cancel-in-progress: false
+
+jobs:
+  pr-keyless:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run check
+      - run: npm test
+
+  independent-main:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.repository.default_branch == 'main' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_BILL_AUTHORS_MANUAL_41_READONLY_AUDIT')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run check
+      - run: npm test
+      - run: npm audit --omit=dev --audit-level=high
+
+  protected-neon-readonly:
+    needs: [independent-main]
+    if: >-
+      needs.independent-main.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      github.run_attempt == 1 &&
+      github.event.repository.default_branch == 'main' &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_BILL_AUTHORS_MANUAL_41_READONLY_AUDIT')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_AUTHORS_41_READONLY_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Existing Neon database / read-only rollback / bounded public exception inventory
+        run: node --import tsx scripts/audit-senate-bill-authors-41-readonly.ts
