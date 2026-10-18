@@ -4,7 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {Pool} from 'pg';
 import {parseJournalPaperActions,rollMatches,hash,explicitVersionLocator} from '../src/operations/senate-vote-paper-parser.js';
 import {backfillVotePapers,historyRoster,parseDatedRoleActs,verifyPaperSources,connectExplicitBaseCaptures,storeHistoricalRoles} from '../src/operations/senate-vote-paper-backfill.js';
-import {archiveCaptures,archiveTimestamp,validHistorySource,captureArchivedHistory,recoverHistoricalArchives,statedAssignmentDate,stageHistoryJobs,historyPaperIdentity,legacyHistoryAliases} from '../src/operations/senate-history-archive.js';
+import {archiveCaptures,archiveTimestamp,validHistorySource,captureArchivedHistory,recoverHistoricalArchives,statedAssignmentDate,stageHistoryJobs,historyPaperIdentity,legacyHistoryAliases,fetchCanonicalGovernmentSource} from '../src/operations/senate-history-archive.js';
 import {assertPaperHistoryRun,PAPER_HISTORY_MARKER} from '../src/operations/senate-paper-history-gate.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
 import {senateJournalEventsToRaw} from '../src/sources/minnesota/senate-raw-votes.js';
@@ -189,3 +189,29 @@ export async function exercisePaperHistory(pool:Pool){
 const connection=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
 test('Postgres: exact motion matching, archives, dated role exposure, idempotency and stale-link invalidation',
  {skip:!connection,timeout:120000},async()=>{const pool=new Pool({connectionString:connection,max:3});try{await exercisePaperHistory(pool)}finally{await pool.end()}});
+
+test('canonical publisher aliases preserve exact paper and assignment identity',async()=>{
+ const role='https://www.senate.mn/committees/2023-2024/info/comlegal.pdf';
+ const bill='https://www.revisor.mn.gov/bills/93/2024/0/HF/100/versions/ue/1/';
+ const canonical=bill.replace('/2024/','/2023/');
+ for(const [source,kind,target] of [[role,'role_pdf',role.replace('www.senate.mn','assets.senate.mn')],[bill,'bill_text',canonical]] as const){
+  const calls:string[]=[];
+  const r=await fetchCanonicalGovernmentSource(source,kind,(async(url)=>{
+   calls.push(String(url));return calls.length===1?new Response(null,{status:302,headers:{location:target}}):new Response('body');
+  }) as typeof fetch);
+  assert.equal(r.resolvedUrl,target);assert.deepEqual(calls,[source,target]);
+ }
+ for(const target of ['https://example.test/comlegal.pdf',role.replace('2023-2024','2025-2026')]){
+  let calls=0;await assert.rejects(()=>fetchCanonicalGovernmentSource(role,'role_pdf',(async()=>{
+   calls++;return new Response(null,{status:302,headers:{location:target}});
+  }) as typeof fetch));assert.equal(calls,1);
+ }
+ for(const target of [bill.replace('/100/','/101/'),bill.replace('/ue/1/','/ue/2/'),bill+'pdf/',bill.replace('/2024/','/2021/'),'https://example.test/']){
+  let calls=0;await assert.rejects(()=>fetchCanonicalGovernmentSource(bill,'bill_text',(async()=>{
+   calls++;return new Response(null,{status:301,headers:{location:target}});
+  }) as typeof fetch));assert.equal(calls,1);
+ }
+ let calls=0;await assert.rejects(()=>fetchCanonicalGovernmentSource(role,'role_pdf',(async()=>{
+  calls++;return new Response(null,{status:302,headers:{location:role}});
+ }) as typeof fetch));assert.equal(calls,1);
+});
