@@ -86,6 +86,7 @@ async function main():Promise<void>{
   try {
     const client=await pool.connect();
     let opened=false;
+    let report:Record<string,unknown>|null=null;
     try {
       await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
       opened=true;
@@ -107,14 +108,13 @@ async function main():Promise<void>{
       const bySession=Object.fromEntries(SESSIONS.map(x=>
         [x,safe.filter(v=>v.session===x).length]));
       // Public identifiers, dates and status counts only; no author names or source bytes.
-      console.log('SENATE_BILL_AUTHORS_MANUAL_EXCEPTION_READBACK='+JSON.stringify({
-        status:'read_only_rolled_back',remaining:safe.length,bySession,
-        rows:safe,databaseModified:false,
-      }));
+      report={status:'read_only_rolled_back',remaining:safe.length,bySession,
+        rows:safe,databaseModified:false};
     } finally {
       if(opened)await client.query('ROLLBACK');
       client.release();
     }
+    if(report)console.log('SENATE_BILL_AUTHORS_MANUAL_EXCEPTION_READBACK='+JSON.stringify(report));
   }finally{await pool.end();}
 }
 main().catch(()=>{
