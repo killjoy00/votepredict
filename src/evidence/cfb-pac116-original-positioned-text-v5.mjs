@@ -405,6 +405,13 @@ export function safePositionedOriginalSummary({
   blockedWithSameAmountInvalidRow=0,
   blockedWithSameDateAndAmountInvalidRow=0,
   cleanCandidateOriginalVersionRows=0;
+ let fourConflictTargetRows=0,
+  fourConflictUnknownDonorEntries=0,
+  fourConflictUnknownDonorSameName=0,
+  fourConflictUnknownDonorDifferentName=0,
+  fourConflictUnknownDonorNameUnusable=0,
+  twoComparatorCompleteCandidateVersions=0,
+  twoComparatorCompleteWithMultipleVersions=0;
  let provisionalWithFullComparator=0,
   provisionalHeldForIncompleteComparator=0,
   provisionalHeldForDuplicateSameSignature=0,
@@ -431,9 +438,24 @@ export function safePositionedOriginalSummary({
     moneyToCents(r.amount)===moneyToCents(receipt.amount));
    if(sameDate)blockedWithSameDateInvalidRow++;
    if(sameAmount)blockedWithSameAmountInvalidRow++;
-   if(broken.some(r=>r.transactionDate===receipt.transactionDate&&
-    moneyToCents(r.amount)===moneyToCents(receipt.amount)))
+   const directConflict=broken.filter(r=>
+    r.transactionDate===receipt.transactionDate&&
+    moneyToCents(r.amount)===moneyToCents(receipt.amount)&&
+    !REG.test(r.contributorReg??''));
+   if(directConflict.length){
     blockedWithSameDateAndAmountInvalidRow++;
+    fourConflictTargetRows++;
+    fourConflictUnknownDonorEntries+=directConflict.length;
+    const targetName=normalizePrintedName(receipt.contributor);
+    for(const r of directConflict){
+     const conflictingName=normalizePrintedName(r.contributor??'');
+     if(!conflictingName||conflictingName.length<5)
+      fourConflictUnknownDonorNameUnusable++;
+     else if(targetName===conflictingName)
+      fourConflictUnknownDonorSameName++;
+     else fourConflictUnknownDonorDifferentName++;
+    }
+   }
    if(!sameDate&&!sameAmount)blockedOnlyByOutOfWindowInvalidRows++;
   }
   else if((signatures.get(sig)?.size??0)!==1)
@@ -443,6 +465,11 @@ export function safePositionedOriginalSummary({
   uniqueSourceVersionsByRow.set(rowKey,versions.size);
   if(versions.size>1)provisionalWithMultipleVersions++;
   else provisionalWithOneVersion++;
+  if(!unsafeReceiving.has(group)&&
+   (signatures.get(sig)?.size??0)===1){
+   twoComparatorCompleteCandidateVersions+=versions.size;
+   if(versions.size>1)twoComparatorCompleteWithMultipleVersions++;
+  }
  }
  const summary={
   schema:POSITIONED_A1_PAC_VERSION,
@@ -474,6 +501,13 @@ export function safePositionedOriginalSummary({
   provisionalHeldGroupsWithSameDateInvalidRow:blockedWithSameDateInvalidRow,
   provisionalHeldGroupsWithSameAmountInvalidRow:blockedWithSameAmountInvalidRow,
   provisionalHeldGroupsWithSameDateAndAmountInvalidRow:blockedWithSameDateAndAmountInvalidRow,
+  directConflictTargetRows:fourConflictTargetRows,
+  directConflictUnknownDonorRows:fourConflictUnknownDonorEntries,
+  directConflictNamesIdenticalToRegisteredPAC:fourConflictUnknownDonorSameName,
+  directConflictNamesDifferentFromRegisteredPAC:fourConflictUnknownDonorDifferentName,
+  directConflictNamesUnusable:fourConflictUnknownDonorNameUnusable,
+  comparatorCompleteCandidateOriginalVersionPairs:twoComparatorCompleteCandidateVersions,
+  comparatorCompleteTargetsWithMultipleVersions:twoComparatorCompleteWithMultipleVersions,
   comparatorCompleteRowsStillRequiringOriginalPrintedRowBoundary:provisionalWithFullComparator,
   provisionalRowsPromotedToExactSourceByLayoutIsolation:0,
   sameBaselinePairsWithExplicitColumnsAndComparator:positionQualifiedPairs,
