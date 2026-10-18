@@ -100,8 +100,13 @@ export function parseOfficialBillAuthorHtml(html:string,item:HtmlRecoveryCase):P
   // Passed House bills can also print a separate "Senate Authors (N)"
   // section, and passed Senate bills can print "House Authors (N)".
   // Only the original chamber's first Authors (N) list belongs to this bill.
-  const opposite=item.identifier.startsWith('HF')?'Senate':'House';
-  const otherChamberHeading=new RegExp('^'+opposite+' Authors\\s*\\(\\s*\\d+\\s*\\)
+  const oppositeHeading=item.identifier.startsWith('HF')
+    ? /^Senate Authors[ ]*[(][ ]*[0-9]+[ ]*[)]$/i
+    : /^House Authors[ ]*[(][ ]*[0-9]+[ ]*[)]$/i;
+  const intermediate=subsequent.slice(0,actionIndex);
+  if(intermediate.length>1||intermediate.some(h=>!oppositeHeading.test(h.value)))
+    throw Error('Unexpected section between source authors and actions');
+  const section=html.slice(all[idx].end,subsequent[0].start);
   const list=[...section.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)];
   const names:listName[]=list.map(li=>{
     const a=/<a\b[^>]*>([\s\S]*?)<\/a>/i.exec(li[1]);
