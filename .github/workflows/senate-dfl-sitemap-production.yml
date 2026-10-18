@@ -1,5 +1,5 @@
-name: Collect first-party historical Senate DFL from publisher Wayback sitemaps (hourly)
-# Make scheduled-vs-reviewed-push-vs-manual fallback visible in the Actions run list.
+name: Collect first-party historical Senate DFL from publisher Wayback sitemaps (manual)
+# Historical 2023-2025 backfill completed; retain manually launched readback path only.
 run-name: "DFL raw ${{ github.event_name }} run #${{ github.run_number }}"
 
 on:
@@ -11,8 +11,6 @@ on:
       - scripts/check-senate-dfl-sitemap-sql-local.ts
       - src/sources/minnesota/senate-dfl-sitemap-archive.ts
       - tests/senate-dfl-sitemap-archive.test.ts
-  schedule:
-    - cron: '47 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -31,7 +29,6 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
       (
-        (github.event_name == 'schedule' && github.event.schedule == '47 * * * *') ||
         (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
         (github.event_name == 'push' &&
           github.event.after == github.sha &&
@@ -103,7 +100,6 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
       (
-        (github.event_name == 'schedule' && github.event.schedule == '47 * * * *') ||
         (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
         (github.event_name == 'push' &&
           github.event.after == github.sha &&
