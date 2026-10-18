@@ -131,7 +131,7 @@ export function diagnoseXml(xml:string,identifier:string,requestedYear:number):E
 export function htmlAuthorHeading(html:string):{found:boolean;count:number|null} {
   const headings=[...html.matchAll(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/gi)]
     .map(x=>x[1].replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim());
-  const found=headings.find(x=>/^Authors(?:\s*\(\d+\))?\b/i.test(x))??'';
+  const found=headings.find(x=>/^Authors(?:\s*\(\d+\))?(?:\s|$)/i.test(x))??'';
   const count=found.match(/^Authors\s*\((\d+)\)/i)?.[1];
   return {found:Boolean(found),count:count!==undefined?Number(count):null};
 }
