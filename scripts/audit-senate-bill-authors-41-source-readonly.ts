@@ -182,7 +182,22 @@ async function publicGet(url:string,accept:string):Promise<RequestResult> {
     const len=Number(res.headers.get('content-length')??0);
     if(res.ok && len>2_000_000)
       return {status:res.status,body:'',failure:'oversized_response'};
-    return {status:res.status,body:res.ok?await res.text():'',failure:null};
+    const body=res.ok?await res.text():'';
+    // Human-readable snippets of public first-party bill status markup only.
+    // This inspection never prints private data, credentials or database rows.
+    if(url.startsWith('https://www.revisor.mn.gov/bills/') &&
+       /\/(?:HF\/1269|SF\/2042|HF\/3605|SF\/2699)\//.test(url) &&
+       res.status===200){
+      const author=body.search(/<h[1-6]\b[^>]*>[\s\S]{0,300}?Authors\b/i);
+      const actions=body.search(/<h[1-6]\b[^>]*>[\s\S]{0,300}?Actions\b/i);
+      console.log('SENATE_AUTHORS_41_OFFICIAL_HTML_MARKUP='+JSON.stringify({
+        requestedUrl:url,finalUrl:res.url,http:res.status,
+        authorHeadingOffset:author,actionsHeadingOffset:actions,
+        authorMarkup:author>=0?body.slice(author,Math.min(body.length,author+16000)):null,
+        actionsMarkup:actions>=0?body.slice(actions,Math.min(body.length,actions+3600)):null,
+      }));
+    }
+    return {status:res.status,body,failure:null};
   }catch {
     return {status:null,body:'',failure:'timeout_or_request_error'};
   }
