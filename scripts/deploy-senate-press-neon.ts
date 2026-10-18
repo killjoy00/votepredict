@@ -146,6 +146,8 @@ async function main(): Promise<void> {
     if (sources.length !== ((DFL_ONLY||GOP_ONLY) ? 1 : 2))
       throw Error('Expected reviewed first-party source subset not found');
     let reviewedCurrentUrls:string[]=[];
+    const unavailable2025Original=
+      'https://senatedfl.mn/senate-majority-leader-erin-murphy-responds-to-house-power-sharing-agreement/';
     if(current2026Review){
       phase='pinned_2026_first_party_publisher_url_selection';
       const pages=[];
@@ -154,13 +156,18 @@ async function main(): Promise<void> {
         await sleep(1400);
       }
       const originals=orderedHistoricalDFLCandidates(pages);
-      reviewedCurrentUrls=originals
+      const current=originals
         .filter(c=>c.lastModifiedOn?.slice(0,4)==='2026').map(c=>c.url);
-      // Historical sitemap last-modified dates are selection hints; the actual
-      // 2026 publication date must still be checked from the live official page.
-      if(reviewedCurrentUrls.length!==33||
-        new Set(reviewedCurrentUrls).size!==reviewedCurrentUrls.length)
-        throw Error('Unexpected reviewed 2026 first-party original URL count');
+      if(current.length!==33||
+        !originals.some(c=>c.url===unavailable2025Original&&
+          c.lastModifiedOn?.slice(0,4)==='2025'))
+        throw Error('Unexpected pinned DFL 2026 originals or missing 2025 exception');
+      // The sole remaining original 2025 archival HTML replay is unusable;
+      // the actual February 2025 publication is still first-party live HTML.
+      // Last-modified hints select the URL only, not its publication date.
+      reviewedCurrentUrls=[...current,unavailable2025Original];
+      if(new Set(reviewedCurrentUrls).size!==34)
+        throw Error('Reviewed first-party current plus historical exception URL count differs');
     }
     phase = 'existing_default_branch_primary';
     const target = await discoverExistingVotePredictNeonConnection({
@@ -263,11 +270,13 @@ async function main(): Promise<void> {
         for(const url of reviewedCurrentUrls){
           // Exact official URL allowlist, robots.txt and per-request courtesy
           // rate-limits are enforced by the existing direct-article collector.
+          const lowerBound=url===unavailable2025Original?'2025-01-01':'2026-01-01';
+          const upperBound=url===unavailable2025Original?'2025-12-31':END;
           const item=await collectDirectArticle(source,url,
-            {from:'2026-01-01',to:END,delayMs:1500},store);
+            {from:lowerBound,to:upperBound,delayMs:1500},store);
           record({
             source:source.id,source_type:source.source_type,
-            from:'2026-01-01',to:END,pages:1,discovered:1,
+            from:lowerBound,to:upperBound,pages:1,discovered:1,
             matched:item.inserted,inserted:item.inserted,previewed:0,
             already_present:item.already_present,outside_range:0,
             undated:0,by_year:{},member_archives:[],archive_gaps:[],
