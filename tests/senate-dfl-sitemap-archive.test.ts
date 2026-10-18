@@ -4,6 +4,7 @@ import {test} from 'node:test';
 import {
   HISTORICAL_DFL_SITEMAPS,parseArchivedDFLSitemap,fetchArchivedDFLSitemap,
   orderedHistoricalDFLCandidates,historicalDFLSitemapManifest,dflSitemapReplayURL,dflSitemapShard,
+  dflOutstandingReviewBatch,
 } from '../src/sources/minnesota/senate-dfl-sitemap-archive.js';
 
 const publisher=(i:number)=>'https://senatedfl.mn/senator-historical-release-'+i+'/';
@@ -142,4 +143,19 @@ test('24 deterministic bounded, disjoint run-number shards eventually cover ever
   assert.equal(possibleFirst.size,dayOne.selected.length);
   assert.throws(()=>dflSitemapShard(candidates,0),/Unreviewed/);
   assert.throws(()=>dflSitemapShard(candidates,NaN),/Unreviewed/);
+});
+
+test('one-shot DFL backlog review targets only unstored originals with a strict cap',()=>{
+  const candidates=Array.from({length:1150},(_,i)=>({
+    url:publisher(i+1),sitemapId:'pinned',lastModifiedOn:i<33?'2026-01-10':'2024-06-02',
+  }));
+  const stored=new Set(candidates.slice(0,972).map(c=>c.url));
+  const pending=dflOutstandingReviewBatch(candidates,stored);
+  assert.equal(pending.length,178);
+  assert.equal(pending[0].url,candidates[972].url);
+  assert.equal(pending.at(-1)?.url,candidates[1149].url);
+  assert.ok(pending.every(c=>!stored.has(c.url)));
+  assert.equal(dflOutstandingReviewBatch(candidates,new Set(),50).length,50);
+  assert.throws(()=>dflOutstandingReviewBatch(candidates,stored,226),/oversized/);
+  assert.throws(()=>dflOutstandingReviewBatch(candidates.slice(0,299),stored),/Unreviewed/);
 });

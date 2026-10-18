@@ -16,14 +16,16 @@ import {getWaybackRecords,loadArchivedDFL}
 import {
   HISTORICAL_DFL_SITEMAPS,fetchArchivedDFLSitemap,
   orderedHistoricalDFLCandidates,historicalDFLSitemapManifest,dflSitemapShard,
+  dflOutstandingReviewBatch,
 } from '../src/sources/minnesota/senate-dfl-sitemap-archive.js';
 
 const MARKER='SENATE_DFL_SITEMAP_RAW_20261016';
+const REVIEW_MARKER='SENATE_DFL_REMAINDER_20261018';
 const CRON='47 * * * *';
 const MIGRATION='0020_senate_raw_statement_archive_captures.sql';
 type Ledger={filename:string;checksum:string};
 type Count={year:string;total:number};
-type CheckedRun={kind:'scheduled'|'initial-main-push'|'manual-fallback';runNumber:number};
+type CheckedRun={kind:'scheduled'|'initial-main-push'|'manual-fallback'|'review-remainder';runNumber:number};
 
 function assertReviewedMain():CheckedRun{
   const e=process.env;
@@ -49,7 +51,8 @@ function assertReviewedMain():CheckedRun{
       p.deleted||p.forced||p.head_commit?.id!==e.GITHUB_SHA||
       !p.head_commit?.message?.includes(MARKER))
       throw Error('Initial insert-only publisher sitemap backfill was not explicitly marked');
-    return {kind:'initial-main-push',runNumber};
+    return {kind:p.head_commit.message.includes(REVIEW_MARKER)
+      ?'review-remainder':'initial-main-push',runNumber};
   }
   if(e.GITHUB_EVENT_NAME==='workflow_dispatch'){
     if(p.ref && p.ref!=='refs/heads/main')
@@ -125,15 +128,8 @@ async function main():Promise<void>{
     const candidates=orderedHistoricalDFLCandidates(pages);
     const batch=dflSitemapShard(candidates,run.runNumber);
     const manifest=historicalDFLSitemapManifest(pages);
-    const selected=batch.selected;
+    let selected=batch.selected;
     const candidateUrls=candidates.map(c=>c.url);
-    console.log('SENATE_DFL_SITEMAP_RUN='+JSON.stringify({
-      mode:run.kind,runNumber:run.runNumber,shard:batch.shard,
-      shardCount:batch.shardCount,sitemapCandidates:candidates.length,
-      selected: selected.length,publisherSitemapManifest:manifest,
-      sitemapFiles:pages.map(p=>({id:p.id,sha256:p.sha256,entries:p.urlEntries,
-        candidates:p.candidateUrls.length})),
-    }));
     phase='existing_votepredict_neon_default_primary';
     const target=await discoverExistingVotePredictNeonConnection({
       apiKey:process.env.NEON_API_KEY?.trim()??'',
@@ -178,25 +174,57 @@ async function main():Promise<void>{
     const captureBefore=await countDFL(pool,'captures');
     phase='read_only_before_complete_publisher_url_progress';
     const publisherStoredBefore=await countStoredSitemapOriginals(pool,candidateUrls);
+    if(run.kind==='review-remainder'){
+      phase='read_only_select_unstored_originals_for_approved_one_shot';
+      const stored=await readonly(pool,async c=>{
+        const rows=await c.query<{source_url:string}>(
+          "SELECT source_url FROM senate_raw_statements WHERE source_id='senate_dfl' "+
+          "AND source_url=ANY($1::text[])",[candidateUrls]);
+        return new Set(rows.rows.map(row=>row.source_url));
+      });
+      if(stored.size!==publisherStoredBefore)
+        throw Error('Reviewed one-shot source URLs disagree with prior production count');
+      selected=dflOutstandingReviewBatch(candidates,stored,225);
+    }
+    console.log('SENATE_DFL_SITEMAP_RUN='+JSON.stringify({
+      mode:run.kind,runNumber:run.runNumber,
+      shard:run.kind==='review-remainder'?null:batch.shard,
+      shardCount:batch.shardCount,sitemapCandidates:candidates.length,
+      selected:selected.length,unresolvedOnly:run.kind==='review-remainder',
+      publisherSitemapManifest:manifest,
+      sitemapFiles:pages.map(p=>({id:p.id,sha256:p.sha256,entries:p.urlEntries,
+        candidates:p.candidateUrls.length})),
+    }));
     phase='read_only_original_url_deduplication';
     const store=new ArchivedSenateDFLStore(pool);
-    const already=await store.existing(selected.map(s=>s.url));
+    const already=new Set<string>();
+    // One-shot review may exceed the store's 100-URL bounded query limit.
+    for(let offset=0;offset<selected.length;offset+=100){
+      const present=await store.existing(selected.slice(offset,offset+100).map(s=>s.url));
+      for(const url of present)already.add(url);
+    }
     phase='bounded_insert_only_first_party_archive_restoration';
     const stats={considered:selected.length,alreadyPresent:already.size,
       attempted:0,inserted:0,noCapture:0,unavailable:0,
       ineligibleOrInvalid:0,indexErrors:0};
     const byYearAdded:Record<string,number>={};
+    const reviewedFailures:Array<{url:string;reason:string}>=[];
     let consecutiveErrors=0,stopReason:string|null=null;
     for(const seed of selected){
       if(already.has(seed.url))continue;
       stats.attempted++;
       let recovered:Awaited<ReturnType<typeof loadArchivedDFL>>|null=null;
+      const failedReasons=new Set<string>();
       try{
         const records=await getWaybackRecords(seed.url,fetch,6);
         if(records.length===0){
           stats.noCapture++;
+          failedReasons.add('no_200_html_capture_in_archive_index');
         }else{
-          for(const record of records.slice(-2).reverse()){
+          // During the expressly reviewed cleanup, revisit all six bounded
+          // captures rather than only the most recent two. Never bypass 429/503.
+          const replayRecords=run.kind==='review-remainder'?records:records.slice(-2);
+          for(const record of replayRecords.slice().reverse()){
             try{
               recovered=await loadArchivedDFL(record);
               break;
@@ -205,6 +233,14 @@ async function main():Promise<void>{
               if(/HTTP (429|503)\b/.test(reason)){
                 stopReason='archive_replay_rate_limited';break;
               }
+              failedReasons.add(/Original publication date missing or outside 2023-2025/.test(reason)
+                ?'publication_date_not_2023_2025':
+                /lacks complete first-party statement text/.test(reason)
+                  ?'incomplete_or_non_statement_html':
+                /Original archived HTML unavailable/.test(reason)
+                  ?'archived_html_unavailable':
+                /Archive replay returned non-HTML/.test(reason)
+                  ?'replay_not_html':'archived_html_invalid_or_unavailable');
               stats.ineligibleOrInvalid++;
             }
           }
@@ -217,10 +253,14 @@ async function main():Promise<void>{
           stopReason='archive_index_rate_limited';
         else{
           stats.indexErrors++;
+          failedReasons.add('archive_index_fetch_or_format_error');
           if(++consecutiveErrors>=5)
             stopReason='repeated_archive_index_unavailable';
         }
       }
+      if(!recovered&&run.kind==='review-remainder')
+        reviewedFailures.push({url:seed.url,
+          reason:stopReason??([...failedReasons].sort().join('|')||'no_usable_archive_capture')});
       if(stopReason)break;
       if(recovered){
         // Database failures must abort this protected job; never misclassify
@@ -272,7 +312,7 @@ async function main():Promise<void>{
       sum(captureAfter)>sum(after))
       throw Error('Raw original and capture provenance inserts do not reconcile');
     const report={status:stopReason?'paused_archive_unavailable_or_rate_limited':'archived_sitemap_shard_raw_backfill',mode:run.kind,
-      shard:batch.shard,shardCount:batch.shardCount,
+      shard:run.kind==='review-remainder'?null:batch.shard,shardCount:batch.shardCount,
       inventorySize:candidates.length,selectedCount:selected.length,
       publisherUrlProgress:{storedBefore:publisherStoredBefore,storedAfter:publisherStoredAfter,
         unresolvedCandidateUrls:candidates.length-publisherStoredAfter,
@@ -282,9 +322,18 @@ async function main():Promise<void>{
       publicationDateIsNotCaptureDate:true,noForecasterOrModelWrites:true,
       entireHistoricalArchiveComplete:false};
     console.log('SENATE_DFL_SITEMAP_PRODUCTION='+JSON.stringify(report));
+    if(run.kind==='review-remainder')
+      console.log('SENATE_DFL_SITEMAP_REMAINDER_REVIEW='+JSON.stringify({
+        selected:selected.length,attempted:stats.attempted,inserted:stats.inserted,
+        indexedCandidateUrlsStillUnstored:candidates.length-publisherStoredAfter,
+        reviewFailures:reviewedFailures,
+        stoppedEarly:stopReason!==null,stopReason,
+        historicalCompletionNotImplied:true,
+      }));
     if(process.env.GITHUB_STEP_SUMMARY)appendFileSync(process.env.GITHUB_STEP_SUMMARY,
       '## Senate DFL original archived publisher sitemap recovery\n\n'+
-      'Shard: '+(batch.shard+1)+'/'+batch.shardCount+
+      'Selection: '+(run.kind==='review-remainder'?'review-only outstanding originals':
+        'shard '+(batch.shard+1)+'/'+batch.shardCount)+
       '; candidates: '+selected.length+'; inserted: '+stats.inserted+
       '; archive pause: '+(stopReason??'none')+'\n\n'+
       'Publisher sitemap URLs currently stored: '+publisherStoredAfter+'/'+candidates.length+
