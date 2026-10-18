@@ -93,10 +93,20 @@ export function parseOfficialBillAuthorHtml(html:string,item:HtmlRecoveryCase):P
   const count=Number(all[idx].value.match(/\(\s*(\d+)\s*\)/)?.[1]);
   if(!Number.isInteger(count)||count<1||count>100)
     throw Error('Invalid public author count');
-  const next=all.slice(idx+1).find(h=>h.start>all[idx].end);
-  if(!next||!/^Actions\b/i.test(next.value))
+  const subsequent=all.slice(idx+1).filter(h=>h.start>all[idx].end);
+  const actionIndex=subsequent.findIndex(h=>/^Actions$/i.test(h.value));
+  if(actionIndex<0||subsequent.length===0)
     throw Error('Authors list not bounded by actions heading');
-  const section=html.slice(all[idx].end,next.start);
+  // Passed House bills can also print a separate "Senate Authors (N)"
+  // section, and passed Senate bills can print "House Authors (N)".
+  // Only the original chamber's first Authors (N) list belongs to this bill.
+  const oppositeHeading=item.identifier.startsWith('HF')
+    ? /^Senate Authors[ ]*[(][ ]*[0-9]+[ ]*[)]$/i
+    : /^House Authors[ ]*[(][ ]*[0-9]+[ ]*[)]$/i;
+  const intermediate=subsequent.slice(0,actionIndex);
+  if(intermediate.length>1||intermediate.some(h=>!oppositeHeading.test(h.value)))
+    throw Error('Unexpected section between source authors and actions');
+  const section=html.slice(all[idx].end,subsequent[0].start);
   const list=[...section.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)];
   const names:listName[]=list.map(li=>{
     const a=/<a\b[^>]*>([\s\S]*?)<\/a>/i.exec(li[1]);
@@ -113,7 +123,7 @@ export function parseOfficialBillAuthorHtml(html:string,item:HtmlRecoveryCase):P
   // Official Action rows are already printed with dates. Dedupe duplicate
   // chronological and side-by-side page sections by choosing the earliest
   // explicitly printed addition for an identified current author.
-  const afterActions=html.slice(next.end);
+  const afterActions=html.slice(subsequent[actionIndex].end);
   const datedAdd=new Map<string,string>();
   const datedStrike=new Map<string,string>();
   let actionRows=0;

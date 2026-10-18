@@ -82,6 +82,27 @@ test('current re-added author retains printed latest add date but not a stale re
   assert.equal(authors[1].addedOn,'2022-05-05');
   assert.equal(authors[1].removedOn,null);
 });
+test('passed House bill with Senate Authors subheading keeps only House chief/coauthors',()=>{
+  const item=AUTHOR_HTML_RECOVERY_CASES.find(x=>x.identifier==='HF3769')!;
+  const base=fixture({session:'2023-2024',legislature:93,chamber:'HF',number:3769,
+    authors:['Lislegard','Gomez'],
+    actionRows:['<tr><td>03/07/2024</td><td>Author added Gomez pg. 11711</td></tr>']});
+  const html=base.replace(
+    '</ul></div><h2>Actions</h2>',
+    '</ul></div><h3>Senate Authors (1)</h3>'+
+    '<ul><li><a href="https://www.senate.mn/members/member_bio.html?leg_id=1">Rest</a></li></ul>'+
+    '<h2>Actions</h2>',
+  );
+  const result=parseOfficialBillAuthorHtml(html,item);
+  assert.equal(result.declaredCount,2);
+  assert.deepEqual(result.authors,[
+    {nameRaw:'Lislegard',role:'chief',authorOrder:1,addedOn:null,removedOn:null},
+    {nameRaw:'Gomez',role:'coauthor',authorOrder:2,addedOn:'2024-03-07',removedOn:null},
+  ]);
+  assert.throws(()=>parseOfficialBillAuthorHtml(
+    html.replace('Senate Authors (1)','House Authors (1)'),item),
+    /Unexpected section/);
+});
 test('two-year Senate 2025 bill correctly accepts only exactly matching official document',()=>{
   const page=fixture({chamber:'SF',number:2042,authors:['Hoffman','Abeler'],
     actionRows:['<tr><td>03/06/2025</td><td>Author added Abeler pg. 125</td></tr>']})
