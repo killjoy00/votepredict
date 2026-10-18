@@ -87,5 +87,5 @@ test('identity mismatch rolls back and refuses private connection',async()=>{
   client as Parameters<typeof runSenate863MismatchQuery>[0],
   {database:'verified',role:'readonly'}),/identity/);
  assert.equal(calls.at(-1),'ROLLBACK');
- assert.throws(()=>assertSenate863Protected({}),/protected/);
+ assert.throws(()=>assertSenate863Protected({NODE_ENV:'test'}),/protected/);
 });
