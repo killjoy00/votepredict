@@ -343,3 +343,43 @@ idempotent receipts. No change to forecasting, serving, votes or features.
 **Do not claim completion until the new protected receipt explicitly shows
 remaining_unscanned: 0 AND remaining_journals: 0.** Retry any
 persistent source errors in a subsequent separately safeguarded pass.
+
+### Owner-directed pause for manual review: October 18, 2026
+
+**This section supersedes earlier scheduled-continuation instructions.**
+The latest [protected collection run #39143427734](https://github.com/killjoy00/votepredict/actions/runs/39143427734)
+finished October 18, 2026 at 11:16 AM Central. Its protected readback
+reported 28,897 successful official XML scan receipts out of 28,938 target
+bills (99.86%), zero pending stored journal scans, **41 outstanding
+retryable source errors**, no Revisor 429/503 throttle, and a safe
+bounded-partial outcome. All 28,938 targets had been attempted by then.
+
+| Session | Targets | Successful source scans | Retryable source errors |
+| --- | ---: | ---: | ---: |
+| 2021-2022 | 8,652 | 8,640 | 12 |
+| 2023-2024 | 10,481 | 10,468 | 13 |
+| 2025-2026 | 9,805 | 9,789 | 16 |
+| **Total** | **28,938** | **28,897** | **41** |
+
+At the owner's explicit request, the recurring bill-authorship collection
+schedule is **disabled** for a human-led review of these 41 exceptions. The
+workflow is kept for *future manual, separately reviewed* continuation via
+a new main-branch merge with the exact existing production launch marker,
+independent CI, protected Neon gates, and source rate limits. This pause
+merge must **not** contain the launch marker; it does **not** trigger
+another production collection. The two ChatGPT authorship continuation
+watch tasks were separately disabled. Other VotePredict workflows are
+out of scope and are not paused.
+
+**Manual review protocol:** Obtain the actual 41 bill identifiers,
+session, chamber, prior HTTP status, last checked timestamp and retry
+attempt count from a bounded production **read-only** query against
+senate_bill_author_scans joined to bills and legislative_sessions. Group
+failures by response type and source year. Inspect official Revisor status
+XML and bill status HTML with polite, serial requests only if needed.
+Distinguish a genuinely unavailable status, a transient upstream failure,
+an XML identity/format mismatch, and a wrong catalog/session or companion
+mapping. Record each case and proposed remedy; do not fabricate authors
+or dates, and do not automatically retry/write to production without a
+separately reviewed recovery decision. A 41-case exception inventory is
+not proof that 41 official bills have no authors.

@@ -11,7 +11,7 @@ import {
   SENATE_BILL_AUTHORS_TIME_BUDGET_MS,senateBillAuthorTimeBudgetExceeded,
 } from '../src/operations/senate-bill-authors.js';
 import {resolveSenator,type SenateMember} from '../src/operations/senate-identity-bill-resolvers.js';
-import {authorizeSenateBillAuthorsRun,SENATE_BILL_AUTHORS_SCHEDULE} from '../src/operations/senate-bill-author-run-guard.js';
+import {authorizeSenateBillAuthorsRun} from '../src/operations/senate-bill-author-run-guard.js';
 
 const specimen=[
   '<BILL><FILE_TYPE>SF</FILE_TYPE><FILE_NUMBER>7991</FILE_NUMBER>',
@@ -66,7 +66,7 @@ test('shared resolver leaves ambiguous names unresolved',()=>{
   assert.equal(resolveSenator({printedName:'Erin Rawtest',sessionSlug:'2025-2026'},roster).membershipId,'one');
   assert.equal(resolveSenator({printedName:'Smith',sessionSlug:'2025-2026'},roster).membershipId,null);
 });
-test('0025 additive, protected independent-main CI and trust-bound recurring schedule',()=>{
+test('0025 additive, protected independent-main CI and manual-only schedule',()=>{
   const migration=readFileSync('migrations/0025_senate_bill_authors.sql','utf8');
   const runner=readFileSync('scripts/deploy-senate-bill-authors-neon.ts','utf8');
   const workflow=readFileSync('.github/workflows/senate-bill-authors-production.yml','utf8');
@@ -77,15 +77,15 @@ test('0025 additive, protected independent-main CI and trust-bound recurring sch
   assert.match(runner,/SENATE_BILL_AUTHORS_PRODUCTION/);
   assert.match(workflow,/environment: evidence-readonly-sandbox/);
   assert.match(workflow,/needs.independent-main.result == 'success'/);
-  assert.match(workflow,/cron: '37 \*\/2 \* \* \*'/);
-  assert.match(workflow,/github\.event\.schedule == '37 \*\/2 \* \* \*'/);
+  assert.doesNotMatch(workflow,/cron:/);
+  assert.doesNotMatch(workflow,/github\.event\.schedule/);
   assert.match(workflow,/cancel-in-progress: false/);
   assert.doesNotMatch(workflow,/workflow_dispatch:/);
   assert.match(runner,/authorizeSenateBillAuthorsRun/);
 });
 
 
-test('scheduled or reviewed main launch requires exact independent CI and denies dispatch/replay',()=>{
+test('only reviewed main launch passes independent CI and denies dispatch/schedule/replay',()=>{
   const sha='a'.repeat(40);
   const env:NodeJS.ProcessEnv={
     NODE_ENV:'test',
@@ -115,18 +115,12 @@ test('scheduled or reviewed main launch requires exact independent CI and denies
   assert.throws(()=>authorizeSenateBillAuthorsRun({...env,GITHUB_REF:'refs/heads/feature'},push),/independent CI required/);
   assert.throws(()=>authorizeSenateBillAuthorsRun({...env,GITHUB_EVENT_NAME:'workflow_dispatch'},push),/required marker/);
 
-  const scheduled={repository,schedule:SENATE_BILL_AUTHORS_SCHEDULE};
+  const scheduled={repository,schedule:'37 */2 * * *'};
   const scheduleEnv={...env,GITHUB_EVENT_NAME:'schedule'};
-  assert.equal(authorizeSenateBillAuthorsRun(scheduleEnv,scheduled),false);
-  assert.throws(()=>authorizeSenateBillAuthorsRun(scheduleEnv,{
-    ...scheduled,schedule:'*/5 * * * *',
-  }),/Unrecognized schedule/);
-  assert.throws(()=>authorizeSenateBillAuthorsRun(scheduleEnv,{
-    ...scheduled,repository:{...repository,default_branch:'development'},
-  }),/Unrecognized schedule/);
+  assert.throws(()=>authorizeSenateBillAuthorsRun(scheduleEnv,scheduled),/required marker/);
   assert.throws(()=>authorizeSenateBillAuthorsRun({
-    ...scheduleEnv,GITHUB_WORKFLOW_REF:'killjoy00/votepredict/.github/workflows/unsafe.yml@refs/heads/main',
-  },scheduled),/Unrecognized schedule/);
+    ...scheduleEnv,GITHUB_WORKFLOW_REF:'killjoy00/votepredict/.github/workflows/senate-bill-authors-production.yml@refs/heads/main',
+  },scheduled),/required marker/);
   assert.throws(()=>authorizeSenateBillAuthorsRun(scheduleEnv,{
     ...scheduled,repository:{...repository,full_name:'someone/fork'},
   }),/independent CI required/);
