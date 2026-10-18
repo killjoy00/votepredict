@@ -169,7 +169,7 @@ export function auditRoster863FrozenProof(input:{
   frozenMatrixRawSha256:ROSTER_863_PINNED_DIGESTS.matrixRaw,
   externalArchiveSourceProofArtifactId:11315632754,
   sourceSignalsArtifactId:11380755983,
-  2025ReadinessArtifactId:11493988951,
+  house2025ReadinessArtifactId:11493988951,
   sourceP2ApplicabilityArtifactId:11436288880,
   directionalRows:92,bySession,
   byFamily:{exactBill:38,reviewedApplicability:54},
