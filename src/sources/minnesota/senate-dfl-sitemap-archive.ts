@@ -4,6 +4,7 @@
  * every raw text item must separately pass archived article checks.
  */
 import {createHash} from 'node:crypto';
+import {setTimeout as sleep} from 'node:timers/promises';
 import {originalDFLUrl} from './senate-dfl-wayback.js';
 
 export interface PinnedDFLSitemap{
@@ -71,9 +72,24 @@ export async function fetchArchivedDFLSitemap(
   item:PinnedDFLSitemap,request:typeof fetch=fetch,
 ):Promise<DflSitemapPage>{
   const replayUrl=dflSitemapReplayURL(item);
-  const res=await request(replayUrl,{method:'GET',redirect:'manual',cache:'no-store',
-    headers:{'User-Agent':'VotePredictRawArchivedDFLSitemap/1.0','Accept':'text/xml, application/xml'},
-    signal:AbortSignal.timeout(40000)});
+  // A dropped connection or timeout must not waste an entire protected shard.
+  // Retry only transport failures; HTTP 429/503, redirects, non-XML content
+  // and mismatched pinned hashes remain fail-closed without retries.
+  let res:Response;
+  for(let attempt=0;;attempt++){
+    try{
+      res=await request(replayUrl,{method:'GET',redirect:'manual',cache:'no-store',
+        headers:{'User-Agent':'VotePredictRawArchivedDFLSitemap/1.0','Accept':'text/xml, application/xml'},
+        signal:AbortSignal.timeout(40000)});
+      break;
+    }catch(error){
+      const transportError=error instanceof TypeError ||
+        (error instanceof DOMException &&
+          (error.name==='AbortError'||error.name==='TimeoutError'));
+      if(!transportError||attempt>=2)throw error;
+      await sleep(1500*(attempt+1));
+    }
+  }
   if(res.status!==200)throw Error('Archived publisher sitemap HTTP '+res.status);
   const ctype=res.headers.get('content-type')??'';
   if(ctype&&!/xml/i.test(ctype))throw Error('Archived publisher sitemap returned non-XML');
