@@ -1,0 +1,101 @@
+name: '#863 Frozen 92 non-serving historical claim-timestamp proof'
+on:
+  pull_request:
+    paths:
+      - research/scripts/audit-863-frozen-directional-proof.ts
+      - tests/historical-roster-863-frozen-evidence-proof.test.ts
+      - .github/workflows/historical-roster-863-frozen-92-proof.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: historical-roster-863-frozen92-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  keyless-review:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+      (github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'ROSTER_863_FROZEN_92_PROOF_V1_20261018')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify immutable digest policy and reject incomplete source proofs
+        run: |
+          node --import tsx --test tests/historical-roster-863-frozen-evidence-proof.test.ts
+          node --import tsx research/scripts/audit-863-frozen-directional-proof.ts --preflight
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  original-artifact-replay:
+    needs: [keyless-review]
+    if: >-
+      needs.keyless-review.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'ROSTER_863_FROZEN_92_PROOF_V1_20261018')
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    env:
+      REPOSITORY: killjoy00/votepredict
+      TOKEN: ${{ github.token }}
+      ROSTER_863_V18_MANIFEST: ${{ runner.temp }}/863-11494634289/evidence-quality-historical-feature-matrix-v1.8-manifest.json
+      ROSTER_863_V18_MATRIX: ${{ runner.temp }}/863-11494634289/evidence-quality-historical-feature-matrix-v1.8.ndjson.gz
+      ROSTER_863_V15_EXACT_SIGNALS: ${{ runner.temp }}/863-11380755983/evidence-quality-historical-exact-signals-v1.5.ndjson.gz
+      ROSTER_863_ARCHIVE_REPAIR: ${{ runner.temp }}/863-11315632754/evidence-quality-granular-availability-repair-plan-v1.json
+      ROSTER_863_P2_REMAINING: ${{ runner.temp }}/863-11436288880/historical-density-p2-remaining-applicability-canonical-v1.json
+      ROSTER_863_2025_READINESS: ${{ runner.temp }}/863-11493988951/historical-density-2025-house-applicability-integration-readiness-v1.json
+      ROSTER_863_PROOF_OUTPUT: ${{ runner.temp }}/863-frozen-92-proof
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Check reviewed exact main code SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch only five pinned historical GitHub Actions artifacts (keyless, no Neon)
+        shell: bash
+        run: |
+          set -euo pipefail
+          for id in 11494634289 11380755983 11315632754 11436288880 11493988951; do
+            mkdir -p "$RUNNER_TEMP/863-$id"
+            curl --fail --silent --show-error --location --max-time 75 \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $TOKEN" \
+              "https://api.github.com/repos/$REPOSITORY/actions/artifacts/$id/zip" \
+              -o "$RUNNER_TEMP/863-$id.zip"
+            unzip -oq "$RUNNER_TEMP/863-$id.zip" -d "$RUNNER_TEMP/863-$id"
+          done
+      - name: Independently replay exact 92 original feature-row source proofs
+        run: |
+          node --import tsx research/scripts/audit-863-frozen-directional-proof.ts --run
+      - name: Retain complete exact-92 audit ledger
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-roster-863-frozen-92-proof
+          path: ${{ runner.temp }}/863-frozen-92-proof/*
+          if-no-files-found: error
+          retention-days: 60
