@@ -238,6 +238,34 @@ async function main():Promise<void>{
     phase='read_only_production_source_year_and_capture_lineage_readback';
     const after=await countDFL(pool,'raw'),captureAfter=await countDFL(pool,'captures');
     const publisherStoredAfter=await countStoredSitemapOriginals(pool,candidateUrls);
+    // Public first-party URLs only: bounded exact inventory for a manual
+    // 2023-2025 eligibility/recoverability review, never raw text or secrets.
+    // A missing URL is a candidate, NOT proof of a missing eligible statement.
+    phase='read_only_unresolved_first_party_url_inventory';
+    const unresolved=await readonly(pool,async c=>{
+      const rows=await c.query<{source_url:string}>(
+        "SELECT source_url FROM senate_raw_statements WHERE source_id='senate_dfl' "+
+        "AND source_url=ANY($1::text[])",[candidateUrls]);
+      const stored=new Set(rows.rows.map(row=>row.source_url));
+      if(stored.size!==publisherStoredAfter)
+        throw Error('DFL public URL inventory and readback counts disagree');
+      return candidates.flatMap((seed,index)=>stored.has(seed.url)?[]:[{
+        url:seed.url,sitemapId:seed.sitemapId,
+        lastModifiedOn:seed.lastModifiedOn,shard:index%24,
+      }]);
+    });
+    if(unresolved.length!==candidates.length-publisherStoredAfter)
+      throw Error('Unresolved DFL original URL inventory size differs from readback');
+    const unresolvedShards=Array.from({length:24},(_,shard)=>({
+      shard,count:unresolved.filter(row=>row.shard===shard).length,
+    }));
+    console.log('SENATE_DFL_SITEMAP_UNRESOLVED_PUBLIC_URLS='+JSON.stringify({
+      manifest,inventorySize:candidates.length,stored:publisherStoredAfter,
+      unresolvedCandidates:unresolved.length,
+      missingUrlIsNotProofOfEligibleStatement:true,
+      byShard:unresolvedShards,
+      urls:unresolved,
+    }));
     if(publisherStoredAfter-publisherStoredBefore!==stats.inserted||
       sum(after)-sum(before)!==stats.inserted||
       sum(captureAfter)-sum(captureBefore)!==stats.inserted||
