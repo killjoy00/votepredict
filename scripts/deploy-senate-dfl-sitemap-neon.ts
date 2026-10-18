@@ -260,7 +260,7 @@ async function main():Promise<void>{
       }
       if(!recovered&&run.kind==='review-remainder')
         reviewedFailures.push({url:seed.url,
-          reason:stopReason??[...failedReasons].sort().join('|')||'no_usable_archive_capture'});
+          reason:stopReason??([...failedReasons].sort().join('|')||'no_usable_archive_capture')});
       if(stopReason)break;
       if(recovered){
         // Database failures must abort this protected job; never misclassify
