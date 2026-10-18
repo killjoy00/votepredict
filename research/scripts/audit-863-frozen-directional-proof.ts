@@ -226,4 +226,5 @@ async function main(){
   outcomeRead:false,productionContacted:false,
  }));
 }
-void main().catch(()=>{console.error('ROSTER_863_FROZEN_92_PROOF_HOLD');process.exitCode=1});
+if(process.argv[1]?.replace(/\\/g,'/').endsWith('/audit-863-frozen-directional-proof.ts'))
+ void main().catch(()=>{console.error('ROSTER_863_FROZEN_92_PROOF_HOLD');process.exitCode=1});
