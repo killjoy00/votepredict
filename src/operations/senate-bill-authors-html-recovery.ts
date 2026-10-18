@@ -93,10 +93,108 @@ export function parseOfficialBillAuthorHtml(html:string,item:HtmlRecoveryCase):P
   const count=Number(all[idx].value.match(/\(\s*(\d+)\s*\)/)?.[1]);
   if(!Number.isInteger(count)||count<1||count>100)
     throw Error('Invalid public author count');
-  const next=all.slice(idx+1).find(h=>h.start>all[idx].end);
-  if(!next||!/^Actions\b/i.test(next.value))
+  const subsequent=all.slice(idx+1).filter(h=>h.start>all[idx].end);
+  const actionIndex=subsequent.findIndex(h=>/^Actions$/i.test(h.value));
+  if(actionIndex<0||subsequent.length===0)
     throw Error('Authors list not bounded by actions heading');
-  const section=html.slice(all[idx].end,next.start);
+  // Passed House bills can also print a separate "Senate Authors (N)"
+  // section, and passed Senate bills can print "House Authors (N)".
+  // Only the original chamber's first Authors (N) list belongs to this bill.
+  const opposite=item.identifier.startsWith('HF')?'Senate':'House';
+  const otherChamberHeading=new RegExp('^'+opposite+' Authors\\s*\\(\\s*\\d+\\s*\\)
+  const list=[...section.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)];
+  const names:listName[]=list.map(li=>{
+    const a=/<a\b[^>]*>([\s\S]*?)<\/a>/i.exec(li[1]);
+    return a?plain(a[1]):'';
+  }).filter(Boolean);
+  if(names.length!==count)
+    throw Error('Listed current authors do not match Authors (N) count');
+  if(names.some(name=>name.length>100||name.length<2||/[\d<>{}]/.test(name)))
+    throw Error('Non-author / malformed name in official author list');
+  const keys=names.map(authorKey);
+  if(keys.some(x=>!x)||new Set(keys).size!==names.length)
+    throw Error('Ambiguous or repeated official author names');
+
+  // Official Action rows are already printed with dates. Dedupe duplicate
+  // chronological and side-by-side page sections by choosing the earliest
+  // explicitly printed addition for an identified current author.
+  const afterActions=html.slice(subsequent[actionIndex].end);
+  const datedAdd=new Map<string,string>();
+  const datedStrike=new Map<string,string>();
+  let actionRows=0;
+  const rows=[...afterActions.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)];
+  for(const row of rows){
+    const s=plain(row[1]);
+    const dateMatch=/\b(\d{1,2}\/\d{1,2}\/\d{4})\b/.exec(s);
+    const action=/\bAuthors?\s+(added|stricken)\s+(.+?)(?:\s+pg\.\s*|\s*$)/i.exec(s);
+    if(!dateMatch||!action)continue;
+    const date=isoDate(dateMatch[1],item.session);
+    if(!date)continue;
+    const target=action[1].toLowerCase()==='added'?datedAdd:datedStrike;
+    let found=false;
+    for(let i=0;i<names.length;i++){
+      if(!appearsAsName(action[2],names[i]))continue;
+      const prior=target.get(keys[i]);
+      if(!prior || (target===datedAdd?date<prior:date>prior))
+        target.set(keys[i],date);
+      found=true;
+    }
+    if(found)actionRows++;
+  }
+  const authors=names.map((name,i):RawAuthor=>({
+    nameRaw:name,role:i===0?'chief':'coauthor',authorOrder:i+1,
+    // A listed current author is not currently removed, even if the page
+    // records an earlier strike followed by reinstatement. Preserve the
+    // historical strike in the complete raw HTML snapshot, not as a false
+    // current removed_on state.
+    addedOn:datedAdd.get(keys[i])??null,removedOn:null,
+  }));
+  return {declaredCount:count,authors,
+    datedCurrentAuthors:authors.filter(a=>a.addedOn!==null||a.removedOn!==null).length,
+    datedActionRows:actionRows};
+}
+type listName=string;
+const INFO:{[key:string]:{legislature:number;first:number}}={
+  '2021-2022':{legislature:92,first:2021},
+  '2023-2024':{legislature:93,first:2023},
+  '2025-2026':{legislature:94,first:2025},
+};
+export async function fetchOfficialHtmlForCase(
+  item:HtmlRecoveryCase,pacer:RevisorPacer,request:typeof fetch=fetch,
+):Promise<OfficialHtmlCapture>{
+  const spec=INFO[item.session];if(!spec)throw Error('Invalid session');
+  // From completed first-party 41-case audit: applicable year has HTTP 200;
+  // the other year returned HTTP 500. No API calls are made here.
+  const year=spec.first+(item.lastHttp===200?1:0);
+  const sourceUrl=officialUrl(item,year,'html');
+  await pacer.wait();
+  const res=await request(sourceUrl,{
+    method:'GET',headers:{Accept:'text/html,application/xhtml+xml;q=0.9,*/*;q=0.1',
+      'User-Agent':'VotePredict/2.0 (41-case official authorship HTML recovery)'},
+    cache:'no-store',signal:AbortSignal.timeout(16000),
+  });
+  if([429,503].includes(res.status))throw Error('Official-source throttle: abort all recovery');
+  if(!res.ok)throw Error('Official HTML did not return 200 for '+item.identifier);
+  const final=new URL(res.url);
+  if(final.protocol!=='https:'||!['www.revisor.mn.gov','revisor.mn.gov'].includes(final.hostname))
+    throw Error('Official HTML redirected to untrusted host');
+  const bits=final.pathname.match(/^\/bills\/(\d+)\/(\d{4})\/0\/(SF|HF)\/(\d+)\/?$/i);
+  if(!bits||Number(bits[1])!==spec.legislature||
+     ![spec.first,spec.first+1].includes(Number(bits[2]))||
+     bits[3].toUpperCase()+Number(bits[4])!==item.identifier)
+    throw Error('Official HTML redirected to a different bill/year');
+  const len=Number(res.headers.get('content-length')??0);
+  if(len>2_000_000)throw Error('Oversized official source');
+  const rawHtml=await res.text();
+  const parsed=parseOfficialBillAuthorHtml(rawHtml,item);
+  return {item,sourceUrl:final.toString(),fetchedAt:new Date().toISOString(),
+    httpStatus:200,rawHtml,parsed};
+}
+,'i');
+  const intermediate=subsequent.slice(0,actionIndex);
+  if(intermediate.length>1||intermediate.some(h=>!otherChamberHeading.test(h.value)))
+    throw Error('Unexpected section between source authors and actions');
+  const section=html.slice(all[idx].end,subsequent[0].start);
   const list=[...section.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)];
   const names:listName[]=list.map(li=>{
     const a=/<a\b[^>]*>([\s\S]*?)<\/a>/i.exec(li[1]);
