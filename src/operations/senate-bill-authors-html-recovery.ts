@@ -138,7 +138,11 @@ export function parseOfficialBillAuthorHtml(html:string,item:HtmlRecoveryCase):P
   }
   const authors=names.map((name,i):RawAuthor=>({
     nameRaw:name,role:i===0?'chief':'coauthor',authorOrder:i+1,
-    addedOn:datedAdd.get(keys[i])??null,removedOn:datedStrike.get(keys[i])??null,
+    // A listed current author is not currently removed, even if the page
+    // records an earlier strike followed by reinstatement. Preserve the
+    // historical strike in the complete raw HTML snapshot, not as a false
+    // current removed_on state.
+    addedOn:datedAdd.get(keys[i])??null,removedOn:null,
   }));
   return {declaredCount:count,authors,
     datedCurrentAuthors:authors.filter(a=>a.addedOn!==null||a.removedOn!==null).length,
