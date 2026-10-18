@@ -5,9 +5,12 @@
  */
 import { createHash } from 'node:crypto';
 import { appendFileSync, readFileSync, readdirSync } from 'node:fs';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { Pool, type PoolClient } from 'pg';
 import { discoverExistingVotePredictNeonConnection } from '../src/operations/senate-media-neon-api-readonly.js';
 import { SenatePressRawStore } from '../src/operations/senate-press-raw-store.js';
+import { HISTORICAL_DFL_SITEMAPS, fetchArchivedDFLSitemap, orderedHistoricalDFLCandidates }
+  from '../src/sources/minnesota/senate-dfl-sitemap-archive.js';
 import {
   collectSource, collectDirectArticle, discoverRepublicanMemberPages,
   type SenatePressSource, type SourceCounts,
@@ -16,6 +19,7 @@ import {
 const MIGRATION = '0016_senate_raw_statements.sql';
 const MARKER = 'SENATE_PRESS_RAW_PRODUCTION_20261015';
 const DFL_REPAIR_MARKER = 'SENATE_PRESS_DFL_REPAIR_20261015';
+const DFL_CURRENT_MARKER = 'SENATE_DFL_2026_MISSING_RAW_20261018';
 const DFL_ONLY = process.env.VOTEPREDICT_SENATE_PRESS_DFL_ONLY === 'true';
 const COVERAGE_MARKER = 'SENATE_PRESS_COVERAGE_20261015';
 const GOP_MARKER = 'SENATE_GOP_RAW_REPAIR_20261015';
@@ -36,7 +40,7 @@ const SOURCES: Record<string, string> = {
 type Ledger = { filename: string; checksum: string };
 type Count = { source_id: string; year: string; items: number };
 
-function assertReviewedMain(): void {
+function assertReviewedMain(): boolean {
   const env = process.env;
   if(!['initial','dfl','coverage','gop-repair','gop-daily'].includes(MODE)
     || (DFL_ONLY && MODE!=='dfl')
@@ -56,7 +60,7 @@ function assertReviewedMain(): void {
   if (DAILY) {
     if(env.GITHUB_EVENT_NAME!=='schedule' || event.schedule!==DAILY_CRON)
       throw Error('Unexpected daily cron event');
-    return;
+    return false;
   }
   if (env.GITHUB_EVENT_NAME!=='push'
     || event.ref !== 'refs/heads/main' || event.after !== env.GITHUB_SHA
@@ -64,6 +68,7 @@ function assertReviewedMain(): void {
     || event.head_commit?.id !== env.GITHUB_SHA
     || !event.head_commit?.message?.includes(COVERAGE ? COVERAGE_MARKER : GOP_ONLY ? GOP_MARKER : DFL_ONLY ? DFL_REPAIR_MARKER : MARKER))
     throw Error('One-shot protected production merge marker missing or mismatched');
+  return DFL_ONLY && event.head_commit?.message?.includes(DFL_CURRENT_MARKER)===true;
 }
 function expectedMigrations(): Ledger[] {
   const files = readdirSync('migrations').filter(x => /^\d{4}_[a-z0-9_-]+\.sql$/.test(x)).sort();
@@ -134,12 +139,29 @@ async function main(): Promise<void> {
   let pool: Pool | undefined;
   try {
     if (process.argv.length !== 2) throw Error('Unexpected production arguments');
-    assertReviewedMain();
+    const current2026Review=assertReviewedMain();
     const expected = expectedMigrations();
     const sources = configuredSources().filter(s =>
       GOP_ONLY ? s.id==='senate_republicans' : !DFL_ONLY || s.id==='senate_dfl');
     if (sources.length !== ((DFL_ONLY||GOP_ONLY) ? 1 : 2))
       throw Error('Expected reviewed first-party source subset not found');
+    let reviewedCurrentUrls:string[]=[];
+    if(current2026Review){
+      phase='pinned_2026_first_party_publisher_url_selection';
+      const pages=[];
+      for(const pinned of HISTORICAL_DFL_SITEMAPS){
+        pages.push(await fetchArchivedDFLSitemap(pinned));
+        await sleep(1400);
+      }
+      const originals=orderedHistoricalDFLCandidates(pages);
+      reviewedCurrentUrls=originals
+        .filter(c=>c.lastModifiedOn?.slice(0,4)==='2026').map(c=>c.url);
+      // Historical sitemap last-modified dates are selection hints; the actual
+      // 2026 publication date must still be checked from the live official page.
+      if(reviewedCurrentUrls.length!==33||
+        new Set(reviewedCurrentUrls).size!==reviewedCurrentUrls.length)
+        throw Error('Unexpected reviewed 2026 first-party original URL count');
+    }
     phase = 'existing_default_branch_primary';
     const target = await discoverExistingVotePredictNeonConnection({
       apiKey: process.env.NEON_API_KEY?.trim() ?? '',
@@ -237,6 +259,26 @@ async function main(): Promise<void> {
       }));
     };
     for (const source of sources) {
+      if(current2026Review){
+        for(const url of reviewedCurrentUrls){
+          // Exact official URL allowlist, robots.txt and per-request courtesy
+          // rate-limits are enforced by the existing direct-article collector.
+          const item=await collectDirectArticle(source,url,
+            {from:'2026-01-01',to:END,delayMs:1500},store);
+          record({
+            source:source.id,source_type:source.source_type,
+            from:'2026-01-01',to:END,pages:1,discovered:1,
+            matched:item.inserted,inserted:item.inserted,previewed:0,
+            already_present:item.already_present,outside_range:0,
+            undated:0,by_year:{},member_archives:[],archive_gaps:[],
+            failures:item.failures,
+          });
+          await sleep(1800);
+          if(item.failures.some(f=>/Publisher rate-limited collection/.test(f.reason)))
+            break;
+        }
+        continue;
+      }
       const window = { from: START, to: END, maxPages: MAX_PAGES, delayMs: 1500 };
       const result = await collectSource(source, window, store);
       record(result);
@@ -293,6 +335,8 @@ async function main(): Promise<void> {
     }
     const report = {
       status: 'migration_committed_raw_backfill_readback',
+      current2026PinnedSitemapReview:current2026Review,
+      targetedCurrentUrls:reviewedCurrentUrls.length,
       migration: MIGRATION, migrationApplied,
       dateFrom: START, dateTo: END, mode: MODE, dflOnlyRepair: DFL_ONLY,
       before: beforeTotals, after: afterTotals,
