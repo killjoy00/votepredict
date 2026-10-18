@@ -20,10 +20,10 @@ const MIGRATION='0027_senate_official_bill_text_raw.sql';
 const REPO='killjoy00/votepredict';
 const SESSIONS=['2025-2026','2023-2024','2021-2022'];
 // A guarded merge push is a small live-source canary. Once it proves real
-// captures, the existing six-hour scheduled run uses the full polite budgets.
+// captures, the scheduled and guarded recovery runs use the full polite budgets.
 const PUSH_CANARY=process.env.GITHUB_EVENT_NAME==='push';
-const MAX_NEW_BILLS=PUSH_CANARY?15:100,MAX_DISCOVER=PUSH_CANARY?15:100,
-  MAX_VERSIONS=PUSH_CANARY?60:550,MAX_JOURNALS=PUSH_CANARY?10:30;
+const MAX_NEW_BILLS=PUSH_CANARY?15:200,MAX_DISCOVER=PUSH_CANARY?15:200,
+  MAX_VERSIONS=PUSH_CANARY?60:1100,MAX_JOURNALS=PUSH_CANARY?10:60;
 const MAX_HTTP_BYTES=8_000_000, RETRIES=3, TIMEOUT_MS=20000;
 type Ledger={filename:string;checksum:string};
 type Bill={bill_id:string;session_id:string;slug:string;identifier:string;attempts:number};
