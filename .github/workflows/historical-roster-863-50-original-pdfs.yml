@@ -56,7 +56,7 @@ jobs:
     env:
       SENATE863_PUBLIC_MAIN_CI_PASSED: ${{ needs.keyless-review.result == 'success' && 'true' || 'false' }}
       SENATE863_PUBLIC_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'ROSTER_863_FIFTY_PUBLIC_ORIGINALS_V1_20261018') && 'true' || 'false' }}
-      ROSTER863_ORIGINAL_OUTPUT: ${{ runner.temp }}/roster-863-official-source-audit
+      ROSTER863_ORIGINAL_OUTPUT: ${{ github.workspace }}/roster-863-official-source-audit
     steps:
       - uses: actions/checkout@v7
         with:
@@ -77,6 +77,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: historical-roster-863-50-original-official-source-proof
-          path: ${{ runner.temp }}/roster-863-official-source-audit/*
+          path: ${{ github.workspace }}/roster-863-official-source-audit/*
           if-no-files-found: error
           retention-days: 60
