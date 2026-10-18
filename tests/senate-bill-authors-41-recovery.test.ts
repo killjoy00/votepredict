@@ -12,6 +12,7 @@ const fixture=(input:{
 }={})=>{
   const session=input.session??'2025-2026',legislature=input.legislature??94;
   const chamber=input.chamber??'HF',number=input.number??1269;
+  const ordinal=legislature===92?'nd':legislature===93?'rd':'th';
   const names=input.authors??['Reyer','Smith','Hansen, R.'];
   const row=input.actionRows??[
     '<tr><td>02/24/2025</td><td>Author added Smith pg. 414</td></tr>',
@@ -20,7 +21,7 @@ const fixture=(input:{
   return '<!DOCTYPE html><html><title>Official Minnesota Revisor Status</title>'+
     '<body>'+(' '.repeat(3200))+
     '<h1>'+chamber+' '+number+'</h1>'+
-    '<h2>Status in the House - '+legislature+'th Legislature ('+
+    '<h2>Status in the House - '+legislature+'+ordinal+' Legislature ('+
       session.replace('-', ' - ')+')</h2>'+
     '<h2>Description</h2><p>Only public source text is parsed</p>'+
     '<h2>Authors <span class="author_count">('+names.length+')</span></h2><div class="author"><ul>'+
@@ -59,7 +60,7 @@ test('strictly rejects wrong bill, session and author count before any DB writes
   assert.throws(()=>parseOfficialBillAuthorHtml(fixture({number:1268}),hf),
     /bill heading/);
   assert.throws(()=>parseOfficialBillAuthorHtml(fixture({session:'2023-2024'}),hf),
-    /Legislature/);
+    /legislature/i);
   assert.throws(()=>parseOfficialBillAuthorHtml(
     fixture().replace('(3)</span>','(4)</span>'),hf),
     /do not match/);
