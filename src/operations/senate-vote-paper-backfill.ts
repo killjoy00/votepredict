@@ -138,7 +138,10 @@ export async function backfillVotePapers(pool:Pool,max=500){
  return summary;
 }
 
-export async function verifyPaperSources(pool:Pool,max=9,fetcher=fetchSenateJournal){
+export async function verifyPaperSources(pool:Pool,max=9,fetcher=fetchSenateJournal,options:{budgetMs?:number}={}){
+ const budgetMs=options.budgetMs??600000;
+ if(!Number.isInteger(max)||max<1||max>500||!Number.isInteger(budgetMs)||budgetMs<1||budgetMs>900000)throw Error('Invalid source verification budget');
+ const started=Date.now();
  const docs=(await pool.query(`WITH ranked AS(SELECT d.id,d.source_url,d.metadata#>>'{rawPrepassageVotes,text}' AS text,
   row_number() OVER(PARTITION BY s.slug ORDER BY count(a.id) DESC,d.id) AS rank
   FROM source_documents d JOIN legislative_sessions s ON s.id=d.session_id JOIN senate_vote_paper_current_v a ON a.source_document_id=d.id
@@ -147,8 +150,10 @@ export async function verifyPaperSources(pool:Pool,max=9,fetcher=fetchSenateJour
    attempt.extracted_text_sha256<>encode(sha256(convert_to(d.metadata#>>'{rawPrepassageVotes,text}','UTF8')),'hex') OR
    (attempt.result='unavailable' AND attempt.attempts<3 AND attempt.checked_at<now()-interval '6 hours')) GROUP BY d.id,s.slug)
   SELECT * FROM ranked ORDER BY rank,source_url LIMIT $1`,[max])).rows;
- const summary={checked:0,matched:0,mismatch:0,unavailable:0};
+ const summary={checked:0,matched:0,mismatch:0,unavailable:0,selected:docs.length,budgetExhausted:false};
  for(const d of docs){
+  if(Date.now()-started>=budgetMs){summary.budgetExhausted=true;break;}
+  if(fetcher===fetchSenateJournal)await new Promise(r=>setTimeout(r,500));
   summary.checked++;let original;
   try{original=await fetcher(d.source_url);}catch{summary.unavailable++;}
   const result=!original?'unavailable':hash(original.text)!==hash(d.text)?'mismatch':'matched';

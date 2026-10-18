@@ -63,9 +63,9 @@ async function main(){
   progress('migration',{migrationApplied,driftPassed:true});
   phase='source_local_papers_and_dated_roles';const batches=[];
   for(let i=0;i<(push?4:1);i++){const batch=await backfillVotePapers(pool,push?1000:500);batches.push(batch);progress('paper_batch',batch);if(batch.documents===0)break;}
-  phase='original_source_verification';const sourceVerification=await verifyPaperSources(pool,push?12:6);progress(phase,sourceVerification);
-  phase='explicit_base_bodies';const baseBodies=await recoverExplicitBaseBodies(pool,{max:push?60:30});progress(phase,baseBodies);
-  phase='dated_assignment_facts';const datedAssignments=await collectDatedAssignmentFacts(pool);progress(phase,datedAssignments);
+  phase='original_source_verification';const sourceVerification=await verifyPaperSources(pool,push?400:30,undefined,{budgetMs:push?600000:180000});progress(phase,sourceVerification);
+  phase='explicit_base_bodies';const baseBodies=await recoverExplicitBaseBodies(pool,{max:push?60:30,retryFailedNow:push});progress(phase,baseBodies);
+  phase='dated_assignment_facts';const datedAssignments=await collectDatedAssignmentFacts(pool,{retryUnavailableNow:push});progress(phase,datedAssignments);
   phase='stage_historical_sources';const historyJobs=await stageHistoryJobs(pool);progress(phase,{eligibleUrls:historyJobs});
   phase='historical_archived_bodies';const archives=await recoverHistoricalArchives(pool,{maxJobs:push?30:18});progress(phase,archives);
   phase='exact_base_connections';const baseConnections=await connectExplicitBaseCaptures(pool);

@@ -13,7 +13,7 @@ import historicalLeads from '../../data/senate-research/historical-capture-leads
 /** Both publisher URL generations identify immutable papers. Latest and special sessions are excluded. */
 export function historyPaperIdentity(value:string):{identifier:string;slug:string;locator:string;family:string;pdf:boolean;legacy:boolean;year:string;legislature:string}|null{
  try{
-  const u=new URL(value);if(u.protocol!=='https:'||u.hostname!=='www.revisor.mn.gov'||u.username||u.password||u.hash)return null;
+  const u=new URL(value);if(u.protocol!=='https:'||u.hostname!=='www.revisor.mn.gov'||u.username||u.password||u.hash||u.port)return null;
   const m=u.pathname.match(/^\/bills\/(92|93|94)\/(202[1-6])\/0\/(HF|SF)\/([1-9]\d{0,5})\/versions\/(\d+|ue\/\d+|ccr\/[A-Za-z0-9]+)\/(pdf\/)?$/i);
   if(m&&!u.search){
    if(m[5].split('/').at(-1)?.toLowerCase()==='latest')return null;
@@ -44,8 +44,34 @@ export function legacyHistoryAliases(value:string):string[]{
  return [...urls];
 }
 
+/** Follow only publisher aliases preserving the requested paper or exact assignment path. */
+export async function fetchCanonicalGovernmentSource(sourceUrl:string,kind:'bill_text'|'role_pdf',fetcher:typeof fetch=fetch):Promise<{response:Response;resolvedUrl:string}>{
+ const original=new URL(sourceUrl),paper=kind==='bill_text'?historyPaperIdentity(sourceUrl):null;
+ const allowed=(value:string)=>{
+  const u=new URL(value);if(u.protocol!=='https:'||u.username||u.password||u.hash||u.port)return false;
+  if(kind==='bill_text'){
+   const p=historyPaperIdentity(value);
+   return !!paper&&!!p&&p.identifier===paper.identifier&&p.slug===paper.slug&&p.locator===paper.locator&&p.pdf===paper.pdf;
+  }
+  return ['www.senate.mn','assets.senate.mn'].includes(u.hostname)&&!u.search&&u.pathname===original.pathname
+   &&/^\/committees\/(?:2021-2022|2023-2024|2025-2026)\/info\/comlegal\.pdf$/.test(u.pathname);
+ };
+ const visited=new Set<string>(),signal=AbortSignal.timeout(20000);let url=sourceUrl;
+ for(let hop=0;hop<4;hop++){
+  if(!allowed(url)||visited.has(url))throw Error('Invalid publisher alias');visited.add(url);
+  const response=await fetcher(url,{redirect:'manual',headers:{'User-Agent':'VotePredict/2.0 canonical Senate evidence research'},signal});
+  if(response.url&&!allowed(response.url)){await response.body?.cancel();throw Error('Unexpected publisher response URL');}
+  if([301,302,303,307,308].includes(response.status)){
+   const location=response.headers.get('location');await response.body?.cancel();
+   if(!location)throw Error('Missing publisher alias');url=new URL(location,url).toString();continue;
+  }
+  return {response,resolvedUrl:response.url||url};
+ }
+ throw Error('Publisher alias limit exceeded');
+}
+
 /** Recover only papers explicitly named in a journal, rather than choosing a latest version. */
-export async function recoverExplicitBaseBodies(pool:Pool,options:{max?:number;fetchImpl?:typeof fetch;sleep?:(ms:number)=>Promise<void>}={}){
+export async function recoverExplicitBaseBodies(pool:Pool,options:{max?:number;fetchImpl?:typeof fetch;retryFailedNow?:boolean;sleep?:(ms:number)=>Promise<void>}={}){
  const max=options.max??30;if(!Number.isInteger(max)||max<1||max>100)throw Error('Invalid explicit body batch');
  const candidates=(await pool.query(`SELECT DISTINCT a.bill_id,b.session_id,b.identifier,s.slug,a.explicit_base_locator AS locator
   FROM senate_vote_paper_current_v a JOIN bills b ON b.id=a.bill_id JOIN legislative_sessions s ON s.id=b.session_id
@@ -60,14 +86,14 @@ export async function recoverExplicitBaseBodies(pool:Pool,options:{max?:number;f
   row_number() OVER(PARTITION BY s.slug ORDER BY q.attempts,q.source_url) AS rank
   FROM senate_official_bill_text_queue q JOIN bills b ON b.id=q.bill_id JOIN legislative_sessions s ON s.id=q.session_id
   WHERE EXISTS(SELECT 1 FROM senate_vote_paper_current_v a WHERE a.bill_id=q.bill_id AND a.explicit_base_locator=q.source_locator)
-  AND(q.status='pending' OR(q.status='failed' AND q.attempts<3 AND q.last_checked_at<now()-interval '6 hours')))
-  SELECT * FROM ranked ORDER BY rank,slug LIMIT $1`,[max])).rows;
+  AND(q.status='pending' OR(q.status='failed' AND q.attempts<3 AND ($2::boolean OR q.last_checked_at<now()-interval '6 hours'))))
+  SELECT * FROM ranked ORDER BY rank,slug LIMIT $1`,[max,options.retryFailedNow??false])).rows;
  const summary={attempted:0,captured:0,unavailable:0,failed:0,throttled:false},fetcher=options.fetchImpl??fetch;
  for(const q of rows){
   if(!validHistorySource('bill_text',q.source_url))throw Error('Invalid explicit base URL');
   await (options.sleep??(ms=>new Promise(r=>setTimeout(r,ms))))(750);summary.attempted++;
-  let response:Response|null=null,bytes:Uint8Array|null=null;
-  try{response=await fetcher(q.source_url,{redirect:'error',headers:{'User-Agent':'VotePredict/2.0 Senate explicit paper research'},signal:AbortSignal.timeout(20000)});
+  let response:Response|null=null,bytes:Uint8Array|null=null,resolvedUrl=q.source_url;
+  try{const result=await fetchCanonicalGovernmentSource(q.source_url,'bill_text',fetcher);response=result.response;resolvedUrl=result.resolvedUrl;
    if([429,503].includes(response.status)){summary.throttled=true;break;}
    if(response.ok)bytes=await boundedBody(response);
   }catch{/* Source failures are recorded below, outside all database writes. */}
@@ -83,7 +109,7 @@ export async function recoverExplicitBaseBodies(pool:Pool,options:{max?:number;f
     original_body,raw_text,original_body_sha256,body_hash_provenance,extracted_text_sha256,original_byte_length,content_type,fetched_at,http_status)
     VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'fetched_original_bytes',$12,$13,'text/html',now(),200)
     ON CONFLICT(source_url,source_locator,original_body_sha256,extracted_text_sha256) DO NOTHING`,
-    [q.id,q.session_id,q.bill_id,q.family,q.source_url,q.status_url,q.source_locator,q.printed_label,captured.originalBody,captured.rawText,
+    [q.id,q.session_id,q.bill_id,q.family,resolvedUrl,resolvedUrl.slice(0,resolvedUrl.indexOf('/versions/')+1),q.source_locator,q.printed_label,captured.originalBody,captured.rawText,
      captured.originalBodySha256,captured.extractedTextSha256,captured.originalByteLength]);summary.captured++;
   }else if(response?.status===404)summary.unavailable++;else summary.failed++;
   await pool.query(`UPDATE senate_official_bill_text_queue SET status=$2,attempts=attempts+1,last_checked_at=now(),last_http_status=$3,last_error_kind=$4 WHERE id=$1`,
@@ -94,9 +120,9 @@ export async function recoverExplicitBaseBodies(pool:Pool,options:{max?:number;f
 
 export function validHistorySource(kind:string,url:string):boolean {
  try{
-  const u=new URL(url);if(u.protocol!=='https:'||u.username||u.password||u.hash)return false;
+  const u=new URL(url);if(u.protocol!=='https:'||u.username||u.password||u.hash||u.port)return false;
   if(kind==='bill_text')return historyPaperIdentity(url)!==null;
-  if(kind==='role_pdf')return u.hostname==='www.senate.mn'&&!u.search&&/^\/committees\/202[135]-202[246]\/info\/comlegal\.pdf$/.test(u.pathname);
+  if(kind==='role_pdf')return ['www.senate.mn','assets.senate.mn'].includes(u.hostname)&&!u.search&&/^\/committees\/(?:2021-2022|2023-2024|2025-2026)\/info\/comlegal\.pdf$/.test(u.pathname);
   if(kind==='role_html')return (u.hostname==='www.senate.mn'&&['/members','/members/','/committees/committee_bio.html','/committees/committee_bio.php'].includes(u.pathname))
    ||(u.hostname==='www.lrl.mn.gov'&&/^\/legdb\/fulldetail(?:\?)?$/.test(u.pathname)&&/^\d+$/.test(u.searchParams.get('ID')??u.searchParams.get('id')??''));
  }catch{}
@@ -177,7 +203,7 @@ export async function stageHistoryJobs(pool:Pool){
 }
 async function pdfText(bytes:Uint8Array){
  const {PDFParse}=await import('pdf-parse');const {CanvasFactory}=await import('pdf-parse/worker');
- const parser=new PDFParse({data:bytes.slice(),CanvasFactory});try{return (await parser.getText()).text}finally{await parser.destroy()}
+ const parser=new PDFParse({data:Uint8Array.from(bytes),CanvasFactory});try{return (await parser.getText()).text}finally{await parser.destroy()}
 }
 export function statedAssignmentDate(text:string,slug:string):string|null{
  const m=text.match(/\bAs of\s*:?\s*(\d{1,2})\/(\d{1,2})\/(\d{4})/i)
@@ -189,22 +215,22 @@ export function statedAssignmentDate(text:string,slug:string):string|null{
 /** A dated official assignment sheet records role facts at its stated date.
  * Its current download is kept separately; no historical page-publication clock is invented.
  */
-export async function collectDatedAssignmentFacts(pool:Pool,options:{fetchImpl?:typeof fetch}={}){
+export async function collectDatedAssignmentFacts(pool:Pool,options:{fetchImpl?:typeof fetch;retryUnavailableNow?:boolean}={}){
  const sessions=(await pool.query(`SELECT s.id,s.slug FROM legislative_sessions s JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
   LEFT JOIN senate_role_dated_roster_checks r ON r.session_id=s.id WHERE s.slug=ANY($1::text[])
-  AND(r.session_id IS NULL OR(r.result='unavailable' AND r.attempts<3 AND r.checked_at<now()-interval '6 hours')) ORDER BY s.slug`,[HISTORY_SESSIONS])).rows;
+  AND(r.session_id IS NULL OR(r.result='unavailable' AND r.attempts<3 AND ($2::boolean OR r.checked_at<now()-interval '6 hours'))) ORDER BY s.slug`,[HISTORY_SESSIONS,options.retryUnavailableNow??false])).rows;
  const roster=await historyRoster(pool),summary={checked:0,capturedSources:0,roleFacts:0,unparsed:0,unavailable:0};
  for(const s of sessions){
   const url=`https://www.senate.mn/committees/${s.slug}/info/comlegal.pdf`;
-  let bytes:Uint8Array|null=null,text:string|null=null;
-  try{const r=await (options.fetchImpl??fetch)(url,{redirect:'error',headers:{'User-Agent':'VotePredict/2.0 dated Senate role research'},signal:AbortSignal.timeout(20000)});
-   if(r.ok){bytes=await boundedBody(r,30_000_000);if(Buffer.from(bytes.slice(0,5)).toString()==='%PDF-')text=await pdfText(bytes);}
+  let bytes:Uint8Array|null=null,text:string|null=null,originalSha:string|null=null,resolvedUrl=url;
+  try{const result=await fetchCanonicalGovernmentSource(url,'role_pdf',options.fetchImpl??fetch),r=result.response;resolvedUrl=result.resolvedUrl;
+   if(r.ok){bytes=await boundedBody(r,30_000_000);originalSha=hash(bytes);if(Buffer.from(bytes.slice(0,5)).toString()==='%PDF-')text=await pdfText(bytes);}
   }catch{/* Public source failure only: storage stays outside this catch. */}
   const date=text?statedAssignmentDate(text,s.slug):null;
   const parsed=text?parseSenateAssignmentPdfText(text,getMinnesotaHouseSession(s.slug)):null;
   const result=!text?'unavailable':!date||!parsed?.roles.length?'unparsed':'captured';summary.checked++;
   if(result==='captured'){
-   summary.roleFacts+=await storeHistoricalRoles(pool,roster,{sessionId:s.id,slug:s.slug,sourceUrl:url,body:text!,originalSha:hash(bytes!),
+   summary.roleFacts+=await storeHistoricalRoles(pool,roster,{sessionId:s.id,slug:s.slug,sourceUrl:resolvedUrl,body:text!,originalSha:originalSha!,
     occurredOn:date!,kind:'official_dated_roster',roles:parsed!.roles});summary.capturedSources++;
   }else if(result==='unparsed')summary.unparsed++;else summary.unavailable++;
   await pool.query(`INSERT INTO senate_role_dated_roster_checks(session_id,result,attempts) VALUES($1,$2,1)
@@ -258,7 +284,10 @@ export async function recoverHistoricalArchives(pool:Pool,options:{maxJobs?:numb
  const fetcher=options.fetchImpl??fetch,sleep=options.sleep??(ms=>new Promise(r=>setTimeout(r,ms))),roster=await historyRoster(pool);
  const jobs=(await pool.query<Job>(`WITH ranked AS(SELECT q.*,s.slug,b.identifier,
   row_number() OVER(PARTITION BY s.slug,CASE WHEN q.kind='bill_text' THEN 'text' ELSE 'role' END
-   ORDER BY CASE WHEN q.source_url=ANY($2::text[]) THEN -1 WHEN q.source_url LIKE '%/bills/text.php?%' THEN 0
+   ORDER BY CASE WHEN q.source_url=ANY($2::text[]) THEN -2
+    WHEN q.kind='bill_text' AND EXISTS(SELECT 1 FROM vote_events ev JOIN chambers ch ON ch.id=ev.chamber_id
+     WHERE ev.bill_id=q.bill_id AND ch.slug='senate') THEN -1 ELSE 0 END,
+    CASE WHEN q.source_url LIKE '%/bills/text.php?%' THEN 0
     WHEN q.kind='role_pdf' THEN 0 WHEN q.source_url LIKE '%/members%' THEN 1
     WHEN q.source_url LIKE '%/committees/%' THEN 2 ELSE 3 END,q.attempts,q.job_key) AS rank
   FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id LEFT JOIN bills b ON b.id=q.bill_id
