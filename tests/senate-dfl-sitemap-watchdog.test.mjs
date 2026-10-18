@@ -52,3 +52,13 @@ test('active collector prevents repeated dispatch, even with an older failed run
   assert.equal(decision.dispatch,false);
   assert.equal(decision.latestId,105);
 });
+
+test('skipped workflow runs never suppress overdue DFL recovery',()=>{
+  const skipped={...run(1,'completed','push',201),conclusion:'skipped'};
+  const stale={...run(100,'completed','schedule',200),conclusion:'success'};
+  assert.equal(decideRecovery([skipped,stale],NOW).reason,'collection_overdue');
+  assert.equal(decideRecovery([skipped,stale],NOW).dispatch,true);
+  assert.equal(decideRecovery([skipped],NOW).reason,'no_collection_runs');
+  const recentlyFailed={...run(40,'completed','workflow_dispatch',202),conclusion:'failure'};
+  assert.equal(decideRecovery([skipped,recentlyFailed],NOW).reason,'recent_collection_exists');
+});
