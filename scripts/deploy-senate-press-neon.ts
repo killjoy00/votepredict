@@ -5,9 +5,12 @@
  */
 import { createHash } from 'node:crypto';
 import { appendFileSync, readFileSync, readdirSync } from 'node:fs';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { Pool, type PoolClient } from 'pg';
 import { discoverExistingVotePredictNeonConnection } from '../src/operations/senate-media-neon-api-readonly.js';
 import { SenatePressRawStore } from '../src/operations/senate-press-raw-store.js';
+import { HISTORICAL_DFL_SITEMAPS, fetchArchivedDFLSitemap, orderedHistoricalDFLCandidates }
+  from '../src/sources/minnesota/senate-dfl-sitemap-archive.js';
 import {
   collectSource, collectDirectArticle, discoverRepublicanMemberPages,
   type SenatePressSource, type SourceCounts,
@@ -16,6 +19,7 @@ import {
 const MIGRATION = '0016_senate_raw_statements.sql';
 const MARKER = 'SENATE_PRESS_RAW_PRODUCTION_20261015';
 const DFL_REPAIR_MARKER = 'SENATE_PRESS_DFL_REPAIR_20261015';
+const DFL_MURPHY_MARKER = 'SENATE_DFL_ERIN_MURPHY_2025_20261018';
 const DFL_ONLY = process.env.VOTEPREDICT_SENATE_PRESS_DFL_ONLY === 'true';
 const COVERAGE_MARKER = 'SENATE_PRESS_COVERAGE_20261015';
 const GOP_MARKER = 'SENATE_GOP_RAW_REPAIR_20261015';
@@ -36,7 +40,7 @@ const SOURCES: Record<string, string> = {
 type Ledger = { filename: string; checksum: string };
 type Count = { source_id: string; year: string; items: number };
 
-function assertReviewedMain(): void {
+function assertReviewedMain(): boolean {
   const env = process.env;
   if(!['initial','dfl','coverage','gop-repair','gop-daily'].includes(MODE)
     || (DFL_ONLY && MODE!=='dfl')
@@ -56,7 +60,7 @@ function assertReviewedMain(): void {
   if (DAILY) {
     if(env.GITHUB_EVENT_NAME!=='schedule' || event.schedule!==DAILY_CRON)
       throw Error('Unexpected daily cron event');
-    return;
+    return false;
   }
   if (env.GITHUB_EVENT_NAME!=='push'
     || event.ref !== 'refs/heads/main' || event.after !== env.GITHUB_SHA
@@ -64,6 +68,7 @@ function assertReviewedMain(): void {
     || event.head_commit?.id !== env.GITHUB_SHA
     || !event.head_commit?.message?.includes(COVERAGE ? COVERAGE_MARKER : GOP_ONLY ? GOP_MARKER : DFL_ONLY ? DFL_REPAIR_MARKER : MARKER))
     throw Error('One-shot protected production merge marker missing or mismatched');
+  return DFL_ONLY && event.head_commit?.message?.includes(DFL_MURPHY_MARKER)===true;
 }
 function expectedMigrations(): Ledger[] {
   const files = readdirSync('migrations').filter(x => /^\d{4}_[a-z0-9_-]+\.sql$/.test(x)).sort();
@@ -134,12 +139,26 @@ async function main(): Promise<void> {
   let pool: Pool | undefined;
   try {
     if (process.argv.length !== 2) throw Error('Unexpected production arguments');
-    assertReviewedMain();
+    const recoverHistoricalMurphy=assertReviewedMain();
     const expected = expectedMigrations();
     const sources = configuredSources().filter(s =>
       GOP_ONLY ? s.id==='senate_republicans' : !DFL_ONLY || s.id==='senate_dfl');
     if (sources.length !== ((DFL_ONLY||GOP_ONLY) ? 1 : 2))
       throw Error('Expected reviewed first-party source subset not found');
+    const murphySourceUrl=
+      'https://senatedfl.mn/senate-majority-leader-erin-murphy-responds-to-house-power-sharing-agreement/';
+    if(recoverHistoricalMurphy){
+      phase='pinned_first_party_2025_erinn_murphy_original';
+      const pages=[];
+      for(const pinned of HISTORICAL_DFL_SITEMAPS){
+        pages.push(await fetchArchivedDFLSitemap(pinned));
+        await sleep(1400);
+      }
+      const originals=orderedHistoricalDFLCandidates(pages);
+      if(originals.length!==1150 ||
+        originals.filter(c=>c.url===murphySourceUrl&&c.lastModifiedOn?.slice(0,4)==='2025').length!==1)
+        throw Error('Requested Murphy historical original not exactly pinned in the publisher sitemap');
+    }
     phase = 'existing_default_branch_primary';
     const target = await discoverExistingVotePredictNeonConnection({
       apiKey: process.env.NEON_API_KEY?.trim() ?? '',
@@ -237,6 +256,37 @@ async function main(): Promise<void> {
       }));
     };
     for (const source of sources) {
+      if(recoverHistoricalMurphy){
+        // A first-party 2025 page whose Wayback replay is unavailable.
+        // Recover its current publisher-original text without inventing a
+        // historical archive capture or a pre-vote observation timestamp.
+        const guardedOriginal={
+          existing:(urls:string[])=>store.existing(urls),
+          insert:async(item:import('../src/sources/minnesota/senate-press-raw.js').RawSenateStatement)=>{
+            if(item.source_id!=='senate_dfl'||item.source_url!==murphySourceUrl||
+              item.published_on!=='2025-02-06'||item.raw_text.length<100||
+              !/Erin Murphy/i.test(item.title))
+              throw Error('Murphy original, publication date or full text did not match review');
+            return store.insert(item);
+          },
+        };
+        const recovered=await collectDirectArticle(source,murphySourceUrl,
+          {from:'2025-02-06',to:'2025-02-06',delayMs:1500},guardedOriginal);
+        record({
+          source:source.id,source_type:source.source_type,
+          from:'2025-02-06',to:'2025-02-06',pages:1,discovered:1,
+          matched:recovered.inserted,inserted:recovered.inserted,previewed:0,
+          already_present:recovered.already_present,outside_range:0,
+          undated:0,by_year:recovered.inserted?{'2025':recovered.inserted}:{},
+          member_archives:[],archive_gaps:[],failures:recovered.failures,
+        });
+        // A successful GitHub job must prove that the exact official article
+        // exists as complete RAW text, even if a parallel collector inserted it
+        // before this deduplicated one-shot.
+        if(recovered.failures.length || recovered.inserted+recovered.already_present!==1)
+          throw Error('The exact Murphy original could not be recovered');
+        continue;
+      }
       const window = { from: START, to: END, maxPages: MAX_PAGES, delayMs: 1500 };
       const result = await collectSource(source, window, store);
       record(result);
@@ -291,8 +341,36 @@ async function main(): Promise<void> {
       if (n < prior || n - prior !== inserted || n > 200000 || n === 0)
         throw Error('Production raw statement source count inconsistent with inserts');
     }
+    let murphyVerified:null|{sourceUrl:string;publishedOn:string;rawTextLength:number;archivedCaptureCount:number}=null;
+    if(recoverHistoricalMurphy){
+      phase='verify_exact_first_party_murphy_2025_raw_and_provenance';
+      murphyVerified=await readonly(pool,async c=>{
+        const raw=await c.query<{source_url:string;published_on:string;title:string;raw_text_length:number}>(
+          "SELECT source_url,to_char(published_on,'YYYY-MM-DD') AS published_on,title,"+
+          "length(raw_text)::integer AS raw_text_length FROM senate_raw_statements "+
+          "WHERE source_id='senate_dfl' AND source_url=$1",[murphySourceUrl]);
+        const row=raw.rows[0];
+        if(raw.rows.length!==1||row.source_url!==murphySourceUrl||
+          row.published_on!=='2025-02-06'||row.raw_text_length<100||
+          !/Erin Murphy/i.test(row.title))
+          throw Error('Exact Murphy 2025 raw statement failed protected readback');
+        const captures=await c.query<{total:string}>(
+          "SELECT count(*)::text AS total FROM senate_raw_statement_archive_captures WHERE source_url=$1",
+          [murphySourceUrl]);
+        return {sourceUrl:row.source_url,publishedOn:row.published_on,
+          rawTextLength:row.raw_text_length,archivedCaptureCount:Number(captures.rows[0].total)};
+      });
+      console.log('SENATE_DFL_ERIN_MURPHY_HISTORICAL_RAW_VERIFIED='+JSON.stringify({
+        ...murphyVerified,
+        originalFirstPartyArticleRecovered:true,
+        provenanceOfThisRecovery:'live_first_party_page_fetch',
+        doesNotEstablishContemporaneousArchivedObservation:true,
+      }));
+    }
     const report = {
       status: 'migration_committed_raw_backfill_readback',
+      targetedHistoricalMurphy2025:recoverHistoricalMurphy,
+      murphyRawVerified:murphyVerified!==null,
       migration: MIGRATION, migrationApplied,
       dateFrom: START, dateTo: END, mode: MODE, dflOnlyRepair: DFL_ONLY,
       before: beforeTotals, after: afterTotals,
