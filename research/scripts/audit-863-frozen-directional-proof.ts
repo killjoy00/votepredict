@@ -40,6 +40,40 @@ export function checkRoster863ProofFreeze(){
    throw Error('Frozen proof digest constants modified');
  return true;
 }
+/**
+ * Several already verified excerpt observations can support the SAME member-event.
+ * This is lawful many-to-one provenance, not a duplicate vote or new feature row.
+ * A repeated evidence identity for the same target, however, is malformed.
+ * Ordering is deterministic and never selects a later candidate over an earlier
+ * authenticated pre-vote one.
+ */
+export function indexRoster863ArchiveProofs(candidates:Json[]):Map<string,Json[]>{
+ const result=new Map<string,Json[]>();
+ if(!Array.isArray(candidates)||candidates.length>200)
+   throw Error('Unexpected archived excerpt provenance scope');
+ for(const candidate of candidates){
+  if(typeof candidate.evidenceId!=='string'||
+    !/^[0-9a-f-]{36}$/.test(candidate.evidenceId)||
+    !Array.isArray(candidate.provenTargetRowKeys)||
+    candidate.provenTargetRowKeys.length>200||
+    typeof candidate.earliestVerifiedCapturedAt!=='string'||
+    !/^20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(candidate.earliestVerifiedCapturedAt))
+   throw Error('Malformed independently matched excerpt record');
+  for(const key of candidate.provenTargetRowKeys as string[]){
+   if(typeof key!=='string'||!/^[a-f0-9-]{36}\|[a-f0-9-]{36}$/.test(key))
+    throw Error('Bad frozen row identity in archive map');
+   const previous=result.get(key)??[];
+   if(previous.some(x=>x.evidenceId===candidate.evidenceId))
+    throw Error('Duplicate evidence item identity for same frozen row');
+   previous.push(candidate);
+   result.set(key,previous);
+  }
+ }
+ for(const group of result.values())group.sort((a,b)=>
+  a.earliestVerifiedCapturedAt.localeCompare(b.earliestVerifiedCapturedAt)||
+  a.evidenceId.localeCompare(b.evidenceId));
+ return result;
+}
 export function auditRoster863FrozenProof(input:{
  manifest:Json;rows:Json[];signals:Json[];repair:Json;
  readiness:Json;p2remaining:Json;
@@ -61,13 +95,7 @@ export function auditRoster863FrozenProof(input:{
    input.p2remaining.schemaVersion!=='historical-density-p2-remaining-applicability-canonical-v1'||
    input.p2remaining.applicableRows?.length!==4)
    throw Error('Frozen 92-row source manifest or proof source drift');
- const repair=new Map<string,Json>();
- for(const c of input.repair.repairCandidates as Json[]){
-  for(const k of c.provenTargetRowKeys as string[]){
-   if(repair.has(k))throw Error('Archive proof row appears twice');
-   repair.set(k,c);
-  }
- }
+ const repair=indexRoster863ArchiveProofs(input.repair.repairCandidates as Json[]);
  const readiness=new Map<string,Json>();
  for(const r of input.readiness.integration.rows as Json[]){
   if(readiness.has(String(r.rowKey)))throw Error('Repeated 2025 witness');
@@ -104,21 +132,26 @@ export function auditRoster863FrozenProof(input:{
    if(eligible.length===0)throw Error('No matching frozen strict pre-event exact-bill signal');
    item.claimAvailableOn=eligible.map((s:Json)=>s.availableOn).sort()[0];
    item.exactSignalCount=eligible.length;
-   const proof=repair.get(k);
-   if(proof){
+   const proofs=repair.get(k)??[];
+   if(proofs.length){
+    for(const proof of proofs){
+     const metadata=proof.recommendedEvidenceMetadataPatch;
+     if(metadata?.availabilityScope!=='evidence_item_excerpt'||
+       metadata?.availabilityContentIdentity!=='exact_frozen_excerpt_match'||
+       metadata?.availabilityProof!=='independent_archive_capture'||
+       typeof proof.earliestVerifiedCapturedAt!=='string'||
+       proof.earliestVerifiedCapturedAt.slice(0,10)>=r.occurredOn||
+       !/^[a-f0-9]{64}$/.test(metadata.availabilityProofArchiveContentSha256)||
+       !(proof.evidenceId&&proof.sourceDocumentId))
+       throw Error('Archive excerpt proof identity/timestamp not independently sufficient');
+    }
+    const proof=proofs[0]!; // earliest verified pre-vote capture, then stable evidence ID
     const metadata=proof.recommendedEvidenceMetadataPatch;
-    if(metadata?.availabilityScope!=='evidence_item_excerpt'||
-      metadata?.availabilityContentIdentity!=='exact_frozen_excerpt_match'||
-      metadata?.availabilityProof!=='independent_archive_capture'||
-      typeof proof.earliestVerifiedCapturedAt!=='string'||
-      proof.earliestVerifiedCapturedAt.slice(0,10)>=r.occurredOn||
-      !/^[a-f0-9]{64}$/.test(metadata.availabilityProofArchiveContentSha256)||
-      !(proof.evidenceId&&proof.sourceDocumentId))
-      throw Error('Archive excerpt proof identity/timestamp not independently sufficient');
     item.historicalClaimProof='archived_exact_excerpt_match';
     item.claimSourceUrl=proof.sourceUrl;
     item.independentArchivedExcerptAt=proof.earliestVerifiedCapturedAt;
     item.independentArchivedExcerptSha256=metadata.availabilityProofArchiveContentSha256;
+    item.supportingIndependentArchivedExcerptProofs=proofs.length;
     item.memberClaimFirstPublicBytesIndependentlyVerified=true;
     item.archiveScope='exact_frozen_excerpt_not_whole_source_document';
    }else{
