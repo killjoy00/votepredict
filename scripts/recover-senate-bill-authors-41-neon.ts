@@ -46,7 +46,7 @@ function authorize():void{
     event.repository.default_branch!=='main'||
     event.ref!=='refs/heads/main'||
     event.after!==e.GITHUB_SHA||event.head_commit?.id!==e.GITHUB_SHA||
-    !event.head_commit.message?.includes(MARKER)||
+    !event.head_commit?.message?.includes(MARKER)||
     event.forced===true||event.deleted===true)
     throw Error('Unreviewed recovery event denied');
 }
