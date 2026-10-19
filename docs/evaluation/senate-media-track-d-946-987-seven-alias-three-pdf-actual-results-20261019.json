@@ -1,0 +1,113 @@
+{
+  "version": "track-d-946-987-seven-historic-alias-and-three-mpr-pdf-actual-public-receipt-v1",
+  "observationLocalDay": "2026-10-18",
+  "observationUtcDay": "2026-10-19",
+  "implementation": {
+    "pullRequest": 1455,
+    "mergedMainCommit": "46f205ecf52d1b071803ed3534c27c7c0777f8d6",
+    "prOfflineKeylessRun": 39196847699,
+    "prFullCiRun": 39196847688,
+    "prChecksSuccessful": true,
+    "postMergeFullCiRun": 39197064435,
+    "postMergeFullCiSuccessful": true,
+    "actualPublicOriginalResearchRun": 39197064412,
+    "actualRunSuccessful": true,
+    "archivedOriginalResearchJobId": 117882519735,
+    "temporaryMetadataArtifactId": 12162625749,
+    "temporaryMetadataArtifactName": "track-d-946-987-seven-alias-three-pdf-public-only",
+    "rawPublisherArticleAudioOrPdfBytesPersisted": false
+  },
+  "boundedScope": {
+    "historicallyKnownPriorReformerBriefOriginalVersionsVerified": 17,
+    "distinctPriorOriginalBriefUrlPaths": 13,
+    "newExactCandidateDatedPathIndexLookups": 7,
+    "newExactApmTranscriptPdfIndexLookups": 3,
+    "unboundedPublisherOrCurrentWebScrapes": 0,
+    "newPrivateSourceDocumentQueries": 0,
+    "productionWrites": 0
+  },
+  "reformer": {
+    "issue": 946,
+    "datedPathCandidateAliasCount": 7,
+    "newlyAuthenticatedHistoricalDatedOriginalUrlCount": 0,
+    "datedIndexUnavailableOrInvalidUnknown": 7,
+    "knownPublisherBriefVsDatedHistoricalDuplicatesAuthenticated": 0,
+    "aliasedArticleIdentityAutomaticallyMerged": 0,
+    "perPreviouslyKnownBrief": [
+      {
+        "id": "new-reporter-2021-commissioners",
+        "datedExactCdxIndex": "index_unavailable_unknown"
+      },
+      {
+        "id": "mn-reformer-2022-dfl-public-safety-brief",
+        "datedExactCdxIndex": "index_unavailable_unknown"
+      },
+      {
+        "id": "new-reporter-2022-special-session",
+        "datedExactCdxIndex": "index_unavailable_unknown"
+      },
+      {
+        "id": "mn-reformer-2023-driver-licenses",
+        "datedExactCdxIndex": "index_unavailable_unknown"
+      },
+      {
+        "id": "mn-reformer-2024-sanctuary-brief",
+        "datedExactCdxIndex": "index_unavailable_unknown"
+      },
+      {
+        "id": "mn-reformer-2025-road-signs-brief",
+        "datedExactCdxIndex": "index_unavailable_unknown"
+      },
+      {
+        "id": "new-reporter-2025-sick-leave",
+        "datedExactCdxIndex": "index_unavailable_unknown"
+      }
+    ],
+    "interpretation": "Unavailable Wayback exact indexes do not prove dated original URLs were never published or do not historically refer to the same article. No duplicate/article merge."
+  },
+  "mpr": {
+    "issue": 987,
+    "historicalTranscriptPdfTargets": 3,
+    "originalBinaryCapturesSha1Authenticated": 1,
+    "transcriptFirstPublisherPublicByAuthenticated": 0,
+    "historicalMp3BinaryCapturesAuthenticated": 0,
+    "humanVerifiedFullAudioOrSpeakerTurns": 0,
+    "perPdf": [
+      {
+        "id": "mpr-2024-hauschild-3play",
+        "historicIndex": "index_candidates",
+        "captureCountInSelectedIndex": 1,
+        "archiveUtc": "2025-07-27T18:09:08Z",
+        "indexedArchiveAndOriginalPdfBodySha1Verified": true,
+        "historicalRawBodySha256": "e246a7b8e9a12a47bd65c54031196a08395b02aed490369be954ac9647ce6991",
+        "matchesPrior2026ServedFirstPartyPdfSha256": true,
+        "historicallyAuthenticatedOriginalEarlierThanPrevious2025Proof": false,
+        "sourcePdfSelfDeclaredCreationClockNotActualFirstPublicBy": true
+      },
+      {
+        "id": "mpr-2025-pha-3play",
+        "historicIndex": "index_unavailable_unknown",
+        "historicalOriginalPdfBinaryVerified": false
+      },
+      {
+        "id": "mpr-2025-coleman-3play",
+        "historicIndex": "index_unavailable_unknown",
+        "historicalOriginalPdfBinaryVerified": false
+      }
+    ],
+    "interpretation": "A matched archived PDF proves that exact July 2025 source binary. It does not prove the transcript was first published in February 2024 or the named speaker's audio verbatim."
+  },
+  "policy": {
+    "waybackExactIndexUnknownNeverCountsAsHistoricalPublicationAbsence": true,
+    "sourceVersionNotDistinctArticleDenominator": true,
+    "retrospectiveForecastFeatureEligibilityAdded": 0,
+    "individuallyRecordedSenateVotesInferred": 0,
+    "reformerTwoSidedHistoricalAliasIdentitiesAuthenticated": 0,
+    "productionCollectorCatalogDatabaseModelForecastServingOrVercelChanged": false
+  },
+  "nextSourceActions": [
+    "Issue 946: acquire independently authenticated historical dated-path source originals or publisher first-party archive evidence; compare to separately SHA-pinned original brief article content/byline/date in memory before certifying an alias",
+    "Issue 987: acquire historically verifiable original MP3 or earlier original 3Play PDF and compare with archived printed speaker turn chronology, then conduct independent named-member service and human passage review",
+    "Do not repeat broad CDX unavailability as proof of absence; do not activate production ingestion or promote forecast features without separate authorization."
+  ]
+}
