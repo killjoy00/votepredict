@@ -1,0 +1,34 @@
+# #946 / #987: isolated, bounded 22-version historical archive capture (research only)
+
+**October 18–19, 2026.** Continuation of the user's request to advance both Track D gaps after the five-source original-replay success in [PRs #1451–#1452](https://github.com/killjoy00/votepredict/pull/1452). This authorizes an isolated *public archive capture pilot*, not source ingester activation, production data writes, model retraining, forecast revision, senator quote certification or a new full-publisher archive census.
+
+## Proven starting point
+
+- A verified [read-only all-source-kind audit](senate-media-track-d-946-987-cross-source-results-20261018.md) looked at 63,594 existing source documents, 46 kinds and 344,016 existing evidence items. It found no exact original URL, Wayback original URL, raw original-body SHA-256 or seven candidate dated-path alias URL matches for 23 independently archived source *versions*. This is not a count of distinct globally missing news articles or a semantic near-duplicate audit.
+- The prior [historical research-only queue](senate-media-track-d-946-987-original-replay-pilot-20261018.md) contains **22** vetted historical HTML source versions, **16 distinct publisher original URLs**, **17** Reformer `/briefs/` versions over 13 original paths and **five** MPR `/episode/` versions over three original paths. One preexisting MPR `/story/` control is excluded.
+- The previous five public replay canaries matched indexed original SHA-1 and pre-recorded original HTML SHA-256 **5/5** in [Actions #39192229175](https://github.com/killjoy00/votepredict/actions/runs/39192229175).
+
+## What V5 does
+
+A new, isolated `src/evaluation/senate-media-track-d-bounded-archive-capture.ts` uses only the 22 publicly pinned originals from the immutable, reviewed public manifests. No dynamic publisher listing, topical keyword search, or new archive URL is discovered. It builds the existing stable idempotent version key from exact original URL + exact `id_` Wayback URL + historical capture second + CDX indexed SHA-1 + whole HTML SHA-256. Different source versions on the same publisher URL remain distinct version keys, while publisher original URL + displayed publisher day forms a distinct *possible article-family* key.
+
+On a one-time marked, CI-reviewed push to `main`, the unprivileged workflow `.github/workflows/senate-media-track-d-bounded-historical-v5.yml` invokes `scripts/replay-senate-media-track-d-bounded-historical.ts --capture`. It makes exactly **22 sequential** HTTPS requests to previously authenticated `web.archive.org/web/<14-digit-id>id_/<fixed-original-URL>` paths, spaced by at least 1.8 seconds. The existing bounded verifier enforces source hosts, timestamp, MIME, HTTP 200, manual redirects (not followed), a 2.5 MB raw body limit, exact prior CDX indexed original payload SHA-1 and independently recorded original raw HTML SHA-256. No direct publisher request or fresh CDX query is needed. If the archive is unavailable, including archive access or robots restrictions, the record remains **UNKNOWN**; mismatch is **QUARANTINED**. No fallback/alternate host, direct publisher crawl, unbounded retry, redirect-following or block evasion is allowed. The archived original bytes are neither returned to the pilot, persisted, redistributed nor logged.
+
+Only *sanitized metadata* is emitted to workflow logs and to an expiring public Actions JSON artifact: public source version ID, historic capture observation time, stable source-version/article-family keys, disposition and explicit review holds. Neither private VotePredict DB records nor raw source text are read or included. Offline `--preview` is network-free; archive network mode requires successful keyless tests, full CI, original repository `main`, first workflow attempt and an exact reviewed-main marker. No GitHub Actions database secrets/environment are used.
+
+The pilot does **not** establish initial publisher public-by seconds, the presence of a quoted passage within any particular earlier HTML/audio version, exact MP3/audio source identity, senator service on publication day, a personally named quote, individual Senate voting behavior, or eligibility for retrospective training/forecast features.
+
+## Alias and speaker/membership gates
+
+- Seven candidate Reformer `/briefs/` vs `/YYYY/MM/DD/` URLs remain **unverified** two-sided historical originals. The pilot performs **zero** cross-path alias merges. Shared titles, current redirects or matching slugs alone never create original-source identity.
+- Multiple archived versions under the *same* exact Reformer or MPR original URL share a family key but have **different** immutable version keys; no version is silently replaced or backdated.
+- The 2024 Grant Hauschild selected MPR transcript cue is first archive-authenticated **July 24, 2025**, not from its February 19, 2024 original page. The 2023 Mary Kunesh printed cues are authenticated in February 10 archived HTML, not inferred from the February 7 broadcast. The April 30, 2025 Keri Heintzeman election article predates her May 6 oath. Existing timestamp/source-receipt assertions must pass in the new pilot script before any public archive network access.
+- **All** historical originals, even matching SHA-1 + SHA-256, remain held for independent human quotation, member-term, initial publisher posting and future feature-as-of decisions. Zero statement/vote/forecast/model eligibility is granted by this pilot.
+
+## Execution and next conditions
+
+1. On PR, inspect the 22-source offline plan, alias/version stability and the regression suite in `tests/senate-media-track-d-bounded-archive-capture.test.ts`; full repo `npm run check` and production dependency audit must pass. Preview: `node --import tsx scripts/replay-senate-media-track-d-bounded-historical.ts --preview`.
+2. On reviewed main commit with `TRACK_D_946_987_BOUNDED_ARCHIVE_CAPTURE_V5_20261019`, the same keyless checks precede the **22 fixed original public Wayback requests**; capture result counters, nonreproducing originals and metadata receipt only. A green workflow means the procedure completed, **not** necessarily that all 22 external sources succeeded.
+3. Independently review unresolved original Reformer dated-path aliases with genuinely authenticated *both-path* historical source versions, historical publisher observation timelines, MPR audio/transcript version boundaries, exact named speaker-turn text, and official senator oath/membership dates before any promotion into source records. Separate explicit review is needed for a **production** historical collector/seed or database write, and #946 and #987 remain open until their full accepted scope is resolved.
+
+**Production impact: none.** No modifications to `data/sources/local-trade-news-v1.json`, topical priority, collectors, schedulers, Neon, `source_documents`, `evidence_items`, `vote_events`, `member_votes`, models, forecasts or Vercel.
