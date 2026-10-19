@@ -146,8 +146,9 @@ classification was guessed. Entity-type completeness is UNKNOWN.
 
 The earlier diagnostic was freshly reproduced: **58,555 legacy eligible copies /
 32,711 possible early-date conflicts / 0 exact version references**.
-30,249 copies have one candidate-year version, 22,421 multiple candidate versions,
-4,165 no candidate report version. A sole candidate PDF is not printed-row proof;
+Within **56,835 candidate-family eligible copies**, 30,249 have one candidate-year version,
+22,421 multiple candidate versions and 4,165 no candidate report version. The remaining
+**1,720 eligible IE copies** are not candidate-PDF matched. A sole candidate PDF is not printed-row proof;
 these flags do not establish invalid transactions or permit bulk rewrites.
 
 **830/830 registry rows match exact immutable inputs / 813 globally unique bodies**;
@@ -293,7 +294,7 @@ The SF1 V7 zero-stored state below is the pre-correction snapshot, superseded by
 | Hold | Required evidence to reopen | Current disposition |
 |---|---|---|
 | A-PRINT | Complete authenticated 2021 print meeting/motion inventory and 2022 print/electronic reconciliation | Denominators UNKNOWN. No office contact or manual audio request. |
-| A-2021 | Newly available official written motion/hearing-day proof for the three held April amendment hearing days | No inferred date or voice/attendance/member sides. |
+| A-2021 | Newly available official written motion/hearing-day proof for SF1159 Dibble and distinct McEwen amendments, and SF970 Pappas amendment, printed in the April 12, 2021 Journal | April 8 bill-level committee actions are proven, but not the individual motion dates; [existing source disposition](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6114008344). No manual audio reopening or inferred date/member side. |
 | A-SIX | Exact official written Minutes for 2022-03-15 Housing; 2022-08-10 and 2022-10-03 Environment Finance; 2023-04-13 and 2024-05-16 Environment/Climate/Legacy; 2025-05-12 Subcommittee on Committees | Six source holds, separately from eight already recovered dates. No generic archive restart. |
 | A-YEA2024 | Independent official full identity/alias and service on the exact original hearing day | Keep source 10 / stored 9; no surname-only assignment. |
 | A-EDUCATION | Unique original numbered question-to-current stored event anchor plus hearing-day member-side parity | Exact PDF stored, one generic event unanchored; cannot safely choose additions/relabels from repeated slates or ordinal keys. |
@@ -319,7 +320,7 @@ A successful job or another proximity-parser variation is not new source proof.
 | [#1464](https://github.com/killjoy00/votepredict/pull/1464) exact two PAC pages | `26ef7238a8097521fa1b863d3505912e61e212ea` | 30 focused tests; independent [39269775612](https://github.com/killjoy00/votepredict/actions/runs/39269775612); protected [39270375811](https://github.com/killjoy00/votepredict/actions/runs/39270375811) verifies sources and retains two holds |
 | [#1466](https://github.com/killjoy00/votepredict/pull/1466) safe mixed-chamber cast, IE spender scope, cohort fingerprints | `67d0fe52706a316b99eceb8ed92e2eb83aa3fc6d` | CI [39271052754](https://github.com/killjoy00/votepredict/actions/runs/39271052754) / PostgreSQL [39271052470](https://github.com/killjoy00/votepredict/actions/runs/39271052470) passed; protected [39271616540](https://github.com/killjoy00/votepredict/actions/runs/39271616540) failed safely at inherited SQL bind contract |
 | [#1468](https://github.com/killjoy00/votepredict/pull/1468) correct parameterless inherited call, test actual orchestration | `eba22dbc5cfba6b73aaa4161dc67b5668f7d528f` | All 9 dedicated checks including real PostgreSQL passed; CI [39272559789](https://github.com/killjoy00/votepredict/actions/runs/39272559789) / independent [39272559931](https://github.com/killjoy00/votepredict/actions/runs/39272559931); protected [39273129172](https://github.com/killjoy00/votepredict/actions/runs/39273129172) SUCCESS, job 118131573694; post-merge CI [39273129228](https://github.com/killjoy00/votepredict/actions/runs/39273129228) SUCCESS |
-| [#1470](https://github.com/killjoy00/votepredict/pull/1470) bounded Education anchors + same-snapshot finance scopes | `a606969debe0ebd9ec41aa57d9372771c41f4182` | All 10 dedicated checks including PostgreSQL passed; CI [39274952995](https://github.com/killjoy00/votepredict/actions/runs/39274952995) / independent [39274953069](https://github.com/killjoy00/votepredict/actions/runs/39274953069); final protected [39275444868](https://github.com/killjoy00/votepredict/actions/runs/39275444868) SUCCESS, job 118139505759; independent main job 118138445409 |
+| [#1470](https://github.com/killjoy00/votepredict/pull/1470) bounded Education anchors + same-snapshot finance scopes | `a606969debe0ebd9ec41aa57d9372771c41f4182` | All 10 dedicated checks including PostgreSQL passed; CI [39274952995](https://github.com/killjoy00/votepredict/actions/runs/39274952995) / independent [39274953069](https://github.com/killjoy00/votepredict/actions/runs/39274953069); final protected [39275444868](https://github.com/killjoy00/votepredict/actions/runs/39275444868) SUCCESS, job 118139505759; independent main job 118138445409; post-merge CI [39275444619](https://github.com/killjoy00/votepredict/actions/runs/39275444619) SUCCESS |
 
 Final source artifact: `12196953355`, ZIP SHA-256
 `eea965970a1c54a881911c87bac521c3053b51d71e8f620c81c51db77de0da42`.
