@@ -30,6 +30,13 @@ export const TRACK_D_CANARY_IDS=Object.freeze([
  'mpr-2024-hauschild-north-star-on-air-interview@2024-02-19T22:55:56Z',
  'mn-reformer-2025-road-signs-brief@2025-05-01T22:45:07Z',
 ] as const);
+const CANARY_RAW_HTML_SHA256=Object.freeze([
+ '36597a9966cc38a9ff94fe5f4fef9fcb0d9462417ed60dae0f830d1ba0ff6874',
+ '35d2149d9fac934bc79416a290a1550f0ac2c0216fecca8c5a77a25fcf308711',
+ '091376b6f0a3a0a1104d9aa8bd4573212c2ba5953486c082df2877a8eb041f92',
+ 'a990fb4207938f11b58b787966f67f1cc9577fd5c1d4feafe081bd8f14242387',
+ '2c8e1603e83e21d45c3d9c8f7282667e0144b13ce963058994fe5426e3ba5c00',
+] as const);
 
 type Issue=946|987;
 type PilotPlanItem={
@@ -210,7 +217,13 @@ export type PilotNetworkResult={
 };
 export function toTrackDPilotReplayCandidate(pin:HistoricalShadowPin):
  PublicCdxCaptureCandidate{
- validateTrackDHistoricalShadowPins;
+ const canaryIndex=TRACK_D_CANARY_IDS.indexOf(pin.publicId as typeof TRACK_D_CANARY_IDS[number]);
+ if(canaryIndex===-1||pin.rawSha256!==CANARY_RAW_HTML_SHA256[canaryIndex]||
+  pin.archiveUrl!=='https://web.archive.org/web/'+
+    pin.capturedUtc.replace(/[-:TZ]/g,'')+'id_/'+pin.originalUrl||
+  !/^[A-Z2-7]{32}$/.test(pin.indexedSha1)||
+  pin.publisher!==(pin.issue===946?'Minnesota Reformer':'MPR News'))
+  throw Error('Network canary must be an immutable, formerly verified public original');
  strictUtc(pin.capturedUtc);
  const {newPrefix}=reviewedSourceFamilyFor(pin);
  if(!newPrefix||pin.issue===987&&!pin.originalUrl.includes('/episode/'))
@@ -268,7 +281,7 @@ export function selectTrackDCanaryPins(
 ){
  validateTrackDHistoricalShadowPins(pins);
  const chosen=TRACK_D_CANARY_IDS.map(id=>pins.find(p=>p.publicId===id));
- if(chosen.length!==5||chosen.some(p=>!p))
+ if(chosen.length!==5||chosen.some((p,i)=>!p||p.rawSha256!==CANARY_RAW_HTML_SHA256[i]))
   throw Error('Prior authenticated sample no longer contains the bounded 5 canaries');
  return chosen as HistoricalShadowPin[];
 }
