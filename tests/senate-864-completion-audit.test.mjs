@@ -90,3 +90,27 @@ test('prepared target cohort has an aggregate fingerprint and cannot silently dr
  assert.throws(()=>safeCohortCounts([{...row,cohort_sha256:'private-row-id'}]),/fingerprint/);
  assert.match(COHORT_COUNTS_SQL,/sha256/);assert.match(COHORT_COUNTS_SQL,/ORDER BY membership_id,bill_id,event_id/);
 });
+
+test('finance copy reconciliation uses the IE spender identity and never borrows a candidate report',async t=>{
+ const url=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;if(!url){t.skip('Disposable Postgres required');return;}
+ const pool=new Pool({connectionString:url,max:1}),db=await pool.connect();
+ try{await db.query('BEGIN');
+  await db.query('CREATE TEMP TABLE source_documents(id int,source_kind text) ON COMMIT DROP');
+  await db.query('CREATE TEMP TABLE evidence_items(source_document_id int,membership_id int,metadata jsonb) ON COMMIT DROP');
+  await db.query('CREATE TEMP TABLE memberships(id int,chamber_id int) ON COMMIT DROP');
+  await db.query('CREATE TEMP TABLE chambers(id int,slug text) ON COMMIT DROP');
+  await db.query('CREATE TEMP TABLE cfb_official_senate_pdf_versions(committee_registration text,report_year int) ON COMMIT DROP');
+  await db.query("INSERT INTO chambers VALUES(1,'senate')");await db.query('INSERT INTO memberships VALUES(1,1)');
+  await db.query("INSERT INTO source_documents VALUES(1,'campaign_finance_candidate_contribution_bulk'),(2,'campaign_finance_independent_expenditure_bulk')");
+  await db.query("INSERT INTO cfb_official_senate_pdf_versions VALUES('11111',2022)");
+  const candidate={year:2022,subtype:'candidate_contribution_record',filerRegistrationNumber:'11111',rowKey:'a'.repeat(64),contributorType:'PAC'};
+  const ie={year:2022,subtype:'independent_expenditure_record',spenderRegistrationNumber:'99999',affectedCommitteeRegistrationNumber:'11111',rowKey:'b'.repeat(64)};
+  for(let i=0;i<2;i++)await db.query('INSERT INTO evidence_items VALUES(1,1,$1::jsonb)',[JSON.stringify(candidate)]);
+  for(let i=0;i<3;i++)await db.query('INSERT INTO evidence_items VALUES(2,1,$1::jsonb)',[JSON.stringify(ie)]);
+  const r=(await db.query(FINANCE_CANONICAL_SQL)).rows;
+  const c=r.find(x=>x.family==='candidate_contribution'),s=r.find(x=>x.family==='independent_expenditure');
+  assert.equal(c.evidence_copies,2);assert.equal(c.canonical_transactions,1);assert.equal(c.canonical_in_indexed_committee_years,1);
+  assert.equal(s.evidence_copies,3);assert.equal(s.canonical_transactions,1);assert.equal(s.copies_missing_canonical_identity,0);
+  assert.equal(s.copies_in_indexed_committee_years,0);assert.equal(s.canonical_in_indexed_committee_years,0);
+ }finally{await db.query('ROLLBACK');db.release();await pool.end();}
+});

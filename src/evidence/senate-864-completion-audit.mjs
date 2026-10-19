@@ -118,15 +118,15 @@ export const FINANCE_CANONICAL_SQL=`WITH rows AS (
  LEFT JOIN chambers c ON c.id=mem.chamber_id
  WHERE sd.source_kind IN ('campaign_finance_candidate_contribution_bulk','campaign_finance_candidate_expenditure_bulk','campaign_finance_independent_expenditure_bulk','campaign_finance_bulk')
  AND ei.metadata->>'year' IN ('2021','2022','2023','2024','2025')
- AND (c.slug='senate' OR (c.slug IS NULL AND ei.metadata->>'chamber'='senate')))
+ AND (c.slug='senate' OR (c.slug IS NULL AND ei.metadata->>'chamber'='senate'))), identified AS (SELECT rows.*,CASE WHEN family='independent_expenditure' THEN m->>'spenderRegistrationNumber' ELSE m->>'filerRegistrationNumber' END AS canonical_filer FROM rows)
  SELECT m->>'year' AS year,family,count(*)::int AS evidence_copies,
- count(DISTINCT (m->>'filerRegistrationNumber',m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND m->>'filerRegistrationNumber' ~ '^[0-9]{3,8}$')::int AS canonical_transactions,
- count(*) FILTER(WHERE NOT coalesce(m->>'rowKey' ~ '^[a-f0-9]{64}$' AND m->>'filerRegistrationNumber' ~ '^[0-9]{3,8}$',false))::int AS copies_missing_canonical_identity,
+ count(DISTINCT (canonical_filer,m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND canonical_filer ~ '^[0-9]{3,8}$')::int AS canonical_transactions,
+ count(*) FILTER(WHERE NOT coalesce(m->>'rowKey' ~ '^[a-f0-9]{64}$' AND canonical_filer ~ '^[0-9]{3,8}$',false))::int AS copies_missing_canonical_identity,
  count(*) FILTER(WHERE m->>'asOfEligible'='true')::int AS legacy_eligible_copies,
- count(*) FILTER(WHERE m->>'contributorType' IS NULL OR m->>'contributorType'='')::int AS unclassified_contributor_type_copies,
- count(*) FILTER(WHERE EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS copies_in_indexed_committee_years,
- count(DISTINCT (m->>'filerRegistrationNumber',m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND m->>'filerRegistrationNumber' ~ '^[0-9]{3,8}$' AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS canonical_in_indexed_committee_years
- FROM rows GROUP BY 1,2 ORDER BY 1,2 LIMIT 21`;
+ count(*) FILTER(WHERE family='candidate_contribution' AND (m->>'contributorType' IS NULL OR m->>'contributorType'=''))::int AS unclassified_contributor_type_copies,
+ count(*) FILTER(WHERE family IN ('candidate_contribution','candidate_expenditure') AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS copies_in_indexed_committee_years,
+ count(DISTINCT (canonical_filer,m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND canonical_filer ~ '^[0-9]{3,8}$' AND family IN ('candidate_contribution','candidate_expenditure') AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS canonical_in_indexed_committee_years
+ FROM identified GROUP BY 1,2 ORDER BY 1,2 LIMIT 21`;
 export const FINANCE_REGISTRY_SQL=`SELECT report_year AS year,count(*)::int AS versions,count(DISTINCT full_original_pdf_sha256)::int AS pdf_bodies,
  count(*) FILTER(WHERE historical_exact_version_public_by_proven)::int AS tracked_historical_version_public_by_proofs,
  count(*) FILTER(WHERE EXISTS(SELECT 1 FROM cfb_finance_pdf_body_captures b WHERE b.pdf_sha256=full_original_pdf_sha256 AND b.byte_length=full_original_pdf_bytes))::int AS versions_with_cached_bodies
