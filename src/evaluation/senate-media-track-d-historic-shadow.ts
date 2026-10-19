@@ -133,6 +133,12 @@ export function buildTrackDHistoricalShadowPins(input:{
   if(!d)throw Error('Additional dated source URL is not 2021-25');
   const publisherDay=d[1]+'-'+d[2]+'-'+d[3];
   for(const snapshot of r.originalBriefsHttpCaptureVersions as Rec[]){
+   // The May 7 2025 second replay is explicitly an indexed SHA1 mismatch:
+   // UNKNOWN, never an authenticated extra version or absence proof.
+   if(snapshot.replayStatus==='archive_raw_sha1_mismatch_unknown'){
+    if(snapshot.rawOriginalSha256!==null)throw Error('Quarantined replay has an unsupported original SHA');
+    continue;
+   }
    if(snapshot.replayStatus!=='actual_original_indexed_sha1_verified')
     throw Error('Additional Reformer original was not SHA-1 indexed body authenticated');
    result.push({
