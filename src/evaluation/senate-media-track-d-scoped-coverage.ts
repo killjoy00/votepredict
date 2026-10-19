@@ -60,7 +60,7 @@ export function validateTrackDPins(pins:readonly PublicOriginalPin[]):true{
    throw Error('Malformed or broadened authenticated source pin');
   leadUrl(pin.originalUrl,pin.issue);
  }
- if(new Set(pins.filter(x=>x.issue===946).map(x=>x.originalUrl)).size!==9||
+ if(new Set(pins.filter(x=>x.issue===946).map(x=>x.originalUrl)).size!==10||
   new Set(pins.filter(x=>x.issue===987).map(x=>x.originalUrl)).size!==4||
   !pins.some(x=>x.issue===987&&x.originalUrl.includes('/2024/02/19/without-total-dfl-support-'))||
   !pins.some(x=>x.issue===946&&x.originalUrl.includes('/briefs/senate-dfl-outlines-')))
@@ -71,7 +71,7 @@ export function selectTrackDPins(input:{
  leadLedger:Rec;earlierOriginals:Rec;fourAliases:Rec;aliasQueue:Rec;mprSix:Rec;
 }):PublicOriginalPin[]{
  const {leadLedger,earlierOriginals,fourAliases,aliasQueue,mprSix}=input;
- if(leadLedger.version!=='senate-media-2021-25-public-article-discovery-v1'||
+ if(leadLedger.version!=='senate-media-public-discovery-leads-v1'||
   !Array.isArray(leadLedger.selectedNonExhaustiveArticleLeads)||
   leadLedger.selectedNonExhaustiveArticleLeads.length!==31||
   earlierOriginals.version!=='senate-media-2021-25-public-index-consistent-exact-replay-receipts-v1'||
