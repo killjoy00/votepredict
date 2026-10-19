@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
 import { Client } from 'pg';
+import { classifyReadbackFailure, withFreshPostCommitReadback } from '../src/operations/senate-official-bill-text-readback.js';
 import {
   captureOfficialRevisorHtml,discoverOfficialVersionLeads,extractLiteralAmendmentBlocks,
   isOfficialRevisorVersionUrl,
@@ -195,4 +196,67 @@ test('SQL archive preserves two conflicting official revisions and ignores ident
     await db.query('ROLLBACK');
     await db.end();
   }
+});
+
+
+test('fresh RAW post-commit readback recovers a transient Neon disconnect',async()=>{
+  const released:number[]=[];
+  const attempts:Array<[number,string]>=[];
+  let next=0;
+  const summary=await withFreshPostCommitReadback(
+    async()=>{
+      const id=++next;
+      return {id,release:(destroy?:boolean)=>{
+        assert.equal(destroy,true);
+        released.push(id);
+      }};
+    },
+    async client=>{
+      if(client.id===1)throw Object.assign(new Error('connection reset'),{code:'08006'});
+      return {captures:37};
+    },
+    (attempt,kind)=>attempts.push([attempt,kind]),
+    async()=>{},
+  );
+  assert.deepEqual(summary,{captures:37});
+  assert.equal(next,2);
+  assert.deepEqual(released,[1,2]);
+  assert.deepEqual(attempts,[[1,'connection_failure']]);
+});
+
+test('post-commit vote-count mismatch fails closed without retrying or releasing the invariant',async()=>{
+  let connections=0;
+  const attempts:Array<[number,string]>=[];
+  await assert.rejects(
+    withFreshPostCommitReadback(
+      async()=>({release:()=>{connections++;}}),
+      async()=>{throw Error('forbidden_live_vote_counts_changed');},
+      (attempt,kind)=>attempts.push([attempt,kind]),
+      async()=>{},
+    ),
+    /forbidden_live_vote_counts_changed/,
+  );
+  assert.equal(connections,1);
+  assert.deepEqual(attempts,[[1,'vote_count_mismatch']]);
+});
+
+test('post-commit readback has a hard retry limit and fixed safe failure categories',async()=>{
+  let connections=0;
+  const attempts:Array<[number,string]>=[];
+  await assert.rejects(
+    withFreshPostCommitReadback(
+      async()=>{connections++;return {release:()=>{}};},
+      async()=>{throw Error('private error details must not appear in receipt');},
+      (attempt,kind)=>attempts.push([attempt,kind]),
+      async()=>{},
+    ),
+    /private error details/,
+  );
+  assert.equal(connections,3);
+  assert.deepEqual(attempts,[
+    [1,'readback_error'],[2,'readback_error'],[3,'readback_error']]);
+  assert.equal(classifyReadbackFailure(Object.assign(new Error('database query aborted'),{code:'57014'})),
+    'statement_timeout');
+  assert.equal(classifyReadbackFailure(new Error('Query read timeout')),
+    'query_timeout');
 });

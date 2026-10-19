@@ -9,6 +9,7 @@ import { appendFileSync, readFileSync, readdirSync } from 'node:fs';
 import { Pool, type PoolClient } from 'pg';
 import { discoverExistingVotePredictNeonConnection } from '../src/operations/senate-media-neon-api-readonly.js';
 import { buildRevisorBillCandidateUrls } from '../src/sources/minnesota/revisor.js';
+import { classifyReadbackFailure, withFreshPostCommitReadback } from '../src/operations/senate-official-bill-text-readback.js';
 import {
   captureOfficialRevisorHtml, discoverOfficialVersionLeads,
   extractLiteralAmendmentBlocks, isOfficialRevisorVersionUrl,
@@ -548,12 +549,22 @@ async function main():Promise<void>{
         }
       }
       phase='post_commit_readback';
-      const after=await readOnly(client,async()=>(await client.query<{votes:number;members:number}>(
-        'SELECT (SELECT count(*)::int FROM vote_events) AS votes,'
-        +'(SELECT count(*)::int FROM member_votes) AS members')).rows[0]);
-      if(!baseline||!after||baseline.votes!==after.votes||baseline.members!==after.members)
-        throw Error('forbidden_live_vote_counts_changed');
-      const summary=await report(client);
+      // Collection writes above are individually committed. Reconnect for
+      // verification so an old session or transient Neon network reset cannot
+      // hide persisted RAW progress. Never retry a vote-count mismatch.
+      const summary=await withFreshPostCommitReadback(
+        ()=>pool!.connect(),
+        async fresh=>{
+          const after=await readOnly(fresh,async()=>(await fresh.query<{votes:number;members:number}>(
+            'SELECT (SELECT count(*)::int FROM vote_events) AS votes,'
+            +'(SELECT count(*)::int FROM member_votes) AS members')).rows[0]);
+          if(!baseline||!after||baseline.votes!==after.votes||baseline.members!==after.members)
+            throw Error('forbidden_live_vote_counts_changed');
+          return report(fresh);
+        },
+        (attempt,kind)=>console.error('SENATE_OFFICIAL_TEXT_RAW_READBACK_RETRY='
+          +JSON.stringify({attempt,kind})),
+      );
       const output={status:throttled?'stopped_on_official_throttle'
           :haltedOnDiscoveryFailures?'stopped_on_repeated_discovery_failures':'bounded_batch_committed',
         migrationApplied,throttled,haltedOnDiscoveryFailures,pushCanary:PUSH_CANARY,counts,
@@ -573,7 +584,8 @@ async function main():Promise<void>{
       && /^[A-Z0-9]{5}$/.test((error as {code:string}).code)
       ?(error as {code:string}).code:'none';
     // Never include credentials, network responses or SQL parameters in logs.
-    console.error('SENATE_OFFICIAL_TEXT_RAW_HELD='+JSON.stringify({phase,sqlState}));
+    console.error('SENATE_OFFICIAL_TEXT_RAW_HELD='+JSON.stringify({phase,sqlState,
+      ...(phase==='post_commit_readback'?{kind:classifyReadbackFailure(error)}:{})}));
     process.exitCode=1;
   }finally{if(pool)await pool.end().catch(()=>undefined);}
 }
