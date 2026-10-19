@@ -9,6 +9,7 @@ import { appendFileSync, readFileSync, readdirSync } from 'node:fs';
 import { Pool, type PoolClient } from 'pg';
 import { discoverExistingVotePredictNeonConnection } from '../src/operations/senate-media-neon-api-readonly.js';
 import { buildRevisorBillCandidateUrls } from '../src/sources/minnesota/revisor.js';
+import { validateBillTextMigrationLedger } from '../src/operations/senate-official-bill-text-migration-ledger.js';
 import {
   captureOfficialRevisorHtml, discoverOfficialVersionLeads,
   extractLiteralAmendmentBlocks, isOfficialRevisorVersionUrl,
@@ -80,15 +81,10 @@ function positionOfMigration(expected:Ledger[]):number{
   return index;
 }
 function prefix(rows:Ledger[],expected:Ledger[]):boolean{
-  positionOfMigration(expected);
-  // Later agents may deploy later-numbered migrations before this PR merges.
-  // Require all *other* reviewed main migrations to be already applied and
-  // checksum-identical. The sole permitted gap is this collector's own 0027.
-  const matches=(actual:Ledger[],want:Ledger[])=>actual.length===want.length
-    &&actual.every((row,i)=>row.filename===want[i].filename&&row.checksum===want[i].checksum);
-  if(matches(rows,expected))return true;
-  if(matches(rows,expected.filter(row=>row.filename!==MIGRATION)))return false;
-  throw Error('production_migration_checksum_drift_or_other_migration_pending');
+  // Future unrelated source tracks may merge new migrations without deploying
+  // immediately. Validate our prerequisites and every *applied* later
+  // migration by checksum, but do not require unrelated future migrations.
+  return validateBillTextMigrationLedger(rows,expected);
 }
 async function readOnly<T>(db:PoolClient,fn:()=>Promise<T>):Promise<T>{
   await db.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
@@ -573,7 +569,16 @@ async function main():Promise<void>{
       && /^[A-Z0-9]{5}$/.test((error as {code:string}).code)
       ?(error as {code:string}).code:'none';
     // Never include credentials, network responses or SQL parameters in logs.
-    console.error('SENATE_OFFICIAL_TEXT_RAW_HELD='+JSON.stringify({phase,sqlState}));
+    const safeCategories=new Set([
+      'official_text_migration_inventory_moved',
+      'official_text_migration_ledger_unsorted_or_duplicate',
+      'production_migration_checksum_drift_or_out_of_order',
+      'production_migration_checksum_drift_or_prerequisite_missing',
+      'wrong_neon_primary_or_raw_prerequisites',
+    ]);
+    const message=error instanceof Error?error.message:'';
+    const category=safeCategories.has(message)?message:'unspecified_protected_failure';
+    console.error('SENATE_OFFICIAL_TEXT_RAW_HELD='+JSON.stringify({phase,sqlState,category}));
     process.exitCode=1;
   }finally{if(pool)await pool.end().catch(()=>undefined);}
 }

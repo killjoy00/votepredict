@@ -8,6 +8,8 @@ on:
       - src/operations/senate-official-bill-text.ts
       - scripts/deploy-senate-official-bill-text-neon.ts
       - tests/senate-official-bill-text.test.ts
+      - tests/senate-official-bill-text-migration-ledger.test.ts
+      - src/operations/senate-official-bill-text-migration-ledger.ts
       - .github/workflows/senate-official-bill-text-production.yml
       - .github/workflows/senate-official-bill-text-watchdog.yml
       - scripts/senate-official-bill-text-watchdog.mjs
@@ -19,6 +21,8 @@ on:
       - src/operations/senate-official-bill-text.ts
       - scripts/deploy-senate-official-bill-text-neon.ts
       - tests/senate-official-bill-text.test.ts
+      - tests/senate-official-bill-text-migration-ledger.test.ts
+      - src/operations/senate-official-bill-text-migration-ledger.ts
       - .github/workflows/senate-official-bill-text-production.yml
   # Incremental hourly backfill; independent watchdog recovers missed runs.
   schedule:
@@ -149,6 +153,7 @@ jobs:
       - name: Run focused raw source and schema regressions
         run: |
           node --import tsx --test tests/senate-official-bill-text.test.ts
+          node --import tsx --test tests/senate-official-bill-text-migration-ledger.test.ts
           node --test tests/senate-official-bill-text-watchdog.test.mjs
       - name: Typecheck, full tests and build
         run: npm run check
