@@ -69,7 +69,7 @@ jobs:
       github.event.repository.full_name == 'killjoy00/votepredict' &&
       github.event.after == github.sha && github.event.head_commit.id == github.sha &&
       github.event.forced != true && github.event.deleted != true &&
-      contains(github.event.head_commit.message, 'SENATE864_PAC23_EXACT_CURRENT_ORIGINAL_COMPARATOR_20261019_V1')
+      contains(github.event.head_commit.message, 'SENATE864_PAC23_ENTITY_TYPED_CURRENT_ORIGINAL_COMPARATOR_20261019_V2')
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 30

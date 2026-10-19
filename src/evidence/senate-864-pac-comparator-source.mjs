@@ -23,6 +23,42 @@ export function reconcileHeldPacComparators({cohort,allRows,outcomes,originalRow
  const broken=allRows.filter(r=>groups.has(r.filerReg+'|'+r.year)&&!valid(r));
  const sourceIndex=new Map();
  for(const r of originalRows){const k=[r.filerRegistrationNumber,r.year,r.rowKey].join('|');if(!sourceIndex.has(k))sourceIndex.set(k,[]);sourceIndex.get(k).push(r)}
+ const exactOriginal=r=>{
+  const rows=sourceIndex.get(key(r))||[];
+  if(!rows.length||r.sourceConflict)return null;
+  const s=rows[0];
+  if(rows.some(x=>x.kind!==s.kind||x.transactionDate!==s.transactionDate||amount(x.amount)!==amount(s.amount)||
+   x.contributor!==s.contributor||x.contributorType!==s.contributorType||x.contributorRegistrationNumber!==s.contributorRegistrationNumber)||
+   s.kind!=='contribution'||s.transactionDate!==r.transactionDate||amount(s.amount)!==amount(r.amount)||
+   s.contributor!==r.contributor||(s.contributorRegistrationNumber||'')!==r.contributorReg)return null;
+  return s;
+ };
+ // Separate source-backed lane: a natural person is not required to possess a
+ // PAC registration. Every comparator must match an independent original row;
+ // registered entities keep their number requirement. No row is discarded.
+ const typed={completeTargets:0,heldTargets:0,heldForOriginalMismatch:0,heldForUnclassifiedEntity:0,
+  heldForRegisteredEntityWithoutRegistration:0,heldForUnusableFieldsOrCopyConflict:0,
+  heldForTargetIdentityOrSignature:0};
+ for(const t of held){
+  const comparison=allRows.filter(r=>r.filerReg===t.filerReg&&r.year===t.year);
+  const target=exactOriginal(t),reasons=new Set();
+  if(!target||target.contributorType!=='Political Committee/Fund'||!reg(t.contributorReg)||
+   comparison.filter(r=>r.contributorReg===t.contributorReg&&r.transactionDate===t.transactionDate&&amount(r.amount)===amount(t.amount)).length!==1)
+   reasons.add('heldForTargetIdentityOrSignature');
+  for(const r of comparison){
+   const s=exactOriginal(r);
+   if(!s){reasons.add('heldForOriginalMismatch');continue}
+   if(r.sourceConflict||!validDay(r.transactionDate)||amount(r.amount)===null||
+    typeof r.contributor!=='string'||r.contributor.length<5||/^(?:unknown|anonymous)\b/i.test(r.contributor))
+    reasons.add('heldForUnusableFieldsOrCopyConflict');
+   const natural=['Individual','Self'].includes(s.contributorType);
+   const registered=['Political Committee/Fund','Party Unit','Candidate Committee','Lobbyist','Registered with Hennepin County'].includes(s.contributorType);
+   if(natural&&r.contributorReg&&!reg(r.contributorReg))reasons.add('heldForUnusableFieldsOrCopyConflict');
+   if(!natural&&!registered)reasons.add('heldForUnclassifiedEntity');
+   if(registered&&!reg(r.contributorReg))reasons.add('heldForRegisteredEntityWithoutRegistration');
+  }
+  if(reasons.size){typed.heldTargets++;for(const reason of reasons)typed[reason]++}else typed.completeTargets++;
+ }
  const types=Object.fromEntries([...categories,'UNKNOWN'].map(x=>[x,0]));
  let exact=0,notObserved=0,mismatch=0,stillMissing=0,sourceHasRegistration=0,originalCopies=0;
  const sourceUnresolved=new Set();
@@ -43,6 +79,8 @@ export function reconcileHeldPacComparators({cohort,allRows,outcomes,originalRow
   currentOriginalRowNotUniquelyObserved:notObserved,currentOriginalFieldMismatches:mismatch,
   originalRowsStillWithoutRegistration:stillMissing,originalRowsWithRegistration:sourceHasRegistration,
   originalEntityTypes:types,
+  independentEntityTypedComparator:typed,
+  typedComparisonRequiresEveryOriginalRow:true,typedComparisonDoesNotCertifyPdfContainment:true,
   targetCasesWithAnyUnobservedOrMismatchedComparator:held.filter(t=>broken.some(r=>r.filerReg===t.filerReg&&r.year===t.year&&sourceUnresolved.has(key(r)))).length,
   originalSourceObservedIn2026NotHistoricalPublication:true,unchangedStrictComparatorHolds:23,
   transactionsPromoted:0,eligibilityWrites:0,noNameBasedRegistrationAssignment:true};
