@@ -215,6 +215,24 @@ export async function appendP8DurableDailyCapture(input:{
         chainSealSha256:existing.chainSealSha256,health:existing.health,
       };
     }
+    // The only test bypass is a uniquely named throwaway integration schema
+    // on a localhost PostgreSQL runner. A real public-schema first write
+    // cannot predate, postdate, or inject fixture-labelled future captures.
+    const gate=await client.query<{schema_name:string;chicago_day:string}>(
+      "SELECT current_schema() AS schema_name, "+
+      "to_char(clock_timestamp() AT TIME ZONE 'America/Chicago','YYYY-MM-DD') "+
+      "AS chicago_day");
+    const scope=gate.rows[0];
+    if(!scope)throw Error('P8 database clock/schema unavailable');
+    const isolatedLocalFixture=/^p8_proof_[0-9a-f]{16}$/.test(scope.schema_name) &&
+      Boolean(process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL&&
+      ['localhost','127.0.0.1'].includes(
+        new URL(process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL).hostname));
+    if(!isolatedLocalFixture &&
+      (scope.schema_name!=='public' ||
+       input.batch.source!=='offline_observed_revisor_receipts' ||
+       input.batch.cutoffDateExclusive!==scope.chicago_day))
+      throw Error('Real P8 capture requires source receipts and today Chicago database cutoff');
     const last=await client.query<StoredRow>(
       'SELECT '+columns+' FROM '+LEDGER+' WHERE session=$1 ORDER BY cutoff_date DESC LIMIT 1',
       ['2027-2028']);
