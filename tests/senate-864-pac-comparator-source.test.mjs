@@ -45,3 +45,8 @@ test('same registered PAC/date/amount collisions, source conflicts and unknown n
  assert.equal(reconcileHeldPacComparators(x).independentEntityTypedComparator.heldForTargetIdentityOrSignature,1);
  x.allRows[3].sourceConflict=true;assert.ok(reconcileHeldPacComparators(x).independentEntityTypedComparator.heldTargets>=2);
 });
+
+test('a contradictory raw column in an original duplicate cannot disappear behind a canonical key',()=>{
+ const x=fixture();x.originalRows.push({...x.originalRows[0],raw:{'Contrib zip':'different source value'}});
+ assert.equal(reconcileHeldPacComparators(x).independentEntityTypedComparator.heldForOriginalMismatch,1);
+});

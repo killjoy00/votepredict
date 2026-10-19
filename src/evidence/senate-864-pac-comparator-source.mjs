@@ -27,7 +27,7 @@ export function reconcileHeldPacComparators({cohort,allRows,outcomes,originalRow
   const rows=sourceIndex.get(key(r))||[];
   if(!rows.length||r.sourceConflict)return null;
   const s=rows[0];
-  if(rows.some(x=>x.kind!==s.kind||x.transactionDate!==s.transactionDate||amount(x.amount)!==amount(s.amount)||
+  if(rows.some(x=>JSON.stringify(x)!==JSON.stringify(s)||x.kind!==s.kind||x.transactionDate!==s.transactionDate||amount(x.amount)!==amount(s.amount)||
    x.contributor!==s.contributor||x.contributorType!==s.contributorType||x.contributorRegistrationNumber!==s.contributorRegistrationNumber)||
    s.kind!=='contribution'||s.transactionDate!==r.transactionDate||amount(s.amount)!==amount(r.amount)||
    s.contributor!==r.contributor||(s.contributorRegistrationNumber||'')!==r.contributorReg)return null;
