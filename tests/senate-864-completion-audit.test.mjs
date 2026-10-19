@@ -4,6 +4,8 @@ import {Pool} from 'pg';
 import {readFileSync} from 'node:fs';
 import {auditWebsiteReadback,mediaAccounting,safeGroupedCounts,COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,
  MEDIA_CONTEXT_SQL,FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,safeCohortCounts} from '../src/evidence/senate-864-completion-audit.mjs';
+import {VERIFY_SQL,REVALIDATE_SQL} from '../src/evidence/cfb-864-pdf-registry-eligibility-v48.mjs';
+import {registry830} from '../src/evidence/cfb-864-pdf-registry-eligibility-v48.mjs';
 import {websiteEvidenceDraft} from '../src/evidence/senate-864-website-signal-neon.mjs';
 const id='11111111-2222-4333-8444-555555555555',person='aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
 function fixtures(){
@@ -58,9 +60,9 @@ test('all new SELECT plans compile on the disposable migrated schema',async t=>{
  const url=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;if(!url){t.skip('Disposable Postgres required');return;}
  const pool=new Pool({connectionString:url,max:1}),db=await pool.connect();
  try{await db.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
-  for(const sql of [COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,MEDIA_CONTEXT_SQL,FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL]){
+  for(const sql of [COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,MEDIA_CONTEXT_SQL,FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,VERIFY_SQL,REVALIDATE_SQL]){
    assert.match(sql,/^(SELECT|WITH) /);assert.doesNotMatch(sql,/\b(?:INSERT|UPDATE|DELETE|DROP|ALTER|CREATE)\b/);
-   const params=sql===COMPLETION_WEBSITE_SQL?[[]]:sql===COHORT_COUNTS_SQL?['[]']:sql===CURRENT_VERIFIED_MEMBER_SQL?[[]]:[];
+   const params=sql===COMPLETION_WEBSITE_SQL?[[]]:sql===COHORT_COUNTS_SQL?['[]']:sql===CURRENT_VERIFIED_MEMBER_SQL?[[]]:sql===VERIFY_SQL?[JSON.stringify(registry830())]:[];
    await db.query('EXPLAIN '+sql,params);
   }
  }finally{await db.query('ROLLBACK');db.release();await pool.end();}

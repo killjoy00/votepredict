@@ -65,7 +65,7 @@ jobs:
       github.event.repository.full_name == 'killjoy00/votepredict' &&
       github.event.after == github.sha && github.event.head_commit.id == github.sha &&
       github.event.forced != true && github.event.deleted != true &&
-      contains(github.event.head_commit.message, 'SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V2')
+      contains(github.event.head_commit.message, 'SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V3')
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 20

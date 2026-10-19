@@ -10,7 +10,9 @@ const input=completionInputs();const uuid=n=>'11111111-2222-4333-8444-'+String(n
 const roster=input.manifest.people.map((p,i)=>({name:p.officialName,legislatorId:uuid(i+1),membershipId:uuid(i+101),sessionSlug:'2021-2022'}));
 const plan=candidateSiteDrafts(input.manifest,roster,input.excerpts);
 const stored=plan.map(p=>{const e=websiteEvidenceDraft(p);return {membershipId:p.membershipId,legislatorId:roster.find(r=>r.membershipId===p.membershipId).legislatorId,excerpt:p.literal,publishedAt:p.observedAt,kind:'context',stance:'neutral',metadata:{...e.drafts[0].metadata,durableIngestion:true,ingestionKey:'synthetic'},sourceUrl:p.sourceUrl,sourceSha:p.sourceSha,sourceMetadata:e.source.metadata}});
-const client={query:async sql=>{
+const client={query:async (sql,params=[])=>{
+const positions=[...sql.matchAll(/\$(\d+)/g)].map(m=>Number(m[1]));
+assert.equal(params.length,positions.length?Math.max(...positions):0,'Actual orchestration must bind only the parameters declared by each inherited SQL contract');
 if(sql===ROSTER_SQL)return {rows:roster};if(sql===COMPLETION_WEBSITE_SQL)return {rows:stored};
 if(sql===VERIFY_SQL)return {rows:[{stored:'830',indexed:'830',exact:'830',missing:'0',distinct_bodies:'813'}]};
 if(sql.includes("current_setting('transaction_read_only')"))return {rows:[{db:'synthetic',role:'synthetic',ro:'on',isolation:'repeatable read'}]};
