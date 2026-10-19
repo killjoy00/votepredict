@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "senate-media-track-d-946-987-protected-source-coverage-public-aggregate-v1",
+  "observationDay": "2026-10-18",
+  "repository": "killjoy00/votepredict",
+  "issueNumbers": [
+    946,
+    987
+  ],
+  "code": {
+    "originalCrosswalkPR": 1446,
+    "originalCrosswalkMainSha": "46038ccc947f42869f0f7fbbf7c31e6f7e38aba9",
+    "denominatorPR": 1447,
+    "denominatorMainSha": "e15ac5a8cf51a05071070da2898bea0f42970aa3",
+    "sourceStrategy": "existing default Neon protected environment; private comparisons only inside database; public aggregate receipt"
+  },
+  "verifiedRuns": {
+    "firstSourceMatch": {
+      "runId": 39184754249,
+      "conclusion": "success",
+      "storedRawPrivateRowsExported": false,
+      "originalCaptureVersionsChecked": 18,
+      "exactStoredVersionsFoundWithinScopedContext": 0,
+      "queryTimeSnapshotIndependentOfLaterContextDenominator": true
+    },
+    "sameSnapshotContextAndSource": {
+      "runId": 39185450015,
+      "conclusion": "success",
+      "sameRepeatableReadTransaction": true,
+      "verifiedRoleAndDatabase": true,
+      "readOnly": true,
+      "explicitRollback": true,
+      "scopeValidatedNonempty": true,
+      "privateIdsNamesArticleTextOrShaExported": false
+    }
+  },
+  "scope": {
+    "sourceDocumentKind": "wayback_local_trade_news",
+    "evidenceItemContextType": "local_trade_news",
+    "description": "bounded original curated 44-seed media historical context; NOT entire VotePredict archive/any other collectors",
+    "targetPublisherOriginalYears": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "actualContextItemRows": 948,
+    "actualDistinctSourceDocuments": 805,
+    "recordsWithOriginalUrlMetadata": 948,
+    "recordsWithArchiveUrlMetadata": 948,
+    "recordsWithCaptureUtcMetadata": 948,
+    "recordsWithArchiveDigestMetadata": 948,
+    "sourceDocumentsWithSha256": 805,
+    "allSourcesAndContextsBeyondThisScopeNotQueried": true
+  },
+  "issues": [
+    {
+      "issue": 946,
+      "publisher": "Minnesota Reformer",
+      "pathFamily": "/briefs/",
+      "sourceDocumentsFromPublisherInFilteredScope": 37,
+      "pathFamilyContextItemsInFilteredScope": 0,
+      "exactOriginalRawHtmlVersionsChecked": 12,
+      "distinctPublisherUrlsChecked": 10,
+      "exactOriginalRawHtmlVersionsFoundWithinFilteredScope": 0,
+      "sameUrlOtherVersionFound": 0,
+      "archiveIdentityConflictsFound": 0,
+      "displayedPublisherYearsCovered": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "candidateHistoricalBriefVsDatedAliasesStillUnverified": 4,
+      "noneInFilteredContextNotAbsenceFromAllVotePredictSources": true
+    },
+    {
+      "issue": 987,
+      "publisher": "MPR News",
+      "pathFamily": "/episode/",
+      "sourceDocumentsFromPublisherInFilteredScope": 22,
+      "pathFamilyContextItemsInFilteredScope": 0,
+      "exactOriginalRawHtmlVersionsChecked": 6,
+      "distinctPublisherUrlsChecked": 4,
+      "episodeOriginalCaptureVersionsInSample": 5,
+      "storyPathControlOriginalCaptureVersionsInSample": 1,
+      "exactOriginalRawHtmlVersionsFoundWithinFilteredScope": 0,
+      "sameUrlOtherVersionFound": 0,
+      "archiveIdentityConflictsFound": 0,
+      "selectedOriginalPublisherYearsCovered": [
+        2021,
+        2023,
+        2024
+      ],
+      "historicalSpeakerTranscriptOrAudioAvailabilityBeyondVerifiedOriginalHtmlNotInferred": true,
+      "noneInFilteredContextNotAbsenceFromAllVotePredictSources": true
+    }
+  ],
+  "interpretation": {
+    "actualScopedLocalNewsGapConfirmed": true,
+    "allOriginalArticleUniverseCountUnknown": true,
+    "allMediaIngesterCoverageUnknown": true,
+    "historicalPublisherFirstPublicTimesNotEstablished": true,
+    "privateFullContentOrLegislatorQuoteNotApproved": true,
+    "publisherHistoricalAliasDuplicatesProved": 0,
+    "actualMissingStatewideArticlesProved": null,
+    "noCollectorOrSeedChanges": true,
+    "noDatabaseModelForecastServingChanges": true
+  },
+  "handoff": "Both issues remain open for approved isolated seed and topical path priority proposal, cross-pipeline independent source reconciliation, historical archive alias/source-public-by and human exact attributed speaker review. Existing issues require separate explicit owner approval for production seed/reprocessing changes."
+}
