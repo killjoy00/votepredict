@@ -48,7 +48,11 @@ jobs:
         run: |
           node --test tests/senate-dfl-sitemap-watchdog.test.mjs
           node --test tests/senate-official-bill-text-watchdog.test.mjs
+      # Pushes are opportunistic recovery triggers, potentially dozens an hour.
+      # Preserve strict scheduled/manual failure alerts and collector failures,
+      # but avoid emailing the same degraded observation on every main push.
       - name: Check live collection receipts and dispatch only after idle
+        continue-on-error: ${{ github.event_name == 'push' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/senate-official-bill-text-watchdog.mjs
