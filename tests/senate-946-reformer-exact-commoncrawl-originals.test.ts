@@ -169,7 +169,7 @@ test('full bounded 14-index run retains 2025 cutoff and cannot infer aliases, vo
 });
 test('reviewed-main source job requires exact commit marker, event, first attempt and keyless proof',()=>{
  const e:NodeJS.ProcessEnv={
-  GITHUB_ACTIONS:'true',GITHUB_REPOSITORY:'killjoy00/votepredict',
+  NODE_ENV:'test',GITHUB_ACTIONS:'true',GITHUB_REPOSITORY:'killjoy00/votepredict',
   GITHUB_EVENT_NAME:'push',GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',
   REFORMER_CC_KEYLESS_PASSED:'true',REFORMER_CC_REVIEWED_MAIN_MARKER:'true',
  };
