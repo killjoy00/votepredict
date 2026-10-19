@@ -150,7 +150,7 @@ export function parseReformerExactCommonCrawlJsonl(
   const t=r.timestamp,u=r.url,d=r.digest,file=r.filename;
   const off=r.offset,len=r.length;
   if(typeof t!=='string'||typeof u!=='string'||typeof d!=='string'||
-   typeof file!=='string'||!/^sha1:/i.test(String(r.digest??''))&&typeof d!=='string')
+   typeof file!=='string')
    throw Error('Malformed exact original index row');
   const utc=validTime(t);
   if(u!==target.datedOriginalUrl||
