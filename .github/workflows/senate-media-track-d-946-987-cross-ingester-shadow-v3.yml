@@ -4,6 +4,7 @@ on:
     paths:
       - src/evaluation/senate-media-track-d-historic-shadow.ts
       - src/evaluation/senate-media-track-d-cross-ingester-audit.ts
+      - src/evaluation/senate-media-track-d-public-speaker-timing-review.ts
       - scripts/audit-senate-media-track-d-cross-ingester-readonly-v3.ts
       - tests/senate-media-track-d-historic-shadow-and-cross-ingester.test.ts
       - .github/workflows/senate-media-track-d-946-987-cross-ingester-shadow-v3.yml
