@@ -107,7 +107,8 @@ test('speaker attribution chronology queue separates SHA-pinned printed cues, la
  assert.equal(q.humanApprovedFullQuotes,0);
  assert.equal(q.mpr2023Kunesh.pinnedOriginalVersionsWithTwoNamedInTurnShortCues.length,2);
  assert.ok(q.mpr2023Kunesh.pinnedOriginalVersionsWithTwoNamedInTurnShortCues.every(
-  x=>x.originalNamedMaryKuneshPrintedTranscriptShortCueCount===2));
+  (x:{originalNamedMaryKuneshPrintedTranscriptShortCueCount:number})=>
+   x.originalNamedMaryKuneshPrintedTranscriptShortCueCount===2));
  assert.equal(q.mpr2024Hauschild.early2024OriginalHtmlHadSpecificSelectedTranscriptCue,false);
  assert.equal(q.mpr2024Hauschild.firstSelectedCueLaterOriginalCaptureUtc,'2025-07-24T23:23:22Z');
  assert.equal(q.mpr2024KuneshCharter.october22OriginalSelectedTranscriptCue,false);
