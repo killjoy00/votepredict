@@ -39,7 +39,7 @@ test('seven exact source motions and 70 named choices are idempotent; changed si
  Object.assign(s.events[0],{vote_kind:'motion',motion_text:fixture().recommendationLiteral,metadata:{issue864MotionRepair:'six-judiciary-anchored-v1',modelWeight:0,sameDayEligible:false,mechanicallyActionable:false,availableOn:YEA_DAY}});
  for(const [i,p] of plan.events.entries()){
   const e={...s.events[0],id:id(100+i),external_key:p.key,vote_kind:'amendment',motion_text:p.literal,amendment_ref:p.anchor,yea_count:p.yea,nay_count:p.nay,passed:false,metadata:{...s.events[0].metadata,originalPdfSha256:YEA_SHA}};
-  s.events.push(e);s.choices.push(...p.votes.map(v=>({vote_event_id:e.id,membership_id:v.membershipId,normalized_member_name:v.normalizedName,choice:v.choice})));
+  s.events.push(e);s.choices.push(...p.votes.map(v=>({vote_event_id:e.id,membership_id:v.membershipId,normalized_member_name:v.normalizedName,choice:v.choice,source_member_name:v.sourceName,repair_metadata:{modelWeight:0,sameDayEligible:false,mechanicallyActionable:false,availableOn:YEA_DAY}})));
  }
  assert.equal(sixMotionsPlan(proof,s).events.length,0);assert.equal(sixMotionsPlan(proof,s).verifiedChoices,70);
  s.choices.at(-1)!.choice='other';assert.throws(()=>sixMotionsPlan(proof,s),/choices mismatch/);

@@ -66,8 +66,8 @@ export function sixMotionsPlan(proof:ReturnType<typeof validateSixOriginals>,s:M
   for(const p of planned){const found=events.filter(e=>e.external_key===p.key);
    if(found.length!==1)throw Error('Missing anchored source motion');const e=found[0];
    if(e.occurred_on!==YEA_DAY||e.bill_identifier!=='SF3534'||e.vote_kind!=='amendment'||e.amendment_ref!==p.anchor||e.motion_text!==p.literal||e.yea_count!==p.yea||e.nay_count!==p.nay||e.passed!==false||e.is_passage!==false||e.committee_vote!==true||e.metadata.issue864MotionRepair!=='six-judiciary-anchored-v1'||e.metadata.modelWeight!==0||e.metadata.sameDayEligible!==false||e.metadata.mechanicallyActionable!==false||e.metadata.availableOn!==YEA_DAY||e.metadata.originalPdfSha256!==YEA_SHA)throw Error('Anchored motion flags/source conflict');
-   const votes=s.choices.filter(v=>v.vote_event_id===e.id);
-   if(votes.length!==10||p.votes.some(v=>votes.filter(c=>c.normalized_member_name===v.normalizedName&&c.choice===v.choice&&c.membership_id===v.membershipId).length!==1))throw Error('Anchored printed choices mismatch');
+   const votes=s.choices.filter(v=>v.vote_event_id===e.id) as Array<RulesSnapshot['choices'][number]&{source_member_name:string;repair_metadata:Record<string,unknown>}>;
+   if(votes.length!==10||p.votes.some(v=>votes.filter(c=>c.normalized_member_name===v.normalizedName&&c.choice===v.choice&&c.membership_id===v.membershipId&&c.source_member_name===v.sourceName&&c.repair_metadata?.modelWeight===0&&c.repair_metadata?.sameDayEligible===false&&c.repair_metadata?.mechanicallyActionable===false&&c.repair_metadata?.availableOn===YEA_DAY).length!==1))throw Error('Anchored printed choices mismatch');
   }
   return {events:[],recommendation,updateRecommendation:false,sourceId:doc.id,verifiedMotions:7,verifiedChoices:70};
  }

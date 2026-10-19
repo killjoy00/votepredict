@@ -21,6 +21,12 @@ export async function motionSnapshot(db:Pick<PoolClient,'query'>):Promise<Motion
  FROM vote_events v JOIN source_documents sd ON sd.id=v.source_document_id
  WHERE sd.source_url=$1 AND sd.content_sha256=$2 AND v.occurred_on=$3::date ORDER BY v.id LIMIT 21`,[YEA_URL,YEA_SHA,YEA_DAY])).rows;
  if(extras.length>=21)throw Error('Unbounded original event scope');
+ const choiceDetails=(await db.query(`SELECT mv.vote_event_id::text,mv.normalized_member_name,mv.source_member_name,mv.metadata AS repair_metadata
+ FROM member_votes mv JOIN vote_events v ON v.id=mv.vote_event_id JOIN source_documents sd ON sd.id=v.source_document_id
+ WHERE sd.source_url=$1 AND sd.content_sha256=$2 AND v.occurred_on=$3::date
+ ORDER BY mv.vote_event_id,mv.normalized_member_name LIMIT 101`,[YEA_URL,YEA_SHA,YEA_DAY])).rows;
+ if(choiceDetails.length>=101)throw Error('Unbounded exact original choices');
+ s.choices=s.choices.map(v=>({...v,...(choiceDetails.find(x=>x.vote_event_id===v.vote_event_id&&x.normalized_member_name===v.normalized_member_name)||{})}));
  return {...s,events:s.events.map(e=>({...e,...(extras.find(x=>x.id===e.id)||{}),is_passage:(e as typeof e&{is_passage:boolean}).is_passage}))} as MotionSnapshot;
 }
 async function readOnly(pool:Pool,target:{database:string;role:string}){
@@ -76,6 +82,9 @@ async function main(){
   phase='bounded_serializable_six_motions';const applied=await applySixMotions(pool,proof,before.snapshot);
   phase='independent_postcommit_readonly_readback';const after=await readOnly(pool,target),replay=sixMotionsPlan(proof,after.snapshot);
   if(replay.events.length||replay.verifiedMotions!==7||replay.verifiedChoices!==70)throw Error('Postcommit exact replay hold');
+  const previous=sixMotionsPlan(proof,before.snapshot).recommendation;
+  if(previous.id!==replay.recommendation.id||previous.external_key!==replay.recommendation.external_key||
+   JSON.stringify(before.snapshot.choices.filter(v=>v.vote_event_id===previous.id))!==JSON.stringify(after.snapshot.choices.filter(v=>v.vote_event_id===previous.id)))throw Error('Existing recommendation key or ten literal choices changed');
   const receipt={version:'senate864-judiciary-six-original-motion-repair-v1',reviewedCommit:e.GITHUB_SHA,verifiedAt:new Date().toISOString(),...applied,verifiedSourceMotions:7,verifiedExplicitChoices:70,idempotentReplayWouldInsert:0,originalRecommendationKeyAndTenChoicesPreserved:true,verifiedReadOnlyBeforeAfter:true,explicitRollbacks:true,schemaLedgerVerified:true,hearingDateAvailability:true,sameDayEligible:false,noAttendanceOrCountOnlyChoiceInference:true,noGenericParserReplay:true,sourceFixtureSha256:sha(readFileSync('tests/fixtures/senate-864-judiciary-six-amendments.json')),committeeYears:after.years,noFloorModelServingOrFreezeChanges:true};
   mkdirSync('artifacts',{recursive:true});writeFileSync('artifacts/senate864-judiciary-six-motion-repair.json',JSON.stringify(receipt,null,2)+'\n');
   console.log('SENATE864_JUDICIARY_SIX_MOTIONS_VERIFIED='+JSON.stringify(receipt));
