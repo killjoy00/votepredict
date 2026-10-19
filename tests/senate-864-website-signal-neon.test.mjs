@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {SOURCE_LEDGER_FILES} from '../src/evidence/senate-864-95-historical-source-neon-parity.mjs';
 import {buildRecoveryPlan} from '../scripts/build-senate-864-95-missing-original-recovery-plan.mjs';
-import {websiteExcerptPlan,observedBeforeVote} from '../src/evidence/senate-864-historical-site-excerpt-asof.mjs';
+import {websiteExcerptPlanV1 as websiteExcerptPlan,observedBeforeVote} from '../src/evidence/senate-864-historical-site-excerpt-asof.mjs';
 import {candidateSiteDrafts,websiteEvidenceDraft,WEBSITE_ASOF_QUERY} from '../src/evidence/senate-864-website-signal-neon.mjs';
 import {verifyWebsiteNeonReadback} from '../src/evidence/senate-864-website-signal-readback.mjs';
 const manifest=JSON.parse(readFileSync('data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json'));

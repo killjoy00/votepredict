@@ -10,7 +10,7 @@ import {ROSTER_SQL,PUBLIC95} from './audit-senate-864-95-historical-source-neon-
 import {buildRecoveryPlan} from './build-senate-864-95-missing-original-recovery-plan.mjs';
 import {assertHistoricalMainPush} from '../src/evidence/senate-864-72-protected-event.mjs';
 import {SOURCE_LEDGER_FILES} from '../src/evidence/senate-864-95-historical-source-neon-parity.mjs';
-import {websiteExcerptPlan} from '../src/evidence/senate-864-historical-site-excerpt-asof.mjs';
+import {websiteExcerptPlanV1 as websiteExcerptPlan} from '../src/evidence/senate-864-historical-site-excerpt-asof.mjs';
 import {candidateSiteDrafts,websiteEvidenceDraft,WEBSITE_ASOF_QUERY}
  from '../src/evidence/senate-864-website-signal-neon.mjs';
 import {WEBSITE_NEON_RECEIPT_SQL,verifyWebsiteNeonReadback}

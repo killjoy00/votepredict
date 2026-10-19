@@ -6,7 +6,7 @@ import {discoverExistingVotePredictNeonConnection} from '../src/operations/senat
 import {ROSTER_SQL,PUBLIC95} from './audit-senate-864-95-historical-source-neon-readonly.mjs';
 import {SOURCE_LEDGER_FILES} from '../src/evidence/senate-864-95-historical-source-neon-parity.mjs';
 import {buildRecoveryPlan} from './build-senate-864-95-missing-original-recovery-plan.mjs';
-import {websiteExcerptPlan} from '../src/evidence/senate-864-historical-site-excerpt-asof.mjs';
+import {websiteExcerptPlanV1 as websiteExcerptPlan} from '../src/evidence/senate-864-historical-site-excerpt-asof.mjs';
 import {candidateSiteDrafts,membershipIndex} from '../src/evidence/senate-864-website-signal-neon.mjs';
 import {source830,QUERIES,safeCounts} from '../src/evidence/cfb-864-finance-db-reconciliation-v47.mjs';
 import {registry830,VERIFY_SQL,REVALIDATE_SQL,safeRevalidation} from '../src/evidence/cfb-864-pdf-registry-eligibility-v48.mjs';

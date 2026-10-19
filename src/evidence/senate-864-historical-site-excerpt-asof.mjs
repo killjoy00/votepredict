@@ -36,13 +36,21 @@ function evidenceText(o){
  const generic=Object.entries(o).filter(([k,v])=>typeof v==='string'&&v.length>=5&&v.length<=1600&&/^(exact|quoted|quote)/i.test(k)&&/(excerpt|quote|literal|text)/i.test(k));
  return generic.length===1?generic[0][1].trim():null;
 }
-function allCandidates(doc){
+function allCandidates(doc,corrected=false){
  const sourceArrays=[];
  for(const [k,v] of Object.entries(doc))if(Array.isArray(v)&&v.length&&v[0]&&typeof v[0]==='object'){
   if(k==='candidates')continue;
   if(!/excerpt|statement|quote|shortIssues|^issues$|^rows$/i.test(k))sourceArrays.push([k,v]);
  }
- return sourceArrays.flatMap(([key,arr])=>arr.map(o=>({key,...o})));
+ const rows=sourceArrays.flatMap(([key,arr])=>arr.map(o=>({key,...o})));
+ // These existing ledgers declare page sections as objects, with explicit IDs
+ // and file links to their original page receipts. Do not invent a page join.
+ if(corrected)for(const key of ['policyPage','policyPageSection']){
+  const page=doc[key];
+  if(page&&typeof page==='object'&&!Array.isArray(page)&&typeof page.id==='string')
+   rows.push({key,...page});
+ }
+ return rows;
 }
 function excerptsFor(doc,path){
  if(Array.isArray(doc.candidates)&&doc.candidates.every(c=>Array.isArray(c.excerpts)))
@@ -85,7 +93,27 @@ function merge(a,b){
  return out;
 }
 export const MIN_REPLAY_VERSION='senate-864-website-literal-asof-v1';
+export const WEBSITE_PERSON_SCHEMA_VERSION='senate-864-website-literal-asof-v2';
+function structuredPerson(doc){
+ const declarations=[];
+ for(const [object,fields] of [[doc.person,['actualLRLName','officialName','candidateName','name']],
+   [doc.actualSenator,['officialName','name']]]){
+  if(!object||typeof object!=='object'||Array.isArray(object))continue;
+  for(const field of fields){const value=take(object,[field]);if(value)declarations.push(value)}
+ }
+ const keys=new Set(declarations.map(canonicalKey).filter(Boolean));
+ if(keys.size>1)throw Error('Conflicting structured candidate identities');
+ return declarations[0]||null;
+}
+// Retain the exact previous plan for the already imported 616 and frozen v1
+// experiment. Closed consumers must explicitly request this compatibility API.
+export function websiteExcerptPlanV1(manifest,docs,knownOriginals=[]){
+ return planWebsiteExcerpts(manifest,docs,knownOriginals,false);
+}
 export function websiteExcerptPlan(manifest,docs,knownOriginals=[]){
+ return planWebsiteExcerpts(manifest,docs,knownOriginals,true);
+}
+function planWebsiteExcerpts(manifest,docs,knownOriginals,corrected){
  assertManifest(manifest);
  const byPerson=new Map(manifest.people.map((p,i)=>[canonicalKey(p.officialName),i+1]));
  const indexSha=new Map(),pageCounts=new Map();
@@ -93,7 +121,7 @@ export function websiteExcerptPlan(manifest,docs,knownOriginals=[]){
  for(const path of SOURCE_LEDGER_FILES){
   const d=docs.get(path);
   if(!d||typeof d!=='object')throw Error('Missing pinned historical research ledger');
-  const pages=allCandidates(d);
+  const pages=allCandidates(d,corrected);
   pageCounts.set(path,pages.length);
   const sources=pages.filter(p=>sourceFrom(p).sha).map(sourceFrom);
   ledgers.push({path,doc:d,pages,rows:excerptsFor(d,path),sources});
@@ -118,7 +146,7 @@ export function websiteExcerptPlan(manifest,docs,knownOriginals=[]){
    if(s.file){const arr=byFile.get(s.file)||[];arr.push(s);byFile.set(s.file,arr)}
   }
   const scopeName=take(doc.scope,['person','senator','officialName'])||
-   take(doc,['person','actualSenator','senator'])||null;
+   take(doc,['person','actualSenator','senator'])||(corrected?structuredPerson(doc):null);
   for(const row of rows){
    const ref=take(row,ROWREFS);
    let candidate=ref?consolidate(byId.get(ref)||[]):null;
@@ -151,7 +179,9 @@ export function websiteExcerptPlan(manifest,docs,knownOriginals=[]){
      if(vals.length===1)candidate[field]=vals[0];
     }
    }
-   const statusKey=!ordinal?'unresolved_official_person':!value?'missing_literal_website_excerpt':
+   const explicitOutside=corrected&&!ordinal&&person&&canonicalKey(person)
+    &&row._sourceCandidate?.candidateName===person;
+   const statusKey=explicitOutside?'outside_served_senate_cohort':!ordinal?'unresolved_official_person':!value?'missing_literal_website_excerpt':
     !candidate?.sha?'missing_original_page_sha':!candidate.url?'missing_original_page_url':
     !candidate.capture?'missing_archived_capture':!candidate.cdx?'missing_original_cdx_digest':
     'ready';
@@ -166,12 +196,12 @@ export function websiteExcerptPlan(manifest,docs,knownOriginals=[]){
     ready.push({...basic,literal:value,sourceUrl:candidate.url,sourceSha:candidate.sha,
      archiveCapturedAt:candidate.capture,originalCdxSha1:candidate.cdx,
      ingestionIdentityKey:sha});
-   }else holds.push({...basic,reason:statusKey});
+   }else holds.push({...basic,reason:statusKey,...(explicitOutside?{knownCandidateName:person}:{})});
   }
  }
  if(ready.length+holds.length!==1197||seen.size!==1197)
   throw Error('Pinned candidate-site ledger row tally mismatch: '+(ready.length+holds.length)+' / '+seen.size+' versus 1197 literal records');
- return {version:MIN_REPLAY_VERSION,sourceLedgers:ledgers.length,selectedExcerpts:seen.size,manifestAggregateResearchCount:1285,countOnlyNotMaterialized:1285-seen.size,
+ return {version:corrected?WEBSITE_PERSON_SCHEMA_VERSION:MIN_REPLAY_VERSION,sourceLedgers:ledgers.length,selectedExcerpts:seen.size,manifestAggregateResearchCount:1285,countOnlyNotMaterialized:1285-seen.size,
   sourcePagesIndexed:[...indexSha.keys()].length,ready,holds,holdCounts:status};
 }
 export function observedBeforeVote(archiveCapturedAt,voteAt){

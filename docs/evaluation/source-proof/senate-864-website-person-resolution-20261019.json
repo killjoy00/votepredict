@@ -1,0 +1,74 @@
+{
+  "version": "senate864-website-person-resolution-v2",
+  "sourceReviewedMain": "599f237211f925cad67d9c6b21b023dc82d17ef4",
+  "sourceLedgerCount": 29,
+  "materializedExcerpts": 1197,
+  "legacyPersonHoldLabels": 55,
+  "resolvedFromExistingExplicitMetadata": 52,
+  "resolvedPeople": [
+    {
+      "officialName": "Justin D. Eichorn",
+      "resolvedExcerpts": 12,
+      "publicSourceLedger": [
+        "data/evaluation/senate-justin-eichorn-2016-original-12-capture-dated-exact-issues-v1.json"
+      ]
+    },
+    {
+      "officialName": "Kent Eken",
+      "resolvedExcerpts": 13,
+      "publicSourceLedger": [
+        "data/evaluation/senate-kent-eken-2020-original-13-capture-dated-platform-excerpts-v1.json"
+      ]
+    },
+    {
+      "officialName": "Bill G. Ingebrigtsen",
+      "resolvedExcerpts": 27,
+      "publicSourceLedger": [
+        "data/evaluation/senate-bill-ingebrigtsen-27-exact-historical-first-party-issues-2010-2012-v1.json"
+      ]
+    }
+  ],
+  "knownPersonOutsideStudy": [
+    {
+      "candidateName": "Louis McNutt",
+      "publicExcerptId": "lm25-health-choice"
+    },
+    {
+      "candidateName": "Louis McNutt",
+      "publicExcerptId": "lm25-social-security-taxes"
+    },
+    {
+      "candidateName": "Louis McNutt",
+      "publicExcerptId": "lm25-special-education"
+    }
+  ],
+  "unknownPersonExcerpts": 0,
+  "sourceReadyExcerpts": 668,
+  "remainingSourceMetadataHolds": 526,
+  "correctedHoldCounts": {
+    "missing_original_page_url": 147,
+    "ready": 668,
+    "missing_original_page_sha": 266,
+    "missing_original_cdx_digest": 113,
+    "outside_served_senate_cohort": 3
+  },
+  "sourceReadyPeople": 53,
+  "sourceReadyUniqueBodies": 69,
+  "frozenV1": {
+    "ready": 616,
+    "held": 581,
+    "exactAll616RecordsAndIngestionKeysPreserved": true,
+    "readyPlanSha256": "038c1dacdaaba814b87db8188d10977a69d121a3db10ac76dc1049dd5b40e0b0",
+    "protocolSha256": "ba6b6bddc901fb26f2ea19897bf855a25d9f6b3ca81d9de5b3fedfb78eeff43b"
+  },
+  "originalArchiveClockAndSourceGatesUnchanged": true,
+  "personNameNotInferredFromSurnameOrDistrict": true,
+  "databaseReadByThisCheck": false,
+  "databaseWritesByThisChange": 0,
+  "additionalExcerptsImportedByThisChange": 0,
+  "lastDatabaseReceipt": "docs/evaluation/source-proof/senate-864-completion-readback-20261019.json",
+  "lastVerifiedStoredLiteralExcerpts": 616,
+  "frozenPreparedMemberBillTargets": 11514,
+  "current668IsSourceReadinessNotStoredCount": true,
+  "noOutcomesModelsServingWeightsTrainingOrFreezeChanges": true
+}
