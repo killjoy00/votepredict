@@ -156,3 +156,10 @@ export function safeGroupedCounts(rows,groups,metrics,{max=100,allowed={}}={}){
  }
  return rows;
 }
+// CASE guards the cast itself: planner reordering of a chamber join must not
+// attempt to cast House districts such as 1A while auditing Senate members.
+export const CURRENT_VERIFIED_MEMBER_SQL=`SELECT m.id::text AS "membershipId",
+ CASE WHEN m.district ~ '^[0-9]{1,2}$' THEN m.district::int END AS district,l.name FROM memberships m
+ JOIN legislators l ON l.id=m.legislator_id JOIN legislative_sessions s ON s.id=m.session_id JOIN chambers c ON c.id=m.chamber_id
+ WHERE s.slug='2025-2026' AND c.slug='senate'
+ AND CASE WHEN m.district ~ '^[0-9]{1,2}$' THEN m.district::int END=ANY($1::int[]) ORDER BY district LIMIT 151`;

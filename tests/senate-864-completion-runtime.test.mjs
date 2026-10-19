@@ -1,0 +1,29 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {completionAudit,completionInputs} from '../scripts/audit-senate-864-completion-readonly.mjs';
+import {candidateSiteDrafts,websiteEvidenceDraft} from '../src/evidence/senate-864-website-signal-neon.mjs';
+import {ROSTER_SQL} from '../scripts/audit-senate-864-95-historical-source-neon-readonly.mjs';
+import {COMPLETION_WEBSITE_SQL,MEDIA_CONTEXT_SQL,DIRECT_STATEMENT_SQL} from '../src/evidence/senate-864-completion-audit.mjs';
+import {VERIFY_SQL} from '../src/evidence/cfb-864-pdf-registry-eligibility-v48.mjs';
+import {TRACK_D_CROSS_SOURCE_SQL} from '../src/evaluation/senate-media-track-d-cross-ingester-audit.ts';
+const input=completionInputs();const uuid=n=>'11111111-2222-4333-8444-'+String(n).padStart(12,'0');
+const roster=input.manifest.people.map((p,i)=>({name:p.officialName,legislatorId:uuid(i+1),membershipId:uuid(i+101),sessionSlug:'2021-2022'}));
+const plan=candidateSiteDrafts(input.manifest,roster,input.excerpts);
+const stored=plan.map(p=>{const e=websiteEvidenceDraft(p);return {membershipId:p.membershipId,legislatorId:roster.find(r=>r.membershipId===p.membershipId).legislatorId,excerpt:p.literal,publishedAt:p.observedAt,kind:'context',stance:'neutral',metadata:{...e.drafts[0].metadata,durableIngestion:true,ingestionKey:'synthetic'},sourceUrl:p.sourceUrl,sourceSha:p.sourceSha,sourceMetadata:e.source.metadata}});
+const client={query:async sql=>{
+if(sql===ROSTER_SQL)return {rows:roster};if(sql===COMPLETION_WEBSITE_SQL)return {rows:stored};
+if(sql===VERIFY_SQL)return {rows:[{stored:'830',indexed:'830',exact:'830',missing:'0',distinct_bodies:'813'}]};
+if(sql.includes("current_setting('transaction_read_only')"))return {rows:[{db:'synthetic',role:'synthetic',ro:'on',isolation:'repeatable read'}]};
+if(sql===TRACK_D_CROSS_SOURCE_SQL)return {rows:input.pins.map(p=>({public_id:p.publicId,matching_body_sha_docs:0,exact_archive_body_docs:0,archive_link_docs:0,same_original_url_docs:0,same_original_url_and_sha_docs:0,potential_dated_alias_reference_docs:0,matching_other_source_kind_docs:0}))};
+if(sql.startsWith('SELECT (SELECT count(*)::int FROM source_documents)'))return {rows:[{stored_source_documents:0,stored_source_kinds:0,stored_evidence_items:0}]};
+return {rows:[]};
+}};
+test('complete public-source/controlled-store audit preserves literal state and rolls back; failed stage also rolls back',async()=>{
+ const stages=[],r=await completionAudit(client,{database:'synthetic',role:'synthetic'},input,s=>stages.push(s));
+ assert.equal(r.website.matched,616);assert.equal(r.explicitRollback,true);
+ assert.equal(r.noWritesOrOutcomeTesting,true);assert.ok(stages.includes('later_2026_selected_member_readback'));
+ const calls=[];
+ const failing={query:async(sql,params)=>{calls.push(sql);if(sql===COMPLETION_WEBSITE_SQL)throw Error('synthetic read failure');return client.query(sql,params);}};
+ await assert.rejects(completionAudit(failing,{database:'synthetic',role:'synthetic'},input),/synthetic read failure/);
+ assert.equal(calls.at(-1),'ROLLBACK');
+});

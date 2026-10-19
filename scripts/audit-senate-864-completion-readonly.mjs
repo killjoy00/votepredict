@@ -14,8 +14,8 @@ import {getTrackDHistoricalShadowPins,getTrackDPublicSpeakerTimingQueue} from '.
 import {TRACK_D_CROSS_SOURCE_SQL,summarizeTrackDCrossSource} from '../src/evaluation/senate-media-track-d-cross-ingester-audit.ts';
 import {buildSenate864ReconciliationPlan,safeSenate864Summary,assertVerifiedSenate864Ledger} from '../src/evidence/senate-864-2026-verified-positions.mjs';
 import {auditWebsiteReadback,mediaAccounting,sha,COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,MEDIA_CONTEXT_SQL,
- FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,safeGroupedCounts} from '../src/evidence/senate-864-completion-audit.mjs';
-export const MARKER='SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V1';
+ FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,safeGroupedCounts} from '../src/evidence/senate-864-completion-audit.mjs';
+export const MARKER='SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V2';
 const read=p=>JSON.parse(readFileSync(p,'utf8'));
 export function completionInputs(){
  const manifest=read(PUBLIC95),docs=new Map(SOURCE_LEDGER_FILES.map(p=>[p,read(p)]));
@@ -29,41 +29,52 @@ export function completionInputs(){
   seeds:read('data/sources/local-trade-news-v1.json').sources,claims:assertVerifiedSenate864Ledger()};
 }
 const integerRows=(rows,groups,metrics,allowed,max=100)=>safeGroupedCounts(rows,groups,metrics,{allowed,max});
-export async function completionAudit(client,target,inputs){
+export async function completionAudit(client,target,inputs,onStage=()=>{}){
  let active=false;
  try{
   await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');active=true;
   const who=(await client.query("SELECT current_database() AS db,current_user AS role,current_setting('transaction_read_only') AS ro,current_setting('transaction_isolation') AS isolation")).rows[0];
   if(who?.db!==target.database||who.role!==target.role||who.ro!=='on'||who.isolation!=='repeatable read')throw Error('Verified RR read-only identity required');
+  onStage('bounded_historical_roster');
   const roster=(await client.query(ROSTER_SQL)).rows;
   if(roster.length>=1001)throw Error('Truncated historic roster');
   const plans=candidateSiteDrafts(inputs.manifest,roster,inputs.excerpts);
   const personByMembership=new Map(roster.map(r=>[r.membershipId,r.legislatorId]));
+  onStage('literal_website_storage_readback');
   const stored=(await client.query(COMPLETION_WEBSITE_SQL,[plans.map(p=>p.key)])).rows;
   const website=auditWebsiteReadback(stored,plans,personByMembership);
   const qualified=website.privateDeduplicated;
+  onStage('pre_vote_cohort_count_query');
   const cohort=integerRows((await client.query(COHORT_COUNTS_SQL,[JSON.stringify(qualified.map(p=>({person:p.legislatorId,observed_at:p.observedAt})))])).rows,
    ['year'],['target_member_bills','unknown_service_targets','qualified_member_bills','qualified_bills','qualified_people'],{year:[2021,2022,2023,2024,2025]},5);
   const finance={};
+  onStage('exact_finance_registry');
   const registry=registry830();
   const parity=(await client.query(VERIFY_SQL,[JSON.stringify(registry)])).rows;
   if(parity.length!==1||Object.keys(parity[0]).sort().join('|')!==['stored','indexed','exact','missing','distinct_bodies'].sort().join('|')||
    Object.values(parity[0]).some(n=>!/^\d+$/.test(n)))throw Error('Registry safe parity output invalid');
   finance.exactRegistryReadback=Object.fromEntries(Object.entries(parity[0]).map(([k,v])=>[k,Number(v)]));
+  onStage('finance_legacy_eligibility_triage');
   finance.legacyEligibilityTriage=safeRevalidation((await client.query(REVALIDATE_SQL,[JSON.stringify(registry)])).rows);
-  for(const [name,sql] of Object.entries(QUERIES))finance[name]=safeCounts(name,(await client.query(sql,sql.includes('$1::jsonb')?[JSON.stringify(inputs.source)]:[])).rows);
+  for(const [name,sql] of Object.entries(QUERIES)){onStage('finance_'+name);finance[name]=safeCounts(name,(await client.query(sql,sql.includes('$1::jsonb')?[JSON.stringify(inputs.source)]:[])).rows);}
+  onStage('finance_canonical_scope_counts');
   finance.canonical=integerRows((await client.query(FINANCE_CANONICAL_SQL)).rows,['year','family'],
    ['evidence_copies','canonical_transactions','copies_missing_canonical_identity','legacy_eligible_copies','unclassified_contributor_type_copies','copies_in_indexed_committee_years','canonical_in_indexed_committee_years'],
    {year:['2021','2022','2023','2024','2025'],family:['candidate_contribution','candidate_expenditure','independent_expenditure','category_mismatch']},20);
+  onStage('finance_registry_year_counts');
   finance.registry=integerRows((await client.query(FINANCE_REGISTRY_SQL)).rows,['year'],['versions','pdf_bodies','tracked_historical_version_public_by_proofs','versions_with_cached_bodies'],{year:[2021,2022,2023,2024,2025]},5);
+  onStage('committee_stored_year_counts');
   const committee=integerRows((await client.query(COMMITTEE_YEAR_SQL)).rows,['year'],['stored_events','declared_named_events','explicit_stored_choices','hearing_date_timing_events'],{year:[2021,2022,2023,2024,2025]},5);
+  onStage('media_context_accounting');
   const mediaRows=(await client.query(MEDIA_CONTEXT_SQL)).rows;
   if(mediaRows.length>=2001)throw Error('Truncated media scope');
   const media=mediaAccounting(mediaRows,inputs.manifest,inputs.seeds);
   const params=JSON.stringify(inputs.pins.map(p=>({public_id:p.publicId,original_url:p.originalUrl,archive_url:p.archiveUrl,candidate_alias_url:p.candidateDatedAlias,raw_sha256:p.rawSha256})));
+  onStage('media_existing_original_crosswalk');
   const matched=(await client.query(TRACK_D_CROSS_SOURCE_SQL,[params])).rows;
   const denominators=(await client.query('SELECT (SELECT count(*)::int FROM source_documents) AS stored_source_documents,(SELECT count(DISTINCT source_kind)::int FROM source_documents) AS stored_source_kinds,(SELECT count(*)::int FROM evidence_items) AS stored_evidence_items LIMIT 1')).rows[0];
   media.existingSelectedOriginalCrosswalk=summarizeTrackDCrossSource(inputs.pins,denominators,matched);
+  onStage('media_declared_direct_statements');
   const direct=(await client.query(DIRECT_STATEMENT_SQL)).rows;
   if(direct.length>=10001)throw Error('Truncated declared direct statement scope');
   const peopleIndex=new Map();for(const [ordinal,copies] of membershipIndex(inputs.manifest,roster))for(const r of copies)peopleIndex.set(r.legislatorId,ordinal);
@@ -75,9 +86,9 @@ export async function completionAudit(client,target,inputs){
    const source=['member_primary_article','senate_member_primary_historical_article','public_news_article','wayback_local_trade_news','wayback_member_primary'].includes(d.sourceKind)?d.sourceKind:'other';
    const k=[ordinal,year,source].join('|');if(!declared.has(k))declared.set(k,{personOrdinal:ordinal,storedAvailabilityYear:year,sourceFamily:source,declaredDirectRows:0});declared.get(k).declaredDirectRows++;
   }
-  const members=(await client.query(`SELECT m.id::text AS "membershipId",m.district::int AS district,l.name FROM memberships m
-   JOIN legislators l ON l.id=m.legislator_id JOIN legislative_sessions s ON s.id=m.session_id JOIN chambers c ON c.id=m.chamber_id
-   WHERE s.slug='2025-2026' AND c.slug='senate' AND m.district::int=ANY($1::int[]) ORDER BY m.district LIMIT 151`,[inputs.claims.map(c=>c.district)])).rows;
+  onStage('later_2026_selected_member_readback');
+  const members=(await client.query(CURRENT_VERIFIED_MEMBER_SQL,[inputs.claims.map(c=>c.district)])).rows;
+  onStage('later_2026_literal_flags_and_disposition');
   const bills=(await client.query(`SELECT b.id::text AS "billId",b.identifier FROM bills b JOIN legislative_sessions s ON s.id=b.session_id
    WHERE s.slug='2025-2026' AND b.identifier IN ('SF3602','SF5032','SF5101') LIMIT 26`)).rows;
   const currentPlan=buildSenate864ReconciliationPlan({members,bills,existingEvidence:direct.filter(d=>inputs.claims.some(c=>c.sourceUrl===d.sourceUrl)).map(d=>({...d,publishedAt:new Date(d.publishedAt).toISOString()}))});
@@ -91,6 +102,7 @@ export async function completionAudit(client,target,inputs){
   }).length;
   media.later2026NotHistoricalPublicationProof=true;
   media.declaredDirectStatementCells=[...declared.values()];media.unknownDeclaredIdentity=unknownDeclaredIdentity;
+  onStage('explicit_readonly_rollback');
   await client.query('ROLLBACK');active=false;
   return {version:'senate864-authoritative-readback-v1',auditedAt:new Date().toISOString(),reviewedCommit:process.env.GITHUB_SHA,
    protocolSha256:inputs.protocolSha256,verifiedRepeatableReadReadOnly:true,explicitRollback:true,noWritesOrOutcomeTesting:true,
@@ -111,14 +123,14 @@ async function main(){
   pool=new Pool({host:target.host,port:target.port,user:target.role,password:target.password,database:target.database,ssl:{rejectUnauthorized:true},max:1,
    connectionTimeoutMillis:10000,statement_timeout:85000,query_timeout:90000,options:'-c default_transaction_read_only=on -c lock_timeout=2500',application_name:'senate864-authoritative-readback'});
   phase='bounded_verified_readonly_reconciliation';const client=await pool.connect();let receipt;
-  try{receipt=await completionAudit(client,target,inputs)}finally{client.release(true)}
+  try{receipt=await completionAudit(client,target,inputs,stage=>{phase=stage;console.log('SENATE864_COMPLETION_STAGE='+stage)})}finally{client.release(true)}
   phase='allowlisted_aggregate_only_receipt';
   const body=JSON.stringify(receipt,null,2);
   if(body.length>400000||/(?:postgres(?:ql)?:\/\/|"(?:membershipId|legislatorId|sourceSha|excerpt|rawBody|password|sourceDocumentId)"\s*:)/i.test(body))throw Error('Private receipt field rejected');
   mkdirSync('artifacts',{recursive:true});writeFileSync('artifacts/senate864-completion-readback.json',body+'\n');
   console.log('SENATE864_COMPLETION_READBACK='+JSON.stringify({website:receipt.website,cohort:receipt.preparedCohort,
    financeYearFamilies:receipt.finance.canonical.length,committeeYears:receipt.committee.length,mediaContexts:receipt.media.rows,explicitRollback:true,protocolSha256:receipt.protocolSha256}));
- }catch{console.error('SENATE864_COMPLETION_HOLD_AT='+phase);process.exitCode=1}
+ }catch(error){const code=/^[0-9A-Z]{5}$/.test(error?.code||'')?error.code:'not_sqlstate';console.error('SENATE864_COMPLETION_HOLD_AT='+phase+';safeSqlState='+code);process.exitCode=1}
  finally{if(pool)await pool.end()}
 }
 if(process.argv[1]?.endsWith('/audit-senate-864-completion-readonly.mjs'))void main();
