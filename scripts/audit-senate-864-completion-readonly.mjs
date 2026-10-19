@@ -15,7 +15,7 @@ import {TRACK_D_CROSS_SOURCE_SQL,summarizeTrackDCrossSource} from '../src/evalua
 import {buildSenate864ReconciliationPlan,safeSenate864Summary,assertVerifiedSenate864Ledger} from '../src/evidence/senate-864-2026-verified-positions.mjs';
 import {auditWebsiteReadback,mediaAccounting,sha,COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,MEDIA_CONTEXT_SQL,
  FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,safeGroupedCounts,safeCohortCounts} from '../src/evidence/senate-864-completion-audit.mjs';
-export const MARKER='SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V2';
+export const MARKER='SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V3';
 const read=p=>JSON.parse(readFileSync(p,'utf8'));
 export function completionInputs(){
  const manifest=read(PUBLIC95),docs=new Map(SOURCE_LEDGER_FILES.map(p=>[p,read(p)]));
@@ -46,7 +46,6 @@ export async function completionAudit(client,target,inputs,onStage=()=>{}){
   const qualified=website.privateDeduplicated;
   onStage('pre_vote_cohort_count_query');
   const cohort=safeCohortCounts((await client.query(COHORT_COUNTS_SQL,[JSON.stringify(qualified.map(p=>({person:p.legislatorId,observed_at:p.observedAt})))])).rows);
-  onStage('exact_finance_registry');
   const finance={};
   onStage('exact_finance_registry');
   const registry=registry830();
@@ -55,7 +54,7 @@ export async function completionAudit(client,target,inputs,onStage=()=>{}){
    Object.values(parity[0]).some(n=>!/^\d+$/.test(n)))throw Error('Registry safe parity output invalid');
   finance.exactRegistryReadback=Object.fromEntries(Object.entries(parity[0]).map(([k,v])=>[k,Number(v)]));
   onStage('finance_legacy_eligibility_triage');
-  finance.legacyEligibilityTriage=safeRevalidation((await client.query(REVALIDATE_SQL,[JSON.stringify(registry)])).rows);
+  finance.legacyEligibilityTriage=safeRevalidation((await client.query(REVALIDATE_SQL)).rows);
   for(const [name,sql] of Object.entries(QUERIES)){onStage('finance_'+name);finance[name]=safeCounts(name,(await client.query(sql,sql.includes('$1::jsonb')?[JSON.stringify(inputs.source)]:[])).rows);}
   onStage('finance_canonical_scope_counts');
   finance.canonical=integerRows((await client.query(FINANCE_CANONICAL_SQL)).rows,['year','family'],
