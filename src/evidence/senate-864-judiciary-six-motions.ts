@@ -15,8 +15,15 @@ const norm=(s:string)=>s.toLowerCase().replace(/[^a-z ]/g,' ').replace(/\s+/g,' 
 export function normalizedJudiciaryOriginal(text:string){return text.replace(/8\/14\/24, 2:38 PM\s*Minnesota Senate/g,' ')
  .replace(/https:\/\/goldpages\.senate\.mn\/schedule\/hearing_minutes\.php\?hearing_id=18345&ls=93\s*[12]\/2/g,' ')
  .replace(/-- [12] of 2 --/g,' ').replace(/\s+/g,' ').trim();}
+function requirePrintedAnchors(f:MotionFixture){
+ for(const r of f.motions){
+  const printed=r.literal.match(/^(A-\d+) – /)?.[1]??
+   (r.literal.startsWith('Oral Amendment - Kreun offered – Page 5, line 5.21 delete "shall" and insert "may" – roll call ')?'oral-kreun-p5-l5.21-shall-to-may':null);
+  if(!printed||r.anchor!==printed)throw Error('Amendment anchor differs from printed question');
+ }
+}
 export function validateSixOriginals(minuteText:string,attendanceText:string,source:JudiciaryYeaSource){
- const f=fixture(),n=normalizedJudiciaryOriginal(minuteText),a=attendanceText.replace(/\b[PA]\b/g,'').replace(/\s+/g,' ');
+ const f=fixture();requirePrintedAnchors(f);const n=normalizedJudiciaryOriginal(minuteText),a=attendanceText.replace(/\b[PA]\b/g,'').replace(/\s+/g,' ');
  if(!source.independentOfficeAndFullAliasVerified||textSha(source.roll.motionText)!==YEA_MOTION_SHA||f.motions.length!==6||new Set(f.motions.map(r=>r.anchor)).size!==6)throw Error('Original source/alias gate');
  for(const p of f.people)if(!n.includes('Senator '+p.headerFullName)||!a.includes(p.independentAttendanceName))throw Error('Independent full-name register/header mismatch');
  for(const r of f.motions){
@@ -32,7 +39,7 @@ export function sixMotionsPlan(proof:ReturnType<typeof validateSixOriginals>,s:M
  if(s.documents.length>100||s.events.length>300||s.choices.length>3000||s.historicalRoster.length>150||!proof.independentOriginalsVerified||!s.readOnlyTransactionProven||!s.databaseIdentityVerified||!s.completeBoundedSourceEventsFetched||!s.explicitRollbackCompleted)throw Error('Verified bounded snapshot required');
  const docs=s.documents.filter(d=>d.source_url===YEA_URL&&d.content_sha256===YEA_SHA&&d.meeting_date===YEA_DAY&&d.committee_name==='Judiciary and Public Safety');
  if(docs.length!==1||s.documents.filter(d=>d.source_url===YEA_URL||d.content_sha256===YEA_SHA).length!==1)throw Error('Original document identity conflict');
- const doc=docs[0],events=s.events.filter(e=>e.source_document_id===doc.id),f=proof.fixture;
+ const doc=docs[0],events=s.events.filter(e=>e.source_document_id===doc.id),f=proof.fixture;requirePrintedAnchors(f);
  const report=events.filter(e=>e.bill_identifier==='SF3534'&&e.occurred_on===YEA_DAY&&e.yea_count===6&&e.nay_count===4&&e.passed===true&&e.is_passage===false&&e.committee_vote===true);
  if(report.length!==1||![1,7].includes(events.length))throw Error('Unanchored or partial source event set');
  const recommendation=report[0],legacy=recommendation.vote_kind==='amendment'&&textSha(recommendation.motion_text||'')===YEA_MOTION_SHA;

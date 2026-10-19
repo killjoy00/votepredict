@@ -24,6 +24,7 @@ test('six distinct exact named amendment anchors, including voted Kreun oral, pr
  assert.deepEqual(plan.events.map(e=>e.anchor),['A-17','oral-kreun-p5-l5.21-shall-to-may','A-22','A-8','A-19','A-18']);
  assert.ok(plan.events.every(e=>!e.literal.includes('A-13')&&!e.literal.includes('withdrew')));
  assert.equal(plan.recommendation.external_key,'legacy-key-retained');
+ proof.fixture.motions[0].anchor='A-99';assert.throws(()=>sixMotionsPlan(proof,s),/anchor differs/);
 });
 test('exact printed literal sides must match fixture; missing independent full-name or unknown term bounds hold',()=>{
  const {proof,s,original,attendance,old}=synthetic();
