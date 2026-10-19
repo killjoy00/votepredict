@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {
   REPO,TEXT_WORKFLOW_ID,TEXT_WORKFLOW_PATH,WATCHDOG_CRON,
   validateGitHubEvent,eligibleCollectorRuns,decideBillTextRecovery,
-  parseProtectedReadback,applyReceiptGuard,
+  parseProtectedReadback,applyReceiptGuard,shouldFailOnKnownDegradation,
 } from '../scripts/senate-official-bill-text-watchdog.mjs';
 
 const NOW=Date.parse('2026-10-17T02:00:00Z');
@@ -110,18 +110,16 @@ test('skip dispatch on completed backlog and cool down when source throttled',()
   assert.equal(applyReceiptGuard(due,null,NOW,run(90)).dispatch,true);
 });
 
-// Pushes can be frequent during research; degrade visibly without a per-push email.
-// The hourly and manual watchdog remain strict, and the collector still fails normally.
-test('hourly watchdog remains strict while main-push degraded runs are non-fatal',()=>{
+// A push can observe the same known collector degradation dozens of times.
+// Preserve scheduled/manual watchdog failures and hard API/dispatch failures.
+test('only duplicate push degradation is non-fatal',()=>{
+  assert.equal(shouldFailOnKnownDegradation('push'),false);
+  assert.equal(shouldFailOnKnownDegradation('schedule'),true);
+  assert.equal(shouldFailOnKnownDegradation('workflow_dispatch'),true);
+  assert.equal(shouldFailOnKnownDegradation('unrecognized'),true);
   const yaml=readFileSync(new URL('../.github/workflows/senate-official-bill-text-watchdog.yml',import.meta.url),'utf8');
   assert.ok(yaml.includes("  schedule:\n    - cron: '13 * * * *'"));
   assert.ok(yaml.includes("\n  actions: write\n"));
-  const step=[
-    '      - name: Check live collection receipts and dispatch only after idle',
-    "        continue-on-error: $"+"{{ github.event_name == 'push' }}",
-    '        env:',
-  ].join('\n');
-  assert.ok(yaml.includes(step));
-  assert.equal((yaml.match(/continue-on-error:/g)??[]).length,1);
   assert.ok(yaml.includes('run: node scripts/senate-official-bill-text-watchdog.mjs'));
+  assert.ok(!yaml.includes('continue-on-error:'));
 });
