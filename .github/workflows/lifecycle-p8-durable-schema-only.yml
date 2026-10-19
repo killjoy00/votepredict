@@ -17,7 +17,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: lifecycle-p8-durable-schema-only-${{ github.sha }
+  group: lifecycle-p8-durable-schema-only-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   keyless-pr:
@@ -46,7 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }
+          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
@@ -94,11 +94,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.sha }
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Require reviewed merge commit
         env:
-          EXPECTED_SHA: ${{ github.sha }
+          EXPECTED_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-node@v7
         with:
@@ -128,18 +128,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
-      NEON_API_KEY: ${{ secrets.NEON_API_KEY }
-      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }
-      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }
-      VOTEPREDICT_P8_SCHEMA_INDEPENDENT_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_P8_SCHEMA_INDEPENDENT_CI: ${{ needs.independent-main.result == 'success' && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.sha }
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Confirm exact accepted marker-bearing main SHA
         env:
-          EXPECTED_SHA: ${{ github.sha }
+          EXPECTED_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-node@v7
         with:
