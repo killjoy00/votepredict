@@ -1,0 +1,106 @@
+{
+  "version": "senate-media-track-d-946-987-all-stored-source-kind-crosswalk-receipt-v1",
+  "researchLocalDay": "2026-10-18",
+  "repository": "killjoy00/votepredict",
+  "issues": [
+    946,
+    987
+  ],
+  "mergedImplementation": {
+    "pullRequest": 1449,
+    "mainCommit": "85c2cec06a31e32350e728cd29649b338f975a56",
+    "fullCiRun": 39190098481,
+    "fullCiResult": "success",
+    "keylessReviewAndProtectedRun": 39190098548,
+    "protectedResult": "success",
+    "privateRowsExported": false,
+    "databaseWrites": false
+  },
+  "publicOriginalInputs": {
+    "verifiedHistoricalOriginalHtmlVersions": 23,
+    "distinctOriginalPublisherUrls": 17,
+    "reformer": {
+      "versions": 17,
+      "urls": 13,
+      "displayedYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "mpr": {
+      "versions": 6,
+      "urls": 4
+    },
+    "additionalReformerAuthenticatedVersions": 5,
+    "unverifiedReformerRawSha1MismatchQuarantined": 1,
+    "candidateReformerBriefVsDatedAliasPairs": 7,
+    "authenticatedHistoricalTwoSidedAliasPairs": 0
+  },
+  "actualProtectedSourceQuery": {
+    "scope": "all source_documents.source_kind categories plus evidence_items.metadata, not all external or uncatalogued ingestion",
+    "storedSourceDocumentRowsAllKinds": 63594,
+    "distinctStoredSourceKinds": 46,
+    "storedEvidenceItemRowsAllKinds": 344016,
+    "transactionIsolation": "REPEATABLE READ",
+    "transactionReadOnly": true,
+    "explicitRollbackVerified": true,
+    "parameters": "23 public original URLs, exact historical archive id_ URLs, already authenticated HTML SHA256, seven optional public dated aliases",
+    "aggregatesOnly": true,
+    "unknownPrivateSourceKindsUrlsIdsNamesOrSHAExposed": false,
+    "matchingOriginalUrlOrBodyShaTotals": {
+      "reformer": {
+        "exactOriginalArchiveUrlAndBodyShaVersions": 0,
+        "exactPublisherOriginalUrlAndBodyShaVersions": 0,
+        "sameOriginalUrlReferenceOnlyVersions": 0,
+        "possibleDatedAliasReferences": 0,
+        "noExactUrlOrShaRecords": 17
+      },
+      "mpr": {
+        "exactOriginalArchiveUrlAndBodyShaVersions": 0,
+        "exactPublisherOriginalUrlAndBodyShaVersions": 0,
+        "sameOriginalUrlReferenceOnlyVersions": 0,
+        "possibleDatedAliasReferences": 0,
+        "noExactUrlOrShaRecords": 6
+      }
+    },
+    "matchedPublicOriginalIds": 0,
+    "conclusion": "No matching exact original URL, archive URL, raw body SHA or candidate alias reference in inspected stored source/evidence metadata for these 23 publicly pinned original versions",
+    "notEstablished": [
+      "Article globally missing from every possible external publisher/archive or pipeline",
+      "semantically similar article elsewhere with a different URL and digest",
+      "seven brief-versus-dated URL stories historically identical",
+      "first publisher publication time or live-broadcast transcript availability",
+      "full human verified senator quotes or recorded individual votes",
+      "historical forecast feature or model eligibility"
+    ]
+  },
+  "historicalShadow": {
+    "researchOnly": true,
+    "proposedReformerPrefix": "https://minnesotareformer.com/briefs/",
+    "proposedMprPrefix": "https://www.mprnews.org/episode/",
+    "historicalYearRange": [
+      2021,
+      2025
+    ],
+    "eligibleOriginalArchiveVersionsForResearch": 22,
+    "excludedExistingMprStoryControl": 1,
+    "newProductionSeedOrTopicalPriorityCodeChanges": 0,
+    "automaticallyMergedAliasPairs": 0,
+    "selectedOriginalCaptureVersionsNotArticles": 23
+  },
+  "speakerChronologyGuards": {
+    "threeReformerOriginalArticleShortNamedSpeakerCuePeople": 6,
+    "kunesh2023PinnedFirstTwoNamedTurnPhraseCuesCapturedUtc": "2023-02-10T02:40:30Z",
+    "hauschild2024SpecificTranscriptCueFirstAuthenticatedOriginalUtc": "2025-07-24T23:23:22Z",
+    "kunesh2024CharterSpecificTranscriptCueOnlyInDecemberOriginalUtc": "2024-12-11T00:46:18Z",
+    "heintzemanElectionArticleDay": "2025-04-30",
+    "heintzemanOfficialSenateOathDay": "2025-05-06",
+    "humanApprovedFullQuotes": 0,
+    "automaticHistoricalVoteOrModelLabels": 0
+  },
+  "changesMadeToProduction": false,
+  "nextStep": "Review isolated historical-only capture pilot with original source integrity, source timing, deduplication, privacy and explicit approval before activation. Keep both issues open."
+}
