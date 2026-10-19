@@ -19,6 +19,8 @@ import {
  assertTrackDCrossSourceStaticSQL,summarizeTrackDCrossSource,
  type CrossSourceContext,type CrossMatchRow,
 } from '../src/evaluation/senate-media-track-d-cross-ingester-audit.js';
+import {buildTrackDPublicSpeakerTimingQueue} from
+ '../src/evaluation/senate-media-track-d-public-speaker-timing-review.js';
 const DIR='docs/evaluation/';
 const read=(p:string)=>JSON.parse(readFileSync(DIR+p,'utf8'));
 export function getTrackDHistoricalShadowPins(){
@@ -27,6 +29,16 @@ export function getTrackDHistoricalShadowPins(){
   original31Ledger:read('senate-media-public-article-discovery-2021-25.json'),
   fourAliasQueue:read('senate-media-reformer-four-historical-brief-dated-alias-queue-20261011.json'),
   threeAdditionalReformerOriginals:read('senate-media-three-original-reformer-brief-historical-recovery-receipts-20261011.json'),
+ });
+}
+export function getTrackDPublicSpeakerTimingQueue(pins:readonly HistoricalShadowPin[]){
+ return buildTrackDPublicSpeakerTimingQueue({
+  pins,
+  newReformer:read('senate-media-three-original-reformer-brief-historical-recovery-receipts-20261011.json'),
+  kunesh2023:read('senate-media-mpr-kunesh-2023-original-in-turn-20261011.json'),
+  hauschild2024:read('senate-media-mpr-hauschild-later-historical-transcript-cue-receipts-20261011.json'),
+  mprSix:read('senate-media-mpr-six-interviews-public-reconciliation-20261011.json'),
+  ledger:read('senate-media-public-article-discovery-2021-25.json'),
  });
 }
 export function assertTrackDCrossReviewedMain(e:NodeJS.ProcessEnv){
@@ -83,13 +95,15 @@ async function main(){
    throw Error('Only exact research modes supported');
   const pins=getTrackDHistoricalShadowPins();
   assertTrackDCrossSourceStaticSQL();
+  const speakerReview=getTrackDPublicSpeakerTimingQueue(pins);
+  if(speakerReview.humanApprovedFullQuotes!==0)throw Error('Unexpected human quote approval');
   if(process.argv[2]==='--preflight'){
    console.log('TRACK_D_946_987_V3_ORIGINALS_AND_SQL_READY=23');
    return;
   }
   if(process.argv[2]==='--shadow-report'){
    const report=previewTrackDResearchOnlyShadow(pins);
-   console.log('TRACK_D_946_987_SHADOW_PREVIEW='+JSON.stringify(report));
+   console.log('TRACK_D_946_987_SHADOW_PREVIEW='+JSON.stringify({historicalUrlShadow:report,speakerTimingReview:speakerReview}));
    return;
   }
   assertTrackDCrossReviewedMain(process.env);
