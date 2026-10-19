@@ -124,6 +124,8 @@ export const FINANCE_CANONICAL_SQL=`WITH rows AS (
  count(*) FILTER(WHERE NOT coalesce(m->>'rowKey' ~ '^[a-f0-9]{64}$' AND canonical_filer ~ '^[0-9]{3,8}$',false))::int AS copies_missing_canonical_identity,
  count(*) FILTER(WHERE m->>'asOfEligible'='true')::int AS legacy_eligible_copies,
  count(*) FILTER(WHERE family='candidate_contribution' AND (m->>'contributorType' IS NULL OR m->>'contributorType'=''))::int AS unclassified_contributor_type_copies,
+ count(*) FILTER(WHERE family IN ('candidate_contribution','candidate_expenditure') AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber'))::int AS copies_in_indexed_registrations,
+ count(DISTINCT (canonical_filer,m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND canonical_filer ~ '^[0-9]{3,8}$' AND family IN ('candidate_contribution','candidate_expenditure') AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber'))::int AS canonical_in_indexed_registrations,
  count(*) FILTER(WHERE family IN ('candidate_contribution','candidate_expenditure') AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS copies_in_indexed_committee_years,
  count(DISTINCT (canonical_filer,m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND canonical_filer ~ '^[0-9]{3,8}$' AND family IN ('candidate_contribution','candidate_expenditure') AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS canonical_in_indexed_committee_years
  FROM identified GROUP BY 1,2 ORDER BY 1,2 LIMIT 21`;
@@ -174,4 +176,36 @@ export function safeCohortCounts(rows){
  });
  safeGroupedCounts(counts,['year'],['target_member_bills','unknown_service_targets','qualified_member_bills','qualified_bills','qualified_people'],{allowed:{year:[2021,2022,2023,2024,2025]},max:5});
  return rows;
+}
+
+// One previously authenticated source with six distinct numbered amendment rolls.
+// A count/slate/positional key cannot certify which original question was stored.
+export const EDUCATION_DOC_SQL=`SELECT id::text,content_sha256 FROM source_documents
+ WHERE source_url='https://www.lrl.mn.gov/archive/minutes/senate/2024/educ/20240214/educ_20240214_Minutes.pdf'
+ OR content_sha256='6d00d812236d4585ea315da9fdf2da8325fcad512e4089e1422fa4a96e2a7f52' LIMIT 21`;
+export const EDUCATION_EVENT_SQL=`SELECT v.id::text,v.source_document_id::text,v.motion_text,v.amendment_ref,
+ v.yea_count,v.nay_count,v.passed,(SELECT count(*)::int FROM member_votes mv WHERE mv.vote_event_id=v.id) AS choices
+ FROM vote_events v JOIN chambers c ON c.id=v.chamber_id JOIN bills b ON b.id=v.bill_id
+ JOIN legislative_sessions s ON s.id=v.session_id JOIN jurisdictions j ON j.id=s.jurisdiction_id
+ WHERE j.slug='us-mn' AND c.slug='senate' AND s.slug='2023-2024' AND v.occurred_on=DATE '2024-02-14'
+ AND (b.identifier='SF3534' OR v.source_document_id IN (SELECT id FROM source_documents
+ WHERE source_url='https://www.lrl.mn.gov/archive/minutes/senate/2024/educ/20240214/educ_20240214_Minutes.pdf'
+ OR content_sha256='6d00d812236d4585ea315da9fdf2da8325fcad512e4089e1422fa4a96e2a7f52')) LIMIT 51`;
+export function educationStoredAnchors(docs,events){
+ if(docs.length>=21||events.length>=51)throw Error('Education bounded source/event scope truncated');
+ const exact=new Set(docs.filter(d=>d.content_sha256==='6d00d812236d4585ea315da9fdf2da8325fcad512e4089e1422fa4a96e2a7f52').map(d=>d.id));
+ const numbers=new Map();let unanchored=0;
+ for(const e of events){
+  const labels=[...String(e.motion_text||'').matchAll(/\bamendment\s+(?:number\s+|no\.?\s*)?(10|2|3|5|6|9)\b/gi)].map(m=>m[1]);
+  if(/^(10|2|3|5|6|9)$/.test(e.amendment_ref||''))labels.push(e.amendment_ref);
+  const distinct=[...new Set(labels)];
+  if(exact.has(e.source_document_id)&&distinct.length===1&&e.yea_count===4&&e.nay_count===6&&e.passed===false&&e.choices===10)
+   numbers.set(distinct[0],(numbers.get(distinct[0])||0)+1);
+  else unanchored++;
+ }
+ return {sourceRecordedAmendments:6,sourceNamedChoiceOccurrences:60,exactStoredOriginalDocuments:exact.size,
+  storedCandidateEvents:events.length,uniquelyLabelledStoredAmendments:[...numbers.values()].filter(n=>n===1).length,
+  ambiguousRepeatedStoredLabels:[...numbers.values()].filter(n=>n>1).length,unanchoredStoredCandidateEvents:unanchored,
+  individualChoiceIdentityParityCertified:false,correctionAuthorizedByThisAudit:false,
+  disposition:'HOLD_unique_original_motion_to_stored_event_and_hearing_day_member_side_parity_required'};
 }

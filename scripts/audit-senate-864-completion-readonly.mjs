@@ -1,5 +1,6 @@
 /** One bounded maintained reconciliation; no source crawl, write, labels or outcome testing. */
 import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
+import {educationStoredAnchors,EDUCATION_DOC_SQL,EDUCATION_EVENT_SQL} from '../src/evidence/senate-864-completion-audit.mjs';
 import {Pool} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.ts';
 import {ROSTER_SQL,PUBLIC95} from './audit-senate-864-95-historical-source-neon-readonly.mjs';
@@ -15,7 +16,7 @@ import {TRACK_D_CROSS_SOURCE_SQL,summarizeTrackDCrossSource} from '../src/evalua
 import {buildSenate864ReconciliationPlan,safeSenate864Summary,assertVerifiedSenate864Ledger} from '../src/evidence/senate-864-2026-verified-positions.mjs';
 import {auditWebsiteReadback,mediaAccounting,sha,COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,MEDIA_CONTEXT_SQL,
  FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,safeGroupedCounts,safeCohortCounts} from '../src/evidence/senate-864-completion-audit.mjs';
-export const MARKER='SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V3';
+export const MARKER='SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V4';
 const read=p=>JSON.parse(readFileSync(p,'utf8'));
 export function completionInputs(){
  const manifest=read(PUBLIC95),docs=new Map(SOURCE_LEDGER_FILES.map(p=>[p,read(p)]));
@@ -58,12 +59,14 @@ export async function completionAudit(client,target,inputs,onStage=()=>{}){
   for(const [name,sql] of Object.entries(QUERIES)){onStage('finance_'+name);finance[name]=safeCounts(name,(await client.query(sql,sql.includes('$1::jsonb')?[JSON.stringify(inputs.source)]:[])).rows);}
   onStage('finance_canonical_scope_counts');
   finance.canonical=integerRows((await client.query(FINANCE_CANONICAL_SQL)).rows,['year','family'],
-   ['evidence_copies','canonical_transactions','copies_missing_canonical_identity','legacy_eligible_copies','unclassified_contributor_type_copies','copies_in_indexed_committee_years','canonical_in_indexed_committee_years'],
+   ['evidence_copies','canonical_transactions','copies_missing_canonical_identity','legacy_eligible_copies','unclassified_contributor_type_copies','copies_in_indexed_registrations','canonical_in_indexed_registrations','copies_in_indexed_committee_years','canonical_in_indexed_committee_years'],
    {year:['2021','2022','2023','2024','2025'],family:['candidate_contribution','candidate_expenditure','independent_expenditure','category_mismatch']},20);
   onStage('finance_registry_year_counts');
   finance.registry=integerRows((await client.query(FINANCE_REGISTRY_SQL)).rows,['year'],['versions','pdf_bodies','tracked_historical_version_public_by_proofs','versions_with_cached_bodies'],{year:[2021,2022,2023,2024,2025]},5);
   onStage('committee_stored_year_counts');
   const committee=integerRows((await client.query(COMMITTEE_YEAR_SQL)).rows,['year'],['stored_events','declared_named_events','explicit_stored_choices','hearing_date_timing_events'],{year:[2021,2022,2023,2024,2025]},5);
+  onStage('education_six_original_motion_storage_anchors');
+  const education=educationStoredAnchors((await client.query(EDUCATION_DOC_SQL)).rows,(await client.query(EDUCATION_EVENT_SQL)).rows);
   onStage('media_context_accounting');
   const mediaRows=(await client.query(MEDIA_CONTEXT_SQL)).rows;
   if(mediaRows.length>=2001)throw Error('Truncated media scope');
@@ -105,7 +108,7 @@ export async function completionAudit(client,target,inputs,onStage=()=>{}){
   await client.query('ROLLBACK');active=false;
   return {version:'senate864-authoritative-readback-v1',auditedAt:new Date().toISOString(),reviewedCommit:process.env.GITHUB_SHA,
    protocolSha256:inputs.protocolSha256,verifiedRepeatableReadReadOnly:true,explicitRollback:true,noWritesOrOutcomeTesting:true,
-   website:{...website.summary,sourcePlanSha256:sha(JSON.stringify(qualified.map(p=>[p.key,p.legislatorId,p.sourceSha,p.observedAt,sha(p.literal)])))},websiteHoldReasons:inputs.excerpts.holdCounts,preparedCohort:cohort,finance,committee,media};
+   website:{...website.summary,sourcePlanSha256:sha(JSON.stringify(qualified.map(p=>[p.key,p.legislatorId,p.sourceSha,p.observedAt,sha(p.literal)])))},websiteHoldReasons:inputs.excerpts.holdCounts,preparedCohort:cohort,finance,committee,education,media};
  }finally{if(active)await client.query('ROLLBACK')}
 }
 async function main(){
