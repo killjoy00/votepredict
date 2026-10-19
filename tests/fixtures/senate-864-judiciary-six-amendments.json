@@ -1,0 +1,362 @@
+{
+  "version": "senate864-judiciary-six-explicit-amendments-v1",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/jud/20240221/Jud_20240221_minutes.pdf",
+  "sourceSha256": "a109e8cbdd2edacc705c4494c35bc096052e9ceb69e16fbbc296b36506dbfa5d",
+  "day": "2024-02-21",
+  "bill": "SF3534",
+  "motions": [
+    {
+      "anchor": "A-17",
+      "page": "1",
+      "literal": "A-17 – Howe offered – roll call 4/6 (Ayes – Limmer, Eichorn, Howe, Kreun; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Seeberger, Westlin), not adopted",
+      "yea": 4,
+      "nay": 6,
+      "choices": [
+        {
+          "sourceName": "Limmer",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Eichorn",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Howe",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Kreun",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Latz",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Oumou Verbeten",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Carlson",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Pappas",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Seeberger",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Westlin",
+          "choice": "nay"
+        }
+      ]
+    },
+    {
+      "anchor": "oral-kreun-p5-l5.21-shall-to-may",
+      "page": "1–2",
+      "literal": "Oral Amendment - Kreun offered – Page 5, line 5.21 delete \"shall\" and insert \"may\" – roll call 5/5 (Ayes – Limmer, Eichorn, Howe, Kreun, Seeberger; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Westlin), not adopted",
+      "yea": 5,
+      "nay": 5,
+      "choices": [
+        {
+          "sourceName": "Limmer",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Eichorn",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Howe",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Kreun",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Seeberger",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Latz",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Oumou Verbeten",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Carlson",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Pappas",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Westlin",
+          "choice": "nay"
+        }
+      ]
+    },
+    {
+      "anchor": "A-22",
+      "page": "2",
+      "literal": "A-22 – Kreun offered – roll call 4/6 (Ayes – Limmer, Eichorn, Howe, Kreun; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Seeberger, Westlin), not adopted",
+      "yea": 4,
+      "nay": 6,
+      "choices": [
+        {
+          "sourceName": "Limmer",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Eichorn",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Howe",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Kreun",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Latz",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Oumou Verbeten",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Carlson",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Pappas",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Seeberger",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Westlin",
+          "choice": "nay"
+        }
+      ]
+    },
+    {
+      "anchor": "A-8",
+      "page": "2",
+      "literal": "A-8 – Kreun offered – roll call 4/6 (Ayes – Limmer, Eichorn, Howe, Kreun; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Seeberger, Westlin), not adopted",
+      "yea": 4,
+      "nay": 6,
+      "choices": [
+        {
+          "sourceName": "Limmer",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Eichorn",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Howe",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Kreun",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Latz",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Oumou Verbeten",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Carlson",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Pappas",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Seeberger",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Westlin",
+          "choice": "nay"
+        }
+      ]
+    },
+    {
+      "anchor": "A-19",
+      "page": "2",
+      "literal": "A-19 – Kreun offered – roll call 5/5 (Ayes – Limmer, Eichorn, Howe, Kreun, Seeberger; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Westlin), not adopted",
+      "yea": 5,
+      "nay": 5,
+      "choices": [
+        {
+          "sourceName": "Limmer",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Eichorn",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Howe",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Kreun",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Seeberger",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Latz",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Oumou Verbeten",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Carlson",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Pappas",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Westlin",
+          "choice": "nay"
+        }
+      ]
+    },
+    {
+      "anchor": "A-18",
+      "page": "2",
+      "literal": "A-18 – Kreun offered – roll call 5/5 (Ayes – Limmer, Eichorn, Howe, Kreun, Seeberger; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Westlin), not adopted",
+      "yea": 5,
+      "nay": 5,
+      "choices": [
+        {
+          "sourceName": "Limmer",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Eichorn",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Howe",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Kreun",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Seeberger",
+          "choice": "yea"
+        },
+        {
+          "sourceName": "Latz",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Oumou Verbeten",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Carlson",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Pappas",
+          "choice": "nay"
+        },
+        {
+          "sourceName": "Westlin",
+          "choice": "nay"
+        }
+      ]
+    }
+  ],
+  "recommendationLiteral": "Senator Limmer requested a roll call vote for the passage of S.F. 3534, as amended, recommended to pass and re-referred to the Finance Committee 6/4 (Ayes: Pappas, Latz - Chair, Carlson, Seeberger, Westlin, Oumou Verbeten; Nays: Limmer, Eichorn, Howe, Kreun) MOTION PREVAILED",
+  "people": [
+    {
+      "token": "Limmer",
+      "headerFullName": "Warren Limmer",
+      "independentAttendanceName": "Limmer, Warren"
+    },
+    {
+      "token": "Eichorn",
+      "headerFullName": "Justin D. Eichorn",
+      "independentAttendanceName": "Eichorn, Justin D."
+    },
+    {
+      "token": "Howe",
+      "headerFullName": "Jeff R. Howe",
+      "independentAttendanceName": "Howe, Jeff R."
+    },
+    {
+      "token": "Kreun",
+      "headerFullName": "Michael E. Kreun",
+      "independentAttendanceName": "Kreun, Michael E."
+    },
+    {
+      "token": "Latz",
+      "headerFullName": "Ron Latz",
+      "independentAttendanceName": "Latz, Ron"
+    },
+    {
+      "token": "Oumou Verbeten",
+      "headerFullName": "Clare Oumou Verbeten",
+      "independentAttendanceName": "Oumou Verbeten, Clare"
+    },
+    {
+      "token": "Carlson",
+      "headerFullName": "Jim Carlson",
+      "independentAttendanceName": "Carlson, Jim"
+    },
+    {
+      "token": "Pappas",
+      "headerFullName": "Sandra L. Pappas",
+      "independentAttendanceName": "Pappas, Sandra L."
+    },
+    {
+      "token": "Seeberger",
+      "headerFullName": "Judy Seeberger",
+      "independentAttendanceName": "Seeberger, Judy"
+    },
+    {
+      "token": "Westlin",
+      "headerFullName": "Bonnie S. Westlin",
+      "independentAttendanceName": "Westlin, Bonnie S."
+    }
+  ],
+  "excluded": [
+    "A-14 voice vote has no named choices",
+    "A-13 count-only division 5/5 has no named choices",
+    "Earlier Howe oral amendment withdrawn; Seeberger oral amendment not voted on",
+    "Later Westlin MOTION PREVAILED is not counted as another named roll"
+  ]
+}
