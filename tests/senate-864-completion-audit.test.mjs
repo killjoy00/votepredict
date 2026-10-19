@@ -1,3 +1,4 @@
+import {educationStoredAnchors,EDUCATION_DOC_SQL,EDUCATION_EVENT_SQL} from '../src/evidence/senate-864-completion-audit.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Pool} from 'pg';
@@ -60,7 +61,7 @@ test('all new SELECT plans compile on the disposable migrated schema',async t=>{
  const url=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;if(!url){t.skip('Disposable Postgres required');return;}
  const pool=new Pool({connectionString:url,max:1}),db=await pool.connect();
  try{await db.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
-  for(const sql of [COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,MEDIA_CONTEXT_SQL,FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,VERIFY_SQL,REVALIDATE_SQL]){
+  for(const sql of [COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,MEDIA_CONTEXT_SQL,FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,VERIFY_SQL,REVALIDATE_SQL,EDUCATION_DOC_SQL,EDUCATION_EVENT_SQL]){
    assert.match(sql,/^(SELECT|WITH) /);assert.doesNotMatch(sql,/\b(?:INSERT|UPDATE|DELETE|DROP|ALTER|CREATE)\b/);
    const params=sql===COMPLETION_WEBSITE_SQL?[[]]:sql===COHORT_COUNTS_SQL?['[]']:sql===CURRENT_VERIFIED_MEMBER_SQL?[[]]:sql===VERIFY_SQL?[JSON.stringify(registry830())]:[];
    await db.query('EXPLAIN '+sql,params);
@@ -115,4 +116,14 @@ test('finance copy reconciliation uses the IE spender identity and never borrows
   assert.equal(s.evidence_copies,3);assert.equal(s.canonical_transactions,1);assert.equal(s.copies_missing_canonical_identity,0);
   assert.equal(s.copies_in_indexed_committee_years,0);assert.equal(s.canonical_in_indexed_committee_years,0);
  }finally{await db.query('ROLLBACK');db.release();await pool.end();}
+});
+
+test('Education six repeated slates require distinct printed question anchors; no ordinal or tally shortcut',()=>{
+ const docs=[{id:'synthetic',content_sha256:'6d00d812236d4585ea315da9fdf2da8325fcad512e4089e1422fa4a96e2a7f52'}];
+ const e={source_document_id:'synthetic',motion_text:'adopt amendment 10',yea_count:4,nay_count:6,passed:false,choices:10};
+ assert.equal(educationStoredAnchors(docs,[e]).uniquelyLabelledStoredAmendments,1);
+ assert.equal(educationStoredAnchors(docs,[e,e]).ambiguousRepeatedStoredLabels,1);
+ assert.equal(educationStoredAnchors(docs,[{...e,motion_text:'MOTION FAILED'}]).unanchoredStoredCandidateEvents,1);
+ assert.equal(educationStoredAnchors([], [e]).uniquelyLabelledStoredAmendments,0);
+ assert.equal(educationStoredAnchors(docs,[e]).individualChoiceIdentityParityCertified,false);
 });
