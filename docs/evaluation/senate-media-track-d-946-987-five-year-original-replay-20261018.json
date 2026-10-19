@@ -1,0 +1,113 @@
+{
+  "version": "senate-media-track-d-946-987-five-year-public-original-replay-receipt-v1",
+  "observedAmericaChicagoDay": "2026-10-18",
+  "source": "Only successful ACTUAL one-shot public Wayback id_ original replay run, no database access",
+  "priorResearch": "docs/evaluation/senate-media-track-d-946-987-cross-source-results-20261018.json",
+  "implementation": {
+    "pullRequest": 1451,
+    "mainSha": "de6c0ba34996f6d00007d8847b6e79313e6ecd5a",
+    "fullReviewedHeadCI": 39191990138,
+    "fullReviewedHeadKeylessReview": 39191990125,
+    "postMergeRepositoryCI": 39192229077,
+    "realPublicReplayWorkflowRun": 39192229175,
+    "realPublicReplayJobId": 117867880794,
+    "postMergeRunSucceeded": true
+  },
+  "plan": {
+    "publicHistoricalArchivedSourceVersionCandidates": 22,
+    "distinctOriginalPublisherUrlPaths": 16,
+    "unverifiedReformerHistoricalAliasPairs": 7,
+    "proposedReformerPrefix": "https://minnesotareformer.com/briefs/",
+    "proposedMprPrefix": "https://www.mprnews.org/episode/",
+    "originalHtmlCaptureVersionsNotUniqueNewsArticleCount": true
+  },
+  "actualFiveSourceReplay": {
+    "publicArchiveGetRequests": 5,
+    "rawPublicArchivedSourceSha1AndSha256MatchedAgain": 5,
+    "archiveAccessUnavailableOrUncertain": 0,
+    "indexedDigestOrArchivedRawBodyMismatchQuarantined": 0,
+    "eachOneSourcePerPublisherDisplayedYear": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "results": [
+      {
+        "publicSourceVersionId": "mn-reformer-2021-rent-control@2021-03-02T18:08:51Z",
+        "issue": 946,
+        "publisherDisplayedYear": 2021,
+        "archiveObservedUtc": "2021-03-02T18:08:51Z",
+        "disposition": "pinned_original_sha256_reauthenticated",
+        "originalPreviouslyRecordedSHA256MatchedAgain": true,
+        "firstPublisherPostingTimeProven": false,
+        "originalFullSpokenAudioOrVerbatimQuoteVerified": false,
+        "historicalForecastEligible": false,
+        "noDbWrite": true
+      },
+      {
+        "publicSourceVersionId": "mn-reformer-2022-dfl-public-safety-brief@2022-03-25T19:14:18Z",
+        "issue": 946,
+        "publisherDisplayedYear": 2022,
+        "archiveObservedUtc": "2022-03-25T19:14:18Z",
+        "disposition": "pinned_original_sha256_reauthenticated",
+        "originalPreviouslyRecordedSHA256MatchedAgain": true,
+        "firstPublisherPostingTimeProven": false,
+        "originalFullSpokenAudioOrVerbatimQuoteVerified": false,
+        "historicalForecastEligible": false,
+        "noDbWrite": true
+      },
+      {
+        "publicSourceVersionId": "mpr-2023-kunesh-native-family-preservation@2023-02-10T02:40:30Z",
+        "issue": 987,
+        "publisherDisplayedYear": 2023,
+        "archiveObservedUtc": "2023-02-10T02:40:30Z",
+        "disposition": "pinned_original_sha256_reauthenticated",
+        "originalPreviouslyRecordedSHA256MatchedAgain": true,
+        "firstPublisherPostingTimeProven": false,
+        "originalFullSpokenAudioOrVerbatimQuoteVerified": false,
+        "historicalForecastEligible": false,
+        "noDbWrite": true
+      },
+      {
+        "publicSourceVersionId": "mpr-2024-hauschild-north-star-on-air-interview@2024-02-19T22:55:56Z",
+        "issue": 987,
+        "publisherDisplayedYear": 2024,
+        "archiveObservedUtc": "2024-02-19T22:55:56Z",
+        "disposition": "pinned_original_sha256_reauthenticated",
+        "originalPreviouslyRecordedSHA256MatchedAgain": true,
+        "firstPublisherPostingTimeProven": false,
+        "originalFullSpokenAudioOrVerbatimQuoteVerified": false,
+        "historicalForecastEligible": false,
+        "noDbWrite": true
+      },
+      {
+        "publicSourceVersionId": "mn-reformer-2025-road-signs-brief@2025-05-01T22:45:07Z",
+        "issue": 946,
+        "publisherDisplayedYear": 2025,
+        "archiveObservedUtc": "2025-05-01T22:45:07Z",
+        "disposition": "pinned_original_sha256_reauthenticated",
+        "originalPreviouslyRecordedSHA256MatchedAgain": true,
+        "firstPublisherPostingTimeProven": false,
+        "originalFullSpokenAudioOrVerbatimQuoteVerified": false,
+        "historicalForecastEligible": false,
+        "noDbWrite": true
+      }
+    ]
+  },
+  "scope": {
+    "directPublisherWebOrAudioFetches": 0,
+    "publisherRobotsAndArchiveAccessNotBypassed": true,
+    "privateSourceDataOrNeonCredentialsFetched": false,
+    "historicJournalVotesOrModelsAltered": false,
+    "historicalPublisherFirstPublicationDayNotInferred": true,
+    "transcriptSpecificPhraseObservationMayBeLaterThanSourceArchive": true,
+    "automaticReformerHistoricBriefDatedAliasMerges": 0,
+    "humanApprovedFullQuotedSenatorRemarks": 0,
+    "oldCollectorSeedsOrPathSelectionModified": false,
+    "productionDataEvidenceModelsOrVercelWrites": false,
+    "productionHistoricalIngestionAuthorized": false,
+    "next": "Separate owner review of isolated bounded historical capture activation, human speaker-term review and two-sided alias original-source proof. Issues #946 and #987 remain OPEN."
+  }
+}
