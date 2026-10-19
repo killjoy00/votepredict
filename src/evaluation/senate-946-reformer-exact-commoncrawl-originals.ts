@@ -267,7 +267,17 @@ export async function runReformerSevenCommonCrawlRecovery(
  pause:()=>Promise<void>=()=>new Promise(r=>setTimeout(r,1400)),
 ){
  const selected=selectReformerCrawlQueries(pins);
- const report=[];
+ const report:Array<{
+  publicBriefId:string;publisherDisplayedDay:string;queriedCollection:Collection;
+  indexStatus:IndexStatus;indexCandidateCount:number|null;
+  selectedIndexPageMayBeTruncated:boolean;authenticatedOriginalBodyVersions:number;
+  attempts:Array<{
+   indexedOriginalCaptureUtc:string;indexedSha1Base32:string;
+   replayStatus:ReplayStatus;archivedRawOriginalSha256:string|null;
+   originalHtmlBytes:number|null;verifiedWarcGzipSha256:string|null;
+   sourceWarcLocator:null|{collection:Collection;filename:string;offset:number;length:number};
+  }>;
+ }>=[];
  for(let i=0;i<selected.length;i++){
   if(i)await pause();
   const q=selected[i]!,idx=await probe(q,f);
