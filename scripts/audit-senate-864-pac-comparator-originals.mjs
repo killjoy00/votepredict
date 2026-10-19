@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {parseCfbCandidateContributionCsv} from '../src/evidence/cfb-candidate-finance-history.js';
 import {main as existingSourceAudit} from './audit-cfb-pac116-original-a1-geometry-readonly.mjs';
 import {reconcileHeldPacComparators,originalComparatorRowsetSha} from '../src/evidence/senate-864-pac-comparator-source.mjs';
-export const MARKER='SENATE864_PAC23_EXACT_CURRENT_ORIGINAL_COMPARATOR_20261019_V1';
+export const MARKER='SENATE864_PAC23_ENTITY_TYPED_CURRENT_ORIGINAL_COMPARATOR_20261019_V2';
 const URL='https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/?download=-2026985457';
 export async function originalComparatorRows(expectedRowsetSha){
  const r=await fetch(URL,{redirect:'error',signal:AbortSignal.timeout(120000)});
