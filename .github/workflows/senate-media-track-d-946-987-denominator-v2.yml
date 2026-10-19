@@ -1,0 +1,77 @@
+name: '#946 / #987 confirm local-news context denominator READ ONLY V2'
+on:
+  pull_request:
+    paths:
+      - src/evaluation/senate-media-track-d-context-denominator.ts
+      - scripts/audit-senate-media-track-d-denominator-readonly-v2.ts
+      - tests/senate-media-track-d-context-denominator.test.ts
+      - .github/workflows/senate-media-track-d-946-987-denominator-v2.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: track-d-946-987-denominator-v2-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  keyless-review:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+       (github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        contains(github.event.head_commit.message, 'TRACK_D_946_987_READONLY_CONTEXT_DENOMINATOR_V2_20261018')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Validate 18 existing SHA originals and bounded filtered DB source denominator
+        run: |
+          node --import tsx --test tests/senate-media-track-d-context-denominator.test.ts
+          node --import tsx scripts/audit-senate-media-track-d-denominator-readonly-v2.ts --preflight
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  protected-context-denominator:
+    needs: [keyless-review]
+    if: >-
+      needs.keyless-review.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'TRACK_D_946_987_READONLY_CONTEXT_DENOMINATOR_V2_20261018')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      TRACK_D_V2_REVIEWED_SCOPE: SOURCE_METADATA_AGGREGATES_READ_ONLY
+      TRACK_D_V2_MAIN_CI_PASSED: ${{ needs.keyless-review.result == 'success' && 'true' || 'false' }}
+      TRACK_D_V2_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'TRACK_D_946_987_READONLY_CONTEXT_DENOMINATOR_V2_20261018') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert exact reviewed main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: In one REPEATABLE READ READ ONLY transaction count actual media scope and exact archive snapshots
+        run: node --import tsx scripts/audit-senate-media-track-d-denominator-readonly-v2.ts --protected
