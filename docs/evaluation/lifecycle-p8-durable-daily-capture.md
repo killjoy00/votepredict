@@ -1,0 +1,29 @@
+# #310 Durable P8 daily capture: PostgreSQL research ledger and source-health alerts
+
+**Status (October 19, 2026): implemented/tested as an outcome-blind storage foundation, not a live 2027 collector.** The future session has not started. No 2027 official source was fetched, no 2027 forecasts were calculated, no Vercel cron was enabled, and no original frozen model was changed. The true authoritative 2027 bill universe remains to be independently authenticated.
+
+## Implemented components
+
+- [Additive migration 0036](../../migrations/0036_lifecycle_p8_durable_daily_capture.sql) creates a separate PostgreSQL table for P8 daily capture receipts: original full daily JSON, supplied bill-index JSON, source-health JSON, their SHA-256s, original caller-observed capture time, immutable **first DB-acceptance timestamp**, previous-day hash-chain seal, P8 session/cutoff constraints, and fixed no-outcome/no-serving/non-activation flags. Triggers refuse ordinary SQL UPDATE, DELETE and TRUNCATE.
+- [Cross-worker durable writer](../../src/evaluation/lifecycle-p8-durable-store.ts) opens a transaction with a fixed session-scoped advisory lock. An original first capture is committed once. Retry of identical source content returns ALREADY_PRESENT with both original timestamps preserved; a different hash for that day is a hard HOLD, never a rewrite. A new earlier date cannot be backfilled after a later day is sealed. Previous accepted day is linked via SHA-256, and all original JSON payload hashes are independently rechecked on readback.
+- [Source-health and heartbeat audit](../../src/evaluation/lifecycle-p8-capture-health.ts) flags missing supplied bill IDs, source-deferred process, low process coverage, vanished previously captured bills, changed first-observation clocks and missed Chicago capture days. Alerts and counts are written *within the immutable original daily receipt*, so retries cannot remove them. A separate optional read-only heartbeat checks stale/no capture **only when collection is explicitly expected**, and a GitHub Actions-compatible annotation formatter is included.
+- [Disposable PostgreSQL integration and regression tests](../../tests/lifecycle-p8-durable-store.test.ts) cover five concurrent writers, same-content replay, first-time retention, conflicting replay, skipped-day holds and alerts, trigger-blocked destructive SQL, stored data SHA revalidation and read-only heartbeat. Unit health tests also run without a database.
+
+The source/capture event date and the first PostgreSQL acceptance clock are **separate**. The first caller timestamp is preserved as received, not falsely attributed to independent archival or public publisher publication. PostgreSQL hash chains and triggers are tamper-resistant for normal application DML but are **not externally notarized WORM against a database superuser**. A future production capture needs a restricted INSERT/SELECT-only role plus an independent off-database seal/source-byte archive and restoration policy.
+
+## Operational health and actual alerts
+
+Daily snapshot health is a **supplied-list diagnostic only**. The report always marks independent official bill-universe verification FALSE. Missing count zero is NOT a claim of statewide official completeness, and the 95% operational process-source warning threshold must not substitute for the frozen P8 95/90/95% prospective evaluation admission criteria.
+
+A future authorized writer will call the durable append API after collecting and independently source-attesting the authoritative 2027 originals and calendar. It should print the safe health summary/annotations from the returned receipt to its GitHub job, and explicitly arrange issue/on-call notification delivery. The current formatter is not a scheduled monitor or email sender. The read-only heartbeat has a collectionExpected flag; setting this to false while the P8 program is inactive prevents false alerts. No automated alert delivery is claimed yet.
+
+The prior local [offline daily-file prototype](lifecycle-p8-daily-offline-prototype.md) remains usable for synthetic fixtures. This database backend is different: it persists exact source/manifest/health JSON across separate workers, independent of ephemeral Actions/local files. The future operational job should retain the original Revisor XML and official calendar source bytes in independent append-only archival storage, not only their URL/SHA lineage in this ledger.
+
+## Remaining P8 activation gates
+
+1. Independently acquire and verify a complete official 2027–28 HF/SF bill-universe index, official initial bill text, Revisor source observation times, and authoritative session calendar bytes. The currently supplied list cannot establish this.
+2. Preserve original source XML/calendar and frozen original September 2026 P8 model bytes in a durable independent WORM/backup system with digest and retention guarantees. This DB table is a research receipt and does not substitute for an original-byte archive.
+3. Authorize and test a day-to-day collector invoking this durable backend under least-privilege DB permissions, cost limits, retry controls, audit/alert notification routing, and fail-closed timing. No scheduled job is added by this change.
+4. Preserve [#732](https://github.com/killjoy00/votepredict/issues/732) Vercel pause and [P8 frozen protocol](../../data/evaluation/lifecycle-p8-prospective-plan-v1.json). No re-fit, auto-promotion, live predictions, target labels or score reveal before July 1, 2028 UTC plus all frozen completeness thresholds.
+
+**Acceptance for this subtask:** full CI + disposable-PG append-only concurrency/retry/tamper/alert tests green, dedicated schema and read-only auditing available, no production capture activated. **Not accepted by this subtask:** an operational 2027 capture schedule, authenticated real bill denominator, WORM original-source archive, real alert deliveries, or 2027 model scoring.
