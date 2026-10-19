@@ -165,9 +165,10 @@ test('PostgreSQL: durable receipts, concurrency, immutable history, chained cont
      assert.equal(original?.chainSealSha256,jobs[0]!.chainSealSha256);
      assert.equal(original?.batch.contentSha256,a.batch.contentSha256);
      assert.equal(original?.firstRecordedAt,jobs[0]!.firstRecordedAt);
+     const divergent=day('2027-01-10',[sf7],[hf42,sf7]);
      await assert.rejects(()=>appendP8DurableDailyCapture({
-       pool:pool!,...day('2027-01-10',[sf7],[hf42,sf7]),
-     } as never),/Invalid|Cannot|conflicts|source bytes/);
+       pool:pool!,batch:divergent.batch,suppliedUniverse:divergent.manifest,
+     }),/Immutable|conflicts|source bytes/);
      // The previous rejection must not poison another connection/replay.
      const b=day('2027-01-11',[hf42,sf7],[hf42,sf7]);
      const second=await appendP8DurableDailyCapture({
