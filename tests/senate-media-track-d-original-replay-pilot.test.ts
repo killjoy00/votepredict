@@ -174,16 +174,16 @@ test('bounded five-canary one-shot algorithm never acquires new publisher, DB, o
 test('network access requires one-shot reviewed main; no CI secret, branch or repeat exposure',()=>{
  assert.equal(TRACK_D_CANARY_MAIN_MARKER,
   'TRACK_D_946_987_ORIGINAL_REPLAY_CANARY_V4_20261018');
- assert.throws(()=>assertTrackDPublicOriginalCanaryMainRun({}),/blocked/);
+ assert.throws(()=>assertTrackDPublicOriginalCanaryMainRun({NODE_ENV:'test'}),/blocked/);
  assert.throws(()=>assertTrackDPublicOriginalCanaryMainRun({
-  GITHUB_REPOSITORY:'killjoy00/votepredict',
+  NODE_ENV:'test',GITHUB_REPOSITORY:'killjoy00/votepredict',
   GITHUB_ACTIONS:'true',GITHUB_EVENT_NAME:'pull_request',
   GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',
   TRACK_D_CANARY_PUBLIC_KEYLESS_OK:'true',
   TRACK_D_CANARY_REVIEWED_MAIN_MARKER:'true',
  }),/blocked/);
  assert.equal(assertTrackDPublicOriginalCanaryMainRun({
-  GITHUB_REPOSITORY:'killjoy00/votepredict',
+  NODE_ENV:'test',GITHUB_REPOSITORY:'killjoy00/votepredict',
   GITHUB_ACTIONS:'true',GITHUB_EVENT_NAME:'push',
   GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',
   TRACK_D_CANARY_PUBLIC_KEYLESS_OK:'true',
