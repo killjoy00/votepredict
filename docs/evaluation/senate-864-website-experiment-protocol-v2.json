@@ -1,0 +1,129 @@
+{
+  "version": "senate864-website-pre-vote-protocol-v2",
+  "frozenBeforeOutcomeTesting": true,
+  "hypothesis": "Candidate-owned website text independently observed before a vote predicts that later vote.",
+  "scope": {
+    "chamber": "Minnesota Senate",
+    "targetCalendarYears": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "servingPeopleManifest": "data/evaluation/senate-864-95-served-historical-candidate-research-manifest-v1.json",
+    "sourceExcerpts": 1197,
+    "provenanceReady": 668,
+    "held": 529
+  },
+  "inclusion": [
+    "Literal archived candidate-owned website excerpt with original URL, full source SHA256, independently authenticated indexed digest and exact zoned observation timestamp",
+    "Fresh storage readback must match literal, stable legislator identity, source URL/SHA, observation, digest and every non-serving flag",
+    "Target is accepted official Senate floor passage event, with bill, session, explicit YEA or NAY and hearing-day member service bounds",
+    "Use first passage event per member/bill/session, chosen by event date then stable event key without reading vote side"
+  ],
+  "exclusion": [
+    "Provenance receipts without literal excerpt",
+    "526 source-metadata holds, 3 known-person out-of-study excerpts, conflicting source/clock, literal mismatch or duplicate ingestion rows",
+    "2026 or later observations for 2021-2025 targets",
+    "Unknown or unzoned observation clock; uncertain timestamp intervals whose latest possible instant is not before cutoff",
+    "Same target calendar day, unknown service boundary, committee/non-passage targets, other/absent labels",
+    "Retrospective source recovery, hand-labelled policy sincerity and outcome-driven text selection"
+  ],
+  "clock": {
+    "targetCutoff": "00:00:00 America/Chicago at start of target occurred_on; day-only target time is unknown",
+    "comparison": "latest possible authenticated observation instant strictly less than cutoff",
+    "archiveClock": "Archive observation, not first authorship/publication",
+    "uncertainty": "No imputed timezone or backdating; hold when latest bound is unknown",
+    "sameDayExcluded": true,
+    "party": "Use target-session membership party only for explicitly bounded historical service; no current-party lookup."
+  },
+  "joinsAndDuplicates": {
+    "identity": "Website membership -> stable legislator_id -> target membership/session with explicit service bounds; never district/surname join",
+    "literalDuplicates": "Same stable person plus exact UTF8 literal SHA256: retain earliest authenticated observation, break ties by source SHA then ingestion key; provenance copies retained separately",
+    "overlappingExcerpts": "Not assumed independent samples; no extra target rows per excerpt",
+    "targetDuplicates": "One member/bill/session target using first accepted passage event; repeated or reconsidered passages not independent outcomes",
+    "textConstruction": "All deduplicated qualifying literals, sorted by observation then SHA; deterministic 20000 Unicode-codepoint cap per person/target; vocabulary and IDF fit on training only"
+  },
+  "split": {
+    "train": [
+      2021,
+      2022
+    ],
+    "validation": [
+      2023
+    ],
+    "untouchedChronologicalTest": [
+      2024,
+      2025
+    ],
+    "billGrouping": "All members of a bill/session stay in the year of its first accepted Senate passage event, independent of vote side. Exclude cross-partition identical stored bill-version text hashes from primary; exclude missing bill hashes from primary. Report exclusions and temporal years without shifting splits.",
+    "noOutcomeReadUntilProtocolMerged": true
+  },
+  "futureComparison": {
+    "baselines": [
+      "Training-only overall YEA rate with Beta(1,1) smoothing",
+      "Training-only party-specific YEA rates with Beta(1,1) smoothing, unseen party falls back to overall"
+    ],
+    "textModel": "Separate non-serving logistic ridge delta using training-only word unigram/bigram TF-IDF plus baseline log odds; no external LLM or mutable encoder",
+    "regularizationGrid": [
+      0.1,
+      1,
+      10,
+      100
+    ],
+    "selection": "Lowest validation bill-macro log loss; tie chooses strongest regularization; no test tuning",
+    "primaryMetrics": [
+      "bill-macro log loss clipped at 1e-6",
+      "bill-macro Brier score"
+    ],
+    "secondaryMetrics": [
+      "micro log loss/Brier",
+      "member-macro Brier",
+      "balanced accuracy",
+      "AUROC when both labels present"
+    ],
+    "uncertainty": "2000 seeded bill-cluster bootstrap replicates, seed 864; report paired deltas and 95% intervals; no causal claim",
+    "implementation": {
+      "runtime": "Python 3.12; numpy 2.2.6, scipy 1.15.3, scikit-learn 1.6.1",
+      "tfidf": {
+        "lowercase": true,
+        "strip_accents": null,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "min_df": 2,
+        "max_features": 5000,
+        "sublinear_tf": true,
+        "norm": "l2"
+      },
+      "ridge": "Minimize mean member-target logistic loss + lambda*||w||^2/2 with fixed party log-odds offset, no additional intercept; L-BFGS maxiter=1000, tolerance=1e-9",
+      "fitSampleWeight": "Equal member-target weights, validation selection uses bill-macro loss",
+      "determinism": "seed 864, one BLAS thread; no LLM or mutable embeddings",
+      "tie": "validation losses within 1e-10 choose larger lambda"
+    }
+  },
+  "leakageChecks": [
+    "Assert every source cutoff before target local midnight",
+    "Zero source or person joins by future office/district",
+    "No target vote text/results, post-cutoff source copy, future observation, outcome labels or post-vote source retrieval in feature inputs",
+    "Training-only vocabulary, IDF, smoothing and regularization selection",
+    "Audit same-bill/version/identical-text leakage across partitions",
+    "Preserve existing immutable evaluation freezes and production model weights; new isolated experiment outputs only",
+    "All available stored nonempty bill-version text hashes are used for cross-partition collision exclusion only, never as feature content; missing hashes excluded from primary and separately counted",
+    "Outcome-free roster/party, source and cohort census runs and is committed before the separate outcome-read workflow is enabled",
+    "Website-only model cannot certify bill-specific policy understanding; stable personal style/identity may explain a signal; exploratory interpretation required"
+  ],
+  "coverageLimitations": [
+    "668 excerpts are not 668 independent votes or 668 people",
+    "Capture selection, old/prior-office pages, sparse senators and source survival create selection bias",
+    "Zero observed website excerpt does not mean no candidate position",
+    "Report candidate people, pages, text hashes, bills, member-bill targets, excluded counts and party/year coverage before outcomes",
+    "If any validation/test partition has fewer than 30 distinct target bills or 20 minority-class member-bill outcomes, label results exploratory and inconclusive; never move a split to manufacture sample size",
+    "Cohort preparation and storage verification demonstrate no predictive lift"
+  ],
+  "executionPolicy": "Owner authorized a separate isolated outcome experiment on 2026-10-19. This version must merge before any experiment outcomes are read. Freeze outcome-free cohort counts and commitments before enabling the separate outcome workflow. No production training, serving weights, forecasts, immutable freezes, floor processing or scheduler changes.",
+  "supersedesForNewExperimentOnly": "v1 remains immutable; no outcomes were examined under v1",
+  "outputPolicy": "Database rows, person IDs, vote sides, literal inputs and fitted weights remain in runner memory/private temporary files and are deleted. Publish aggregate metrics/coverage, seeded bill-cluster intervals, source/protocol/code/cohort commitments and workflow receipts only."
+}
