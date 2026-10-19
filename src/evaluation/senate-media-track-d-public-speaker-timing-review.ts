@@ -136,7 +136,7 @@ export function buildTrackDPublicSpeakerTimingQueue(input:{
   mpr2024Hauschild:{
    namedMember:'Grant Hauschild',
    eventDay:'2024-02-19',
-   2024EarlyOriginalHtmlHadSpecificSelectedTranscriptCue:false,
+   early2024OriginalHtmlHadSpecificSelectedTranscriptCue:false,
    firstSelectedCueLaterOriginalCaptureUtc:early2024,
    firstOriginalPublishedTimeProven:false,
    no2024_02_19ForecastStanceOrTranscriptPromotion:true,
