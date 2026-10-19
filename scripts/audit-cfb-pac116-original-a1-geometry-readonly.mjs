@@ -218,7 +218,7 @@ export function geometryPagesForSource({
   imageOrUnrenderedPages
  };
 }
-export async function main(){
+export async function main({inspectTwoOriginalPages}={}){
  assertPac116FinanceReadOnlyGuard(process.env);
  const manifest=validateCfbIssueSourceManifest(JSON.parse(readFileSync(
   'data/evidence/cfb-issue-finance-source-observation-manifest-v1.json','utf8')));
@@ -241,16 +241,13 @@ export async function main(){
  const client=await pool.connect();
  let opened=false;
  try{
-  const who=(await client.query(
-   'SELECT current_database() AS db,current_user AS role'
-  )).rows[0];
-  if(who?.db!==target.database||who?.role!==target.role)
-   throw Error('Incorrect existing Neon protected production database identity');
   await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
   opened=true;
-  if((await client.query(
-   "SELECT current_setting('transaction_read_only') AS ro"
-  )).rows[0]?.ro!=='on')throw Error('Readonly original PDF proof transaction required');
+  const who=(await client.query(
+   "SELECT current_database() AS db,current_user AS role,current_setting('transaction_read_only') AS ro,current_setting('transaction_isolation') AS isolation"
+  )).rows[0];
+  if(who?.db!==target.database||who?.role!==target.role||who.ro!=='on'||who.isolation!=='repeatable read')
+   throw Error('Incorrect existing Neon protected read-only transaction identity');
   const registry=(await client.query([
    'SELECT count(*)::int AS total,',
    'count(DISTINCT full_original_pdf_sha256)::int AS unique_shas',
@@ -406,6 +403,7 @@ export async function main(){
     else await loading.destroy().catch(()=>{});
    }
   }
+  if(inspectTwoOriginalPages)await inspectTwoOriginalPages({client,cohort,allRows,reports,pages,positionedOutcomes,registeredNames});
   const summary=safeOriginalA1PacCohortSummary({
    cohort,allRows,reports,pageOutcomes:outcomes,
    pdfHashesChecked:bodiesChecked,
