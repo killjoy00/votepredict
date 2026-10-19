@@ -114,9 +114,14 @@ test('skip dispatch on completed backlog and cool down when source throttled',()
 // The hourly and manual watchdog remain strict, and the collector still fails normally.
 test('hourly watchdog remains strict while main-push degraded runs are non-fatal',()=>{
   const yaml=readFileSync(new URL('../.github/workflows/senate-official-bill-text-watchdog.yml',import.meta.url),'utf8');
-  assert.match(yaml,/schedule:\\n\\s+- cron: '13 \\* \\* \\* \\*'/);
-  assert.match(yaml,/\\n  actions: write\\n/);
-  assert.match(yaml,/name: Check live collection receipts and dispatch only after idle\\n\\s+continue-on-error: \\$\\{\\{ github\\.event_name == 'push' \\}\\}\\n\\s+env:/);
+  assert.ok(yaml.includes("  schedule:\n    - cron: '13 * * * *'"));
+  assert.ok(yaml.includes("\n  actions: write\n"));
+  const step=[
+    '      - name: Check live collection receipts and dispatch only after idle',
+    "        continue-on-error: $"+"{{ github.event_name == 'push' }}",
+    '        env:',
+  ].join('\n');
+  assert.ok(yaml.includes(step));
   assert.equal((yaml.match(/continue-on-error:/g)??[]).length,1);
-  assert.match(yaml,/run: node scripts\\/senate-official-bill-text-watchdog\\.mjs/);
+  assert.ok(yaml.includes('run: node scripts/senate-official-bill-text-watchdog.mjs'));
 });
