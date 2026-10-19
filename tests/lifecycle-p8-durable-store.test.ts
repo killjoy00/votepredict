@@ -17,6 +17,9 @@ import {
   appendP8DurableDailyCapture,readP8DurableDailyCapture,
   inspectP8DurableHeartbeat,
 } from '../src/evaluation/lifecycle-p8-durable-store.js';
+import {
+  P8_DURABLE_SCHEMA_MARKER,authorizeP8SchemaOnlyMain,
+} from '../scripts/deploy-lifecycle-p8-durable-schema-neon.js';
 import {LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256}
   from '../src/evaluation/lifecycle-p8-prospective.js';
 
@@ -127,6 +130,37 @@ test('original model and scoring policy unchanged in the persisted capture shape
  assert.equal(batch.outcomeRead,false);
  assert.equal(batch.predictionsComputed,false);
  assert.equal(batch.rows.every(r=>r.memberVoteLabel===null),true);
+});
+
+
+test('schema-only Neon deploy requires independent CI, exact first main push and marker',()=>{
+ const sha='a'.repeat(40);
+ const env:NodeJS.ProcessEnv={
+  GITHUB_REPOSITORY:'killjoy00/votepredict',GITHUB_EVENT_NAME:'push',
+  GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',
+  VOTEPREDICT_P8_SCHEMA_INDEPENDENT_CI:'true',GITHUB_SHA:sha,
+ };
+ const event={
+  repository:{full_name:'killjoy00/votepredict'},
+  ref:'refs/heads/main',after:sha,head_commit:{id:sha,
+    message:'feat: verified P8 '+P8_DURABLE_SCHEMA_MARKER},
+  deleted:false,forced:false,
+ };
+ assert.doesNotThrow(()=>authorizeP8SchemaOnlyMain(env,event));
+ for(const change of [
+  {GITHUB_REPOSITORY:'someone/fork'},{GITHUB_REF:'refs/heads/branch'},
+  {GITHUB_EVENT_NAME:'pull_request'},{GITHUB_RUN_ATTEMPT:'2'},
+  {VOTEPREDICT_P8_SCHEMA_INDEPENDENT_CI:'false'},
+ ]){
+  assert.throws(()=>authorizeP8SchemaOnlyMain({...env,...change},event),/denied/);
+ }
+ for(const mutation of [
+  {after:'b'.repeat(40)},
+  {forced:true},{deleted:true},
+  {head_commit:{id:sha,message:'no marker'}},
+ ]){
+  assert.throws(()=>authorizeP8SchemaOnlyMain(env,{...event,...mutation}),/denied/);
+ }
 });
 
 const url=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
