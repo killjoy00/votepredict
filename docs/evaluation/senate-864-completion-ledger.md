@@ -13,6 +13,127 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 19 continuation: verified website expansion and executed experiment
+
+**The 52 newly source-ready excerpts are now imported and verified**, not merely planned.
+[#1477](https://github.com/killjoy00/votepredict/pull/1477), main
+`452ea58d0680f6d1d2905f73a43a938b84af77a4`; required CI
+[39324793311](https://github.com/killjoy00/votepredict/actions/runs/39324793311) and independent
+[39324793476](https://github.com/killjoy00/votepredict/actions/runs/39324793476) passed.
+The independent job rehashed four exact original HTML bodies from three pinned acquisition
+artifacts, matched SHA256/SHA1 and independent CDX capture/URL/digest rows, and found all
+52 literal excerpts in original visible text. The protected main
+[39325185350](https://github.com/killjoy00/votepredict/actions/runs/39325185350), job
+`118309647752`, **inserted 52 / reused 0**, read back **668/668** exact literals, identities,
+original URLs/hashes/indexed observations and non-serving flags, and verified **0 replay inserts**.
+Before/after snapshots verified REPEATABLE READ READ ONLY, schema checksums and explicit ROLLBACK.
+The existing durable writer was reused; all 616 v1 records/keys and the v1 protocol hash remain exact.
+Current storage: **668 excerpts / 53 people / 69 original bodies / 668 unique person-literal features**.
+There are still **526 source-metadata holds, 3 known-person scope exclusions and 0 unknown people**.
+
+A separately versioned [protocol v2](senate-864-website-experiment-protocol-v2.json) merged
+before outcome access. The [outcome-free readback/cohort commitment](source-proof/senate-864-website-cohort-v2-pre-outcome.json)
+was then committed in [#1478](https://github.com/killjoy00/votepredict/pull/1478), main
+`502e505976ff82d814ab3bbfbf4fbe9fd190745e`, before its separately gated outcome execution.
+It selects **12,134 member/bill targets / 370 bills / 52 people / 59 distinct constructed
+text inputs** from 24,218 accepted first-passage targets. **12,084 targets lack qualifying
+prior text**; this does not mean their candidates had no positions. There are **0 unknown
+service bounds, 0 missing bill hashes and 0 cross-partition identical bill-version hashes**.
+All text observations precede target-day local midnight strictly. Training has 4,073 targets /
+177 bills (2021–22), validation 3,540 / 85 (2023), and test 4,521 / 108 (2024–25).
+The exact cohort commitment is
+`0bf82f9a1f7401b7dd4d79886b92c78aa2c476e78ace29582975b4b4061a2dc9`.
+
+**Outcome experiment executed and verified:** protected
+[39326151003](https://github.com/killjoy00/votepredict/actions/runs/39326151003), job
+`118313094173`; [durable aggregate result](source-proof/senate-864-website-v2-executed-20261019.json).
+Required PR CI [39325745476](https://github.com/killjoy00/votepredict/actions/runs/39325745476),
+independent [39325745679](https://github.com/killjoy00/votepredict/actions/runs/39325745679),
+and main CI [39326150837](https://github.com/killjoy00/votepredict/actions/runs/39326150837) passed.
+Five Python numerical/chronology regressions and 15 dedicated JavaScript/PostgreSQL/source-gate
+checks passed. The outcome-free preparation receipt was produced on `452ea58d` and its file was committed on `502e5059` before that commit's gated outcome execution. The frozen source/storage/protocol/cohort commitments were matched **before**
+reading vote sides in a verified read-only transaction, explicitly rolled back before fitting.
+Private rows/text and fitted weights stayed in memory; only aggregate metrics were exported.
+
+| Frozen 2024–25 test model | Bill-macro log loss | Bill-macro Brier |
+|---|---:|---:|
+| Training-only overall YEA rate | 0.5884604741 | 0.1764924542 |
+| Training-only party YEA rates | 1.0806926349 | 0.2126346114 |
+| Party offset + website TF-IDF ridge | 1.0806929824 | 0.2126346786 |
+
+Lower is better. Validation selected **lambda 100**, the strongest prescribed shrinkage.
+The prespecified primary comparison shows **no useful held-out gain**: text-minus-party log loss
+`+0.0000003475`, paired 2,000 bill-cluster bootstrap 95% interval
+`[+0.0000003014, +0.0000003892]`; Brier delta `+0.0000000671`.
+Historical party-rate transfer itself performed worse than the overall-rate baseline.
+Secondary AUROC changed from 0.191906 to 0.203539, while balanced accuracy remained 0.5;
+this does not overturn the primary result. The sample-size thresholds were met, but selected
+source survival, repeated people/old captures and website-only features limit interpretation.
+This experiment **does not establish that bill-conditioned website text is useless**.
+No bill-text features, mutable encoder, subjective stance labels or serving changes were used.
+**The 2024–25 test is now examined for this experiment:** do not tune against these results
+and later call the same test untouched. A further model experiment needs a separately frozen
+protocol and an honest evaluation design; no outcome-driven archive recovery is proposed.
+
+**Existing committee source cohort now reconciles exactly:** the same protected workflow,
+job `118313094006`, reused all 1,452 SHA-pinned original PDF manifests (including previously
+verified OCR) with the existing comparator, without fetching/re-parsing the PDF universe.
+[Durable receipt](source-proof/senate-864-existing-committee-readback-20261019.json):
+**1,452/1,452 original URL/SHA identities, 153/153 recognized candidate rolls and 989/989
+original named-choice tokens matched**, with no named-choice mismatch or unresolved stored
+membership in that bounded comparison. It read **155 stored events / 1,009 choices**, including
+the separately proved SF1 addition. The frozen parser reports one 2023 document with extra
+stored events: its two new SF1 events are separately source-proven, not evidence of duplicates.
+The recognized candidate set is **not an all-motion denominator**, and source context actions
+and independent hearing-day identity checks for the whole universe remain uncertified.
+The snapshot precedes the separately bounded Judiciary six-motion correction below.
+
+## Six additional Judiciary named motions: merged, applied and verified
+
+Exact original-page review found a concrete omission beyond the earlier one-YEA repair.
+The February 21, 2024 Judiciary original above explicitly prints six failed named amendment
+rolls: **A-17, Kreun's voted oral amendment at page 5/line 5.21, A-22, A-8, A-19 and A-18**.
+Their physical source boundaries and exact literal AYE/NAY lists were independently checked;
+the oral roll continues from page 1 onto page 2. The original register supplies full identities,
+not choices. Full first-name/surname identities (with initial variants) and the separately
+proved Ron/Ronald alias join explicit stored hearing-day service bounds; no surname-only join.
+The existing **6–4 recommendation to Finance** is distinct from all six failed 4–6 / 5–5 rolls.
+Its broad legacy motion text had included preceding amendments and its kind was `amendment`.
+
+[#1479](https://github.com/killjoy00/votepredict/pull/1479), main
+`391b951d08ac7522471ea7a70cd9a55bf8242762`, is **merged, executed and verified**.
+Required [39327576169](https://github.com/killjoy00/votepredict/actions/runs/39327576169)
+and independent [39327576220](https://github.com/killjoy00/votepredict/actions/runs/39327576220)
+passed **2,297 repository tests / 0 failures**, four specific tests including PostgreSQL,
+and fresh independent official originals. Main CI
+[39328026704](https://github.com/killjoy00/votepredict/actions/runs/39328026704) passed.
+Protected [39328026873](https://github.com/killjoy00/votepredict/actions/runs/39328026873),
+job `118320064442`, reports **6 events / 60 explicit choices inserted, 1 recommendation
+classification/text corrected, exact 7 motions / 70 choices verified and 0 replay inserts**.
+The recommendation's existing ID/key and all ten literal choices/person links/metadata
+were separately compared before/after and preserved. Its narrowed text now represents only
+the recommendation; its kind is `motion`, `passed=true`, `is_passage=false`.
+
+[Durable aggregate receipt](source-proof/senate-864-judiciary-six-motions-verified-20261019.json)
+records the schema checksum gate, verified read-only before/after snapshots and explicit
+ROLLBACKs, locked SERIALIZABLE atomic plan, exact original/anchor/side/person checks,
+all new literal source names and non-serving/timing flags, post-commit read-back and replay.
+Only this original's six specific source anchors are addable. No generic parser or positional
+replay changed. A-13's **count-only** 5–5 division, the A-14 **voice vote**, Howe's withdrawn
+oral proposal, Seeberger's unvoted oral proposal and the later formal-result restatement
+supply **zero inferred individual choices**. They are not automatically counted as additional
+named motions. Broader context-action parity remains uncertified.
+
+Current separately verified committee totals are **161 events / 1,069 explicit choices**:
+2022 38/259, 2023 35/217, 2024 **55/288**, 2025 33/305. The new source-proven six are
+separate from the frozen 153-candidate parser comparison above; this does not certify an
+all-motion denominator. Written-date coverage remains **1,586/1,592**: this correction uses
+one already acquired original. All seven target motions use hearing-date availability,
+next-day eligibility, no inferred floor passage and zero model weight. The old one-YEA
+writer is a dated completed stage; its single-event guard is not a replay path for the now
+seven-motion source. Education Policy's separate unanchored event and other source holds
+remain unchanged.
+
 ## October 19 focused continuation: six Minutes, Judiciary YEA, PAC2 and PAC23
 
 **#1474 is merged, executed and verified**, main `c9b56f4f23c673d8c14a66a1104dd89ebe4eb5cc`. [Durable focused receipts](source-proof/senate-864-focused-verified-20261019.json) preserve actual results. Exact-head required CI [39302144905](https://github.com/killjoy00/votepredict/actions/runs/39302144905), independent Judiciary originals [39302144756](https://github.com/killjoy00/votepredict/actions/runs/39302144756) and comparator tests/original acquisition [39302144633](https://github.com/killjoy00/votepredict/actions/runs/39302144633) all passed: **2,293 repository tests**, four Judiciary tests including actual PostgreSQL, four comparator and 27 inherited gates. Main CI [39302798219](https://github.com/killjoy00/votepredict/actions/runs/39302798219) also passed. Older full-census JSON remains an immutable snapshot.
@@ -56,18 +177,15 @@ This corrects attribution handling without new archive research or relaxed sourc
 Regression checks cover every affected record, contradictory full names and ambiguous page
 receipts. All previous 616 records and ingestion keys match exactly in the revised plan.
 
-**Stored verification remains 616**, from the dated protected receipt above; this follow-up
-performs **zero additional database imports**. The frozen v1 protocol/hash and its 11,514
+**At the name-correction commit, stored verification remained 616** and additional imports were zero. The later #1477 execution above has now imported/read back all 52 additions: current verification is 668. The frozen v1 protocol/hash and its 11,514
 prepared targets stay unchanged. The fixed-v1 importer and audit explicitly use the v1
-compatibility planner; the corrected default is v2. A future bounded, source-verified import
-can add the 52 newly ready excerpts, followed by read-back and an explicitly versioned
-experiment cohort. Do not describe 668 as already stored or replace the frozen v1 silently.
+compatibility planner; the corrected default is v2. That bounded source-verified import and its separately versioned cohort are now executed and verified above. Current verified storage is now 668; do not silently replace the separately preserved frozen v1.
 The completed v1 writer now requires its explicit reviewed-commit marker, so this name fix
 does not trigger archive acquisition or database access.
 
 ## Calendar-year reconciliation
 
-The website read-back figures below describe the stored/frozen-v1 cohort; the corrected source-ready inventory is reported above.
+The website year figures below preserve the dated stored/frozen-v1 census; the current verified 668-record v2 storage/cohort is reported above. Its additions were observed in 2010 (14), 2012 (13), 2016 (12) and 2020 (13), so the 2021–25 observation-year figures remain unchanged.
 
 Year means committee hearing date, finance metadata transaction/report calendar year, or
 website/media archive observation year. Target-vote years are reported separately.
@@ -79,7 +197,7 @@ votes. Observation is not authenticated first publication. UNKNOWN never means z
 | Committee 2021 | Printed meeting/motion denominator UNKNOWN; selected official Journal originals only | Full source-to-stored parity UNKNOWN; no complete print acquisition | A-PRINT / A-2021 below; hearing-day availability, next-day eligibility. |
 | Committee 2022 | 337 indexed meeting dates / 334 written-source dates / 3 source gaps; true all-motion denominator UNKNOWN | 38 materialized events / 28 declared named events / 259 explicit stored choices | Complete individual/motion parity UNKNOWN. |
 | Committee 2023 | 517 indexed meeting dates / 516 written-source dates / 1 source gaps; true all-motion denominator UNKNOWN | 35 materialized events / 24 declared named events / 217 explicit stored choices | SF1 2 motions/20 choices repaired and verified. |
-| Committee 2024 | 300 indexed meeting dates / 299 written-source dates / 1 source gaps; true all-motion denominator UNKNOWN | 49 materialized events / 25 declared named events / 227 choices in the prior full census; later +1 exact target choice verified | Judiciary discrepancy now 10/10; full-year post-write census not rerun, other joins remain open. |
+| Committee 2024 | 300 indexed meeting dates / 299 written-source dates / 1 source gaps; true all-motion denominator UNKNOWN | 55 materialized events / 31 declared named events / 288 explicit choices in the latest verified committee readback | One YEA plus six distinct Judiciary amendment rolls repaired; original-to-all-motion/member parity remains UNKNOWN. |
 | Committee 2025 | 438 indexed meeting dates / 437 written-source dates / 1 source gaps; true all-motion denominator UNKNOWN | 33 materialized events / 29 declared named events / 305 explicit stored choices | Complete individual/motion parity UNKNOWN. |
 | Finance 2021 | 121 indexed PDF versions / 121 within-year unique bodies; legally owed filings UNKNOWN | Contributions 2,091 / 5,794; spending 1,543 / 4,425; IE 7 / 35 (canonical / copies) | 10,014 legacy eligible copies / 5,947 possible early-date flags; 0 tracked exact-version public-by proofs. |
 | Finance 2022 | 346 indexed PDF versions / 344 within-year unique bodies; legally owed filings UNKNOWN | Contributions 2,588 / 9,503; spending 3,386 / 9,987; IE 326 / 1,630 (canonical / copies) | 17,067 legacy eligible copies / 2,247 possible early-date flags; 0 tracked exact-version public-by proofs. |
@@ -104,9 +222,7 @@ Committee date coverage is **1,586/1,592**, not the older 1,578/1,592. The origi
 Those 108 records are not 108 certified distinct motions or inferred individual choices.
 
 Stored committee counts above cover materialized events explicitly marked
-`committeeVote=true`, not all raw parser views. Only the two new SF1 events carry
-all three hearing-date timing metadata flags measured by this audit; absence of these
-flags on an older event alone does not prove incorrect eligibility. No bulk flag rewrite.
+`committeeVote=true`, not all raw parser views. The earlier full-family snapshot measured those hearing-date flags on two SF1 events. The latest committee readback now verifies them on those two plus all seven target Judiciary motions; absence of these flags on an older event alone does not prove incorrect eligibility. No bulk flag rewrite.
 2021 print completeness and 2022 print/electronic equivalence remain UNKNOWN.
 
 ## Verified changes and bounded dispositions
@@ -289,8 +405,7 @@ testing sides. This is a reproducible pre-vote candidate cohort, not a fitted ma
 or prediction result. Counts precede specified modeling-stage identical-bill-text
 exclusions; party/minority-outcome coverage and all leakage checks are required before
 future fitting. Capture selection, source survival, sparse people and old pages limit
-generalization. **No outcomes tested, fitted model or predictive-lift claim**; no serving
-weights, training or immutable evaluation freeze changed.
+generalization. **No outcomes were tested in that v1 preparation snapshot**. The separately frozen v2 experiment above is now executed; no serving weights, production training pipeline or earlier immutable evaluation freeze changed.
 
 ### Media: original/import/storage/exclusion accounting finalized in bounded scope
 
@@ -355,8 +470,8 @@ The SF1 V7 zero-stored state below is the pre-correction snapshot, superseded by
 | B-PAC2 | Independent original printed-row attestation (date, registered entity, legal name, correct total) and, separately, independently dated publication of that exact original/amended version | Two stable source/chronology gates; exact two-case inspection STOPPED. |
 | B-PAC23 | Exact original classification/applicable identifiers for the remaining Other/unclassified comparator records; usable original fields where separately held | **17/23 entity-typed comparison sets verified; 6 held**, all for unclassified entities, 4 with an overlapping usable-field/name failure. Legacy all-registration gate still reports 23 held. No PDF containment/publication/eligibility promotion. |
 | C-SOURCES | Missing original URL/body SHA/indexed archive digest/observation linkage for the 526 held records | Person mapping is fixed: 0 unresolved people; 3 McNutt records excluded by actual-service scope. No subjective sincerity gate or invented excerpts. |
-| C-IMPORT52 | Bounded import and exact read-back of the 52 newly source-ready records, with a deliberately versioned experiment cohort if used | Names/source joins fixed; additional imports in this follow-up = 0. Stored/frozen-v1 616 and protocol remain preserved. |
-| C-EXPERIMENT | Future deliberately isolated outcome evaluation under frozen v1, with specified leakage and coverage checks | Protocol/pre-vote cohort preparation complete; outcome testing was not authorized in this pass and no lift is claimed. |
+| C-IMPORT52 | COMPLETE: #1477 inserted 52 and exactly read back all 668; zero replay inserts | Frozen v1 616/protocol preserved; separately versioned v2 cohort committed before outcomes. |
+| C-EXPERIMENT | COMPLETE in the frozen v2 scope: #1478 actual protected outcome experiment, source/storage/cohort/leakage checks and aggregate results above | No useful held-out primary-metric gain; 2024–25 test is now examined. Further experiments require a new frozen protocol and honest evaluation design. |
 | D-ATTRIBUTION | Exact source-contained named passage, historical speaker membership, supported publication/observation clocks for a specifically identified source version | Contextual mentions and declared metadata are not certified speech. Preserve selected-source exclusions; no Reformer/MPR/general-crawl restart. |
 
 Further recovery requires **new evidence or a concrete defect in the prior method**.
@@ -376,6 +491,9 @@ A successful job or another proximity-parser variation is not new source proof.
 | [#1473](https://github.com/killjoy00/votepredict/pull/1473) structured website person correction | `f220028b7ac7d4b0c221c7c0f8546dce573af84e` | Required CI 39282336576, website checks 39282336797 and independent 39282336656 SUCCESS; zero extra imports, frozen v1 intact |
 | [#1474](https://github.com/killjoy00/votepredict/pull/1474) one Judiciary YEA and original comparator accounting | `c9b56f4f23c673d8c14a66a1104dd89ebe4eb5cc` | Required CI 39302144905; independent 39302144756 / 39302144633; protected YEA 39302798150 (1 inserted, exact 10/10, zero replay); protected comparator 39302798399 (777 keys / 780 source copies exact); main CI 39302798219 SUCCESS |
 | [#1475](https://github.com/killjoy00/votepredict/pull/1475) every-row source-backed entity-typed comparison | `0f51f20ad59a5f3d32cec565726b2814bb2e07fd` | Required CI 39304293244 and independent 39304293296 SUCCESS; protected 39304896926, job 118240985498, verifies 17/23 complete comparison sets and 6 holds; main CI 39304896549 SUCCESS |
+| [#1477](https://github.com/killjoy00/votepredict/pull/1477) website 52 append + frozen protocol v2 | `452ea58d0680f6d1d2905f73a43a938b84af77a4` | Required CI 39324793311 and independent 39324793476 SUCCESS; protected 39325185350 / 118309647752 inserted 52, verified all 668, zero replay; outcome-free cohort committed before outcomes |
+| [#1478](https://github.com/killjoy00/votepredict/pull/1478) isolated website experiment + existing committee readback | `502e505976ff82d814ab3bbfbf4fbe9fd190745e` | Required CI 39325745476 / independent 39325745679 / main CI 39326150837 SUCCESS; protected 39326151003 jobs 118313094173 (frozen no-gain result) and 118313094006 (153/153 rolls, 989/989 choices) SUCCESS |
+| [#1479](https://github.com/killjoy00/votepredict/pull/1479) six exact Judiciary rolls + recommendation semantics | `391b951d08ac7522471ea7a70cd9a55bf8242762` | Required CI 39327576169 / independent 39327576220 / main CI 39328026704 SUCCESS; protected 39328026873 / 118320064442 inserted 6/60, corrected recommendation, exact 7/70, zero replay |
 
 Final source artifact: `12196953355`, ZIP SHA-256
 `eea965970a1c54a881911c87bac521c3053b51d71e8f620c81c51db77de0da42`.
@@ -401,17 +519,21 @@ as independent human approval. No branch/environment protection was bypassed.
 - [x] Recheck the exact six missing-Minutes sources and retain their bounded written-original holds.
 - [x] Finish exact two-case PAC inspection and stop at separate containment/publication holds.
 - [x] Verify all 616 literal website records and non-serving flags; freeze protocol and prepare reproducible pre-vote cohort.
-- [x] Correct all 52 structured-identity/page joins and classify 3 known-person scope exclusions; test zero remaining unresolved-person records without silently expanding the frozen cohort.
+- [x] Correct all 52 structured-identity/page joins and classify 3 known-person scope exclusions; verify zero unknown people.
+- [x] Import/read back the 52 additions and all 668 literal records; preserve v1 and separately freeze v2 before outcomes.
+- [x] Execute the prespecified isolated website experiment, publish the no-gain result and mark its test as examined.
+- [x] Reconcile the existing 1,452 original PDF identities / 153 candidate rolls / 989 named tokens after the YEA correction.
+- [x] Add the separately source-proven six Judiciary named rolls / 60 choices, correct the recommendation question/classification, and verify all seven/70 with zero replay inserts.
 - [x] Finalize bounded media accounting by senator/year/source and preserve existing exclusions.
 - [x] Record merged versus executed versus verified outcomes; update one consolidated #864 checklist linked here.
 - [ ] True official denominators and complete original-to-stored parity across all four families.
 
-**#864 cannot close.** Acquisition/practical dating, SF1, 616-excerpt storage verification,
-protocol/cohort preparation and bounded PAC/media disposition passes are complete in their
+**#864 cannot close.** Acquisition/practical dating, SF1, the seven-motion Judiciary correction, v1 storage verification,
+website v2 import/cohort/outcome evaluation and bounded PAC/media disposition passes are complete in their
 stated scopes. Unknown denominators, six written gaps, unresolved member/source-motion joins,
 legacy finance eligibility and held website/media provenance still prevent historical completeness.
 No indefinite parser/archive continuation is proposed.
 
-No forecasting/serving models or weights, training, immutable evaluation freezes, accepted Senate
-floor processing, Vercel deployment or scheduler reactivation changed. No offices were contacted
+No forecasting/serving models or weights, production training pipeline, earlier immutable evaluation freezes, accepted Senate
+floor processing, Vercel deployment or scheduler reactivation changed. The isolated v2 research fit is explicitly reported above. No offices were contacted
 and no manual audio listening was requested.

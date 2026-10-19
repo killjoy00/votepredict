@@ -1,5 +1,7 @@
 # #864: candidate website content as a historical prediction signal
 
+Current verified state: **668 stored literal excerpts**, with the separately frozen v2 outcome experiment executed. See the [maintained ledger](senate-864-completion-ledger.md). The original v1 design and its later updates are retained below.
+
 The hypothesis is **whether words observable on a candidate-owned campaign website before a vote improve prediction of a later vote**. The source observation is sufficient; this project does **not** require a subjective "verified policy position", proof of sincerity, a personal spoken quotation, or proof the described legislative action took place.
 
 ## Evidence handling
@@ -31,3 +33,24 @@ zero unknown people. See the [maintained ledger](senate-864-completion-ledger.md
 `websiteExcerptPlanV1` is retained only for the already imported 616 and frozen
 protocol v1; all 616 records/keys remain exact. This code correction imports no
 additional records and does not change the frozen experiment, serving or weights.
+
+## October 19 verified import and isolated outcome experiment
+
+The later #1477 protected execution inserted all 52 additions and exactly verified
+**668 stored literal excerpts / 53 people / 69 original bodies**, with zero replay inserts.
+The 616 v1 records and frozen protocol remain exact. There are 526 source-metadata holds,
+3 known-person scope exclusions and zero unknown people.
+
+A separate protocol v2 and outcome-free cohort commitment preceded #1478's isolated
+outcome execution: 12,134 member/bill targets across 370 bills and 52 people, with strict
+observation-before-local-midnight cutoffs and chronological 2021–22 / 2023 / 2024–25 splits.
+The prespecified primary comparison found **no useful held-out improvement** from website
+TF-IDF over historical party rates. Validation selected strongest shrinkage; test bill-macro
+log loss was 1.0806929824 for text versus 1.0806926349 for party. The training-only overall
+rate performed better at 0.5884604741. This limited website-only experiment does not decide
+whether bill-conditioned text features can help a future, separately designed model.
+
+See the [maintained ledger](senate-864-completion-ledger.md) for actual source/import/CI
+receipts, full metrics and limitations. The v2 test is now examined; do not tune against it
+and describe it as untouched. No serving weights, production training pipeline or earlier
+immutable evaluation freeze changed.
