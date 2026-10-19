@@ -132,7 +132,7 @@ export function parseExactPdfIndex(
  const originals:IndexedPdf[]=[],seen=new Map<string,string>();
  for(const row of value.slice(1)){
   if(!Array.isArray(row)||row.length!==fields.length||
-   row.some(x=>typeof x!=='string))throw Error('Malformed indexed PDF row');
+   row.some(x=>typeof x!=='string'))throw Error('Malformed indexed PDF row');
   const [ts,url,mime,status,sha,length]=row as string[];
   const utc=strictlyHistoricalUtc(ts!);
   if(url!==expected.exactUrl||status!=='200'||!PDF_MIME.has(mime!)||
