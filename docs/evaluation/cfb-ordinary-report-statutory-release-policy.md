@@ -40,3 +40,17 @@ Safe follow-up (not authorized as part of this PR):
 4. After separate database authorization, design an **idempotent** repair that corrects or withdraws previously eligible dates without duplicating row identities. Independently verify migration/ingestion keys, historical timestamps and frozen artifact boundaries before any write or retrospective replay.
 
 No Neon/Vercel production writes, no migration, no scheduled backfill reactivation, no database correction, no frozen snapshot modification, and no model fitting occurred in this PR. Issue #864 remains open pending full official source-to-database reconciliation across all four workstreams.
+
+## October 19 actionable-pass consumer correction
+
+The experimental bulk loader and its actual `publicFinanceFeatures` consumer had
+accepted `availabilitySource=direct_disclosure` even when the claimed date was
+**before the known statutoryNotBeforeOn**. Both now reject that contradiction;
+the consumer also protects previously materialized experimental input rows.
+Tests cover receipts, candidate spending and independent spending separately,
+early originals, late amendment/version filings, and whole availability-day
+exclusion. The accepted project floor remains `max(due+1,filed+1)`; the labelled
+Chicago 08:00 boundary is conservatively excluded for the entire day in day-only
+replay, including DST. No legacy database evidence or eligibility was rewritten.
+Notice and lobbying proof builders retain their separate rules. A direct date
+label still requires independent original/publication proof for certification.

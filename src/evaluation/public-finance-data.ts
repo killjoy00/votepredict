@@ -202,6 +202,7 @@ export function parsePublicFinanceCsvTransactions(text: string, kind: PublicFina
     // An explicit official disclosure date can establish a row's public-by
     // claim, but it cannot precede the underlying event.
     const availableOn = directDisclosureOn && directDisclosureOn >= occurredOn
+      && (!statutoryNotBeforeOn || directDisclosureOn >= statutoryNotBeforeOn)
       ? directDisclosureOn : null;
     const availabilitySource = availableOn ? 'direct_disclosure' as const : null;
     if (availableOn) availabilityDatedRows += 1;
