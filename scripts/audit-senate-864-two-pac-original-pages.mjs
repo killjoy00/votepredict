@@ -19,10 +19,11 @@ async function main(){
    if(tx.ro!=='on'||tx.isolation!=='repeatable read')throw Error('Verified repeatable-read read-only transaction required');
    const cases=selectTwoComparatorCompleteOriginalPages(cohort,allRows,positionedOutcomes);
    phase='exact_two_whole_body_hashes_and_original_pages';
-   const inspections=[];let relatedVersions=0,missingReceived=0,publicBy=0,independentBulkRows=0;
+   const inspections=[],uniqueBodies=new Set(),uniquePages=new Set();let relatedVersions=0,missingReceived=0,publicBy=0,independentBulkRows=0;
    for(const c of cases){
     const report=reports.find(r=>r.reportVersionId===c.hit.reportVersionId);
     if(!report)throw Error('Exact selected report missing');
+    uniqueBodies.add(report.pdfSha);uniquePages.add(report.pdfSha+'|'+c.hit.pageNumber);
     const stored=(await client.query('SELECT original_pdf,byte_length FROM cfb_finance_pdf_body_captures WHERE pdf_sha256=$1 AND byte_length BETWEEN 501 AND 30000000 LIMIT 2',[report.pdfSha])).rows;
     if(stored.length!==1||stored[0].original_pdf.length!==Number(report.pdfBytes)||
      createHash('sha256').update(stored[0].original_pdf).digest('hex')!==report.pdfSha)throw Error('Original body hash changed');
@@ -51,7 +52,7 @@ async function main(){
      AND independently_observed_at<TIMESTAMPTZ '2026-01-01T00:00:00Z'`,[c.row.filerReg,c.row.year,c.row.rowKey])).rows[0];
     independentBulkRows+=archive.n;
    }
-   receipt={version:'senate864-two-pac-source-gates-v1',selectedComparatorCompleteCases:2,originalPdfBodiesRehashed:2,exactOriginalPagesInspected:2,
+   receipt={version:'senate864-two-pac-source-gates-v1',selectedComparatorCompleteCases:2,originalBodyRehashOperations:2,sourceCasePageInspections:2,uniqueOriginalPdfBodies:uniqueBodies.size,uniqueOriginalPages:uniquePages.size,
     printedReportIdentityVerified:inspections.filter(x=>x.printedReportIdentityFieldsVerified).length,
     fourLiteralFieldsOnOriginalPage:inspections.filter(x=>x.allFourLiteralFieldsPresent).length,
     labelledPhysicalRowContainmentCertified:inspections.filter(x=>x.labelledSinglePrintedRowContained).length,
