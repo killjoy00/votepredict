@@ -1,0 +1,151 @@
+{
+  "version": "senate864-six-minutes-bounded-original-recheck-v1",
+  "observedAt": "2026-10-19T18:17:23.023647+00:00",
+  "scope": "Exact six remaining indexed committee/day sources only",
+  "writtenCoverageUnchanged": 1586,
+  "indexedDates": 1592,
+  "newWrittenMinuteSources": 0,
+  "noMissingVoteOrSourceNonexistenceInferred": true,
+  "cases": [
+    {
+      "year": 2022,
+      "hearingDate": "2022-03-15",
+      "committeeName": "Housing Finance and Policy",
+      "indexUrl": "https://www.lrl.mn.gov/minutes/comm?commid=23832-0&date=2022-03-15&year=2022",
+      "observedIndexBytes": 89055,
+      "observedIndexSha256": "a4a195a9baa070762f049a7addb2fb9822cd139479944fb3152a60877d0bdb14",
+      "linkedOriginalPdfUrls": [
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/FinHousing_2022_Bill-Index.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_Agenda.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_AssocofMNBuildingOfficialsAMBOLetteronSF3259.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_AssocofMNCountiesLetteronSF3259.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_CityCommentsSF3259SenateHousingCommittee.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_FreshEnergyLetteronSF3259.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_MICAHsTestimonyonSF3259.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_SalimFurthMercatusTestimonyonSF3259.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_SF3259A-4authoramendment.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_VoteYESonSF3259IncreasingHousingAffordabilityAndHomeownershipAccess.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhousing/20220315/FinHousing_20220315_ZillowWrittenTestimonyonSF3259.pdf"
+      ],
+      "linkedWrittenMinutesObserved": 0,
+      "calendarSha256": "05ace220e8370a3f4ee27508e1acab595c297141f2332a44e59e6409d569f7cd",
+      "independentlyIndexedSenateHearingId": 16859,
+      "clerkDisposition": "HOLD_transport_or_updating_response",
+      "reopenRequirement": "Exact committee/day written Minutes original, including printed identity/date; a working exact Clerk original qualifies. Agenda, attendance and bill documents do not."
+    },
+    {
+      "year": 2022,
+      "hearingDate": "2022-08-10",
+      "committeeName": "Environment and Natural Resources Finance",
+      "indexUrl": "https://www.lrl.mn.gov/minutes/comm?commid=23835-0&date=2022-08-10&year=2022",
+      "observedIndexBytes": 83343,
+      "observedIndexSha256": "31d0bad619d3fbad90208b49b5647b4a9cfe15f7b57b8363cac4a0df02422b34",
+      "linkedOriginalPdfUrls": [
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/finenv_2022_Bill-Index.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20220810/finenv_20220810_agenda.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20220810/finenv_20220810_dnrreport.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20220810/finenv_20220810_friendsofthemississippi.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20220810/finenv_20220810_minnesotaconservationfederation.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20220810/finenv_20220810_nationalparksconservationassociation.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20220810/finenv_20220810_sorensonreport.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20220810/finenv_20220810_uofmstudy.pdf"
+      ],
+      "linkedWrittenMinutesObserved": 0,
+      "calendarSha256": "533e7ffba6625673f0cd278a0957c7c365fe6a2aa76210ce8a3853739f7073fd",
+      "independentlyIndexedSenateHearingId": 17254,
+      "clerkDisposition": "HOLD_transport_or_updating_response",
+      "reopenRequirement": "Exact committee/day written Minutes original, including printed identity/date; a working exact Clerk original qualifies. Agenda, attendance and bill documents do not."
+    },
+    {
+      "year": 2022,
+      "hearingDate": "2022-10-03",
+      "committeeName": "Environment and Natural Resources Finance",
+      "indexUrl": "https://www.lrl.mn.gov/minutes/comm?commid=23835-0&date=2022-10-03&year=2022",
+      "observedIndexBytes": 78154,
+      "observedIndexSha256": "05a2dc6a77e70284f3225f7a79bb5b404791d191258955f0b84e94e929ebf79b",
+      "linkedOriginalPdfUrls": [
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/finenv_2022_Bill-Index.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20221003/finev_20221003_agenda.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20221003/finev_20221003_MPCA-Clean-Cars-Minnesota-Presentation.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finenv/20221003/finev_20221003_Wanda-Patsche-Letter.pdf"
+      ],
+      "linkedWrittenMinutesObserved": 0,
+      "calendarSha256": "9ec30492c50c02be903418221c7c236f995bcf0b904fe6f28c81cc35494fc932",
+      "independentlyIndexedSenateHearingId": 17261,
+      "clerkDisposition": "HOLD_transport_or_updating_response",
+      "reopenRequirement": "Exact committee/day written Minutes original, including printed identity/date; a working exact Clerk original qualifies. Agenda, attendance and bill documents do not."
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-04-13",
+      "committeeName": "Environment, Climate, and Legacy",
+      "indexUrl": "https://www.lrl.mn.gov/minutes/comm?commid=26147-0&date=2023-04-13&year=2023",
+      "observedIndexBytes": 90421,
+      "observedIndexSha256": "be2edab79f8e6c09a6601c59c75325beae1ca8f5c71e17409f16295eadcae75c",
+      "linkedOriginalPdfUrls": [
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/envlegacy_2023_Attendance.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/envlegacy_2023_Bill-Index.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/envlegacy_2023_bill-log.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_agenda.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_DNR-Wolf-Management-overview.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_MN-Wolf-Management-plan.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_SF2062.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_SF2062-as-introduced.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_SF2062-MN-Human-Society-ltr.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_SF2062-MN-moose-mortality-overview.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_SF2062-Scott-Engle-for-Howling-for-MN-moose.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_SF2062-Star-Tribune-Wolf-article.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2023/envlegacy/20230413/envlegacy_20230413_SF2062-USDA-Wildlife-Services-Wolf-Damage-Management.pdf"
+      ],
+      "linkedWrittenMinutesObserved": 0,
+      "calendarSha256": "f0d6ba84767ec8148b0961d88b02d6e5e607d225b648dd57b529d5fb5154e255",
+      "independentlyIndexedSenateHearingId": 17971,
+      "clerkDisposition": "HOLD_transport_or_updating_response",
+      "reopenRequirement": "Exact committee/day written Minutes original, including printed identity/date; a working exact Clerk original qualifies. Agenda, attendance and bill documents do not."
+    },
+    {
+      "year": 2024,
+      "hearingDate": "2024-05-16",
+      "committeeName": "Environment, Climate, and Legacy",
+      "indexUrl": "https://www.lrl.mn.gov/minutes/comm?commid=26147-0&date=2024-05-16&year=2024",
+      "observedIndexBytes": 90273,
+      "observedIndexSha256": "8e2e81b5abc7aacab74483b5ebf0dc9f275dc8cfe26ee6ce5ab7d6d50e3d0aba",
+      "linkedOriginalPdfUrls": [
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/envlegacy_2024_Attendance.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/envlegacy_2024_Bill-Index.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/envlegacy_2024_Bill-Log.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/20240516/envlegacy_20240516_HF3911-CC-Policy-comparison.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/20240516/envlegacy_20240516_HF3911-CC-Policy-Final-Agreement.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/20240516/envlegacy_20240516_HF3911-Env-Omnibus-Finance-Senate-Counsel-bill-summary-1st-unofficial-engrossment.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/20240516/envlegacy_20240516_HF3911-Enviro-A24-0351-DE-Agreement.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/20240516/envlegacy_20240516_HF3911-Enviro-CC-Side-by-Side.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/20240516/envlegacy_20240516_HF3911-Enviro-CC-spreadsheet-agreement.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/20240516/envlegacy_20240516_HF3911-Enviro-CC-spreadsheet-comparison.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/20240516/envlegacy_20240516_HF3911-House-Research-Finance-bill-summary-3rd-engrossment.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2024/envlegacy/20240516/envlegacy_20240516_SF3631-Env-Omnibus-Policy-Senate-Counsel-bill-summary-2nd-engrossment.pdf"
+      ],
+      "linkedWrittenMinutesObserved": 0,
+      "calendarSha256": "8fe6964af8e08e9683b0ce30b2e150eaa434ee21f0d275da435d0f9118321a1b",
+      "independentlyIndexedSenateHearingId": null,
+      "clerkDisposition": "HOLD_no_exact_committee_hearing_identity_in_day_calendar",
+      "reopenRequirement": "Exact committee/day written Minutes original, including printed identity/date; a working exact Clerk original qualifies. Agenda, attendance and bill documents do not."
+    },
+    {
+      "year": 2025,
+      "hearingDate": "2025-05-12",
+      "committeeName": "Rules and Administration - Subcommittee on Committees",
+      "indexUrl": "https://www.lrl.mn.gov/minutes/comm?commid=26198-21261&date=2025-05-12&year=2025",
+      "observedIndexBytes": 75143,
+      "observedIndexSha256": "62c220c031160a0b9f86e4536fab095098fe57ef6b8740218568cab111f0ac78",
+      "linkedOriginalPdfUrls": [
+        "https://www.lrl.mn.gov/archive/minutes/senate/2025/rulescommittees/Rulescommittees_2025_Attendance.pdf",
+        "https://www.lrl.mn.gov/archive/minutes/senate/2025/rulescommittees/20250512/Rules_20250512_Subcommittee-on-Committees-Agenda.pdf"
+      ],
+      "linkedWrittenMinutesObserved": 0,
+      "calendarSha256": "c28db5137e84086986e2c5828871f06a258d56be412ac1a6417e83401d7aa4fc",
+      "independentlyIndexedSenateHearingId": 19475,
+      "clerkDisposition": "HOLD_transport_or_updating_response",
+      "reopenRequirement": "Exact committee/day written Minutes original, including printed identity/date; a working exact Clerk original qualifies. Agenda, attendance and bill documents do not."
+    }
+  ]
+}

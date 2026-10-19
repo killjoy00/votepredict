@@ -1,0 +1,64 @@
+{
+  "roll": {
+    "billIdentifier": "SF3534",
+    "motionText": "opted A-22 – Kreun offered – roll call 4/6 (Ayes – Limmer, Eichorn, Howe, Kreun; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Seeberger, Westlin), not adopted. A-8 – Kreun offered – roll call 4/6 (Ayes – Limmer, Eichorn, Howe, Kreun; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Seeberger, Westlin), not adopted. A-19 – Kreun offered – roll call 5/5 (Ayes – Limmer, Eichorn, Howe, Kreun, Seeberger; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Westlin), not adopted. A-18 – Kreun offered – roll call 5/5 (Ayes – Limmer, Eichorn, Howe, Kreun, Seeberger; Nays – Latz, Oumou Verbeten, Carlson, Pappas, Westlin), not adopted. Senator Limmer requested a roll call vote for the passage of S.F. 3534, as amended, recommended to pass and re-referred to the Finance Committee 6/4 (Ayes: Pappas, Latz - Chair, Carlson, Seeberger, Westlin, Oumou Verbeten; Nays: Limmer, Eichorn, Howe, Kreun) MOTION PREVAILED",
+    "voteKind": "amendment",
+    "yeaCount": 6,
+    "nayCount": 4,
+    "passed": true,
+    "memberVotes": [
+      {
+        "sourceName": "Pappas",
+        "normalizedName": "pappas",
+        "choice": "yea"
+      },
+      {
+        "sourceName": "Latz - Chair",
+        "normalizedName": "latz chair",
+        "choice": "yea"
+      },
+      {
+        "sourceName": "Carlson",
+        "normalizedName": "carlson",
+        "choice": "yea"
+      },
+      {
+        "sourceName": "Seeberger",
+        "normalizedName": "seeberger",
+        "choice": "yea"
+      },
+      {
+        "sourceName": "Westlin",
+        "normalizedName": "westlin",
+        "choice": "yea"
+      },
+      {
+        "sourceName": "Oumou Verbeten",
+        "normalizedName": "oumou verbeten",
+        "choice": "yea"
+      },
+      {
+        "sourceName": "Limmer",
+        "normalizedName": "limmer",
+        "choice": "nay"
+      },
+      {
+        "sourceName": "Eichorn",
+        "normalizedName": "eichorn",
+        "choice": "nay"
+      },
+      {
+        "sourceName": "Howe",
+        "normalizedName": "howe",
+        "choice": "nay"
+      },
+      {
+        "sourceName": "Kreun",
+        "normalizedName": "kreun",
+        "choice": "nay"
+      }
+    ],
+    "individualVotesAvailable": true
+  },
+  "independentOfficeAndFullAliasVerified": true
+}
