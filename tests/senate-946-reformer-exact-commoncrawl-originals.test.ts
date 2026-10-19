@@ -82,7 +82,7 @@ test('exact original Common Crawl index parsing requires URL/year/mime/status/di
   {url:first.target.briefOriginalUrl},
   {url:'https://evil.example.com/historical/'},
   {mime:'application/pdf'},{status:'301'},
-  {digest:'Z'.repeat(32)},
+  {digest:'!'.repeat(32)},
   {timestamp:'20260114120000'},
   {timestamp:'20250230120000'},
   {filename:'crawl-data/CC-MAIN-2025-21/../secret/warc/file.warc.gz'},
@@ -131,7 +131,7 @@ test('independent original WARC HTTP 206 byte range accepted; HTTP 200 ignored a
 test('original WARC tampering quarantines rather than emitting false historical proof',async()=>{
  const s=fixture(),bad=fixture(first.target.briefOriginalUrl),start=s.index.offset;
  const f=(async()=>new Response(bad.gz,{status:206,
-  headers:{'content-range':'bytes '+start+'-'+(start+s.gz.length-1)+'/456456'}})) as typeof fetch;
+  headers:{'content-range':'bytes '+start+'-'+(start+bad.gz.length-1)+'/456456'}})) as typeof fetch;
  const p=await replayReformerExactWarc({...s.index,length:bad.gz.length},f);
  assert.equal(p.status,'warc_integrity_quarantined');
  assert.equal(p.rawHtmlSha256,null);
