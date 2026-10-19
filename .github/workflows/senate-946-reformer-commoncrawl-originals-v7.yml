@@ -1,0 +1,82 @@
+name: '#946 Reformer seven historical dated-path original Common Crawl WARC V7'
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-946-reformer-commoncrawl-originals-v7.yml
+      - src/evaluation/senate-946-reformer-exact-commoncrawl-originals.ts
+      - scripts/run-senate-946-reformer-exact-commoncrawl-originals-v7.ts
+      - tests/senate-946-reformer-exact-commoncrawl-originals.test.ts
+      - docs/evaluation/senate-946-reformer-commoncrawl-seven-dated-research-20261019.md
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: senate-946-reformer-exact-CC-v7-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  offline-public-source-validation:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+       (github.event_name == 'push' &&
+        github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        contains(github.event.head_commit.message, 'SENATE_946_REFORMER_COMMONCRAWL_V7_20261019')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Authenticate synthetic Common Crawl original WARC and scope constraints with no HTTP
+        run: |
+          node --import tsx --test tests/senate-946-reformer-exact-commoncrawl-originals.test.ts
+          node --import tsx scripts/run-senate-946-reformer-exact-commoncrawl-originals-v7.ts --preview
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+  fixed-historical-original-commoncrawl:
+    needs: offline-public-source-validation
+    if: >-
+      needs.offline-public-source-validation.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_946_REFORMER_COMMONCRAWL_V7_20261019')
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    env:
+      REFORMER_CC_KEYLESS_PASSED: ${{ needs.offline-public-source-validation.result == 'success' && 'true' || 'false' }}
+      REFORMER_CC_REVIEWED_MAIN_MARKER: ${{ contains(github.event.head_commit.message, 'SENATE_946_REFORMER_COMMONCRAWL_V7_20261019') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm exact reviewed-main commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Exactly seven known 2021-25 dated URLs, fourteen selected Common Crawl indexes, original WARC SHA checks
+        run: node --import tsx scripts/run-senate-946-reformer-exact-commoncrawl-originals-v7.ts --capture
+      - name: Retain sanitized public original WARC provenance only
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-946-reformer-seven-original-dated-commoncrawl-v7-metadata
+          path: reformer-946-v7-original-commoncrawl-public-metadata.json
+          if-no-files-found: error
+          retention-days: 30
