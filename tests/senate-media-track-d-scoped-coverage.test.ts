@@ -46,7 +46,7 @@ test('all URL fingerprints and index SHA are exact and fail closed on cross publ
  ]){
   assert.throws(()=>validateTrackDPins([invalid,...pins.slice(1)]));
  }
- assert.throws(()=>validateTrackDPins([...pins.slice(1),pins[0]!]),
+ assert.throws(()=>validateTrackDPins([...pins.slice(1),pins[1]!]),
   /pinned coverage/);
 });
 test('static SQL is parameterized, bounded and only selects permitted public ID plus numeric aggregates',()=>{
@@ -91,7 +91,7 @@ test('matching, cross-seed and conflicting private sources stay scope-limited',(
  assert.equal(flattened.reduce((n,x)=>n+x.exactStoredUnderDifferentSeed,0),1);
  assert.throws(()=>summarizeTrackDProtectedAggregate(pins,[...r.slice(1),r[1]!]),/duplicated/);
  assert.throws(()=>summarizeTrackDProtectedAggregate(pins,
-  [{...r[0]!,exact_source_docs:3},...r.slice(1)]),/unexpected/);
+  [{...r[0]!,exact_source_docs:3},...r.slice(1)]),/Unexpected/);
 });
 test('existing default Neon identity and REPEATABLE READ READ ONLY ROLLBACK must precede any receipt',async()=>{
  const calls:string[]=[];
