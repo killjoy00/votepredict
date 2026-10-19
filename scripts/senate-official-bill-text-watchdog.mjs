@@ -151,6 +151,13 @@ async function readbackForCompleted(run){
   return {kind:receipt?'verified':'missing_or_invalid_production_readback',receipt};
 }
 
+export function shouldFailOnKnownDegradation(eventName){
+  // Only repeated observations of a known degraded/stalled source are de-duplicated.
+  // API exceptions, failed recovery dispatches, and other unexpected errors still
+  // exit nonzero on *all* event types, including push.
+  return eventName!=='push';
+}
+
 export async function main(){
   if(!process.env.GITHUB_EVENT_PATH)throw Error('GitHub event payload missing');
   const payload=JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH,'utf8'));
@@ -176,8 +183,10 @@ export async function main(){
   if(!decision.dispatch&&decision.reason==='existing_collection_stuck'){
     report({status:'stalled',reason:decision.reason,latestId:decision.latestId,
       ageMinutes:decision.ageMinutes});
-    // Never start a second protected production job while one is active.
-    process.exitCode=1;return;
+    // A stalled collector is reported once by the scheduled/manual watchdog;
+    // push observations must not generate a new failure email for every commit.
+    if(shouldFailOnKnownDegradation(process.env.GITHUB_EVENT_NAME))process.exitCode=1;
+    return;
   }
   let inspected={kind:'no_completed_run',receipt:null};
   if(newest?.status==='completed') {
@@ -204,7 +213,7 @@ export async function main(){
     report({status:degraded?'degraded':'healthy',
       ...observation,
       ...(noNewText?{progressWarning:'no_new_official_versions_with_bill_backlog'}:{})});
-    if(degraded)process.exitCode=1;
+    if(degraded&&shouldFailOnKnownDegradation(process.env.GITHUB_EVENT_NAME))process.exitCode=1;
     return;
   }
   await github('POST','/actions/workflows/'+TEXT_WORKFLOW_ID+'/dispatches',{ref:'main'});
