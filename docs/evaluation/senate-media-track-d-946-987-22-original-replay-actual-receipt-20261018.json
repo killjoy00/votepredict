@@ -1,0 +1,89 @@
+{
+  "version": "senate-media-track-d-946-987-22-original-public-archive-capture-actual-receipt-v1",
+  "observationAmericaChicagoDay": "2026-10-18",
+  "observationUtcDay": "2026-10-19",
+  "repository": "killjoy00/votepredict",
+  "researchIssues": [
+    946,
+    987
+  ],
+  "implementation": {
+    "pullRequest": 1453,
+    "merged": true,
+    "mainCommit": "0a44705328e0bb1a9e3734a4c1174c270d018659",
+    "independentPrKeylessRun": 39194367302,
+    "independentPrKeylessConclusion": "success",
+    "fullPrCiRun": 39194367325,
+    "fullPrCiConclusion": "success",
+    "actualReviewedMainOriginalCaptureRun": 39194588504,
+    "captureRunConclusion": "success",
+    "postMergeFullCiRun": 39194588573,
+    "postMergeFullCiConclusion": "success",
+    "originalCaptureJobId": 117874944495,
+    "metadataArtifactId": 12161740620,
+    "metadataArtifactName": "senate-media-track-d-bounded-historical-public-metadata",
+    "metadataArtifactRetentionDays": 30,
+    "actualMetadataOnlyReceiptSha256": "cb60b371fdf167368b2f3e49a0a66f1b52cb81b514c76993b45db71039af13b1"
+  },
+  "historicalOnlySourceVersionResults": {
+    "sourceVersionsAttempted": 22,
+    "uniquePublisherOriginalUrlPaths": 16,
+    "sourceVersionsAuthenticatedByIndexedOriginalSha1AndPriorRawOriginalSha256": 22,
+    "unavailableOrUnknown": 0,
+    "quarantinedDigestOrHtmlBodyHashMismatches": 0,
+    "perIssue": [
+      {
+        "issue": 946,
+        "publisher": "Minnesota Reformer",
+        "historicalPath": "/briefs/",
+        "originalVersionsAttempted": 17,
+        "reverifiedSha1AndSha256": 17,
+        "unknown": 0,
+        "quarantined": 0,
+        "originalUrlFamilies": 13
+      },
+      {
+        "issue": 987,
+        "publisher": "MPR News",
+        "historicalPath": "/episode/",
+        "originalVersionsAttempted": 5,
+        "reverifiedSha1AndSha256": 5,
+        "unknown": 0,
+        "quarantined": 0,
+        "originalUrlFamilies": 3
+      }
+    ],
+    "publisherDisplayedYears": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "excludedMprStoryControlVersion": 1,
+    "sourceVersionsNotDistinctArticles": true,
+    "archiveClockNotInitialPublisherPostingTime": true
+  },
+  "researchSafetyObservations": {
+    "preExistingUnprovenReformerBriefDatedHistoricAliasPairs": 7,
+    "independentBothUrlHistoricalArticleProofsFromThisRun": 0,
+    "automaticAliasIdentityMerges": 0,
+    "directPublisherRequests": 0,
+    "cdxIndexRequests": 0,
+    "rawArticleTextOrBytesPersistedOrDistributed": false,
+    "historicalAudioAuthenticated": 0,
+    "fullNamedSenatorSpokenTurnsHumanApproved": 0,
+    "independentSenatorMemberTermVerifiedByThisRun": 0,
+    "retrospectiveForecastFeaturesPromoted": 0,
+    "productionSourceEvidenceDatabaseWrites": 0,
+    "existingProductionCollectorSeedOrTopicalGateChanged": false,
+    "servingForecastModelVoteOrVercelChanged": false
+  },
+  "interpretation": [
+    "The 22 original HTML archive versions now match independent indexed SHA1 and earlier raw-body SHA256 receipts, but do not represent 22 globally missing distinct articles.",
+    "The earlier protected exact URL/body reconciliation across 63,594 source documents and 46 stored kinds found no exact metadata match; a semantic or alternate-source near-duplicate was not ruled out.",
+    "Historic Reformer dated-path alias equivalences, publisher first-publication times, human specific speaker review, original audio/transcripts and senator membership remain separate unverified requirements.",
+    "This one-shot public-only archive capture did not activate production ingestion, collections, forecast inputs or serving models."
+  ],
+  "issueStateAfterRun": "keep_946_and_987_open_for_remaining_human_and_historical_proof_and_production_activation_gate"
+}
