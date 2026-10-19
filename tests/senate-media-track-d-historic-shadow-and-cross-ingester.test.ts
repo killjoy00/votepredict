@@ -12,7 +12,7 @@ import {
  summarizeTrackDCrossSource,type CrossMatchRow,type CrossSourceContext,
 } from '../src/evaluation/senate-media-track-d-cross-ingester-audit.js';
 import {
- getTrackDHistoricalShadowPins,runTrackDCrossStoreReadOnly,
+ getTrackDHistoricalShadowPins,getTrackDPublicSpeakerTimingQueue,runTrackDCrossStoreReadOnly,
  assertTrackDCrossReviewedMain,
 } from '../scripts/audit-senate-media-track-d-cross-ingester-readonly-v3.js';
 
@@ -63,7 +63,7 @@ test('shadow proposed prefixes are research-only and fully separate from product
 test('Reformer brief dated-path alias remains unproven even for matching slug/date and multiple bodies',()=>{
  const preview=previewTrackDResearchOnlyShadow(pins);
  const candidates=preview.rows.filter(x=>x.potentialDatedPathAlias);
- assert.equal(candidates.length,10); // four pairs + three new, some multiple historical versions
+ assert.equal(candidates.length,11); // seven unresolved pairs, some with multiple historical versions
  assert.ok(candidates.every(x=>x.historicArticleAliasVerified===false));
  assert.ok(preview.rows.filter(x=>x.publicOriginalId.includes('sanctuary')).length>=2);
  const bad=[...pins];
@@ -99,6 +99,24 @@ test('historical labeled transcript phrase must be captured in that same origina
  assert.equal(hauschild.cannotBackdate2025HtmlTranscriptTextTo2024Captures,true);
  assert.ok(previewTrackDResearchOnlyShadow(pins).rows
   .filter(x=>x.issue===987).every(x=>!x.currentAudioMatchedHistoricTranscript));
+});
+test('speaker attribution chronology queue separates SHA-pinned printed cues, later transcripts and senator oath dates',()=>{
+ const q=getTrackDPublicSpeakerTimingQueue(pins);
+ assert.equal(q.originalReformerReporterItems.length,3);
+ assert.equal(q.originalReformerDistinctNamedSenatorShortCueCandidates,6);
+ assert.equal(q.humanApprovedFullQuotes,0);
+ assert.equal(q.mpr2023Kunesh.pinnedOriginalVersionsWithTwoNamedInTurnShortCues.length,2);
+ assert.ok(q.mpr2023Kunesh.pinnedOriginalVersionsWithTwoNamedInTurnShortCues.every(
+  x=>x.originalNamedMaryKuneshPrintedTranscriptShortCueCount===2));
+ assert.equal(q.mpr2024Hauschild.early2024OriginalHtmlHadSpecificSelectedTranscriptCue,false);
+ assert.equal(q.mpr2024Hauschild.firstSelectedCueLaterOriginalCaptureUtc,'2025-07-24T23:23:22Z');
+ assert.equal(q.mpr2024KuneshCharter.october22OriginalSelectedTranscriptCue,false);
+ assert.equal(q.mpr2024KuneshCharter.december11OriginalSelectedTranscriptCue,true);
+ assert.equal(q.memberTermGuard.senator,'Keri Heintzeman');
+ assert.equal(q.memberTermGuard.officialSenateOathDay,'2025-05-06');
+ assert.equal(q.memberTermGuard.onArticlePublicationDayServingSenator,false);
+ assert.equal(q.exactIndividualSenateVotesInferredFromMediaStories,0);
+ assert.equal(q.historicalModelForecastSignalPromoted,0);
 });
 test('all source-kind SQL only projects public IDs plus counts and no private document/senator values',()=>{
  assert.equal(assertTrackDCrossSourceStaticSQL(),true);
@@ -190,5 +208,6 @@ test('operator-free offline dry run and preflight use no credentials or DB',()=>
   {encoding:'utf8'});
  assert.match(p,/SHADOW_PREVIEW=/);
  const j=JSON.parse(p.split('SHADOW_PREVIEW=')[1]!);
- assert.equal(j.newResearchOnlyCandidateVersions,22);
+ assert.equal(j.historicalUrlShadow.newResearchOnlyCandidateVersions,22);
+ assert.equal(j.speakerTimingReview.humanApprovedFullQuotes,0);
 });
