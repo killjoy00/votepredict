@@ -9,7 +9,7 @@ Scope: evidence research direction and forecast-evaluation prioritization only. 
 
 Before work resumes, require a genuinely new, independent source/proof class and a tiny prespecified target-overlap sample demonstrating **actual** member-specific, strict-before-vote, semantically qualifying incremental rows. Potential row overlap, MP3 URLs, speech timecodes, article counts, or transcript segment counts do not satisfy the success metric.
 
-Retain issue #718 as a **paused / reopen-only-on-qualifying-proof** tracker, not an active research queue. The closed general historical-source expansion in [#355](https://github.com/killjoy00/votepredict/issues/355) must not be implicitly reopened.
+**October 9 disposition:** Issue #718 was retained as a **paused / reopen-only-on-qualifying-proof** tracker, not an active research queue. **October 18 owner re-review:** since no qualifying new original evidence emerged and the standing research stop rule still applies, [#718](https://github.com/killjoy00/votepredict/issues/718) is **closed as not planned** rather than left open indefinitely. A future genuinely new verified pre-vote source and small target-overlap proof would merit a separate deliberate request, not automatic reopening or scheduled retrials. The closed general historical-source expansion [#355](https://github.com/killjoy00/votepredict/issues/355) must not be implicitly reopened.
 
 ## Final bounded SF958 / Vang provenance check
 
@@ -52,7 +52,7 @@ The lifecycle prospective P8 model has **already been frozen**; its **daily capt
 
 ## Next authorized scope, in order
 
-1. **Close the loop on #718:** record this stopped research outcome, preserve the v1.8 count, and retain source leads only for provenance. Reopen solely upon new independently timestamped pre-vote content and a demonstrated genuine qualifying member-event row; no timed standing work or external inquiries.
+1. **Close #718 as not planned after reviewing the stopped research:** retain this decision, the frozen v1.8 counts and the underlying provenance leads; do not repeat the failed/archive source lanes. If independent new source proof plus a prespecified qualifying target-overlap sample becomes available, open a separate work request; no recurring historical crawl, standing work, or external inquiries.
 2. **Treat #287 and #310 as the governing forecast-quality programs.** Review status/readiness from checked-in frozen artifacts without reading a live DB. Their uncompleted prospective accrual/capture steps are real operational work and must receive **separate, explicit production/session authorization** before any activation. #732 production automation remains paused.
 3. **Do not fit another retrospective predictor against 2021-26 outcomes** or expand member/caucus/House-attachment/Wayback/audio sweeps merely to increase source counts. With new out-of-sample observations, run the **already frozen** member/chamber and all-bill lifecycle comparisons under their own population/cutoff/reveal rules.
 4. **Promotion remains human-reviewed** and must show improved governing chamber/all-bill proper scores without material member/calibration regressions. Evidence remains context-only, non-mechanical and zero-weight unless separately admitted.
