@@ -25,6 +25,7 @@ jobs:
     outputs:
       original_sha: ${{ steps.comparator_original.outputs.original_sha }}
       original_bytes: ${{ steps.comparator_original.outputs.original_bytes }}
+      original_rows_sha: ${{ steps.comparator_original.outputs.original_rows_sha }}
     if: >-
       github.repository == 'killjoy00/votepredict' &&
       (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
@@ -74,6 +75,7 @@ jobs:
     timeout-minutes: 30
     env:
       SENATE864_PUBLIC_SOURCE_SHA: ${{ needs.independent-keyless-verification.outputs.original_sha }}
+      SENATE864_PUBLIC_ROWS_SHA: ${{ needs.independent-keyless-verification.outputs.original_rows_sha }}
       SENATE864_PUBLIC_SOURCE_BYTES: ${{ needs.independent-keyless-verification.outputs.original_bytes }}
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
       VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}

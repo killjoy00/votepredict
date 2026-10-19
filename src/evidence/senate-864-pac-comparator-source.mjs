@@ -1,5 +1,12 @@
 /** Explain existing holds using exact current regulator rows. Never weaken gates. */
 import {validDay} from './cfb-report-schedule-raw.mjs';
+import {createHash} from 'node:crypto';
+/** Include every parsed field and raw CSV column; preserve duplicate copies.
+ * CSV row order is not an identity field. This never certifies a PDF row. */
+export function originalComparatorRowsetSha(rows){
+ if(!Array.isArray(rows)||rows.length>300000)throw Error('Unbounded original rows');
+ return createHash('sha256').update(JSON.stringify(rows.map(r=>JSON.stringify(r)).sort())).digest('hex');
+}
 const key=r=>[r.filerReg,r.year,r.rowKey].join('|');
 const reg=s=>/^\d{3,8}$/.test(s||'');
 const amount=s=>{const clean=String(s??'').replace(/[$, ]/g,'');if(!/^\d{1,10}(?:\.\d{1,2})?$/.test(clean))return null;const x=Number(clean);return x>0&&Number.isSafeInteger(Math.round(x*100))?Math.round(x*100):null};

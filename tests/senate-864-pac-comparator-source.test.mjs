@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {reconcileHeldPacComparators} from '../src/evidence/senate-864-pac-comparator-source.mjs';
+import {reconcileHeldPacComparators,originalComparatorRowsetSha} from '../src/evidence/senate-864-pac-comparator-source.mjs';
 function fixture(){
  const cohort=Array.from({length:116},(_,i)=>({filerReg:String(10000+i),year:2024,rowKey:String(i).padStart(64,'0'),contributorReg:'90000',transactionDate:'2024-01-02',contributor:'Synthetic PAC',amount:'100.00'}));
  const broken=cohort.slice(2,25).map((r,i)=>({...r,rowKey:String(i+200).padStart(64,'0'),contributorReg:'',contributor:'Synthetic Individual'}));
@@ -19,4 +19,11 @@ test('identical source copies remain separate from canonical keys; contradictory
  const x=fixture();x.originalRows.push({...x.originalRows[0]});const r=reconcileHeldPacComparators(x);
  assert.equal(r.exactCurrentRegulatorCanonicalKeyMatches,23);assert.equal(r.matchingCurrentRegulatorRowCopies,24);
  x.originalRows.at(-1).contributorType='Party Unit';assert.equal(reconcileHeldPacComparators(x).currentOriginalFieldMismatches,1);
+});
+test('independent full rowset commitment ignores only row order and CSV serialization',()=>{
+ const rows=fixture().originalRows,sha=originalComparatorRowsetSha(rows);
+ assert.equal(originalComparatorRowsetSha([...rows].reverse()),sha);
+ assert.notEqual(originalComparatorRowsetSha([...rows,rows[0]]),sha);
+ const changed=structuredClone(rows);changed[0].contributorType='Other';assert.notEqual(originalComparatorRowsetSha(changed),sha);
+ changed[0].raw={newColumn:'literal original data'};assert.notEqual(originalComparatorRowsetSha(changed),sha);
 });
