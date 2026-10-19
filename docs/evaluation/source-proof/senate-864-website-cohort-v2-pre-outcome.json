@@ -1,0 +1,128 @@
+{
+  "version": "senate864-website52-import-and-cohort-v2",
+  "reviewedCommit": "452ea58d0680f6d1d2905f73a43a938b84af77a4",
+  "verifiedAt": "2026-10-19T21:11:46.224Z",
+  "inserted": 52,
+  "reused": 0,
+  "previouslyStoredAdded": 0,
+  "verifiedExcerpts": 668,
+  "frozenV1Verified": 616,
+  "addedVerified": 52,
+  "idempotentReplayWouldInsert": 0,
+  "verifiedReadOnlyBeforeAfter": true,
+  "explicitRollbacks": true,
+  "schemaLedgerVerified": true,
+  "independentNewOriginalBodiesVerified": 4,
+  "sourcePlanSha256": "17da535d472074bc860cb9512d3aada57ad8d0b42728cff759dc7de83cf67b7f",
+  "protocolSha256": "e3b57c7c6460e329b73e8acf58e6c9606777db7b75cbd6b4420e0870a7108ac0",
+  "cohort": {
+    "version": "senate864-website-cohort-v2",
+    "targets": 24218,
+    "included": 12134,
+    "distinctBills": 370,
+    "distinctPeople": 52,
+    "distinctTextInputs": 59,
+    "exclusions": {
+      "unknownService": 0,
+      "noPriorText": 12084,
+      "missingBillHashes": 0,
+      "crossPartitionBillHash": 0
+    },
+    "crossPartitionHashes": 0,
+    "coverage": [
+      {
+        "year": 2021,
+        "targets": 4701,
+        "included": 1208,
+        "bills": 71,
+        "people": 18,
+        "parties": [
+          {
+            "party": "DFL",
+            "targets": 355
+          },
+          {
+            "party": "R",
+            "targets": 853
+          }
+        ]
+      },
+      {
+        "year": 2022,
+        "targets": 6948,
+        "included": 2865,
+        "bills": 106,
+        "people": 28,
+        "parties": [
+          {
+            "party": "DFL",
+            "targets": 1088
+          },
+          {
+            "party": "R",
+            "targets": 1777
+          }
+        ]
+      },
+      {
+        "year": 2023,
+        "targets": 5531,
+        "included": 3540,
+        "bills": 85,
+        "people": 43,
+        "parties": [
+          {
+            "party": "DFL",
+            "targets": 1856
+          },
+          {
+            "party": "R",
+            "targets": 1684
+          }
+        ]
+      },
+      {
+        "year": 2024,
+        "targets": 3812,
+        "included": 2436,
+        "bills": 58,
+        "people": 43,
+        "parties": [
+          {
+            "party": "DFL",
+            "targets": 1274
+          },
+          {
+            "party": "R",
+            "targets": 1162
+          }
+        ]
+      },
+      {
+        "year": 2025,
+        "targets": 3226,
+        "included": 2085,
+        "bills": 50,
+        "people": 44,
+        "parties": [
+          {
+            "party": "DFL",
+            "targets": 1115
+          },
+          {
+            "party": "R",
+            "targets": 970
+          }
+        ]
+      }
+    ],
+    "cohortSha256": "0bf82f9a1f7401b7dd4d79886b92c78aa2c476e78ace29582975b4b4061a2dc9",
+    "noOutcomesRead": true,
+    "strictLocalMidnight": true
+  },
+  "noOutcomesRead": true,
+  "noServingOrFreezeChanges": true,
+  "workflowRun": 39325185350,
+  "protectedJob": 118309647752,
+  "independentJob": 118309058357
+}
