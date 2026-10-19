@@ -113,8 +113,8 @@ async function main(){
       '**.\n\n'+
       '| Issue | Original archive versions inspected | Exact stored | Publisher sources in filtered context |\n'+
       '| --- | ---: | ---: | ---: |\n'+
-      ...report.issues.map(i=>'| #'+i.issue+' | '+i.publicOriginalVersionsAudited+
-       ' | '+i.exactVersionMatches+' | '+i.publisherSourceDocumentsInContext+' |\n')+
+      report.issues.map(i=>'| #'+i.issue+' | '+i.publicOriginalVersionsAudited+
+       ' | '+i.exactVersionMatches+' | '+i.publisherSourceDocumentsInContext+' |\n').join('')+
       '\nA zero is only within this filtered context. No private records exported, no database writes.\n');
     }
    }finally{client.release(true)}
