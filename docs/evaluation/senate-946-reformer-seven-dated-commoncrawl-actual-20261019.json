@@ -1,0 +1,169 @@
+{
+  "version": "senate-946-seven-historical-reformer-dated-commoncrawl-warc-actual-v1",
+  "observedLocalDay": "2026-10-18",
+  "observedUtcDay": "2026-10-19",
+  "verifiedImplementation": {
+    "researchPr": 1457,
+    "mergedMainSha": "36736f6b9e9ad5b0b6fb4edd18674a0fd4c0b693",
+    "independentPrScopeWorkflow": 39198845169,
+    "fullPrCi": 39198845068,
+    "independentScopeTestsSuccessful": true,
+    "fullPrCiSuccessful": true,
+    "postMergeFullCi": 39199085387,
+    "postMergeFullCiSuccessful": true,
+    "realCommonCrawlWorkflow": 39199085502,
+    "realCommonCrawlJob": 117888660253,
+    "realRunSuccessful": true,
+    "publicMetadataArtifactId": 12162903922,
+    "publicMetadataArtifactName": "senate-946-reformer-seven-original-dated-commoncrawl-v7-metadata"
+  },
+  "scope": {
+    "issue": 946,
+    "origin": "exact seven previously independently known Minnesota Reformer /briefs/-versus-dated candidate pairs",
+    "firstExamined": "2025 road signs then 2022 DFL public safety",
+    "yearSpan": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "distinctDatedOriginalPublisherUrls": 7,
+    "officialCommonCrawlSelectedIndexLookups": 14,
+    "maxOriginalIndexMatchedWarcReplaysPerCrawl": 1,
+    "selectedIndexesAreNotArchiveOrPublisherCensus": true
+  },
+  "actual": {
+    "selectedIndexLookupsWithNoExactDatedUrl": 9,
+    "selectedIndexLookupsUnavailableUnknown": 5,
+    "indexesWithVerifiedSameOriginalUrlCandidates": 0,
+    "historicallySha1AuthenticatedDatedOriginalWarcVersions": 0,
+    "distinctHistoricallyAuthenticatedDatedOriginalPublisherUrls": 0,
+    "provenBriefVersusDatedHistoricArticleAliases": 0,
+    "automaticDeduplication": 0,
+    "priorIndependentlyAuthenticatedOriginalBriefVersionsUnaffected": 17,
+    "priorDistinctOriginalBriefPathsUnaffected": 13,
+    "perPreviouslyAuthenticatedBrief": [
+      {
+        "id": "mn-reformer-2025-road-signs-brief",
+        "datedOriginalDay": "2025-05-01",
+        "collections": [
+          {
+            "id": "CC-MAIN-2025-21",
+            "status": "index_unavailable_unknown"
+          },
+          {
+            "id": "CC-MAIN-2025-26",
+            "status": "selected_index_no_exact_record_unknown"
+          }
+        ]
+      },
+      {
+        "id": "mn-reformer-2022-dfl-public-safety-brief",
+        "datedOriginalDay": "2022-03-22",
+        "collections": [
+          {
+            "id": "CC-MAIN-2022-21",
+            "status": "index_unavailable_unknown"
+          },
+          {
+            "id": "CC-MAIN-2022-27",
+            "status": "index_unavailable_unknown"
+          }
+        ]
+      },
+      {
+        "id": "new-reporter-2021-commissioners",
+        "datedOriginalDay": "2021-07-02",
+        "collections": [
+          {
+            "id": "CC-MAIN-2021-31",
+            "status": "selected_index_no_exact_record_unknown"
+          },
+          {
+            "id": "CC-MAIN-2021-39",
+            "status": "selected_index_no_exact_record_unknown"
+          }
+        ]
+      },
+      {
+        "id": "new-reporter-2022-special-session",
+        "datedOriginalDay": "2022-06-16",
+        "collections": [
+          {
+            "id": "CC-MAIN-2022-27",
+            "status": "selected_index_no_exact_record_unknown"
+          },
+          {
+            "id": "CC-MAIN-2022-33",
+            "status": "index_unavailable_unknown"
+          }
+        ]
+      },
+      {
+        "id": "mn-reformer-2023-driver-licenses",
+        "datedOriginalDay": "2023-02-21",
+        "collections": [
+          {
+            "id": "CC-MAIN-2023-14",
+            "status": "selected_index_no_exact_record_unknown"
+          },
+          {
+            "id": "CC-MAIN-2023-23",
+            "status": "selected_index_no_exact_record_unknown"
+          }
+        ]
+      },
+      {
+        "id": "mn-reformer-2024-sanctuary-brief",
+        "datedOriginalDay": "2024-02-12",
+        "collections": [
+          {
+            "id": "CC-MAIN-2024-10",
+            "status": "index_unavailable_unknown"
+          },
+          {
+            "id": "CC-MAIN-2024-18",
+            "status": "selected_index_no_exact_record_unknown"
+          }
+        ]
+      },
+      {
+        "id": "new-reporter-2025-sick-leave",
+        "datedOriginalDay": "2025-05-06",
+        "collections": [
+          {
+            "id": "CC-MAIN-2025-21",
+            "status": "selected_index_no_exact_record_unknown"
+          },
+          {
+            "id": "CC-MAIN-2025-26",
+            "status": "selected_index_no_exact_record_unknown"
+          }
+        ]
+      }
+    ]
+  },
+  "historicalInterpretation": {
+    "zeroAuthenticatedDatedOriginalsInSelectedCollectionsNotProofOriginalArticleNeverExisted": true,
+    "missingExactOriginalIndexNotAllCommonCrawlOrPublisherAbsent": true,
+    "neverMergeAliasWithoutBothHistoricalSourceCopies": true,
+    "archiveObservationNotOriginalPublisherPostingTime": true,
+    "noNewVerifiedNamedSenatorSpokenQuoteOrRecordedVote": true,
+    "cannotEstablishStatewideOrPublisherArticleMissingRecall": true
+  },
+  "mpr": {
+    "ownerDirectedCutoff": "2025-07",
+    "selectedHauschildHtmlSpeakerTextFirstVerifiedUtc": "2025-07-24T23:23:22Z",
+    "independentlyVerifiedPdfArchiveUtc": "2025-07-27T18:09:08Z",
+    "earlierOriginalTranscriptPublicationNotBeingResearchedInThisPhase": true,
+    "no2024BackdatingOrRetrospectiveForecastPromotions": true
+  },
+  "production": {
+    "newCollectorOrSourceSeedWrites": 0,
+    "privateNeonSourceReadsOrWrites": 0,
+    "newModelTrainingOrForecastWrites": 0,
+    "articleOrWarcOrFullTranscriptBytesPersisted": false
+  },
+  "researchNext": "Do not extrapolate seven globally missing articles from bounded negative or unavailable indexes. Further dated-path identity proof requires an independently authenticated original from publisher or another separately authorized source; only then compare historical body/byline/date with pinned original brief. Other CC collections not sampled remain unknown."
+}
