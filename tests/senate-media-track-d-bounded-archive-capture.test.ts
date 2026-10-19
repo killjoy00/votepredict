@@ -132,13 +132,13 @@ test('captured original cannot secretly claim private match, human quote or anot
  assert.throws(()=>classifyTrackDBoundedCapture(p,item,c,
   {...plausible(c),archiveUrl:'https://evil.test/other'}),/provenance/);
  assert.throws(()=>classifyTrackDBoundedCapture(p,item,c,
-  {...plausible(c),historicalForecastEligibilityProven:true}),/provenance/);
+  {...plausible(c),historicalForecastEligibilityProven:true} as unknown as PublicCdxReplayResult),/provenance/);
  assert.throws(()=>classifyTrackDBoundedCapture(p,item,c,
   {...plausible(c),matchedArchivedIndexPayload:false}),/SHA-1/);
 });
 test('network one-shot main guard rejects forks, PRs, reruns and unreviewed captures',()=>{
  const valid={
-  GITHUB_REPOSITORY:'killjoy00/votepredict',GITHUB_ACTIONS:'true',
+  NODE_ENV:'test',GITHUB_REPOSITORY:'killjoy00/votepredict',GITHUB_ACTIONS:'true',
   GITHUB_EVENT_NAME:'push',GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',
   TRACK_D_V5_PUBLIC_KEYLESS_CHECKS_PASSED:'true',
   TRACK_D_V5_REVIEWED_MAIN_MARKER_PRESENT:'true',
