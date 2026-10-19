@@ -1,0 +1,87 @@
+name: Issue 864 website 52 source-verified append and outcome-free cohort v2
+on:
+  pull_request:
+    paths: ['.github/workflows/senate-864-website52-cohort-v2.yml', 'src/evidence/senate-864-website-expansion.mjs', 'src/evidence/senate-864-website-cohort-v2.mjs', 'scripts/verify-senate-864-website-52-originals.mjs', 'scripts/ingest-senate-864-website-52-and-prepare.mjs', 'tests/senate-864-website-expansion.test.mjs', 'docs/evaluation/senate-864-website-experiment-protocol-v2.json']
+  push:
+    branches: [main]
+    paths: ['.github/workflows/senate-864-website52-cohort-v2.yml', 'src/evidence/senate-864-website-expansion.mjs', 'src/evidence/senate-864-website-cohort-v2.mjs', 'scripts/verify-senate-864-website-52-originals.mjs', 'scripts/ingest-senate-864-website-52-and-prepare.mjs', 'tests/senate-864-website-expansion.test.mjs', 'docs/evaluation/senate-864-website-experiment-protocol-v2.json']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: senate864-website52-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  independent-keyless-verification:
+    if: github.repository == 'killjoy00/votepredict' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run typecheck
+      - run: node --import tsx --test tests/senate-864-website-expansion.test.mjs tests/senate-864-website-signal-neon.test.mjs tests/senate-864-historical-site-excerpt-asof.test.mjs
+      - name: Independently verify all four exact original bodies, indexed captures and 52 visible literals
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/verify-senate-864-website-52-originals.mjs
+  protected-bounded-append-and-prepare:
+    needs: independent-keyless-verification
+    if: >-
+      needs.independent-keyless-verification.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' && github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' && github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha && github.event.head_commit.id == github.sha &&
+      github.event.forced != true && github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'SENATE864_WEBSITE_52_SOURCE_VERIFIED_IMPORT_V2')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      SENATE864_INDEPENDENT_MAIN: ${{ needs.independent-keyless-verification.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact independently verified main commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx scripts/ingest-senate-864-website-52-and-prepare.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate864-website52-cohort-v2
+          path: artifacts/senate864-website52-cohort-v2.json
+          if-no-files-found: error
+          retention-days: 14
