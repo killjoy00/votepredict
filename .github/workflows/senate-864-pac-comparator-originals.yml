@@ -1,0 +1,100 @@
+name: Issue 864 23 PAC comparator original-source accounting
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-pac-comparator-originals.yml
+      - src/evidence/senate-864-pac-comparator-source.mjs
+      - scripts/audit-senate-864-pac-comparator-originals.mjs
+      - tests/senate-864-pac-comparator-source.test.mjs
+      - scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-pac-comparator-originals.yml
+      - src/evidence/senate-864-pac-comparator-source.mjs
+      - scripts/audit-senate-864-pac-comparator-originals.mjs
+      - tests/senate-864-pac-comparator-source.test.mjs
+      - scripts/audit-cfb-pac116-original-a1-geometry-readonly.mjs
+permissions:
+  contents: read
+concurrency:
+  group: senate864-pac23-originals-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  independent-keyless-verification:
+    outputs:
+      original_sha: ${{ steps.comparator_original.outputs.original_sha }}
+      original_bytes: ${{ steps.comparator_original.outputs.original_bytes }}
+      original_rows_sha: ${{ steps.comparator_original.outputs.original_rows_sha }}
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: node --import tsx --test tests/senate-864-pac-comparator-source.test.mjs
+      - run: node --import tsx --test tests/cfb-pac116-original-a1-geometry-v4.test.mjs tests/cfb-pac116-original-positioned-text-v5.test.mjs
+      - id: comparator_original
+        run: node --import tsx scripts/audit-senate-864-pac-comparator-originals.mjs --source-only
+  protected-original-comparators:
+    needs: independent-keyless-verification
+    if: >-
+      needs.independent-keyless-verification.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' && github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' && github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha && github.event.head_commit.id == github.sha &&
+      github.event.forced != true && github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'SENATE864_PAC23_EXACT_CURRENT_ORIGINAL_COMPARATOR_20261019_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SENATE864_PUBLIC_SOURCE_SHA: ${{ needs.independent-keyless-verification.outputs.original_sha }}
+      SENATE864_PUBLIC_ROWS_SHA: ${{ needs.independent-keyless-verification.outputs.original_rows_sha }}
+      SENATE864_PUBLIC_SOURCE_BYTES: ${{ needs.independent-keyless-verification.outputs.original_bytes }}
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      SENATE864_INDEPENDENT_MAIN: ${{ needs.independent-keyless-verification.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_PAC_116_KEYLESS_PASSED: ${{ needs.independent-keyless-verification.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_PAC_116_COMMIT_MARKER: 'true'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact independently verified main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx scripts/audit-senate-864-pac-comparator-originals.mjs
