@@ -118,3 +118,28 @@ test('ridge offset learns incremental signal without changing zero-feature avera
   assert.ok(positive > 0.5);
   assert.ok(negative < 0.5);
 });
+
+test('direct disclosure cannot bypass the known ordinary-report release floor in loader or legacy reader', () => {
+  for (const kind of ['receipts', 'spending', 'independent'] as const) {
+    const party = kind === 'receipts' ? 'Recipient' : kind === 'spending' ? 'Committee name' : 'Affected Comte Name';
+    const date = kind === 'receipts' ? 'Receipt date' : 'Date';
+    const csv = [
+      `${party},${date},Amount,Filed date,Report due date,Disclosure date`,
+      // Early original: the receipt precedes the due date; printed disclosure is impossible.
+      '"Murphy, Erin Senate Committee",10/10/2025,100,10/22/2025,10/28/2025,10/23/2025',
+      // Later amendment/version: the original due date cannot backdate a late filing.
+      '"Murphy, Erin Senate Committee",10/11/2025,200,11/03/2025,10/28/2025,10/29/2025',
+      '"Murphy, Erin Senate Committee",10/12/2025,300,11/03/2025,10/28/2025,11/04/2025',
+    ].join('\n');
+    const result = parsePublicFinanceCsvTransactions(csv, kind);
+    assert.deepEqual(result.transactions.map(r => r.availableOn), [null, null, '2025-11-04']);
+    assert.equal(result.availabilityDatedRows, 1);
+    assert.equal(result.statutoryFloorOnlyRows, 2);
+    // A previously materialized direct label must also fail at the actual feature consumer.
+    const legacy = {...result.transactions[0]!, availableOn: '2025-10-23', availabilitySource: 'direct_disclosure' as const};
+    assert.equal(publicFinanceFeatures([legacy], '2025-2026', '2025-11-10'), undefined);
+    assert.equal(publicFinanceFeatures([result.transactions[2]!], '2025-2026', '2025-11-04'), undefined,
+      'whole availability day excluded, including the Chicago 08:00 release boundary');
+    assert.ok(publicFinanceFeatures([result.transactions[2]!], '2025-2026', '2025-11-05'));
+  }
+});

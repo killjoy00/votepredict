@@ -80,6 +80,7 @@ export function publicFinanceFeatures(
     // exact source/transaction was historically public.
     if (row.availabilitySource !== 'direct_disclosure'
       || !row.availableOn || row.availableOn < row.occurredOn
+      || (row.statutoryNotBeforeOn != null && row.availableOn < row.statutoryNotBeforeOn)
       || row.availableOn < start || row.availableOn >= cutoffOn) continue;
     count += 1;
     if (row.kind === 'receipts') receipts += row.amount;
