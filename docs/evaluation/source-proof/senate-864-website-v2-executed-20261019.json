@@ -1,0 +1,267 @@
+{
+  "version": "senate864-website-isolated-experiment-v2",
+  "reviewedCommit": "502e505976ff82d814ab3bbfbf4fbe9fd190745e",
+  "executedAt": "2026-10-19T21:18:49.727Z",
+  "verifiedRepeatableReadReadOnly": true,
+  "explicitRollback": true,
+  "storedExcerptsVerified": 668,
+  "frozenPreOutcomeReceiptCommit": "452ea58d0680f6d1d2905f73a43a938b84af77a4",
+  "pythonCodeSha256": "5a76b4bf0f1755bf4fd22cc833f719dc56135d09fb3d7fc994ed6d0f4f66ca68",
+  "noDatabaseWrites": true,
+  "noServingWeightsTrainingPipelineOrFreezeChanges": true,
+  "result": {
+    "status": "EXECUTED_ISOLATED_NON_SERVING",
+    "selectedLambda": 100,
+    "validationGrid": [
+      {
+        "lambda": 0.1,
+        "billMacroLogLoss": 1.47459571454695
+      },
+      {
+        "lambda": 1,
+        "billMacroLogLoss": 1.4742213268959719
+      },
+      {
+        "lambda": 10,
+        "billMacroLogLoss": 1.4741827166505939
+      },
+      {
+        "lambda": 100,
+        "billMacroLogLoss": 1.4741788434417997
+      }
+    ],
+    "vocabularySize": 4026,
+    "partitions": {
+      "train": {
+        "overall": {
+          "memberTargets": 4073,
+          "bills": 177,
+          "yea": 3788,
+          "nay": 285,
+          "billMacroLogLoss": 0.2640931965454799,
+          "billMacroBrier": 0.06857799464630854,
+          "microLogLoss": 0.253569423901794,
+          "microBrier": 0.06507681769208426,
+          "memberMacroBrier": 0.0670886951637899,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.5
+        },
+        "party": {
+          "memberTargets": 4073,
+          "bills": 177,
+          "yea": 3788,
+          "nay": 285,
+          "billMacroLogLoss": 0.19901376432120735,
+          "billMacroBrier": 0.05992244906621798,
+          "microLogLoss": 0.19525324887305767,
+          "microBrier": 0.05772567523290522,
+          "memberMacroBrier": 0.060408724317002185,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.8150804016376739
+        },
+        "text": {
+          "memberTargets": 4073,
+          "bills": 177,
+          "yea": 3788,
+          "nay": 285,
+          "billMacroLogLoss": 0.19901295331842278,
+          "billMacroBrier": 0.05992220643922833,
+          "microLogLoss": 0.19525253549344382,
+          "microBrier": 0.05772546211343767,
+          "memberMacroBrier": 0.060408511572391126,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.8674929139109654
+        },
+        "exploratoryInsufficientCoverage": false
+      },
+      "validation": {
+        "overall": {
+          "memberTargets": 3540,
+          "bills": 85,
+          "yea": 2561,
+          "nay": 979,
+          "billMacroLogLoss": 0.7816377627819882,
+          "billMacroBrier": 0.24076102913807204,
+          "microLogLoss": 0.7873461351633041,
+          "microBrier": 0.2426601600395346,
+          "memberMacroBrier": 0.24876556942024305,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.5
+        },
+        "party": {
+          "memberTargets": 3540,
+          "bills": 85,
+          "yea": 2561,
+          "nay": 979,
+          "billMacroLogLoss": 1.4741784129478877,
+          "billMacroBrier": 0.2885066797130835,
+          "microLogLoss": 1.4850527842176588,
+          "microBrier": 0.29065886480985886,
+          "memberMacroBrier": 0.2972329251794649,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.13975943066800306
+        },
+        "text": {
+          "memberTargets": 3540,
+          "bills": 85,
+          "yea": 2561,
+          "nay": 979,
+          "billMacroLogLoss": 1.4741788434417997,
+          "billMacroBrier": 0.2885067544276617,
+          "microLogLoss": 1.485053216717948,
+          "microBrier": 0.29065893926572645,
+          "memberMacroBrier": 0.2972329968560832,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.1431101551160868
+        },
+        "exploratoryInsufficientCoverage": false
+      },
+      "test": {
+        "overall": {
+          "memberTargets": 4521,
+          "bills": 108,
+          "yea": 3611,
+          "nay": 910,
+          "billMacroLogLoss": 0.5884604741072774,
+          "billMacroBrier": 0.17649245416147175,
+          "microLogLoss": 0.5928565810754866,
+          "microBrier": 0.17795500461049074,
+          "memberMacroBrier": 0.18168527880725543,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.5
+        },
+        "party": {
+          "memberTargets": 4521,
+          "bills": 108,
+          "yea": 3611,
+          "nay": 910,
+          "billMacroLogLoss": 1.080692634925534,
+          "billMacroBrier": 0.21263461142216725,
+          "microLogLoss": 1.08855579874973,
+          "microBrier": 0.21424665535187723,
+          "memberMacroBrier": 0.2183264880871754,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.19190644581118133
+        },
+        "text": {
+          "memberTargets": 4521,
+          "bills": 108,
+          "yea": 3611,
+          "nay": 910,
+          "billMacroLogLoss": 1.0806929824497962,
+          "billMacroBrier": 0.21263467856118137,
+          "microLogLoss": 1.0885561462139242,
+          "microBrier": 0.21424672217795232,
+          "memberMacroBrier": 0.21832654820823327,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.203539094524971
+        },
+        "exploratoryInsufficientCoverage": false,
+        "pairedBillBootstrap2000": {
+          "billMacroLogLoss": {
+            "textMinusParty": 3.4752426286003224e-7,
+            "lower95": 3.013609234425728e-7,
+            "upper95": 3.892211894666657e-7
+          },
+          "billMacroBrier": {
+            "textMinusParty": 6.713901419151768e-8,
+            "lower95": 5.6751779788209146e-8,
+            "upper95": 7.498044229884906e-8
+          }
+        }
+      }
+    },
+    "testByYear": {
+      "2024": {
+        "party": {
+          "memberTargets": 2436,
+          "bills": 58,
+          "yea": 1887,
+          "nay": 549,
+          "billMacroLogLoss": 1.2194112994607698,
+          "billMacroBrier": 0.23868940826158172,
+          "microLogLoss": 1.22288662205644,
+          "microBrier": 0.23940292135633306,
+          "memberMacroBrier": 0.24478113075778118,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.17065715667451448
+        },
+        "text": {
+          "memberTargets": 2436,
+          "bills": 58,
+          "yea": 1887,
+          "nay": 549,
+          "billMacroLogLoss": 1.2194116647989517,
+          "billMacroBrier": 0.2386894791916665,
+          "microLogLoss": 1.2228869873380073,
+          "microBrier": 0.2394029921899585,
+          "memberMacroBrier": 0.2447812001198311,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.18446218639082673
+        },
+        "pairedBillBootstrap2000": {
+          "billMacroLogLoss": {
+            "textMinusParty": 3.653381825690505e-7,
+            "lower95": 3.198697876050727e-7,
+            "upper95": 4.1036505906926687e-7
+          },
+          "billMacroBrier": {
+            "textMinusParty": 7.093008481681758e-8,
+            "lower95": 6.778830339414803e-8,
+            "upper95": 7.286554712515713e-8
+          }
+        }
+      },
+      "2025": {
+        "party": {
+          "memberTargets": 2085,
+          "bills": 50,
+          "yea": 1724,
+          "nay": 361,
+          "billMacroLogLoss": 0.9197789840646603,
+          "billMacroBrier": 0.18241104708844638,
+          "microLogLoss": 0.9316110095050565,
+          "microBrier": 0.18485544960278644,
+          "memberMacroBrier": 0.18229200141779983,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.22017581351106424
+        },
+        "text": {
+          "memberTargets": 2085,
+          "bills": 50,
+          "yea": 1724,
+          "nay": 361,
+          "billMacroLogLoss": 0.9197793109247759,
+          "billMacroBrier": 0.18241110982981862,
+          "microLogLoss": 0.931611336152406,
+          "microBrier": 0.18485551174665882,
+          "memberMacroBrier": 0.18229205539702084,
+          "balancedAccuracy": 0.5,
+          "auroc": 0.22709941449055535
+        },
+        "pairedBillBootstrap2000": {
+          "billMacroLogLoss": {
+            "textMinusParty": 3.26860115997571e-7,
+            "lower95": 2.3745996631788016e-7,
+            "upper95": 4.035449697837298e-7
+          },
+          "billMacroBrier": {
+            "textMinusParty": 6.27413722661698e-8,
+            "lower95": 3.8408926319368075e-8,
+            "upper95": 7.885525580511712e-8
+          }
+        }
+      }
+    },
+    "protocolSha256": "e3b57c7c6460e329b73e8acf58e6c9606777db7b75cbd6b4420e0870a7108ac0",
+    "cohortSha256": "0bf82f9a1f7401b7dd4d79886b92c78aa2c476e78ace29582975b4b4061a2dc9",
+    "noFittedWeightsOrPrivateRowsExported": true,
+    "negativeDeltaFavorsText": true,
+    "interpretation": "Website-only associations may reflect member identity/style; no bill-specific policy or causal inference."
+  },
+  "workflowRun": 39326151003,
+  "protectedJob": 118313094173,
+  "requiredPrCiRun": 39325745476,
+  "independentPrRun": 39325745679,
+  "pr": 1478
+}

@@ -1,5 +1,6 @@
 # Issue #864: independently reconciled Minnesota Senate committee-year evidence
 
+Historical source snapshot. Current decisions and actual readbacks are maintained in the [authoritative completion ledger](senate-864-completion-ledger.md): the 2024 missing YEA is now corrected, and the existing 153-roll / 989-choice source cohort exactly matches storage. These bounded results do not certify all motions or print completeness.
 **Scope:** historical Minnesota Senate committee/subcommittee meetings in 2022-2025, not Senate floor votes, forecasts, serving changes or model training. This is an offline source-only audit; no private database queries or writes, no external government contact, no deployment or scheduler.
 
 ## Verified inherited source baseline

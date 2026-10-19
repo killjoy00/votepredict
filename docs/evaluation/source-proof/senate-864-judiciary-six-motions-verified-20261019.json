@@ -1,0 +1,58 @@
+{
+  "version": "senate864-judiciary-six-original-motion-repair-v1",
+  "reviewedCommit": "391b951d08ac7522471ea7a70cd9a55bf8242762",
+  "verifiedAt": "2026-10-19T21:34:16.842Z",
+  "insertedEvents": 6,
+  "insertedChoices": 60,
+  "updatedRecommendation": 1,
+  "verifiedSourceMotions": 7,
+  "verifiedExplicitChoices": 70,
+  "idempotentReplayWouldInsert": 0,
+  "originalRecommendationKeyAndTenChoicesPreserved": true,
+  "verifiedReadOnlyBeforeAfter": true,
+  "explicitRollbacks": true,
+  "schemaLedgerVerified": true,
+  "hearingDateAvailability": true,
+  "sameDayEligible": false,
+  "noAttendanceOrCountOnlyChoiceInference": true,
+  "noGenericParserReplay": true,
+  "sourceFixtureSha256": "3c84a2d86404c02991256e344540ac2b1caf8f07f7502415f8eabb114372c4f0",
+  "committeeYears": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 35,
+      "declared_named_events": 24,
+      "explicit_stored_choices": 217,
+      "hearing_date_timing_events": 2
+    },
+    {
+      "year": 2024,
+      "stored_events": 55,
+      "declared_named_events": 31,
+      "explicit_stored_choices": 288,
+      "hearing_date_timing_events": 7
+    },
+    {
+      "year": 2025,
+      "stored_events": 33,
+      "declared_named_events": 29,
+      "explicit_stored_choices": 305,
+      "hearing_date_timing_events": 0
+    }
+  ],
+  "noFloorModelServingOrFreezeChanges": true,
+  "workflowRun": 39328026873,
+  "protectedJob": 118320064442,
+  "independentMainJob": 118318795395,
+  "requiredPrCiRun": 39327576169,
+  "independentPrRun": 39327576220,
+  "mainCiRun": 39328026704,
+  "pr": 1479
+}
