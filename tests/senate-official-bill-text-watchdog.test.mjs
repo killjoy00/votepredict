@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {
   REPO,TEXT_WORKFLOW_ID,TEXT_WORKFLOW_PATH,WATCHDOG_CRON,
   validateGitHubEvent,eligibleCollectorRuns,decideBillTextRecovery,
-  parseProtectedReadback,applyReceiptGuard,
+  parseProtectedReadback,applyReceiptGuard,shouldFailOnKnownDegradation,
 } from '../scripts/senate-official-bill-text-watchdog.mjs';
 
 const NOW=Date.parse('2026-10-17T02:00:00Z');
@@ -107,4 +108,18 @@ test('skip dispatch on completed backlog and cool down when source throttled',()
     'official_source_throttle_cooldown');
   assert.equal(applyReceiptGuard(due,throttled,NOW,run(370)).dispatch,true);
   assert.equal(applyReceiptGuard(due,null,NOW,run(90)).dispatch,true);
+});
+
+// A push can observe the same known collector degradation dozens of times.
+// Preserve scheduled/manual watchdog failures and hard API/dispatch failures.
+test('only duplicate push degradation is non-fatal',()=>{
+  assert.equal(shouldFailOnKnownDegradation('push'),false);
+  assert.equal(shouldFailOnKnownDegradation('schedule'),true);
+  assert.equal(shouldFailOnKnownDegradation('workflow_dispatch'),true);
+  assert.equal(shouldFailOnKnownDegradation('unrecognized'),true);
+  const yaml=readFileSync(new URL('../.github/workflows/senate-official-bill-text-watchdog.yml',import.meta.url),'utf8');
+  assert.ok(yaml.includes("  schedule:\n    - cron: '13 * * * *'"));
+  assert.ok(yaml.includes("\n  actions: write\n"));
+  assert.ok(yaml.includes('run: node scripts/senate-official-bill-text-watchdog.mjs'));
+  assert.ok(!yaml.includes('continue-on-error:'));
 });
