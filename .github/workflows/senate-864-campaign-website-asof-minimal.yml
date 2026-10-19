@@ -7,6 +7,8 @@ on:
       - src/evidence/senate-864-website-signal-neon.mjs
       - src/evidence/senate-864-website-signal-readback.mjs
       - scripts/ingest-senate-864-website-asof-neon.mjs
+      - scripts/audit-senate-864-website-person-resolution.mjs
+      - docs/evaluation/source-proof/senate-864-website-person-resolution-20261019.json
       - tests/senate-864-historical-site-excerpt-asof.test.mjs
       - tests/senate-864-website-signal-neon.test.mjs
   push:
@@ -17,6 +19,8 @@ on:
       - src/evidence/senate-864-website-signal-neon.mjs
       - src/evidence/senate-864-website-signal-readback.mjs
       - scripts/ingest-senate-864-website-asof-neon.mjs
+      - scripts/audit-senate-864-website-person-resolution.mjs
+      - docs/evaluation/source-proof/senate-864-website-person-resolution-20261019.json
       - tests/senate-864-historical-site-excerpt-asof.test.mjs
       - tests/senate-864-website-signal-neon.test.mjs
 permissions:
@@ -44,6 +48,9 @@ jobs:
       - run: node --check src/evidence/senate-864-website-signal-neon.mjs
       - run: node --check scripts/ingest-senate-864-website-asof-neon.mjs
       - run: node --test tests/senate-864-historical-site-excerpt-asof.test.mjs tests/senate-864-website-signal-neon.test.mjs
+      - run: node scripts/audit-senate-864-website-person-resolution.mjs --check
+  # The completed fixed-v1 writer is opt-in on a reviewed main commit. Name
+  # extraction fixes must not re-run archive acquisition or gain database access.
   independently-verified-main:
     needs: [keyless-research]
     if: >-
@@ -56,7 +63,8 @@ jobs:
       github.event.after == github.sha &&
       github.event.head_commit.id == github.sha &&
       github.event.deleted != true &&
-      github.event.forced != true
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_616_LITERAL_INGEST_V1')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -91,7 +99,8 @@ jobs:
       github.event.after == github.sha &&
       github.event.head_commit.id == github.sha &&
       github.event.deleted != true &&
-      github.event.forced != true
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_864_616_LITERAL_INGEST_V1')
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 35

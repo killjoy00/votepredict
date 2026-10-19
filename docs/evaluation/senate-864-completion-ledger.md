@@ -13,7 +13,35 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 19 follow-up: person labels corrected
+
+The earlier stored/frozen-v1 receipt's **55 `unresolved_official_person` labels were
+extractor/schema labels**, not 55 unknown candidate identities. The corrected default
+source planner reads explicit nested person declarations and their declared page-section
+IDs/file references. **52 excerpts now resolve** from existing records: Justin D. Eichorn
+12, Kent Eken 13 and Bill G. Ingebrigtsen 27. Louis McNutt's three excerpts have a known
+identity and are explicitly **outside the 95 actually-serving-person study**, not unknown.
+There are **zero unresolved-person excerpts** in the corrected source plan.
+
+[Reproducible correction receipt](source-proof/senate-864-website-person-resolution-20261019.json):
+**668 source-ready excerpts / 53 people / 69 original bodies**, **526 remaining source-metadata
+holds** (URL 147, SHA 266, indexed digest 113) and **3 known-person scope exclusions**.
+This corrects attribution handling without new archive research or relaxed source/clock gates.
+Regression checks cover every affected record, contradictory full names and ambiguous page
+receipts. All previous 616 records and ingestion keys match exactly in the revised plan.
+
+**Stored verification remains 616**, from the dated protected receipt above; this follow-up
+performs **zero additional database imports**. The frozen v1 protocol/hash and its 11,514
+prepared targets stay unchanged. The fixed-v1 importer and audit explicitly use the v1
+compatibility planner; the corrected default is v2. A future bounded, source-verified import
+can add the 52 newly ready excerpts, followed by read-back and an explicitly versioned
+experiment cohort. Do not describe 668 as already stored or replace the frozen v1 silently.
+The completed v1 writer now requires its explicit reviewed-commit marker, so this name fix
+does not trigger archive acquisition or database access.
+
 ## Calendar-year reconciliation
+
+The website read-back figures below describe the stored/frozen-v1 cohort; the corrected source-ready inventory is reported above.
 
 Year means committee hearing date, finance metadata transaction/report calendar year, or
 website/media archive observation year. Target-vote years are reported separately.
@@ -195,8 +223,9 @@ or duplicate ingestion keys**. There are **50 people / 65 original page bodies /
 excerpts are still not independent samples.
 
 154 ready excerpts were observed before 2021, 31 in 2021, 426 in 2022 and 5 in 2025.
-The 581 primary-reason holds partition as missing original URL 147, body SHA 266,
-indexed digest 113 and official person 55; underlying missingness may overlap.
+The historical v1 receipt partitions its 581 labels as missing original URL 147, body SHA 266,
+indexed digest 113 and person 55. The person labels are superseded by the correction above:
+52 existing identities resolved and 3 known-person scope exclusions; 526 source-metadata holds remain.
 The 72 original-page provenance receipts are distinct from 398 linked literal excerpts.
 1,285 was aggregate research metadata; 1,197 are materialized excerpts; 88 are not
 itemized and were not fabricated. Wiger/Tomassoni/Bakk owned-site originals and
@@ -303,7 +332,8 @@ The SF1 V7 zero-stored state below is the pre-correction snapshot, superseded by
 | B-LEGACY | Exact transaction-to-original-version containment or independently authenticated regulatory row disclosure, plus appropriate historical release/observation bound | 58,555 eligible-copy claims remain revalidation debt; no speculative withdrawal, promotion or exact-version attachment by year. |
 | B-PAC2 | Independent original printed-row attestation (date, registered entity, legal name, correct total) and, separately, independently dated publication of that exact original/amended version | Two stable source/chronology gates; exact two-case inspection STOPPED. |
 | B-PAC23 | Complete receiving-committee/year official registered donor comparator identities | 23 full-comparator holds retained; no weaker matches. |
-| C-581 | Missing original URL/body SHA/indexed archive digest/observation/person provenance for each held record | 581 held; no subjective sincerity gate or invented aggregate-only excerpts. |
+| C-SOURCES | Missing original URL/body SHA/indexed archive digest/observation linkage for the 526 held records | Person mapping is fixed: 0 unresolved people; 3 McNutt records excluded by actual-service scope. No subjective sincerity gate or invented excerpts. |
+| C-IMPORT52 | Bounded import and exact read-back of the 52 newly source-ready records, with a deliberately versioned experiment cohort if used | Names/source joins fixed; additional imports in this follow-up = 0. Stored/frozen-v1 616 and protocol remain preserved. |
 | C-EXPERIMENT | Future deliberately isolated outcome evaluation under frozen v1, with specified leakage and coverage checks | Protocol/pre-vote cohort preparation complete; outcome testing was not authorized in this pass and no lift is claimed. |
 | D-ATTRIBUTION | Exact source-contained named passage, historical speaker membership, supported publication/observation clocks for a specifically identified source version | Contextual mentions and declared metadata are not certified speech. Preserve selected-source exclusions; no Reformer/MPR/general-crawl restart. |
 
@@ -342,6 +372,7 @@ as independent human approval. No branch/environment protection was bypassed.
 - [x] Complete SF1 guarded 2-motion/20-choice correction through CI/review/merge/execution/read-back.
 - [x] Finish exact two-case PAC inspection and stop at separate containment/publication holds.
 - [x] Verify all 616 literal website records and non-serving flags; freeze protocol and prepare reproducible pre-vote cohort.
+- [x] Correct all 52 structured-identity/page joins and classify 3 known-person scope exclusions; test zero remaining unresolved-person records without silently expanding the frozen cohort.
 - [x] Finalize bounded media accounting by senator/year/source and preserve existing exclusions.
 - [x] Record merged versus executed versus verified outcomes; update one consolidated #864 checklist linked here.
 - [ ] True official denominators and complete original-to-stored parity across all four families.

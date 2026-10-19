@@ -19,3 +19,15 @@ The manifest's **1,285** is an aggregate research count, **not 1,285 itemized qu
 The protected workflow writes only the **616** provenance-complete excerpts idempotently into the existing VotePredict Neon database after independent main CI and renewed original-source verification; it verifies every stored literal, target, archive timestamp, original URL/hash, and non-serving forecast flags by database read-back.
 
 This enables a legitimate future experiment. It **does not demonstrate predictive lift** until the literal texts have been compared with later actual votes using a held-out, time-safe evaluation.
+
+
+## October 19 structured identity correction
+
+The old 55 person-hold labels were 52 schema/metadata-join defects plus 3 known
+Louis McNutt excerpts outside the actually-serving Senate study. The corrected
+`websiteExcerptPlan` reads explicit nested names and page-section IDs; it yields
+668 source-ready records, 526 source-metadata holds and 3 scope exclusions, with
+zero unknown people. See the [maintained ledger](senate-864-completion-ledger.md).
+`websiteExcerptPlanV1` is retained only for the already imported 616 and frozen
+protocol v1; all 616 records/keys remain exact. This code correction imports no
+additional records and does not change the frozen experiment, serving or weights.
