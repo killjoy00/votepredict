@@ -10,7 +10,7 @@ function fixture(){
  const snapshot:RulesSnapshot={readOnlyTransactionProven:true,databaseIdentityVerified:true,completeBoundedSourceEventsFetched:true,
  explicitRollbackCompleted:true,documents:[{id:id(50),source_url:YEA_URL,content_sha256:YEA_SHA,meeting_date:YEA_DAY,committee_name:'Judiciary and Public Safety'}],
  events:[{id:id(51),source_document_id:id(50),external_key:'existing-legacy-key-kept',occurred_on:YEA_DAY,bill_identifier:'SF3534',vote_kind:'amendment',
- amendment_ref:null,motion_text:source.roll.motionText,yea_count:6,nay_count:4,passed:true,committee_name:'Judiciary and Public Safety',committee_vote:true}],
+ amendment_ref:null,motion_text:source.roll.motionText,yea_count:6,nay_count:4,passed:true,committee_name:'Judiciary and Public Safety',committee_vote:true,is_passage:false} as RulesSnapshot['events'][number]],
  choices:source.roll.memberVotes.filter(v=>v.normalizedName!=='latz chair').map((v,i)=>({vote_event_id:id(51),membership_id:id(i+1),normalized_member_name:v.normalizedName,choice:v.choice})),
  historicalRoster:[{membershipId:id(70),legislatorId:id(71),name:'Ronald Steven Latz',startsOn:'2023-01-03',endsOn:'2024-12-31',aliases:['Ron Latz']}]};
  return {source,snapshot};

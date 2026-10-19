@@ -27,7 +27,7 @@ export function judiciaryYeaPlan(source:JudiciaryYeaSource,s:RulesSnapshot){
  // Match the complete literal question and original, never an ordinal key.
  const events=s.events.filter(e=>e.source_document_id===docs[0].id&&e.occurred_on===YEA_DAY&&e.bill_identifier==='SF3534'&&
   e.yea_count===6&&e.nay_count===4&&e.passed===true&&e.committee_vote===true&&
-  e.committee_name==='Judiciary and Public Safety'&&textSha(e.motion_text??'')===YEA_MOTION_SHA);
+  e.committee_name==='Judiciary and Public Safety'&&(e as typeof e&{is_passage?:boolean}).is_passage===false&&textSha(e.motion_text??'')===YEA_MOTION_SHA);
  if(events.length!==1||s.events.filter(e=>e.source_document_id===docs[0].id).length!==1)
   throw Error('Exact stored parliamentary question not unique');
  // Independent LRL original explicitly connects Ronald Steven Latz to "Ron";

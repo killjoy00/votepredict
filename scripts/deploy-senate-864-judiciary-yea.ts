@@ -15,7 +15,8 @@ export async function yeaSnapshot(db:Pick<PoolClient,'query'>):Promise<RulesSnap
   const r=await db.query(sql,values);if(r.rows.length>=max)throw Error('Truncated Judiciary snapshot');return r.rows;
  };
  const documents=await bounded(DOC_SQL.replace("LIKE '%rules%'","LIKE '%judiciary%'"),[YEA_URL,YEA_SHA,YEA_DAY],101);
- const events=await bounded(EVENT_SQL,params,301),choices=await bounded(CHOICE_SQL,params,3001);
+ const events=await bounded(EVENT_SQL.replace('ve.external_key,','ve.is_passage,ve.external_key,'),params,301),
+  choices=await bounded(CHOICE_SQL.replace('mv.choice,',"mv.metadata AS repair_metadata,mv.choice,"),params,3001);
  const roster=await bounded(ROSTER_SQL.replace("WHERE s.slug='2023-2024'","WHERE s.jurisdiction_id=(SELECT id FROM jurisdictions WHERE slug='us-mn') AND s.slug='2023-2024'"),[],151),aliases=await bounded(ALIAS_SQL,[],801);
  const historicalRoster=roster.map(r=>({membershipId:r.membership_id,legislatorId:r.legislator_id,name:r.name,
   normalizedName:r.normalized_name,startsOn:r.starts_on,endsOn:r.ends_on,
@@ -82,6 +83,11 @@ async function main(){
   phase='independent_postcommit_readonly_readback';const after=await yeaReadOnly(pool,target);
   const repeated=judiciaryYeaPlan(source,after);
   if(repeated.insert||state(before)===state(after)&&applied.insertedChoices!==0)throw Error('Post-commit exact source readback failed');
+  if(applied.insertedChoices===1){
+   const v=after.choices.find(v=>v.vote_event_id===repeated.eventId&&v.normalized_member_name===repeated.choice.normalizedName) as typeof after.choices[number]&{repair_metadata?:Record<string,unknown>};
+   if(v?.repair_metadata?.modelWeight!==0||v.repair_metadata.sameDayEligible!==false||v.repair_metadata.mechanicallyActionable!==false||v.repair_metadata.availableOn!==YEA_DAY)
+    throw Error('Post-commit non-serving choice metadata mismatch');
+  }
   console.log('SENATE864_JUDICIARY_YEA_VERIFIED='+JSON.stringify({...applied,verifiedEvents:1,verifiedExplicitChoices:10,
    idempotentReplayWouldInsert:0,readOnlyBeforeAndAfterRolledBack:true,hearingDateAvailability:true,sameDayEligible:false,
    independentFullNameAliasAndOfficeVerified:true,noEventRekeyOrReplay:true,noFloorModelServingOrFreezeChanges:true}));
