@@ -29,12 +29,14 @@ export function buildTrackDPublicSpeakerTimingQueue(input:{
 
  const grouped=newReformer.perSourceOriginalUrlVariantPairs.map((r:Rec)=>{
   const matching=pins.filter(p=>p.originalUrl===r.originalPublisherBriefsPath);
-  if(matching.length!==r.originalBriefsHttpCaptureVersions.length||
+  const verified=(r.originalBriefsHttpCaptureVersions as Rec[])
+   .filter(x=>x.replayStatus==='actual_original_indexed_sha1_verified');
+  if(matching.length!==verified.length||
    matching.some(p=>p.sourceGroup!=='additional_5_2021_2025_reformer_originals')||
    r.bothExactUrlVariantsHistoricallyVerified!==false)
    throw Error('Reformer candidate speech original identity inconsistent');
   const people=new Set<string>();
-  for(const original of r.originalBriefsHttpCaptureVersions as Rec[]){
+  for(const original of verified){
    const pin=matching.find(p=>p.capturedUtc===original.captureUtc);
    if(!pin||pin.rawSha256!==original.rawOriginalSha256||
     original.replayStatus!=='actual_original_indexed_sha1_verified')
