@@ -1,0 +1,81 @@
+name: '#946 / #987 seven historic Reformer alias and three MPR PDF original probes V6'
+on:
+  pull_request:
+    paths:
+      - src/evaluation/senate-media-track-d-remaining-original-probe.ts
+      - scripts/probe-senate-media-track-d-seven-alias-three-pdf-v6.ts
+      - tests/senate-media-track-d-remaining-original-probe.test.ts
+      - docs/evaluation/senate-media-track-d-946-987-seven-alias-three-pdf-probe-20261019.md
+      - .github/workflows/senate-media-track-d-seven-alias-three-pdf-v6.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: track-d-946-987-remnant-public-originals-v6-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  keyless-offline-review:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+       (github.event_name == 'push' &&
+        github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        contains(github.event.head_commit.message, 'TRACK_D_946_987_REMAINING_ORIGINAL_V6_20261019')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Validate seven historical aliases and three original MPR PDFs without a network or secrets
+        run: |
+          node --import tsx --test tests/senate-media-track-d-remaining-original-probe.test.ts
+          node --import tsx scripts/probe-senate-media-track-d-seven-alias-three-pdf-v6.ts --preview
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  fixed-original-research:
+    needs: [keyless-offline-review]
+    if: >-
+      needs.keyless-offline-review.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'TRACK_D_946_987_REMAINING_ORIGINAL_V6_20261019')
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    env:
+      TRACK_D_V6_KEYLESS_SUCCEEDED: ${{ needs.keyless-offline-review.result == 'success' && 'true' || 'false' }}
+      TRACK_D_V6_REVIEWED_MAIN_MARKER: ${{ contains(github.event.head_commit.message, 'TRACK_D_946_987_REMAINING_ORIGINAL_V6_20261019') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert exact SHA of reviewed and protected main
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Public Wayback exact historical original CDX/replay proof, no collector or DB
+        run: node --import tsx scripts/probe-senate-media-track-d-seven-alias-three-pdf-v6.ts --public-index-probe
+      - name: Retain original archive public metadata only
+        uses: actions/upload-artifact@v4
+        with:
+          name: track-d-946-987-seven-alias-three-pdf-public-only
+          path: track-d-946-987-v6-public-research-metadata.json
+          if-no-files-found: error
+          retention-days: 30
