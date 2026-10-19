@@ -137,7 +137,7 @@ test('captured original cannot secretly claim private match, human quote or anot
   {...plausible(c),matchedArchivedIndexPayload:false}),/SHA-1/);
 });
 test('network one-shot main guard rejects forks, PRs, reruns and unreviewed captures',()=>{
- const valid={
+ const valid:NodeJS.ProcessEnv={
   NODE_ENV:'test',GITHUB_REPOSITORY:'killjoy00/votepredict',GITHUB_ACTIONS:'true',
   GITHUB_EVENT_NAME:'push',GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',
   TRACK_D_V5_PUBLIC_KEYLESS_CHECKS_PASSED:'true',
