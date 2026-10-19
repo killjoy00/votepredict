@@ -1,0 +1,73 @@
+name: '#946 / #987 research-only historical archive canary V4'
+on:
+  pull_request:
+    paths:
+      - src/evaluation/senate-media-track-d-original-replay-pilot.ts
+      - scripts/replay-senate-media-track-d-historical-canaries.ts
+      - tests/senate-media-track-d-original-replay-pilot.test.ts
+      - docs/evaluation/senate-media-track-d-946-987-original-replay-pilot-20261018.md
+      - .github/workflows/senate-media-track-d-original-replay-canary-v4.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: senate-media-track-d-946-987-public-canary-v4-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  keyless-offline-review:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+       (github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        contains(github.event.head_commit.message, 'TRACK_D_946_987_ORIGINAL_REPLAY_CANARY_V4_20261018')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify immutable existing source receipts, version/dedup bounds and forecast as-of safety
+        run: |
+          node --import tsx --test tests/senate-media-track-d-original-replay-pilot.test.ts
+          node --import tsx scripts/replay-senate-media-track-d-historical-canaries.ts --preview
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  public-original-replay:
+    needs: [keyless-offline-review]
+    if: >-
+      needs.keyless-offline-review.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'TRACK_D_946_987_ORIGINAL_REPLAY_CANARY_V4_20261018')
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      TRACK_D_CANARY_PUBLIC_KEYLESS_OK: ${{ needs.keyless-offline-review.result == 'success' && 'true' || 'false' }}
+      TRACK_D_CANARY_REVIEWED_MAIN_MARKER: ${{ contains(github.event.head_commit.message, 'TRACK_D_946_987_ORIGINAL_REPLAY_CANARY_V4_20261018') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require the exact SHA reviewed on main
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reverify only five historical public archive bodies; no collector, source or forecast writes
+        run: node --import tsx scripts/replay-senate-media-track-d-historical-canaries.ts --network-canary
