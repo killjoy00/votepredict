@@ -114,6 +114,10 @@ test('finance copy reconciliation uses the IE spender identity and never borrows
   const c=r.find(x=>x.family==='candidate_contribution'),s=r.find(x=>x.family==='independent_expenditure');
   assert.equal(c.evidence_copies,2);assert.equal(c.canonical_transactions,1);assert.equal(c.canonical_in_indexed_committee_years,1);
   assert.equal(s.evidence_copies,3);assert.equal(s.canonical_transactions,1);assert.equal(s.copies_missing_canonical_identity,0);
+  assert.equal(s.copies_in_indexed_registrations,0);assert.equal(c.copies_in_indexed_registrations,2);
+  await db.query('INSERT INTO evidence_items VALUES(1,1,$1::jsonb)',[JSON.stringify({...candidate,year:2023})]);
+  const otherYear=(await db.query(FINANCE_CANONICAL_SQL)).rows.find(x=>x.year==='2023');
+  assert.equal(otherYear.copies_in_indexed_registrations,1);assert.equal(otherYear.copies_in_indexed_committee_years,0);
   assert.equal(s.copies_in_indexed_committee_years,0);assert.equal(s.canonical_in_indexed_committee_years,0);
  }finally{await db.query('ROLLBACK');db.release();await pool.end();}
 });

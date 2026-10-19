@@ -59,7 +59,7 @@ export async function completionAudit(client,target,inputs,onStage=()=>{}){
   for(const [name,sql] of Object.entries(QUERIES)){onStage('finance_'+name);finance[name]=safeCounts(name,(await client.query(sql,sql.includes('$1::jsonb')?[JSON.stringify(inputs.source)]:[])).rows);}
   onStage('finance_canonical_scope_counts');
   finance.canonical=integerRows((await client.query(FINANCE_CANONICAL_SQL)).rows,['year','family'],
-   ['evidence_copies','canonical_transactions','copies_missing_canonical_identity','legacy_eligible_copies','unclassified_contributor_type_copies','copies_in_indexed_committee_years','canonical_in_indexed_committee_years'],
+   ['evidence_copies','canonical_transactions','copies_missing_canonical_identity','legacy_eligible_copies','unclassified_contributor_type_copies','copies_in_indexed_registrations','canonical_in_indexed_registrations','copies_in_indexed_committee_years','canonical_in_indexed_committee_years'],
    {year:['2021','2022','2023','2024','2025'],family:['candidate_contribution','candidate_expenditure','independent_expenditure','category_mismatch']},20);
   onStage('finance_registry_year_counts');
   finance.registry=integerRows((await client.query(FINANCE_REGISTRY_SQL)).rows,['year'],['versions','pdf_bodies','tracked_historical_version_public_by_proofs','versions_with_cached_bodies'],{year:[2021,2022,2023,2024,2025]},5);
