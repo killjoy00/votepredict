@@ -31,7 +31,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-      - name: Offline tests: no speaker, date, provider, original-site or database claims invented
+      - name: "Offline tests: no speaker, date, provider, original-site or database claims invented"
         run: |
           node --check scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs
           node --test tests/senate-864-2026-incumbent-duckworth-public-source.test.mjs tests/senate-864-2026-49-incumbent-source-parity-boundary.test.mjs
