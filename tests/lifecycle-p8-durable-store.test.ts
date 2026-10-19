@@ -136,7 +136,7 @@ test('original model and scoring policy unchanged in the persisted capture shape
 test('schema-only Neon deploy requires independent CI, exact first main push and marker',()=>{
  const sha='a'.repeat(40);
  const env:NodeJS.ProcessEnv={
-  GITHUB_REPOSITORY:'killjoy00/votepredict',GITHUB_EVENT_NAME:'push',
+  NODE_ENV:'test',GITHUB_REPOSITORY:'killjoy00/votepredict',GITHUB_EVENT_NAME:'push',
   GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',
   VOTEPREDICT_P8_SCHEMA_INDEPENDENT_CI:'true',GITHUB_SHA:sha,
  };
