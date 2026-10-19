@@ -47,7 +47,7 @@ export const COMPLETION_WEBSITE_SQL=`SELECT ei.membership_id::text AS "membershi
  OR ei.metadata->>'experimentalWebsiteTextForHistoricalEvaluation'='true' ORDER BY ei.id LIMIT 1201`;
 export const COHORT_COUNTS_SQL=`WITH observed AS (SELECT * FROM jsonb_to_recordset($1::jsonb)
  AS x(person uuid,observed_at timestamptz)), target AS (
- SELECT DISTINCT ON (mv.membership_id,v.bill_id) mv.membership_id,m.legislator_id,v.bill_id,v.occurred_on,
+ SELECT DISTINCT ON (mv.membership_id,v.bill_id) mv.membership_id,m.legislator_id,v.bill_id,v.id AS event_id,v.occurred_on,
  (m.starts_on IS NOT NULL AND m.ends_on IS NOT NULL AND m.starts_on<=v.occurred_on AND m.ends_on>=v.occurred_on) AS service_proven
  FROM member_votes mv JOIN vote_events v ON v.id=mv.vote_event_id JOIN memberships m ON m.id=mv.membership_id
  JOIN chambers c ON c.id=v.chamber_id JOIN legislative_sessions s ON s.id=v.session_id
@@ -63,7 +63,9 @@ export const COHORT_COUNTS_SQL=`WITH observed AS (SELECT * FROM jsonb_to_records
  count(*) FILTER(WHERE NOT service_proven)::int AS unknown_service_targets,
  count(*) FILTER(WHERE service_proven AND prior_text)::int AS qualified_member_bills,
  count(DISTINCT bill_id) FILTER(WHERE service_proven AND prior_text)::int AS qualified_bills,
- count(DISTINCT legislator_id) FILTER(WHERE service_proven AND prior_text)::int AS qualified_people
+ count(DISTINCT legislator_id) FILTER(WHERE service_proven AND prior_text)::int AS qualified_people,
+ encode(sha256(convert_to(coalesce(string_agg(concat_ws('|',membership_id,bill_id,event_id,occurred_on),E'\\n' ORDER BY membership_id,bill_id,event_id)
+ FILTER(WHERE service_proven AND prior_text),''),'UTF8')),'hex') AS cohort_sha256
  FROM classified GROUP BY 1 ORDER BY 1 LIMIT 6`;
 export const MEDIA_CONTEXT_SQL=`SELECT sd.id::text AS "sourceId",sd.content_sha256 AS "sourceSha",ei.metadata,
  ei.evidence_kind AS kind,ei.stance,ei.published_at AS "publishedAt"
@@ -116,15 +118,15 @@ export const FINANCE_CANONICAL_SQL=`WITH rows AS (
  LEFT JOIN chambers c ON c.id=mem.chamber_id
  WHERE sd.source_kind IN ('campaign_finance_candidate_contribution_bulk','campaign_finance_candidate_expenditure_bulk','campaign_finance_independent_expenditure_bulk','campaign_finance_bulk')
  AND ei.metadata->>'year' IN ('2021','2022','2023','2024','2025')
- AND (c.slug='senate' OR (c.slug IS NULL AND ei.metadata->>'chamber'='senate')))
+ AND (c.slug='senate' OR (c.slug IS NULL AND ei.metadata->>'chamber'='senate'))), identified AS (SELECT rows.*,CASE WHEN family='independent_expenditure' THEN m->>'spenderRegistrationNumber' ELSE m->>'filerRegistrationNumber' END AS canonical_filer FROM rows)
  SELECT m->>'year' AS year,family,count(*)::int AS evidence_copies,
- count(DISTINCT (m->>'filerRegistrationNumber',m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND m->>'filerRegistrationNumber' ~ '^[0-9]{3,8}$')::int AS canonical_transactions,
- count(*) FILTER(WHERE NOT coalesce(m->>'rowKey' ~ '^[a-f0-9]{64}$' AND m->>'filerRegistrationNumber' ~ '^[0-9]{3,8}$',false))::int AS copies_missing_canonical_identity,
+ count(DISTINCT (canonical_filer,m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND canonical_filer ~ '^[0-9]{3,8}$')::int AS canonical_transactions,
+ count(*) FILTER(WHERE NOT coalesce(m->>'rowKey' ~ '^[a-f0-9]{64}$' AND canonical_filer ~ '^[0-9]{3,8}$',false))::int AS copies_missing_canonical_identity,
  count(*) FILTER(WHERE m->>'asOfEligible'='true')::int AS legacy_eligible_copies,
- count(*) FILTER(WHERE m->>'contributorType' IS NULL OR m->>'contributorType'='')::int AS unclassified_contributor_type_copies,
- count(*) FILTER(WHERE EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS copies_in_indexed_committee_years,
- count(DISTINCT (m->>'filerRegistrationNumber',m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND m->>'filerRegistrationNumber' ~ '^[0-9]{3,8}$' AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS canonical_in_indexed_committee_years
- FROM rows GROUP BY 1,2 ORDER BY 1,2 LIMIT 21`;
+ count(*) FILTER(WHERE family='candidate_contribution' AND (m->>'contributorType' IS NULL OR m->>'contributorType'=''))::int AS unclassified_contributor_type_copies,
+ count(*) FILTER(WHERE family IN ('candidate_contribution','candidate_expenditure') AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS copies_in_indexed_committee_years,
+ count(DISTINCT (canonical_filer,m->>'year',m->>'rowKey')) FILTER(WHERE m->>'rowKey' ~ '^[a-f0-9]{64}$' AND canonical_filer ~ '^[0-9]{3,8}$' AND family IN ('candidate_contribution','candidate_expenditure') AND EXISTS(SELECT 1 FROM cfb_official_senate_pdf_versions v WHERE v.committee_registration=m->>'filerRegistrationNumber' AND v.report_year::text=m->>'year'))::int AS canonical_in_indexed_committee_years
+ FROM identified GROUP BY 1,2 ORDER BY 1,2 LIMIT 21`;
 export const FINANCE_REGISTRY_SQL=`SELECT report_year AS year,count(*)::int AS versions,count(DISTINCT full_original_pdf_sha256)::int AS pdf_bodies,
  count(*) FILTER(WHERE historical_exact_version_public_by_proven)::int AS tracked_historical_version_public_by_proofs,
  count(*) FILTER(WHERE EXISTS(SELECT 1 FROM cfb_finance_pdf_body_captures b WHERE b.pdf_sha256=full_original_pdf_sha256 AND b.byte_length=full_original_pdf_bytes))::int AS versions_with_cached_bodies
@@ -154,5 +156,22 @@ export function safeGroupedCounts(rows,groups,metrics,{max=100,allowed={}}={}){
   for(const k of groups)if(allowed[k]&&!allowed[k].includes(r[k]))throw Error('Unexpected aggregate scope');
   for(const k of metrics)if(!Number.isSafeInteger(r[k])||r[k]<0||r[k]>3000000)throw Error('Invalid aggregate count');
  }
+ return rows;
+}
+// CASE guards the cast itself: planner reordering of a chamber join must not
+// attempt to cast House districts such as 1A while auditing Senate members.
+export const CURRENT_VERIFIED_MEMBER_SQL=`SELECT m.id::text AS "membershipId",
+ CASE WHEN m.district ~ '^[0-9]{1,2}$' THEN m.district::int END AS district,l.name FROM memberships m
+ JOIN legislators l ON l.id=m.legislator_id JOIN legislative_sessions s ON s.id=m.session_id JOIN chambers c ON c.id=m.chamber_id
+ WHERE s.slug='2025-2026' AND c.slug='senate'
+ AND CASE WHEN m.district ~ '^[0-9]{1,2}$' THEN m.district::int END=ANY($1::int[]) ORDER BY district LIMIT 151`;
+
+export function safeCohortCounts(rows){
+ if(!Array.isArray(rows)||rows.length>5)throw Error('Unbounded cohort years');
+ const counts=rows.map(({cohort_sha256,...r})=>{
+  if(!/^[a-f0-9]{64}$/.test(cohort_sha256||''))throw Error('Invalid aggregate cohort fingerprint');
+  return r;
+ });
+ safeGroupedCounts(counts,['year'],['target_member_bills','unknown_service_targets','qualified_member_bills','qualified_bills','qualified_people'],{allowed:{year:[2021,2022,2023,2024,2025]},max:5});
  return rows;
 }

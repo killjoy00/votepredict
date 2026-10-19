@@ -6,6 +6,7 @@ on:
       - src/evidence/senate-864-completion-audit.mjs
       - scripts/audit-senate-864-completion-readonly.mjs
       - tests/senate-864-completion-audit.test.mjs
+      - tests/senate-864-completion-runtime.test.mjs
       - docs/evaluation/senate-864-website-experiment-protocol-v1.json
   push:
     branches: [main]
@@ -14,6 +15,7 @@ on:
       - src/evidence/senate-864-completion-audit.mjs
       - scripts/audit-senate-864-completion-readonly.mjs
       - tests/senate-864-completion-audit.test.mjs
+      - tests/senate-864-completion-runtime.test.mjs
       - docs/evaluation/senate-864-website-experiment-protocol-v1.json
 permissions:
   contents: read
@@ -52,7 +54,7 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - run: npm run db:migrate
       - run: npm run check
-      - run: node --import tsx --test tests/senate-864-completion-audit.test.mjs
+      - run: node --import tsx --test tests/senate-864-completion-audit.test.mjs tests/senate-864-completion-runtime.test.mjs
       - run: node --import tsx scripts/audit-senate-864-completion-readonly.mjs --preflight
   protected-readonly-reconciliation:
     needs: independent-keyless-verification
@@ -63,7 +65,7 @@ jobs:
       github.event.repository.full_name == 'killjoy00/votepredict' &&
       github.event.after == github.sha && github.event.head_commit.id == github.sha &&
       github.event.forced != true && github.event.deleted != true &&
-      contains(github.event.head_commit.message, 'SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V1')
+      contains(github.event.head_commit.message, 'SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V2')
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 20
