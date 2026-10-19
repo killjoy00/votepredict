@@ -1,0 +1,81 @@
+name: '#946 / #987 cross-ingester original archive READ ONLY and shadow V3'
+on:
+  pull_request:
+    paths:
+      - src/evaluation/senate-media-track-d-historic-shadow.ts
+      - src/evaluation/senate-media-track-d-cross-ingester-audit.ts
+      - src/evaluation/senate-media-track-d-public-speaker-timing-review.ts
+      - scripts/audit-senate-media-track-d-cross-ingester-readonly-v3.ts
+      - tests/senate-media-track-d-historic-shadow-and-cross-ingester.test.ts
+      - .github/workflows/senate-media-track-d-946-987-cross-ingester-shadow-v3.yml
+      - docs/evaluation/senate-media-track-d-946-987-research-shadow-20261018.md
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: senate-media-track-d-cross-source-v3-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  keyless-shadow-review:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+       (github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        contains(github.event.head_commit.message, 'TRACK_D_946_987_CROSS_INGESTER_READONLY_SHADOW_V3_20261018')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Independently test historic URL admission, original SHA, alias and scope safety
+        run: |
+          node --import tsx --test tests/senate-media-track-d-historic-shadow-and-cross-ingester.test.ts
+          node --import tsx scripts/audit-senate-media-track-d-cross-ingester-readonly-v3.ts --preflight
+          node --import tsx scripts/audit-senate-media-track-d-cross-ingester-readonly-v3.ts --shadow-report > /tmp/track-d-public-research-shadow.json
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  protected-cross-ingester-audit:
+    needs: [keyless-shadow-review]
+    if: >-
+      needs.keyless-shadow-review.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'TRACK_D_946_987_CROSS_INGESTER_READONLY_SHADOW_V3_20261018')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      TRACK_D_V3_SCOPE: ALL_STORED_SOURCE_KINDS_AGGREGATES_ONLY
+      TRACK_D_V3_PUBLIC_CHECKS_PASSED: ${{ needs.keyless-shadow-review.result == 'success' && 'true' || 'false' }}
+      TRACK_D_V3_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'TRACK_D_946_987_CROSS_INGESTER_READONLY_SHADOW_V3_20261018') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert exact reviewed main source commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: One guarded REPEATABLE READ READ ONLY transaction with explicit ROLLBACK; aggregate matched source counts only
+        run: node --import tsx scripts/audit-senate-media-track-d-cross-ingester-readonly-v3.ts --protected
