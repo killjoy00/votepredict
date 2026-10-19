@@ -1,0 +1,244 @@
+name: Issue 864 frozen website experiment and existing committee source readback
+on:
+  pull_request:
+    paths: ['.github/workflows/senate-864-website-experiment-v2.yml', 'research/website864/**', 'scripts/evaluate-senate-864-website-v2.mjs', 'scripts/audit-senate-864-existing-committee-originals.mjs', 'docs/evaluation/source-proof/senate-864-website-cohort-v2-pre-outcome.json', 'tests/senate-864-website-experiment.test.mjs']
+  push:
+    branches: [main]
+    paths: ['.github/workflows/senate-864-website-experiment-v2.yml', 'research/website864/**', 'scripts/evaluate-senate-864-website-v2.mjs', 'scripts/audit-senate-864-existing-committee-originals.mjs', 'docs/evaluation/source-proof/senate-864-website-cohort-v2-pre-outcome.json', 'tests/senate-864-website-experiment.test.mjs']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: senate864-isolated-website-v2-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  independent-keyless-verification:
+    if: github.repository == 'killjoy00/votepredict' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run typecheck
+      - run: node --import tsx --test tests/senate-864-website-experiment.test.mjs tests/senate-864-website-expansion.test.mjs tests/senate-864-protected-source-db-parity.test.ts
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: pip install numpy==2.2.6 scipy==1.15.3 scikit-learn==1.6.1
+      - run: python -m unittest discover -s research/website864 -p 'test_*.py'
+      - name: Four original 2022-25 electronic Minutes PDF source manifests
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11674729430,11674568363,11675315164,11675014092'
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+          merge-multiple: true
+      - name: First six original low-embedded-text PDF OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11676072623'
+          repository: killjoy00/votepredict
+          run-id: 38068730892
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Second 24 original OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11675539378,11676162360,11675569424,11675584270'
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Next 25 original OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11678185896,11677986160'
+          repository: killjoy00/votepredict
+          run-id: 38073521109
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Final 152 original OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11677439544,11678168763,11677629231,11677879406,11678358764,11678323861,11677409668,11678273765,11677519671'
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Original 2025 Judiciary 8-choice full source proof
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11676168658'
+          repository: killjoy00/votepredict
+          run-id: 38070395356
+          github-token: ${{ github.token }}
+          path: artifacts/judiciary
+          merge-multiple: true
+      - name: Verify previously acquired original source manifests without re-downloading PDFs
+        run: node --import tsx scripts/audit-senate-864-existing-committee-originals.mjs --preflight
+  protected-isolated-website-experiment:
+    needs: independent-keyless-verification
+    if: >-
+      needs.independent-keyless-verification.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' && github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' && github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha && github.event.head_commit.id == github.sha &&
+      github.event.forced != true && github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'SENATE864_WEBSITE_ISOLATED_OUTCOME_EXPERIMENT_V2')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      SENATE864_INDEPENDENT_MAIN: ${{ needs.independent-keyless-verification.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact independently verified main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: pip install numpy==2.2.6 scipy==1.15.3 scikit-learn==1.6.1
+      - name: Verified read-only frozen cohort, rollback, isolated private-input evaluation
+        run: node --import tsx scripts/evaluate-senate-864-website-v2.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate864-website-experiment-v2
+          path: artifacts/senate864-website-experiment-v2.json
+          if-no-files-found: error
+          retention-days: 14
+  protected-existing-committee-readback:
+    needs: independent-keyless-verification
+    if: >-
+      needs.independent-keyless-verification.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' && github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' && github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha && github.event.head_commit.id == github.sha &&
+      github.event.forced != true && github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'SENATE864_COMMITTEE_EXISTING_ORIGINALS_READBACK_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      SENATE864_INDEPENDENT_MAIN: ${{ needs.independent-keyless-verification.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact independently verified main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Four original 2022-25 electronic Minutes PDF source manifests
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11674729430,11674568363,11675315164,11675014092'
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+          merge-multiple: true
+      - name: First six original low-embedded-text PDF OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11676072623'
+          repository: killjoy00/votepredict
+          run-id: 38068730892
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Second 24 original OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11675539378,11676162360,11675569424,11675584270'
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Next 25 original OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11678185896,11677986160'
+          repository: killjoy00/votepredict
+          run-id: 38073521109
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Final 152 original OCR proofs
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11677439544,11678168763,11677629231,11677879406,11678358764,11678323861,11677409668,11678273765,11677519671'
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+          merge-multiple: true
+      - name: Original 2025 Judiciary 8-choice full source proof
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11676168658'
+          repository: killjoy00/votepredict
+          run-id: 38070395356
+          github-token: ${{ github.token }}
+          path: artifacts/judiciary
+          merge-multiple: true
+      - run: node --import tsx scripts/audit-senate-864-existing-committee-originals.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate864-existing-committee-readback
+          path: artifacts/senate864-existing-committee-readback.json
+          if-no-files-found: error
+          retention-days: 14
