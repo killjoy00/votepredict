@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {
   REPO,TEXT_WORKFLOW_ID,TEXT_WORKFLOW_PATH,WATCHDOG_CRON,
   validateGitHubEvent,eligibleCollectorRuns,decideBillTextRecovery,
@@ -107,4 +108,15 @@ test('skip dispatch on completed backlog and cool down when source throttled',()
     'official_source_throttle_cooldown');
   assert.equal(applyReceiptGuard(due,throttled,NOW,run(370)).dispatch,true);
   assert.equal(applyReceiptGuard(due,null,NOW,run(90)).dispatch,true);
+});
+
+// Pushes can be frequent during research; degrade visibly without a per-push email.
+// The hourly and manual watchdog remain strict, and the collector still fails normally.
+test('hourly watchdog remains strict while main-push degraded runs are non-fatal',()=>{
+  const yaml=readFileSync(new URL('../.github/workflows/senate-official-bill-text-watchdog.yml',import.meta.url),'utf8');
+  assert.match(yaml,/schedule:\\n\\s+- cron: '13 \\* \\* \\* \\*'/);
+  assert.match(yaml,/\\n  actions: write\\n/);
+  assert.match(yaml,/name: Check live collection receipts and dispatch only after idle\\n\\s+continue-on-error: \\$\\{\\{ github\\.event_name == 'push' \\}\\}\\n\\s+env:/);
+  assert.equal((yaml.match(/continue-on-error:/g)??[]).length,1);
+  assert.match(yaml,/run: node scripts\\/senate-official-bill-text-watchdog\\.mjs/);
 });
