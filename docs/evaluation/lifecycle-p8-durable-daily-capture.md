@@ -13,6 +13,8 @@ The source/capture event date and the first PostgreSQL acceptance clock are **se
 
 ## Operational health and actual alerts
 
+**Real-schema first-write gate:** a public-schema first capture is accepted only from the official-receipt source class and only for the *current Chicago day as measured by the PostgreSQL server*. Test-only 2027 synthetic snapshots are accepted solely in a uniquely named throwaway integration schema with an explicit localhost test database. A same-content retry of an already accepted day preserves its first timestamp even on subsequent dates; a missing earlier day cannot be inserted later.
+
 Daily snapshot health is a **supplied-list diagnostic only**. The report always marks independent official bill-universe verification FALSE. Missing count zero is NOT a claim of statewide official completeness, and the 95% operational process-source warning threshold must not substitute for the frozen P8 95/90/95% prospective evaluation admission criteria.
 
 A future authorized writer will call the durable append API after collecting and independently source-attesting the authoritative 2027 originals and calendar. It should print the safe health summary/annotations from the returned receipt to its GitHub job, and explicitly arrange issue/on-call notification delivery. The current formatter is not a scheduled monitor or email sender. The read-only heartbeat has a collectionExpected flag; setting this to false while the P8 program is inactive prevents false alerts. No automated alert delivery is claimed yet.
