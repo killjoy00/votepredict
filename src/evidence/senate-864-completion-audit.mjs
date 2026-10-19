@@ -47,7 +47,7 @@ export const COMPLETION_WEBSITE_SQL=`SELECT ei.membership_id::text AS "membershi
  OR ei.metadata->>'experimentalWebsiteTextForHistoricalEvaluation'='true' ORDER BY ei.id LIMIT 1201`;
 export const COHORT_COUNTS_SQL=`WITH observed AS (SELECT * FROM jsonb_to_recordset($1::jsonb)
  AS x(person uuid,observed_at timestamptz)), target AS (
- SELECT DISTINCT ON (mv.membership_id,v.bill_id) mv.membership_id,m.legislator_id,v.bill_id,v.occurred_on,
+ SELECT DISTINCT ON (mv.membership_id,v.bill_id) mv.membership_id,m.legislator_id,v.bill_id,v.id AS event_id,v.occurred_on,
  (m.starts_on IS NOT NULL AND m.ends_on IS NOT NULL AND m.starts_on<=v.occurred_on AND m.ends_on>=v.occurred_on) AS service_proven
  FROM member_votes mv JOIN vote_events v ON v.id=mv.vote_event_id JOIN memberships m ON m.id=mv.membership_id
  JOIN chambers c ON c.id=v.chamber_id JOIN legislative_sessions s ON s.id=v.session_id
@@ -63,7 +63,9 @@ export const COHORT_COUNTS_SQL=`WITH observed AS (SELECT * FROM jsonb_to_records
  count(*) FILTER(WHERE NOT service_proven)::int AS unknown_service_targets,
  count(*) FILTER(WHERE service_proven AND prior_text)::int AS qualified_member_bills,
  count(DISTINCT bill_id) FILTER(WHERE service_proven AND prior_text)::int AS qualified_bills,
- count(DISTINCT legislator_id) FILTER(WHERE service_proven AND prior_text)::int AS qualified_people
+ count(DISTINCT legislator_id) FILTER(WHERE service_proven AND prior_text)::int AS qualified_people,
+ encode(sha256(convert_to(coalesce(string_agg(concat_ws('|',membership_id,bill_id,event_id,occurred_on),E'\\n' ORDER BY membership_id,bill_id,event_id)
+ FILTER(WHERE service_proven AND prior_text),''),'UTF8')),'hex') AS cohort_sha256
  FROM classified GROUP BY 1 ORDER BY 1 LIMIT 6`;
 export const MEDIA_CONTEXT_SQL=`SELECT sd.id::text AS "sourceId",sd.content_sha256 AS "sourceSha",ei.metadata,
  ei.evidence_kind AS kind,ei.stance,ei.published_at AS "publishedAt"
@@ -163,3 +165,13 @@ export const CURRENT_VERIFIED_MEMBER_SQL=`SELECT m.id::text AS "membershipId",
  JOIN legislators l ON l.id=m.legislator_id JOIN legislative_sessions s ON s.id=m.session_id JOIN chambers c ON c.id=m.chamber_id
  WHERE s.slug='2025-2026' AND c.slug='senate'
  AND CASE WHEN m.district ~ '^[0-9]{1,2}$' THEN m.district::int END=ANY($1::int[]) ORDER BY district LIMIT 151`;
+
+export function safeCohortCounts(rows){
+ if(!Array.isArray(rows)||rows.length>5)throw Error('Unbounded cohort years');
+ const counts=rows.map(({cohort_sha256,...r})=>{
+  if(!/^[a-f0-9]{64}$/.test(cohort_sha256||''))throw Error('Invalid aggregate cohort fingerprint');
+  return r;
+ });
+ safeGroupedCounts(counts,['year'],['target_member_bills','unknown_service_targets','qualified_member_bills','qualified_bills','qualified_people'],{allowed:{year:[2021,2022,2023,2024,2025]},max:5});
+ return rows;
+}

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {Pool} from 'pg';
 import {readFileSync} from 'node:fs';
 import {auditWebsiteReadback,mediaAccounting,safeGroupedCounts,COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,
- MEDIA_CONTEXT_SQL,FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL} from '../src/evidence/senate-864-completion-audit.mjs';
+ MEDIA_CONTEXT_SQL,FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,safeCohortCounts} from '../src/evidence/senate-864-completion-audit.mjs';
 import {websiteEvidenceDraft} from '../src/evidence/senate-864-website-signal-neon.mjs';
 const id='11111111-2222-4333-8444-555555555555',person='aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
 function fixtures(){
@@ -82,4 +82,11 @@ test('Senate member query safely handles nonnumeric House district data regardle
   assert.equal(r.rows.length,1);assert.equal(r.rows[0].district,1);
   assert.match(CURRENT_VERIFIED_MEMBER_SQL,/CASE WHEN m.district/);
  }finally{await db.query('ROLLBACK');db.release();await pool.end();}
+});
+
+test('prepared target cohort has an aggregate fingerprint and cannot silently drift by count alone',()=>{
+ const row={year:2024,target_member_bills:20,unknown_service_targets:0,qualified_member_bills:10,qualified_bills:5,qualified_people:2,cohort_sha256:'a'.repeat(64)};
+ assert.equal(safeCohortCounts([row])[0].cohort_sha256,'a'.repeat(64));
+ assert.throws(()=>safeCohortCounts([{...row,cohort_sha256:'private-row-id'}]),/fingerprint/);
+ assert.match(COHORT_COUNTS_SQL,/sha256/);assert.match(COHORT_COUNTS_SQL,/ORDER BY membership_id,bill_id,event_id/);
 });

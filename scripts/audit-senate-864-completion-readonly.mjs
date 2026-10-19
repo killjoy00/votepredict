@@ -14,7 +14,7 @@ import {getTrackDHistoricalShadowPins,getTrackDPublicSpeakerTimingQueue} from '.
 import {TRACK_D_CROSS_SOURCE_SQL,summarizeTrackDCrossSource} from '../src/evaluation/senate-media-track-d-cross-ingester-audit.ts';
 import {buildSenate864ReconciliationPlan,safeSenate864Summary,assertVerifiedSenate864Ledger} from '../src/evidence/senate-864-2026-verified-positions.mjs';
 import {auditWebsiteReadback,mediaAccounting,sha,COMPLETION_WEBSITE_SQL,COHORT_COUNTS_SQL,MEDIA_CONTEXT_SQL,
- FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,safeGroupedCounts} from '../src/evidence/senate-864-completion-audit.mjs';
+ FINANCE_CANONICAL_SQL,FINANCE_REGISTRY_SQL,COMMITTEE_YEAR_SQL,DIRECT_STATEMENT_SQL,CURRENT_VERIFIED_MEMBER_SQL,safeGroupedCounts,safeCohortCounts} from '../src/evidence/senate-864-completion-audit.mjs';
 export const MARKER='SENATE_864_AUTHORITATIVE_COMPLETION_READBACK_20261019_V2';
 const read=p=>JSON.parse(readFileSync(p,'utf8'));
 export function completionInputs(){
@@ -45,8 +45,8 @@ export async function completionAudit(client,target,inputs,onStage=()=>{}){
   const website=auditWebsiteReadback(stored,plans,personByMembership);
   const qualified=website.privateDeduplicated;
   onStage('pre_vote_cohort_count_query');
-  const cohort=integerRows((await client.query(COHORT_COUNTS_SQL,[JSON.stringify(qualified.map(p=>({person:p.legislatorId,observed_at:p.observedAt})))])).rows,
-   ['year'],['target_member_bills','unknown_service_targets','qualified_member_bills','qualified_bills','qualified_people'],{year:[2021,2022,2023,2024,2025]},5);
+  const cohort=safeCohortCounts((await client.query(COHORT_COUNTS_SQL,[JSON.stringify(qualified.map(p=>({person:p.legislatorId,observed_at:p.observedAt})))])).rows);
+  onStage('exact_finance_registry');
   const finance={};
   onStage('exact_finance_registry');
   const registry=registry830();
@@ -106,7 +106,7 @@ export async function completionAudit(client,target,inputs,onStage=()=>{}){
   await client.query('ROLLBACK');active=false;
   return {version:'senate864-authoritative-readback-v1',auditedAt:new Date().toISOString(),reviewedCommit:process.env.GITHUB_SHA,
    protocolSha256:inputs.protocolSha256,verifiedRepeatableReadReadOnly:true,explicitRollback:true,noWritesOrOutcomeTesting:true,
-   website:website.summary,websiteHoldReasons:inputs.excerpts.holdCounts,preparedCohort:cohort,finance,committee,media};
+   website:{...website.summary,sourcePlanSha256:sha(JSON.stringify(qualified.map(p=>[p.key,p.legislatorId,p.sourceSha,p.observedAt,sha(p.literal)])))},websiteHoldReasons:inputs.excerpts.holdCounts,preparedCohort:cohort,finance,committee,media};
  }finally{if(active)await client.query('ROLLBACK')}
 }
 async function main(){
