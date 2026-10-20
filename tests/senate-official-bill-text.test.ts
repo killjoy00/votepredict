@@ -5,7 +5,8 @@ import { Client } from 'pg';
 import { classifyReadbackFailure, withFreshPostCommitReadback } from '../src/operations/senate-official-bill-text-readback.js';
 import {
   captureOfficialRevisorHtml,discoverOfficialVersionLeads,extractLiteralAmendmentBlocks,
-  isOfficialRevisorVersionUrl,
+  isOfficialRevisorVersionUrl, officialVersionHttpBudget,
+  VERIFIED_LARGE_OFFICIAL_VERSION_URLS, EXHAUSTED_LARGE_VERSION_RETRY_URLS,
 } from '../src/operations/senate-official-bill-text.js';
 
 const root='https://www.revisor.mn.gov/bills/93/2023/0/HF/100/';
@@ -19,6 +20,22 @@ const official=String.raw`<h2>Bill Text Versions</h2><p>Engrossments</p>
 <h2>Conference Committee Reports</h2>
 <a href="/bills/93/2023/0/HF/100/versions/ccr/0/">CCR-HF0100</a> Posted on 05/16/2023 |
 <a href="/bills/93/2023/0/HF/100/versions/ccr/A/">CCR-HF0100A</a> Posted on 05/17/2023 |`;
+
+
+test('only six independently verified official oversized versions get a larger safe cap',()=>{
+  assert.equal(VERIFIED_LARGE_OFFICIAL_VERSION_URLS.length,6);
+  assert.equal(new Set(VERIFIED_LARGE_OFFICIAL_VERSION_URLS).size,6);
+  for(const url of VERIFIED_LARGE_OFFICIAL_VERSION_URLS)
+    assert.deepEqual(officialVersionHttpBudget(url),{maxBytes:32_000_000,timeoutMs:60_000});
+  assert.deepEqual([...EXHAUSTED_LARGE_VERSION_RETRY_URLS],
+    [...VERIFIED_LARGE_OFFICIAL_VERSION_URLS].slice(0,2));
+  for(const url of [
+    'https://www.revisor.mn.gov/bills/94/2025/0/HF/1143/versions/2/',
+    'https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/3/',
+    'https://www.revisor.mn.gov/bills/92/2021/0/SF/2360/',
+    'https://not-revisor.example/bills/92/2021/0/SF/2360/versions/2/',
+  ]) assert.deepEqual(officialVersionHttpBudget(url),{maxBytes:8_000_000,timeoutMs:20_000});
+});
 
 test('discovers numeric, UE, numeric CCR and alphabetic CCR exactly as printed',()=>{
   const leads=discoverOfficialVersionLeads(official,root);
