@@ -39,7 +39,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: senate-paper-history-neon-production
+  # PRs are keyless. Their per-PR queue must never evict a pending guarded
+  # main push/schedule verification from GitHub's one-pending-run limit.
+  # Production push/schedule continue to serialize against each other.
+  group: ${{ github.event_name == 'pull_request' && format('senate-paper-history-pr-{0}', github.event.pull_request.number) || 'senate-paper-history-neon-production' }}
   cancel-in-progress: false
 
 jobs:
