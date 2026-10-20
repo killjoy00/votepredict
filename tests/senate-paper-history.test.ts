@@ -77,6 +77,16 @@ test('authenticated page heading between a roll and affirmative list preserves t
  assert.equal(actions[0].yeas,1);
  assert.equal(actions[0].nays,1);
  assert.match(actions[0].ballotSignature??'',/^[0-9a-f]{64}$/);
+
+ for(const variant of ['2023 6889','2023\n6889']){
+  const relayout=journal.replace('20236889',variant);
+  assert.notEqual(stripInterposedSenateJournalRollHeader(relayout),relayout,
+   'Only the independently recognizable Senate page heading is stripped');
+  const [restored]=parseJournalPaperActions(relayout,['Abeler','Boldon']);
+  assert.equal(restored?.ballotSignature,actions[0].ballotSignature,
+   'Whitespace introduced by PDF extraction cannot change any named voter identity');
+ }
+
  const unsafe=journal.replace('59TH DAY]FRIDAY, APRIL 28, 20236889','Unverified page header:');
  assert.equal(stripInterposedSenateJournalRollHeader(unsafe),unsafe);
  assert.equal(parseJournalPaperActions(unsafe,['Abeler','Boldon'])[0].ballotSignature,null,
