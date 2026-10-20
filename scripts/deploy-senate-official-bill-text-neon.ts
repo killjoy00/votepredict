@@ -437,6 +437,381 @@ async function report(db:PoolClient){
       +"WHERE q.status IN ('failed','unavailable') "
       +'GROUP BY s.slug,q.family,q.status,error_category,retry_state '
       +'ORDER BY s.slug DESC,q.family,retry_state,error_category LIMIT 50')).rows;
+
+    // Only public legislative identifiers and official version paths.
+    // Do not emit database UUIDs, source URLs, HTML, or raw error messages.
+    const versionReviewKeys=(await db.query(
+      "SELECT s.slug AS session,q.family,q.status,q.attempts,"
+      +"CASE WHEN b.identifier ~ '^(HF|SF)[1-9][0-9]{0,5}
+      'SELECT s.slug AS session,j.status,count(*)::int AS documents,'
+      +'coalesce(sum(j.snippets_found),0)::int AS snippets,'
+      +'coalesce(sum(j.exact_record_links),0)::int AS exact_record_links,'
+      +'coalesce(sum(j.unresolved_snippets),0)::int AS unresolved '
+      +'FROM senate_official_bill_text_journal_scans j '
+      +'JOIN source_documents d ON d.id=j.source_document_id '
+      +'JOIN legislative_sessions s ON s.id=d.session_id '
+      +'GROUP BY s.slug,j.status ORDER BY s.slug DESC,j.status')).rows;
+    const outstanding=(await db.query(
+      "SELECT (SELECT count(*)::int FROM senate_official_bill_text_discovery WHERE status='pending') AS pending_discovery,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_queue WHERE status='pending') AS pending_versions,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_queue WHERE status='failed') AS failed_versions,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_queue WHERE status='unavailable') AS unavailable_versions,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_discovery WHERE status='failed') AS failed_discovery,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_discovery WHERE status='unavailable') AS unavailable_discovery,"
+      +'(SELECT count(*)::int FROM senate_official_bill_text_record_links) AS exact_amendment_links')).rows[0];
+    const eligible=(await db.query([
+      'WITH bill_ids AS (',
+      ' SELECT DISTINCT m.bill_id FROM senate_raw_vote_bill_mentions m WHERE m.bill_id IS NOT NULL',
+      ' UNION SELECT c.house_bill_id FROM bill_companions c JOIN senate_raw_vote_bill_mentions m ON m.bill_id=c.senate_bill_id',
+      ' UNION SELECT c.senate_bill_id FROM bill_companions c JOIN senate_raw_vote_bill_mentions m ON m.bill_id=c.house_bill_id',
+      ') SELECT s.slug AS session,count(*)::int AS eligible_bills,',
+      "count(*) FILTER(WHERE disc.bill_id IS NULL)::int AS unstaged_bills",
+      ' FROM bill_ids a JOIN bills b ON b.id=a.bill_id',
+      ' JOIN legislative_sessions s ON s.id=b.session_id',
+      " JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'",
+      ' LEFT JOIN senate_official_bill_text_discovery disc ON disc.bill_id=b.id',
+      " WHERE s.slug IN ('2025-2026','2023-2024','2021-2022')",
+      ' GROUP BY s.slug ORDER BY s.slug DESC'
+    ].join('\n'))).rows;
+    const rawDocuments=(await db.query([
+      'SELECT s.slug AS session,count(*)::int AS eligible_documents,',
+      'count(*) FILTER(WHERE j.source_document_id IS NULL)::int AS unscanned_documents,',
+      "count(*) FILTER(WHERE j.status='failed')::int AS failed_documents,",
+      "count(*) FILTER(WHERE j.status='failed' AND j.attempts>=3)::int AS exhausted_document_retries",
+      ' FROM source_documents d',
+      ' JOIN legislative_sessions s ON s.id=d.session_id',
+      " JOIN jurisdictions jur ON jur.id=s.jurisdiction_id AND jur.slug='us-mn'",
+      ' LEFT JOIN senate_official_bill_text_journal_scans j ON j.source_document_id=d.id',
+      " WHERE s.slug IN ('2025-2026','2023-2024','2021-2022')",
+      " AND d.metadata->'rawPrepassageVotes'->>'sourceType'",
+      " IN ('mn_senate_journal','mn_senate_committee_minutes_html','mn_senate_committee_minutes_pdf')",
+      ' AND EXISTS (SELECT 1 FROM senate_raw_vote_bill_mentions m',
+      ' WHERE m.source_document_id=d.id AND m.bill_id IS NOT NULL)',
+      ' GROUP BY s.slug ORDER BY s.slug DESC'
+    ].join('\n'))).rows;
+    return {families,queue,discovery,discoveryFailureKinds,versionFailureKinds,versionReviewKeys,journals,eligible,rawDocuments,outstanding};
+  });
+}
+async function main():Promise<void>{
+  let phase='main_gate',pool:Pool|null=null;
+  try{
+    guard(process.env);
+    const expected=expectedMigrations();
+    phase='existing_neon_primary';
+    const target=await discoverExistingVotePredictNeonConnection({
+      apiKey:process.env.NEON_API_KEY?.trim()??'',
+      projectId:process.env.VOTEPREDICT_NEON_PROJECT_ID?.trim()??'',
+      preferredDatabase:process.env.VOTEPREDICT_MEDIA_EXISTING_DATABASE?.trim()||undefined,
+      requirePrimary:true,
+    });
+    pool=new Pool({host:target.host,port:target.port,user:target.role,
+      password:target.password,database:target.database,ssl:{rejectUnauthorized:true},
+      max:2,connectionTimeoutMillis:15000,statement_timeout:180000,query_timeout:195000,
+      application_name:'votepredict-senate-official-text-raw',
+      options:'-c statement_timeout=180000 -c lock_timeout=5000'});
+    const client=await pool.connect();
+    try{
+      phase='read_only_preflight';
+      await preflight(client,target,expected);
+      phase='additive_migration';
+      const migrationApplied=await migrate(client,expected);
+      phase='read_only_baseline';
+      const baseline=await readOnly(client,async()=>(await client.query<{votes:number;members:number}>(
+        'SELECT (SELECT count(*)::int FROM vote_events) AS votes,'
+        +'(SELECT count(*)::int FROM member_votes) AS members')).rows[0]);
+      const {RevisorPacer}=await import('../src/operations/senate-revisor-pacer.js');
+      const pacer=new RevisorPacer();
+      const counts={staged:0,discovered:0,failedDiscovery:0,unavailableDiscovery:0,
+        versionsRecovered:0,versionsAlreadyStored:0,matchedExistingVersions:0,
+        failedVersions:0,unavailableVersions:0,journalDocuments:0,amendmentBlocks:0,
+        exactAmendmentLinks:0,unresolvedAmendments:0};
+      let throttled=false;
+      let haltedOnDiscoveryFailures=false;
+      let repeatedDiscoveryFailures=0;
+      phase='stage_raw_vote_linked_bills';
+      counts.staged=await stageBills(client);
+      phase='discover_versions';
+      for(const bill of await nextDiscovery(client)){
+        try {
+          const result=await discoverBill(client,bill,pacer);
+          if(result==='complete'){counts.discovered++;repeatedDiscoveryFailures=0;}
+          if(result==='failed'){counts.failedDiscovery++;repeatedDiscoveryFailures++;}
+          if(result==='unavailable'){counts.unavailableDiscovery++;repeatedDiscoveryFailures=0;}
+          // A run with repeated failures and no successes must never silently
+          // exhaust thousands of source retries. Keep queued work resumable.
+          if(repeatedDiscoveryFailures>=8){
+            haltedOnDiscoveryFailures=true;
+            break;
+          }
+        }catch(error){
+          if(error instanceof Throttled){throttled=true;break;}
+          throw error;
+        }
+      }
+      if(!throttled){
+        phase='fetch_immutable_versions';
+        for(const q of await nextVersions(client)){
+          try{
+            const result=await fetchVersion(client,q,pacer);
+            if(result.status==='complete'){
+              if(result.created)counts.versionsRecovered++;
+              else counts.versionsAlreadyStored++;
+              if(result.legacyMatched)counts.matchedExistingVersions++;
+            }
+            if(result.status==='failed')counts.failedVersions++;
+            if(result.status==='unavailable')counts.unavailableVersions++;
+          }catch(error){
+            if(error instanceof Throttled){throttled=true;break;}
+            throw error;
+          }
+        }
+      }
+      // Existing extracted journal/minutes text: no refetch or name resolution.
+      if(!throttled){
+        phase='extract_literal_amendments';
+        for(const doc of await nextDocuments(client)){
+          try{
+            const result=await scanDocument(client,doc);
+            counts.journalDocuments++;counts.amendmentBlocks+=result.found;
+            counts.exactAmendmentLinks+=result.links;
+            counts.unresolvedAmendments+=result.unresolved;
+          }catch{
+            await noteDocumentFailure(client,doc.id);
+          }
+        }
+      }
+      phase='post_commit_readback';
+      // Collection writes above are individually committed. Reconnect for
+      // verification so an old session or transient Neon network reset cannot
+      // hide persisted RAW progress. Never retry a vote-count mismatch.
+      const summary=await withFreshPostCommitReadback(
+        ()=>pool!.connect(),
+        async fresh=>{
+          const after=await readOnly(fresh,async()=>(await fresh.query<{votes:number;members:number}>(
+            'SELECT (SELECT count(*)::int FROM vote_events) AS votes,'
+            +'(SELECT count(*)::int FROM member_votes) AS members')).rows[0]);
+          if(!baseline||!after||baseline.votes!==after.votes||baseline.members!==after.members)
+            throw Error('forbidden_live_vote_counts_changed');
+          return report(fresh);
+        },
+        (attempt,kind)=>console.error('SENATE_OFFICIAL_TEXT_RAW_READBACK_RETRY='
+          +JSON.stringify({attempt,kind})),
+      );
+      const output={status:throttled?'stopped_on_official_throttle'
+          :haltedOnDiscoveryFailures?'stopped_on_repeated_discovery_failures':'bounded_batch_committed',
+        migrationApplied,throttled,haltedOnDiscoveryFailures,pushCanary:PUSH_CANARY,counts,
+        baselineUnchanged:true,...summary,
+        servingInputsUntouched:true};
+      console.log('SENATE_OFFICIAL_TEXT_RAW_READBACK='+JSON.stringify(output));
+      if(process.env.GITHUB_STEP_SUMMARY)
+        appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+          'Minnesota Senate official RAW text (no forecast changes)\n\n'
+          +'State: '+output.status+'\n\n'+JSON.stringify(output,null,2)+'\n');
+      // Operational gate: returning success on repeated failed fetches hid
+      // the 100/100 first-production failure. Keep receipts but flag the run.
+      if(haltedOnDiscoveryFailures)process.exitCode=1;
+    }finally{client.release(true);}
+  }catch(error){
+    const sqlState=typeof (error as {code?:unknown})?.code==='string'
+      && /^[A-Z0-9]{5}$/.test((error as {code:string}).code)
+      ?(error as {code:string}).code:'none';
+    // Never include credentials, network responses or SQL parameters in logs.
+    console.error('SENATE_OFFICIAL_TEXT_RAW_HELD='+JSON.stringify({phase,sqlState,
+      ...(phase==='post_commit_readback'?{kind:classifyReadbackFailure(error)}:{})}));
+    process.exitCode=1;
+  }finally{if(pool)await pool.end().catch(()=>undefined);}
+}
+main().catch(()=>{process.exitCode=1;});
+ "
+      +"THEN b.identifier ELSE 'unrecognized_bill_key' END AS bill,"
+      +"CASE WHEN q.source_locator ~ '^versions/(?:[0-9]+|ue/[0-9]+|ccr/[a-zA-Z0-9]+)/
+      'SELECT s.slug AS session,j.status,count(*)::int AS documents,'
+      +'coalesce(sum(j.snippets_found),0)::int AS snippets,'
+      +'coalesce(sum(j.exact_record_links),0)::int AS exact_record_links,'
+      +'coalesce(sum(j.unresolved_snippets),0)::int AS unresolved '
+      +'FROM senate_official_bill_text_journal_scans j '
+      +'JOIN source_documents d ON d.id=j.source_document_id '
+      +'JOIN legislative_sessions s ON s.id=d.session_id '
+      +'GROUP BY s.slug,j.status ORDER BY s.slug DESC,j.status')).rows;
+    const outstanding=(await db.query(
+      "SELECT (SELECT count(*)::int FROM senate_official_bill_text_discovery WHERE status='pending') AS pending_discovery,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_queue WHERE status='pending') AS pending_versions,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_queue WHERE status='failed') AS failed_versions,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_queue WHERE status='unavailable') AS unavailable_versions,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_discovery WHERE status='failed') AS failed_discovery,"
+      +"(SELECT count(*)::int FROM senate_official_bill_text_discovery WHERE status='unavailable') AS unavailable_discovery,"
+      +'(SELECT count(*)::int FROM senate_official_bill_text_record_links) AS exact_amendment_links')).rows[0];
+    const eligible=(await db.query([
+      'WITH bill_ids AS (',
+      ' SELECT DISTINCT m.bill_id FROM senate_raw_vote_bill_mentions m WHERE m.bill_id IS NOT NULL',
+      ' UNION SELECT c.house_bill_id FROM bill_companions c JOIN senate_raw_vote_bill_mentions m ON m.bill_id=c.senate_bill_id',
+      ' UNION SELECT c.senate_bill_id FROM bill_companions c JOIN senate_raw_vote_bill_mentions m ON m.bill_id=c.house_bill_id',
+      ') SELECT s.slug AS session,count(*)::int AS eligible_bills,',
+      "count(*) FILTER(WHERE disc.bill_id IS NULL)::int AS unstaged_bills",
+      ' FROM bill_ids a JOIN bills b ON b.id=a.bill_id',
+      ' JOIN legislative_sessions s ON s.id=b.session_id',
+      " JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'",
+      ' LEFT JOIN senate_official_bill_text_discovery disc ON disc.bill_id=b.id',
+      " WHERE s.slug IN ('2025-2026','2023-2024','2021-2022')",
+      ' GROUP BY s.slug ORDER BY s.slug DESC'
+    ].join('\n'))).rows;
+    const rawDocuments=(await db.query([
+      'SELECT s.slug AS session,count(*)::int AS eligible_documents,',
+      'count(*) FILTER(WHERE j.source_document_id IS NULL)::int AS unscanned_documents,',
+      "count(*) FILTER(WHERE j.status='failed')::int AS failed_documents,",
+      "count(*) FILTER(WHERE j.status='failed' AND j.attempts>=3)::int AS exhausted_document_retries",
+      ' FROM source_documents d',
+      ' JOIN legislative_sessions s ON s.id=d.session_id',
+      " JOIN jurisdictions jur ON jur.id=s.jurisdiction_id AND jur.slug='us-mn'",
+      ' LEFT JOIN senate_official_bill_text_journal_scans j ON j.source_document_id=d.id',
+      " WHERE s.slug IN ('2025-2026','2023-2024','2021-2022')",
+      " AND d.metadata->'rawPrepassageVotes'->>'sourceType'",
+      " IN ('mn_senate_journal','mn_senate_committee_minutes_html','mn_senate_committee_minutes_pdf')",
+      ' AND EXISTS (SELECT 1 FROM senate_raw_vote_bill_mentions m',
+      ' WHERE m.source_document_id=d.id AND m.bill_id IS NOT NULL)',
+      ' GROUP BY s.slug ORDER BY s.slug DESC'
+    ].join('\n'))).rows;
+    return {families,queue,discovery,discoveryFailureKinds,versionFailureKinds,journals,eligible,rawDocuments,outstanding};
+  });
+}
+async function main():Promise<void>{
+  let phase='main_gate',pool:Pool|null=null;
+  try{
+    guard(process.env);
+    const expected=expectedMigrations();
+    phase='existing_neon_primary';
+    const target=await discoverExistingVotePredictNeonConnection({
+      apiKey:process.env.NEON_API_KEY?.trim()??'',
+      projectId:process.env.VOTEPREDICT_NEON_PROJECT_ID?.trim()??'',
+      preferredDatabase:process.env.VOTEPREDICT_MEDIA_EXISTING_DATABASE?.trim()||undefined,
+      requirePrimary:true,
+    });
+    pool=new Pool({host:target.host,port:target.port,user:target.role,
+      password:target.password,database:target.database,ssl:{rejectUnauthorized:true},
+      max:2,connectionTimeoutMillis:15000,statement_timeout:180000,query_timeout:195000,
+      application_name:'votepredict-senate-official-text-raw',
+      options:'-c statement_timeout=180000 -c lock_timeout=5000'});
+    const client=await pool.connect();
+    try{
+      phase='read_only_preflight';
+      await preflight(client,target,expected);
+      phase='additive_migration';
+      const migrationApplied=await migrate(client,expected);
+      phase='read_only_baseline';
+      const baseline=await readOnly(client,async()=>(await client.query<{votes:number;members:number}>(
+        'SELECT (SELECT count(*)::int FROM vote_events) AS votes,'
+        +'(SELECT count(*)::int FROM member_votes) AS members')).rows[0]);
+      const {RevisorPacer}=await import('../src/operations/senate-revisor-pacer.js');
+      const pacer=new RevisorPacer();
+      const counts={staged:0,discovered:0,failedDiscovery:0,unavailableDiscovery:0,
+        versionsRecovered:0,versionsAlreadyStored:0,matchedExistingVersions:0,
+        failedVersions:0,unavailableVersions:0,journalDocuments:0,amendmentBlocks:0,
+        exactAmendmentLinks:0,unresolvedAmendments:0};
+      let throttled=false;
+      let haltedOnDiscoveryFailures=false;
+      let repeatedDiscoveryFailures=0;
+      phase='stage_raw_vote_linked_bills';
+      counts.staged=await stageBills(client);
+      phase='discover_versions';
+      for(const bill of await nextDiscovery(client)){
+        try {
+          const result=await discoverBill(client,bill,pacer);
+          if(result==='complete'){counts.discovered++;repeatedDiscoveryFailures=0;}
+          if(result==='failed'){counts.failedDiscovery++;repeatedDiscoveryFailures++;}
+          if(result==='unavailable'){counts.unavailableDiscovery++;repeatedDiscoveryFailures=0;}
+          // A run with repeated failures and no successes must never silently
+          // exhaust thousands of source retries. Keep queued work resumable.
+          if(repeatedDiscoveryFailures>=8){
+            haltedOnDiscoveryFailures=true;
+            break;
+          }
+        }catch(error){
+          if(error instanceof Throttled){throttled=true;break;}
+          throw error;
+        }
+      }
+      if(!throttled){
+        phase='fetch_immutable_versions';
+        for(const q of await nextVersions(client)){
+          try{
+            const result=await fetchVersion(client,q,pacer);
+            if(result.status==='complete'){
+              if(result.created)counts.versionsRecovered++;
+              else counts.versionsAlreadyStored++;
+              if(result.legacyMatched)counts.matchedExistingVersions++;
+            }
+            if(result.status==='failed')counts.failedVersions++;
+            if(result.status==='unavailable')counts.unavailableVersions++;
+          }catch(error){
+            if(error instanceof Throttled){throttled=true;break;}
+            throw error;
+          }
+        }
+      }
+      // Existing extracted journal/minutes text: no refetch or name resolution.
+      if(!throttled){
+        phase='extract_literal_amendments';
+        for(const doc of await nextDocuments(client)){
+          try{
+            const result=await scanDocument(client,doc);
+            counts.journalDocuments++;counts.amendmentBlocks+=result.found;
+            counts.exactAmendmentLinks+=result.links;
+            counts.unresolvedAmendments+=result.unresolved;
+          }catch{
+            await noteDocumentFailure(client,doc.id);
+          }
+        }
+      }
+      phase='post_commit_readback';
+      // Collection writes above are individually committed. Reconnect for
+      // verification so an old session or transient Neon network reset cannot
+      // hide persisted RAW progress. Never retry a vote-count mismatch.
+      const summary=await withFreshPostCommitReadback(
+        ()=>pool!.connect(),
+        async fresh=>{
+          const after=await readOnly(fresh,async()=>(await fresh.query<{votes:number;members:number}>(
+            'SELECT (SELECT count(*)::int FROM vote_events) AS votes,'
+            +'(SELECT count(*)::int FROM member_votes) AS members')).rows[0]);
+          if(!baseline||!after||baseline.votes!==after.votes||baseline.members!==after.members)
+            throw Error('forbidden_live_vote_counts_changed');
+          return report(fresh);
+        },
+        (attempt,kind)=>console.error('SENATE_OFFICIAL_TEXT_RAW_READBACK_RETRY='
+          +JSON.stringify({attempt,kind})),
+      );
+      const output={status:throttled?'stopped_on_official_throttle'
+          :haltedOnDiscoveryFailures?'stopped_on_repeated_discovery_failures':'bounded_batch_committed',
+        migrationApplied,throttled,haltedOnDiscoveryFailures,pushCanary:PUSH_CANARY,counts,
+        baselineUnchanged:true,...summary,
+        servingInputsUntouched:true};
+      console.log('SENATE_OFFICIAL_TEXT_RAW_READBACK='+JSON.stringify(output));
+      if(process.env.GITHUB_STEP_SUMMARY)
+        appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+          'Minnesota Senate official RAW text (no forecast changes)\n\n'
+          +'State: '+output.status+'\n\n'+JSON.stringify(output,null,2)+'\n');
+      // Operational gate: returning success on repeated failed fetches hid
+      // the 100/100 first-production failure. Keep receipts but flag the run.
+      if(haltedOnDiscoveryFailures)process.exitCode=1;
+    }finally{client.release(true);}
+  }catch(error){
+    const sqlState=typeof (error as {code?:unknown})?.code==='string'
+      && /^[A-Z0-9]{5}$/.test((error as {code:string}).code)
+      ?(error as {code:string}).code:'none';
+    // Never include credentials, network responses or SQL parameters in logs.
+    console.error('SENATE_OFFICIAL_TEXT_RAW_HELD='+JSON.stringify({phase,sqlState,
+      ...(phase==='post_commit_readback'?{kind:classifyReadbackFailure(error)}:{})}));
+    process.exitCode=1;
+  }finally{if(pool)await pool.end().catch(()=>undefined);}
+}
+main().catch(()=>{process.exitCode=1;});
+ "
+      +"THEN q.source_locator ELSE 'unrecognized_version_key' END AS version,"
+      +"substring(q.status_url FROM '/bills/(?:92|93|94)/(202[1-6])/') AS source_year "
+      +'FROM senate_official_bill_text_queue q '
+      +'JOIN legislative_sessions s ON s.id=q.session_id '
+      +'JOIN bills b ON b.id=q.bill_id '
+      +"WHERE q.status IN ('failed','unavailable') "
+      +'ORDER BY s.slug DESC,q.family,b.identifier,q.source_locator LIMIT 8')).rows;
     const journals=(await db.query(
       'SELECT s.slug AS session,j.status,count(*)::int AS documents,'
       +'coalesce(sum(j.snippets_found),0)::int AS snippets,'
