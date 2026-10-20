@@ -126,7 +126,7 @@ function amountColumnsAgree(source,row){
 export function financeMatches(source,row){
  const contrib=row.subtype==='candidate_contribution_record';
  if(!contrib&&row.subtype!=='candidate_expenditure_record')return [];
- if(contrib&&norm(row.receiptType)!=='contribution'||!contrib&&norm(row.expenditureType)!=='general expenditure')return [];
+ if(contrib&&norm(row.receiptType)!=='contribution'||!contrib&&norm(row.expenditureType)!=='campaign expenditure')return [];
  const candidates=source.filter(s=>(contrib?s.schedule!=='CE':s.schedule==='CE')&&s.date===row.transactionDate&&s.cents===money(row.amount)&&
   nameVariants(s.party).some(n=>nameVariants(contrib?row.contributor:row.vendorName).includes(n))&&
   (s.registration?String(row.contributorRegistrationNumber||'')===s.registration:!contrib||row.contributorType==='Individual')&&
@@ -143,9 +143,9 @@ export function financeFieldAccounting(source,rows){
   if(base.length)out.dateAndPaidAmount++;
   const named=base.filter(s=>nameVariants(s.party).some(n=>nameVariants(name).includes(n)));if(named.length)out.fullCounterparty++;
   if(!name)out.missingCounterparty++;
-  const type=norm(contrib?r.receiptType:r.expenditureType),recognized=contrib?type==='contribution':type==='general expenditure';
+  const type=norm(contrib?r.receiptType:r.expenditureType),recognized=contrib?type==='contribution':type==='campaign expenditure';
   if(recognized)out.recognizedType++;
-  if(recognized&&(contrib?r.receiptType!=='Contribution':r.expenditureType!=='General expenditure'))out.caseOrSpacingOnlyTypeDifference++;
+  if(recognized&&(contrib?r.receiptType!=='Contribution':r.expenditureType!=='Campaign expenditure'))out.caseOrSpacingOnlyTypeDifference++;
   if(!type)out.missingType++;
   if(contrib)continue;
   const vocabulary=type==='general expenditure'?'generalExpenditure':type==='campaign expenditure'?'campaignExpenditure':/^(?:noncampaign|non campaign) disbursements?$/.test(type)?'nonCampaignDisbursement':'otherOrUnrecognized';out.knownTypeVocabulary[vocabulary]++;
