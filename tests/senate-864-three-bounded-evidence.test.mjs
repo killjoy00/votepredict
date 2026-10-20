@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,readdirSync} from 'node:fs';
-import {fixture,sha,validateOriginalQuestions,compareCommittee,financeMatches,compareFinance,assertSafeThreeReceipt,MEDIA_FRAGMENTS} from '../src/evidence/senate-864-three-bounded-evidence.mjs';
+import {fixture,sha,validateOriginalQuestions,compareCommittee,financeMatches,compareFinance,compareMedia,assertSafeThreeReceipt,MEDIA_FRAGMENTS} from '../src/evidence/senate-864-three-bounded-evidence.mjs';
 import {QUERIES,boundedSnapshot} from '../scripts/audit-senate-864-three-bounded-evidence.mjs';
 const doc=()=>({...fixture().documents[1],sourceText:fixture().documents[1].motions.map(m=>m.literal).join(' ')});
 test('fixed reviewed sources have 19 distinct questions / 211 printed names, no voice inference',()=>{
@@ -52,4 +52,12 @@ test('all ten actual SELECTs execute against the migrated schema and roll back',
   const result=await boundedSnapshot(client,proof,target);assert.equal(result.committee.length,4);assert.equal(result.media.fragments.length,3);assert.equal(result.finance.families.length,2);
   assert.equal((await client.query("SELECT current_setting('transaction_read_only') AS ro")).rows[0].ro,'off');
  }finally{client.release()}}finally{await pool.end()}
+});
+
+test('media copies need a single stable person, exact observation clock and non-serving flags',()=>{
+ const pin={sha256:'b'.repeat(64),utc:'2022-10-05T01:59:37Z',sourceUrl:'https://publisher.invalid/article/'},source={pins:[pin],verifiedVersions:2};
+ const roster=[{name:'Jeremy R. Miller',legislator_id:'stable-person'}],row={excerpt:MEDIA_FRAGMENTS[0],source_sha:pin.sha256,kind:'direct_statement',person_id:'stable-person',starts_on:'2021-01-01',ends_on:'2022-12-31',source_url:pin.sourceUrl,metadata:{archiveCapturedAt:pin.utc,modelWeight:0,mechanicallyActionable:false,sameDayEligible:false}};
+ assert.equal(compareMedia(source,[row],roster)[0].verifiedStoredDirectStatementCopies,1);
+ for(const patch of [{person_id:'other-person'},{kind:'context'},{metadata:{...row.metadata,archiveCapturedAt:'2021-11-08T00:00:00Z'}},{metadata:{...row.metadata,modelWeight:1}}])assert.equal(compareMedia(source,[{...row,...patch}],roster)[0].verifiedStoredDirectStatementCopies,0);
+ assert.equal(compareMedia(source,[row],[...roster,{...roster[0],legislator_id:'ambiguous-person'}])[0].verifiedStoredDirectStatementCopies,0);
 });

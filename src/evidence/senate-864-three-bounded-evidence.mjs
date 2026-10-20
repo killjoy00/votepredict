@@ -133,18 +133,30 @@ export function compareFinance(source,copies,links){
    matchedCommitteeFundCanonical:group.filter(([,m])=>financeMatches(source,m).length===1&&financeMatches(source,m)[0].schedule==='PCF').length};
  });
 }
-export function compareMedia(source,rows){
+export function compareMedia(source,rows,roster=[]){
+ const identities=new Set(roster.filter(p=>full(p.name)===full('Jeremy R. Miller')).map(p=>p.legislator_id));
+ const person=identities.size===1?[...identities][0]:null;
  return MEDIA_FRAGMENTS.map((literal,index)=>{
   const candidates=rows.filter(r=>r.excerpt&&r.excerpt.includes(literal));
-  const exact=candidates.filter(r=>source.pins.some(p=>p.sha256===r.source_sha)&&r.kind==='direct_statement'&&r.person_name&&full(r.person_name)===full('Jeremy R. Miller')&&r.metadata?.modelWeight===0&&r.metadata?.mechanicallyActionable===false);
+  const sourceMatched=candidates.filter(r=>source.pins.some(p=>p.sha256===r.source_sha));
+  const exact=sourceMatched.filter(r=>{
+   const pin=source.pins.find(p=>p.sha256===r.source_sha),m=r.metadata||{},sm=r.source_metadata||{};
+   const clock=m.archiveCapturedAt||sm.archiveCapturedAt;
+   const url=sm.originalUrl||m.originalUrl||r.source_url;
+   return person&&r.person_id===person&&r.kind==='direct_statement'&&clock&&Date.parse(clock)===Date.parse(pin.utc)&&
+    (url===pin.sourceUrl||r.source_url?.endsWith('id_/'+pin.sourceUrl))&&
+    r.starts_on&&r.ends_on&&r.starts_on<=pin.utc.slice(0,10)&&r.ends_on>=pin.utc.slice(0,10)&&
+    m.modelWeight===0&&m.mechanicallyActionable===false&&m.sameDayEligible===false;
+  });
   return {fragment:index+1,literalSha256:sha(literal),sourceVersionsWithExplicitPrintedAttribution:source.verifiedVersions,
-   earliestAuthenticatedObservation:source.pins[0].utc,storedLiteralContainingCopies:candidates.length,verifiedStoredDirectStatementCopies:exact.length,
-   contextCopiesContainingLiteral:candidates.filter(r=>r.kind==='context').length,
-   sameLiteralDuplicateCopies:Math.max(0,exact.length-1),disposition:exact.length?'stored_literal_needs_final_clock_and_person_readback':'literal_available_not_verified_as_stored_attributable_statement'};
+   earliestAuthenticatedObservation:source.pins[0].utc,stableHistoricalPersonUniquelyResolved:!!person,
+   storedLiteralContainingCopies:candidates.length,storedExactSourceLiteralCopies:sourceMatched.length,
+   verifiedStoredDirectStatementCopies:exact.length,contextCopiesContainingLiteral:candidates.filter(r=>r.kind==='context').length,
+   sameLiteralDuplicateCopies:Math.max(0,exact.length-1),disposition:exact.length?'stored_literal_person_source_clock_and_nonserving_flags_verified':'literal_available_not_verified_as_stored_attributable_statement'};
  });
 }
 export function assertSafeThreeReceipt(receipt){
  const s=JSON.stringify(receipt);
- if(s.length>45000||/postgres(?:ql)?:\/\/|"(?:password|normalized_member_name|membership_id|rowKey|canonical_row_key|contributor|vendorName|excerpt|source_member_name|person_name)"\s*:/i.test(s))throw Error('Private row/credential output rejected');
+ if(s.length>45000||/postgres(?:ql)?:\/\/|"(?:password|normalized_member_name|membership_id|rowKey|canonical_row_key|contributor|vendorName|excerpt|source_member_name|person_name|person_id|legislator_id)"\s*:/i.test(s))throw Error('Private row/credential output rejected');
  return receipt;
 }
