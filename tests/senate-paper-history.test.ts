@@ -87,6 +87,18 @@ test('authenticated page heading between a roll and affirmative list preserves t
    'Whitespace introduced by PDF extraction cannot change any named voter identity');
  }
 
+
+ const reverse=journal.replace('59TH DAY]FRIDAY, APRIL 28, 20236889',
+  '6890 JOURNAL OF THE SENATE [59TH DAY');
+ assert.notEqual(stripInterposedSenateJournalRollHeader(reverse),reverse);
+ const reversedActions=parseJournalPaperActions(reverse,['Abeler','Boldon']);
+ assert.equal(reversedActions.length,1);
+ assert.equal(reversedActions[0].ballotSignature,actions[0].ballotSignature,
+  'The printed reversed running head is not a senator and does not change the ballot');
+ const hostile=reverse.replace('JOURNAL OF THE SENATE','UNKNOWN PUBLICATION');
+ assert.equal(stripInterposedSenateJournalRollHeader(hostile),hostile);
+ assert.equal(parseJournalPaperActions(hostile,['Abeler','Boldon'])[0].ballotSignature,null);
+
  const unsafe=journal.replace('59TH DAY]FRIDAY, APRIL 28, 20236889','Unverified page header:');
  assert.equal(stripInterposedSenateJournalRollHeader(unsafe),unsafe);
  assert.equal(parseJournalPaperActions(unsafe,['Abeler','Boldon'])[0].ballotSignature,null,
