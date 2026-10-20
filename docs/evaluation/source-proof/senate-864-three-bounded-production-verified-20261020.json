@@ -1,0 +1,86 @@
+{
+  "schema": "senate864-three-bounded-production-v1",
+  "reviewedCommit": "b42133d96a14a8be618a1a6e0a8cfb8b34b1c085",
+  "verifiedAt": "2026-10-20T04:25:45.213Z",
+  "insertedEvents": 12,
+  "insertedChoices": 144,
+  "updatedExistingEvents": 7,
+  "insertedMedia": 3,
+  "insertedFinanceLinks": 0,
+  "upgradedFinanceLinks": 25,
+  "verifiedCommitteeRolls": 19,
+  "verifiedCommitteeChoices": 211,
+  "verifiedMediaFragments": 3,
+  "mediaArticleCount": 1,
+  "mediaPersonCount": 1,
+  "mediaAuthenticatedCopies": 2,
+  "earliestMediaObservation": "2022-10-05T01:59:37Z",
+  "verifiedFinanceLinks": 25,
+  "financeLinkRecords": 28,
+  "nonExactFinanceLinksPreserved": 3,
+  "financeContributionLinks": 18,
+  "financeExpenditureLinks": 7,
+  "financeFullPurposeHolds": 3,
+  "financeHistoricalPublicBy": "UNKNOWN",
+  "financeEvidenceAndEligibilityUnchanged": true,
+  "oldCommitteeChoiceRowsAndEventKeysPreserved": true,
+  "idempotentReplayWouldWrite": 0,
+  "verifiedRepeatableReadReadOnlyBeforeAfter": true,
+  "explicitRollbacks": true,
+  "schemaLedgerVerified": true,
+  "defaultPrimaryIdentityVerified": true,
+  "serializableLockedFingerprintVerified": true,
+  "hearingDateAvailability": true,
+  "sameDayEligible": false,
+  "sourceFixtureSha256": "4b10a95ef840b8b7e15c0aefe78e5262e3691b3b305d3decfdd5cceabb922a24",
+  "committeeYears": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 35,
+      "declared_named_events": 24,
+      "explicit_stored_choices": 217,
+      "hearing_date_timing_events": 2
+    },
+    {
+      "year": 2024,
+      "stored_events": 56,
+      "declared_named_events": 32,
+      "explicit_stored_choices": 297,
+      "hearing_date_timing_events": 10
+    },
+    {
+      "year": 2025,
+      "stored_events": 44,
+      "declared_named_events": 40,
+      "explicit_stored_choices": 440,
+      "hearing_date_timing_events": 16
+    }
+  ],
+  "noFloorModelServingTrainingFreezeOrSchedulerChanges": true,
+  "workflowRun": 39369127511,
+  "protectedJob": 118453549297,
+  "independentJob": 118452744192,
+  "requiredCI": 39369127418,
+  "preflight": {
+    "committeeEvents": 7,
+    "committeeChoices": 67,
+    "financeLinkRecords": 28,
+    "financeExactLinks": 0,
+    "financeUnmatchedLinks": 28,
+    "financeAmbiguousLinks": 0
+  },
+  "priorGuardedAttempt": {
+    "reviewedCommit": "2d14d5eb021dba8222ccb6ef3807e8dda793ba1a",
+    "workflowRun": 39368167690,
+    "protectedJob": 118450569932,
+    "status": "stopped_before_commit_no_changes_committed",
+    "guard": "Finance link source conflict"
+  }
+}
