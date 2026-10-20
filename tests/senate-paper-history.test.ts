@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {Pool} from 'pg';
 import {parseJournalPaperActions,rollMatches,hash,explicitVersionLocator} from '../src/operations/senate-vote-paper-parser.js';
+import {readVoteTextGapAudit,verifyVoteTextGapAudit,VOTE_TEXT_GAP_AUDIT_VERSION,type VoteTextGapAudit} from '../src/operations/senate-vote-text-gap-audit.js';
 import {backfillVotePapers,historyRoster,parseDatedRoleActs,verifyPaperSources,connectExplicitBaseCaptures,storeHistoricalRoles} from '../src/operations/senate-vote-paper-backfill.js';
 import {archiveCaptures,archiveTimestamp,validHistorySource,captureArchivedHistory,recoverHistoricalArchives,statedAssignmentDate,stageHistoryJobs,historyPaperIdentity,legacyHistoryAliases,fetchCanonicalGovernmentSource} from '../src/operations/senate-history-archive.js';
 import {assertPaperHistoryRun,PAPER_HISTORY_MARKER} from '../src/operations/senate-paper-history-gate.js';
@@ -28,6 +29,32 @@ function legislativePdf(number:number):Buffer{
  const xref=Buffer.byteLength(body);body+='xref\n0 6\n0000000000 65535 f \n'+offsets.slice(1).map(n=>String(n).padStart(10,'0')+' 00000 n \n').join('');
  return Buffer.from(body+`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
 }
+
+
+test('vote-to-paper gap buckets reconcile all official events without promoting bill-only text',()=>{
+ const baseline=[{session:'2023-2024',vote_kind:'amendment',official_events:'3',exact_question_links:'1'}];
+ const row=(evidence_stage:string,event_count:number)=>({
+  session:'2023-2024',vote_kind:'amendment',source_family:'senate_journal',evidence_stage,event_count,
+  exact_proposed_text:evidence_stage==='exact_question'?1:0,
+  exact_explicit_base:0,exact_captured_base:0,exact_in_journal_prior_adoptions:0,
+  exact_verified_original:evidence_stage==='exact_question'?1:0,
+ });
+ const audit:VoteTextGapAudit={schemaVersion:VOTE_TEXT_GAP_AUDIT_VERSION,auditedEvents:3,
+  groups:[row('exact_question',1),row('same_source_day_bill_unlinked',2)],
+  examples:[{session:'2023-2024',vote_kind:'amendment',source_family:'senate_journal',
+   evidence_stage:'same_source_day_bill_unlinked',bill:'HF100',vote_day:'2023-04-28',event_count:2}],
+  hf100Pilot:[]};
+ assert.doesNotThrow(()=>verifyVoteTextGapAudit(audit,baseline));
+ assert.throws(()=>verifyVoteTextGapAudit({...audit,auditedEvents:4},baseline),
+  /total does not balance/);
+ assert.throws(()=>verifyVoteTextGapAudit(audit,[{...baseline[0],exact_question_links:'2'}]),
+  /exact official-event reconciliation/);
+ assert.throws(()=>verifyVoteTextGapAudit({...audit,groups:[row('exact_question',1),
+  {...row('same_source_day_bill_unlinked',2),exact_captured_base:1}]},baseline),
+  /incorrectly promoted/);
+ assert.throws(()=>verifyVoteTextGapAudit({...audit,examples:[
+  {...audit.examples[0],bill:'DROP TABLE'}]},baseline),/unsafe case example/);
+});
 
 test('unnumbered proposals preserve voice action, rejected text, order and explicit base without claiming an assembled bill',()=>{
  const actions=parseJournalPaperActions(sequence('123','Alpha','Beta'),['Alpha','Beta']);
@@ -174,6 +201,14 @@ export async function exercisePaperHistory(pool:Pool){
  await verifyPaperSources(pool,30,async sourceUrl=>{if(sourceUrl!==url)throw Error('fixture-only');return {text,pdfSha256:'f'.repeat(64),byteLength:2000}});
  assert.equal((await q('SELECT count(*)::int AS n FROM senate_vote_paper_current_v WHERE bill_id=$1 AND original_source_verified',[bill])).n,5);
  const coverage=(await pool.query("SELECT * FROM senate_vote_paper_coverage_v WHERE session='2023-2024'")).rows;
+ const allCoverage=(await pool.query('SELECT * FROM senate_vote_paper_coverage_v')).rows;
+ const populationAudit=await readVoteTextGapAudit(pool);
+ verifyVoteTextGapAudit(populationAudit,allCoverage);
+ assert.ok(populationAudit.groups.some(x=>x.session==='2023-2024'
+  && x.evidence_stage==='exact_question'&&x.event_count>0));
+ assert.equal(populationAudit.groups.reduce((sum,g)=>sum+g.event_count,0),
+  populationAudit.auditedEvents,'all accepted Senate events must be represented once');
+
  assert.ok(coverage.some(r=>r.vote_kind==='passage'&&Number(r.exact_question_links)>=1));
  assert.ok(coverage.some(r=>r.vote_kind==='amendment'&&Number(r.exact_base_observed_before_day)>=1));
  assert.ok(await stageHistoryJobs(pool)>0);
