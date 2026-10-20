@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {Pool} from 'pg';
-import {parseJournalPaperActions,rollMatches,hash,explicitVersionLocator} from '../src/operations/senate-vote-paper-parser.js';
+import {parseJournalPaperActions,rollMatches,hash,explicitVersionLocator,stripInterposedSenateJournalRollHeader} from '../src/operations/senate-vote-paper-parser.js';
 import {readVoteTextGapAudit,verifyVoteTextGapAudit,VOTE_TEXT_GAP_AUDIT_VERSION,type VoteTextGapAudit} from '../src/operations/senate-vote-text-gap-audit.js';
 import {backfillVotePapers,historyRoster,parseDatedRoleActs,verifyPaperSources,connectExplicitBaseCaptures,storeHistoricalRoles} from '../src/operations/senate-vote-paper-backfill.js';
 import {archiveCaptures,archiveTimestamp,validHistorySource,captureArchivedHistory,recoverHistoricalArchives,statedAssignmentDate,stageHistoryJobs,historyPaperIdentity,legacyHistoryAliases,fetchCanonicalGovernmentSource} from '../src/operations/senate-history-archive.js';
@@ -54,6 +54,33 @@ test('vote-to-paper gap buckets reconcile all official events without promoting 
   /incorrectly promoted/);
  assert.throws(()=>verifyVoteTextGapAudit({...audit,examples:[
   {...audit.examples[0],bill:'DROP TABLE'}]},baseline),/unsafe case example/);
+});
+
+test('authenticated page heading between a roll and affirmative list preserves the full named division',()=>{
+ const journal=[
+  'Senator Pratt moved that H.F. No. 100 be re-referred to the Committee on Finance.',
+  'The question was taken on the adoption of the Pratt motion.',
+  'The roll was called, and there were yeas 1 and nays 1, as follows:',
+  '59TH DAY]FRIDAY, APRIL 28, 20236889Those who voted in the affirmative were:',
+  'Abeler',
+  'Those who voted in the negative were:',
+  'Boldon',
+  'The motion did not prevail.'
+ ].join('\n');
+ const stripped=stripInterposedSenateJournalRollHeader(journal);
+ assert.ok(stripped.includes('as follows:\nThose who voted in the affirmative were:'));
+ assert.ok(journal.includes('59TH DAY]FRIDAY, APRIL 28, 20236889'),'retained original is never rewritten');
+ const actions=parseJournalPaperActions(journal,['Abeler','Boldon']);
+ assert.equal(actions.length,1);
+ assert.equal(actions[0].kind,'procedural');
+ assert.equal(actions[0].billIdentifier,'HF100');
+ assert.equal(actions[0].yeas,1);
+ assert.equal(actions[0].nays,1);
+ assert.match(actions[0].ballotSignature??'',/^[0-9a-f]{64}$/);
+ const unsafe=journal.replace('59TH DAY]FRIDAY, APRIL 28, 20236889','Unverified page header:');
+ assert.equal(stripInterposedSenateJournalRollHeader(unsafe),unsafe);
+ assert.equal(parseJournalPaperActions(unsafe,['Abeler','Boldon'])[0].ballotSignature,null,
+  'unrecognized header cannot silently become a named ballot');
 });
 
 test('unnumbered proposals preserve voice action, rejected text, order and explicit base without claiming an assembled bill',()=>{

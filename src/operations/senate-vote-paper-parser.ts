@@ -23,6 +23,20 @@ export function ballotSignature(votes:readonly Ballot[],yeas:number,nays:number)
   ||normalized.filter(v=>v[1]==='yea').length!==yeas||normalized.filter(v=>v[1]==='nay').length!==nays)return null;
  return hash(JSON.stringify(normalized.sort((a,b)=>a[0].localeCompare(b[0]))));
 }
+/**
+ * Some authenticated Senate Journal PDFs print a page heading directly
+ * between "... as follows:" and "Those who voted in the affirmative were:".
+ * A page header is NOT a voter. Strip only a tightly identified official
+ * header for a SECOND, strict named-ballot parse; retain source character
+ * offsets and all original bytes for source provenance.
+ */
+export function stripInterposedSenateJournalRollHeader(local:string):string {
+ return local.replace(
+  /(The roll was called,\s*and there were yeas\s+\d+\s+and nays\s+\d+,\s*as follows:\s*)\d{1,3}(?:ST|ND|RD|TH)\s+DAY\]\s*(?:MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\s*,\s*[A-Z]+\s+\d{1,2},\s+\d{4}\d{2,6}\s*(?=Those who voted in the affirmative were:)/gi,
+  '$1'
+ );
+}
+
 export interface PaperAction {
  key:string;sequence:number;start:number;end:number;billIdentifier:string;
  kind:'amendment'|'passage'|'conference'|'procedural';motionText:string;questionText:string;
@@ -82,12 +96,25 @@ export function parseJournalPaperActions(text:string,knownNames:readonly string[
   const end=rolls[i+1]?.index??text.length;
   const local=text.slice(Math.max(0,at-2600,(rolls[i-1]?.index??-10000)+(rolls[i-1]?.[0].length??0)),end);
   const parsed=parseSenateJournalText({text:local,sessionKey:'source-only',sourceUrl:'https://example.test/source',knownMemberNames:knownNames,allowRosterMismatch:true});
-  const event=parsed.length===1?parsed[0]:null;
+  let verifiedBallot=parsed.length===1
+   ?ballotSignature(parsed[0].memberVotes.map(v=>({name:v.sourceName,choice:v.choice})),Number(roll[1]),Number(roll[2])):null;
+  if(!verifiedBallot){
+   const adjusted=stripInterposedSenateJournalRollHeader(local);
+   if(adjusted!==local){
+    try{
+     const restored=parseSenateJournalText({text:adjusted,sessionKey:'source-only',
+      sourceUrl:'https://example.test/source',knownMemberNames:knownNames,allowRosterMismatch:false});
+     if(restored.length===1&&restored[0].yeaCount===Number(roll[1])&&restored[0].nayCount===Number(roll[2])){
+      verifiedBallot=ballotSignature(restored[0].memberVotes.map(v=>({name:v.sourceName,choice:v.choice})),Number(roll[1]),Number(roll[2]));
+     }
+    }catch{/* Any incomplete or ambiguous original remains unlinked. */}
+   }
+  }
   const start=Math.max(previous,at-10000)+qStart,key=hash(JSON.stringify([start,at,hash(question)]));
   results.push({key,sequence:0,start,end:at,billIdentifier:bill,kind,motionText:question,questionText:question,
    proposedText:null,baseLocator:explicitVersionLocator(context.slice(qStart)),outcome:'unknown',
    priorAdoptedKeys:[],yeas:Number(roll[1]),nays:Number(roll[2]),
-   ballotSignature:event?ballotSignature(event.memberVotes.map(v=>({name:v.sourceName,choice:v.choice})),Number(roll[1]),Number(roll[2])):null,rollStart:at});
+   ballotSignature:verifiedBallot,rollStart:at});
  }
  results.sort((a,b)=>a.start-b.start);
  const adopted=new Map<string,string[]>();

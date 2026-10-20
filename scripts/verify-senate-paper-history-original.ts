@@ -44,6 +44,12 @@ async function main(){await verifyCanonicalSources();for(const [path,expected] o
   const rejected=actions.find(a=>a.kind==='amendment'&&a.outcome==='rejected')!;
   assert.equal(actions.at(-1)!.priorAdoptedKeys.includes(rejected.key),false);
   assert.equal(actions.filter(a=>a.kind==='amendment'&&a.baseLocator==='versions/ue/1/').length,5);
+  assert.equal(actions.filter(a=>a.ballotSignature!==null).length,7,
+   'Source-authenticated HF100 has seven named Senate divisions, including Pratt 33-34');
+  const procedural=actions.filter(a=>a.kind==='procedural'&&a.yeas===33&&a.nays===34);
+  assert.equal(procedural.length,2);
+  assert.ok(procedural.every(a=>a.ballotSignature!==null),
+   'Both distinct 33-34 procedural questions require full source-derived named ballots');
   console.log('SENATE_PAPER_ORIGINAL_PROOF='+JSON.stringify({source:path,sha256:got.pdfSha256,bytes:got.byteLength,actions:8,proposedPapers:5,adopted:4,rejected:1}));
  }else{
   const roles=parseDatedRoleActs(got.text,null,true);
