@@ -59,7 +59,9 @@ test('unverified original, missing base locator or ambiguous base text stay held
  assert.throws(()=>summarizeHf100TextChain(unverified),/provenance changed/);
  const otherVersion=fixture();otherVersion[1]!.explicitBaseLocator='versions/ue/2/';
  assert.throws(()=>summarizeHf100TextChain(otherVersion),/contract drift/);
- const repeatedBase=fixture();repeatedBase[2]!.baseComponents=2;
+ const repeatedBase=fixture();repeatedBase[1]!.baseComponents=2;
+ // Sequence 3 had one distinct base component; making it ambiguous must
+ // increase the number of proposals without a uniquely authenticated base.
  const held=summarizeHf100TextChain(repeatedBase);
  assert.equal(held.proposalsWithAmbiguousBase,1);
  assert.equal(held.proposalsWithoutUnambiguousBase,2);
