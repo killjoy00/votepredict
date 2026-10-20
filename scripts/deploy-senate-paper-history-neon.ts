@@ -85,6 +85,10 @@ async function main(){
    const gapAudit=await readVoteTextGapAudit(db);
    verifyVoteTextGapAudit(gapAudit,events);
    const caseAudit=await readSenateSourceCaseAudit(db);
+   const hf100Exact=gapAudit.hf100Pilot.filter(x=>x.evidence_stage==='exact_question')
+    .reduce((n,x)=>n+x.event_count,0);
+   if(caseAudit.cases.find(c=>c.bill==='HF100')?.exactBillLinks!==hf100Exact)
+    throw Error('HF100 case audit failed independent exact-event parity');
    const roles=(await db.query(`SELECT s.slug AS session,h.observed_basis,count(*)::int AS observations,count(h.membership_id)::int AS linked_members,
     min(h.observed_on)::text AS first_observed,max(h.observed_on)::text AS last_observed
     FROM senate_role_history_v h JOIN legislative_sessions s ON s.id=h.session_id GROUP BY s.slug,h.observed_basis ORDER BY s.slug,h.observed_basis`)).rows;
