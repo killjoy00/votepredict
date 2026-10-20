@@ -32,7 +32,7 @@ export function ballotSignature(votes:readonly Ballot[],yeas:number,nays:number)
  */
 export function stripInterposedSenateJournalRollHeader(local:string):string {
  return local.replace(
-  /(The roll was called,\s*and there were yeas\s+\d+\s+and nays\s+\d+,\s*as follows:\s*)\d{1,3}(?:ST|ND|RD|TH)\s+DAY\]\s*(?:MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\s*,\s*[A-Z]+\s+\d{1,2},\s+\d{4}\d{2,6}\s*(?=Those who voted in the affirmative were:)/gi,
+  /(The roll was called,\s*and there were yeas\s+\d+\s+and nays\s+\d+,\s*as follows:\s*)\[?\d{1,3}(?:ST|ND|RD|TH)\s+DAY\]\s*(?:MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\s*,\s*[A-Z]+\s+\d{1,2},\s+\d{4}\s{0,8}\d{2,6}\s*(?=Those who voted in the affirmative were:)/gi,
   '$1'
  );
 }
