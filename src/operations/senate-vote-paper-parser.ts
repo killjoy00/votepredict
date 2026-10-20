@@ -31,12 +31,21 @@ export function ballotSignature(votes:readonly Ballot[],yeas:number,nays:number)
  * offsets and all original bytes for source provenance.
  */
 export function stripInterposedSenateJournalRollHeader(local:string):string {
- return local.replace(
-  /(The roll was called,\s*and there were yeas\s+\d+\s+and nays\s+\d+,\s*as follows:\s*)\d{1,3}(?:ST|ND|RD|TH)\s+DAY\]\s*(?:MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\s*,\s*[A-Z]+\s+\d{1,2},\s+\d{4}\d{2,6}\s*(?=Those who voted in the affirmative were:)/gi,
-  '$1'
- );
+  // The authenticated Journal alternates running headings. A page split
+  // between the vote question and the first voter can insert either style.
+  const dateHeading=/(The roll was called,\s*and there were yeas\s+\d+\s+and nays\s+\d+,\s*as follows:\s*)\[?\d{1,3}(?:ST|ND|RD|TH)\s+DAY\]\s*(?:MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\s*,\s*[A-Z]+\s+\d{1,2},\s+\d{4}\s{0,8}\d{2,6}\s*(?=Those who voted in the affirmative were:)/gi;
+  // Reverse folio heading on printed p.6890, following HF100's Pratt motion:
+  // "6890 JOURNAL OF THE SENATE [59TH DAY". Never remove named ballots.
+  const folioHeading=/(The roll was called,\s*and there were yeas\s+\d+\s+and nays\s+\d+,\s*as follows:\s*)\d{3,6}\s*JOURNAL\s+OF\s+THE\s+SENATE\s*\[\s*\d{1,3}(?:ST|ND|RD|TH)\s+DAY\]?\s*(?=Those who voted in the affirmative were:)/gi;
+  // In pdf-parse 2.4.5 the printed folio can precede the reverse
+  // date heading, and its independently recognizable PDF page-counter footer
+  // follows it: "6889 FRIDAY, APRIL 28, 2023 59TH DAY] -- 289 of 292 --".
+  // Remove *only* this complete official header between roll and names.
+  // The authenticated bytes/character offsets remain unchanged elsewhere.
+  const pdfExtractedDateHeader=/(The roll was called,\s*and there were yeas\s+\d+\s+and nays\s+\d+,\s*as follows:\s*)\d{3,6}\s+(?:MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY),\s*[A-Z]+\s+\d{1,2},\s+\d{4}\s+\d{1,3}(?:ST|ND|RD|TH)\s+DAY\]\s*--\s*\d{1,4}\s+of\s+\d{1,4}\s*--\s*(?=Those who voted in the affirmative were:)/gi;
+  return local.replace(dateHeading,'$1').replace(folioHeading,'$1')
+   .replace(pdfExtractedDateHeader,'$1');
 }
-
 export interface PaperAction {
  key:string;sequence:number;start:number;end:number;billIdentifier:string;
  kind:'amendment'|'passage'|'conference'|'procedural';motionText:string;questionText:string;
