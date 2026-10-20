@@ -1,6 +1,6 @@
 # #864: candidate website content as a historical prediction signal
 
-Current verified state: **668 stored literal excerpts**, with the separately frozen v2 outcome experiment executed. See the [maintained ledger](senate-864-completion-ledger.md). The original v1 design and its later updates are retained below.
+Current verified state: **1,194 stored literal excerpts / 92 people / 123 unique original bodies**, with **0 itemized source holds, 0 unknown people and 3 known-person scope exclusions**. The separately frozen v2 outcome experiment used its original 668-record scope and remains unchanged. See the [maintained ledger](senate-864-completion-ledger.md). The original v1 design and its later updates are retained below.
 
 The hypothesis is **whether words observable on a candidate-owned campaign website before a vote improve prediction of a later vote**. The source observation is sufficient; this project does **not** require a subjective "verified policy position", proof of sincerity, a personal spoken quotation, or proof the described legislative action took place.
 
@@ -54,3 +54,20 @@ See the [maintained ledger](senate-864-completion-ledger.md) for actual source/i
 receipts, full metrics and limitations. The v2 test is now examined; do not tune against it
 and describe it as untouched. No serving weights, production training pipeline or earlier
 immutable evaluation freeze changed.
+
+## October 20 UTC: all retained-source metadata recoveries verified
+
+The latest #1481/#1482 pass recovered every one of the remaining 526 source-metadata
+holds from existing retained acquisitions: explicit aliases, omitted original-receipt
+links, exact page metadata and visible literal containment. Independent original
+SHA256/SHA1/CDX URL/observation checks preceded the guarded append. Actual execution
+inserted 526 and exactly read back all **1,194** records; the original 668 remain exact
+and replay would insert zero. All research-only/non-serving flags were verified.
+
+The **1,197-item inventory is now reconciled to 1,194 stored + 3 known-person McNutt
+scope exclusions**. There are 92 represented people and 123 unique original bodies;
+the wider owned-page/text denominator is still UNKNOWN. Earlier hold counts above are
+dated receipts. See the [maintained ledger](senate-864-completion-ledger.md) and its
+durable source map/executed receipt for actual workflow IDs, source bindings and
+calendar-year accounting. Both frozen protocols and the already examined experiment
+remain unchanged. This continuation reads no outcomes and fits no model.
