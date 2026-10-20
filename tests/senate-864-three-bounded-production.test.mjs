@@ -68,11 +68,11 @@ test('actual migrated PostgreSQL: 12/144 additions, three media, 25 links, prese
   pool=new Pool({connectionString:url.toString(),max:1});const db=await pool.connect();let target;
   phase='fresh_originals';const proof=await verifyThreeBoundedOriginals();phase='seed';
   try{await seed(db,proof);target=(await db.query('SELECT current_database() AS database,current_user AS role')).rows[0];}finally{db.release()}
-  phase='read_and_plan';const before=(await readOnly(pool,target,proof)).snapshot,plan=productionPlan(proof,before);
+  phase='readonly_snapshot';const before=(await readOnly(pool,target,proof)).snapshot;phase='production_plan';const plan=productionPlan(proof,before);
   assert.equal(plan.committee.add.length,12);assert.equal(plan.committee.add.flatMap(p=>p.votes).length,144);assert.equal(plan.media.filter(p=>!p.stored).length,3);assert.equal(plan.finance.filter(p=>!p.stored).length,25);
-  const bad=structuredClone(before);bad.roster.find(p=>p.name==='Ron Latz').ends_on=null;assert.throws(()=>productionPlan(proof,bad),/Historical/);
-  const wrong=structuredClone(before);wrong.choices[0].choice='other';assert.throws(()=>productionPlan(proof,wrong),/choices/);
-  const shared=structuredClone(before);shared.finance[0].metadata.contributor='not the printed donor';assert.throws(()=>productionPlan(proof,shared),/comparator/);
+  phase='negative_person_guard';const bad=structuredClone(before);bad.roster.find(p=>p.name==='Ron Latz').ends_on=null;assert.throws(()=>productionPlan(proof,bad),/Historical/);
+  phase='negative_choice_guard';const wrong=structuredClone(before);wrong.choices[0].choice='other';assert.throws(()=>productionPlan(proof,wrong),/choices/);
+  phase='negative_finance_guard';const shared=structuredClone(before);shared.finance.find(r=>r.metadata.subtype==='candidate_contribution_record').metadata.contributor='not the printed donor';assert.throws(()=>productionPlan(proof,shared),/comparator/);
   phase='atomic_apply';const counts=await applyProduction(pool,proof,before);assert.equal(counts.insertedEvents,12);assert.equal(counts.insertedChoices,144);assert.equal(counts.insertedMedia,3);assert.equal(counts.insertedFinanceLinks,25);
   phase='independent_readback';const after=(await readOnly(pool,target,proof)).snapshot;verifyPreserved(before,after);assert.equal(after.events.length,19);assert.equal(after.choices.length,211);assert.equal(after.links.length,25);assert.equal(after.media.filter(r=>r.kind).length,3);
   phase='replay_and_negative_guards';const replay=await applyProduction(pool,proof,after);assert.equal(Object.values(replay).reduce((a,b)=>a+b,0),0);
@@ -83,5 +83,5 @@ test('actual migrated PostgreSQL: 12/144 additions, three media, 25 links, prese
   const c=await pool.connect();try{await c.query("UPDATE evidence_items SET metadata=metadata||'{\"concurrentChange\":true}'::jsonb WHERE id=$1",[before.finance[0].id]);}finally{c.release()}
   await assert.rejects(()=>applyProduction(pool,proof,before),/Concurrent state/);
   const final=(await readOnly(pool,target,proof)).snapshot;assert.equal(final.events.length,19);assert.equal(final.links.length,25);
- }catch{throw Error('Disposable PostgreSQL production test failed at '+phase)}finally{if(pool)await pool.end();await admin.query('DROP DATABASE IF EXISTS '+name+' WITH (FORCE)');await admin.end()}
+ }catch(error){const labels=new Set(['scripts/deploy-senate-864-three-bounded.mjs','src/evidence/senate-864-three-bounded-plan.mjs'].flatMap(f=>[...readFileSync(f,'utf8').matchAll(/throw Error\('([^']+)'\)/g)].map(m=>m[1])));throw Error('Disposable PostgreSQL production test failed at '+phase+(labels.has(error?.message)?'; guard='+error.message:''))}finally{if(pool)await pool.end();await admin.query('DROP DATABASE IF EXISTS '+name+' WITH (FORCE)');await admin.end()}
 });
