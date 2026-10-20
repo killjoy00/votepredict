@@ -1,0 +1,75 @@
+{
+  "schema": "senate864-three-bounded-originals-v1",
+  "reviewedCommit": "b42133d96a14a8be618a1a6e0a8cfb8b34b1c085",
+  "verifiedAt": "2026-10-20T04:24:08.883Z",
+  "fourCommitteeOriginals": [
+    {
+      "day": "2024-04-19",
+      "sha256": "c7e0cefd90512c4956d0ec5227ad8f593a543e1f59b70065112394ed231c2f3a",
+      "namedRolls": 3,
+      "namedChoices": 27
+    },
+    {
+      "day": "2025-03-17",
+      "sha256": "59a1e2c81e4cd8f10086628ddb3156e92dfa091e938b9e72a8e7157623f56fe0",
+      "namedRolls": 2,
+      "namedChoices": 18
+    },
+    {
+      "day": "2025-04-10",
+      "sha256": "ca0b6ef3d1d4289b7405c23d8aca7ac7dba70baab81a758a72644cb87e82b1df",
+      "namedRolls": 10,
+      "namedChoices": 130
+    },
+    {
+      "day": "2025-04-23",
+      "sha256": "4580d4257925e6f54711bf72b6bed8b4bcfb756284e411f7c14b2b628e31665a",
+      "namedRolls": 4,
+      "namedChoices": 36
+    }
+  ],
+  "mediaOriginals": [
+    {
+      "utc": "2022-10-05T01:59:37Z",
+      "sha1": "Z55ODFJANQV2PCOGS32J3IZE3GEL2DBR",
+      "sha256": "28dada90321263cbf20a75cc9949c176527a97c2d89d33c0831ed63469167f36",
+      "bytes": 65348,
+      "sourceUrl": "https://www.enterpriseminnesota.org/articles/winter-2021/valuable-legislative-support/"
+    },
+    {
+      "utc": "2023-01-31T06:39:41Z",
+      "sha1": "KDDZ7S7QX7HETNGDLYUQLZUUTAO5275J",
+      "sha256": "fb8fd1d2c4bd209e54a905d5b050310a520a46d46f82c3a910a7270c723f3251",
+      "bytes": 67207,
+      "sourceUrl": "https://www.enterpriseminnesota.org/articles/winter-2021/valuable-legislative-support/"
+    }
+  ],
+  "mediaVerifiedVersions": 2,
+  "mediaFragments": 3,
+  "financeOriginal": {
+    "id": "16891:24:pcc:YE:0:0",
+    "reg": "16891",
+    "year": 2024,
+    "url": "https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year=24&type=pcc&period=YE&se=0&regnum=16891&amend=0",
+    "sha": "e5d5d82d46ec7ac2c573c0cc4158541e06d2846e16573d748c0d052f7648b0a3",
+    "bytes": 20822,
+    "received_on": "2025-01-09",
+    "due_on": "2025-01-31",
+    "release_floor": "2025-02-01",
+    "estimated_on": "2025-02-01",
+    "observed_on": "2026-10-15",
+    "method": "pdf_board_stamp_with_statutory_floor",
+    "confidence": "medium"
+  },
+  "financePrintedItemizedRows": 28,
+  "financeSchedules": {
+    "individualContributions": 9,
+    "committeeFundContributions": 9,
+    "campaignExpenditures": 10,
+    "nonCampaignItemized": 0
+  },
+  "noDatabaseAccess": true,
+  "noHistoricalPublicByInference": true,
+  "workflowRun": 39369127511,
+  "independentJob": 118452744192
+}
