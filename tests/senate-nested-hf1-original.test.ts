@@ -23,6 +23,13 @@ test('HF1 nested papers are present in independently downloaded 2023 official Se
   }));
   assert.ok(journal.byteLength>1000&&nested.length>=3,
    'Original Journal must contain at least three complete nested proposals');
+  console.log('SENATE_HF1_NESTED_PROOF_CHECKS='+JSON.stringify({
+   firstLuceroParentFound:nested.some(p=>p.parentMover==='Lucero'&&p.parentOrdinal==='first'),
+   namedMayeQuadeParentAdoptionFound:nested.some(p=>p.mover==='Maye Quade'
+    &&p.parentMover==='Lucero'&&p.disposition==='adopted_to_parent'),
+   mayeQuadeSourcePapers:nested.filter(p=>p.mover==='Maye Quade').length,
+   explicitParentAdoptions:nested.filter(p=>p.disposition==='adopted_to_parent').length
+  }));
   assert.ok(nested.some(p=>p.parentMover==='Lucero'&&p.parentOrdinal==='first'));
   assert.ok(nested.every(p=>!p.appliesDirectlyToBill&&!p.acceptedVoteEventLinked&&!p.fullBillTextAssembled));
   assert.equal(journal.pdfSha256,'0604a308854471523dcd282769cfadb45ed403d1ad39383a3d20438393e3fd52',
