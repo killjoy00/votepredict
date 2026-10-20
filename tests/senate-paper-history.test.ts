@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
+import {readFileSync} from 'node:fs';
 import {Pool} from 'pg';
 import {parseJournalPaperActions,rollMatches,hash,explicitVersionLocator,stripInterposedSenateJournalRollHeader} from '../src/operations/senate-vote-paper-parser.js';
 import {readVoteTextGapAudit,verifyVoteTextGapAudit,VOTE_TEXT_GAP_AUDIT_VERSION,type VoteTextGapAudit} from '../src/operations/senate-vote-text-gap-audit.js';
@@ -30,6 +31,15 @@ function legislativePdf(number:number):Buffer{
  return Buffer.from(body+`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
 }
 
+
+test('keyless Senate PR runs cannot evict queued protected main production verification',()=>{
+ const yaml=readFileSync('.github/workflows/senate-paper-history-production.yml','utf8');
+ const group="group: ${{ github.event_name == 'pull_request' && format('senate-paper-history-pr-{0}', github.event.pull_request.number) || 'senate-paper-history-neon-production' }}";
+ assert.ok(yaml.includes(group),'PR and main actions require different concurrency identities');
+ assert.match(yaml,/cancel-in-progress:\s*false/);
+ assert.match(yaml,/pr-keyless:[\s\S]*?independent-main:/);
+ assert.match(yaml,/protected-production-neon:[\s\S]*?needs:\s*\[independent-main\]/);
+});
 
 test('vote-to-paper gap buckets reconcile all official events without promoting bill-only text',()=>{
  const baseline=[{session:'2023-2024',vote_kind:'amendment',official_events:'3',exact_question_links:'1'}];
