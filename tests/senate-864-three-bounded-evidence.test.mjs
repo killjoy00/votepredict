@@ -67,8 +67,8 @@ test('one printed finance row cannot certify two distinct canonical transactions
  const rows=['a','b'].map(k=>({metadata:{...m,rowKey:k.repeat(64)}}));
  const r=compareFinance(source,rows,[])[0];assert.equal(r.exactPrintedRowMatches,0);assert.equal(r.ambiguousPrintedRowMatches,2);assert.equal(r.uniquePrintedRowsMatched,0);
  const e={schedule:'CE',date:'2024-10-01',party:'Example Vendor',cents:10000,unpaid:0,inKind:0,total:10000,purpose:'Advertising: a printed ad'};
- const row={subtype:'candidate_expenditure_record',transactionDate:e.date,vendorName:e.party,amount:100,unpaidAmount:0,totalAmount:100,purpose:e.purpose,expenditureType:'General expenditure'};
- assert.equal(financeMatches([e],row).length,1);assert.equal(financeMatches([e],{...row,purpose:'another ad'}).length,0);assert.equal(financeMatches([e],{...row,expenditureType:'Noncampaign disbursement'}).length,0);
+ const row={subtype:'candidate_expenditure_record',transactionDate:e.date,vendorName:e.party,amount:100,unpaidAmount:0,totalAmount:100,purpose:e.purpose,expenditureType:'Campaign expenditure'};
+ assert.equal(financeMatches([e],row).length,1);assert.equal(financeMatches([e],{...row,purpose:'another ad'}).length,0);assert.equal(financeMatches([e],{...row,expenditureType:'Noncampaign disbursement'}).length,0);assert.equal(financeMatches([e],{...row,expenditureType:'General expenditure'}).length,0);
 });
 
 test('committee membership resolution is restricted to the hearing session',()=>{
@@ -79,7 +79,7 @@ test('committee membership resolution is restricted to the hearing session',()=>
  const result=compareCommittee(d,docs,[event],choices,[...people,...older]);assert.equal(result.sourceQuestions[0].unresolvedFullIdentities,0);assert.equal(result.sourceQuestions[0].storedChoiceMatches,9);
 });
 test('finance diagnostics distinguish missing metadata, case-only types and real purpose differences',()=>{
- const s={schedule:'CE',date:'2024-10-01',party:'Example Vendor',cents:10000,unpaid:0,inKind:0,total:10000,purpose:'Advertising: a printed ad'},r={subtype:'candidate_expenditure_record',transactionDate:s.date,vendorName:s.party,amount:100,unpaidAmount:0,totalAmount:100,purpose:s.purpose,expenditureType:'GENERAL EXPENDITURE'};
+ const s={schedule:'CE',date:'2024-10-01',party:'Example Vendor',cents:10000,unpaid:0,inKind:0,total:10000,purpose:'Advertising: a printed ad'},r={subtype:'candidate_expenditure_record',transactionDate:s.date,vendorName:s.party,amount:100,unpaidAmount:0,totalAmount:100,purpose:s.purpose,expenditureType:'CAMPAIGN EXPENDITURE'};
  assert.equal(financeMatches([s],r).length,1);assert.equal(financeFieldAccounting([s],[r]).caseOrSpacingOnlyTypeDifference,1);
  const missing={...r};delete missing.unpaidAmount;delete missing.totalAmount;assert.equal(financeMatches([s],missing).length,0);
  const counts=financeFieldAccounting([s],[missing]);assert.equal(counts.missingUnpaid,1);assert.equal(counts.missingTotal,1);assert.equal(counts.fullPurpose,1);assert.equal(counts.unpaidAndTotal,0);
@@ -92,6 +92,6 @@ test('source question anchors additionally use compatible bill/tally, never ordi
  r=compareCommittee(d,docs,[{...e,bill_identifier:'SF9999'}],[],[]);assert.equal(r.sourceQuestions.some(q=>q.unambiguousStoredQuestion),false);
 });
 test('a missing computed total may be derived from paid and explicitly stored unpaid, never assumed zero',()=>{
- const s={schedule:'CE',date:'2024-10-01',party:'Example Vendor',cents:10000,unpaid:500,inKind:0,total:10500,purpose:'Advertising'},r={subtype:'candidate_expenditure_record',transactionDate:s.date,vendorName:s.party,amount:100,unpaidAmount:5,purpose:s.purpose,expenditureType:'General expenditure'};
+ const s={schedule:'CE',date:'2024-10-01',party:'Example Vendor',cents:10000,unpaid:500,inKind:0,total:10500,purpose:'Advertising'},r={subtype:'candidate_expenditure_record',transactionDate:s.date,vendorName:s.party,amount:100,unpaidAmount:5,purpose:s.purpose,expenditureType:'Campaign expenditure'};
  assert.equal(financeMatches([s],r).length,1);assert.equal(financeMatches([s],{...r,totalAmount:100}).length,0);
 });

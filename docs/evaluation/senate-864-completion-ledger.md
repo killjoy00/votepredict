@@ -82,6 +82,28 @@ nonmatches. Case/spacing-only enum differences may normalize; missing unpaid/tot
 columns must remain missing, never default to certified zero. Full purpose, family,
 registered identity, date, money and one-to-one row comparisons remain required.
 
+**Corrected session read-back:** [#1485](https://github.com/killjoy00/votepredict/pull/1485),
+merged `b1fbc36479aa5886e0c2cbbefcb256117fc89450`, protected
+[39357442992](https://github.com/killjoy00/votepredict/actions/runs/39357442992), job
+`118416148731`, completed 2026-10-20T02:13:43.841Z. **All 67 stored choices match;
+zero unresolved full historical identities across all 211 printed choices.** All seven
+existing questions now have unique source anchors using the actual bill/tally where
+adjacent contexts overlap. The source/store cardinality gap remains **12 rolls / 144
+choices**, not an identity research hold. Demonstrable fields to repair include the
+SF5337 recommendation stored as `amendment`, SF2149 A1 with a null outcome despite explicit
+passage, and missing bill/amendment references. No repair has been executed in this
+evidence-only pass.
+
+The finance diagnostics expose a concrete new-auditor defect: the stored original type is
+**Campaign expenditure**, exactly matching the PDF's **B1–CE Campaign Expenditures** heading;
+the initial gate incorrectly expected the synthetic-test label General expenditure.
+All ten expenditure records match date/paid amount, full counterparty and unpaid/total
+columns. **Seven full purposes match; three differ.** Recognize the exact source-supported
+Campaign expenditure class, keep NCD excluded, and repeat one-to-one containment checks.
+Do not relax full-purpose or collision checks. The three purpose differences require an
+independently authenticated original bulk row / exact report-version comparison before
+any correction; no invalid transaction or historical eligibility conclusion follows.
+
 `senate-864-three-bounded-evidence.yml` independently reauthenticates these seven existing
 bodies before the protected job. Ten bounded data SELECTs plus identity/schema checks run
 only inside verified `REPEATABLE READ READ ONLY` with explicit `ROLLBACK`. Public receipts
