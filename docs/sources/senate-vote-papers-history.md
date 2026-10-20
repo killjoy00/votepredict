@@ -37,8 +37,10 @@ Once the gaps are measured, first review journal-origin `same_source_day_bill_un
 
 The guarded protected production readback also reports `coverage.caseAudit` from the
 existing **verified REPEATABLE READ, READ ONLY transaction**. The diagnostic compares
-only stored current paper actions against accepted votes in the **same original
-source document and day**. It recomputes normalized complete named ballot
+stored current paper actions against accepted votes from the **same exact
+official source URL and day**, even when the verified original and its accepted
+vote events have separate database source-document rows. Cross-row matching is
+permitted only where the paper original is independently verified. It recomputes normalized complete named ballot
 signatures inside the transaction, and separates full-question matches from
 unique-ballot-only candidates, unresolved bill identities, repeated ballots,
 and absent candidate ballots. Only aggregate category counts and source

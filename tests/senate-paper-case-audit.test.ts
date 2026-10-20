@@ -7,7 +7,7 @@ const votes=[{name:'Alex Test',choice:'yea'},{name:'Blair Test',choice:'nay'}];
 const sig=ballotSignature(votes,1,1);
 if(!sig)throw new Error('Invalid synthetic ballot fixture');
 function action(overrides:Record<string,unknown>={}){
- return {id:'paper1',source_id:'original1',bill:'HF100',day:'2023-04-28',
+ return {id:'paper1',source_id:'original1',source_url:'https://www.senate.mn/journals/2023-2024/20230428059.pdf',bill:'HF100',day:'2023-04-28',
   kind:'amendment',sequence:1,yea_count:1,nay_count:1,
   ballot_sha256:sig,
   motion_text:'Senator Test moved to amend HF100.',
@@ -15,7 +15,7 @@ function action(overrides:Record<string,unknown>={}){
   original_source_verified:true,...overrides};
 }
 function vote(overrides:Record<string,unknown>={}){
- return {id:'accepted1',source_id:'original1',bill:'HF100',day:'2023-04-28',
+ return {id:'accepted1',source_id:'original1',source_url:'https://www.senate.mn/journals/2023-2024/20230428059.pdf',bill:'HF100',day:'2023-04-28',
   vote_kind:'amendment',yea_count:1,nay_count:1,
   votes,motion_text:'The question was taken on adoption of the amendment.',
   exact_linked:false,...overrides};
@@ -26,7 +26,9 @@ test('case diagnostics distinguish exact question from a ballot-only candidate',
  assert.equal(candidateStage(action(),[vote({motion_text:'The question was taken on laying the bill on the table.'})]),
   'unique_ballot_question_mismatch');
  assert.equal(candidateStage(action(),[vote({bill:null})]),'unique_ballot_unknown_bill');
- assert.equal(candidateStage(action(),[vote({source_id:'another-source'})]),'no_accepted_ballot');
+ assert.equal(candidateStage(action(),[vote({source_id:'another-source'})]),'exactly_matched_question');
+ assert.equal(candidateStage(action({original_source_verified:false}),[vote({source_id:'another-source'})]),'no_accepted_ballot');
+ assert.equal(candidateStage(action(),[vote({source_url:'https://www.senate.mn/journals/2023-2024/another.pdf'})]),'no_accepted_ballot');
  assert.equal(candidateStage(action(),[vote(),vote({id:'accepted2'})]),'ambiguous_ballot');
  assert.equal(candidateStage(action({ballot_sha256:null}),[vote()]),'no_action_ballot');
 });
