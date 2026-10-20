@@ -33,6 +33,7 @@ test('HF100 original at-vote source chain is verifiable but never an assembled o
  assert.equal(report.proposalsWithOneUnambiguousBaseCapture,4);
  assert.equal(report.proposalsWithoutVerifiedCapture,1);
  assert.equal(report.proposalsWithoutUnambiguousBase,1);
+ assert.equal(report.proposalsWithAmbiguousBase,0);
  assert.equal(report.passageCarriesFourSourceAdoptions,true);
  assert.equal(report.rejectedAmendmentExcludedFromPassage,true);
  assert.equal(report.completeAssembledBillText,false);
@@ -59,7 +60,9 @@ test('unverified original, missing base locator or ambiguous base text stay held
  const otherVersion=fixture();otherVersion[1]!.explicitBaseLocator='versions/ue/2/';
  assert.throws(()=>summarizeHf100TextChain(otherVersion),/contract drift/);
  const repeatedBase=fixture();repeatedBase[2]!.baseComponents=2;
- assert.throws(()=>summarizeHf100TextChain(repeatedBase),/contract drift/);
+ const held=summarizeHf100TextChain(repeatedBase);
+ assert.equal(held.proposalsWithAmbiguousBase,1);
+ assert.equal(held.proposalsWithoutUnambiguousBase,2);
  const missing=fixture().slice(0,7);
  assert.throws(()=>summarizeHf100TextChain(missing),/count, sequence or provenance/);
 });
