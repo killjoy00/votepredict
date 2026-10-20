@@ -7,6 +7,7 @@ import {discoverExistingVotePredictNeonConnection} from '../src/operations/senat
 import {assertPaperHistoryRun} from '../src/operations/senate-paper-history-gate.js';
 import {readVoteTextGapAudit,verifyVoteTextGapAudit} from '../src/operations/senate-vote-text-gap-audit.js';
 import {readSenateSourceCaseAudit} from '../src/operations/senate-vote-paper-case-audit.js';
+import {appendHf100OriginalPrattProof,readCommittedHf100PrattShadow} from '../src/operations/senate-hf100-original-shadow.js';
 import {backfillVotePapers,verifyPaperSources,connectExplicitBaseCaptures} from '../src/operations/senate-vote-paper-backfill.js';
 import {stageHistoryJobs,recoverHistoricalArchives,recoverExplicitBaseBodies,collectDatedAssignmentFacts} from '../src/operations/senate-history-archive.js';
 const MIGRATION='0035_senate_vote_papers_history.sql';
@@ -71,6 +72,7 @@ async function main(){
   phase='stage_historical_sources';const historyJobs=await stageHistoryJobs(pool);progress(phase,{eligibleUrls:historyJobs});
   phase='historical_archived_bodies';const archives=await recoverHistoricalArchives(pool,{maxJobs:push?30:18});progress(phase,archives);
   phase='exact_base_connections';const baseConnections=await connectExplicitBaseCaptures(pool);
+  phase='hf100_original_pratt_append_only_proof';const prattSupplement=await appendHf100OriginalPrattProof(pool);progress(phase,prattSupplement);
   phase='read_only_coverage';
   const coverage=await readOnly(pool,target,async db=>{
    const events=(await db.query('SELECT * FROM senate_vote_paper_coverage_v ORDER BY session,vote_kind')).rows;
@@ -85,6 +87,7 @@ async function main(){
    const gapAudit=await readVoteTextGapAudit(db);
    verifyVoteTextGapAudit(gapAudit,events);
    const caseAudit=await readSenateSourceCaseAudit(db);
+   const prattShadowReadback=await readCommittedHf100PrattShadow(db);
    const hf100Exact=gapAudit.hf100Pilot.filter(x=>x.evidence_stage==='exact_question')
     .reduce((n,x)=>n+x.event_count,0);
    if(caseAudit.cases.find(c=>c.bill==='HF100')?.exactBillLinks!==hf100Exact)
@@ -110,9 +113,9 @@ async function main(){
     FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id GROUP BY s.slug,q.kind,q.status ORDER BY s.slug,q.kind,q.status`)).rows;
    const sourceAttempts=(await db.query('SELECT result,count(*)::int AS documents FROM senate_paper_source_attempts GROUP BY result ORDER BY result')).rows;
    if(!links.exact_raw_questions||!actions.some(a=>a.literal_papers>0)||!links.historical_roles)throw Error('Paper/history acceptance counts are empty');
-   return {events,actions,links,gapAudit,caseAudit,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
+   return {events,actions,links,gapAudit,caseAudit,prattShadowReadback,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
   });
-  const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,baseBodies,datedAssignments,historyJobs,archives,baseConnections,coverage,
+  const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
    officialVotesUnchanged:true,sourceBodiesUnchanged:true,servingModelsUnchanged:true,completeStateClaims:false};
   console.log('SENATE_PAPER_HISTORY_PRODUCTION='+JSON.stringify(report));
   if(process.env.GITHUB_STEP_SUMMARY)appendFileSync(process.env.GITHUB_STEP_SUMMARY,'Senate paper identity and historical evidence coverage\n'+JSON.stringify(report,null,2)+'\n');
