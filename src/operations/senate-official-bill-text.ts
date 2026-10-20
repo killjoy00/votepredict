@@ -5,6 +5,30 @@
 import { createHash } from 'node:crypto';
 import { parseRevisorBillTextHtml } from '../sources/minnesota/revisor.js';
 
+
+/**
+ * Six exact, official 200-OK version HTML pages independently verified by
+ * keyless Revisor probes to exceed the standard 8 MB fetch budget (#1493).
+ * Never widen the limit for unrelated status pages or version URLs.
+ */
+export const VERIFIED_LARGE_OFFICIAL_VERSION_URLS = [
+  'https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ccr/0/',
+  'https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/4/',
+  'https://www.revisor.mn.gov/bills/92/2021/0/HF/2128/versions/3/',
+  'https://www.revisor.mn.gov/bills/92/2021/0/HF/2128/versions/4/',
+  'https://www.revisor.mn.gov/bills/92/2021/0/HF/2128/versions/ue/1/',
+  'https://www.revisor.mn.gov/bills/92/2021/0/SF/2360/versions/2/',
+] as const;
+
+/** One additional source-paced attempt, not a reset of the 3 recorded failures. */
+export const EXHAUSTED_LARGE_VERSION_RETRY_URLS = VERIFIED_LARGE_OFFICIAL_VERSION_URLS.slice(0,2);
+
+export function officialVersionHttpBudget(url: string): { maxBytes: number; timeoutMs: number } {
+  return VERIFIED_LARGE_OFFICIAL_VERSION_URLS.some(source => source === url)
+    ? { maxBytes: 32_000_000, timeoutMs: 60_000 }
+    : { maxBytes: 8_000_000, timeoutMs: 20_000 };
+}
+
 export type SenateOfficialTextFamily = 'numbered_version' | 'unofficial_engrossment' | 'conference_report' | 'amendment';
 export interface OfficialVersionLead {
   family: Exclude<SenateOfficialTextFamily, 'amendment'>;
