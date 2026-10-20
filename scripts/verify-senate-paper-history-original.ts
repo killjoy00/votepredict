@@ -34,8 +34,8 @@ async function verifyCanonicalSources(){
 }
 async function main(){
  await verifyCanonicalSources();
- // First original-government-source calibration fails closed until its
- // exact PDF digest is independently obtained and pinned on this PR.
+ // Pin from the independently downloaded official 92-page HF1 journal in
+ // keyless PR CI; any source byte change requires a fresh original review.
  const hf1=await fetchSenateJournal('https://www.senate.mn/journals/2023-2024/20230127014.pdf');
  const sourceNested=parseNestedSenateSourcePapers(hf1.text);
  const inBill=sourceNested.filter(p=>p.billIdentifier==='HF1');
@@ -47,10 +47,12 @@ async function main(){
   nestedOutcomeUnknown:inBill.filter(x=>x.disposition==='unknown').length,
   exactNumberedParentLinks:0,acceptedVotesChanged:0,fullBillAssemblies:0}));
  assert.ok(hf1.byteLength>1000&&inBill.length>=3
-  &&inBill.some(x=>x.parentMover==='Lucero'&&x.parentOrdinal==='first'));
+  &&inBill.some(x=>x.parentMover==='Lucero'&&x.parentOrdinal==='first')
+  &&inBill.some(x=>x.mover==='Maye Quade'&&x.parentMover==='Lucero'&&x.disposition==='adopted_to_parent'));
+ assert.equal(hf1.byteLength,1_806_101,'Original HF1 journal byte length unexpectedly changed');
  assert.ok(inBill.every(x=>!x.appliesDirectlyToBill&&!x.acceptedVoteEventLinked));
- assert.equal(hf1.pdfSha256,'PENDING_AUTHENTICATED_ORIGINAL_SHA_REVIEW',
-  'New 92-page original must be SHA-pinned before merging this source parser');
+ assert.equal(hf1.pdfSha256,'0604a308854471523dcd282769cfadb45ed403d1ad39383a3d20438393e3fd52',
+  'Original HF1 journal PDF SHA differs from independently authenticated source');
  for(const [path,expected] of sources){
  const got=await fetchSenateJournal('https://www.senate.mn/journals/'+path);
  assert.equal(got.pdfSha256,expected,'Original government PDF changed; review before accepting a new source receipt');
