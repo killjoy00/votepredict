@@ -41,7 +41,7 @@ export async function verifyThreeBoundedOriginals(){
   if(!layout.includes('01/09/2025')||!layout.includes('16891'))throw Error('Printed report cover identity changed');
   financeRows=parseMillerPrintedRows(layout);
  }finally{rmSync(temp,{recursive:true,force:true})}
- return {documents,media:{pins,verifiedVersions},finance:{report,rows:financeRows}};
+ return {documents,media:{pins,verifiedVersions},finance:{report,rows:financeRows,originalPdf:binary.bytes}};
 }
 if(process.argv[1]?.endsWith('/verify-senate-864-three-bounded-originals.mjs')){
  verifyThreeBoundedOriginals().then(p=>{

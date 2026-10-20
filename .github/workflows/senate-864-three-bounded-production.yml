@@ -1,0 +1,92 @@
+name: Issue 864 three bounded source-proven production changes
+on:
+  pull_request:
+    paths: ['.github/workflows/senate-864-three-bounded-production.yml', 'src/evidence/senate-864-three-bounded-evidence.mjs', 'scripts/verify-senate-864-three-bounded-originals.mjs', 'scripts/audit-senate-864-three-bounded-evidence.mjs', 'tests/senate-864-three-bounded-evidence.test.mjs', 'tests/fixtures/senate-864-four-original-questions.json', 'src/evidence/senate-864-three-bounded-plan.mjs', 'scripts/deploy-senate-864-three-bounded.mjs', 'tests/senate-864-three-bounded-production.test.mjs']
+  push:
+    branches: [main]
+    paths: ['.github/workflows/senate-864-three-bounded-production.yml', 'src/evidence/senate-864-three-bounded-evidence.mjs', 'scripts/verify-senate-864-three-bounded-originals.mjs', 'scripts/audit-senate-864-three-bounded-evidence.mjs', 'tests/senate-864-three-bounded-evidence.test.mjs', 'tests/fixtures/senate-864-four-original-questions.json', 'src/evidence/senate-864-three-bounded-plan.mjs', 'scripts/deploy-senate-864-three-bounded.mjs', 'tests/senate-864-three-bounded-production.test.mjs']
+permissions:
+  contents: read
+concurrency:
+  group: senate864-three-bounded-production-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  independent-keyless-verification:
+    if: github.repository == 'killjoy00/votepredict' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U postgres -d votepredict" --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: node --import tsx --test tests/senate-864-three-bounded-evidence.test.mjs tests/senate-864-three-bounded-production.test.mjs
+      - run: node --import tsx scripts/verify-senate-864-three-bounded-originals.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate864-three-bounded-originals
+          path: artifacts/senate864-three-bounded-originals.json
+          if-no-files-found: error
+          retention-days: 14
+  protected-bounded-production:
+    needs: independent-keyless-verification
+    if: >-
+      needs.independent-keyless-verification.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' && github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' && github.run_attempt == 1 &&
+      github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha && github.event.head_commit.id == github.sha &&
+      github.event.forced != true && github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'SENATE864_THREE_BOUNDED_PRODUCTION_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      SENATE864_INDEPENDENT_MAIN: ${{ needs.independent-keyless-verification.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify independently checked exact main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+      - run: npm ci --no-fund --no-audit
+      - name: Fresh originals, verified read-only preflight, bounded SERIALIZABLE write and independent read-back
+        run: node --import tsx scripts/deploy-senate-864-three-bounded.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate864-three-bounded-production
+          path: artifacts/senate864-three-bounded-production.json
+          if-no-files-found: error
+          retention-days: 14

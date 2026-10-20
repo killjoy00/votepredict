@@ -13,6 +13,30 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 20 UTC: authorized guarded production patch in review
+
+The owner authorized the three next production changes after the evidence-only pass.
+The bounded writer `scripts/deploy-senate-864-three-bounded.mjs` reauthenticates the
+same seven bodies and validates the migration ledger and primary database identity.
+It plans 12 committee rolls / 144 explicit choices plus seven existing event field
+repairs, three non-serving Miller fragments, and 25 mechanical finance containment
+links. Before/after reads use verified RR READ ONLY transactions and explicit rollback;
+the write uses a locked SERIALIZABLE fingerprint and verifies every resulting field
+before commit and again independently afterward. Existing 67 choices, event keys,
+all 28 finance evidence records and their eligibility are preserved exactly.
+
+Finance entry coordinates are the dated line numbers in fresh `pdftotext -layout`
+output of the exact authenticated six-page body, under extractor/matcher version
+`miller16891-2024-printed-layout-full-comparators-v1`. Each appended raw block contains
+its own printed counterparty header, dated row, amount columns and full continuation
+purpose. Existing v1 captures/pages/entries are immutable; any coordinate collision
+with a different extractor or source content stops the transaction. No generic
+schedule parser or proximity fallback is used. Three purpose discrepancies and
+historical first-public proof remain holds.
+
+**Proposed, not yet executed or verified.** Production status and receipt will replace
+this paragraph after protected execution and independent post-write read-back.
+
 ## October 20 UTC: three bounded evidence-only passes executed and verified
 
 **Evidence gathering and clarification complete in these stated scopes; no database writes.**
