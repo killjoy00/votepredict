@@ -5,6 +5,9 @@ import {parseNestedSenateSourcePapers} from '../src/operations/senate-vote-paper
 import {parseJournalPaperActions,stripInterposedSenateJournalRollHeader} from '../src/operations/senate-vote-paper-parser.js';
 import {identifyPrattSourceAction,HF100_ORIGINAL_SHADOW_VERSION} from '../src/operations/senate-hf100-original-shadow.js';
 import {summarizeHf100TextChain} from '../src/operations/senate-hf100-text-chain-readiness.js';
+import {HF100_FIRST_UE_PDF,HF100_FIRST_UE_PDF_SHA256,HF100_FIRST_UE_PDF_BYTE_LENGTH,assessHf100PrintedLinePilot} from '../src/operations/senate-hf100-printed-line-pilot.js';
+import {fetchCanonicalGovernmentSource,boundedBody} from '../src/operations/senate-history-archive.js';
+import {hash} from '../src/operations/senate-vote-paper-parser.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
 
 /**
@@ -45,7 +48,7 @@ test('HF1 nested papers are present in independently downloaded 2023 official Se
 
 
 test('HF100 original paper verifier replay has complete named rolls and explicit parent version',
- {skip:process.env.GITHUB_ACTIONS!=='true',timeout:150_000},async()=>{
+ {skip:process.env.GITHUB_ACTIONS!=='true',timeout:240_000},async()=>{
   const original=await fetchSenateJournal('https://www.senate.mn/journals/2023-2024/20230428059.pdf');
   const names=original.text.slice(0,original.text.indexOf('The President declared')).split('\n')
    .map(x=>x.trim()).filter(x=>/^[A-Z][A-Za-z ]+$/.test(x));
@@ -146,4 +149,30 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
   assert.equal(actions.length,8);assert.equal(procedural.length,2);
   assert.equal(state.namedDivisionActions,7);
   assert.equal(state.proceduralCompleteBallots,2);
+
+  // Independently verify the literal printed page.line numbering in the
+  // Revisor FIRST UNOFFICIAL PDF, not in a latest/engrossed substitute.
+  // In-memory anchor proof is not an assembled amended bill or publication proof.
+  const {response,resolvedUrl}=await fetchCanonicalGovernmentSource(HF100_FIRST_UE_PDF,'bill_text');
+  assert.equal(response.ok,true);
+  assert.equal(resolvedUrl,HF100_FIRST_UE_PDF);
+  const pdfBytes=await boundedBody(response,15_000_000);
+  assert.ok(pdfBytes.length>20_000&&Buffer.from(pdfBytes.subarray(0,5)).toString('ascii')==='%PDF-');
+  const pdfSha256=hash(pdfBytes);
+  assert.equal(pdfBytes.length,HF100_FIRST_UE_PDF_BYTE_LENGTH,
+   'The original Revisor first-unofficial PDF byte length changed; review before accepting');
+  assert.equal(pdfSha256,HF100_FIRST_UE_PDF_SHA256,
+   'The original Revisor first-unofficial PDF SHA changed; review before accepting');
+  const {PDFParse}=await import('pdf-parse'),{CanvasFactory}=await import('pdf-parse/worker');
+  const pdfParser=new PDFParse({data:Uint8Array.from(pdfBytes),CanvasFactory});
+  let revisorText:string;
+  try{revisorText=(await pdfParser.getText()).text}finally{await pdfParser.destroy()}
+  const linePilot=assessHf100PrintedLinePilot(actions,revisorText);
+  console.log('SENATE_HF100_REVISOR_LINE_PILOT='+JSON.stringify({
+   source:'HF100 UE1 Revisor PDF',pdfSha256,pdfBytes:pdfBytes.length,...linePilot
+  }));
+  assert.equal(linePilot.fullyCheckedAdoptedAmendments,1);
+  assert.equal(linePilot.adoptedAmendmentsStillHeldForCompositeApplication,4);
+  assert.equal(linePilot.completeAssembledBillText,false);
+  assert.equal(linePilot.preVotePublicationProven,false);
 });

@@ -17,6 +17,8 @@ on:
       - src/operations/senate-hf100-original-shadow.ts
       - src/operations/senate-hf100-text-chain-readiness.ts
       - tests/senate-hf100-text-chain-readiness.test.ts
+      - src/operations/senate-hf100-printed-line-pilot.ts
+      - tests/senate-hf100-printed-line-pilot.test.ts
       - tests/senate-nested-hf1-original.test.ts
       - tests/senate-hf100-original-shadow.test.ts
       - src/operations/senate-history-archive.ts
@@ -40,6 +42,8 @@ on:
       - src/operations/senate-hf100-original-shadow.ts
       - src/operations/senate-hf100-text-chain-readiness.ts
       - tests/senate-hf100-text-chain-readiness.test.ts
+      - src/operations/senate-hf100-printed-line-pilot.ts
+      - tests/senate-hf100-printed-line-pilot.test.ts
       - tests/senate-nested-hf1-original.test.ts
       - tests/senate-hf100-original-shadow.test.ts
       - src/operations/senate-history-archive.ts

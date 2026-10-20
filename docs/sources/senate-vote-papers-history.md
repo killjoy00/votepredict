@@ -55,6 +55,20 @@ be identical. Prior original-PDF provenance remains required before any
 new append-only event/paper link is created. The 2,308-event denominator
 and existing official-vote integrity safeguards stay unchanged.
 
+### HF100 first-unofficial printed-line anchor pilot (source-only)
+
+A separate keyless original-source canary pairs the April 28, 2023 authenticated Senate Journal with the **official Revisor HF100 first unofficial engrossment PDF**, not a later engrossment or the live/last version. The canary preserves the full official PDF byte digest and verifies printed `page.line` coordinates against the extracted first-unofficial text. A source offset from the journal is not assumed to be a Revisor printed page number.
+
+The targeted, in-memory proof is **strictly narrower than full amendment application**:
+
+The downloaded Revisor original was independently verified in both PR workflows at SHA-256 `547d33380988ad84e1e8fdec6d421437f5eb699f51465bff111b4519f883369c` (5,716,766 bytes); the keyless canary now pins both values and must fail on changed source bytes.
+
+- **Port (adopted):** four literal `before ... insert` operations anchor to their individually specified printed lines on pages 56 and 71. The first instruction explicitly means the **second** instance of “eight” on line 56.7. The remaining **15 instructions in the same adopted Port amendment are NOT interpreted**, so Port has only *partial anchor coverage*, not a completed amendment or state.
+- **Hoffman (adopted):** one complete source instruction on page 296, line 19 deletes two occurrences of `$4,000,000` and inserts `$5,500,000` in their places. Both deleted anchors must occur **exactly twice on that one printed line**, be consumed exactly, and yield two added new anchors. The resulting single-line text is kept in memory and never persisted or represented as an assembled bill.
+- **The two adopted Hauschild amendments:** not interpreted as patch instructions; they include structural or appropriation changes. The **rejected Hauschild amendment** is excluded from passage. The passage still carries the four original adopted source keys in exact order.
+
+Expected verified research-only outcome: **five distinct printed base lines anchored; four partial Port insertions; two Hoffman line replacements; one of four adopted amendments completely instruction-checked **in isolation**; three other adopted amendments without full instruction proof; **all four** still held for composite application; zero full bill assemblies and zero newly linked accepted votes**. Any mismatching printed line, changed source wording, missing/duplicate anchor, original digest drift or reordered adoption chain fails the canary instead of silently choosing a nearby line or latest edition. This does **not** prove the full amended HF100 text that went to final passage, a complete text hash or historical publication-before-vote timing. No accepted event, serving model or database table is modified by the proof.
+
 ## Historical text and role dates
 
 The collector stages exact numbered, unofficial-engrossment and conference-report URLs, including official PDF representations, from existing text stores and explicit journal references. Legacy-store discovery prioritizes bills with Senate official votes or raw proceedings links; it does not spend the historical retrieval budget on every unrelated House bill. Exact base references are also queued for current original-body acquisition. Publisher redirects are followed only within the same explicit bill/edition/representation and biennium, or between the exact assignment-sheet paths on www.senate.mn and assets.senate.mn. Resolved source URLs are retained; off-site, wrong-bill and wrong-edition redirects are rejected before fetching. A current download proves current wording, not historical availability.
