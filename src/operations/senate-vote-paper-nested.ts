@@ -45,7 +45,7 @@ export function parseNestedSenateSourcePapers(
   const body=remaining.slice(0,question.index);
   // A divided proposal needs separately authenticated portions. An appeal or
   // withdrawal is a different Senate question, not a ballot on this paper.
-  if(/\b(?:request(?:ed)? (?:a )?division|first portion:|second portion:|appealed the decision|ruled[\s\S]{0,120}out of order|amendment was withdrawn|withdrew (?:the|his|her) amendment)\b/i.test(body))continue;
+  if(/\b(?:request(?:ed)? (?:a )?division|first portion|second portion|appealed the decision|ruled[\s\S]{0,120}out of order|amendment was withdrawn|withdrew (?:the|his|her) amendment)\b/i.test(body))continue;
   if(!/\b(?:Page\s+\d+\s*,|delete|insert|strike|replace)\b/i.test(body))continue;
   const literal=text.slice(start,start+h[0].length+question.index).trimEnd();
   if(literal.length<65||literal.length>150_000)continue;
