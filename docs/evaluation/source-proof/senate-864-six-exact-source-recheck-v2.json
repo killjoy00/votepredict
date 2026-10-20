@@ -1,0 +1,135 @@
+{
+  "schema": "senate864-six-exact-written-source-recheck-v2",
+  "observedAt": "2026-10-20T00:35:47.966631+00:00",
+  "previousReceipt": "senate-864-six-minutes-recheck-20261019.json",
+  "scope": "Six exact indexed dates and five previously independently identified original Clerk routes; one exact official calendar. No general archive or audio search.",
+  "requests": [
+    {
+      "hearingDate": "2022-03-15",
+      "committeeName": "Housing Finance and Policy",
+      "route": "LRL exact indexed date",
+      "url": "https://www.lrl.mn.gov/minutes/comm?commid=23832-0&date=2022-03-15&year=2022",
+      "httpStatus": 200,
+      "finalUrl": "https://www.lrl.mn.gov/minutes/comm?commid=23832-0&date=2022-03-15&year=2022",
+      "bytes": 89055,
+      "sha256": "a4a195a9baa070762f049a7addb2fb9822cd139479944fb3152a60877d0bdb14",
+      "updatingOrMaintenance": false,
+      "writtenMinutesLinks": []
+    },
+    {
+      "hearingDate": "2022-03-15",
+      "committeeName": "Housing Finance and Policy",
+      "route": "original Clerk route",
+      "url": "https://goldpages.senate.mn/schedule/hearing_minutes.php?hearing_id=16859&ls=92",
+      "httpStatus": 503,
+      "failureClass": "HTTPError"
+    },
+    {
+      "hearingDate": "2022-08-10",
+      "committeeName": "Environment and Natural Resources Finance",
+      "route": "LRL exact indexed date",
+      "url": "https://www.lrl.mn.gov/minutes/comm?commid=23835-0&date=2022-08-10&year=2022",
+      "httpStatus": 200,
+      "finalUrl": "https://www.lrl.mn.gov/minutes/comm?commid=23835-0&date=2022-08-10&year=2022",
+      "bytes": 83343,
+      "sha256": "31d0bad619d3fbad90208b49b5647b4a9cfe15f7b57b8363cac4a0df02422b34",
+      "updatingOrMaintenance": false,
+      "writtenMinutesLinks": []
+    },
+    {
+      "hearingDate": "2022-08-10",
+      "committeeName": "Environment and Natural Resources Finance",
+      "route": "original Clerk route",
+      "url": "https://goldpages.senate.mn/schedule/hearing_minutes.php?hearing_id=17254&ls=92",
+      "httpStatus": 503,
+      "failureClass": "HTTPError"
+    },
+    {
+      "hearingDate": "2022-10-03",
+      "committeeName": "Environment and Natural Resources Finance",
+      "route": "LRL exact indexed date",
+      "url": "https://www.lrl.mn.gov/minutes/comm?commid=23835-0&date=2022-10-03&year=2022",
+      "httpStatus": 200,
+      "finalUrl": "https://www.lrl.mn.gov/minutes/comm?commid=23835-0&date=2022-10-03&year=2022",
+      "bytes": 78154,
+      "sha256": "05a2dc6a77e70284f3225f7a79bb5b404791d191258955f0b84e94e929ebf79b",
+      "updatingOrMaintenance": false,
+      "writtenMinutesLinks": []
+    },
+    {
+      "hearingDate": "2022-10-03",
+      "committeeName": "Environment and Natural Resources Finance",
+      "route": "original Clerk route",
+      "url": "https://goldpages.senate.mn/schedule/hearing_minutes.php?hearing_id=17261&ls=92",
+      "httpStatus": 503,
+      "failureClass": "HTTPError"
+    },
+    {
+      "hearingDate": "2023-04-13",
+      "committeeName": "Environment, Climate, and Legacy",
+      "route": "LRL exact indexed date",
+      "url": "https://www.lrl.mn.gov/minutes/comm?commid=26147-0&date=2023-04-13&year=2023",
+      "httpStatus": 200,
+      "finalUrl": "https://www.lrl.mn.gov/minutes/comm?commid=26147-0&date=2023-04-13&year=2023",
+      "bytes": 90421,
+      "sha256": "be2edab79f8e6c09a6601c59c75325beae1ca8f5c71e17409f16295eadcae75c",
+      "updatingOrMaintenance": false,
+      "writtenMinutesLinks": []
+    },
+    {
+      "hearingDate": "2023-04-13",
+      "committeeName": "Environment, Climate, and Legacy",
+      "route": "original Clerk route",
+      "url": "https://goldpages.senate.mn/schedule/hearing_minutes.php?hearing_id=17971&ls=93",
+      "httpStatus": 503,
+      "failureClass": "HTTPError"
+    },
+    {
+      "hearingDate": "2024-05-16",
+      "committeeName": "Environment, Climate, and Legacy",
+      "route": "LRL exact indexed date",
+      "url": "https://www.lrl.mn.gov/minutes/comm?commid=26147-0&date=2024-05-16&year=2024",
+      "httpStatus": 200,
+      "finalUrl": "https://www.lrl.mn.gov/minutes/comm?commid=26147-0&date=2024-05-16&year=2024",
+      "bytes": 90273,
+      "sha256": "8e2e81b5abc7aacab74483b5ebf0dc9f275dc8cfe26ee6ce5ab7d6d50e3d0aba",
+      "updatingOrMaintenance": false,
+      "writtenMinutesLinks": []
+    },
+    {
+      "hearingDate": "2024-05-16",
+      "committeeName": "Environment, Climate, and Legacy",
+      "route": "official exact day calendar",
+      "url": "https://www.leg.mn.gov/cal?d1=05/16/2024",
+      "httpStatus": 200,
+      "finalUrl": "https://www.leg.mn.gov/cal?d1=05/16/2024",
+      "bytes": 124843,
+      "sha256": "4441145a19ab74c3a91b26c59376c6cb8e41fdafd62de50bfb76d71bcd5032b0",
+      "updatingOrMaintenance": false,
+      "environmentNamedOnCalendar": false
+    },
+    {
+      "hearingDate": "2025-05-12",
+      "committeeName": "Rules and Administration - Subcommittee on Committees",
+      "route": "LRL exact indexed date",
+      "url": "https://www.lrl.mn.gov/minutes/comm?commid=26198-21261&date=2025-05-12&year=2025",
+      "httpStatus": 200,
+      "finalUrl": "https://www.lrl.mn.gov/minutes/comm?commid=26198-21261&date=2025-05-12&year=2025",
+      "bytes": 75143,
+      "sha256": "62c220c031160a0b9f86e4536fab095098fe57ef6b8740218568cab111f0ac78",
+      "updatingOrMaintenance": false,
+      "writtenMinutesLinks": []
+    },
+    {
+      "hearingDate": "2025-05-12",
+      "committeeName": "Rules and Administration - Subcommittee on Committees",
+      "route": "original Clerk route",
+      "url": "https://goldpages.senate.mn/schedule/hearing_minutes.php?hearing_id=19475&ls=94",
+      "httpStatus": 503,
+      "failureClass": "HTTPError"
+    }
+  ],
+  "newWrittenSources": 0,
+  "databaseAccess": false,
+  "noVoteAbsenceInferred": true
+}
