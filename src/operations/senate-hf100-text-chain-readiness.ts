@@ -62,7 +62,7 @@ export function summarizeHf100TextChain(rows:readonly Hf100ChainEvidenceRow[]):H
   completeAssembledBillText:false,preVotePublicationProven:false,addedEventLinks:0};
 }
 
-const SQL=[
+export const HF100_TEXT_CHAIN_READINESS_SQL=[
  'SELECT a.sequence,a.action_key AS "actionKey",a.kind,a.outcome,',
  'a.proposed_text AS "proposedText",a.explicit_base_locator AS "explicitBaseLocator",',
  'a.prior_adopted_action_keys AS "priorAdoptedKeys",',
@@ -90,6 +90,6 @@ const SQL=[
 
 /** Caller guarantees verified REPEATABLE READ READ ONLY with explicit ROLLBACK. */
 export async function readHf100TextChainReadiness(db:PoolClient):Promise<Hf100TextChainReadiness>{
- const rows=(await db.query<Hf100ChainEvidenceRow>(SQL,[ORIGINAL])).rows;
+ const rows=(await db.query<Hf100ChainEvidenceRow>(HF100_TEXT_CHAIN_READINESS_SQL,[ORIGINAL])).rows;
  return summarizeHf100TextChain(rows);
 }
