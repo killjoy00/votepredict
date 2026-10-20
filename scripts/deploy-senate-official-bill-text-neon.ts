@@ -23,7 +23,10 @@ const SESSIONS=['2025-2026','2023-2024','2021-2022'];
 // A guarded merge push is a small live-source canary. Once it proves real
 // captures, the scheduled and guarded recovery runs use the full polite budgets.
 const PUSH_CANARY=process.env.GITHUB_EVENT_NAME==='push';
-const MAX_NEW_BILLS=PUSH_CANARY?15:200,MAX_DISCOVER=PUSH_CANARY?15:200,
+// Increase only full scheduled/recovery bill discovery to clear the final
+// historical session sooner. Preserve the 15-bill push canary, serial 1150ms
+// source pacer, 1100-version fetch cap, throttle stop and protected timeout.
+const MAX_NEW_BILLS=PUSH_CANARY?15:600,MAX_DISCOVER=PUSH_CANARY?15:600,
   MAX_VERSIONS=PUSH_CANARY?60:1100,MAX_JOURNALS=PUSH_CANARY?10:60;
 const MAX_HTTP_BYTES=8_000_000, RETRIES=3, TIMEOUT_MS=20000;
 type Ledger={filename:string;checksum:string};
