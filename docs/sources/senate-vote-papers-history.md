@@ -69,6 +69,36 @@ The downloaded Revisor original was independently verified in both PR workflows 
 
 Expected verified research-only outcome: **five distinct printed base lines anchored; four partial Port insertions; two Hoffman line replacements; one of four adopted amendments completely instruction-checked **in isolation**; three other adopted amendments without full instruction proof; **all four** still held for composite application; zero full bill assemblies and zero newly linked accepted votes**. Any mismatching printed line, changed source wording, missing/duplicate anchor, original digest drift or reordered adoption chain fails the canary instead of silently choosing a nearby line or latest edition. This does **not** prove the full amended HF100 text that went to final passage, a complete text hash or historical publication-before-vote timing. No accepted event, serving model or database table is modified by the proof.
 
+### HF100 Port instruction coverage continuation (source-only)
+
+The follow-on original-source check enumerates **all 19** Port amendment instruction
+headings in the original April 28, 2023 Journal order and binds each target to
+its **original first-UE printed page.line**, never to an approximate neighboring
+line or an implicitly renumbered post-amendment page. The independent PR canary
+uses the already pinned original Revisor PDF bytes. Four previously checked
+insertions stay hard-gated by the existing pilot.
+
+Nine additional instructions are *eligible* for isolated local preview only:
+four simple inserts/replacements on pages 146, 148, 177 and 251; the
+page 291.26 replacement; and four local changes on page 292 (lines 1, 26,
+27 and 28). Each earns a checked count **only** if its exact printed line,
+complete literal anchor and any required occurrence cardinality agree. Text
+layer fusion (for example `grantsissued` or `isfor`) is an explicit hold,
+not permission to guess where spaces belong or replace a nearby token.
+The six other Port instructions—page 144.22/23, page 175.7/8, and
+page 291.27/28–32—are always held as structural or cross-line operations,
+even when their original page/line coordinates exist.
+
+This checker reports instruction-level aggregate outcomes. It deliberately
+does **not** materialize, store, hash, certify, or publish a completed Port
+amendment; it does not resolve renumbering, quoted multi-line replacement
+layout, the two adopted Hauschild amendments, dependent appropriation
+adjustments, the composite final-passage bill text or pre-vote web availability.
+The one rejected Hauschild proposal remains outside the passage chain.
+An unresolved new anchor reduces the verified-local count and raises the
+held count; it never triggers a guessed amendment. No serving table or accepted
+vote/event link changes.
+
 ## Historical text and role dates
 
 The collector stages exact numbered, unofficial-engrossment and conference-report URLs, including official PDF representations, from existing text stores and explicit journal references. Legacy-store discovery prioritizes bills with Senate official votes or raw proceedings links; it does not spend the historical retrieval budget on every unrelated House bill. Exact base references are also queued for current original-body acquisition. Publisher redirects are followed only within the same explicit bill/edition/representation and biennium, or between the exact assignment-sheet paths on www.senate.mn and assets.senate.mn. Resolved source URLs are retained; off-site, wrong-bill and wrong-edition redirects are rejected before fetching. A current download proves current wording, not historical availability.
