@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,readdirSync} from 'node:fs';
-import {fixture,sha,validateOriginalQuestions,compareCommittee,financeMatches,compareFinance,compareMedia,assertSafeThreeReceipt,MEDIA_FRAGMENTS} from '../src/evidence/senate-864-three-bounded-evidence.mjs';
+import {fixture,sha,validateOriginalQuestions,compareCommittee,financeMatches,compareFinance,financeFieldAccounting,compareMedia,assertSafeThreeReceipt,MEDIA_FRAGMENTS} from '../src/evidence/senate-864-three-bounded-evidence.mjs';
 import {QUERIES,boundedSnapshot} from '../scripts/audit-senate-864-three-bounded-evidence.mjs';
 const doc=()=>({...fixture().documents[1],sourceText:fixture().documents[1].motions.map(m=>m.literal).join(' ')});
 test('fixed reviewed sources have 19 distinct questions / 211 printed names, no voice inference',()=>{
@@ -12,7 +12,7 @@ test('fixed reviewed sources have 19 distinct questions / 211 printed names, no 
 });
 test('identical named slates and ordinal keys do not identify stored questions',()=>{
  const d=doc(),docs=[{id:'d',source_url:d.sourceUrl,content_sha256:d.originalRawPdfSha256}];
- const e={id:'e',source_document_id:'d',motion_text:'5/4 (Ayes: Hoffman, Rasmusson, Abeler, Gruenhagen, Utke; Nays: Fateh, Maye Quade, Mohamed, Wiklund)',external_key:'positional:0'};
+ const e={id:'e',source_document_id:'d',yea_count:5,nay_count:4,motion_text:'5/4 (Ayes: Hoffman, Rasmusson, Abeler, Gruenhagen, Utke; Nays: Fateh, Maye Quade, Mohamed, Wiklund)',external_key:'positional:0'};
  const result=compareCommittee(d,docs,[e],[],[]);assert.equal(result.sourceQuestions.some(q=>q.unambiguousStoredQuestion),false);
  e.motion_text=d.motions.map(m=>m.literal).join(' ');
  assert.equal(compareCommittee(d,docs,[e],[],[]).sourceQuestions.some(q=>q.unambiguousStoredQuestion),false);
@@ -69,4 +69,29 @@ test('one printed finance row cannot certify two distinct canonical transactions
  const e={schedule:'CE',date:'2024-10-01',party:'Example Vendor',cents:10000,unpaid:0,inKind:0,total:10000,purpose:'Advertising: a printed ad'};
  const row={subtype:'candidate_expenditure_record',transactionDate:e.date,vendorName:e.party,amount:100,unpaidAmount:0,totalAmount:100,purpose:e.purpose,expenditureType:'General expenditure'};
  assert.equal(financeMatches([e],row).length,1);assert.equal(financeMatches([e],{...row,purpose:'another ad'}).length,0);assert.equal(financeMatches([e],{...row,expenditureType:'Noncampaign disbursement'}).length,0);
+});
+
+test('committee membership resolution is restricted to the hearing session',()=>{
+ const d=doc(),m=d.motions[0],docs=[{id:'d',source_url:d.sourceUrl,content_sha256:d.originalRawPdfSha256}],event={id:'e',source_document_id:'d',motion_text:m.literal,yea_count:m.yea,nay_count:m.nay,passed:true,vote_kind:'amendment',is_passage:false};
+ const people=d.people.map((name,i)=>({membership_id:'current-'+i,session_slug:'2025-2026',name,starts_on:'2021-01-01',ends_on:'2026-12-31'}));
+ const older=people.map(p=>({...p,membership_id:p.membership_id.replace('current','old'),session_slug:'2023-2024'}));
+ const choices=m.choices.map(v=>({vote_event_id:'e',choice:v.choice,membership_id:people.find(p=>p.name.endsWith(v.token)).membership_id}));
+ const result=compareCommittee(d,docs,[event],choices,[...people,...older]);assert.equal(result.sourceQuestions[0].unresolvedFullIdentities,0);assert.equal(result.sourceQuestions[0].storedChoiceMatches,9);
+});
+test('finance diagnostics distinguish missing metadata, case-only types and real purpose differences',()=>{
+ const s={schedule:'CE',date:'2024-10-01',party:'Example Vendor',cents:10000,unpaid:0,inKind:0,total:10000,purpose:'Advertising: a printed ad'},r={subtype:'candidate_expenditure_record',transactionDate:s.date,vendorName:s.party,amount:100,unpaidAmount:0,totalAmount:100,purpose:s.purpose,expenditureType:'GENERAL EXPENDITURE'};
+ assert.equal(financeMatches([s],r).length,1);assert.equal(financeFieldAccounting([s],[r]).caseOrSpacingOnlyTypeDifference,1);
+ const missing={...r};delete missing.unpaidAmount;delete missing.totalAmount;assert.equal(financeMatches([s],missing).length,0);
+ const counts=financeFieldAccounting([s],[missing]);assert.equal(counts.missingUnpaid,1);assert.equal(counts.missingTotal,1);assert.equal(counts.fullPurpose,1);assert.equal(counts.unpaidAndTotal,0);
+});
+
+test('source question anchors additionally use compatible bill/tally, never ordinal labels',()=>{
+ const d={...fixture().documents[3],sourceText:''},docs=[{id:'d',source_url:d.sourceUrl,content_sha256:d.originalRawPdfSha256}],e={id:'e',source_document_id:'d',bill_identifier:'SF2669',yea_count:5,nay_count:4,motion_text:d.motions.slice(0,2).map(m=>m.literal).join(' ')};
+ let r=compareCommittee(d,docs,[e],[],[]);assert.equal(r.sourceQuestions[0].unambiguousStoredQuestion,false);assert.equal(r.sourceQuestions[1].unambiguousStoredQuestion,true);
+ r=compareCommittee(d,docs,[{...e,bill_identifier:null}],[],[]);assert.equal(r.sourceQuestions.some(q=>q.unambiguousStoredQuestion),false);
+ r=compareCommittee(d,docs,[{...e,bill_identifier:'SF9999'}],[],[]);assert.equal(r.sourceQuestions.some(q=>q.unambiguousStoredQuestion),false);
+});
+test('a missing computed total may be derived from paid and explicitly stored unpaid, never assumed zero',()=>{
+ const s={schedule:'CE',date:'2024-10-01',party:'Example Vendor',cents:10000,unpaid:500,inKind:0,total:10500,purpose:'Advertising'},r={subtype:'candidate_expenditure_record',transactionDate:s.date,vendorName:s.party,amount:100,unpaidAmount:5,purpose:s.purpose,expenditureType:'General expenditure'};
+ assert.equal(financeMatches([s],r).length,1);assert.equal(financeMatches([s],{...r,totalAmount:100}).length,0);
 });
