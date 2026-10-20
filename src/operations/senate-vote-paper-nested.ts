@@ -43,12 +43,26 @@ export function parseNestedSenateSourcePapers(
   const competing=nextMotion.exec(remaining.slice(0,question.index));
   if(competing)continue; // never splice a different source motion into this proposal
   const body=remaining.slice(0,question.index);
+  // A divided proposal needs separately authenticated portions. An appeal or
+  // withdrawal is a different Senate question, not a ballot on this paper.
+  if(/\b(?:request(?:ed)? (?:a )?division|first portion:|second portion:|appealed the decision|ruled[\s\S]{0,120}out of order|amendment was withdrawn|withdrew (?:the|his|her) amendment)\b/i.test(body))continue;
   if(!/\b(?:Page\s+\d+\s*,|delete|insert|strike|replace)\b/i.test(body))continue;
   const literal=text.slice(start,start+h[0].length+question.index).trimEnd();
   if(literal.length<65||literal.length>150_000)continue;
   const after=remaining.slice(question.index);
   const anotherMotion=nextMotion.exec(after);
-  const local=after.slice(0,Math.min(anotherMotion?.index??after.length,18_000));
+  const localWindow=after.slice(0,Math.min(anotherMotion?.index??after.length,18_000));
+  const questionMarkers=[...localWindow.matchAll(/\bThe question (?:was taken|recurred)\b/gi)];
+  const local=localWindow.slice(0,questionMarkers[1]?.index??localWindow.length);
+  const rollMarker=/\bThe roll was called\b/i.exec(local);
+  const questionText=compact(local.slice(0,Math.min(rollMarker?.index??400,400)));
+  // Do not silently label a ruling/appeal/parent-bill question as a vote
+  // on this nested amendment. A valid question must explicitly be about
+  // adopting or rejecting an amendment *to another amendment*.
+  if(!/^The question (?:was taken|recurred)\s+on\b/i.test(questionText)
+   ||!/\b(?:adoption|rejection)\s+of\b/i.test(questionText)
+   ||!/\bamendment\s+to\s+(?:the\s+)?(?:[\w'’.\s]{0,75})?\bamendment\b/i.test(questionText)
+   ||/\b(?:decision of the President|ruling|appeal|division|portion)\b/i.test(questionText))continue;
   const roll=/\bThe roll was called,\s*and there were yeas\s+(\d+)\s+and nays\s+(\d+)/i.exec(local);
   const yea=roll?Number(roll[1]):null,nay=roll?Number(roll[2]):null;
   let ballotSha256:string|null=null;
