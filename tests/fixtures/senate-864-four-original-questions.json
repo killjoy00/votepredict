@@ -1,0 +1,1147 @@
+{
+  "schema": "senate864-four-manually-reviewed-originals-v1",
+  "documents": [
+    {
+      "year": 2024,
+      "committeeName": "Judiciary and Public Safety",
+      "meetingDate": "2024-04-19",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/jud/20240419/Jud_20240419_minutes.pdf",
+      "originalRawPdfSha256": "c7e0cefd90512c4956d0ec5227ad8f593a543e1f59b70065112394ed231c2f3a",
+      "originalPdfBytes": 218514,
+      "fetchedAt": "2026-10-10T16:10:25.703Z",
+      "extractionMethod": "embedded_text",
+      "extractedTextSha256": "ad1a8492e0c3e79c594bcd971d3587e4facdae0496ae7eabd8b2aa5111397ea5",
+      "extractedTextBytes": 7265,
+      "baselineNamed": 2,
+      "people": [
+        "Ron Latz",
+        "Clare Oumou Verbeten",
+        "Warren Limmer",
+        "Jim Carlson",
+        "Justin D. Eichorn",
+        "Jeff R. Howe",
+        "Michael E. Kreun",
+        "Sandra L. Pappas",
+        "Judy Seeberger",
+        "Bonnie S. Westlin"
+      ],
+      "motions": [
+        {
+          "question": "SF5337 A13",
+          "page": 2,
+          "literal": "A-13 Senator Oumou Verbeten moved. Senator Kreun requested a roll call vote for the adoption of A-13 amendment. 5/4 (Ayes: Latz, Oumou Verbeten, Carlson, Pappas, Westlin; Nays: Limmer, Eichorn, Howe, Kreun) MOTION PREVAILED",
+          "yea": 5,
+          "nay": 4,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Latz",
+              "choice": "yea"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "yea"
+            },
+            {
+              "token": "Carlson",
+              "choice": "yea"
+            },
+            {
+              "token": "Pappas",
+              "choice": "yea"
+            },
+            {
+              "token": "Westlin",
+              "choice": "yea"
+            },
+            {
+              "token": "Limmer",
+              "choice": "nay"
+            },
+            {
+              "token": "Eichorn",
+              "choice": "nay"
+            },
+            {
+              "token": "Howe",
+              "choice": "nay"
+            },
+            {
+              "token": "Kreun",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF5337 oral amendment to A14: reports / agency discretion",
+          "page": 2,
+          "literal": "Senator Oumou Verbeten moved the following oral amendment: Page 1, line 5 delete \"report required\" and insert \"reports\" Page 1, line 18 delete \"ocer\" and insert \"agency shall consider requiring its ocers\" Page 1, line 19 delete \"conducts a\" and insert \"conduct\", delete \"stop\" and insert \"stops\", delete \"shall\" and insert \"to\" Page 2, line 18 after the comma insert \"and the law enforcement agency so requires\" Page 2, line 20 after the comma insert \"and the law enforcement agency so requires\" Page 2, line 24 after \"agency\" insert \"that collects data under this section\" Page 2, line 27 delete \"subject to the requirements of this section\" Page 2, line 32 delete \"required to\" and insert \"that\" Page 3, line 12 after \"agency\" insert \"that reports under\" and delete \"covered by\" Senator Kreun requested a roll call vote for the adoption of Oral amendment. 5/4 (Ayes: Latz, Oumou Verbeten, Carlson, Pappas, Westlin; Nays: Limmer, Eichorn, Howe, Kreun) MOTION PREVAILED",
+          "yea": 5,
+          "nay": 4,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Latz",
+              "choice": "yea"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "yea"
+            },
+            {
+              "token": "Carlson",
+              "choice": "yea"
+            },
+            {
+              "token": "Pappas",
+              "choice": "yea"
+            },
+            {
+              "token": "Westlin",
+              "choice": "yea"
+            },
+            {
+              "token": "Limmer",
+              "choice": "nay"
+            },
+            {
+              "token": "Eichorn",
+              "choice": "nay"
+            },
+            {
+              "token": "Howe",
+              "choice": "nay"
+            },
+            {
+              "token": "Kreun",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF5337 recommendation to Finance",
+          "page": 2,
+          "literal": "Senator Kreun requested a roll call vote for the passage of S.F. 5337 to the 5/4 (Ayes: Latz, Oumou Verbeten, Carlson, Pappas, Westlin; Nays: Limmer, Eichorn, Howe, Kreun) MOTION PREVAILED",
+          "yea": 5,
+          "nay": 4,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Latz",
+              "choice": "yea"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "yea"
+            },
+            {
+              "token": "Carlson",
+              "choice": "yea"
+            },
+            {
+              "token": "Pappas",
+              "choice": "yea"
+            },
+            {
+              "token": "Westlin",
+              "choice": "yea"
+            },
+            {
+              "token": "Limmer",
+              "choice": "nay"
+            },
+            {
+              "token": "Eichorn",
+              "choice": "nay"
+            },
+            {
+              "token": "Howe",
+              "choice": "nay"
+            },
+            {
+              "token": "Kreun",
+              "choice": "nay"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "committeeName": "Human Services",
+      "meetingDate": "2025-03-17",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/human/20250317/Human_20250317_Minutes.pdf",
+      "originalRawPdfSha256": "59a1e2c81e4cd8f10086628ddb3156e92dfa091e938b9e72a8e7157623f56fe0",
+      "originalPdfBytes": 143289,
+      "fetchedAt": "2026-10-10T16:10:53.307Z",
+      "extractionMethod": "embedded_text",
+      "extractedTextSha256": "7fc61d7a2b21bd3eea3e789d3b75e423c0bf64d1c78d9e69f670f34530b05cdf",
+      "extractedTextBytes": 6076,
+      "baselineNamed": 1,
+      "people": [
+        "John A. Hoffman",
+        "Omar Fateh",
+        "Jordan Rasmusson",
+        "Jim Abeler",
+        "Glenn H. Gruenhagen",
+        "Erin K. Maye Quade",
+        "Zaynab Mohamed",
+        "Paul J. Utke",
+        "Melissa H. Wiklund"
+      ],
+      "motions": [
+        {
+          "question": "SF2149 A1",
+          "page": 2,
+          "literal": "Senator Utke moved that the A-1 amendment be adopted to SF 2149. Senator Maye Quade requested a roll call vote for the adoption of A-1 amendment. 5/4 (Ayes: Hoffman, Rasmusson, Abeler, Gruenhagen, Utke; Nays: Fateh, Maye Quade, Mohamed, Wiklund) MOTION PREVAILED",
+          "yea": 5,
+          "nay": 4,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Hoffman",
+              "choice": "yea"
+            },
+            {
+              "token": "Rasmusson",
+              "choice": "yea"
+            },
+            {
+              "token": "Abeler",
+              "choice": "yea"
+            },
+            {
+              "token": "Gruenhagen",
+              "choice": "yea"
+            },
+            {
+              "token": "Utke",
+              "choice": "yea"
+            },
+            {
+              "token": "Fateh",
+              "choice": "nay"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "nay"
+            },
+            {
+              "token": "Mohamed",
+              "choice": "nay"
+            },
+            {
+              "token": "Wiklund",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2149 A4",
+          "page": 3,
+          "literal": "Senator Rasmusson moved that the A-4 amendment be adopted to SF 2149. Senator Mohamed requested a roll call vote for the 5/4 (Ayes: Hoffman, Rasmusson, Abeler, Gruenhagen, Utke; Nays: Fateh, Maye Quade, Mohamed, Wiklund) MOTION PREVAILED",
+          "yea": 5,
+          "nay": 4,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Hoffman",
+              "choice": "yea"
+            },
+            {
+              "token": "Rasmusson",
+              "choice": "yea"
+            },
+            {
+              "token": "Abeler",
+              "choice": "yea"
+            },
+            {
+              "token": "Gruenhagen",
+              "choice": "yea"
+            },
+            {
+              "token": "Utke",
+              "choice": "yea"
+            },
+            {
+              "token": "Fateh",
+              "choice": "nay"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "nay"
+            },
+            {
+              "token": "Mohamed",
+              "choice": "nay"
+            },
+            {
+              "token": "Wiklund",
+              "choice": "nay"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "committeeName": "Education Finance",
+      "meetingDate": "2025-04-10",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/fineduc/20250410/fineduc_20250410_minutes.pdf",
+      "originalRawPdfSha256": "ca0b6ef3d1d4289b7405c23d8aca7ac7dba70baab81a758a72644cb87e82b1df",
+      "originalPdfBytes": 226493,
+      "fetchedAt": "2026-10-10T16:11:13.091Z",
+      "extractionMethod": "embedded_text",
+      "extractedTextSha256": "434152b9c1835c0ead8fab2221a3b86f5763a4a2ae200d5b49ef8c3b23f41a98",
+      "extractedTextBytes": 4371,
+      "baselineNamed": 1,
+      "people": [
+        "Mary K. Kunesh",
+        "Heather Gustafson",
+        "Jason Rarick",
+        "Doron Clark",
+        "Steve A. Cwodzinski",
+        "Robert D. Farnsworth",
+        "Karin Housley",
+        "Michael E. Kreun",
+        "Andrew R. Lang",
+        "Eric Lucero",
+        "Erin K. Maye Quade",
+        "Clare Oumou Verbeten",
+        "Bonnie S. Westlin"
+      ],
+      "motions": [
+        {
+          "question": "SF2255 A16 divided lines 1.21-1.23",
+          "page": 1,
+          "literal": "Senator Kunesh moved the A-16 amendment. Senator Rarick moved to divide the A-16 amendment. The portion to be divided consists of line 1.21-1.23 of the amendment. The A-16 amendment, not including the divided portion, prevailed. Senator Westlin requested a roll call vote for the adoption of the divided portion of the A-16, lines 1.21 - 1.23. 7/6 (Ayes: Kunesh, Gustafson, Clark, Cwodzinski, Maye Quade, Oumou Verbeten, Westlin; Nays: Rarick, Farnsworth, Housley, Kreun, Lang, Lucero) MOTION PREVAILED",
+          "yea": 7,
+          "nay": 6,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Kunesh",
+              "choice": "yea"
+            },
+            {
+              "token": "Gustafson",
+              "choice": "yea"
+            },
+            {
+              "token": "Clark",
+              "choice": "yea"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "yea"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "yea"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "yea"
+            },
+            {
+              "token": "Westlin",
+              "choice": "yea"
+            },
+            {
+              "token": "Rarick",
+              "choice": "nay"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "nay"
+            },
+            {
+              "token": "Housley",
+              "choice": "nay"
+            },
+            {
+              "token": "Kreun",
+              "choice": "nay"
+            },
+            {
+              "token": "Lang",
+              "choice": "nay"
+            },
+            {
+              "token": "Lucero",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2255 A32",
+          "page": 1,
+          "literal": "Senator Gustafson moved the A-32 amendment. Senator Westlin requested a roll call vote for the adoption of A-32 amendment. 13/0 (Ayes: Kunesh, Gustafson, Rarick, Clark, Cwodzinski, Farnsworth, Housley, Kreun, Lang, Lucero, Maye Quade, Oumou Verbeten, Westlin; Nays) MOTION PREVAILED",
+          "yea": 13,
+          "nay": 0,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Kunesh",
+              "choice": "yea"
+            },
+            {
+              "token": "Gustafson",
+              "choice": "yea"
+            },
+            {
+              "token": "Rarick",
+              "choice": "yea"
+            },
+            {
+              "token": "Clark",
+              "choice": "yea"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "yea"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "yea"
+            },
+            {
+              "token": "Housley",
+              "choice": "yea"
+            },
+            {
+              "token": "Kreun",
+              "choice": "yea"
+            },
+            {
+              "token": "Lang",
+              "choice": "yea"
+            },
+            {
+              "token": "Lucero",
+              "choice": "yea"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "yea"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "yea"
+            },
+            {
+              "token": "Westlin",
+              "choice": "yea"
+            }
+          ]
+        },
+        {
+          "question": "SF2255 A10",
+          "page": 1,
+          "literal": "Senator Oumou Verbeten moved the A-10 amendment. Senator Westlin requested a roll call vote for the 13/0 (Ayes: Kunesh, Gustafson, Rarick, Clark, Cwodzinski, Farnsworth, Housley, Kreun, Lang, Lucero, Maye Quade, Oumou Verbeten, Westlin; Nays) MOTION PREVAILED",
+          "yea": 13,
+          "nay": 0,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Kunesh",
+              "choice": "yea"
+            },
+            {
+              "token": "Gustafson",
+              "choice": "yea"
+            },
+            {
+              "token": "Rarick",
+              "choice": "yea"
+            },
+            {
+              "token": "Clark",
+              "choice": "yea"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "yea"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "yea"
+            },
+            {
+              "token": "Housley",
+              "choice": "yea"
+            },
+            {
+              "token": "Kreun",
+              "choice": "yea"
+            },
+            {
+              "token": "Lang",
+              "choice": "yea"
+            },
+            {
+              "token": "Lucero",
+              "choice": "yea"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "yea"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "yea"
+            },
+            {
+              "token": "Westlin",
+              "choice": "yea"
+            }
+          ]
+        },
+        {
+          "question": "SF2255 A5",
+          "page": 1,
+          "literal": "Senator Westlin moved the A-5 amendment. Senator Westlin requested a roll call vote for the adoption of A-5 amendment. 13/0 (Ayes: Kunesh, Gustafson, Rarick, Clark, Cwodzinski, Farnsworth, Housley, Kreun, Lang, Lucero, Maye Quade, Oumou Verbeten, Westlin; Nays) MOTION PREVAILED",
+          "yea": 13,
+          "nay": 0,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Kunesh",
+              "choice": "yea"
+            },
+            {
+              "token": "Gustafson",
+              "choice": "yea"
+            },
+            {
+              "token": "Rarick",
+              "choice": "yea"
+            },
+            {
+              "token": "Clark",
+              "choice": "yea"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "yea"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "yea"
+            },
+            {
+              "token": "Housley",
+              "choice": "yea"
+            },
+            {
+              "token": "Kreun",
+              "choice": "yea"
+            },
+            {
+              "token": "Lang",
+              "choice": "yea"
+            },
+            {
+              "token": "Lucero",
+              "choice": "yea"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "yea"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "yea"
+            },
+            {
+              "token": "Westlin",
+              "choice": "yea"
+            }
+          ]
+        },
+        {
+          "question": "SF2255 A20",
+          "page": 2,
+          "literal": "Senator Lucero offered the A-20 amendment. Senator Lucero requested a roll call vote for the adoption of A-20 amendment. 6/7 (Ayes: Rarick, Farnsworth, Housley, Kreun, Lang, Lucero; Nays: Kunesh, Gustafson, Clark, Cwodzinski, Maye Quade, Oumou Verbeten, Westlin) MOTION FAILED",
+          "yea": 6,
+          "nay": 7,
+          "passed": false,
+          "choices": [
+            {
+              "token": "Rarick",
+              "choice": "yea"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "yea"
+            },
+            {
+              "token": "Housley",
+              "choice": "yea"
+            },
+            {
+              "token": "Kreun",
+              "choice": "yea"
+            },
+            {
+              "token": "Lang",
+              "choice": "yea"
+            },
+            {
+              "token": "Lucero",
+              "choice": "yea"
+            },
+            {
+              "token": "Kunesh",
+              "choice": "nay"
+            },
+            {
+              "token": "Gustafson",
+              "choice": "nay"
+            },
+            {
+              "token": "Clark",
+              "choice": "nay"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "nay"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "nay"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "nay"
+            },
+            {
+              "token": "Westlin",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2255 A13",
+          "page": 2,
+          "literal": "Senator Kreun offered the A-13 amendment. Senator Westlin requested a roll call vote for the adoption of A-13 amendment. 7/6 (Ayes: Gustafson, Rarick, Farnsworth, Housley, Kreun, Lang, Lucero; Nays: Kunesh, Clark, Cwodzinski, Maye Quade, Oumou Verbeten, Westlin) MOTION PREVAILED",
+          "yea": 7,
+          "nay": 6,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Gustafson",
+              "choice": "yea"
+            },
+            {
+              "token": "Rarick",
+              "choice": "yea"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "yea"
+            },
+            {
+              "token": "Housley",
+              "choice": "yea"
+            },
+            {
+              "token": "Kreun",
+              "choice": "yea"
+            },
+            {
+              "token": "Lang",
+              "choice": "yea"
+            },
+            {
+              "token": "Lucero",
+              "choice": "yea"
+            },
+            {
+              "token": "Kunesh",
+              "choice": "nay"
+            },
+            {
+              "token": "Clark",
+              "choice": "nay"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "nay"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "nay"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "nay"
+            },
+            {
+              "token": "Westlin",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2255 A24",
+          "page": 2,
+          "literal": "Senator Lucero offered the A-24 amendment. Senator Lucero requested a roll call vote for the adoption of A-24 amendment. 6/7 (Ayes: Rarick, Farnsworth, Housley, Kreun, Lang, Lucero; Nays: Kunesh, Gustafson, Clark, Cwodzinski, Maye Quade, Oumou Verbeten, Westlin) MOTION FAILED",
+          "yea": 6,
+          "nay": 7,
+          "passed": false,
+          "choices": [
+            {
+              "token": "Rarick",
+              "choice": "yea"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "yea"
+            },
+            {
+              "token": "Housley",
+              "choice": "yea"
+            },
+            {
+              "token": "Kreun",
+              "choice": "yea"
+            },
+            {
+              "token": "Lang",
+              "choice": "yea"
+            },
+            {
+              "token": "Lucero",
+              "choice": "yea"
+            },
+            {
+              "token": "Kunesh",
+              "choice": "nay"
+            },
+            {
+              "token": "Gustafson",
+              "choice": "nay"
+            },
+            {
+              "token": "Clark",
+              "choice": "nay"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "nay"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "nay"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "nay"
+            },
+            {
+              "token": "Westlin",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2255 A14",
+          "page": 2,
+          "literal": "Senator Kreun offered the A-14 amendment. Senator Lucero requested a roll call vote for the adoption of A-14 amendment. 6/7 (Ayes: Rarick, Farnsworth, Housley, Kreun, Lang, Lucero; Nays: Kunesh, Gustafson, Clark, Cwodzinski, Maye Quade, Oumou Verbeten, Westlin) MOTION FAILED",
+          "yea": 6,
+          "nay": 7,
+          "passed": false,
+          "choices": [
+            {
+              "token": "Rarick",
+              "choice": "yea"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "yea"
+            },
+            {
+              "token": "Housley",
+              "choice": "yea"
+            },
+            {
+              "token": "Kreun",
+              "choice": "yea"
+            },
+            {
+              "token": "Lang",
+              "choice": "yea"
+            },
+            {
+              "token": "Lucero",
+              "choice": "yea"
+            },
+            {
+              "token": "Kunesh",
+              "choice": "nay"
+            },
+            {
+              "token": "Gustafson",
+              "choice": "nay"
+            },
+            {
+              "token": "Clark",
+              "choice": "nay"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "nay"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "nay"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "nay"
+            },
+            {
+              "token": "Westlin",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2255 A19",
+          "page": 2,
+          "literal": "Senator Lucero offered the A-19 amendment. Senator Lucero requested a roll call vote for the adoption of A-19 amendment. 6/7 (Ayes: Rarick, Farnsworth, Housley, Kreun, Lang, Lucero; Nays: Kunesh, Gustafson, Clark, Cwodzinski, Maye Quade, Oumou Verbeten, Westlin) MOTION FAILED",
+          "yea": 6,
+          "nay": 7,
+          "passed": false,
+          "choices": [
+            {
+              "token": "Rarick",
+              "choice": "yea"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "yea"
+            },
+            {
+              "token": "Housley",
+              "choice": "yea"
+            },
+            {
+              "token": "Kreun",
+              "choice": "yea"
+            },
+            {
+              "token": "Lang",
+              "choice": "yea"
+            },
+            {
+              "token": "Lucero",
+              "choice": "yea"
+            },
+            {
+              "token": "Kunesh",
+              "choice": "nay"
+            },
+            {
+              "token": "Gustafson",
+              "choice": "nay"
+            },
+            {
+              "token": "Clark",
+              "choice": "nay"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "nay"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "nay"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "nay"
+            },
+            {
+              "token": "Westlin",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2255 recommendation to Taxes",
+          "page": 2,
+          "literal": "Senator Kunesh requested a roll call vote for the passage of S.F. 2255, be recommended to pass and re-referred to the Taxes 7/6 (Ayes: Kunesh, Gustafson, Clark, Cwodzinski, Maye Quade, Oumou Verbeten, Westlin; Nays: Rarick, Farnsworth, Housley, Kreun, Lang, Lucero) MOTION PREVAILED",
+          "yea": 7,
+          "nay": 6,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Kunesh",
+              "choice": "yea"
+            },
+            {
+              "token": "Gustafson",
+              "choice": "yea"
+            },
+            {
+              "token": "Clark",
+              "choice": "yea"
+            },
+            {
+              "token": "Cwodzinski",
+              "choice": "yea"
+            },
+            {
+              "token": "Maye Quade",
+              "choice": "yea"
+            },
+            {
+              "token": "Oumou Verbeten",
+              "choice": "yea"
+            },
+            {
+              "token": "Westlin",
+              "choice": "yea"
+            },
+            {
+              "token": "Rarick",
+              "choice": "nay"
+            },
+            {
+              "token": "Farnsworth",
+              "choice": "nay"
+            },
+            {
+              "token": "Housley",
+              "choice": "nay"
+            },
+            {
+              "token": "Kreun",
+              "choice": "nay"
+            },
+            {
+              "token": "Lang",
+              "choice": "nay"
+            },
+            {
+              "token": "Lucero",
+              "choice": "nay"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "committeeName": "Taxes",
+      "meetingDate": "2025-04-23",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/taxes/20250423/Taxes_20250423_Minutes.pdf",
+      "originalRawPdfSha256": "4580d4257925e6f54711bf72b6bed8b4bcfb756284e411f7c14b2b628e31665a",
+      "originalPdfBytes": 73496,
+      "fetchedAt": "2026-10-10T18:21:30.435Z",
+      "extractionMethod": "ocr_tesseract",
+      "extractedTextSha256": "84da5ed69657dbb91ea6b1ef06cbfd0ea29bce66d5004131d4b07717b24eda90",
+      "extractedTextBytes": 2005,
+      "baselineNamed": 3,
+      "people": [
+        "Ann H. Rest",
+        "Matt D. Klein",
+        "D. Scott Dibble",
+        "Steve Drazkowski",
+        "Grant Hauschild",
+        "Jeremy R. Miller",
+        "Carla J. Nelson",
+        "Aric Putnam"
+      ],
+      "motions": [
+        {
+          "question": "SF2255 recommendation to Finance",
+          "page": 1,
+          "literal": "Senator Klein moved S.F. 2255 be recommended to pass and re-referred to the committee on Finance. Senator Klein requested a roll call vote. 5/4 (Ayes: Rest, Klein, Dibble, Hauschild, Putnam; Nays: Weber, Drazkowski, Miller, Nelson) The motion prevailed",
+          "yea": 5,
+          "nay": 4,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Rest",
+              "choice": "yea"
+            },
+            {
+              "token": "Klein",
+              "choice": "yea"
+            },
+            {
+              "token": "Dibble",
+              "choice": "yea"
+            },
+            {
+              "token": "Hauschild",
+              "choice": "yea"
+            },
+            {
+              "token": "Putnam",
+              "choice": "yea"
+            },
+            {
+              "token": "Weber",
+              "choice": "nay"
+            },
+            {
+              "token": "Drazkowski",
+              "choice": "nay"
+            },
+            {
+              "token": "Miller",
+              "choice": "nay"
+            },
+            {
+              "token": "Nelson",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2669 A47",
+          "page": 1,
+          "literal": "Senator Klein moved the A-47 amendment. Senator Drazkowski requested a roll call vote for the adoption of the A-47 amendment. 5/4 (Ayes: Rest, Klein, Dibble, Hauschild, Putnam; Nays: Weber, Drazkowski, Miller, Nelson) The motion prevailed",
+          "yea": 5,
+          "nay": 4,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Rest",
+              "choice": "yea"
+            },
+            {
+              "token": "Klein",
+              "choice": "yea"
+            },
+            {
+              "token": "Dibble",
+              "choice": "yea"
+            },
+            {
+              "token": "Hauschild",
+              "choice": "yea"
+            },
+            {
+              "token": "Putnam",
+              "choice": "yea"
+            },
+            {
+              "token": "Weber",
+              "choice": "nay"
+            },
+            {
+              "token": "Drazkowski",
+              "choice": "nay"
+            },
+            {
+              "token": "Miller",
+              "choice": "nay"
+            },
+            {
+              "token": "Nelson",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2669 A49",
+          "page": 1,
+          "literal": "Senator Klein moved the A-49 amendment. Senator Klein requested a roll call vote for the adoption of A-49 amendment. 4/5 (Ayes: Rest, Klein, Dibble, Nelson; Nays: Weber, Drazkowski, Hauschild, Miller, Putnam) The motion did not prevail",
+          "yea": 4,
+          "nay": 5,
+          "passed": false,
+          "choices": [
+            {
+              "token": "Rest",
+              "choice": "yea"
+            },
+            {
+              "token": "Klein",
+              "choice": "yea"
+            },
+            {
+              "token": "Dibble",
+              "choice": "yea"
+            },
+            {
+              "token": "Nelson",
+              "choice": "yea"
+            },
+            {
+              "token": "Weber",
+              "choice": "nay"
+            },
+            {
+              "token": "Drazkowski",
+              "choice": "nay"
+            },
+            {
+              "token": "Hauschild",
+              "choice": "nay"
+            },
+            {
+              "token": "Miller",
+              "choice": "nay"
+            },
+            {
+              "token": "Putnam",
+              "choice": "nay"
+            }
+          ]
+        },
+        {
+          "question": "SF2669 recommendation to Finance",
+          "page": 1,
+          "literal": "Senator Klein moved S.F. 2669 as amended, be recommended to pass and re-referred to the committee on Finance. Senator Klein requested a roll call vote. 5/4 (Ayes: Rest, Klein, Dibble, Hauschild, Putnam; Nays: Weber, Drazkowski, Miller, Nelson) The motion prevailed",
+          "yea": 5,
+          "nay": 4,
+          "passed": true,
+          "choices": [
+            {
+              "token": "Rest",
+              "choice": "yea"
+            },
+            {
+              "token": "Klein",
+              "choice": "yea"
+            },
+            {
+              "token": "Dibble",
+              "choice": "yea"
+            },
+            {
+              "token": "Hauschild",
+              "choice": "yea"
+            },
+            {
+              "token": "Putnam",
+              "choice": "yea"
+            },
+            {
+              "token": "Weber",
+              "choice": "nay"
+            },
+            {
+              "token": "Drazkowski",
+              "choice": "nay"
+            },
+            {
+              "token": "Miller",
+              "choice": "nay"
+            },
+            {
+              "token": "Nelson",
+              "choice": "nay"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
