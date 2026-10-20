@@ -88,7 +88,8 @@ test('isolated Postgres validates bounded HF100 chain read-only SQL against migr
   const plan=await db.query('EXPLAIN '+HF100_TEXT_CHAIN_READINESS_SQL,[
    'https://www.senate.mn/journals/2023-2024/20230428059.pdf'
   ]);
-  assert.ok(plan.rowCount&&plan.rowCount>0);
+  assert.ok(plan.rows.length>0&&plan.rows.some((r:{'QUERY PLAN'?:string})=>typeof r['QUERY PLAN']==='string'),
+   'PostgreSQL EXPLAIN must return an actual parsed query plan');
  }finally{
   await db.query('ROLLBACK');
   db.release();
