@@ -33,6 +33,26 @@ The original October 20, 2026 protected snapshot counted **2,308 accepted Senate
 
 Once the gaps are measured, first review journal-origin `same_source_day_bill_unlinked` votes by original question text, recorded ballot and amendment disposition. Every improvement must originate in authentic source evidence and pass exact-match conflict tests. The first source-backed pilot remains HF100 April 28, 2023: journal states first unofficial engrossment as the amendment base, with four amendments adopted and one rejected before final passage. The existing source-only PDF SHA ledger is not itself a stored event identity match. The live vote model and time-sensitive `senate_evidence_asof` remain untouched.
 
+### Original-source HF100/HF1/HF7 individual cases
+
+The guarded protected production readback also reports `coverage.caseAudit` from the
+existing **verified REPEATABLE READ, READ ONLY transaction**. The diagnostic compares
+only stored current paper actions against accepted votes in the **same original
+source document and day**. It recomputes normalized complete named ballot
+signatures inside the transaction, and separates full-question matches from
+unique-ballot-only candidates, unresolved bill identities, repeated ballots,
+and absent candidate ballots. Only aggregate category counts and source
+ordinal/kind/tally for the **HF100** pilot are emitted; member ballots, names,
+internal IDs, URLs and source bodies are never logged.
+
+The source-pinned cases are **HF100 on April 28, 2023**, **HF1 on January 27,
+2023**, and **HF7 on February 2, 2023**. Unlinked but same-ballot events are
+investigation candidates, *not* links: a vote on tabling a bill can share its
+division with a motion to re-refer it, and repeated amendment divisions can
+be identical. Prior original-PDF provenance remains required before any
+new append-only event/paper link is created. The 2,308-event denominator
+and existing official-vote integrity safeguards stay unchanged.
+
 ## Historical text and role dates
 
 The collector stages exact numbered, unofficial-engrossment and conference-report URLs, including official PDF representations, from existing text stores and explicit journal references. Legacy-store discovery prioritizes bills with Senate official votes or raw proceedings links; it does not spend the historical retrieval budget on every unrelated House bill. Exact base references are also queued for current original-body acquisition. Publisher redirects are followed only within the same explicit bill/edition/representation and biennium, or between the exact assignment-sheet paths on www.senate.mn and assets.senate.mn. Resolved source URLs are retained; off-site, wrong-bill and wrong-edition redirects are rejected before fetching. A current download proves current wording, not historical availability.
