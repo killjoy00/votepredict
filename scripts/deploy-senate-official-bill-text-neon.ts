@@ -437,6 +437,21 @@ async function report(db:PoolClient){
       +"WHERE q.status IN ('failed','unavailable') "
       +'GROUP BY s.slug,q.family,q.status,error_category,retry_state '
       +'ORDER BY s.slug DESC,q.family,retry_state,error_category LIMIT 50')).rows;
+
+    // Public legislative identifiers only for eight official text exceptions.
+    // Excludes source URL, source body, database UUID and raw error messages.
+    const versionReviewKeys=(await db.query(
+      "SELECT s.slug AS session,q.family,q.status,q.attempts,"
+      +"CASE WHEN b.identifier ~ '^(HF|SF)[1-9][0-9]{0,5}$' "
+      +"THEN b.identifier ELSE 'unrecognized_bill_key' END AS bill,"
+      +"CASE WHEN q.source_locator ~ '^versions/(?:[0-9]+|ue/[0-9]+|ccr/[a-zA-Z0-9]+)/$' "
+      +"THEN q.source_locator ELSE 'unrecognized_version_key' END AS version,"
+      +"substring(q.status_url FROM '/bills/(?:92|93|94)/(202[1-6])/') AS source_year "
+      +'FROM senate_official_bill_text_queue q '
+      +'JOIN legislative_sessions s ON s.id=q.session_id '
+      +'JOIN bills b ON b.id=q.bill_id '
+      +"WHERE q.status IN ('failed','unavailable') "
+      +'ORDER BY s.slug DESC,q.family,b.identifier,q.source_locator LIMIT 8')).rows;
     const journals=(await db.query(
       'SELECT s.slug AS session,j.status,count(*)::int AS documents,'
       +'coalesce(sum(j.snippets_found),0)::int AS snippets,'
@@ -484,7 +499,7 @@ async function report(db:PoolClient){
       ' WHERE m.source_document_id=d.id AND m.bill_id IS NOT NULL)',
       ' GROUP BY s.slug ORDER BY s.slug DESC'
     ].join('\n'))).rows;
-    return {families,queue,discovery,discoveryFailureKinds,versionFailureKinds,journals,eligible,rawDocuments,outstanding};
+    return {families,queue,discovery,discoveryFailureKinds,versionFailureKinds,versionReviewKeys,journals,eligible,rawDocuments,outstanding};
   });
 }
 async function main():Promise<void>{
