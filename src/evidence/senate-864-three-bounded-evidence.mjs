@@ -86,10 +86,11 @@ export function parseMillerPrintedRows(layout){
  if(pages.length!==6||!pages[2].includes('Schedule A1 - IND')||!pages[3].includes('Schedule A1 - PCF')||!pages[4].includes('Schedule B1 - CE')||!pages[5].includes('Schedule B1 - NCD'))throw Error('Different six-page report/schedule identity');
  const rows=[];
  for(const [page,index,expected] of [[pages[2],3,9],[pages[3],4,9],[pages[4],5,10]]){
-  const lines=page.split(/\r?\n/);let party=null,registration=null,found=0;
+  const lines=page.split(/\r?\n/);let party=null,registration=null,found=0,blockStart=null;
   for(let i=0;i<lines.length;i++){
    if(/^Date\s+/.test(lines[i].trim())){
     let start=i-1;while(start>=0&&lines[start].trim())start--;
+    blockStart=start+1;
     const block=lines.slice(start+1,i).filter(x=>x.trim());
     // Header immediately follows a printed name/address block. Some first
     // blocks follow the report committee title without a blank separator.
@@ -106,7 +107,7 @@ export function parseMillerPrintedRows(layout){
    const continuation=[];if(index===5)for(let j=i+1;j<lines.length&&lines[j].trim()&&!/^\s*(?:\d\d\/|Total|Date)/.test(lines[j]);j++)continuation.push(lines[j].trim());
    const purpose=index===5?compact(d[4].slice(0,printedAmounts[0]?.index)+' '+continuation.join(' ')):null;
    if(fields.length!==(index===5?4:3)||fields.at(-1)!==fields.slice(0,-1).reduce((a,b)=>a+b,0))throw Error('Printed amount columns do not reconcile');
-   rows.push({page:index,schedule:index===3?'IND':index===4?'PCF':'CE',date:`2024-${d[1]}-${d[2]}`,party,registration,purpose,cents:fields[0],unpaid:index===5?fields[1]:0,inKind:fields.at(-2),total:fields.at(-1)});found++;
+   rows.push({page:index,line:i+1,rawBlock:lines.slice(blockStart,i+1+continuation.length).join('\n'),schedule:index===3?'IND':index===4?'PCF':'CE',date:`2024-${d[1]}-${d[2]}`,party,registration,purpose,cents:fields[0],unpaid:index===5?fields[1]:0,inKind:fields.at(-2),total:fields.at(-1)});found++;
   }
   if(found!==expected)throw Error('Printed itemized transaction denominator changed');
  }
