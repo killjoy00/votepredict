@@ -22,7 +22,7 @@ export interface Hf100TextChainReadiness{
  originalPaperActions:8;proposedAmendments:5;adoptedAmendments:4;rejectedAmendments:1;
  explicitBase:'first_unofficial_engrossment';
  verifiedLiteralProposalCaptures:number;
- proposalsWithOneUnambiguousBaseCapture:number;
+ proposalsWithOneUnambiguousBaseCapture:number;proposalsWithAmbiguousBase:number;
  proposalsWithoutVerifiedCapture:number;
  proposalsWithoutUnambiguousBase:number;
  passageCarriesFourSourceAdoptions:true;
@@ -42,7 +42,7 @@ export function summarizeHf100TextChain(rows:readonly Hf100ChainEvidenceRow[]):H
  const passage=rows.at(-1);
  if(proposals.length!==5||adopted.length!==4||rejected.length!==1
   ||proposals.some(p=>!p.proposedText?.trim()||p.explicitBaseLocator!==EXPLICIT_BASE)
-  ||rows.some(r=>!Number.isInteger(r.baseComponents)||r.baseComponents<0||r.baseComponents>1)
+  ||rows.some(r=>!Number.isInteger(r.baseComponents)||r.baseComponents<0||r.baseComponents>100)
   ||!passage||passage.kind!=='passage'||passage.proposedText!==null
   ||!Array.isArray(passage.priorAdoptedKeys))
   throw Error('HF100 proposal, base locator, passage or evidence-count contract drift');
@@ -52,10 +52,11 @@ export function summarizeHf100TextChain(rows:readonly Hf100ChainEvidenceRow[]):H
   throw Error('HF100 rejected or out-of-order amendment may not enter passage text chain');
  const verified=proposals.filter(p=>p.captureVerified).length;
  const exact=proposals.filter(p=>p.baseComponents===1).length;
+ const ambiguous=proposals.filter(p=>p.baseComponents>1).length;
  return {schemaVersion:HF100_CHAIN_READINESS_VERSION,case:'HF100',proceedingOn:DAY,
   originalPaperActions:8,proposedAmendments:5,adoptedAmendments:4,rejectedAmendments:1,
   explicitBase:'first_unofficial_engrossment',
-  verifiedLiteralProposalCaptures:verified,proposalsWithOneUnambiguousBaseCapture:exact,
+  verifiedLiteralProposalCaptures:verified,proposalsWithOneUnambiguousBaseCapture:exact,proposalsWithAmbiguousBase:ambiguous,
   proposalsWithoutVerifiedCapture:5-verified,proposalsWithoutUnambiguousBase:5-exact,
   passageCarriesFourSourceAdoptions:true,rejectedAmendmentExcludedFromPassage:true,
   completeAssembledBillText:false,preVotePublicationProven:false,addedEventLinks:0};
