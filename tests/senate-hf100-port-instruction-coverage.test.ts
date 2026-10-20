@@ -111,7 +111,7 @@ test('text-layer fusion cannot be repaired by guessing words or adjacent lines',
  assert.equal(result.additionalLocalEditsVerified,6);
  assert.equal(result.localEditsHeld,3);
  assert.equal(result.instructionsStillHeld,9);
- assert.deepEqual(result.outcomes.filter(o=>o.reason==='anchor_unresolved').map(o=>o.ordinal),[13,17]);
+ assert.deepEqual(result.outcomes.filter(o=>o.reason==='anchor_unresolved').map(o=>o.ordinal),[11,13,17]);
  assert.equal(result.completeAssembledBillText,false);
 });
 
