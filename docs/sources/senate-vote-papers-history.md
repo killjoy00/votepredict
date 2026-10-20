@@ -14,6 +14,25 @@ Nested amendment/withdrawal sequences that are not fully separated are held rath
 
 `senate_vote_paper_components_current_v` connects an explicitly named base locator to captured text for that bill. Conflicting retained text hashes at the same version URL hold that representation rather than selecting a latest body. HTML and PDF representations preserve their separate original bytes and extracted-text hashes. Full assembled amended-bill text remains explicitly **unverified**. A linked question or amendment is not automatically a complete final-passage paper.
 
+## Population-wide vote-to-text gap audit (#1498)
+
+The same independently gated, protected production readback now includes `coverage.gapAudit`, a **read-only** event-level reconciliation of **every accepted Senate vote event** in the three requested biennia. It is a classification of existing evidence, not an attempt to reconstruct an unspecified version or to overwrite accepted votes. It is checked against the already deployed `senate_vote_paper_coverage_v` denominator for **both** accepted event counts and exact event-paper question links; disagreement fails the protected run.
+
+Each event falls into exactly one stage:
+
+- `exact_question`: the preexisting unique official-question/full-named-ballot linkage is intact. Separate counters show literal proposed text, explicitly named base version, captured base representation, in-journal earlier adopted actions, and original-source verification. **None** is a certified complete assembled bill state.
+- `same_source_day_bill_unlinked`: a parsed paper exists in the **same original document, bill and day**, but the exact question+ballot link did not pass. Audit the original question, distinct ballot/motion and possible parser defects; never auto-attach by date/bill.
+- `same_bill_day_other_source`: paper exists for the same bill and date but not the accepted event's exact document source. A fresh government-source/PDF identity proof is needed, not simply identical vote tallies.
+- `bill_papers_on_other_dates`: this bill has papers, but not on the event date. Publication date cannot substitute for acted-on text.
+- `no_parsed_paper_for_bill`: existing paper parser has no source-local paper for this resolved bill. Retrieve/inspect the correct official journal, committee text, or missing paper only after identifying original source context.
+- `no_resolved_bill`: the accepted event itself lacks a bill link; do not assume its text from neighboring proceedings.
+
+The output breaks these categories down by session, existing vote kind and source family (`senate_journal`, `committee_minutes`, `other_source`), with at most 18 **public bill/day-only** examples and a bounded HF100 April 28, 2023 original-action pilot. It includes no raw journal text, named member choices, internal IDs, SQL connection strings, or source URLs. A committee-minute vote does not inherit a floor-journal paper link. A procedural vote may have a completely specified *question* without constituting a vote to enact particular policy language.
+
+The original October 20, 2026 protected snapshot counted **2,308 accepted Senate votes and 890 exact question links** (455/658 passage, 225/1,218 amendment), **82 captured explicit base components**, and **zero certified complete assemblies**. These are baseline measures until the new readback is verified; source-local paper counts are not interchangeable with the event denominator.
+
+Once the gaps are measured, first review journal-origin `same_source_day_bill_unlinked` votes by original question text, recorded ballot and amendment disposition. Every improvement must originate in authentic source evidence and pass exact-match conflict tests. The first source-backed pilot remains HF100 April 28, 2023: journal states first unofficial engrossment as the amendment base, with four amendments adopted and one rejected before final passage. The existing source-only PDF SHA ledger is not itself a stored event identity match. The live vote model and time-sensitive `senate_evidence_asof` remain untouched.
+
 ## Historical text and role dates
 
 The collector stages exact numbered, unofficial-engrossment and conference-report URLs, including official PDF representations, from existing text stores and explicit journal references. Legacy-store discovery prioritizes bills with Senate official votes or raw proceedings links; it does not spend the historical retrieval budget on every unrelated House bill. Exact base references are also queued for current original-body acquisition. Publisher redirects are followed only within the same explicit bill/edition/representation and biennium, or between the exact assignment-sheet paths on www.senate.mn and assets.senate.mn. Resolved source URLs are retained; off-site, wrong-bill and wrong-edition redirects are rejected before fetching. A current download proves current wording, not historical availability.
