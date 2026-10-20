@@ -6,6 +6,7 @@ import {parseJournalPaperActions,stripInterposedSenateJournalRollHeader} from '.
 import {identifyPrattSourceAction,HF100_ORIGINAL_SHADOW_VERSION} from '../src/operations/senate-hf100-original-shadow.js';
 import {summarizeHf100TextChain} from '../src/operations/senate-hf100-text-chain-readiness.js';
 import {HF100_FIRST_UE_PDF,HF100_FIRST_UE_PDF_SHA256,HF100_FIRST_UE_PDF_BYTE_LENGTH,assessHf100PrintedLinePilot} from '../src/operations/senate-hf100-printed-line-pilot.js';
+import {assessHf100PortInstructionCoverage} from '../src/operations/senate-hf100-port-instruction-coverage.js';
 import {fetchCanonicalGovernmentSource,boundedBody} from '../src/operations/senate-history-archive.js';
 import {hash} from '../src/operations/senate-vote-paper-parser.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
@@ -171,6 +172,31 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
   console.log('SENATE_HF100_REVISOR_LINE_PILOT='+JSON.stringify({
    source:'HF100 UE1 Revisor PDF',pdfSha256,pdfBytes:pdfBytes.length,...linePilot
   }));
+  // Independent original-Journal + pinned original-Revisor audit of ALL Port
+  // headings. Only local edit anchors may be checked; no structural rewrite or
+  // final bill state is certified by this source-only readback.
+  const portCoverage=assessHf100PortInstructionCoverage(actions,revisorText);
+  console.log('SENATE_HF100_PORT_INSTRUCTION_COVERAGE='+JSON.stringify({
+   source:'HF100 first UE + April 28 original Journal',
+   sourceInstructions:portCoverage.sourceInstructionsIdentified,
+   printedCoordinatesResolved:portCoverage.printedCoordinatesResolved,
+   earlierLocalEdits:portCoverage.previouslyVerifiedLocalEdits,
+   additionalLocalEditsVerified:portCoverage.additionalLocalEditsVerified,
+   structuralInstructionsHeld:portCoverage.structuralInstructionsHeld,
+   localEditsHeld:portCoverage.localEditsHeld,
+   remainingHeld:portCoverage.instructionsStillHeld,
+   portFullyApplied:portCoverage.portFullyApplied,
+   completeAssembledBillText:portCoverage.completeAssembledBillText,
+   eventLinksAdded:portCoverage.eventLinksAdded
+  }));
+  assert.equal(portCoverage.sourceInstructionsIdentified,19);
+  assert.ok(portCoverage.additionalLocalEditsVerified>=6,
+   'Port must verify at least six NEW strict printed-line edits, or hold CI for review');
+  assert.equal(portCoverage.structuralInstructionsHeld,6);
+  assert.equal(portCoverage.portFullyApplied,false);
+  assert.equal(portCoverage.completeAssembledBillText,false);
+  assert.equal(portCoverage.preVotePublicationProven,false);
+  assert.equal(portCoverage.eventLinksAdded,0);
   assert.equal(linePilot.fullyCheckedAdoptedAmendments,1);
   assert.equal(linePilot.adoptedAmendmentsStillHeldForCompositeApplication,4);
   assert.equal(linePilot.completeAssembledBillText,false);
