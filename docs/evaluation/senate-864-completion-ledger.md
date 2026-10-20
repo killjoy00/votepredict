@@ -13,6 +13,61 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 20 UTC: three bounded evidence-only clarifications
+
+The owner selected evidence gathering and clarification only. The new pass is limited to
+four already acquired original Minutes, one existing Enterprise Minnesota interview in its
+two retained historical body versions, and Jeremy R. Miller registration **16891**, report
+**2024 year-end original `16891:24:pcc:YE:0:0`**. No database correction, import or
+historical eligibility promotion is included in this audit.
+
+The [manually reviewed question attestation](../../tests/fixtures/senate-864-four-original-questions.json)
+is an appendix to this ledger. Original PDFs were rendered and checked against their
+existing raw PDF and extracted-text SHA256 pins. Source verification establishes:
+
+| Original Minutes | Distinct printed named rolls | Printed individual choices |
+|---|---:|---:|
+| Judiciary, 2024-04-19 | 3 | 27 |
+| Human Services, 2025-03-17 | 2 | 18 |
+| Education Finance, 2025-04-10 | 10 | 130 |
+| Taxes, 2025-04-23 | 4 | 36 |
+| **Selected four originals only** | **19** | **211** |
+
+The earlier four parser gains were candidate locators, not the complete motion count of
+these four originals. Education Finance has three **explicitly named** 13–0 rolls and four
+failed 6–7 rolls. A22 was withdrawn; the subsequent named roll is the SF2255 recommendation
+to Taxes. The divided A16 vote covers lines 1.21–1.23 only. Judiciary has a named roll on an
+oral amendment to A14 even though A14 as amended was later withdrawn; Seeberger's different
+withdrawn oral proposal and the later voice-voted oral amendment are separate exclusions.
+Taxes has separate SF2669 A49 **failure** and final recommendation **passage**. Formal result
+restatements are not additional motions. Hearing-day availability and next-day historical
+eligibility remain the owner rule; no intraday date is inferred from a typographic gavel time.
+
+For media, the existing Enterprise Minnesota Q&A has three selected short fragments
+inside paragraphs explicitly labeled **Miller:** in both exact SHA1/SHA256-authenticated
+bodies. The earliest authenticated observation is **2022-10-05T01:59:37Z**, followed by
+2023-01-31T06:39:41Z. The displayed 2021-11-08 date is not independent 2021 publication proof.
+Two source copies do not create six distinct statement events. No audio review, subjective
+sincerity gate, Reformer/MPR reopening or general publisher crawling is required.
+
+The exact six-page Miller finance PDF has **9 itemized individual contribution rows**,
+**9 committee/fund contribution rows**, **10 campaign expenditure rows**, and **zero
+itemized non-campaign disbursement rows**. Non-itemized subtotals are not individual
+transaction records. The board received stamp is 2025-01-09; the accepted due date is
+2025-01-31, statutory release floor and practical estimate 2025-02-01. These dates do not
+prove historical first-public availability of this exact version. Independent expenditures
+are outside this candidate report's scope. No exact transaction/report link is inferred
+from registration/year alone.
+
+**Execution state:** original-source checks passed locally; reviewed protected source-to-store
+read-back is pending. `senate-864-three-bounded-evidence.yml` independently reauthenticates
+these seven existing bodies before the protected job; ten bounded static SELECTs run only
+inside verified `REPEATABLE READ READ ONLY`, schema-ledger-checked transactions with an
+explicit `ROLLBACK`. Public receipts contain aggregate counts and parliamentary question
+labels; no private database identities, finance names, amounts or row keys. The audit
+will distinguish exact question anchors from context windows containing multiple rolls;
+identical slates and legacy positional keys are insufficient.
+
 ## October 20 UTC: all 526 website metadata holds resolved and stored; donor/Minutes holds clarified
 
 **Implemented, merged, executed and verified.** [#1481](https://github.com/killjoy00/votepredict/pull/1481),
