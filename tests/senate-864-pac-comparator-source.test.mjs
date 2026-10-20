@@ -1,5 +1,11 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {reconcileHeldPacComparators,originalComparatorRowsetSha} from '../src/evidence/senate-864-pac-comparator-source.mjs';
+import {reconcileHeldPacComparators,originalComparatorRowsetSha,clarifyUnclassifiedOriginalRows} from '../src/evidence/senate-864-pac-comparator-source.mjs';
+test('clarify exact raw blanks and receipt categories without exposing names or assigning a class',()=>{
+ const r=clarifyUnclassifiedOriginalRows([{contributor:'Unknown',contributorType:null,raw:{contributor:'','contrib type':'','contrib reg num':'','receipt type':'Contribution'}},
+ {contributor:'Private comparator name',contributorType:'Other',raw:{contributor:'Private comparator name','contrib type':'Other','contrib reg num':'','receipt type':'Loan'}}]);
+ assert.equal(r.blankOriginalContributor,1);assert.equal(r.blankOriginalType,1);assert.equal(r.rawTypeAgreesWithParser,2);
+ assert.equal(r.receiptClass.loan,1);assert.ok(!JSON.stringify(r).includes('Private comparator name'));
+});
 function fixture(){
  const cohort=Array.from({length:116},(_,i)=>({filerReg:String(10000+i),year:2024,rowKey:String(i).padStart(64,'0'),contributorReg:'90000',transactionDate:'2024-01-02',contributor:'Synthetic PAC',amount:'100.00'}));
  const broken=cohort.slice(2,25).map((r,i)=>({...r,rowKey:String(i+200).padStart(64,'0'),contributorReg:'',contributor:'Synthetic Individual'}));

@@ -1,0 +1,32 @@
+name: Issue 864 exact retained website metadata recovery
+on:
+  pull_request:
+    paths: ['.github/workflows/senate-864-metadata-recovery.yml', 'src/evidence/senate-864-website-metadata-recovery.mjs', 'scripts/verify-senate-864-metadata-recovery.mjs', 'tests/senate-864-website-metadata-recovery.test.mjs']
+  push:
+    branches: [main]
+    paths: ['.github/workflows/senate-864-metadata-recovery.yml', 'src/evidence/senate-864-website-metadata-recovery.mjs', 'scripts/verify-senate-864-metadata-recovery.mjs', 'tests/senate-864-website-metadata-recovery.test.mjs']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-original-verification:
+    if: github.repository == 'killjoy00/votepredict' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: node --test tests/senate-864-website-metadata-recovery.test.mjs
+      - run: node scripts/verify-senate-864-metadata-recovery.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate864-website-metadata-recovery
+          path: artifacts/senate864-website-metadata-recovery.json
+          if-no-files-found: error
+          retention-days: 14
