@@ -76,6 +76,31 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
      sourceUrl:'https://example.test/HF100-pratt-diagnostic',knownMemberNames:names,
      allowRosterMismatch:true});
    }catch(error){parseFailure=error instanceof Error?error.name:'unknown'}
+
+   const dayMarker=block.indexOf('59TH DAY]');
+   const asFollows=dayMarker>=0?block.lastIndexOf('as follows:',dayMarker):-1;
+   const namedHeading=dayMarker>=0?block.indexOf('Those who voted in the affirmative were:',dayMarker):-1;
+   const between=asFollows>=0&&namedHeading>asFollows
+    ?block.slice(asFollows+'as follows:'.length,namedHeading):'';
+   const structural={
+    boundaryIdentified:asFollows>=0&&namedHeading>asFollows,
+    gapCharacters:between.length,whitespaceCharacters:(between.match(/\s/g)||[]).length,
+    nonAsciiCharacters:[...between].filter(ch=>ch.charCodeAt(0)>127).length,
+    hasDayMarker:between.includes('59TH DAY]'),
+    hasWeekday:/\bFRIDAY\b/i.test(between),
+    hasMonth:/\bAPRIL\b/i.test(between),
+    hasYear:between.includes('2023'),
+    hasFolio:between.includes('6889'),
+    hasDocumentTitle:/JOURNAL OF THE SENATE/i.test(between),
+    startsWithBracket:/^\s*\[/i.test(between),
+    endsWithDigits:/\d+\s*$/.test(between),
+    numberOfYearStrings:(between.match(/2023/g)||[]).length,
+    numberOfDayStrings:(between.match(/59TH\s+DAY/g)||[]).length,
+    numberOfNamedHeaders:(between.match(/Those who voted/gi)||[]).length,
+    charClassSignature:[...between].slice(0,140).map(ch=>/[\d]/.test(ch)?'D':/[A-Za-z]/.test(ch)?'L':/\s/.test(ch)?'S':'P').join('').replace(/(.)\1+/g,(_x,c)=>c)
+   };
+   console.log('SENATE_HF100_PAGE_BOUNDARY_DIAGNOSTIC='+JSON.stringify(structural));
+
    console.log('SENATE_HF100_MISSING_BALLOT_DIAGNOSTIC='+JSON.stringify({
     hasRollStart:true,headerStripped:stripped!==block,
     sourceMarkerPresent:block.includes('59TH DAY]'),
