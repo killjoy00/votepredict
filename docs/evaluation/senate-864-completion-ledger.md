@@ -34,8 +34,18 @@ with a different extractor or source content stops the transaction. No generic
 schedule parser or proximity fallback is used. Three purpose discrepancies and
 historical first-public proof remain holds.
 
-**Proposed, not yet executed or verified.** Production status and receipt will replace
-this paragraph after protected execution and independent post-write read-back.
+**Merged #1489, not yet committed or verified in production.** Main
+`2d14d5eb021dba8222ccb6ef3807e8dda793ba1a`, protected [39368167690](https://github.com/killjoy00/votepredict/actions/runs/39368167690),
+job 118450569932, stopped at `Finance link source conflict` before COMMIT. No accepted
+production result. Zero **exact** links in the earlier audit did not establish zero
+parser-result records. The V2 plan retains the same full source comparators: it can
+upgrade only the 25 certified canonical records from well-formed `unmatched`/`ambiguous`
+results, preserving the three held parser results byte-for-byte. Existing contradictory
+exact claims still stop execution. The disposable PostgreSQL regression now seeds all
+28 prior unmatched results and requires 25 exact upgrades, three unchanged holds and zero
+replay writes. V2 emits only aggregate preflight status counts from its verified read-only
+snapshot. Production status and receipt will replace this paragraph after successful
+protected execution and independent post-write read-back.
 
 ## October 20 UTC: three bounded evidence-only passes executed and verified
 

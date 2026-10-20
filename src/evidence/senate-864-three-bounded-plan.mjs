@@ -2,7 +2,7 @@
 import {sha,compact,fixture,validateOriginalQuestions,financeMatches,compareFinance,MEDIA_FRAGMENTS} from './senate-864-three-bounded-evidence.mjs';
 import {senateCommitteeHearingTiming} from './senate-committee-meeting-timing.ts';
 export const VERSION='senate864-three-bounded-production-v1';
-export const MARKER='SENATE864_THREE_BOUNDED_PRODUCTION_V1';
+export const MARKER='SENATE864_THREE_BOUNDED_PRODUCTION_V2';
 export const METHOD='miller16891-2024-printed-layout-full-comparators-v1';
 export const REPORT='16891:24:pcc:YE:0:0';
 const legacy=[
@@ -84,6 +84,13 @@ export function financePlan(proof,s){
  const counts=compareFinance(proof.finance.rows,s.finance,s.links);
  if(!exact(counts.map(c=>[c.storedEvidenceCopies,c.canonicalTransactions,c.conflictingCopyMetadata,c.exactPrintedRowMatches,c.ambiguousPrintedRowMatches,c.notMatchedToThisExactVersion]),[[18,18,0,18,0,0],[10,10,0,7,0,3]]))throw Error('Finance comparator scope drift');
  const plans=[];
+ for(const l of s.links){
+  const item=one(s.finance.filter(r=>r.metadata.rowKey===l.canonical_row_key),'Link canonical scope');
+  const family=item.metadata.subtype==='candidate_contribution_record'?'candidate_contribution':'candidate_expenditure';
+  if(l.family!==family||!['exact','ambiguous','unmatched'].includes(l.match_status))throw Error('Existing finance link family/status conflict');
+  if(l.match_status!=='exact'&&(l.entry_id!==null||l.match_status==='unmatched'&&l.possible_entry_count!==0||l.match_status==='ambiguous'&&l.possible_entry_count<1))throw Error('Existing parser result shape conflict');
+  if(l.match_status==='exact'&&!financeMatches(proof.finance.rows,item.metadata).length)throw Error('Held finance row has an existing exact claim');
+ }
  for(const r of s.finance){
   const matches=financeMatches(proof.finance.rows,r.metadata);if(!matches.length)continue;
   const row=one(matches,'Finance row ambiguous');
@@ -92,10 +99,11 @@ export function financePlan(proof,s){
   const entry=s.entries.filter(e=>e.page_number===row.page&&e.line_number===row.line);
   if(entry.length){const e=one(entry,'Printed entry collision');if(e.entry_extractor_version!==METHOD||e.raw_schedule_line!==row.rawBlock||e.printed_transaction_date!==row.date||Number(e.printed_amount_cents)!==row.cents||e.printed_counterparty!==row.party||e.schedule_family!==family)throw Error('Existing entry incompatible with fixed layout coordinates');}
   const existing=s.links.filter(l=>l.canonical_row_key===r.metadata.rowKey);
-  if(existing.length){const l=one(existing,'Finance link duplication');if(l.family!==family||l.match_status!=='exact'||l.possible_entry_count!==1||l.matching_method!==METHOD||!entry.length||l.entry_id!==entry[0].id)throw Error('Finance link source conflict');}
-  plans.push({key:r.metadata.rowKey,row,family,entry:entry[0],stored:existing.length===1});
+  const priorLink=existing.length?one(existing,'Finance link duplication'):null;
+  if(priorLink?.match_status==='exact'&&(priorLink.possible_entry_count!==1||priorLink.matching_method!==METHOD||!entry.length||priorLink.entry_id!==entry[0].id))throw Error('Existing exact finance link source conflict');
+  plans.push({key:r.metadata.rowKey,row,family,entry:entry[0],priorLink,stored:priorLink?.match_status==='exact'});
  }
- if(plans.length!==25||s.links.length!==plans.filter(p=>p.stored).length||new Set(plans.map(p=>p.row)).size!==25||s.entries.some(e=>e.entry_extractor_version===METHOD&&!plans.some(p=>p.entry?.id===e.id)))throw Error('Finance one-to-one/hold boundary');
+ if(plans.length!==25||s.links.filter(l=>l.match_status==='exact').length!==plans.filter(p=>p.stored).length||new Set(plans.map(p=>p.row)).size!==25||s.entries.some(e=>e.entry_extractor_version===METHOD&&!plans.some(p=>p.entry?.id===e.id)))throw Error('Finance one-to-one/hold boundary');
  return plans;
 }
 export function productionPlan(proof,s){return {committee:committeePlan(proof,s),media:mediaPlan(proof,s),finance:financePlan(proof,s)};}
