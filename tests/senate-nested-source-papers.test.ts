@@ -64,3 +64,45 @@ test('nested source context without a complete named ballot remains unlinked',()
  assert.equal(a?.yeas,33);assert.equal(a?.nays,34);
  assert.equal(a?.disposition,'rejected');
 });
+
+
+test('out-of-order nested proposal and appeal are not mislabeled as an amendment ballot',()=>{
+ const journal=[
+  'Senator Lucero moved to amend the first Lucero amendment to H.F. No. 1 as follows:',
+  'Page 1, line 6, delete "22" and insert "39".',
+  'Senator Maye Quade questioned whether the proposal was in order.',
+  'The President ruled the third Lucero amendment out of order.',
+  'Senator Pratt appealed the decision of the President.',
+  'The question was taken on "Shall the decision of the President be the judgment of the Senate?"',
+  'The roll was called, and there were yeas 38 and nays 28, as follows:',
+  'So the decision of the President was sustained.'
+ ].join('\n');
+ assert.equal(parseNestedSenateSourcePapers(journal).length,0,
+  'The 38-28 appellate division is not a vote adopting Lucero amendment text');
+});
+
+test('a divided amendment cannot be assigned the ballot of its first portion',()=>{
+ const initial=[
+  'Senator Murphy moved to amend the first Abeler amendment to H.F. No. 1 as follows:',
+  'Page 1, delete line 2 and insert: "some different wording".',
+  'Senator Rasmusson requested division of the Murphy amendment to the first Abeler amendment.',
+  'First portion:',
+  'The question was taken on the adoption of the first portion of the Murphy amendment to the first Abeler amendment.',
+  'The roll was called, and there were yeas 34 and nays 33, as follows:',
+  'The motion prevailed. So the amendment to the amendment was adopted.'
+ ].join('\n');
+ assert.equal(parseNestedSenateSourcePapers(initial).length,0);
+ const noRequest=initial.replace('Senator Rasmusson requested division of the Murphy amendment to the first Abeler amendment.\n','');
+ assert.equal(parseNestedSenateSourcePapers(noRequest).length,0,
+  'Explicit portion-only adoption does not authenticate an undivided proposal');
+});
+
+test('unrelated parent-bill passage question does not become nested amendment identity',()=>{
+ const journal=[
+  'Senator Maye Quade moved to amend the first Lucero amendment to H.F. No. 1 as follows:',
+  'Page 1, line 3, delete "word".',
+  'The question was taken on the final passage of H.F. No. 1.',
+  'The roll was called, and there were yeas 34 and nays 33, as follows:'
+ ].join('\n');
+ assert.equal(parseNestedSenateSourcePapers(journal).length,0);
+});
