@@ -13,104 +13,127 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
-## October 20 UTC: three bounded evidence-only clarifications
+## October 20 UTC: three bounded evidence-only passes executed and verified
 
-The owner selected evidence gathering and clarification only. The new pass is limited to
-four already acquired original Minutes, one existing Enterprise Minnesota interview in its
-two retained historical body versions, and Jeremy R. Miller registration **16891**, report
-**2024 year-end original `16891:24:pcc:YE:0:0`**. No database correction, import or
-historical eligibility promotion is included in this audit.
+**Evidence gathering and clarification complete in these stated scopes; no database writes.**
+[#1484](https://github.com/killjoy00/votepredict/pull/1484) acquired no new source cohort:
+it reuses four already acquired original Minutes, two retained versions of one Enterprise
+Minnesota interview, and Miller registration **16891**'s single indexed **2024 year-end
+original `16891:24:pcc:YE:0:0`**. The final corrected audit is
+[#1486](https://github.com/killjoy00/votepredict/pull/1486), merged
+`8909582f003fe86ba3e2d8f29883d9cad6ddb27e`, executed at **2026-10-20T02:23:54.274Z** in protected
+[39358291489](https://github.com/killjoy00/votepredict/actions/runs/39358291489), job **118419129381**.
+The [aggregate source-to-store receipt](source-proof/senate-864-three-bounded-readback-20261020.json),
+[seven-body source receipt](source-proof/senate-864-three-bounded-originals-20261020.json)
+and [manually reviewed question attestation](../../tests/fixtures/senate-864-four-original-questions.json)
+are appendices of this maintained ledger.
 
-The [manually reviewed question attestation](../../tests/fixtures/senate-864-four-original-questions.json)
-is an appendix to this ledger. Original PDFs were rendered and checked against their
-existing raw PDF and extracted-text SHA256 pins. Source verification establishes:
+### Committee: twelve missing source questions, with all identities resolved
 
-| Original Minutes | Distinct printed named rolls | Printed individual choices |
+| Exact original | Source named rolls / printed choices | Stored events / choices |
 |---|---:|---:|
-| Judiciary, 2024-04-19 | 3 | 27 |
-| Human Services, 2025-03-17 | 2 | 18 |
-| Education Finance, 2025-04-10 | 10 | 130 |
-| Taxes, 2025-04-23 | 4 | 36 |
-| **Selected four originals only** | **19** | **211** |
+| Judiciary and Public Safety, 2024-04-19 | 3 / 27 | 2 / 18 |
+| Human Services, 2025-03-17 | 2 / 18 | 1 / 9 |
+| Education Finance, 2025-04-10 | 10 / 130 | 1 / 13 |
+| Taxes, 2025-04-23 | 4 / 36 | 3 / 27 |
+| **Selected four originals only** | **19 / 211** | **7 / 67** |
 
-The earlier four parser gains were candidate locators, not the complete motion count of
-these four originals. Education Finance has three **explicitly named** 13–0 rolls and four
-failed 6–7 rolls. A22 was withdrawn; the subsequent named roll is the SF2255 recommendation
-to Taxes. The divided A16 vote covers lines 1.21–1.23 only. Judiciary has a named roll on an
-oral amendment to A14 even though A14 as amended was later withdrawn; Seeberger's different
-withdrawn oral proposal and the later voice-voted oral amendment are separate exclusions.
-Taxes has separate SF2669 A49 **failure** and final recommendation **passage**. Formal result
-restatements are not additional motions. Hearing-day availability and next-day historical
-eligibility remain the owner rule; no intraday date is inferred from a typographic gavel time.
+All four original URL/PDF SHA identities are stored. **All 67 existing choices match the
+source and historical person/session; zero unresolved joins across the 211 printed
+choices.** Each of the seven stored questions has a unique source anchor. Complete question
+text plus compatible bill/tally distinguishes overlapping Taxes contexts; no ordinal-key,
+attendance, count-only or surname-only assignment is used. The earlier four parser gains
+were candidate locators, not the full named-roll count of these originals.
 
-For media, the existing Enterprise Minnesota Q&A has three selected short fragments
-inside paragraphs explicitly labeled **Miller:** in both exact SHA1/SHA256-authenticated
-bodies. The earliest authenticated observation is **2022-10-05T01:59:37Z**, followed by
-2023-01-31T06:39:41Z. The displayed 2021-11-08 date is not independent 2021 publication proof.
-Two source copies do not create six distinct statement events. No audio review, subjective
-sincerity gate, Reformer/MPR reopening or general publisher crawling is required.
+The concrete next repair is **12 events / 144 explicit choices** from these exact sources:
+the Judiciary oral amendment to A14; Human Services SF2149 A4; nine Education Finance
+SF2255 rolls (A32, A10, A5, A20, A13, A24, A14, A19, recommendation to Taxes); and Taxes
+SF2669's recommendation to Finance. Preserve original IDs/keys and all 67 existing choices.
+Also correct the SF5337 recommendation currently classified as an amendment, SF2149 A1's
+null outcome despite explicit passage, and source-proven missing bill/amendment references.
+**These data repairs are not executed by this evidence-only pass.**
 
-The exact six-page Miller finance PDF has **9 itemized individual contribution rows**,
-**9 committee/fund contribution rows**, **10 campaign expenditure rows**, and **zero
-itemized non-campaign disbursement rows**. Non-itemized subtotals are not individual
-transaction records. The board received stamp is 2025-01-09; the accepted due date is
-2025-01-31, statutory release floor and practical estimate 2025-02-01. These dates do not
-prove historical first-public availability of this exact version. Independent expenditures
-are outside this candidate report's scope. No exact transaction/report link is inferred
-from registration/year alone.
+Education Finance's three 13–0 rolls print all thirteen names; they are not inferred from
+unanimity. A16 covers divided lines 1.21–1.23 only. A22 was withdrawn; the later roll is
+the recommendation. Judiciary's distinct oral roll occurred before A14 as amended was
+withdrawn; Seeberger's different withdrawn oral proposal and the voice-voted oral amendment
+supply no extra named votes. Taxes A49 failed; the later recommendation passed. Formal
+result restatements are not additional motions. Apply the owner hearing-day availability
+and next-day eligibility rule in any future guarded correction.
 
-**First executed read-back:** [#1484](https://github.com/killjoy00/votepredict/pull/1484),
-merged `f33545a9d3808d3a0c08e3558d861ab9ec5f2818`, protected
-[39356274079](https://github.com/killjoy00/votepredict/actions/runs/39356274079), job
-`118412555964`, completed 2026-10-20T02:01:56.486Z. All four exact source identities
-are stored; their selected current storage contains **7 events / 67 choices**, versus
-**19 source rolls / 211 printed choices**. The bounded exact-version/article query
-returns **zero media evidence rows** for the selected Q&A. Finance read-back confirms
-the exact report registry/body and six pages, **18 contribution copies / 18 canonical
-transactions / 18 unique printed-row matches** (9 individual, 9 committee/fund), and
-**10 expenditure copies / 10 canonical transactions**, not yet certified by all field
-comparators. There are no stored exact transaction/version links or historical
-exact-version / independent historical bulk-row publication proofs in this selected cohort.
+### Media: three source-ready fragments, no stored evidence found in the bounded query
 
-**Audit correction before final interpretation:** the first receipt's committee
-`unresolvedFullIdentities` values are superseded method diagnostics, **not evidence of
-unknown people**. The new auditor considered multiple sessions' memberships; it must
-restrict the full-name/date join to the hearing's session. Source headers already supply
-all printed full names. Add regression coverage for overlapping career dates across
-sessions and fixed aggregate finance field diagnostics before interpreting expenditure
-nonmatches. Case/spacing-only enum differences may normalize; missing unpaid/total
-columns must remain missing, never default to certified zero. Full purpose, family,
-registered identity, date, money and one-to-one row comparisons remain required.
+The existing Enterprise Minnesota Q&A has three selected short literal fragments in
+paragraphs explicitly labeled **Miller:** in **both** exact SHA1/SHA256-authenticated bodies.
+The stable historical Jeremy Miller identity resolves uniquely. The earliest authenticated
+observation is **2022-10-05T01:59:37Z**, followed by 2023-01-31T06:39:41Z. The displayed
+2021-11-08 date is not independent 2021 publication proof. Two source copies do not create
+six statement events. No audio review or subjective sincerity gate is required.
 
-**Corrected session read-back:** [#1485](https://github.com/killjoy00/votepredict/pull/1485),
-merged `b1fbc36479aa5886e0c2cbbefcb256117fc89450`, protected
-[39357442992](https://github.com/killjoy00/votepredict/actions/runs/39357442992), job
-`118416148731`, completed 2026-10-20T02:13:43.841Z. **All 67 stored choices match;
-zero unresolved full historical identities across all 211 printed choices.** All seven
-existing questions now have unique source anchors using the actual bill/tally where
-adjacent contexts overlap. The source/store cardinality gap remains **12 rolls / 144
-choices**, not an identity research hold. Demonstrable fields to repair include the
-SF5337 recommendation stored as `amendment`, SF2149 A1 with a null outcome despite explicit
-passage, and missing bill/amendment references. No repair has been executed in this
-evidence-only pass.
+The exact source hashes/article URL/seed query returned **zero evidence rows**, including
+zero literal direct statements or context copies for this selected article. This is a
+bounded storage observation, not a claim that the statement never existed or that media
+history is complete. The concrete next implementation is a bounded append of **three
+non-serving literal statements** using the 2022 observation clock, the resolved stable
+person and source deduplication. No import was executed here. Closed Reformer/MPR cases
+and general press-release crawling remain outside this pass.
 
-The finance diagnostics expose a concrete new-auditor defect: the stored original type is
-**Campaign expenditure**, exactly matching the PDF's **B1–CE Campaign Expenditures** heading;
-the initial gate incorrectly expected the synthetic-test label General expenditure.
-All ten expenditure records match date/paid amount, full counterparty and unpaid/total
-columns. **Seven full purposes match; three differ.** Recognize the exact source-supported
-Campaign expenditure class, keep NCD excluded, and repeat one-to-one containment checks.
-Do not relax full-purpose or collision checks. The three purpose differences require an
-independently authenticated original bulk row / exact report-version comparison before
-any correction; no invalid transaction or historical eligibility conclusion follows.
+### Finance: 25 exact printed-row matches; three purpose holds and separate chronology hold
 
-`senate-864-three-bounded-evidence.yml` independently reauthenticates these seven existing
-bodies before the protected job. Ten bounded data SELECTs plus identity/schema checks run
-only inside verified `REPEATABLE READ READ ONLY` with explicit `ROLLBACK`. Public receipts
-contain aggregate counts and parliamentary question labels; no private database identities,
-finance names, amounts or row keys. A complete printed-question anchor remains mandatory;
-compatible bill/tally checks can rule out adjacent questions, but repeated same-bill/same-tally
-questions cannot be assigned by slates or legacy positional keys. No database writes occurred.
+The exact six-page report registry, raw PDF body SHA and all six stored pages read back.
+Its itemized denominator is **9 individual contributions + 9 committee/fund contributions
++ 10 campaign expenditures = 28 printed rows**. The NCD page has zero itemized rows;
+non-itemized subtotals are not individual transactions. Independent expenditures are
+outside this candidate-report scope.
+
+| Family | Stored evidence copies | Canonical transactions | Exact unique printed-row matches | Held |
+|---|---:|---:|---:|---:|
+| Contributions | 18 | 18 | 18 (9 IND, 9 PCF schedule) | 0 |
+| Campaign expenditures | 10 | 10 | 7 | 3 full-purpose differences |
+
+All ten expenditures agree on date/paid amount, full counterparty and unpaid/total
+columns. Their actual type **Campaign expenditure** matches the original **B1–CE Campaign
+Expenditures** heading. The seven exact matches additionally pass full-purpose and
+one-to-one collision checks. The three purpose differences remain **unmatched to this
+exact version**, not proven invalid transactions. Reopen them only with an authenticated
+original bulk row and exact report-version comparison that explains the full-purpose
+difference; do not use a fuzzy/proximity fallback or change canonical records speculatively.
+
+There are **zero stored exact-version links** for these 28 canonical transactions. The
+25 matches above are freshly verified read-only containment results, not persisted links.
+A subsequent bounded implementation may persist the 25 proven mechanical links after the
+guarded plan/read-back checks, keeping the three held records distinct.
+
+The board received stamp is **2025-01-09**, due date **2025-01-31**, statutory release
+floor and accepted practical estimate **2025-02-01**. Historical exact-version public-by
+proof remains **UNKNOWN**; the selected cohort has zero tracked exact-version or independent
+historical bulk-row publication proofs. The source acquisition/dating subtrack stays closed.
+An original/archive observation or official publication receipt for this exact version/row
+is needed to reopen chronology. Containment does not authenticate historical publication.
+All **28 existing legacy eligibility claims** are unchanged; missing proof is diagnostic,
+not authority for an automatic historical rewrite.
+
+### Actual validation, scope and stopping point
+
+The final main [CI 39358291472](https://github.com/killjoy00/votepredict/actions/runs/39358291472) and
+independent source job passed **2,297 repository tests and 13 focused checks**, including
+all ten SELECTs on clean migrated PostgreSQL. Production reads used the existing independently
+marked primary, verified **REPEATABLE READ READ ONLY**, matching schema ledger and explicit
+**ROLLBACK**. Public receipts exclude private row-level identities, finance names, amounts
+and keys. No database correction/import/link write, model/weight/training/freeze/floor change,
+Vercel deployment or scheduler reactivation occurred.
+
+Earlier successful audit receipts remain dated execution evidence: #1484 main
+`f33545a9d3808d3a0c08e3558d861ab9ec5f2818`, run 39356274079/job 118412555964;
+#1485 main `b1fbc36479aa5886e0c2cbbefcb256117fc89450`, run 39357442992/job 118416148731.
+Their new-auditor cross-session identity and synthetic type-label diagnostics are superseded
+by this final read-back; they were not genuine unknown-person or invalid-transaction findings.
+
+**Next work is the bounded implementations above, not another archive/parser investigation.**
+The three expense purpose differences and historical publication need the specific new
+evidence stated above. Six missing written Minutes, the 2021 print denominator, 2022
+print/electronic equivalence, owed-finance filing denominator and previously accepted holds
+remain separately accounted below. **#864 remains OPEN under its actual acceptance criteria.**
 
 ## October 20 UTC: all 526 website metadata holds resolved and stored; donor/Minutes holds clarified
 
@@ -375,12 +398,12 @@ votes. Observation is not authenticated first publication. UNKNOWN never means z
 | Committee 2021 | Printed meeting/motion denominator UNKNOWN; selected official Journal originals only | Full source-to-stored parity UNKNOWN; no complete print acquisition | A-PRINT / A-2021 below; hearing-day availability, next-day eligibility. |
 | Committee 2022 | 337 indexed meeting dates / 334 written-source dates / 3 source gaps; true all-motion denominator UNKNOWN | 38 materialized events / 28 declared named events / 259 explicit stored choices | Complete individual/motion parity UNKNOWN. |
 | Committee 2023 | 517 indexed meeting dates / 516 written-source dates / 1 source gaps; true all-motion denominator UNKNOWN | 35 materialized events / 24 declared named events / 217 explicit stored choices | SF1 2 motions/20 choices repaired and verified. |
-| Committee 2024 | 300 indexed meeting dates / 299 written-source dates / 1 source gaps; true all-motion denominator UNKNOWN | 55 materialized events / 31 declared named events / 288 explicit choices in the latest verified committee readback | One YEA plus six distinct Judiciary amendment rolls repaired; original-to-all-motion/member parity remains UNKNOWN. |
-| Committee 2025 | 438 indexed meeting dates / 437 written-source dates / 1 source gaps; true all-motion denominator UNKNOWN | 33 materialized events / 29 declared named events / 305 explicit stored choices | Complete individual/motion parity UNKNOWN. |
+| Committee 2024 | 300 indexed meeting dates / 299 written-source dates / 1 source gaps; true all-motion denominator UNKNOWN | 55 materialized events / 31 declared named events / 288 explicit choices in the latest verified committee readback | One YEA plus six distinct Judiciary amendment rolls repaired; original-to-all-motion/member parity remains UNKNOWN. Selected April 19 original: 3 rolls/27 choices versus 2/18 stored; one 9-choice source-proven addition ready, no identity hold. |
+| Committee 2025 | 438 indexed meeting dates / 437 written-source dates / 1 source gaps; true all-motion denominator UNKNOWN | 33 materialized events / 29 declared named events / 305 explicit stored choices | Complete individual/motion parity UNKNOWN. Selected three originals: 16 rolls/184 choices versus 5/49 stored; 11 additions/135 choices ready, no identity hold. |
 | Finance 2021 | 121 indexed PDF versions / 121 within-year unique bodies; legally owed filings UNKNOWN | Contributions 2,091 / 5,794; spending 1,543 / 4,425; IE 7 / 35 (canonical / copies) | 10,014 legacy eligible copies / 5,947 possible early-date flags; 0 tracked exact-version public-by proofs. |
 | Finance 2022 | 346 indexed PDF versions / 344 within-year unique bodies; legally owed filings UNKNOWN | Contributions 2,588 / 9,503; spending 3,386 / 9,987; IE 326 / 1,630 (canonical / copies) | 17,067 legacy eligible copies / 2,247 possible early-date flags; 0 tracked exact-version public-by proofs. |
 | Finance 2023 | 110 indexed PDF versions / 108 within-year unique bodies; legally owed filings UNKNOWN | Contributions 1,651 / 2,493; spending 1,506 / 2,150; IE 0 observed / 0 observed (canonical / copies) | 4,272 legacy eligible copies / 1,847 possible early-date flags; 0 tracked exact-version public-by proofs. |
-| Finance 2024 | 123 indexed PDF versions / 118 within-year unique bodies; legally owed filings UNKNOWN | Contributions 1,563 / 2,659; spending 1,535 / 2,070; IE 27 / 135 (canonical / copies) | 4,699 legacy eligible copies / 1,550 possible early-date flags; 0 tracked exact-version public-by proofs. |
+| Finance 2024 | 123 indexed PDF versions / 118 within-year unique bodies; legally owed filings UNKNOWN | Contributions 1,563 / 2,659; spending 1,535 / 2,070; IE 27 / 135 (canonical / copies) | 4,699 legacy eligible copies / 1,550 possible early-date flags; 0 tracked exact-version public-by proofs. Selected Miller cohort: 25/28 canonical rows match exact printed rows; 3 full-purpose holds, zero persisted links; chronology separate. |
 | Finance 2025 | 130 indexed PDF versions / 122 within-year unique bodies; legally owed filings UNKNOWN | Contributions 3,027 / 16,666; spending 1,983 / 6,163; IE 31 / 155 (canonical / copies) | 22,503 legacy eligible copies / 21,120 possible early-date flags; 0 tracked exact-version public-by proofs. |
 | Campaign websites 2021 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 51 exact stored excerpts observed in 2021; 1,194/1,194 verified overall, 92 people / 123 unique original bodies | Strict observation-before-target rule; earlier observations can inform later targets. All itemized source holds resolved; 3 known-person scope exclusions. Whole-site completeness remains UNKNOWN. |
 | Campaign websites 2022 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 723 exact stored excerpts observed in 2022; 1,194/1,194 verified overall, 92 people / 123 unique original bodies | Strict observation-before-target rule; earlier observations can inform later targets. All itemized source holds resolved; 3 known-person scope exclusions. Whole-site completeness remains UNKNOWN. |
@@ -388,7 +411,7 @@ votes. Observation is not authenticated first publication. UNKNOWN never means z
 | Campaign websites 2024 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 18 exact stored excerpts observed in 2024; 1,194/1,194 verified overall, 92 people / 123 unique original bodies | Strict observation-before-target rule; earlier observations can inform later targets. All itemized source holds resolved; 3 known-person scope exclusions. Whole-site completeness remains UNKNOWN. |
 | Campaign websites 2025 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 29 exact stored excerpts observed in 2025; 1,194/1,194 verified overall, 92 people / 123 unique original bodies | Strict observation-before-target rule; earlier observations can inform later targets. All itemized source holds resolved; 3 known-person scope exclusions. Whole-site completeness remains UNKNOWN. |
 | Media 2021 | All attributable published statements UNKNOWN; 44 curated source seeds, bounded sampling | 131 stored contexts / 122 within-year source documents / 52 with publisher dates | Contextual mentions, not certified speaker statements; publication and observation clocks kept separate. |
-| Media 2022 | All attributable published statements UNKNOWN; 44 curated source seeds, bounded sampling | 182 stored contexts / 163 within-year source documents / 118 with publisher dates | Contextual mentions, not certified speaker statements; publication and observation clocks kept separate. |
+| Media 2022 | All attributable published statements UNKNOWN; 44 curated source seeds, bounded sampling | 182 stored contexts / 163 within-year source documents / 118 with publisher dates | Contextual mentions, not certified speaker statements; publication and observation clocks kept separate. Selected Miller Q&A: 3 source-ready fragments first observed 2022-10-05, zero rows from the bounded storage query; no import yet. |
 | Media 2023 | All attributable published statements UNKNOWN; 44 curated source seeds, bounded sampling | 155 stored contexts / 132 within-year source documents / 124 with publisher dates | Contextual mentions, not certified speaker statements; publication and observation clocks kept separate. |
 | Media 2024 | All attributable published statements UNKNOWN; 44 curated source seeds, bounded sampling | 118 stored contexts / 103 within-year source documents / 88 with publisher dates | Contextual mentions, not certified speaker statements; publication and observation clocks kept separate. |
 | Media 2025 | All attributable published statements UNKNOWN; 44 curated source seeds, bounded sampling | 208 stored contexts / 168 within-year source documents / 155 with publisher dates | Contextual mentions, not certified speaker statements; publication and observation clocks kept separate. |
@@ -642,17 +665,19 @@ The SF1 V7 zero-stored state below is the pre-correction snapshot, superseded by
 | A-SIX | Exact official written Minutes for 2022-03-15 Housing; 2022-08-10 and 2022-10-03 Environment Finance; 2023-04-13 and 2024-05-16 Environment/Climate/Legacy; 2025-05-12 Subcommittee on Committees | Latest exact recheck: all six LRL whole bodies unchanged/no Minutes links; five identified original Clerk routes HTTP 503. May 16 additionally lacks an exact standing-committee hearing match. No source nonexistence or individual votes inferred. |
 | A-YEA2024 — CLOSED | Independent official office, full-name/nickname and explicit hearing-day membership bounds authenticated | #1474 executed: 1 YEA inserted, exact 10/10 readback and zero replay inserts. Other committee joins remain open. |
 | A-EDUCATION | Unique original numbered question-to-current stored event anchor plus hearing-day member-side parity | Exact PDF stored, one generic event unanchored; cannot safely choose additions/relabels from repeated slates or ordinal keys. |
-| A-MOTION | Distinct source parliamentary questions, explicit named sides where printed, historical identities and unique current stored matching | Other four v3 gains and 81/323 candidate review cohorts remain source/segmentation holds, not automatic motions or importer replay. |
+| A-MOTION | Distinct source questions and historical person/session joins for remaining review cohorts | The selected four v3 candidate originals are now clarified: 19 printed rolls/211 choices, 7/67 stored, all identities resolved; 12/144 source-proven additions await guarded implementation. Other 81/323 candidate cohorts remain unverified, not automatic motions or safe importer replay. |
 | B-OBLIGATION | Effective filer/entity identities, report-type duties/exemptions and authoritative owed-report inventory by year | Legally owed denominator UNKNOWN; indexed PDFs are not obligations. |
 | B-LEGACY | Exact transaction-to-original-version containment or independently authenticated regulatory row disclosure, plus appropriate historical release/observation bound | 58,555 eligible-copy claims remain revalidation debt; no speculative withdrawal, promotion or exact-version attachment by year. |
 | B-PAC2 | Independent original printed-row attestation (date, registered entity, legal name, correct total) and, separately, independently dated publication of that exact original/amended version | Two stable source/chronology gates; exact two-case inspection STOPPED. |
 | B-PAC23 | Independent original donor identity/entity classification and applicable identifiers for the ten exact Other/blank records; six originals have blank donor names and types | Latest protected original audit: **17/23 sets complete; 6 held**. Ten canonical problematic originals = 4 Other + 6 blank names/types; all 10 blank registrations; all raw values match parser. Four held sets also fail usable fields. No PDF/publication/eligibility promotion. |
+| B-MILLER-PURPOSE | Authenticated original bulk rows and an exact report-version comparison explaining the three full-purpose differences | Date, full counterparty and all amount columns agree; three rows remain unmatched to this exact PDF. No fuzzy purpose/collision fallback or invalid-transaction inference. |
+| B-MILLER-PUBLICBY | Independently dated original/archive observation or official public-disclosure receipt for this exact version/row | 25 mechanical containment matches do not prove historical publication. Accepted practical date 2025-02-01 is not first-public proof; 28 existing eligibility claims unchanged. |
 | C-COVERAGE | Newly available exact original owned-site evidence for Wiger/Tomassoni/Bakk, version-specific Clark sources, or an authenticated wider page/text inventory | Wider denominator UNKNOWN. Itemized inventory recovery is complete; do not restart closed generic archive searches or invent the 88 aggregate-only records. |
 | C-SOURCES — CLOSED within itemized inventory | COMPLETE: exact retained original bytes, indexed URL/observation/digest and visible literal containment recovered for all 526 held excerpts | All 1,194 in-scope copies are source-supported and exactly stored; 3 McNutt scope exclusions; 0 unknown people. The wider owned-site/text denominator remains UNKNOWN. |
 | C-IMPORT526 | COMPLETE: latest retained-source append/read-back above resolves all 526 source holds | 1,194 exact stored excerpt copies; old 668 and both frozen protocols preserved. |
 | C-IMPORT52 | COMPLETE: #1477 inserted 52 and exactly read back all 668; zero replay inserts | Frozen v1 616/protocol preserved; separately versioned v2 cohort committed before outcomes. |
 | C-EXPERIMENT | COMPLETE in the frozen v2 scope: #1478 actual protected outcome experiment, source/storage/cohort/leakage checks and aggregate results above | No useful held-out primary-metric gain; 2024–25 test is now examined. Further experiments require a new frozen protocol and honest evaluation design. |
-| D-ATTRIBUTION | Exact source-contained named passage, historical speaker membership, supported publication/observation clocks for a specifically identified source version | Contextual mentions and declared metadata are not certified speech. Preserve selected-source exclusions; no Reformer/MPR/general-crawl restart. |
+| D-ATTRIBUTION | Exact source-contained attributable literal, historical person and supported publication/observation clock for remaining specifically identified versions | Contextual mentions and provenance receipts are not literal attributable statements. Miller's three selected fragments have cleared source/person/2022-clock gates and await non-serving append; no further evidence gathering is needed for them. Preserve closed Reformer/MPR and general-crawl exclusions. |
 
 Further recovery requires **new evidence or a concrete defect in the prior method**.
 A successful job or another proximity-parser variation is not new source proof.
@@ -675,7 +700,11 @@ A successful job or another proximity-parser variation is not new source proof.
 | [#1478](https://github.com/killjoy00/votepredict/pull/1478) isolated website experiment + existing committee readback | `502e505976ff82d814ab3bbfbf4fbe9fd190745e` | Required CI 39325745476 / independent 39325745679 / main CI 39326150837 SUCCESS; protected 39326151003 jobs 118313094173 (frozen no-gain result) and 118313094006 (153/153 rolls, 989/989 choices) SUCCESS |
 | [#1479](https://github.com/killjoy00/votepredict/pull/1479) six exact Judiciary rolls + recommendation semantics | `391b951d08ac7522471ea7a70cd9a55bf8242762` | Required CI 39327576169 / independent 39327576220 / main CI 39328026704 SUCCESS; protected 39328026873 / 118320064442 inserted 6/60, corrected recommendation, exact 7/70, zero replay |
 
-Final source artifact: `12196953355`, ZIP SHA-256
+| [#1484](https://github.com/killjoy00/votepredict/pull/1484) selected three-family evidence audit | `f33545a9d3808d3a0c08e3558d861ab9ec5f2818` | CI 39355994362 / source 39355994347 / main CI 39356274179 SUCCESS; protected 39356274079 / 118412555964 executed read-only. Initial cross-session/type diagnostics superseded below; no data writes. |
+| [#1485](https://github.com/killjoy00/votepredict/pull/1485) hearing-session joins and finance field accounting | `b1fbc36479aa5886e0c2cbbefcb256117fc89450` | CI 39357111622 / source 39357111589 / main CI 39357442863 SUCCESS; protected 39357442992 / 118416148731 verifies all 67 choices, zero unresolved identities, seven matching spending purposes. No data writes. |
+| [#1486](https://github.com/killjoy00/votepredict/pull/1486) actual CE class and final unique containment | `8909582f003fe86ba3e2d8f29883d9cad6ddb27e` | CI 39357958098 / source 39357958012 / main CI 39358291472 SUCCESS; protected 39358291489 / 118419129381 verifies 19/211 source versus 7/67 stored, three media literals source-ready/zero returned storage rows, 25 exact finance matches/three purpose holds. 2,297 repository and 13 focused checks pass. No data writes. |
+
+Dated October 19 full-census source artifact: `12196953355`, ZIP SHA-256
 `eea965970a1c54a881911c87bac521c3053b51d71e8f620c81c51db77de0da42`.
 The durable JSON appendix preserves the parsed allowlisted receipt independently of artifact expiry.
 A temporary no-secret reader in [#1471](https://github.com/killjoy00/votepredict/pull/1471) transferred only this pinned sanitized artifact after
@@ -706,13 +735,19 @@ as independent human approval. No branch/environment protection was bypassed.
 - [x] Reconcile the existing 1,452 original PDF identities / 153 candidate rolls / 989 named tokens after the YEA correction.
 - [x] Add the separately source-proven six Judiciary named rolls / 60 choices, correct the recommendation question/classification, and verify all seven/70 with zero replay inserts.
 - [x] Finalize bounded media accounting by senator/year/source and preserve existing exclusions.
+- [x] Clarify all four selected Minutes originals: 19 rolls/211 choices, exact 7/67 stored, all person/session joins resolved and 12/144 source-proven additions identified.
+- [x] Verify three existing Miller Q&A fragments in two exact versions, stable person and earliest 2022 observation; distinguish zero returned storage rows from source absence.
+- [x] Reconcile one Miller 2024 finance report: 28 copies/28 canonical records, 25 exact printed-row matches, 3 precise purpose holds and separate publication chronology hold.
+- [ ] Implement guarded 12-roll/144-choice committee additions and source-proven existing field repairs; preserve existing IDs/keys/choices and verify post-write read-back.
+- [ ] Append/read back three non-serving Miller literal statements with earliest authenticated observation and source deduplication.
+- [ ] Persist/read back the 25 proven mechanical finance report links without eligibility changes; retain three full-purpose and historical-publication holds.
 - [x] Record merged versus executed versus verified outcomes; update one consolidated #864 checklist linked here.
 - [ ] True official denominators and complete original-to-stored parity across all four families.
 
 **#864 cannot close.** Acquisition/practical dating, SF1, the seven-motion Judiciary correction, v1 storage verification,
 website v2 import/cohort/outcome evaluation, all 526 retained-source metadata recoveries and bounded PAC/media disposition passes are complete in their
-stated scopes. Unknown denominators, six written gaps, unresolved member/source-motion joins,
-legacy finance eligibility, wider website coverage and held media attribution still prevent historical completeness.
+stated scopes. Unknown denominators, six written gaps, unapplied source-proven motion repairs and other unresolved source-to-stored question joins,
+legacy finance eligibility, wider website coverage and remaining media evidence gaps still prevent historical completeness. The selected four-original person/session joins are resolved.
 No indefinite parser/archive continuation is proposed.
 
 No forecasting/serving models or weights, production training pipeline, earlier immutable evaluation freezes, accepted Senate
