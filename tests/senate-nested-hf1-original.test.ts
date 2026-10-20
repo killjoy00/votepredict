@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {fetchSenateJournal} from '../src/sources/minnesota/senate-journals.js';
 import {parseNestedSenateSourcePapers} from '../src/operations/senate-vote-paper-nested.js';
+import {parseJournalPaperActions} from '../src/operations/senate-vote-paper-parser.js';
 
 /**
  * A keyless primary-source proof in ordinary PR CI, not a protected production
@@ -37,4 +38,31 @@ test('HF1 nested papers are present in independently downloaded 2023 official Se
   assert.equal(journal.byteLength,1_806_101);
   assert.ok(nested.some(p=>p.mover==='Maye Quade'&&p.parentMover==='Lucero'
    &&p.disposition==='adopted_to_parent'));
+});
+
+
+test('HF100 original paper verifier replay has complete named rolls and explicit parent version',
+ {skip:process.env.GITHUB_ACTIONS!=='true',timeout:150_000},async()=>{
+  const original=await fetchSenateJournal('https://www.senate.mn/journals/2023-2024/20230428059.pdf');
+  const names=original.text.slice(0,original.text.indexOf('The President declared')).split('\n')
+   .map(x=>x.trim()).filter(x=>/^[A-Z][A-Za-z ]+$/.test(x));
+  const actions=parseJournalPaperActions(original.text,names).filter(x=>x.billIdentifier==='HF100');
+  const procedural=actions.filter(a=>a.kind==='procedural'&&a.yeas===33&&a.nays===34);
+  const state={
+   sha256:original.pdfSha256,byteLength:original.byteLength,
+   names:names.length,actions:actions.length,proposedPapers:actions.filter(a=>a.proposedText).length,
+   amendmentsAdopted:actions.filter(a=>a.kind==='amendment'&&a.outcome==='adopted').length,
+   amendmentsRejected:actions.filter(a=>a.kind==='amendment'&&a.outcome==='rejected').length,
+   explicitUnofficialBase:actions.filter(a=>a.kind==='amendment'&&a.baseLocator==='versions/ue/1/').length,
+   namedDivisionActions:actions.filter(a=>a.ballotSignature!==null).length,
+   proceduralCount:procedural.length,
+   proceduralCompleteBallots:procedural.filter(a=>a.ballotSignature!==null).length,
+   lastKind:actions.at(-1)?.kind??null,
+   priorAdoptionsOnLast:actions.at(-1)?.priorAdoptedKeys.length??null
+  };
+  console.log('SENATE_HF100_MAIN_ORIGINAL_CANARY_DIAGNOSTIC='+JSON.stringify(state));
+  assert.equal(original.pdfSha256,'9e8160e4c78ef70cc0635226201f12e656ac84a999af8e0a8f8dc3e6737791a3');
+  assert.equal(actions.length,8);assert.equal(procedural.length,2);
+  assert.equal(state.namedDivisionActions,7);
+  assert.equal(state.proceduralCompleteBallots,2);
 });
