@@ -49,7 +49,8 @@ test('source-only HF100 pilot checks strict printed anchors but never assembles 
  assert.equal(proof.partialPortInsertionsVerified,4);
  assert.equal(proof.completeHoffmanLineReplacementsVerified,2);
  assert.equal(proof.fullyCheckedAdoptedAmendments,1);
- assert.equal(proof.adoptedAmendmentsStillHeldForCompositeApplication,3);
+ assert.equal(proof.adoptedAmendmentsWithoutCompleteInstructionProof,3);
+ assert.equal(proof.adoptedAmendmentsStillHeldForCompositeApplication,4);
  assert.equal(proof.allFourAdoptedAmendmentsApplied,false);
  assert.equal(proof.completeAssembledBillText,false);
  assert.equal(proof.preVotePublicationProven,false);
