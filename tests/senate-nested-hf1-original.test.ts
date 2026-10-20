@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {fetchSenateJournal} from '../src/sources/minnesota/senate-journals.js';
 import {parseNestedSenateSourcePapers} from '../src/operations/senate-vote-paper-nested.js';
-import {parseJournalPaperActions} from '../src/operations/senate-vote-paper-parser.js';
+import {parseJournalPaperActions,stripInterposedSenateJournalRollHeader} from '../src/operations/senate-vote-paper-parser.js';
+import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
 
 /**
  * A keyless primary-source proof in ordinary PR CI, not a protected production
@@ -61,6 +62,32 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
    priorAdoptionsOnLast:actions.at(-1)?.priorAdoptedKeys.length??null
   };
   console.log('SENATE_HF100_MAIN_ORIGINAL_CANARY_DIAGNOSTIC='+JSON.stringify(state));
+
+  const unresolved=procedural.find(a=>a.ballotSignature===null);
+  if(unresolved?.rollStart!==null&&unresolved?.rollStart!==undefined){
+   const begin=Math.max(0,unresolved.rollStart-500);
+   const next=original.text.indexOf('The roll was called,',unresolved.rollStart+40);
+   const block=original.text.slice(begin,next>begin?next:unresolved.rollStart+8_000);
+   const stripped=stripInterposedSenateJournalRollHeader(block);
+   let parseFailure:null|string=null;
+   let ballots:ReturnType<typeof parseSenateJournalText>=[];
+   try{
+    ballots=parseSenateJournalText({text:stripped,sessionKey:'source-only',
+     sourceUrl:'https://example.test/HF100-pratt-diagnostic',knownMemberNames:names,
+     allowRosterMismatch:true});
+   }catch(error){parseFailure=error instanceof Error?error.name:'unknown'}
+   console.log('SENATE_HF100_MISSING_BALLOT_DIAGNOSTIC='+JSON.stringify({
+    hasRollStart:true,headerStripped:stripped!==block,
+    sourceMarkerPresent:block.includes('59TH DAY]'),
+    strictRollHeaderRecognized:/The roll was called,\s*and there were yeas\s+33\s+and nays\s+34, as follows:\s*Those who voted in the affirmative were:/i.test(stripped),
+    parsedBallots:ballots.length,parsedYeaCounts:ballots.map(x=>x.yeaCount),
+    parsedNayCounts:ballots.map(x=>x.nayCount),
+    parsedYeaNames:ballots.map(x=>x.memberVotes.filter(v=>v.choice==='yea').length),
+    parsedNayNames:ballots.map(x=>x.memberVotes.filter(v=>v.choice==='nay').length),
+    parseFailure
+   }));
+  }
+
   assert.equal(original.pdfSha256,'9e8160e4c78ef70cc0635226201f12e656ac84a999af8e0a8f8dc3e6737791a3');
   assert.equal(actions.length,8);assert.equal(procedural.length,2);
   assert.equal(state.namedDivisionActions,7);
