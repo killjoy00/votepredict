@@ -6,6 +6,7 @@ import {Pool,type PoolClient} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {assertPaperHistoryRun} from '../src/operations/senate-paper-history-gate.js';
 import {readVoteTextGapAudit,verifyVoteTextGapAudit} from '../src/operations/senate-vote-text-gap-audit.js';
+import {readSenateSourceCaseAudit} from '../src/operations/senate-vote-paper-case-audit.js';
 import {backfillVotePapers,verifyPaperSources,connectExplicitBaseCaptures} from '../src/operations/senate-vote-paper-backfill.js';
 import {stageHistoryJobs,recoverHistoricalArchives,recoverExplicitBaseBodies,collectDatedAssignmentFacts} from '../src/operations/senate-history-archive.js';
 const MIGRATION='0035_senate_vote_papers_history.sql';
@@ -83,6 +84,7 @@ async function main(){
     (SELECT count(*)::int FROM senate_role_history_v) AS historical_roles`)).rows[0];
    const gapAudit=await readVoteTextGapAudit(db);
    verifyVoteTextGapAudit(gapAudit,events);
+   const caseAudit=await readSenateSourceCaseAudit(db);
    const roles=(await db.query(`SELECT s.slug AS session,h.observed_basis,count(*)::int AS observations,count(h.membership_id)::int AS linked_members,
     min(h.observed_on)::text AS first_observed,max(h.observed_on)::text AS last_observed
     FROM senate_role_history_v h JOIN legislative_sessions s ON s.id=h.session_id GROUP BY s.slug,h.observed_basis ORDER BY s.slug,h.observed_basis`)).rows;
@@ -104,7 +106,7 @@ async function main(){
     FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id GROUP BY s.slug,q.kind,q.status ORDER BY s.slug,q.kind,q.status`)).rows;
    const sourceAttempts=(await db.query('SELECT result,count(*)::int AS documents FROM senate_paper_source_attempts GROUP BY result ORDER BY result')).rows;
    if(!links.exact_raw_questions||!actions.some(a=>a.literal_papers>0)||!links.historical_roles)throw Error('Paper/history acceptance counts are empty');
-   return {events,actions,links,gapAudit,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
+   return {events,actions,links,gapAudit,caseAudit,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
   });
   const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,baseBodies,datedAssignments,historyJobs,archives,baseConnections,coverage,
    officialVotesUnchanged:true,sourceBodiesUnchanged:true,servingModelsUnchanged:true,completeStateClaims:false};
