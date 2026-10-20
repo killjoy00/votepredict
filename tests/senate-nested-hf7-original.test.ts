@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {fetchSenateJournal} from '../src/sources/minnesota/senate-journals.js';
 import {parseNestedSenateSourcePapers} from '../src/operations/senate-vote-paper-nested.js';
+import {compact} from '../src/operations/senate-vote-paper-parser.js';
 
 /** Original-government PDF calibration: source-only actions, not accepted vote matches. */
 test('HF7 nested amendment papers derive from independent February 2 Senate Journal PDF',
@@ -31,6 +32,12 @@ test('HF7 nested amendment papers derive from independent February 2 Senate Jour
   assert.equal(original.pdfSha256,'e60b103c2a0ad32dc13b6bb1480fa5197810ce7ecdc2b9480edf97d63ee7060c',
    'HF7 original government PDF body changed from independently verified keyless receipt');
   assert.equal(original.byteLength,1_152_045);
+  assert.ok(papers.every(p=>p.sourceStart>=0&&p.sourceEnd<=p.questionStart
+   &&p.questionStart<p.questionEnd&&p.questionEnd<=original.text.length),
+   'Original character spans for each nested proposal and its question must not overlap');
+  assert.ok(papers.every(p=>original.text.slice(p.sourceStart,p.sourceEnd)===p.literalText
+   &&compact(original.text.slice(p.questionStart,p.questionEnd))===p.questionText),
+   'Every nested literal and printed question must round-trip to authenticated original PDF extraction');
   assert.equal(papers.length,17);
   assert.equal(papers.filter(p=>p.parentOrdinal===null).length,8);
   assert.equal(papers.filter(p=>p.parentOrdinal!==null).length,9);
