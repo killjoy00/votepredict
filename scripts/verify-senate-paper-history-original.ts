@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import {fetchSenateJournal} from '../src/sources/minnesota/senate-journals.js';
 import {parseJournalPaperActions} from '../src/operations/senate-vote-paper-parser.js';
+import {parseNestedSenateSourcePapers} from '../src/operations/senate-vote-paper-nested.js';
 import {parseDatedRoleActs} from '../src/operations/senate-vote-paper-backfill.js';
 import {fetchCanonicalGovernmentSource,boundedBody,statedAssignmentDate} from '../src/operations/senate-history-archive.js';
 import {parseSenateAssignmentPdfText} from '../src/sources/minnesota/senate-assignment-pdf.js';
@@ -31,7 +32,26 @@ async function verifyCanonicalSources(){
  assert.match(body,/<title[^>]*>[^<]*HF\s*100/i);assert.match(body,/A bill for an act/i);
  console.log('SENATE_BILL_ALIAS_PROOF='+JSON.stringify({resolvedUrl,sha256:hash(bytes),bytes:bytes.length}));
 }
-async function main(){await verifyCanonicalSources();for(const [path,expected] of sources){
+async function main(){
+ await verifyCanonicalSources();
+ // First original-government-source calibration fails closed until its
+ // exact PDF digest is independently obtained and pinned on this PR.
+ const hf1=await fetchSenateJournal('https://www.senate.mn/journals/2023-2024/20230127014.pdf');
+ const sourceNested=parseNestedSenateSourcePapers(hf1.text);
+ const inBill=sourceNested.filter(p=>p.billIdentifier==='HF1');
+ console.log('SENATE_HF1_NESTED_ORIGINAL_PROOF='+JSON.stringify({
+  source:'2023-2024/20230127014.pdf',pdfSha256:hf1.pdfSha256,
+  pdfBytes:hf1.byteLength,sourceOnlyNestedProposals:inBill.length,
+  nestedRejected:inBill.filter(x=>x.disposition==='rejected').length,
+  nestedParentAdoptions:inBill.filter(x=>x.disposition==='adopted_to_parent').length,
+  nestedOutcomeUnknown:inBill.filter(x=>x.disposition==='unknown').length,
+  exactNumberedParentLinks:0,acceptedVotesChanged:0,fullBillAssemblies:0}));
+ assert.ok(hf1.byteLength>1000&&inBill.length>=3
+  &&inBill.some(x=>x.parentMover==='Lucero'&&x.parentOrdinal==='first'));
+ assert.ok(inBill.every(x=>!x.appliesDirectlyToBill&&!x.acceptedVoteEventLinked));
+ assert.equal(hf1.pdfSha256,'PENDING_AUTHENTICATED_ORIGINAL_SHA_REVIEW',
+  'New 92-page original must be SHA-pinned before merging this source parser');
+ for(const [path,expected] of sources){
  const got=await fetchSenateJournal('https://www.senate.mn/journals/'+path);
  assert.equal(got.pdfSha256,expected,'Original government PDF changed; review before accepting a new source receipt');
  if(path.includes('20230428')){
