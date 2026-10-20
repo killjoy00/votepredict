@@ -12,6 +12,22 @@ const reg=s=>/^\d{3,8}$/.test(s||'');
 const amount=s=>{const clean=String(s??'').replace(/[$, ]/g,'');if(!/^\d{1,10}(?:\.\d{1,2})?$/.test(clean))return null;const x=Number(clean);return x>0&&Number.isSafeInteger(Math.round(x*100))?Math.round(x*100):null};
 const valid=r=>reg(r.filerReg)&&/^202[1-5]$/.test(String(r.year))&&/^[a-f0-9]{64}$/.test(r.rowKey||'')&&reg(r.contributorReg)&&validDay(r.transactionDate)&&amount(r.amount)!==null&&typeof r.contributor==='string'&&r.contributor.length>=5&&!r.sourceConflict;
 const categories=new Set(['Individual','Self','Lobbyist','Political Committee/Fund','Party Unit','Candidate Committee','Other','Registered with Hennepin County']);
+export function clarifyUnclassifiedOriginalRows(rows){
+ const counts={canonicalRows:rows.length,explicitOther:0,blankOriginalType:0,blankOriginalContributor:0,
+  literalAnonymousOrUnknown:0,shortOriginalContributor:0,blankOriginalRegistration:0,
+  rawTypeAgreesWithParser:0,rawContributorAgreesWithParser:0,missingRawTypeColumn:0,
+  receiptClass:{contribution:0,loan:0,refundOrReturn:0,interest:0,other:0,blank:0}};
+ for(const r of rows){const raw=r.raw||{},type=raw['contrib type'],name=raw.contributor,receipt=String(raw['receipt type']||'');
+  counts.explicitOther+=r.contributorType==='Other';counts.blankOriginalType+=type==='';
+  counts.blankOriginalContributor+=name==='';counts.literalAnonymousOrUnknown+=/^(?:anonymous|unknown)\b/i.test(name||'');
+  counts.shortOriginalContributor+=typeof name==='string'&&name.length<5;counts.blankOriginalRegistration+=raw['contrib reg num']==='';
+  counts.rawTypeAgreesWithParser+=(type||null)===r.contributorType;
+  counts.rawContributorAgreesWithParser+=(name||'Unknown')===r.contributor;
+  counts.missingRawTypeColumn+=!Object.hasOwn(raw,'contrib type');
+  const kind=!receipt?'blank':/loan/i.test(receipt)?'loan':/refund|return/i.test(receipt)?'refundOrReturn':/interest/i.test(receipt)?'interest':/contrib/i.test(receipt)?'contribution':'other';
+  counts.receiptClass[kind]++;
+ }return counts;
+}
 export function reconcileHeldPacComparators({cohort,allRows,outcomes,originalRows}){
  if(cohort.length!==116||allRows.length>50000||outcomes.length>830||originalRows.length>300000)throw Error('Bounded original comparator scope');
  const candidates=new Set(outcomes.flatMap(o=>(o.privateBlockCandidates||[]).map(h=>h.key)));
@@ -79,6 +95,7 @@ export function reconcileHeldPacComparators({cohort,allRows,outcomes,originalRow
   currentOriginalRowNotUniquelyObserved:notObserved,currentOriginalFieldMismatches:mismatch,
   originalRowsStillWithoutRegistration:stillMissing,originalRowsWithRegistration:sourceHasRegistration,
   originalEntityTypes:types,
+  unclassifiedOriginalClarification:clarifyUnclassifiedOriginalRows(broken.map(r=>exactOriginal(r)).filter(r=>r&&!['Individual','Self','Lobbyist','Political Committee/Fund','Party Unit','Candidate Committee','Registered with Hennepin County'].includes(r.contributorType))),
   independentEntityTypedComparator:typed,
   typedComparisonRequiresEveryOriginalRow:true,typedComparisonDoesNotCertifyPdfContainment:true,
   targetCasesWithAnyUnobservedOrMismatchedComparator:held.filter(t=>broken.some(r=>r.filerReg===t.filerReg&&r.year===t.year&&sourceUnresolved.has(key(r)))).length,
