@@ -10,9 +10,9 @@ import {visibleLiteralText} from '../src/evidence/senate-864-website-expansion.m
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const value=(o,keys)=>keys.map(k=>o[k]).find(v=>typeof v==='string'&&v)||null;
 const fields={file:['originalHtmlFile','originalSourceFile','file','originalFile','rawHtmlFile','sourceFile','pageFile','originalHtmlFileName','retainedRawOriginalHtml','originalFullHtmlFile'],
- sha:['originalHtmlSha256','actualOriginalBodySha256','htmlSha256','sha256','originalHTMLSHA256','fullResponseSha256','completeResponseBytesSha256'],
+ sha:['originalHtmlSha256','actualOriginalBodySha256','originalHtmlResponseSha256','htmlSha256','sha256','originalHTMLSHA256','fullResponseSha256','completeResponseBytesSha256'],
  url:['originalUrl','url','originalSiteUrl','originalCandidateUrl'],
- capture:['archiveCaptureUtc','archivePublicByUtc','publicByUtc','captureUtc','originalArchiveCaptureAtUtc','archivedOriginalCapturedAtUtc','capturedAtUtc'],
+ capture:['archiveCaptureUtc','archivePublicByUtc','publicByUtc','captureUtc','sourceArchiveCaptureAt','originalArchiveCaptureAtUtc','archivedOriginalCapturedAtUtc','capturedAtUtc'],
  cdx:['originalArchiveCdxSha1Base32','originalHistoricalCdxIndexBase32Sha1','originalCdxIndexedSha1Base32','sha1IndexedInIndependentOriginal32RowCdx']};
 function metadata(o){return Object.fromEntries(Object.entries(fields).map(([k,keys])=>[k,value(o,keys)]))}
 function indexedSources(indexes,digest,capture){
@@ -61,6 +61,25 @@ export async function verifyMetadataRecovery(){
     Object.assign(o,{originalHtmlSha256:p.sha,originalUrl:p.url,originalArchiveCaptureAtUtc:p.capture,originalArchiveCdxSha1Base32:digest});
     bodyCache.set(p.sha,bytes);sourceReceipts.push({ledger:path,file:p.file,...w,artifactIds:ids});
    });
+  }
+  // The final 35 have literal text and explicit people but no page locator.
+  // Search only the exact candidate-owned originals declared by their source
+  // ledgers, and require literal containment in an independently verified body.
+  // This is a text-to-source join, never a name-only source assignment.
+  const additional=docs.get('data/evaluation/senate-original-campaign-additional-35-statement-excerpts-v1.json');
+  const candidates=docs.get('data/evaluation/senate-authenticated-campaign-issue-excerpt-leads-2024-25-v1.json').candidates;
+  const bound=new Map(candidates.map(c=>[c.candidateName,[c.originalHtmlSource.originalHtmlResponseSha256]]));
+  bound.set('Carla Nelson',docs.get('data/evaluation/senate-carla-nelson-2022-dated-original-platform-excerpts-v1.json').verifiedOriginals.map(p=>p.originalHtmlSha256));
+  bound.set('Nicole Mitchell',docs.get('data/evaluation/senate-nicole-mitchell-2022-original-priorities-excerpts-v1.json').originals.map(p=>p.actualOriginalBodySha256));
+  additional.recoveredOriginalReceipts=[];
+  for(const row of additional.rows){
+   const matches=sourceReceipts.filter(p=>(bound.get(row.person)||[]).includes(p.originalHtmlSha256)&&bodyCache.has(p.originalHtmlSha256)&&visibleLiteralText(bodyCache.get(p.originalHtmlSha256).toString('utf8')).includes(visibleLiteralText(row.exactShortExcerpt)));
+   const unique=[...new Map(matches.map(p=>[[p.originalHtmlSha256,p.originalUrl,p.originalArchiveCapturedAtUtc].join('|'),p])).values()]
+    .sort((a,b)=>a.originalArchiveCapturedAtUtc.localeCompare(b.originalArchiveCapturedAtUtc)||a.originalHtmlSha256.localeCompare(b.originalHtmlSha256));
+   if(!unique.length)continue;
+   const p=unique[0],id='literal-contained-'+p.originalHtmlSha256;
+   row.pageId=id;
+   if(!additional.recoveredOriginalReceipts.some(p=>p.id===id))additional.recoveredOriginalReceipts.push({id,person:row.person,...p});
   }
   const plan=recoveredWebsitePlan(docs),verified=[],held=[];
   for(const row of plan.added){const bytes=bodyCache.get(row.sourceSha);
