@@ -145,3 +145,31 @@ export async function appendHf100OriginalPrattProof(pool:Pool):Promise<Hf100Shad
   catch(error){await db.query('ROLLBACK');throw error}
  }finally{db.release(true)}
 }
+
+
+/** Separately committed/read-only verification, not the writer's own snapshot. */
+export async function readCommittedHf100PrattShadow(db:PoolClient){
+ const sql=[
+  'SELECT count(*)::int AS "shadowRows",',
+  'count(*) FILTER (WHERE a.ballot_sha256 IS NOT NULL)::int AS "namedBallots",',
+  'count(l.vote_event_id)::int AS "acceptedLinks",',
+  'count(current.id)::int AS "currentRows"',
+  'FROM senate_vote_paper_actions a',
+  'JOIN source_documents d ON d.id=a.source_document_id',
+  'LEFT JOIN senate_vote_paper_event_links l ON l.action_id=a.id',
+  'LEFT JOIN senate_vote_paper_current_v current ON current.id=a.id',
+  'WHERE a.parser_version=$1 AND d.source_url=$2',
+  "AND a.occurred_on=DATE '2023-04-28'",
+  "AND a.source_payload_sha256=encode(sha256(convert_to((d.metadata->'rawPrepassageVotes')::text,'UTF8')),'hex')",
+  'AND EXISTS(SELECT 1 FROM senate_paper_source_verifications proof',
+  ' WHERE proof.source_document_id=d.id AND proof.source_url=d.source_url',
+  ' AND proof.original_body_sha256::text=$3',
+  " AND proof.extracted_text_sha256=encode(sha256(convert_to(d.metadata#>>'{rawPrepassageVotes,text}','UTF8')),'hex'))",
+ ].join(' ');
+ const row=(await db.query<{shadowRows:number;namedBallots:number;acceptedLinks:number;currentRows:number}>(
+  sql,[HF100_ORIGINAL_SHADOW_VERSION,JOURNAL,ORIGINAL_PDF_SHA])).rows[0];
+ if(!row||row.shadowRows!==1||row.namedBallots!==1
+  ||row.acceptedLinks!==0||row.currentRows!==0)
+  throw Error('Committed HF100 original supplemental ballot proof failed independent read-only verification');
+ return row;
+}
