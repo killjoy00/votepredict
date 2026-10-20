@@ -13,6 +13,85 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 20 UTC: all 526 website metadata holds resolved and stored; donor/Minutes holds clarified
+
+**Implemented, merged, executed and verified.** [#1481](https://github.com/killjoy00/votepredict/pull/1481),
+main `be89457c87b1a7521da877eb44bb93091020b172`, corrects concrete source-field alias and
+omitted-receipt joins in a separate additive planner. Retained acquisition manifests recover
+exact original page locators; the final 35 excerpts require literal containment in explicitly
+identified candidate-owned originals. No name-only page assignment, filename-derived clock,
+new general crawl or subjective position certification was used.
+
+All **526 previously held excerpts** independently match original SHA256, indexed SHA1,
+exact original URL/archive observation and visible literal text. The
+[durable public source map](source-proof/senate-864-website-recovered-source-map.json) records
+54 added unique bodies, the 526 original-ledger bindings and pinned acquisition artifacts.
+Existing source ledgers retain the exact literal texts. This source map is an appendix of
+this reconciliation, not a competing census. The existing 668-record planner and both
+immutable experiment protocols are preserved explicitly; their dated hold counts below
+are superseded for current inventory accounting.
+
+[#1482](https://github.com/killjoy00/votepredict/pull/1482), main
+`422646d3bf8a683bef073c67d9a3a241e72859a7`, reuses the existing durable writer after
+independent same-commit source verification and a digest-bound same-run artifact.
+Protected [39349395107](https://github.com/killjoy00/votepredict/actions/runs/39349395107),
+job `118390051620`, **inserted 526 / reused 0** and exactly read back **1,194/1,194**
+literals, stable identities, original URLs/hashes, archive observations/CDX and non-serving
+flags. All prior 668 records remain exact. **Replay would insert 0.** Before/after audits
+verified schema checksums, REPEATABLE READ READ ONLY and explicit ROLLBACK.
+[Executed aggregate receipt](source-proof/senate-864-website526-executed.json).
+
+Current itemized inventory: **1,197 = 1,194 stored source-supported excerpts + 3 known-person
+McNutt scope exclusions**; **0 source-metadata holds / 0 unknown people**. These are
+**92 people / 123 unique original bodies / 1,194 distinct person-literal pairs**. Excerpts
+and overlapping text are not independent pages, people or predictive samples. Archive
+observation years: **373 before 2021; 51 in 2021; 723 in 2022; 0 in 2023; 18 in 2024;
+29 in 2025**. This dates observable copies, not first authorship, and does not certify all
+owned pages or usable pre-vote features for every senator. The wider denominator remains
+UNKNOWN. The 88 aggregate-only, nonmaterialized items were not invented. No outcomes were
+read or models fitted in this continuation; the already examined frozen v2 stays exact.
+
+**Six donor comparison sets: precise original-data holds, not ingestion loss.** Protected
+[39349054386](https://github.com/killjoy00/votepredict/actions/runs/39349054386), job
+`118389667098`, verified the complete independent current regulator rowset and all
+**777 canonical comparator keys / 780 copies**, with **0 absent keys / 0 field mismatches**.
+[Durable raw-column clarification](source-proof/senate-864-donor-six-raw-clarification.json):
+the six held recipient/year comparison sets contain **10 problematic canonical originals**:
+**4 explicitly Other; 6 with both donor name and entity type literally blank**. All ten lack
+registration numbers; **10/10 raw types and names agree with parsing**, and no type column
+is missing. Eight have contribution receipt labels; two fall in the separately reported
+other-receipt bucket. Those labels do not establish legal entity identity. Four held sets
+have overlapping usable-field failures. **17/23 sets remain complete; 6 held.** The older
+strict all-registration result remains 23 held, separately labelled. No comparator was
+dropped, assigned a name/registration, attached to a PDF version or historically promoted.
+Whole CSV byte hashes differed across downloads; the complete parsed-rowset commitment,
+including raw columns and copies, matched. A 2026 source observation is not historical
+publication. Reopen only for independent original identities/classifications/applicable
+identifiers for these exact records, including actual donor names for the blank originals.
+
+**Six missing Minutes: bounded recheck complete, no recovery.** The
+[exact-source receipt](source-proof/senate-864-six-exact-source-recheck-v2.json) verifies all
+six LRL whole responses unchanged from the previous receipt, with no linked written Minutes.
+All five independently identified original Clerk routes return **HTTP 503**. The exact
+May 16, 2024 calendar still does not establish the standing Environment/Climate/Legacy
+hearing; same-day conference materials are not an equivalent meeting. Written-date coverage
+remains **1,586/1,592**. These observations prove neither source nonexistence nor zero votes.
+The reopening requirement remains the exact official committee/day written original and,
+for May 16, the independently matched standing-committee hearing identity. No generic
+archive or audio investigation is proposed.
+
+**Validation:** #1481 required CI [39348720397](https://github.com/killjoy00/votepredict/actions/runs/39348720397),
+independent original [39348720357](https://github.com/killjoy00/votepredict/actions/runs/39348720357),
+independent comparator [39348720342](https://github.com/killjoy00/votepredict/actions/runs/39348720342)
+and main CI [39349054417](https://github.com/killjoy00/votepredict/actions/runs/39349054417) SUCCESS.
+#1482 required CI [39349090633](https://github.com/killjoy00/votepredict/actions/runs/39349090633),
+independent original/binding [39349090646](https://github.com/killjoy00/votepredict/actions/runs/39349090646),
+main CI [39349395181](https://github.com/killjoy00/votepredict/actions/runs/39349395181) and
+protected source/append/read-back above SUCCESS. Full CI passed **2,297 repository tests**;
+**16 focused local tests** and typecheck passed, with dedicated source/binding/non-serving/
+rollback and donor checks. Automated verification and recorded agent reviews are not
+represented as independent human approval. No branch/environment protections were bypassed.
+
 ## October 19 continuation: verified website expansion and executed experiment
 
 **The 52 newly source-ready excerpts are now imported and verified**, not merely planned.
@@ -28,8 +107,8 @@ artifacts, matched SHA256/SHA1 and independent CDX capture/URL/digest rows, and 
 original URLs/hashes/indexed observations and non-serving flags, and verified **0 replay inserts**.
 Before/after snapshots verified REPEATABLE READ READ ONLY, schema checksums and explicit ROLLBACK.
 The existing durable writer was reused; all 616 v1 records/keys and the v1 protocol hash remain exact.
-Current storage: **668 excerpts / 53 people / 69 original bodies / 668 unique person-literal features**.
-There are still **526 source-metadata holds, 3 known-person scope exclusions and 0 unknown people**.
+At that #1477 execution: **668 excerpts / 53 people / 69 original bodies / 668 unique person-literal features**.
+At that stage there were **526 source-metadata holds, 3 known-person scope exclusions and 0 unknown people**; the latest retained-source continuation above supersedes those holds.
 
 A separately versioned [protocol v2](senate-864-website-experiment-protocol-v2.json) merged
 before outcome access. The [outcome-free readback/cohort commitment](source-proof/senate-864-website-cohort-v2-pre-outcome.json)
@@ -171,21 +250,21 @@ identity and are explicitly **outside the 95 actually-serving-person study**, no
 There are **zero unresolved-person excerpts** in the corrected source plan.
 
 [Reproducible correction receipt](source-proof/senate-864-website-person-resolution-20261019.json):
-**668 source-ready excerpts / 53 people / 69 original bodies**, **526 remaining source-metadata
+At that identity-correction snapshot: **668 source-ready excerpts / 53 people / 69 original bodies**, **526 source-metadata
 holds** (URL 147, SHA 266, indexed digest 113) and **3 known-person scope exclusions**.
 This corrects attribution handling without new archive research or relaxed source/clock gates.
 Regression checks cover every affected record, contradictory full names and ambiguous page
 receipts. All previous 616 records and ingestion keys match exactly in the revised plan.
 
-**At the name-correction commit, stored verification remained 616** and additional imports were zero. The later #1477 execution above has now imported/read back all 52 additions: current verification is 668. The frozen v1 protocol/hash and its 11,514
+**At the name-correction commit, stored verification remained 616** and additional imports were zero. The later #1477 execution above has now imported/read back all 52 additions: verification at #1477 was 668. The frozen v1 protocol/hash and its 11,514
 prepared targets stay unchanged. The fixed-v1 importer and audit explicitly use the v1
-compatibility planner; the corrected default is v2. That bounded source-verified import and its separately versioned cohort are now executed and verified above. Current verified storage is now 668; do not silently replace the separately preserved frozen v1.
+compatibility planner; the corrected default is v2. That bounded source-verified import and its separately versioned cohort are now executed and verified above. At #1477 verified storage was 668; do not silently replace the separately preserved frozen v1.
 The completed v1 writer now requires its explicit reviewed-commit marker, so this name fix
 does not trigger archive acquisition or database access.
 
 ## Calendar-year reconciliation
 
-The website year figures below preserve the dated stored/frozen-v1 census; the current verified 668-record v2 storage/cohort is reported above. Its additions were observed in 2010 (14), 2012 (13), 2016 (12) and 2020 (13), so the 2021–25 observation-year figures remain unchanged.
+The website rows report the latest verified 1,194-record storage; earlier v1/v2 counts remain dated receipts below. Archive observation year is distinct from target-vote year. Earlier observations are itemized in the latest continuation receipt.
 
 Year means committee hearing date, finance metadata transaction/report calendar year, or
 website/media archive observation year. Target-vote years are reported separately.
@@ -204,11 +283,11 @@ votes. Observation is not authenticated first publication. UNKNOWN never means z
 | Finance 2023 | 110 indexed PDF versions / 108 within-year unique bodies; legally owed filings UNKNOWN | Contributions 1,651 / 2,493; spending 1,506 / 2,150; IE 0 observed / 0 observed (canonical / copies) | 4,272 legacy eligible copies / 1,847 possible early-date flags; 0 tracked exact-version public-by proofs. |
 | Finance 2024 | 123 indexed PDF versions / 118 within-year unique bodies; legally owed filings UNKNOWN | Contributions 1,563 / 2,659; spending 1,535 / 2,070; IE 27 / 135 (canonical / copies) | 4,699 legacy eligible copies / 1,550 possible early-date flags; 0 tracked exact-version public-by proofs. |
 | Finance 2025 | 130 indexed PDF versions / 122 within-year unique bodies; legally owed filings UNKNOWN | Contributions 3,027 / 16,666; spending 1,983 / 6,163; IE 31 / 155 (canonical / copies) | 22,503 legacy eligible copies / 21,120 possible early-date flags; 0 tracked exact-version public-by proofs. |
-| Campaign websites 2021 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 31 ready excerpts observed in 2021; 616/616 freshly matched overall, 50 people / 65 original page bodies | Strict observation-before-target rule; earlier observations can inform later targets. No absence inference from 0 ready observations. |
-| Campaign websites 2022 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 426 ready excerpts observed in 2022; 616/616 freshly matched overall, 50 people / 65 original page bodies | Strict observation-before-target rule; earlier observations can inform later targets. No absence inference from 0 ready observations. |
-| Campaign websites 2023 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 0 ready excerpts observed in 2023; 616/616 freshly matched overall, 50 people / 65 original page bodies | Strict observation-before-target rule; earlier observations can inform later targets. No absence inference from 0 ready observations. |
-| Campaign websites 2024 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 0 ready excerpts observed in 2024; 616/616 freshly matched overall, 50 people / 65 original page bodies | Strict observation-before-target rule; earlier observations can inform later targets. No absence inference from 0 ready observations. |
-| Campaign websites 2025 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 5 ready excerpts observed in 2025; 616/616 freshly matched overall, 50 people / 65 original page bodies | Strict observation-before-target rule; earlier observations can inform later targets. No absence inference from 0 ready observations. |
+| Campaign websites 2021 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 51 exact stored excerpts observed in 2021; 1,194/1,194 verified overall, 92 people / 123 unique original bodies | Strict observation-before-target rule; earlier observations can inform later targets. All itemized source holds resolved; 3 known-person scope exclusions. Whole-site completeness remains UNKNOWN. |
+| Campaign websites 2022 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 723 exact stored excerpts observed in 2022; 1,194/1,194 verified overall, 92 people / 123 unique original bodies | Strict observation-before-target rule; earlier observations can inform later targets. All itemized source holds resolved; 3 known-person scope exclusions. Whole-site completeness remains UNKNOWN. |
+| Campaign websites 2023 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 0 exact stored excerpts observed in 2023; 1,194/1,194 verified overall, 92 people / 123 unique original bodies | Strict observation-before-target rule; earlier observations can inform later targets. All itemized source holds resolved; 3 known-person scope exclusions. Whole-site completeness remains UNKNOWN. |
+| Campaign websites 2024 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 18 exact stored excerpts observed in 2024; 1,194/1,194 verified overall, 92 people / 123 unique original bodies | Strict observation-before-target rule; earlier observations can inform later targets. All itemized source holds resolved; 3 known-person scope exclusions. Whole-site completeness remains UNKNOWN. |
+| Campaign websites 2025 | All owned pages/text denominator UNKNOWN; bounded 95-person manifest and 1,197 materialized excerpts across cycles | 29 exact stored excerpts observed in 2025; 1,194/1,194 verified overall, 92 people / 123 unique original bodies | Strict observation-before-target rule; earlier observations can inform later targets. All itemized source holds resolved; 3 known-person scope exclusions. Whole-site completeness remains UNKNOWN. |
 | Media 2021 | All attributable published statements UNKNOWN; 44 curated source seeds, bounded sampling | 131 stored contexts / 122 within-year source documents / 52 with publisher dates | Contextual mentions, not certified speaker statements; publication and observation clocks kept separate. |
 | Media 2022 | All attributable published statements UNKNOWN; 44 curated source seeds, bounded sampling | 182 stored contexts / 163 within-year source documents / 118 with publisher dates | Contextual mentions, not certified speaker statements; publication and observation clocks kept separate. |
 | Media 2023 | All attributable published statements UNKNOWN; 44 curated source seeds, bounded sampling | 155 stored contexts / 132 within-year source documents / 124 with publisher dates | Contextual mentions, not certified speaker statements; publication and observation clocks kept separate. |
@@ -351,7 +430,7 @@ gates. Reopen only for independent original printed-row attestation and independ
 dated publication of that exact original/amended version. **STOPPED**: no comparator
 relaxation, proximity experiments, envelope change or promoted candidate. The later #1475 source-backed entity-typed audit verifies comparison sets for **17 of the other 23 candidates**, holding **6** for unclassified entities (4 also fail the usable-field/name gate). Its complete comparison sets do not certify printed-row containment or historical publication. The legacy all-registration metric remains separately labelled as 23 held; the four date/amount collisions never establish identity by name alone.
 
-### Campaign websites: storage verification and frozen experiment preparation complete
+### Campaign websites: dated v1 storage verification and frozen experiment preparation
 
 Fresh read-back verifies **616/616 exact literal excerpts**, stable person identity,
 original URL/full SHA, authenticated archive observation timestamp/indexed digest,
@@ -363,7 +442,7 @@ excerpts are still not independent samples.
 154 ready excerpts were observed before 2021, 31 in 2021, 426 in 2022 and 5 in 2025.
 The historical v1 receipt partitions its 581 labels as missing original URL 147, body SHA 266,
 indexed digest 113 and person 55. The person labels are superseded by the correction above:
-52 existing identities resolved and 3 known-person scope exclusions; 526 source-metadata holds remain.
+52 existing identities resolved and 3 known-person scope exclusions. The later retained-source recovery above resolves all 526 source-metadata holds.
 The 72 original-page provenance receipts are distinct from 398 linked literal excerpts.
 1,285 was aggregate research metadata; 1,197 are materialized excerpts; 88 are not
 itemized and were not fabricated. Wiger/Tomassoni/Bakk owned-site originals and
@@ -461,15 +540,17 @@ The SF1 V7 zero-stored state below is the pre-correction snapshot, superseded by
 |---|---|---|
 | A-PRINT | Complete authenticated 2021 print meeting/motion inventory and 2022 print/electronic reconciliation | Denominators UNKNOWN. No office contact or manual audio request. |
 | A-2021 | Newly available official written motion/hearing-day proof for SF1159 Dibble and distinct McEwen amendments, and SF970 Pappas amendment, printed in the April 12, 2021 Journal | April 8 bill-level committee actions are proven, but not the individual motion dates; [existing source disposition](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6114008344). No manual audio reopening or inferred date/member side. |
-| A-SIX | Exact official written Minutes for 2022-03-15 Housing; 2022-08-10 and 2022-10-03 Environment Finance; 2023-04-13 and 2024-05-16 Environment/Climate/Legacy; 2025-05-12 Subcommittee on Committees | Six source holds, separately from eight already recovered dates. No generic archive restart. |
+| A-SIX | Exact official written Minutes for 2022-03-15 Housing; 2022-08-10 and 2022-10-03 Environment Finance; 2023-04-13 and 2024-05-16 Environment/Climate/Legacy; 2025-05-12 Subcommittee on Committees | Latest exact recheck: all six LRL whole bodies unchanged/no Minutes links; five identified original Clerk routes HTTP 503. May 16 additionally lacks an exact standing-committee hearing match. No source nonexistence or individual votes inferred. |
 | A-YEA2024 — CLOSED | Independent official office, full-name/nickname and explicit hearing-day membership bounds authenticated | #1474 executed: 1 YEA inserted, exact 10/10 readback and zero replay inserts. Other committee joins remain open. |
 | A-EDUCATION | Unique original numbered question-to-current stored event anchor plus hearing-day member-side parity | Exact PDF stored, one generic event unanchored; cannot safely choose additions/relabels from repeated slates or ordinal keys. |
 | A-MOTION | Distinct source parliamentary questions, explicit named sides where printed, historical identities and unique current stored matching | Other four v3 gains and 81/323 candidate review cohorts remain source/segmentation holds, not automatic motions or importer replay. |
 | B-OBLIGATION | Effective filer/entity identities, report-type duties/exemptions and authoritative owed-report inventory by year | Legally owed denominator UNKNOWN; indexed PDFs are not obligations. |
 | B-LEGACY | Exact transaction-to-original-version containment or independently authenticated regulatory row disclosure, plus appropriate historical release/observation bound | 58,555 eligible-copy claims remain revalidation debt; no speculative withdrawal, promotion or exact-version attachment by year. |
 | B-PAC2 | Independent original printed-row attestation (date, registered entity, legal name, correct total) and, separately, independently dated publication of that exact original/amended version | Two stable source/chronology gates; exact two-case inspection STOPPED. |
-| B-PAC23 | Exact original classification/applicable identifiers for the remaining Other/unclassified comparator records; usable original fields where separately held | **17/23 entity-typed comparison sets verified; 6 held**, all for unclassified entities, 4 with an overlapping usable-field/name failure. Legacy all-registration gate still reports 23 held. No PDF containment/publication/eligibility promotion. |
-| C-SOURCES | Missing original URL/body SHA/indexed archive digest/observation linkage for the 526 held records | Person mapping is fixed: 0 unresolved people; 3 McNutt records excluded by actual-service scope. No subjective sincerity gate or invented excerpts. |
+| B-PAC23 | Independent original donor identity/entity classification and applicable identifiers for the ten exact Other/blank records; six originals have blank donor names and types | Latest protected original audit: **17/23 sets complete; 6 held**. Ten canonical problematic originals = 4 Other + 6 blank names/types; all 10 blank registrations; all raw values match parser. Four held sets also fail usable fields. No PDF/publication/eligibility promotion. |
+| C-COVERAGE | Newly available exact original owned-site evidence for Wiger/Tomassoni/Bakk, version-specific Clark sources, or an authenticated wider page/text inventory | Wider denominator UNKNOWN. Itemized inventory recovery is complete; do not restart closed generic archive searches or invent the 88 aggregate-only records. |
+| C-SOURCES — CLOSED within itemized inventory | COMPLETE: exact retained original bytes, indexed URL/observation/digest and visible literal containment recovered for all 526 held excerpts | All 1,194 in-scope copies are source-supported and exactly stored; 3 McNutt scope exclusions; 0 unknown people. The wider owned-site/text denominator remains UNKNOWN. |
+| C-IMPORT526 | COMPLETE: latest retained-source append/read-back above resolves all 526 source holds | 1,194 exact stored excerpt copies; old 668 and both frozen protocols preserved. |
 | C-IMPORT52 | COMPLETE: #1477 inserted 52 and exactly read back all 668; zero replay inserts | Frozen v1 616/protocol preserved; separately versioned v2 cohort committed before outcomes. |
 | C-EXPERIMENT | COMPLETE in the frozen v2 scope: #1478 actual protected outcome experiment, source/storage/cohort/leakage checks and aggregate results above | No useful held-out primary-metric gain; 2024–25 test is now examined. Further experiments require a new frozen protocol and honest evaluation design. |
 | D-ATTRIBUTION | Exact source-contained named passage, historical speaker membership, supported publication/observation clocks for a specifically identified source version | Contextual mentions and declared metadata are not certified speech. Preserve selected-source exclusions; no Reformer/MPR/general-crawl restart. |
@@ -521,6 +602,7 @@ as independent human approval. No branch/environment protection was bypassed.
 - [x] Verify all 616 literal website records and non-serving flags; freeze protocol and prepare reproducible pre-vote cohort.
 - [x] Correct all 52 structured-identity/page joins and classify 3 known-person scope exclusions; verify zero unknown people.
 - [x] Import/read back the 52 additions and all 668 literal records; preserve v1 and separately freeze v2 before outcomes.
+- [x] Recover all 526 source-metadata holds from retained original acquisitions, append only verified literals and read back all 1,194; preserve the frozen 668-record experiment.
 - [x] Execute the prespecified isolated website experiment, publish the no-gain result and mark its test as examined.
 - [x] Reconcile the existing 1,452 original PDF identities / 153 candidate rolls / 989 named tokens after the YEA correction.
 - [x] Add the separately source-proven six Judiciary named rolls / 60 choices, correct the recommendation question/classification, and verify all seven/70 with zero replay inserts.
@@ -529,9 +611,9 @@ as independent human approval. No branch/environment protection was bypassed.
 - [ ] True official denominators and complete original-to-stored parity across all four families.
 
 **#864 cannot close.** Acquisition/practical dating, SF1, the seven-motion Judiciary correction, v1 storage verification,
-website v2 import/cohort/outcome evaluation and bounded PAC/media disposition passes are complete in their
+website v2 import/cohort/outcome evaluation, all 526 retained-source metadata recoveries and bounded PAC/media disposition passes are complete in their
 stated scopes. Unknown denominators, six written gaps, unresolved member/source-motion joins,
-legacy finance eligibility and held website/media provenance still prevent historical completeness.
+legacy finance eligibility, wider website coverage and held media attribution still prevent historical completeness.
 No indefinite parser/archive continuation is proposed.
 
 No forecasting/serving models or weights, production training pipeline, earlier immutable evaluation freezes, accepted Senate
