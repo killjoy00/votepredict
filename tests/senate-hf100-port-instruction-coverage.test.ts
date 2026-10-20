@@ -77,17 +77,17 @@ function actions(source=marker.join('\n')):PaperAction[]{
  }));
 }
 
-test('all Port source headings are recognized; six structural instructions remain held even with perfect text layer',()=>{
+test('all Port source headings are recognized; repeated unqualified anchors remain held',()=>{
  const result=assessHf100PortInstructionCoverage(actions(),printed);
  assert.equal(result.schemaVersion,HF100_PORT_COVERAGE_VERSION);
  assert.equal(result.sourceInstructionsIdentified,19);
  assert.equal(result.printedCoordinatesResolved,23);
  assert.equal(result.previouslyVerifiedLocalEdits,4);
- assert.equal(result.additionalLocalEditsVerified,9);
+ assert.equal(result.additionalLocalEditsVerified,8);
  assert.equal(result.structuralInstructionsHeld,6);
- assert.equal(result.localEditsHeld,0);
- assert.equal(result.instructionsStillHeld,6);
- assert.deepEqual(result.outcomes.filter(o=>o.result==='held').map(o=>o.ordinal),[5,6,9,10,14,15]);
+ assert.equal(result.localEditsHeld,1);
+ assert.equal(result.instructionsStillHeld,7);
+ assert.deepEqual(result.outcomes.filter(o=>o.result==='held').map(o=>o.ordinal),[5,6,9,10,11,14,15]);
  assert.equal(result.portFullyApplied,false);
  assert.equal(result.anyAdoptedAmendmentIntegratedIntoComposite,false);
  assert.equal(result.completeAssembledBillText,false);
@@ -95,13 +95,22 @@ test('all Port source headings are recognized; six structural instructions remai
  assert.equal(result.eventLinksAdded,0);
 });
 
+test('the originally ambiguous revolving line becomes checkable only if there is exactly one literal anchor',()=>{
+ const one=printed.replace('in a revolving loan','in a separate loan');
+ const r=assessHf100PortInstructionCoverage(actions(),one);
+ assert.equal(r.additionalLocalEditsVerified,9);
+ assert.equal(r.localEditsHeld,0);
+ assert.deepEqual(r.outcomes.filter(x=>x.reason==='structural_unimplemented').map(x=>x.ordinal),[5,6,9,10,14,15]);
+ assert.equal(r.portFullyApplied,false);
+});
+
 test('text-layer fusion cannot be repaired by guessing words or adjacent lines',()=>{
  const fused=printed.replace('grants issued','grantsissued')
   .replace('is for the CanStartup','isfor the CanStartup');
  const result=assessHf100PortInstructionCoverage(actions(),fused);
- assert.equal(result.additionalLocalEditsVerified,7);
- assert.equal(result.localEditsHeld,2);
- assert.equal(result.instructionsStillHeld,8);
+ assert.equal(result.additionalLocalEditsVerified,6);
+ assert.equal(result.localEditsHeld,3);
+ assert.equal(result.instructionsStillHeld,9);
  assert.deepEqual(result.outcomes.filter(o=>o.reason==='anchor_unresolved').map(o=>o.ordinal),[13,17]);
  assert.equal(result.completeAssembledBillText,false);
 });
@@ -110,11 +119,11 @@ test('unreadable and duplicate original coordinates are counted as holds, never 
  const missing=printed.replace('148.12 EFFECTIVE','148.13 EFFECTIVE');
  const held=assessHf100PortInstructionCoverage(actions(),missing);
  assert.equal(held.printedCoordinatesResolved,22);
- assert.equal(held.additionalLocalEditsVerified,8);
+ assert.equal(held.additionalLocalEditsVerified,7);
  assert.equal(held.outcomes[7]!.reason,'coordinate_unavailable');
  const duplicate=assessHf100PortInstructionCoverage(actions(),printed+'\n292.27 program established under Minnesota Statutes,');
  assert.equal(duplicate.outcomes[17]!.reason,'coordinate_unavailable');
- assert.equal(duplicate.additionalLocalEditsVerified,8);
+ assert.equal(duplicate.additionalLocalEditsVerified,7);
 });
 
 test('instruction count, order, literal wording, first UE and adopted chain are immutable gates',()=>{
