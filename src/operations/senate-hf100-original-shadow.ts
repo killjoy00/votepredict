@@ -3,7 +3,6 @@
  * replace v1 actions, become visible through senate_vote_paper_current_v, or
  * insert accepted-event links, member votes, bill text, models or eligibility.
  */
-import assert from 'node:assert/strict';
 import type {Pool,PoolClient} from 'pg';
 import {parseJournalPaperActions,type PaperAction} from './senate-vote-paper-parser.js';
 
@@ -64,7 +63,7 @@ const STORED_SQL=[
  "yea_count AS yeas,nay_count AS nays,ballot_sha256::text AS \"ballotSha\",",
  "prior_adopted_action_keys AS prior FROM senate_vote_paper_actions",
  "WHERE source_document_id=$1 AND source_payload_sha256=$2 AND parser_version=$3",
- "ORDER BY sequence LIMIT 3",
+ "ORDER BY sequence LIMIT 12",
 ].join(' ');
 
 export interface Hf100ShadowProofResult {
