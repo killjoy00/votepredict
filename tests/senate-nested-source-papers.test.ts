@@ -132,6 +132,9 @@ test('HF7 official question extraction preserves unnumbered and third parents se
   'Tally-only journal excerpt cannot supply full ballot signature');
  assert.notEqual(found[0]?.sourceOnlyKey,found[1]?.sourceOnlyKey);
  assert.ok(found[1]?.literalText.startsWith('Senator Lucero'));
+ assert.ok(found.every(p=>p.questionText.startsWith('The question')));
+ assert.ok(found.every(p=>paper.slice(p.questionStart,p.questionEnd).replace(/\\s+/g,' ').trim()===p.questionText));
+ assert.ok(found.every(p=>p.questionStart>=p.sourceEnd));
 });
 
 test('omitted parent ordinal never assigns a numbered parent or adopted bill text',()=>{
