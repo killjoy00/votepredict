@@ -14,6 +14,9 @@ on:
       - tests/senate-role-collection.test.ts
       - src/operations/senate-vote-paper-parser.ts
       - src/operations/senate-vote-paper-backfill.ts
+      - src/operations/senate-hf100-original-shadow.ts
+      - tests/senate-nested-hf1-original.test.ts
+      - tests/senate-hf100-original-shadow.test.ts
       - src/operations/senate-history-archive.ts
       - .github/workflows/senate-paper-history-production.yml
   schedule:
@@ -32,6 +35,9 @@ on:
       - tests/senate-role-collection.test.ts
       - src/operations/senate-vote-paper-parser.ts
       - src/operations/senate-vote-paper-backfill.ts
+      - src/operations/senate-hf100-original-shadow.ts
+      - tests/senate-nested-hf1-original.test.ts
+      - tests/senate-hf100-original-shadow.test.ts
       - src/operations/senate-history-archive.ts
       - .github/workflows/senate-paper-history-production.yml
 

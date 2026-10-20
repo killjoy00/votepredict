@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {fetchSenateJournal} from '../src/sources/minnesota/senate-journals.js';
 import {parseNestedSenateSourcePapers} from '../src/operations/senate-vote-paper-nested.js';
 import {parseJournalPaperActions,stripInterposedSenateJournalRollHeader} from '../src/operations/senate-vote-paper-parser.js';
+import {identifyPrattSourceAction,HF100_ORIGINAL_SHADOW_VERSION} from '../src/operations/senate-hf100-original-shadow.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
 
 /**
@@ -48,6 +49,15 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
   const names=original.text.slice(0,original.text.indexOf('The President declared')).split('\n')
    .map(x=>x.trim()).filter(x=>/^[A-Z][A-Za-z ]+$/.test(x));
   const actions=parseJournalPaperActions(original.text,names).filter(x=>x.billIdentifier==='HF100');
+  const supplemental=identifyPrattSourceAction(original.text,names);
+  assert.equal(HF100_ORIGINAL_SHADOW_VERSION,'senate-hf100-original-supplement-v2');
+  assert.equal(supplemental.sequence,8);
+  assert.equal(supplemental.kind,'procedural');
+  assert.equal(supplemental.yeas,33);assert.equal(supplemental.nays,34);
+  assert.match(supplemental.ballotSignature??'',/^[a-f0-9]{64}$/);
+  assert.equal(supplemental.proposedText,null);
+  assert.equal(supplemental.priorAdoptedKeys.length,4);
+
   const procedural=actions.filter(a=>a.kind==='procedural'&&a.yeas===33&&a.nays===34);
   const state={
    sha256:original.pdfSha256,byteLength:original.byteLength,
