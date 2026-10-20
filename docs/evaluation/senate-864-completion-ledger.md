@@ -59,14 +59,36 @@ prove historical first-public availability of this exact version. Independent ex
 are outside this candidate report's scope. No exact transaction/report link is inferred
 from registration/year alone.
 
-**Execution state:** original-source checks passed locally; reviewed protected source-to-store
-read-back is pending. `senate-864-three-bounded-evidence.yml` independently reauthenticates
-these seven existing bodies before the protected job; ten bounded static SELECTs run only
-inside verified `REPEATABLE READ READ ONLY`, schema-ledger-checked transactions with an
-explicit `ROLLBACK`. Public receipts contain aggregate counts and parliamentary question
-labels; no private database identities, finance names, amounts or row keys. The audit
-will distinguish exact question anchors from context windows containing multiple rolls;
-identical slates and legacy positional keys are insufficient.
+**First executed read-back:** [#1484](https://github.com/killjoy00/votepredict/pull/1484),
+merged `f33545a9d3808d3a0c08e3558d861ab9ec5f2818`, protected
+[39356274079](https://github.com/killjoy00/votepredict/actions/runs/39356274079), job
+`118412555964`, completed 2026-10-20T02:01:56.486Z. All four exact source identities
+are stored; their selected current storage contains **7 events / 67 choices**, versus
+**19 source rolls / 211 printed choices**. The bounded exact-version/article query
+returns **zero media evidence rows** for the selected Q&A. Finance read-back confirms
+the exact report registry/body and six pages, **18 contribution copies / 18 canonical
+transactions / 18 unique printed-row matches** (9 individual, 9 committee/fund), and
+**10 expenditure copies / 10 canonical transactions**, not yet certified by all field
+comparators. There are no stored exact transaction/version links or historical
+exact-version / independent historical bulk-row publication proofs in this selected cohort.
+
+**Audit correction before final interpretation:** the first receipt's committee
+`unresolvedFullIdentities` values are superseded method diagnostics, **not evidence of
+unknown people**. The new auditor considered multiple sessions' memberships; it must
+restrict the full-name/date join to the hearing's session. Source headers already supply
+all printed full names. Add regression coverage for overlapping career dates across
+sessions and fixed aggregate finance field diagnostics before interpreting expenditure
+nonmatches. Case/spacing-only enum differences may normalize; missing unpaid/total
+columns must remain missing, never default to certified zero. Full purpose, family,
+registered identity, date, money and one-to-one row comparisons remain required.
+
+`senate-864-three-bounded-evidence.yml` independently reauthenticates these seven existing
+bodies before the protected job. Ten bounded data SELECTs plus identity/schema checks run
+only inside verified `REPEATABLE READ READ ONLY` with explicit `ROLLBACK`. Public receipts
+contain aggregate counts and parliamentary question labels; no private database identities,
+finance names, amounts or row keys. A complete printed-question anchor remains mandatory;
+compatible bill/tally checks can rule out adjacent questions, but repeated same-bill/same-tally
+questions cannot be assigned by slates or legacy positional keys. No database writes occurred.
 
 ## October 20 UTC: all 526 website metadata holds resolved and stored; donor/Minutes holds clarified
 
