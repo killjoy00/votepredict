@@ -25,5 +25,9 @@ test('HF1 nested papers are present in independently downloaded 2023 official Se
    'Original Journal must contain at least three complete nested proposals');
   assert.ok(nested.some(p=>p.parentMover==='Lucero'&&p.parentOrdinal==='first'));
   assert.ok(nested.every(p=>!p.appliesDirectlyToBill&&!p.acceptedVoteEventLinked&&!p.fullBillTextAssembled));
-  assert.match(journal.pdfSha256,/^[a-f0-9]{64}$/);
+  assert.equal(journal.pdfSha256,'0604a308854471523dcd282769cfadb45ed403d1ad39383a3d20438393e3fd52',
+   'Original HF1 journal PDF bytes differ from independent keyless source receipt');
+  assert.equal(journal.byteLength,1_806_101);
+  assert.ok(nested.some(p=>p.mover==='Maye Quade'&&p.parentMover==='Lucero'
+   &&p.disposition==='adopted_to_parent'));
 });
