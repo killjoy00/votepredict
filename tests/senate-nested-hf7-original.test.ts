@@ -23,5 +23,12 @@ test('HF7 nested amendment papers derive from independent February 2 Senate Jour
   assert.ok(papers.some(p=>p.parentMover==='Lucero'&&p.parentOrdinal==='third'));
   assert.ok(papers.every(p=>!p.exactNumberedParentProven
    &&!p.appliesDirectlyToBill&&!p.acceptedVoteEventLinked&&!p.fullBillTextAssembled));
-  assert.match(original.pdfSha256,/^[a-f0-9]{64}$/);
+  assert.equal(original.pdfSha256,'e60b103c2a0ad32dc13b6bb1480fa5197810ce7ecdc2b9480edf97d63ee7060c',
+   'HF7 original government PDF body changed from independently verified keyless receipt');
+  assert.equal(original.byteLength,1_152_045);
+  assert.equal(papers.length,17);
+  assert.equal(papers.filter(p=>p.parentOrdinal===null).length,8);
+  assert.equal(papers.filter(p=>p.parentOrdinal!==null).length,9);
+  assert.equal(papers.filter(p=>p.disposition==='rejected').length,17);
+  assert.equal(papers.filter(p=>p.disposition==='adopted_to_parent').length,0);
 });
