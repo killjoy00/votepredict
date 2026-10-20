@@ -144,6 +144,70 @@ jobs:
             }));
           }
           NODE
+
+      - name: Inspect public version response sizes (PR-only, no secrets)
+        if: github.event_name == 'pull_request'
+        run: |
+          node --input-type=module <<'NODE'
+          const threshold=8000000;
+          const urls=[
+            ['HF1143-2025-v2','https://www.revisor.mn.gov/bills/94/2025/0/HF/1143/versions/2/'],
+            ['HF1143-2026-v2','https://www.revisor.mn.gov/bills/94/2026/0/HF/1143/versions/2/'],
+            ['HF5247-2024-ccr0','https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ccr/0/'],
+            ['HF5247-2024-v4','https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/4/'],
+            ['HF2128-2021-v3','https://www.revisor.mn.gov/bills/92/2021/0/HF/2128/versions/3/'],
+            ['HF2128-2021-v4','https://www.revisor.mn.gov/bills/92/2021/0/HF/2128/versions/4/'],
+            ['HF2128-2021-ue1','https://www.revisor.mn.gov/bills/92/2021/0/HF/2128/versions/ue/1/'],
+            ['SF2360-2021-v2','https://www.revisor.mn.gov/bills/92/2021/0/SF/2360/versions/2/'],
+          ];
+          let next=0;
+          async function get(url,method){
+            const now=Date.now();
+            const start=Math.max(now,next);
+            next=start+1150;
+            if(start>now)await new Promise(resolve=>setTimeout(resolve,start-now));
+            return fetch(url,{method,headers:{
+              'User-Agent':'VotePredict/2.0 official Senate raw bill text research',
+              Accept:'text/html,application/xhtml+xml;q=0.9',
+            },signal:AbortSignal.timeout(20000),cache:'no-store'});
+          }
+          for(const [label,url] of urls){
+            const out={case:label};
+            try{
+              const head=await get(url,'HEAD');
+              const length=head.headers.get('content-length');
+              const n=length===null?null:Number(length);
+              out.headStatus=head.status;
+              out.headBytes=Number.isSafeInteger(n)&&n>=0?n:null;
+              if(head.status===429||head.status===503){
+                out.result='official_throttle';console.log('SENATE_PUBLIC_VERSION_SIZE='+JSON.stringify(out));break;
+              }
+              const res=await get(url,'GET');
+              out.getStatus=res.status;
+              out.siteVerified=new URL(res.url).hostname==='www.revisor.mn.gov';
+              const ct=(res.headers.get('content-type')||'').toLowerCase();
+              out.type=ct.includes('html')?'html':ct.includes('pdf')?'pdf':ct.includes('text')?'text':'other';
+              if(res.status===429||res.status===503){
+                out.result='official_throttle';console.log('SENATE_PUBLIC_VERSION_SIZE='+JSON.stringify(out));break;
+              }
+              if(res.status===200&&out.siteVerified&&res.body){
+                const reader=res.body.getReader();
+                let bytes=0,finished=false;
+                while(true){
+                  const part=await reader.read();
+                  if(part.done){finished=true;break;}
+                  bytes+=part.value.byteLength;
+                  if(bytes>threshold){await reader.cancel();break;}
+                }
+                out.observedBytes=bytes;
+                out.result=bytes>threshold?'over_8mb_import_cap'
+                  :finished&&bytes<100?'under_100_bytes'
+                  :finished?'within_import_cap':'incomplete_stream';
+              }else out.result='non_200_or_redirected';
+            }catch(error){out.result=error instanceof Error?error.name:'request_failed';}
+            console.log('SENATE_PUBLIC_VERSION_SIZE='+JSON.stringify(out));
+          }
+          NODE
       - name: Apply all migrations to disposable Postgres
         run: npm run db:migrate
       - name: Check migration ledger on disposable Postgres
