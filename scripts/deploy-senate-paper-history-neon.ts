@@ -8,6 +8,7 @@ import {assertPaperHistoryRun} from '../src/operations/senate-paper-history-gate
 import {readVoteTextGapAudit,verifyVoteTextGapAudit} from '../src/operations/senate-vote-text-gap-audit.js';
 import {readSenateSourceCaseAudit} from '../src/operations/senate-vote-paper-case-audit.js';
 import {readNestedAcceptedAudit} from '../src/operations/senate-nested-accepted-candidate-audit.js';
+import {readHf100TextChainReadiness} from '../src/operations/senate-hf100-text-chain-readiness.js';
 import {appendHf100OriginalPrattProof,readCommittedHf100PrattShadow} from '../src/operations/senate-hf100-original-shadow.js';
 import {backfillVotePapers,verifyPaperSources,connectExplicitBaseCaptures} from '../src/operations/senate-vote-paper-backfill.js';
 import {stageHistoryJobs,recoverHistoricalArchives,recoverExplicitBaseBodies,collectDatedAssignmentFacts} from '../src/operations/senate-history-archive.js';
@@ -90,6 +91,7 @@ async function main(){
    const caseAudit=await readSenateSourceCaseAudit(db);
    const nestedCandidateAudit=await readNestedAcceptedAudit(db);
    const prattShadowReadback=await readCommittedHf100PrattShadow(db);
+   const hf100TextChainReadiness=await readHf100TextChainReadiness(db);
    for(const nested of nestedCandidateAudit.cases){
     const stored=caseAudit.cases.find(c=>c.bill===nested.bill&&c.day===nested.day);
     if(!stored||stored.acceptedBillVotes!==nested.acceptedBillVotes
@@ -122,7 +124,7 @@ async function main(){
     FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id GROUP BY s.slug,q.kind,q.status ORDER BY s.slug,q.kind,q.status`)).rows;
    const sourceAttempts=(await db.query('SELECT result,count(*)::int AS documents FROM senate_paper_source_attempts GROUP BY result ORDER BY result')).rows;
    if(!links.exact_raw_questions||!actions.some(a=>a.literal_papers>0)||!links.historical_roles)throw Error('Paper/history acceptance counts are empty');
-   return {events,actions,links,gapAudit,caseAudit,nestedCandidateAudit,prattShadowReadback,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
+   return {events,actions,links,gapAudit,caseAudit,nestedCandidateAudit,prattShadowReadback,hf100TextChainReadiness,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
   });
   const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
    officialVotesUnchanged:true,sourceBodiesUnchanged:true,servingModelsUnchanged:true,completeStateClaims:false};

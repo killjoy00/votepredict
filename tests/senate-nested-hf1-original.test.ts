@@ -4,6 +4,7 @@ import {fetchSenateJournal} from '../src/sources/minnesota/senate-journals.js';
 import {parseNestedSenateSourcePapers} from '../src/operations/senate-vote-paper-nested.js';
 import {parseJournalPaperActions,stripInterposedSenateJournalRollHeader} from '../src/operations/senate-vote-paper-parser.js';
 import {identifyPrattSourceAction,HF100_ORIGINAL_SHADOW_VERSION} from '../src/operations/senate-hf100-original-shadow.js';
+import {summarizeHf100TextChain} from '../src/operations/senate-hf100-text-chain-readiness.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
 
 /**
@@ -49,6 +50,22 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
   const names=original.text.slice(0,original.text.indexOf('The President declared')).split('\n')
    .map(x=>x.trim()).filter(x=>/^[A-Z][A-Za-z ]+$/.test(x));
   const actions=parseJournalPaperActions(original.text,names).filter(x=>x.billIdentifier==='HF100');
+  // All source proposals must round-trip the independently authenticated PDF.
+  // This proof supplies no captured text or at-vote publication metadata:
+  // those are established separately by the protected read-only query.
+  const chain=summarizeHf100TextChain(actions.map(a=>({
+   sequence:a.sequence,actionKey:a.key,kind:a.kind,outcome:a.outcome,
+   proposedText:a.proposedText,explicitBaseLocator:a.baseLocator,
+   priorAdoptedKeys:a.priorAdoptedKeys,originalSourceVerified:true,
+   captureVerified:false,baseComponents:0
+  })));
+  assert.deepEqual(actions.map(a=>a.sequence),[2,3,4,5,6,7,8,9]);
+  assert.equal(chain.proposedAmendments,5);
+  assert.equal(chain.adoptedAmendments,4);
+  assert.equal(chain.rejectedAmendments,1);
+  assert.equal(chain.completeAssembledBillText,false);
+  assert.equal(chain.preVotePublicationProven,false);
+
   const supplemental=identifyPrattSourceAction(original.text,names);
   assert.equal(HF100_ORIGINAL_SHADOW_VERSION,'senate-hf100-original-supplement-v2');
   assert.equal(supplemental.sequence,8);
