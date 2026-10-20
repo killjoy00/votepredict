@@ -13,6 +13,7 @@ import { classifyReadbackFailure, withFreshPostCommitReadback } from '../src/ope
 import {
   captureOfficialRevisorHtml, discoverOfficialVersionLeads,
   extractLiteralAmendmentBlocks, isOfficialRevisorVersionUrl,
+  officialVersionHttpBudget, EXHAUSTED_LARGE_VERSION_RETRY_URLS,
   type OfficialVersionLead,
 } from '../src/operations/senate-official-bill-text.js';
 
@@ -28,7 +29,7 @@ const PUSH_CANARY=process.env.GITHUB_EVENT_NAME==='push';
 // source pacer, 1100-version fetch cap, throttle stop and protected timeout.
 const MAX_NEW_BILLS=PUSH_CANARY?15:600,MAX_DISCOVER=PUSH_CANARY?15:600,
   MAX_VERSIONS=PUSH_CANARY?60:1100,MAX_JOURNALS=PUSH_CANARY?10:60;
-const MAX_HTTP_BYTES=8_000_000, RETRIES=3, TIMEOUT_MS=20000;
+const RETRIES=3;
 type Ledger={filename:string;checksum:string};
 type Bill={bill_id:string;session_id:string;slug:string;identifier:string;attempts:number};
 type Version={id:string;bill_id:string;session_id:string;family:'numbered_version'|'unofficial_engrossment'|'conference_report';
@@ -133,12 +134,13 @@ async function migrate(db:PoolClient,expected:Ledger[]):Promise<boolean>{
   } catch(error){await db.query('ROLLBACK');throw error;}
 }
 async function getHttp(url:string,pacer:{wait:()=>Promise<void>}):Promise<HttpResponse>{
+  const budget=officialVersionHttpBudget(url);
   await pacer.wait();
   let response:Response;
   try{
     response=await fetch(url,{headers:{'User-Agent':'VotePredict/2.0 official Senate raw bill text research',
       Accept:'text/html,application/xhtml+xml;q=0.9'},
-      signal:AbortSignal.timeout(TIMEOUT_MS),cache:'no-store'});
+      signal:AbortSignal.timeout(budget.timeoutMs),cache:'no-store'});
   }catch{throw Error('official_fetch_network_failure');}
   if(response.status===429||response.status===503)throw new Throttled(response.status);
   const final=new URL(response.url||url);
@@ -146,9 +148,9 @@ async function getHttp(url:string,pacer:{wait:()=>Promise<void>}):Promise<HttpRe
     ||final.username||final.password)throw Error('official_fetch_redirected_off_site');
   if(response.status!==200)return {status:response.status,sourceUrl:final.toString(),body:null,contentType:null};
   const advertised=Number(response.headers.get('content-length'));
-  if(advertised>MAX_HTTP_BYTES)throw Error('official_body_too_large');
+  if(advertised>budget.maxBytes)throw Error('official_body_too_large');
   const bytes=new Uint8Array(await response.arrayBuffer());
-  if(bytes.length<100||bytes.length>MAX_HTTP_BYTES)throw Error('official_body_size_invalid');
+  if(bytes.length<100||bytes.length>budget.maxBytes)throw Error('official_body_size_invalid');
   return {status:200,sourceUrl:final.toString(),body:bytes,contentType:response.headers.get('content-type')};
 }
 async function stageBills(db:PoolClient):Promise<number>{
@@ -235,11 +237,13 @@ async function nextVersions(db:PoolClient):Promise<Version[]>{
     'SELECT q.id,q.bill_id,q.session_id,q.family,q.printed_label,q.source_url,q.status_url,'
     +'q.source_locator,q.posted_on::text,q.attempts FROM senate_official_bill_text_queue q '
     +'JOIN legislative_sessions s ON s.id=q.session_id '
-    +"WHERE q.attempts<$1 AND (q.status='pending' OR "
+    +"WHERE (q.attempts<$1 OR (q.attempts=3 AND "
+    +"q.last_error_kind='official_body_size_invalid' "
+    +"AND q.source_url=ANY($3::text[]))) AND (q.status='pending' OR "
     +"(q.status='failed' AND q.last_checked_at<now()-interval '6 hours')) "
     +"ORDER BY s.slug DESC,CASE q.family WHEN 'unofficial_engrossment' THEN 0 "
     +"WHEN 'conference_report' THEN 1 ELSE 2 END,q.id LIMIT $2",
-    [RETRIES,MAX_VERSIONS]);
+    [RETRIES,MAX_VERSIONS,EXHAUSTED_LARGE_VERSION_RETRY_URLS]);
   return r.rows;
 }
 async function markVersion(db:PoolClient,q:Version,status:'failed'|'unavailable',httpStatus:number|null,kind:string):Promise<void>{
