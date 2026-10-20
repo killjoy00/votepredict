@@ -76,11 +76,11 @@ test('actual migrated PostgreSQL: 12/144 additions, three media, 25 links, prese
   phase='atomic_apply';const counts=await applyProduction(pool,proof,before);assert.equal(counts.insertedEvents,12);assert.equal(counts.insertedChoices,144);assert.equal(counts.insertedMedia,3);assert.equal(counts.insertedFinanceLinks,25);
   phase='independent_readback';const after=(await readOnly(pool,target,proof)).snapshot;verifyPreserved(before,after);assert.equal(after.events.length,19);assert.equal(after.choices.length,211);assert.equal(after.links.length,25);assert.equal(after.media.filter(r=>r.kind).length,3);
   phase='replay_and_negative_guards';const replay=await applyProduction(pool,proof,after);assert.equal(Object.values(replay).reduce((a,b)=>a+b,0),0);
-  const backdate=structuredClone(after);backdate.media[0].published_at='2021-11-08T00:00:00Z';assert.throws(()=>productionPlan(proof,backdate),/Media stored/);
-  const purpose=structuredClone(after);purpose.finance.find(r=>r.metadata.subtype==='candidate_expenditure_record').metadata.purpose='wrong';assert.throws(()=>productionPlan(proof,purpose),/comparator/);
-  const drift=structuredClone(after);drift.choices[0].metadata={changed:true};assert.throws(()=>verifyPreserved(before,drift),/choice/);
+  phase='negative_backdating_guard';const backdate=structuredClone(after);backdate.media[0].published_at='2021-11-08T00:00:00Z';assert.throws(()=>productionPlan(proof,backdate),/Media stored/);
+  phase='negative_matched_purpose_guard';const purpose=structuredClone(after),matchedExpense=plan.finance.find(p=>p.family==='candidate_expenditure');purpose.finance.find(r=>r.metadata.rowKey===matchedExpense.key).metadata.purpose='wrong';assert.throws(()=>productionPlan(proof,purpose),/comparator/);
+  phase='negative_preservation_guard';const drift=structuredClone(after);drift.choices.find(v=>v.id===before.choices[0].id).metadata={changed:true};assert.throws(()=>verifyPreserved(before,drift),/choice/);
   // Drift between the read-only snapshot and SERIALIZABLE lock must rollback.
-  const c=await pool.connect();try{await c.query("UPDATE evidence_items SET metadata=metadata||'{\"concurrentChange\":true}'::jsonb WHERE id=$1",[before.finance[0].id]);}finally{c.release()}
+  phase='concurrent_fingerprint_guard';const c=await pool.connect();try{await c.query("UPDATE evidence_items SET metadata=metadata||'{\"concurrentChange\":true}'::jsonb WHERE id=$1",[before.finance[0].id]);}finally{c.release()}
   await assert.rejects(()=>applyProduction(pool,proof,before),/Concurrent state/);
   const final=(await readOnly(pool,target,proof)).snapshot;assert.equal(final.events.length,19);assert.equal(final.links.length,25);
  }catch(error){const labels=new Set(['scripts/deploy-senate-864-three-bounded.mjs','src/evidence/senate-864-three-bounded-plan.mjs'].flatMap(f=>[...readFileSync(f,'utf8').matchAll(/throw Error\('([^']+)'\)/g)].map(m=>m[1])));throw Error('Disposable PostgreSQL production test failed at '+phase+(labels.has(error?.message)?'; guard='+error.message:''))}finally{if(pool)await pool.end();await admin.query('DROP DATABASE IF EXISTS '+name+' WITH (FORCE)');await admin.end()}
