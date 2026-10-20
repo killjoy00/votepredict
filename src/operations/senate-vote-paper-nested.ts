@@ -9,7 +9,7 @@ import {parseSenateJournalText} from '../sources/minnesota/senate-journals.js';
 export const NESTED_PAPER_PARSER_VERSION='senate-nested-source-paper-v2' as const;
 export interface NestedSenateSourcePaper{
  sourceOnlyKey:string;
- sourceStart:number;sourceEnd:number;billIdentifier:string;
+ sourceStart:number;sourceEnd:number;questionStart:number;questionEnd:number;questionText:string;billIdentifier:string;
  mover:string;parentMover:string;parentOrdinal:string|null;
  literalText:string;literalSha256:string;
  yeas:number|null;nays:number|null;ballotSha256:string|null;
@@ -56,8 +56,13 @@ export function parseNestedSenateSourcePapers(
   const localWindow=after.slice(0,Math.min(anotherMotion?.index??after.length,18_000));
   const questionMarkers=[...localWindow.matchAll(/\bThe question (?:was\s*taken|recurred)\b/gi)];
   const local=localWindow.slice(0,questionMarkers[1]?.index??localWindow.length);
-  const rollMarker=/\bThe roll was called\b/i.exec(local);
-  const questionText=compact(local.slice(0,Math.min(rollMarker?.index??400,400)));
+  // Preserve the complete original question with source character anchors,
+  // never the following ballot, outcome, or an adjacent separate question.
+  const printedQuestion=/^The question (?:was\s*taken|recurred)\s+on[\s\S]{1,500}?\.(?=\s|$)/i.exec(local);
+  if(!printedQuestion)continue;
+  const questionText=compact(printedQuestion[0]);
+  const questionStart=start+h[0].length+question.index;
+  const questionEnd=questionStart+printedQuestion[0].length;
   // Do not silently label a ruling/appeal/parent-bill question as a vote
   // on this nested amendment. A valid question must explicitly be about
   // adopting or rejecting an amendment *to another amendment*.
@@ -84,7 +89,7 @@ export function parseNestedSenateSourcePapers(
    :/\bSo the amendment to the amendment was adopted\b/i.test(local)?'adopted_to_parent'
    :'unknown';
   result.push({sourceOnlyKey:sha(JSON.stringify([start,end,sha(literal)])),
-   sourceStart:start,sourceEnd:end,billIdentifier:h[4]!.toUpperCase()+'F'+Number(h[5]),
+   sourceStart:start,sourceEnd:end,questionStart,questionEnd,questionText,billIdentifier:h[4]!.toUpperCase()+'F'+Number(h[5]),
    mover:compact(h[1]!),parentMover:compact(h[3]!),parentOrdinal:h[2]?.toLowerCase()??null,
    literalText:literal,literalSha256:sha(literal),
    yeas:yea,nays:nay,ballotSha256,disposition,exactNumberedParentProven:false,
