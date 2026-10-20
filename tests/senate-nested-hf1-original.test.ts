@@ -5,7 +5,7 @@ import {parseNestedSenateSourcePapers} from '../src/operations/senate-vote-paper
 import {parseJournalPaperActions,stripInterposedSenateJournalRollHeader} from '../src/operations/senate-vote-paper-parser.js';
 import {identifyPrattSourceAction,HF100_ORIGINAL_SHADOW_VERSION} from '../src/operations/senate-hf100-original-shadow.js';
 import {summarizeHf100TextChain} from '../src/operations/senate-hf100-text-chain-readiness.js';
-import {HF100_FIRST_UE_PDF,assessHf100PrintedLinePilot} from '../src/operations/senate-hf100-printed-line-pilot.js';
+import {HF100_FIRST_UE_PDF,HF100_FIRST_UE_PDF_SHA256,HF100_FIRST_UE_PDF_BYTE_LENGTH,assessHf100PrintedLinePilot} from '../src/operations/senate-hf100-printed-line-pilot.js';
 import {fetchCanonicalGovernmentSource,boundedBody} from '../src/operations/senate-history-archive.js';
 import {hash} from '../src/operations/senate-vote-paper-parser.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
@@ -159,6 +159,10 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
   const pdfBytes=await boundedBody(response,15_000_000);
   assert.ok(pdfBytes.length>20_000&&Buffer.from(pdfBytes.subarray(0,5)).toString('ascii')==='%PDF-');
   const pdfSha256=hash(pdfBytes);
+  assert.equal(pdfBytes.length,HF100_FIRST_UE_PDF_BYTE_LENGTH,
+   'The original Revisor first-unofficial PDF byte length changed; review before accepting');
+  assert.equal(pdfSha256,HF100_FIRST_UE_PDF_SHA256,
+   'The original Revisor first-unofficial PDF SHA changed; review before accepting');
   const {PDFParse}=await import('pdf-parse'),{CanvasFactory}=await import('pdf-parse/worker');
   const pdfParser=new PDFParse({data:Uint8Array.from(pdfBytes),CanvasFactory});
   let revisorText:string;
@@ -168,6 +172,7 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
    source:'HF100 UE1 Revisor PDF',pdfSha256,pdfBytes:pdfBytes.length,...linePilot
   }));
   assert.equal(linePilot.fullyCheckedAdoptedAmendments,1);
+  assert.equal(linePilot.adoptedAmendmentsStillHeldForCompositeApplication,4);
   assert.equal(linePilot.completeAssembledBillText,false);
   assert.equal(linePilot.preVotePublicationProven,false);
 });
