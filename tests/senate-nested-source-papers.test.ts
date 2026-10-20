@@ -22,7 +22,7 @@ test('nested Senate amendments retain exact parent description but never amend b
   'The motion prevailed. So the amendment to the amendment was adopted.'
  ].join('\n');
  const papers=parseNestedSenateSourcePapers(source,['Abeler','Boldon']);
- assert.equal(NESTED_PAPER_PARSER_VERSION,'senate-nested-source-paper-v1');
+ assert.equal(NESTED_PAPER_PARSER_VERSION,'senate-nested-source-paper-v2');
  assert.equal(papers.length,2);
  assert.deepEqual(papers.map(p=>p.disposition),['rejected','adopted_to_parent']);
  assert.deepEqual(papers.map(p=>p.parentMover),['Lucero','Lucero']);
@@ -37,11 +37,13 @@ test('nested Senate amendments retain exact parent description but never amend b
  assert.equal(parseJournalPaperActions(source,['Abeler','Boldon']).length,0);
 });
 
-test('absent parent ordinal, vague bill or interrupted motion is not a nested paper',()=>{
+test('unnumbered parent remains unresolved; vague bill or interrupted motion is held',()=>{
  const base='Senator Maye Quade moved to amend the first Lucero amendment to H.F. No. 1 as follows:\n';
  const tail='Page 1, line 3, delete "word".\nThe question was taken on the adoption of the amendment to the amendment.\n';
  assert.equal(parseNestedSenateSourcePapers(base+tail).length,1);
- assert.equal(parseNestedSenateSourcePapers(base.replace('the first Lucero','the Lucero')+tail).length,0);
+ const [unnumbered]=parseNestedSenateSourcePapers(base.replace('the first Lucero','the Lucero')+tail);
+ assert.ok(unnumbered);assert.equal(unnumbered.parentOrdinal,null);
+ assert.equal(unnumbered.exactNumberedParentProven,false);
  assert.equal(parseNestedSenateSourcePapers(base.replace('H.F. No. 1','an unknown bill')+tail).length,0);
  assert.equal(parseNestedSenateSourcePapers(base+'Page 1, line 1, insert "a".\nSenator Test moved that the bill be laid on the table.\n'+tail).length,0);
  assert.equal(parseNestedSenateSourcePapers(base+'The question was taken.').length,0);
@@ -105,4 +107,48 @@ test('unrelated parent-bill passage question does not become nested amendment id
   'The roll was called, and there were yeas 34 and nays 33, as follows:'
  ].join('\n');
  assert.equal(parseNestedSenateSourcePapers(journal).length,0);
+});
+
+
+test('HF7 official question extraction preserves unnumbered and third parents separately',()=>{
+ const paper=[
+  'Senator Rarick moved to amend the Rarick amendment to H.F. No. 7 as follows:',
+  'Page 1, line 2, delete "19" and insert "31".',
+  'The question was taken on the adoption of the Rarick amendment to the Rarick amendment.',
+  'The roll was called, and there were yeas 33 and nays 34, as follows:',
+  'The motion did not prevail. So the amendment to the amendment was not adopted.',
+  'Senator Lucero moved to amend the third Lucero amendment to H.F. No. 7 asfollows:',
+  'Page 1, after line 8, insert: "(d) The commission may not count carbon dioxide".',
+  'The question wastaken on the adoption of the Lucero amendment to the third Lucero amendment.',
+  'The roll was called, and there were yeas 33 and nays 34, as follows:',
+  'The motion did not prevail. So the amendment to the amendment was not adopted.'
+ ].join('\n');
+ const found=parseNestedSenateSourcePapers(paper);
+ assert.equal(found.length,2);
+ assert.deepEqual(found.map(p=>p.parentOrdinal),[null,'third']);
+ assert.deepEqual(found.map(p=>p.parentMover),['Rarick','Lucero']);
+ assert.ok(found.every(p=>p.billIdentifier==='HF7'&&p.disposition==='rejected'));
+ assert.ok(found.every(p=>p.ballotSha256===null),
+  'Tally-only journal excerpt cannot supply full ballot signature');
+ assert.notEqual(found[0]?.sourceOnlyKey,found[1]?.sourceOnlyKey);
+ assert.ok(found[1]?.literalText.startsWith('Senator Lucero'));
+ assert.ok(found.every(p=>p.questionText.startsWith('The question')));
+ assert.ok(found.every(p=>paper.slice(p.questionStart,p.questionEnd).replace(/\s+/g,' ').trim()===p.questionText));
+ assert.ok(found.every(p=>p.questionStart>=p.sourceEnd));
+});
+
+test('omitted parent ordinal never assigns a numbered parent or adopted bill text',()=>{
+ const source=[
+  'Senator Mathews moved to amend the Mathews amendment to H.F. No. 7 as follows:',
+  'Page 1, delete line 2 and insert "different text".',
+  'The question wastaken on the adoption of the Mathews amendment to the Mathews amendment.',
+  'The motion prevailed. So the amendment to the amendment was adopted.'
+ ].join('\n');
+ const [p]=parseNestedSenateSourcePapers(source);
+ assert.ok(p);assert.equal(p.parentMover,'Mathews');assert.equal(p.parentOrdinal,null);
+ assert.equal(p.disposition,'adopted_to_parent');
+ assert.equal(p.exactNumberedParentProven,false);
+ assert.equal(p.appliesDirectlyToBill,false);
+ assert.equal(p.acceptedVoteEventLinked,false);
+ assert.equal(p.fullBillTextAssembled,false);
 });
