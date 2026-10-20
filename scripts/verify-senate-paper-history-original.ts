@@ -7,7 +7,7 @@ import {parseDatedRoleActs} from '../src/operations/senate-vote-paper-backfill.j
 import {fetchCanonicalGovernmentSource,boundedBody,statedAssignmentDate} from '../src/operations/senate-history-archive.js';
 import {parseSenateAssignmentPdfText} from '../src/sources/minnesota/senate-assignment-pdf.js';
 import {getMinnesotaHouseSession} from '../src/sources/minnesota/sessions.js';
-import {hash} from '../src/operations/senate-vote-paper-parser.js';
+import {hash,compact} from '../src/operations/senate-vote-paper-parser.js';
 const sources=[
  ['2023-2024/20230428059.pdf','9e8160e4c78ef70cc0635226201f12e656ac84a999af8e0a8f8dc3e6737791a3'],
  ['2021-2022/2021010501.pdf','78f953dbef770ccc1227769d56f927f9162bb8cb27e2e1d959d408055b557da0'],
@@ -80,6 +80,11 @@ async function main(){
  verificationPhase='hf7_original_integrity_assertions';
  assert.equal(hf7.pdfSha256,'e60b103c2a0ad32dc13b6bb1480fa5197810ce7ecdc2b9480edf97d63ee7060c');
  assert.equal(hf7.byteLength,1_152_045);
+ assert.ok(hf7Papers.every(p=>p.sourceStart>=0&&p.sourceEnd<=p.questionStart
+  &&p.questionStart<p.questionEnd&&p.questionEnd<=hf7.text.length));
+ assert.ok(hf7Papers.every(p=>hf7.text.slice(p.sourceStart,p.sourceEnd)===p.literalText
+  &&compact(hf7.text.slice(p.questionStart,p.questionEnd))===p.questionText),
+  'HF7 original source spans and question text must round-trip without inference');
  assert.equal(hf7Papers.length,17);
  assert.equal(hf7Papers.filter(p=>p.ballotSha256!==null).length,17);
  assert.equal(new Set(hf7Papers.map(p=>p.questionText)).size,15);
