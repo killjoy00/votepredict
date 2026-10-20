@@ -6,6 +6,9 @@
 import {compact,type PaperAction} from './senate-vote-paper-parser.js';
 
 export const HF100_FIRST_UE_PDF='https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ue/1/pdf/';
+/** Independently downloaded twice from the official Revisor source in keyless CI. */
+export const HF100_FIRST_UE_PDF_SHA256='547d33380988ad84e1e8fdec6d421437f5eb699f51465bff111b4519f883369c';
+export const HF100_FIRST_UE_PDF_BYTE_LENGTH=5_716_766;
 export const HF100_PRINTED_LINE_PILOT_VERSION='senate-hf100-printed-line-pilot-v1' as const;
 
 export interface Hf100PrintedLinePilot {
@@ -16,7 +19,8 @@ export interface Hf100PrintedLinePilot {
  partialPortInsertionsVerified:4;
  completeHoffmanLineReplacementsVerified:2;
  fullyCheckedAdoptedAmendments:1;
- adoptedAmendmentsStillHeldForCompositeApplication:3;
+ adoptedAmendmentsWithoutCompleteInstructionProof:3;
+ adoptedAmendmentsStillHeldForCompositeApplication:4;
  allFourAdoptedAmendmentsApplied:false;
  completeAssembledBillText:false;
  preVotePublicationProven:false;
@@ -141,7 +145,8 @@ export function assessHf100PrintedLinePilot(
   originalActions:8,adoptedAmendments:4,rejectedAmendmentsExcluded:1,
   printedBaseLinesVerified:5,partialPortInsertionsVerified:4,
   completeHoffmanLineReplacementsVerified:2,fullyCheckedAdoptedAmendments:1,
-  adoptedAmendmentsStillHeldForCompositeApplication:3,
+  adoptedAmendmentsWithoutCompleteInstructionProof:3,
+  adoptedAmendmentsStillHeldForCompositeApplication:4,
   allFourAdoptedAmendmentsApplied:false,completeAssembledBillText:false,
   preVotePublicationProven:false,eventLinksAdded:0};
 }
