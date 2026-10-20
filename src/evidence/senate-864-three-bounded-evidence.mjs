@@ -95,9 +95,12 @@ export function parseMillerPrintedRows(layout){
    const d=lines[i].match(/^\s*(\d\d)\/(\d\d)\/(2024)\s+(.*?)\s*$/);
    if(!d)continue;
    if(!party)throw Error('Dated line lacks its own printed counterparty header');
-   const fields=[...d[4].matchAll(/(?<!\S)([\d,]+\.\d\d)(?!\S)/g)].map(x=>money(x[1]));
+   const printedAmounts=[...d[4].matchAll(/(?<!\S)([\d,]+\.\d\d)(?!\S)/g)];
+   const fields=printedAmounts.map(x=>money(x[1]));
+   const continuation=[];if(index===5)for(let j=i+1;j<lines.length&&lines[j].trim()&&!/^\s*(?:\d\d\/|Total|Date)/.test(lines[j]);j++)continuation.push(lines[j].trim());
+   const purpose=index===5?compact(d[4].slice(0,printedAmounts[0]?.index)+' '+continuation.join(' ')):null;
    if(fields.length!==(index===5?4:3)||fields.at(-1)!==fields.slice(0,-1).reduce((a,b)=>a+b,0))throw Error('Printed amount columns do not reconcile');
-   rows.push({page:index,schedule:index===3?'IND':index===4?'PCF':'CE',date:`2024-${d[1]}-${d[2]}`,party,registration,cents:fields[0],unpaid:index===5?fields[1]:0,inKind:fields.at(-2),total:fields.at(-1)});found++;
+   rows.push({page:index,schedule:index===3?'IND':index===4?'PCF':'CE',date:`2024-${d[1]}-${d[2]}`,party,registration,purpose,cents:fields[0],unpaid:index===5?fields[1]:0,inKind:fields.at(-2),total:fields.at(-1)});found++;
   }
   if(found!==expected)throw Error('Printed itemized transaction denominator changed');
  }
@@ -105,12 +108,15 @@ export function parseMillerPrintedRows(layout){
  return rows;
 }
 function nameVariants(s){const values=[norm(s)];const x=String(s).split(',');if(x.length===2&&x.every(x=>x.trim()))values.push(norm(x[1]+' '+x[0]));return values;}
+const purposeKey=s=>norm(String(s||'').replace(/\\r\\n/g,' '));
 export function financeMatches(source,row){
  const contrib=row.subtype==='candidate_contribution_record';
+ if(!contrib&&row.subtype!=='candidate_expenditure_record')return [];
+ if(contrib&&row.receiptType!=='Contribution'||!contrib&&row.expenditureType!=='General expenditure')return [];
  const candidates=source.filter(s=>(contrib?s.schedule!=='CE':s.schedule==='CE')&&s.date===row.transactionDate&&s.cents===money(row.amount)&&
   nameVariants(s.party).some(n=>nameVariants(contrib?row.contributor:row.vendorName).includes(n))&&
   (s.registration?String(row.contributorRegistrationNumber||'')===s.registration:!contrib||row.contributorType==='Individual')&&
-  s.inKind===0&&(contrib||s.unpaid===money(row.unpaidAmount||0)));
+  s.inKind===0&&(contrib||s.unpaid===money(row.unpaidAmount||0)&&s.total===money(row.totalAmount)&&purposeKey(s.purpose)===purposeKey(row.purpose)));
  return candidates;
 }
 export function compareFinance(source,copies,links){
@@ -120,17 +126,18 @@ export function compareFinance(source,copies,links){
  for(const r of copies){const k=r.metadata.rowKey;if(!/^[a-f0-9]{64}$/.test(k||''))throw Error('Canonical finance identity missing');
   const old=unique.get(k);if(old&&canonical(old)!==canonical(r.metadata))conflicts.add(k);else unique.set(k,r.metadata);}
  return ['candidate_contribution_record','candidate_expenditure_record'].map(subtype=>{
-  const group=[...unique].filter(([,m])=>m.subtype===subtype),seen=new Set();let exact=0,ambiguous=0,unmatched=0,legacyExactLinks=0,legacyExactLinksNotRecertified=0;
-  for(const [key,m] of group){const matches=financeMatches(source,m);if(matches.length===1){exact++;seen.add(source.indexOf(matches[0]));}else if(matches.length>1)ambiguous++;else unmatched++;
-   const old=links.filter(l=>l.canonical_row_key===key&&l.match_status==='exact');legacyExactLinks+=old.length;if(old.length&&matches.length!==1)legacyExactLinksNotRecertified+=old.length;
+  const group=[...unique].filter(([,m])=>m.subtype===subtype),seen=new Set(),matchesByKey=new Map(group.map(([k,m])=>[k,financeMatches(source,m)])),reverse=new Map();
+  for(const matches of matchesByKey.values())for(const m of matches)reverse.set(m,(reverse.get(m)||0)+1);
+  let exact=0,ambiguous=0,unmatched=0,legacyExactLinks=0,legacyExactLinksNotRecertified=0,matchedIndividualCanonical=0,matchedCommitteeFundCanonical=0;
+  for(const [key] of group){const matches=matchesByKey.get(key),certified=matches.length===1&&reverse.get(matches[0])===1&&!conflicts.has(key);if(certified){exact++;seen.add(source.indexOf(matches[0]));if(matches[0].schedule==='IND')matchedIndividualCanonical++;if(matches[0].schedule==='PCF')matchedCommitteeFundCanonical++;}else if(matches.length)ambiguous++;else unmatched++;
+   const old=links.filter(l=>l.canonical_row_key===key&&l.match_status==='exact');legacyExactLinks+=old.length;if(old.length&&!certified)legacyExactLinksNotRecertified+=old.length;
   }
   return {family:subtype,storedEvidenceCopies:copies.filter(r=>r.metadata.subtype===subtype).length,canonicalTransactions:group.length,conflictingCopyMetadata:group.filter(([k])=>conflicts.has(k)).length,
    exactPrintedRowMatches:exact,ambiguousPrintedRowMatches:ambiguous,notMatchedToThisExactVersion:unmatched,uniquePrintedRowsMatched:seen.size,
    printedItemizedRows:source.filter(s=>subtype==='candidate_contribution_record'?s.schedule!=='CE':s.schedule==='CE').length,
    storedExactLinkRecords:legacyExactLinks,storedExactLinksNotRecertified:legacyExactLinksNotRecertified,
    legacyEligibleCopies:copies.filter(r=>r.metadata.subtype===subtype&&r.metadata.asOfEligible===true).length,
-   matchedIndividualCanonical:group.filter(([,m])=>financeMatches(source,m).length===1&&financeMatches(source,m)[0].schedule==='IND').length,
-   matchedCommitteeFundCanonical:group.filter(([,m])=>financeMatches(source,m).length===1&&financeMatches(source,m)[0].schedule==='PCF').length};
+   matchedIndividualCanonical,matchedCommitteeFundCanonical};
  });
 }
 export function compareMedia(source,rows,roster=[]){

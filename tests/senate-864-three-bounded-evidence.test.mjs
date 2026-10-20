@@ -21,7 +21,7 @@ test('identical named slates and ordinal keys do not identify stored questions',
 });
 test('finance containment requires all exact row comparators and proper family',()=>{
  const source=[{schedule:'PCF',date:'2024-10-01',party:'Example Fund',registration:'30000',cents:10000,unpaid:0,inKind:0,total:10000}];
- const r={subtype:'candidate_contribution_record',transactionDate:'2024-10-01',contributor:'Example Fund',contributorRegistrationNumber:'30000',amount:100};
+ const r={subtype:'candidate_contribution_record',transactionDate:'2024-10-01',contributor:'Example Fund',contributorRegistrationNumber:'30000',receiptType:'Contribution',amount:100};
  assert.equal(financeMatches(source,r).length,1);
  for(const patch of [{amount:99},{transactionDate:'2024-10-02'},{contributor:'Example'},{contributorRegistrationNumber:'30001'},{subtype:'candidate_expenditure_record',vendorName:'Example Fund'}])assert.equal(financeMatches(source,{...r,...patch}).length,0);
  const copies=[{metadata:{...r,rowKey:'a'.repeat(64),asOfEligible:true}},{metadata:{...r,rowKey:'a'.repeat(64),asOfEligible:true}}];
@@ -60,4 +60,13 @@ test('media copies need a single stable person, exact observation clock and non-
  assert.equal(compareMedia(source,[row],roster)[0].verifiedStoredDirectStatementCopies,1);
  for(const patch of [{person_id:'other-person'},{kind:'context'},{metadata:{...row.metadata,archiveCapturedAt:'2021-11-08T00:00:00Z'}},{metadata:{...row.metadata,modelWeight:1}}])assert.equal(compareMedia(source,[{...row,...patch}],roster)[0].verifiedStoredDirectStatementCopies,0);
  assert.equal(compareMedia(source,[row],[...roster,{...roster[0],legislator_id:'ambiguous-person'}])[0].verifiedStoredDirectStatementCopies,0);
+});
+
+test('one printed finance row cannot certify two distinct canonical transactions',()=>{
+ const source=[{schedule:'PCF',date:'2024-10-01',party:'Example Fund',registration:'30000',cents:10000,unpaid:0,inKind:0,total:10000}],m={subtype:'candidate_contribution_record',transactionDate:'2024-10-01',contributor:'Example Fund',contributorRegistrationNumber:'30000',receiptType:'Contribution',amount:100};
+ const rows=['a','b'].map(k=>({metadata:{...m,rowKey:k.repeat(64)}}));
+ const r=compareFinance(source,rows,[])[0];assert.equal(r.exactPrintedRowMatches,0);assert.equal(r.ambiguousPrintedRowMatches,2);assert.equal(r.uniquePrintedRowsMatched,0);
+ const e={schedule:'CE',date:'2024-10-01',party:'Example Vendor',cents:10000,unpaid:0,inKind:0,total:10000,purpose:'Advertising: a printed ad'};
+ const row={subtype:'candidate_expenditure_record',transactionDate:e.date,vendorName:e.party,amount:100,unpaidAmount:0,totalAmount:100,purpose:e.purpose,expenditureType:'General expenditure'};
+ assert.equal(financeMatches([e],row).length,1);assert.equal(financeMatches([e],{...row,purpose:'another ad'}).length,0);assert.equal(financeMatches([e],{...row,expenditureType:'Noncampaign disbursement'}).length,0);
 });
