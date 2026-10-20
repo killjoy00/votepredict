@@ -57,6 +57,7 @@ async function seed(db,proof){
   if(exp)Object.assign(m,{vendorName:row.party,purpose:row.purpose+(expense++>=7?' deliberately different purpose':''),expenditureType:'Campaign Expenditure',unpaidAmount:row.unpaid/100,totalAmount:row.total/100});
   else Object.assign(m,{contributor:row.party,contributorRegistrationNumber:row.registration,contributorType:row.schedule==='IND'?'Individual':'Political Committee',receiptType:'Contribution'});
   await db.query("INSERT INTO evidence_items(source_document_id,evidence_kind,claim,source_quality,relevance,freshness,extraction_method,metadata) VALUES($1,'fact','synthetic integration fixture','official','low','stale','test',$2)",[sources[exp?'expenditure':'contribution'],JSON.stringify(m)]);
+  await db.query("INSERT INTO cfb_finance_report_transaction_links(report_version_id,family,committee_registration,transaction_year,canonical_row_key,match_status,possible_entry_count) VALUES($1,$2,'16891',2024,$3,'unmatched',0)",[REPORT,exp?'candidate_expenditure':'candidate_contribution',m.rowKey]);
  }
 }
 test('actual migrated PostgreSQL: 12/144 additions, three media, 25 links, preservation, rejection and zero-write replay',{skip:!process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL,timeout:360000},async()=>{
@@ -73,8 +74,8 @@ test('actual migrated PostgreSQL: 12/144 additions, three media, 25 links, prese
   phase='negative_person_guard';const bad=structuredClone(before);bad.roster.find(p=>p.name==='Ron Latz').ends_on=null;assert.throws(()=>productionPlan(proof,bad),/Historical/);
   phase='negative_choice_guard';const wrong=structuredClone(before);wrong.choices[0].choice='other';assert.throws(()=>productionPlan(proof,wrong),/choices/);
   phase='negative_finance_guard';const shared=structuredClone(before);shared.finance.find(r=>r.metadata.subtype==='candidate_contribution_record').metadata.contributor='not the printed donor';assert.throws(()=>productionPlan(proof,shared),/comparator/);
-  phase='atomic_apply';const counts=await applyProduction(pool,proof,before);assert.equal(counts.insertedEvents,12);assert.equal(counts.insertedChoices,144);assert.equal(counts.insertedMedia,3);assert.equal(counts.insertedFinanceLinks,25);
-  phase='independent_readback';const after=(await readOnly(pool,target,proof)).snapshot;verifyPreserved(before,after);assert.equal(after.events.length,19);assert.equal(after.choices.length,211);assert.equal(after.links.length,25);assert.equal(after.media.filter(r=>r.kind).length,3);
+  phase='atomic_apply';const counts=await applyProduction(pool,proof,before);assert.equal(counts.insertedEvents,12);assert.equal(counts.insertedChoices,144);assert.equal(counts.insertedMedia,3);assert.equal(counts.insertedFinanceLinks,0);assert.equal(counts.upgradedFinanceLinks,25);
+  phase='independent_readback';const after=(await readOnly(pool,target,proof)).snapshot;verifyPreserved(before,after,new Set(plan.finance.map(p=>p.key)));assert.equal(after.events.length,19);assert.equal(after.choices.length,211);assert.equal(after.links.length,28);assert.equal(after.links.filter(l=>l.match_status==='exact').length,25);assert.equal(after.links.filter(l=>l.match_status==='unmatched').length,3);assert.equal(after.media.filter(r=>r.kind).length,3);
   phase='replay_and_negative_guards';const replay=await applyProduction(pool,proof,after);assert.equal(Object.values(replay).reduce((a,b)=>a+b,0),0);
   phase='negative_backdating_guard';const backdate=structuredClone(after);backdate.media[0].published_at='2021-11-08T00:00:00Z';assert.throws(()=>productionPlan(proof,backdate),/Media stored/);
   phase='negative_matched_purpose_guard';const purpose=structuredClone(after),matchedExpense=plan.finance.find(p=>p.family==='candidate_expenditure');purpose.finance.find(r=>r.metadata.rowKey===matchedExpense.key).metadata.purpose='wrong';assert.throws(()=>productionPlan(proof,purpose),/comparator/);
@@ -82,6 +83,6 @@ test('actual migrated PostgreSQL: 12/144 additions, three media, 25 links, prese
   // Drift between the read-only snapshot and SERIALIZABLE lock must rollback.
   phase='concurrent_fingerprint_guard';const c=await pool.connect();try{await c.query("UPDATE evidence_items SET metadata=metadata||'{\"concurrentChange\":true}'::jsonb WHERE id=$1",[before.finance[0].id]);}finally{c.release()}
   await assert.rejects(()=>applyProduction(pool,proof,before),/Concurrent state/);
-  const final=(await readOnly(pool,target,proof)).snapshot;assert.equal(final.events.length,19);assert.equal(final.links.length,25);
+  const final=(await readOnly(pool,target,proof)).snapshot;assert.equal(final.events.length,19);assert.equal(final.links.length,28);
  }catch(error){const labels=new Set(['scripts/deploy-senate-864-three-bounded.mjs','src/evidence/senate-864-three-bounded-plan.mjs'].flatMap(f=>[...readFileSync(f,'utf8').matchAll(/throw Error\('([^']+)'\)/g)].map(m=>m[1])));throw Error('Disposable PostgreSQL production test failed at '+phase+(labels.has(error?.message)?'; guard='+error.message:''))}finally{if(pool)await pool.end();await admin.query('DROP DATABASE IF EXISTS '+name+' WITH (FORCE)');await admin.end()}
 });
