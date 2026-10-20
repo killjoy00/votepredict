@@ -413,6 +413,30 @@ async function report(db:PoolClient){
       +'FROM senate_official_bill_text_discovery d JOIN legislative_sessions s ON s.id=d.session_id '
       +"WHERE d.status='failed' GROUP BY s.slug,d.last_http_status,d.last_error_kind "
       +'ORDER BY count(*) DESC,s.slug LIMIT 25')).rows;
+    // Final-closeout diagnostics are deliberately aggregated and allowlisted.
+    // The database may contain untrusted exception messages; never log raw
+    // error strings, URL/locator, bill identifiers, body text, or SQL params.
+    const versionFailureKinds=(await db.query(
+      'SELECT s.slug AS session,q.family,q.status,'
+      +"CASE WHEN q.last_http_status=404 THEN 'official_404' "
+      +"WHEN q.last_http_status BETWEEN 500 AND 599 THEN 'official_http_5xx' "
+      +"WHEN q.last_http_status BETWEEN 400 AND 499 THEN 'official_http_4xx' "
+      +"WHEN q.last_http_status BETWEEN 300 AND 399 THEN 'official_http_3xx' "
+      +"WHEN q.last_error_kind='version_url_redirect_or_source_mismatch' THEN 'source_mismatch' "
+      +"WHEN q.last_error_kind='invalid_queued_official_url' THEN 'invalid_queued_url' "
+      +"WHEN q.last_error_kind IN ('official_body_too_large','official_body_size_invalid') "
+      +"THEN 'invalid_source_body_size' ELSE 'source_parse_or_fetch_error' END AS error_category,"
+      +"CASE WHEN q.status='unavailable' THEN 'unavailable_404' "
+      +"WHEN q.attempts>=3 THEN 'retry_exhausted' "
+      +"WHEN q.last_checked_at IS NULL OR q.last_checked_at<now()-interval '6 hours' "
+      +"THEN 'retry_ready' ELSE 'retry_cooldown' END AS retry_state,"
+      +'count(*)::int AS count,min(q.attempts)::int AS min_attempts,'
+      +'max(q.attempts)::int AS max_attempts '
+      +'FROM senate_official_bill_text_queue q '
+      +'JOIN legislative_sessions s ON s.id=q.session_id '
+      +"WHERE q.status IN ('failed','unavailable') "
+      +'GROUP BY s.slug,q.family,q.status,error_category,retry_state '
+      +'ORDER BY s.slug DESC,q.family,retry_state,error_category LIMIT 50')).rows;
     const journals=(await db.query(
       'SELECT s.slug AS session,j.status,count(*)::int AS documents,'
       +'coalesce(sum(j.snippets_found),0)::int AS snippets,'
@@ -460,7 +484,7 @@ async function report(db:PoolClient){
       ' WHERE m.source_document_id=d.id AND m.bill_id IS NOT NULL)',
       ' GROUP BY s.slug ORDER BY s.slug DESC'
     ].join('\n'))).rows;
-    return {families,queue,discovery,discoveryFailureKinds,journals,eligible,rawDocuments,outstanding};
+    return {families,queue,discovery,discoveryFailureKinds,versionFailureKinds,journals,eligible,rawDocuments,outstanding};
   });
 }
 async function main():Promise<void>{
