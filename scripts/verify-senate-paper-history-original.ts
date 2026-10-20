@@ -65,7 +65,7 @@ async function main(){
  verificationPhase='hf7_original_download';
  const hf7=await fetchSenateJournal('https://www.senate.mn/journals/2023-2024/20230202017.pdf');
  verificationPhase='hf7_original_parse';
- const hf7Names=hf7.text.slice(0,hf7.text.indexOf('The President declared')).split('\\n')
+ const hf7Names=hf7.text.slice(0,hf7.text.indexOf('The President declared')).split('\n')
   .map(x=>x.trim()).filter(x=>/^[A-Z][A-Za-z ]+$/.test(x));
  const hf7Papers=parseNestedSenateSourcePapers(hf7.text,hf7Names).filter(p=>p.billIdentifier==='HF7');
  console.log('SENATE_HF7_NESTED_ORIGINAL_PROOF='+JSON.stringify({
