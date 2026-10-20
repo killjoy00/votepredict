@@ -85,6 +85,8 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
    const structural={
     boundaryIdentified:asFollows>=0&&namedHeading>asFollows,
     gapCharacters:between.length,whitespaceCharacters:(between.match(/\s/g)||[]).length,
+    redactedHeaderLayout:between.replace(/[A-Za-z]/g,'A').replace(/[0-9]/g,'0').replace(/\s+/g,' ').slice(0,120),
+    alphaRuns:[...between.matchAll(/[A-Za-z]+/g)].map(m=>m[0].length),digitRuns:[...between.matchAll(/\d+/g)].map(m=>m[0].length),
     nonAsciiCharacters:[...between].filter(ch=>ch.charCodeAt(0)>127).length,
     hasDayMarker:between.includes('59TH DAY]'),
     hasWeekday:/\bFRIDAY\b/i.test(between),
