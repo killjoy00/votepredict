@@ -6,7 +6,7 @@ import {QUERIES,boundedSnapshot} from '../scripts/audit-senate-864-three-bounded
 const doc=()=>({...fixture().documents[1],sourceText:fixture().documents[1].motions.map(m=>m.literal).join(' ')});
 test('fixed reviewed sources have 19 distinct questions / 211 printed names, no voice inference',()=>{
  const ds=fixture().documents;assert.equal(ds.length,4);assert.equal(ds.flatMap(d=>d.motions).length,19);assert.equal(ds.flatMap(d=>d.motions.flatMap(m=>m.choices)).length,211);
- for(const d of ds){const t=d.motions.map(m=>m.literal).join(' ');assert.equal(validateOriginalQuestions({...d,extractedTextSha256:sha(t)},t),true);assert.throws(()=>validateOriginalQuestions(d,t));}
+ for(const d of ds){for(const m of d.motions)for(const v of m.choices)assert.equal(d.people.filter(p=>p.toLowerCase().endsWith(v.token.toLowerCase())).length,1,'Every printed choice must have exactly one full name in the reviewed header');const t=d.motions.map(m=>m.literal).join(' ');assert.equal(validateOriginalQuestions({...d,extractedTextSha256:sha(t)},t),true);assert.throws(()=>validateOriginalQuestions(d,t));}
  const edu=ds[2].motions;assert.equal(edu.filter(m=>m.yea===13&&m.nay===0).length,3);assert.equal(edu.filter(m=>m.question.includes('A22')).length,0);assert.equal(edu.at(-1).question,'SF2255 recommendation to Taxes');
  assert.equal(ds[0].motions[1].question.includes('oral'),true);assert.equal(ds[3].motions[2].passed,false);
 });

@@ -949,6 +949,7 @@
       "people": [
         "Ann H. Rest",
         "Matt D. Klein",
+        "Bill Weber",
         "D. Scott Dibble",
         "Steve Drazkowski",
         "Grant Hauschild",
@@ -1140,6 +1141,18 @@
               "choice": "nay"
             }
           ]
+        }
+      ],
+      "manualPrintedHeaderChecks": [
+        {
+          "page": 1,
+          "name": "Bill Weber",
+          "reason": "Original image prints Senator Bill Weber; OCR misspells the Senator label."
+        },
+        {
+          "page": 1,
+          "name": "Aric Putnam",
+          "reason": "Original image prints Aric Putnam; OCR renders final letter m."
         }
       ]
     }
