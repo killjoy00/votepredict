@@ -7,10 +7,15 @@ import {parseNestedSenateSourcePapers} from '../src/operations/senate-vote-paper
 test('HF7 nested amendment papers derive from independent February 2 Senate Journal PDF',
  {skip:process.env.GITHUB_ACTIONS!=='true',timeout:150_000},async()=>{
   const original=await fetchSenateJournal('https://www.senate.mn/journals/2023-2024/20230202017.pdf');
-  const papers=parseNestedSenateSourcePapers(original.text).filter(p=>p.billIdentifier==='HF7');
+  const knownSenators=original.text.slice(0,original.text.indexOf('The President declared')).split('\n')
+   .map(x=>x.trim()).filter(x=>/^[A-Z][A-Za-z ]+$/.test(x));
+  const papers=parseNestedSenateSourcePapers(original.text,knownSenators).filter(p=>p.billIdentifier==='HF7');
   console.log('SENATE_HF7_NESTED_ORIGINAL_KEYLESS='+JSON.stringify({
    source:'2023-2024/20230202017.pdf',pdfSha256:original.pdfSha256,
    pdfBytes:original.byteLength,sourceOnlyNestedProposals:papers.length,
+   availableRosterNames:knownSenators.length,
+   completeNamedBallots:papers.filter(p=>p.ballotSha256!==null).length,
+   uniquePrintedQuestions:new Set(papers.map(p=>p.questionText)).size,
    unnumberedParent:papers.filter(p=>p.parentOrdinal===null).length,
    numberedParent:papers.filter(p=>p.parentOrdinal!==null).length,
    rejected:papers.filter(p=>p.disposition==='rejected').length,
