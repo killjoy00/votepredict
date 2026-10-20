@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import type {PoolClient} from 'pg';
-import {summarizeHf100TextChain,readHf100TextChainReadiness,
+import {Pool,type PoolClient} from 'pg';
+import {HF100_TEXT_CHAIN_READINESS_SQL,summarizeHf100TextChain,readHf100TextChainReadiness,
  type Hf100ChainEvidenceRow} from '../src/operations/senate-hf100-text-chain-readiness.js';
 
 function fixture():Hf100ChainEvidenceRow[]{
@@ -76,4 +76,22 @@ test('empty production source chain fails in a protected read-only audit without
  assert.equal(statements.length,1);
  assert.match(statements[0]??'',/^SELECT /);
  assert.ok(!/\b(INSERT|UPDATE|DELETE)\b/i.test(statements[0]??''));
+});
+
+
+test('isolated Postgres validates bounded HF100 chain read-only SQL against migrated schema',
+ {skip:!process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL,timeout:30000},async()=>{
+ const pool=new Pool({connectionString:process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL,max:1});
+ const db=await pool.connect();
+ try{
+  await db.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
+  const plan=await db.query('EXPLAIN '+HF100_TEXT_CHAIN_READINESS_SQL,[
+   'https://www.senate.mn/journals/2023-2024/20230428059.pdf'
+  ]);
+  assert.ok(plan.rowCount&&plan.rowCount>0);
+ }finally{
+  await db.query('ROLLBACK');
+  db.release();
+  await pool.end();
+ }
 });
