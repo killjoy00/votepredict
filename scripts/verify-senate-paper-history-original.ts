@@ -32,11 +32,14 @@ async function verifyCanonicalSources(){
  assert.match(body,/<title[^>]*>[^<]*HF\s*100/i);assert.match(body,/A bill for an act/i);
  console.log('SENATE_BILL_ALIAS_PROOF='+JSON.stringify({resolvedUrl,sha256:hash(bytes),bytes:bytes.length}));
 }
+let verificationPhase='aliases';
 async function main(){
  await verifyCanonicalSources();
+ verificationPhase='hf1_original_download';
  // Pin from the independently downloaded official 92-page HF1 journal in
  // keyless PR CI; any source byte change requires a fresh original review.
  const hf1=await fetchSenateJournal('https://www.senate.mn/journals/2023-2024/20230127014.pdf');
+ verificationPhase='hf1_original_parse';
  const sourceNested=parseNestedSenateSourcePapers(hf1.text);
  const inBill=sourceNested.filter(p=>p.billIdentifier==='HF1');
  console.log('SENATE_HF1_NESTED_ORIGINAL_PROOF='+JSON.stringify({
@@ -46,14 +49,48 @@ async function main(){
   nestedParentAdoptions:inBill.filter(x=>x.disposition==='adopted_to_parent').length,
   nestedOutcomeUnknown:inBill.filter(x=>x.disposition==='unknown').length,
   exactNumberedParentLinks:0,acceptedVotesChanged:0,fullBillAssemblies:0}));
+ verificationPhase='hf1_nested_proposal_assertions';
  assert.ok(hf1.byteLength>1000&&inBill.length>=3
   &&inBill.some(x=>x.parentMover==='Lucero'&&x.parentOrdinal==='first')
   &&inBill.some(x=>x.mover==='Maye Quade'&&x.parentMover==='Lucero'&&x.disposition==='adopted_to_parent'));
+ verificationPhase='hf1_original_integrity_assertions';
  assert.equal(hf1.byteLength,1_806_101,'Original HF1 journal byte length unexpectedly changed');
  assert.ok(inBill.every(x=>!x.appliesDirectlyToBill&&!x.acceptedVoteEventLinked));
  assert.equal(hf1.pdfSha256,'0604a308854471523dcd282769cfadb45ed403d1ad39383a3d20438393e3fd52',
   'Original HF1 journal PDF SHA differs from independently authenticated source');
+ verificationPhase='hf1_v2_nested_source_count';
+ assert.equal(inBill.length,18,'HF1 source-only nested v2 original count drift');
+ assert.equal(inBill.filter(x=>x.disposition==='rejected').length,16);
+ assert.equal(inBill.filter(x=>x.disposition==='adopted_to_parent').length,2);
+ verificationPhase='hf7_original_download';
+ const hf7=await fetchSenateJournal('https://www.senate.mn/journals/2023-2024/20230202017.pdf');
+ verificationPhase='hf7_original_parse';
+ const hf7Names=hf7.text.slice(0,hf7.text.indexOf('The President declared')).split('\\n')
+  .map(x=>x.trim()).filter(x=>/^[A-Z][A-Za-z ]+$/.test(x));
+ const hf7Papers=parseNestedSenateSourcePapers(hf7.text,hf7Names).filter(p=>p.billIdentifier==='HF7');
+ console.log('SENATE_HF7_NESTED_ORIGINAL_PROOF='+JSON.stringify({
+  source:'2023-2024/20230202017.pdf',pdfSha256:hf7.pdfSha256,pdfBytes:hf7.byteLength,
+  sourceOnlyProposals:hf7Papers.length,namedBallots:hf7Papers.filter(p=>p.ballotSha256!==null).length,
+  distinctPrintedQuestions:new Set(hf7Papers.map(p=>p.questionText)).size,
+  parentOrdinalUnknown:hf7Papers.filter(p=>p.parentOrdinal===null).length,
+  parentOrdinalKnown:hf7Papers.filter(p=>p.parentOrdinal!==null).length,
+  rejected:hf7Papers.filter(p=>p.disposition==='rejected').length,
+  acceptedEventLinks:0,fullBillAssemblies:0
+ }));
+ verificationPhase='hf7_original_integrity_assertions';
+ assert.equal(hf7.pdfSha256,'e60b103c2a0ad32dc13b6bb1480fa5197810ce7ecdc2b9480edf97d63ee7060c');
+ assert.equal(hf7.byteLength,1_152_045);
+ assert.equal(hf7Papers.length,17);
+ assert.equal(hf7Papers.filter(p=>p.ballotSha256!==null).length,17);
+ assert.equal(new Set(hf7Papers.map(p=>p.questionText)).size,15);
+ assert.equal(hf7Papers.filter(p=>p.parentOrdinal===null).length,8);
+ assert.equal(hf7Papers.filter(p=>p.parentOrdinal!==null).length,9);
+ assert.ok(hf7Papers.every(p=>p.disposition==='rejected'&&!p.appliesDirectlyToBill
+  &&!p.acceptedVoteEventLinked&&!p.fullBillTextAssembled&&!p.exactNumberedParentProven));
+ assert.ok(hf7Papers.some(p=>p.parentMover==='Rarick'&&p.parentOrdinal===null));
+ assert.ok(hf7Papers.some(p=>p.parentMover==='Lucero'&&p.parentOrdinal==='third'));
  for(const [path,expected] of sources){
+ verificationPhase=path.includes('20230428')?'hf100_original':path.includes('20210105')?'role_2021_original':path.includes('20230103')?'role_2023_original':'role_2025_original';
  const got=await fetchSenateJournal('https://www.senate.mn/journals/'+path);
  assert.equal(got.pdfSha256,expected,'Original government PDF changed; review before accepting a new source receipt');
  if(path.includes('20230428')){
@@ -81,4 +118,4 @@ async function main(){
   console.log('SENATE_ROLE_ORIGINAL_PROOF='+JSON.stringify({source:path,sha256:got.pdfSha256,bytes:got.byteLength,datedRoleFacts:roles.length}));
  }
 }}
-void main().catch(()=>{console.error('SENATE_PAPER_ORIGINAL_PROOF_HELD');process.exitCode=1});
+void main().catch(error=>{console.error('SENATE_PAPER_ORIGINAL_PROOF_HELD='+JSON.stringify({phase:verificationPhase,kind:error instanceof Error?error.name:'unknown'}));process.exitCode=1});
