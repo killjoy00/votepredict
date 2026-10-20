@@ -99,6 +99,19 @@ test('authenticated page heading between a roll and affirmative list preserves t
  assert.equal(stripInterposedSenateJournalRollHeader(hostile),hostile);
  assert.equal(parseJournalPaperActions(hostile,['Abeler','Boldon'])[0].ballotSignature,null);
 
+
+ const extracted=journal.replace('59TH DAY]FRIDAY, APRIL 28, 20236889',
+  '6889 FRIDAY, APRIL 28, 2023 59TH DAY] -- 289 of 292 -- ');
+ assert.notEqual(stripInterposedSenateJournalRollHeader(extracted),extracted,
+  'Only the exact official reordered date heading plus PDF page counter is stripped');
+ const [recovered]=parseJournalPaperActions(extracted,['Abeler','Boldon']);
+ assert.equal(recovered?.ballotSignature,actions[0].ballotSignature,
+  'Source PDF header reordering leaves the complete named ballot unchanged');
+ const changedFooter=extracted.replace('289 of 292','289 from 292');
+ assert.equal(stripInterposedSenateJournalRollHeader(changedFooter),changedFooter);
+ assert.equal(parseJournalPaperActions(changedFooter,['Abeler','Boldon'])[0]?.ballotSignature,null,
+  'An unrecognized PDF footer cannot silently become an official voter list');
+
  const unsafe=journal.replace('59TH DAY]FRIDAY, APRIL 28, 20236889','Unverified page header:');
  assert.equal(stripInterposedSenateJournalRollHeader(unsafe),unsafe);
  assert.equal(parseJournalPaperActions(unsafe,['Abeler','Boldon'])[0].ballotSignature,null,
