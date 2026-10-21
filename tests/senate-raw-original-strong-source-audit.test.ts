@@ -93,7 +93,8 @@ test('question, bill, attendance and verified source must be independently ancho
  };
  const out=summarizeRawOriginalStrongSource([source],1);
  assert.equal(out.stages.original_document_or_roster_unverified,1);
- const broken=body().replace('H.F. No. 4124:','S.F. No. 999:');
+ // The original question also names HF4124: change every printed occurrence.
+ const broken=body().replaceAll('H.F. No. 4124','S.F. No. 999');
  assert.equal(probe(broken).result.stages.raw_exact_source_roll_absent_or_repeated,1);
 });
 test('preliminary cohort count and one-to-one original accepted identities never truncate',()=>{
