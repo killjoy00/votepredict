@@ -6,28 +6,23 @@
 import assert from 'node:assert/strict';
 import {fetchSenateJournal,parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
 import {ballotSignature,parseJournalPaperActions} from '../src/operations/senate-vote-paper-parser.js';
+import {independentlyPrintedAttendanceNames} from '../src/operations/senate-2022-passage-roster-shadow.js';
 
 const sourceCases=[
  {day:'2022-05-10',url:'https://www.senate.mn/journals/2021-2022/20220510106.pdf',bills:['SF1391','SF2922'],sha256:'160dee14bf8d824d4d332f87aa3154fbd96593197f639dc0398c13f11d139a5f',bytes:3_402_568},
  {day:'2022-05-11',url:'https://www.senate.mn/journals/2021-2022/20220511107.pdf',bills:['HF3845'],sha256:'d32e223bccbe2a3dc3892a84a12d4821a12609a65b90448cde9d2061967d4ff6',bytes:1_210_956},
  {day:'2022-05-20',url:'https://www.senate.mn/journals/2021-2022/20220520113.pdf',bills:['HF2665'],sha256:'bcdffbb63d711ba36b6613103f2daef2610ca3eabd0bb44aa916bbb06383a591',bytes:669_374}
 ] as const;
-function rosterNames(text:string):string[]{
- const begin=text.indexOf('The roll was called, and the following Senators were present:');
- if(begin<0)return [];
- const tail=text.slice(begin+58,begin+7000);
- const stop=tail.search(/Pursuant to Rule 14\.1|The President declared a quorum present/);
- const roster=tail.slice(0,stop>=0?stop:2000);
- return [...new Set(roster.split('\n').map(s=>s.trim()).filter(s=>
-  /^[\p{Lu}][\p{L}\p{M}'’.-]*(?: [\p{Lu}][\p{L}\p{M}'’.-]*){0,2}$/u.test(s)))];
-}
+
 async function main(){
  for(const item of sourceCases){
   const got=await fetchSenateJournal(item.url);
   assert.ok(got.byteLength>20_000&&/The roll was called/i.test(got.text));
   assert.equal(got.pdfSha256,item.sha256,'Original Minnesota Senate May 2022 Journal SHA drift');
   assert.equal(got.byteLength,item.bytes,'Original Minnesota Senate May 2022 Journal byte length drift');
-  const names=rosterNames(got.text);
+  const names=independentlyPrintedAttendanceNames(got.text);
+  assert.ok(names.length>=55&&names.length<=67,
+   'Original Minnesota Senate PDF attendance quorum must yield verified complete names');
   const actions=parseJournalPaperActions(got.text,names);
   const raw=parseSenateJournalText({text:got.text,sourceUrl:item.url,sessionKey:'source-only',
    occurredOn:item.day,knownMemberNames:names,allowRosterMismatch:true});
@@ -62,6 +57,12 @@ async function main(){
    cases
   }));
   assert.equal(cases.length,item.bills.length);
+  assert.ok(cases.every(x=>x.passageActions===x.signedActions&&x.signedActions>0),
+   'Every reviewed original 2022 passage must retain its complete named source ballot');
+  if(item.day==='2022-05-11')assert.deepEqual(cases[0]?.sourceTallies,[[60,6],[57,9]],
+   'HF3845 passage and repassage must stay separate and retain original tallies');
+  if(item.day==='2022-05-20')assert.deepEqual(cases[0]?.sourceTallies,[[65,0],[66,0]],
+   'HF2665 passage and repassage must stay separate and retain original tallies');
  }
 }
 void main().catch(error=>{
