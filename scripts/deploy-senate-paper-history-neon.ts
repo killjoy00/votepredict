@@ -8,6 +8,7 @@ import {assertPaperHistoryRun} from '../src/operations/senate-paper-history-gate
 import {readVoteTextGapAudit,verifyVoteTextGapAudit} from '../src/operations/senate-vote-text-gap-audit.js';
 import {readSameSourceQuestionRows,summarizeSameSourceFailures} from '../src/operations/senate-same-source-question-census.js';
 import {read2022PassageRosterShadow} from '../src/operations/senate-2022-passage-roster-shadow.js';
+import {repair2022UniquePassageLinks} from '../src/operations/senate-2022-passage-link-repair.js';
 import {readSenateSourceCaseAudit} from '../src/operations/senate-vote-paper-case-audit.js';
 import {readNestedAcceptedAudit} from '../src/operations/senate-nested-accepted-candidate-audit.js';
 import {readHf100TextChainReadiness} from '../src/operations/senate-hf100-text-chain-readiness.js';
@@ -71,6 +72,10 @@ async function main(){
   phase='source_local_papers_and_dated_roles';const batches=[];
   for(let i=0;i<(push?4:1);i++){const batch=await backfillVotePapers(pool,push?1000:500);batches.push(batch);progress('paper_batch',batch);if(batch.documents===0)break;}
   phase='original_source_verification';const sourceVerification=await verifyPaperSources(pool,push?400:30,undefined,{budgetMs:push?600000:180000});progress(phase,sourceVerification);
+  // The only permitted research promotion: 101 uniquely proved 2022 named
+  // passage ballots, with all original-source and accepted-event identity
+  // fields checked and one serializable all-or-nothing transaction.
+  phase='2022_exact_original_passage_roll_repair';const passageRepair=await repair2022UniquePassageLinks(pool);progress(phase,passageRepair);
   phase='explicit_base_bodies';const baseBodies=await recoverExplicitBaseBodies(pool,{max:push?60:30,retryFailedNow:push});progress(phase,baseBodies);
   phase='dated_assignment_facts';const datedAssignments=await collectDatedAssignmentFacts(pool,{retryUnavailableNow:push});progress(phase,datedAssignments);
   phase='stage_historical_sources';const historyJobs=await stageHistoryJobs(pool);progress(phase,{eligibleUrls:historyJobs});
@@ -137,7 +142,7 @@ async function main(){
    if(!links.exact_raw_questions||!actions.some(a=>a.literal_papers>0)||!links.historical_roles)throw Error('Paper/history acceptance counts are empty');
    return {events,actions,links,gapAudit,sameSourceCensus,passage2022RosterShadow,caseAudit,nestedCandidateAudit,prattShadowReadback,hf100TextChainReadiness,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
   });
-  const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
+  const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,passageRepair,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
    officialVotesUnchanged:true,sourceBodiesUnchanged:true,servingModelsUnchanged:true,completeStateClaims:false};
   console.log('SENATE_PAPER_HISTORY_PRODUCTION='+JSON.stringify(report));
   if(process.env.GITHUB_STEP_SUMMARY)appendFileSync(process.env.GITHUB_STEP_SUMMARY,'Senate paper identity and historical evidence coverage\n'+JSON.stringify(report,null,2)+'\n');
