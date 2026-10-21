@@ -122,6 +122,12 @@ models are changed.
 The protected transaction must independently read back
 **1,022 exact links, 565 same-Journal unlinked, and 150
 no-matching-tally** cases or **ROLL BACK all 31**.
+The earlier completed 2022 passage-roll recovery also explicitly
+recognizes this verified **1022/565** subsequent exact-link state
+as a no-op, without relaxing its 30 duplicate-ballot and one
+incomplete named-roll holds. Every other production coverage drift
+continues to fail closed.
+
 Subsequent protected executions only allow a verified
 no-op baseline with **zero** additional source-unique nested
 candidates; new sources cannot be silently promoted.
