@@ -82,6 +82,48 @@ proximity are never evidence of exact question identity. Do not extrapolate
 the 697 into 697 distinct bills or conflate a correct question link with
 certified amended bill text.
 
+### Strong original printed-source uniqueness for nested-amendment questions
+
+The protected source-only missing-tally census first found **31** nested
+amendment paper questions with exact full accepted member ballots, tallies,
+bill/date and printed question text, unique against all accepted
+same-Journal source-day votes. These are **preliminary** question candidates:
+the *source* may still contain a second question with that same ballot
+even when the accepted vote is unique.
+
+A second independent source-sided gate now checks EACH of the 31
+within its authenticated original Journal PDF text:
+
+- Exactly **one** nested question among **all printed nested papers
+  in the original Journal**, independent of bill or question text,
+  may have the complete normalized named ballot and both totals.
+- **No independently parsed original v1 paper** in the full same Journal
+  may have the same complete ballot and totals, even for another bill.
+- The nested question's original proposal start/end, question start/end,
+  verbatim proposal bytes, literal SHA-256 and printable source action
+  key must agree with the original PDF extraction exactly.
+- The original still has uniquely matched complete accepted vote
+  and exact original nested question text. The verified source URL,
+  separate parent amendment identity and government original-source
+  SHA/text verification remain mandatory.
+
+The protected census reports **four** additional count-only metrics:
+`nestedStrongSourceUniqueCandidates`,
+`nestedSourceBallotRepeated`,
+`nestedConflictingV1PaperBallot`, and
+`nestedOriginalPrintedSpanInvalid`. These MUST partition the
+previously measured 31 independently unique accepted-ballot nested
+questions exactly; no source text, private event IDs, member names or
+ballot digests are reported. A fixture tests that a second distinct
+printed question reusing the same named ballot must remain a hold,
+even though the accepted motion text itself agrees with one question.
+
+Even a source-unique nested question is **not an enacted change to
+the parent bill**. Any later persistence should be *question-only*
+without claiming direct bill amendment adoption, cumulative text or
+pre-vote publication. This stage is strictly `READ ONLY` and adds
+no paper or event links.
+
 ### Population-wide 181 Senate missing-paper-tally investigation (#1498)
 
 Following 101 strict original-source passage links, the independent
