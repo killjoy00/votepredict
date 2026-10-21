@@ -8,6 +8,7 @@ import {summarizeHf100TextChain} from '../src/operations/senate-hf100-text-chain
 import {HF100_FIRST_UE_PDF,HF100_FIRST_UE_PDF_SHA256,HF100_FIRST_UE_PDF_BYTE_LENGTH,assessHf100PrintedLinePilot} from '../src/operations/senate-hf100-printed-line-pilot.js';
 import {assessHf100PortInstructionCoverage} from '../src/operations/senate-hf100-port-instruction-coverage.js';
 import {assessHf100PortStructuralPairs} from '../src/operations/senate-hf100-port-structural-pairs.js';
+import {assessHf100SecondUnofficialSuccessor,HF100_SECOND_UE_PDF,HF100_SECOND_UE_PDF_SHA256,HF100_SECOND_UE_PDF_BYTE_LENGTH} from '../src/operations/senate-hf100-second-ue-successor-witness.js';
 import {fetchCanonicalGovernmentSource,boundedBody} from '../src/operations/senate-history-archive.js';
 import {hash} from '../src/operations/senate-vote-paper-parser.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
@@ -226,6 +227,53 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
   assert.equal(portCoverage.completeAssembledBillText,false);
   assert.equal(portCoverage.preVotePublicationProven,false);
   assert.equal(portCoverage.eventLinksAdded,0);
+  // Independent current official Revisor SECOND unofficial successor source.
+  // The original first-UE / journal hashes above remain hard gates. Source
+  // witnessing is retrospective, never publication-by-the-vote verification.
+  const secondSource=await fetchCanonicalGovernmentSource(HF100_SECOND_UE_PDF,'bill_text');
+  assert.equal(secondSource.response.ok,true);
+  assert.equal(secondSource.resolvedUrl,HF100_SECOND_UE_PDF);
+  const secondBytes=await boundedBody(secondSource.response,15_000_000);
+  assert.ok(secondBytes.length>20_000&&
+   Buffer.from(secondBytes.subarray(0,5)).toString('ascii')==='%PDF-');
+  const successorSha=hash(secondBytes);
+  assert.equal(secondBytes.length,HF100_SECOND_UE_PDF_BYTE_LENGTH,
+   'Independent original second-UE PDF byte length changed; review source before accepting');
+  assert.equal(successorSha,HF100_SECOND_UE_PDF_SHA256,
+   'Independent original second-UE PDF SHA drift: never substitute another edition');
+  const successorParser=new PDFParse({data:Uint8Array.from(secondBytes),CanvasFactory});
+  let successorText:string;
+  try{successorText=(await successorParser.getText()).text}
+  finally{await successorParser.destroy()}
+  const successor=assessHf100SecondUnofficialSuccessor(actions,revisorText,successorText);
+  console.log('SENATE_HF100_SECOND_UE_SUCCESSOR_WITNESS='+JSON.stringify({
+   source:'HF100 2nd UE Revisor PDF',sha256:successorSha,bytes:secondBytes.length,
+   witnessTerms:successor.sourceWordingWitnesses,
+   uniquelyNewWitnessTerms:successor.strictUniqueNewWitnesses,
+   heldWitnessTerms:successor.heldWitnesses,
+   amendmentGroupsWithWitness:successor.amendmentsWithAtLeastOneSuccessorWitness,
+   firstPort1778AccountRetrospectivelySuggested:successor.port1778FirstOccurrenceSuggestedBySuccessor,
+   namedHolds:successor.evidence.filter(x=>!x.verified).map(x=>x.id),
+   fullEditionDiffProven:successor.fullEditionDiffProven,
+   exactCompositeAtVoteCertified:successor.exactCompositeAtVoteCertified,
+   preVotePublicationCertified:successor.successorPreVotePublicAvailabilityCertified,
+   completeAssembledBillText:successor.completeAssembledBillText,
+   eventLinksAdded:successor.eventLinksAdded
+  }));
+  assert.equal(successor.strictUniqueNewWitnesses,8,
+   'Original successor proof must retain eight uniquely new exact excerpts');
+  assert.equal(successor.heldWitnesses,1);
+  assert.deepEqual(successor.evidence.filter(x=>!x.verified).map(x=>x.id),
+   ['hauschild_public_safety_totals']);
+  assert.equal(successor.port1778FirstOccurrenceSuggestedBySuccessor,true);
+  assert.equal(successor.amendmentsWithAtLeastOneSuccessorWitness,4,
+   'Every adopted HF100 amendment requires at least one independently verified new successor wording witness');
+  assert.ok(successor.strictUniqueNewWitnesses>=5,
+   'At least five strict unique firstUE-to-secondUE source excerpts must match before promotion');
+  assert.equal(successor.exactCompositeAtVoteCertified,false);
+  assert.equal(successor.completeAssembledBillText,false);
+  assert.equal(successor.successorPreVotePublicAvailabilityCertified,false);
+  assert.equal(successor.eventLinksAdded,0);
   assert.equal(linePilot.fullyCheckedAdoptedAmendments,1);
   assert.equal(linePilot.adoptedAmendmentsStillHeldForCompositeApplication,4);
   assert.equal(linePilot.completeAssembledBillText,false);

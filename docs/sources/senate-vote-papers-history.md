@@ -144,6 +144,55 @@ fails CI outright. The verifier produces only safe counts and static
 instruction ordinal/status labels, not bill text or ballots. No database
 migration, accepted vote or serving model is modified.
 
+### HF100 second unofficial engrossment: successor witness, not vote-time proof
+
+The official Revisor version list also contains a **second unofficial engrossment**
+for HF100, a *distinct original PDF edition* from the first unofficial
+engrossment named in the Senate's April 28 amendment motions. The current
+[Revisor version page](https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ue/2/)
+reports **April 28, 2023 at 6:31 p.m.** as its posting time.
+That present-day metadata does **not** independently establish when that
+edition was historically public relative to the final Senate vote.
+
+The keyless original-source canary downloads the second-UE PDF separately,
+requires the independently verified original **SHA-256**
+`fd4f28a4c1068e10faba827ab4142c108f05aca6d34fe6028b52ac30b0651e3a`
+(**5,749,963 bytes**) before parsing, rejects a different source URL
+or bill/edition identity, and checks bounded exact wording excerpts that are
+**absent** in the pinned first-UE body and appear **uniquely** in the second-UE
+body. The reviewed witness set covers Port's CanGrow/CanStartup account and
+appropriation provisions, the successor's commissioner-held CanStartup
+repayment account (in contrast to the nonprofit's unqualified revolving
+account), Hauschild's local retail restrictions and public-safety changes,
+and Hoffman's fiscal-year transfers.
+
+At the original-pinned first keyless check, **8 of 9** distinct new
+successor wording witnesses were uniquely verified, spanning **all four
+adopted amendment sources**. The ninth, the public-safety totals as a single
+PDF table expression, was held because the PDF text layer did not yield that
+joint layout. Its two revised totals also appear in the official Revisor
+HTML successor, but that observation is **not** silently promoted into a
+PDF-table match, an exhaustive edition diff or vote-time proof.
+
+Witness checks tolerate whitespace text-extraction artifacts only;
+different letters, numbers, punctuation, repeated occurrences and missing
+phrases are held and reported by safe static ID. These are **retrospective
+source-wording observations**, *not* an exhaustive, independently verified
+first-UE-to-second-UE diff; the successor must not be joined automatically
+to an accepted floor vote, an at-vote textual hash or an eligibility clock.
+The original Journal's four adopted and one rejected proposals remain
+immutable gates. The existence of a complete official later PDF edition
+does not mean the separately requested complete **amended-at-final-passage**
+bill text was reconstructed or its historical public availability proved.
+
+**Promotion prerequisites:** pin second-UE original bytes; independently
+attribute every substantive change across both entire editions to the
+adopted four-action Journal sequence, including Port 177.8 and Hauschild's
+dependent appropriations; account for normalization and page reflow without
+confusing printed *original* line coordinates; verify any remaining
+editorial/source differences and the original exact question. Historical
+public-before-vote remains a separate archival/release-clock question.
+
 ## Historical text and role dates
 
 The collector stages exact numbered, unofficial-engrossment and conference-report URLs, including official PDF representations, from existing text stores and explicit journal references. Legacy-store discovery prioritizes bills with Senate official votes or raw proceedings links; it does not spend the historical retrieval budget on every unrelated House bill. Exact base references are also queued for current original-body acquisition. Publisher redirects are followed only within the same explicit bill/edition/representation and biennium, or between the exact assignment-sheet paths on www.senate.mn and assets.senate.mn. Resolved source URLs are retained; off-site, wrong-bill and wrong-edition redirects are rejected before fetching. A current download proves current wording, not historical availability.
