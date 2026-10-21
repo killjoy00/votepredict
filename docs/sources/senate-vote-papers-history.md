@@ -82,6 +82,61 @@ proximity are never evidence of exact question identity. Do not extrapolate
 the 697 into 697 distinct bills or conflate a correct question link with
 certified amended bill text.
 
+### Population-wide 181 Senate missing-paper-tally investigation (#1498)
+
+Following 101 strict original-source passage links, the independent
+post-merge protected census classifies **181** unlinked accepted Senate
+events whose current same-official-Journal URL/bill/day paper actions
+lack even a matching **yea/nay tally**. These are not 181 different
+bills. **148 are amendments** (21 in 2021–22, 100 in 2023–24 and
+27 in 2025–26). Two especially concentrated original-source examples
+are **HF4 on 2023-02-21 (16)** and **HF4124 on 2024-05-03 (15)**.
+
+The original government Senate Journals plainly contain multi-level
+floor amendment discussions, individual roll calls, and questions on
+amendments **to other amendments**. Those are distinct questions; a
+nested amendment to a parent proposal is NOT adopted bill text.
+One-size-fits-all bill/day or tally matches are explicitly prohibited.
+
+The new `senate-no-tally-original-census.ts` checks **every** event in
+this independently reconciled population, inside the existing protected
+`REPEATABLE READ READ ONLY` transaction. It uses only stored,
+original-government-verified and SHA-bound Journal text. For each
+event it checks (a) whether the exact original printed roll totals
+exist anywhere, (b) whether the original day has a complete
+independently printed quorum attendance roster, (c) whether the
+previous strict v1 bill-paper parser would recover a matching tally
+with that roster, (d) whether the existing conservative nested
+source-amendment extractor recovers the **same bill, original
+question, both tallies and complete normalized named ballot**, and
+(e) whether this named ballot is **unique among ALL accepted events
+from the same official Journal URL/day, including different bills
+and unresolved bill identities**. It also compares unlinked
+accepted votes to raw original Journal roll readings without
+assuming those raw readings identify the correct amendment.
+
+The result has **one exclusive first-failure stage per accepted vote**:
+source unverified/multiple original copies/quorum unreadable,
+actual original tally absent, parser refusal, nested exact candidate
+or nested repetition/question/ballot hold, v1 reparse tally recovery,
+raw vote strict candidate or raw-question/bill conflict, or merely
+printed tally with no provably matching full named ballot. A
+conservation test requires the stage counts to total the independently
+reconciled **181** (or a changed future denominator if verified
+links are later added). Protected output is only aggregate
+session/kind/stage counts plus up to 20 **public bill/day/count**
+groups, never original PDF text, member ballots, source URLs,
+internal IDs or candidate hashes.
+
+A **source-only** keyless original government replay independently
+parses both `20230221025.pdf` (HF4) and
+`20240503111.pdf` (HF4124) to determine what the nested and raw
+parsers actually recover. No database writes, source/paper
+replacement, new exact links, serving-model changes or text-state
+certification are part of this exploratory phase. A later generic
+parser repair must be separately source-pinned, reviewed and tested
+against original-question/ballot collisions before any promotion.
+
 ### 2021–22 original Senate passage exact-link promotion (#1498)
 
 The protected production replay from merge #1517 identified **101** independently
