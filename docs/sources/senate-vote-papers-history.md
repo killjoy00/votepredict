@@ -82,6 +82,56 @@ proximity are never evidence of exact question identity. Do not extrapolate
 the 697 into 697 distinct bills or conflate a correct question link with
 certified amended bill text.
 
+### Raw Senate Journal roll-question source-position proof (105 preliminary cases)
+
+The original-source-read-only census separately identified **105**
+unlinked accepted Senate votes with an exact independently parsed
+raw Journal question, matching complete named ballot, matching
+yea/nay totals, bill/date and unique accepted event across all
+same-original-Journal source-day votes. This is a preliminary
+**accepted-event** match, NOT yet proof of a unique printed
+**source question**.
+
+An additional protected `REPEATABLE READ READ ONLY` evidence gate
+now independently enumerates the ORIGINAL printed roll headers
+using the same tight literal original Senate Journal syntax as
+the authenticated raw ingester, and requires each parsed raw
+vote to correspond in sequence **one-to-one** with exactly one
+original roll header and the same yea/nay totals. It anchors the
+original latest preceding `The question was taken on ...` /
+`The question recurred on ...` marker, original question
+character start, roll header character start, and the original
+context's last separately printed bill identifier. It refuses
+question text that is missing, different, contaminated,
+too short, overlong or truncated. A full original quorum roster,
+complete original named yes/no lists and exact accepted motion
+text are mandatory.
+
+Before considering an exact question link, the NEW source-side
+audit also requires the same complete named ballot/tally to
+appear **exactly once anywhere in that entire original
+government Journal**. Reuse by another original nested
+amendment or v1 direct paper action is a hard hold. These
+conditions are independent of the accepted event uniqueness
+check and are intentionally conservative.
+
+Every one of the 105 preliminary candidates is categorized
+into one of eight exhaustive source-side outcomes, including
+different printed questions reusing identical ballots, source
+nested/direct question collision, unsafe question start/end
+positions, original header/parser disagreement, or strictly
+source-unique printable questions. All 105 must reconcile
+exactly before reporting, with at most twenty PUBLIC bill/date/
+count examples. No source text, senator names, private IDs,
+vote choices or ballot digests leave the protected transaction.
+
+This source audit does **not** create any links, alter the raw
+parser, backfill accepted events, introduce migrations, or
+certify complete amended bill text. Later promotion must
+have a new reviewed exact-original-source action/key schema
+and strict one-to-one proof, not inferred chronology or
+matching tallies alone.
+
 ### Strong original printed-source uniqueness for nested-amendment questions
 
 The protected source-only missing-tally census first found **31** nested
