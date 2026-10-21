@@ -6,7 +6,8 @@ import {Pool,type PoolClient} from 'pg';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {assertPaperHistoryRun} from '../src/operations/senate-paper-history-gate.js';
 import {readVoteTextGapAudit,verifyVoteTextGapAudit} from '../src/operations/senate-vote-text-gap-audit.js';
-import {readSameSourceQuestionCensus} from '../src/operations/senate-same-source-question-census.js';
+import {readSameSourceQuestionRows,summarizeSameSourceFailures} from '../src/operations/senate-same-source-question-census.js';
+import {read2022PassageRosterShadow} from '../src/operations/senate-2022-passage-roster-shadow.js';
 import {readSenateSourceCaseAudit} from '../src/operations/senate-vote-paper-case-audit.js';
 import {readNestedAcceptedAudit} from '../src/operations/senate-nested-accepted-candidate-audit.js';
 import {readHf100TextChainReadiness} from '../src/operations/senate-hf100-text-chain-readiness.js';
@@ -90,7 +91,14 @@ async function main(){
    const gapAudit=await readVoteTextGapAudit(db);
    verifyVoteTextGapAudit(gapAudit,events);
    // All unmatched SAME original Journal URL/bill/day events: no guessed links.
-   const sameSourceCensus=await readSameSourceQuestionCensus(db,gapAudit);
+   const populationRows=await readSameSourceQuestionRows(db);
+   const sameSourceCensus=summarizeSameSourceFailures(
+    populationRows.votes,populationRows.actions,gapAudit);
+   // Pure shadow reparse of independently verified, stored 2022 Journal text.
+   // Strict source/ballot/question collisions must hold; NO link SQL is used.
+   const passage2022RosterShadow=await read2022PassageRosterShadow(db,
+    populationRows.votes,populationRows.actions,
+    sameSourceCensus.focused2021Passage.passageActionWithTallyButNoBallot);
    const caseAudit=await readSenateSourceCaseAudit(db);
    const nestedCandidateAudit=await readNestedAcceptedAudit(db);
    const prattShadowReadback=await readCommittedHf100PrattShadow(db);
@@ -127,7 +135,7 @@ async function main(){
     FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id GROUP BY s.slug,q.kind,q.status ORDER BY s.slug,q.kind,q.status`)).rows;
    const sourceAttempts=(await db.query('SELECT result,count(*)::int AS documents FROM senate_paper_source_attempts GROUP BY result ORDER BY result')).rows;
    if(!links.exact_raw_questions||!actions.some(a=>a.literal_papers>0)||!links.historical_roles)throw Error('Paper/history acceptance counts are empty');
-   return {events,actions,links,gapAudit,sameSourceCensus,caseAudit,nestedCandidateAudit,prattShadowReadback,hf100TextChainReadiness,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
+   return {events,actions,links,gapAudit,sameSourceCensus,passage2022RosterShadow,caseAudit,nestedCandidateAudit,prattShadowReadback,hf100TextChainReadiness,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
   });
   const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
    officialVotesUnchanged:true,sourceBodiesUnchanged:true,servingModelsUnchanged:true,completeStateClaims:false};
