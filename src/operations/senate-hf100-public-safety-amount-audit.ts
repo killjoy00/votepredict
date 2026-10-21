@@ -32,7 +32,7 @@ function uniqueSection(pdf:string):string|null{
  if(starts.length!==1)return null;
  const rest=text.slice(starts[0]!.index!);
  const end=/\bSec\.\s*17\.\s*REVENUE\b/i.exec(rest);
- if(!end||end.index<150||end.index>15000)return null;
+ if(!end||end.index<100||end.index>15000)return null;
  const body=rest.slice(0,end.index);
  return /Total\s+Appropriation/i.test(body)&&/State\s+Patrol/i.test(body)?body:null;
 }
