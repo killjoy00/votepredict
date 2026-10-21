@@ -52,6 +52,9 @@ export interface DayAccepted {
  yeas:number;nays:number;votes:Array<{name:string;choice:string}>;
  existingExact:boolean;
 }
+export interface PreliminaryRawOriginalCandidate {
+ vote:AcceptedVote; originalDocument:OriginalJournal;
+}
 export interface StrongNestedSourceQuestion {
   vote:AcceptedVote;originalDocument:OriginalJournal;paper:NestedSenateSourcePaper;
   /** Research-only. Parent amendment may not be applied directly to bill. */
@@ -135,7 +138,8 @@ export function summarizeNoTallyOriginalCensus(
  votes:readonly AcceptedVote[],actions:readonly ParsedAction[],
  docs:readonly OriginalJournal[],dayAccepted:readonly DayAccepted[],
  existing:SameSourceQuestionCensus,
- onStrongNested?: (candidate:StrongNestedSourceQuestion)=>void
+ onStrongNested?: (candidate:StrongNestedSourceQuestion)=>void,
+ onPreliminaryRaw?: (candidate:PreliminaryRawOriginalCandidate)=>void
 ):NoTallyOriginalCensus{
  if(votes.length>2500||actions.length>6500||docs.length>220
   ||dayAccepted.length>2500||new Set(docs.map(d=>d.id)).size!==docs.length)
@@ -229,8 +233,10 @@ export function summarizeNoTallyOriginalCensus(
      const raw=d.raw.filter(p=>p.yeas===v.yea_count&&p.nays===v.nay_count
       &&p.ballot===signature&&p.ballot!==null);
      const exactRaw=raw.filter(p=>p.bill===v.bill&&p.question===questionCore(v.motion_text));
-     if(exactRaw.length===1&&allAccepted.length===1&&allAccepted[0]!.eventId===v.id)
+     if(exactRaw.length===1&&allAccepted.length===1&&allAccepted[0]!.eventId===v.id){
       stage='raw_roll_exact_question_ballot_candidate';
+      if(onPreliminaryRaw)onPreliminaryRaw({vote:v,originalDocument:d.source});
+     }
      else if(exactRaw.length||raw.some(p=>p.bill===v.bill))
       stage=allAccepted.length!==1?'raw_roll_repeated_accepted_ballot':'raw_roll_different_question';
      else if(raw.length)stage='raw_roll_different_bill';
@@ -278,7 +284,8 @@ export function summarizeNoTallyOriginalCensus(
 export async function readNoTallyOriginalCensus(
  db:PoolClient,votes:readonly AcceptedVote[],actions:readonly ParsedAction[],
  previous:SameSourceQuestionCensus,
- onStrongNested?: (candidate:StrongNestedSourceQuestion)=>void
+ onStrongNested?: (candidate:StrongNestedSourceQuestion)=>void,
+ onPreliminaryRaw?: (candidate:PreliminaryRawOriginalCandidate)=>void
 ):Promise<NoTallyOriginalCensus>{
  const actionsByScope=new Map<string,ParsedAction[]>();
  const votesByScope=new Map<string,AcceptedVote[]>();
@@ -322,5 +329,5 @@ export async function readNoTallyOriginalCensus(
   'ORDER BY d.source_url,v.occurred_on,v.id LIMIT 2501'
  ].join(' '),[urls])).rows;
  if(dayAccepted.length>=2501)throw Error('Original-day accepted ballot cross-bill collision census truncated');
- return summarizeNoTallyOriginalCensus(votes,actions,docs,dayAccepted,previous,onStrongNested);
+ return summarizeNoTallyOriginalCensus(votes,actions,docs,dayAccepted,previous,onStrongNested,onPreliminaryRaw);
 }
