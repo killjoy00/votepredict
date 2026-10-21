@@ -11,7 +11,7 @@
  * output; those remain inside the protected READ ONLY transaction.
  */
 import type {PoolClient} from 'pg';
-import {ballotSignature,parseJournalPaperActions} from './senate-vote-paper-parser.js';
+import {ballotSignature,parseJournalPaperActions,hash,compact} from './senate-vote-paper-parser.js';
 import {parseNestedSenateSourcePapers,type NestedSenateSourcePaper}
  from './senate-vote-paper-nested.js';
 import {parseSenateJournalText} from '../sources/minnesota/senate-journals.js';
@@ -42,7 +42,7 @@ const STAGES:readonly TallyFailure[]=[
  'raw_roll_different_question','raw_roll_different_bill',
  'printed_tally_without_full_named_match'
 ];
-interface OriginalJournal {
+export interface OriginalJournal {
  id:string;source_url:string;source_type:string|null;body:string|null;
  original_verified:boolean;
 }
@@ -52,6 +52,11 @@ export interface DayAccepted {
  yeas:number;nays:number;votes:Array<{name:string;choice:string}>;
  existingExact:boolean;
 }
+export interface StrongNestedSourceQuestion {
+  vote:AcceptedVote;originalDocument:OriginalJournal;paper:NestedSenateSourcePaper;
+  /** Research-only. Parent amendment may not be applied directly to bill. */
+  questionOnly:true;
+}
 export interface NoTallyOriginalCensus {
  schemaVersion:typeof SENATE_NO_TALLY_ORIGINAL_CENSUS;
  originalSameSourceUnlinked:number;
@@ -60,6 +65,10 @@ export interface NoTallyOriginalCensus {
  verifiedOriginalDocuments:number;
  originalQuorumRostersRead:number;
  nestedUniqueQuestionBallotCandidates:number;
+ nestedStrongSourceUniqueCandidates:number;
+ nestedSourceBallotRepeated:number;
+ nestedConflictingV1PaperBallot:number;
+ nestedOriginalPrintedSpanInvalid:number;
  rawRollUniqueQuestionBallotCandidates:number;
  stages:Record<TallyFailure,number>;
  stageGroups:Array<{session:string;vote_kind:string;stage:TallyFailure;count:number}>;
@@ -75,7 +84,7 @@ interface ParsedDoc {
  rosterCount:number;
  tallies:Array<{yeas:number;nays:number}>;
  nested:NestedSenateSourcePaper[];
- v1:Array<{bill:string;yeas:number|null;nays:number|null}>;
+ v1:Array<{bill:string;yeas:number|null;nays:number|null;ballot:string|null}>;
  raw:Array<{bill:string|null;yeas:number;nays:number;question:string;ballot:string|null}>;
  refused:boolean;
 }
@@ -90,7 +99,7 @@ function reparse(doc:OriginalJournal):ParsedDoc{
   try{
    nested=parseNestedSenateSourcePapers(text,names);
    v1=parseJournalPaperActions(text,names).map(p=>({
-    bill:p.billIdentifier,yeas:p.yeas,nays:p.nays
+    bill:p.billIdentifier,yeas:p.yeas,nays:p.nays,ballot:p.ballotSignature
    }));
    raw=parseSenateJournalText({
     text,sessionKey:'source-only',sourceUrl:doc.source_url,
@@ -125,7 +134,8 @@ function acceptedPeers(v:AcceptedVote,day:readonly DayAccepted[]):DayAccepted[]{
 export function summarizeNoTallyOriginalCensus(
  votes:readonly AcceptedVote[],actions:readonly ParsedAction[],
  docs:readonly OriginalJournal[],dayAccepted:readonly DayAccepted[],
- existing:SameSourceQuestionCensus
+ existing:SameSourceQuestionCensus,
+ onStrongNested?: (candidate:StrongNestedSourceQuestion)=>void
 ):NoTallyOriginalCensus{
  if(votes.length>2500||actions.length>6500||docs.length>220
   ||dayAccepted.length>2500||new Set(docs.map(d=>d.id)).size!==docs.length)
@@ -151,6 +161,7 @@ export function summarizeNoTallyOriginalCensus(
  const stages=Object.fromEntries(STAGES.map(x=>[x,0])) as Record<TallyFailure,number>;
  const groups=new Map<string,{session:string;vote_kind:string;stage:TallyFailure;count:number}>();
  const examples=new Map<string,{session:string;bill:string;day:string;stage:TallyFailure;votes:number}>();
+ const strong={eligible:0,repeatedSource:0,conflictingV1:0,invalidSpan:0};
  for(const v of targets){
   if(!/^(HF|SF)[1-9]\d{0,5}$/.test(v.bill)
    ||!/^202[1-6]-\d\d-\d\d$/.test(v.day))
@@ -180,7 +191,34 @@ export function summarizeNoTallyOriginalCensus(
       stage='nested_repeated_accepted_ballot';
      else if(exactlySame.length!==1)stage='nested_repeated_source_question';
      else if(v.vote_kind!=='amendment')stage='nested_different_question';
-     else stage='nested_unique_question_ballot_candidate';
+     else {
+      stage='nested_unique_question_ballot_candidate';
+      const p=exactlySame[0]!,body=d.source.body??'';
+      // All printed nested votes in this original, not merely same bill
+      // or question, must have a different complete named ballot.
+      const repeated=d.nested.filter(x=>x.ballotSha256===signature
+       &&x.yeas===v.yea_count&&x.nays===v.nay_count);
+      const older=d.v1.filter(x=>x.ballot===signature
+       &&x.yeas===v.yea_count&&x.nays===v.nay_count);
+      const spans=Number.isSafeInteger(p.sourceStart)&&Number.isSafeInteger(p.sourceEnd)
+       &&Number.isSafeInteger(p.questionStart)&&Number.isSafeInteger(p.questionEnd)
+       &&p.sourceStart>=0&&p.sourceEnd>p.sourceStart
+       &&p.questionStart>=p.sourceEnd&&p.questionEnd>p.questionStart
+       &&p.questionEnd<=body.length
+       &&body.slice(p.sourceStart,p.sourceEnd)===p.literalText
+       &&compact(body.slice(p.questionStart,p.questionEnd))===p.questionText
+       &&hash(p.literalText)===p.literalSha256
+       &&hash(JSON.stringify([p.sourceStart,p.sourceEnd,p.literalSha256]))===p.sourceOnlyKey;
+      if(repeated.length!==1)strong.repeatedSource++;
+      else if(older.length!==0)strong.conflictingV1++;
+      else if(!spans)strong.invalidSpan++;
+      else{
+       strong.eligible++;
+       if(onStrongNested)onStrongNested({
+        vote:v,originalDocument:d.source,paper:p,questionOnly:true
+       });
+      }
+     }
     }else if(sameBallot.length)stage='nested_different_question';
     else if(matches.length && matches.every(p=>p.ballotSha256===null))
      stage='nested_matching_tally_no_full_ballot';
@@ -210,6 +248,9 @@ export function summarizeNoTallyOriginalCensus(
  }
  if(Object.values(stages).reduce((a,b)=>a+b,0)!==targets.length)
   throw Error('Original no-tally Journal cohort did not conserve accepted votes');
+ if(strong.eligible+strong.repeatedSource+strong.conflictingV1+strong.invalidSpan
+  !==stages.nested_unique_question_ballot_candidate)
+  throw Error('Nested independent original source-ballot uniqueness did not reconcile to population');
  return{
   schemaVersion:SENATE_NO_TALLY_ORIGINAL_CENSUS,
   originalSameSourceUnlinked:existing.sameSourceUnlinked,
@@ -218,6 +259,10 @@ export function summarizeNoTallyOriginalCensus(
   verifiedOriginalDocuments:parsed.size,
   originalQuorumRostersRead:[...parsed.values()].filter(x=>x.rosterCount>=55).length,
   nestedUniqueQuestionBallotCandidates:stages.nested_unique_question_ballot_candidate,
+  nestedStrongSourceUniqueCandidates:strong.eligible,
+  nestedSourceBallotRepeated:strong.repeatedSource,
+  nestedConflictingV1PaperBallot:strong.conflictingV1,
+  nestedOriginalPrintedSpanInvalid:strong.invalidSpan,
   rawRollUniqueQuestionBallotCandidates:stages.raw_roll_exact_question_ballot_candidate,
   stages,stageGroups:[...groups.values()].sort((a,b)=>b.count-a.count||
    a.session.localeCompare(b.session)||a.vote_kind.localeCompare(b.vote_kind)),
@@ -232,7 +277,8 @@ export function summarizeNoTallyOriginalCensus(
  */
 export async function readNoTallyOriginalCensus(
  db:PoolClient,votes:readonly AcceptedVote[],actions:readonly ParsedAction[],
- previous:SameSourceQuestionCensus
+ previous:SameSourceQuestionCensus,
+ onStrongNested?: (candidate:StrongNestedSourceQuestion)=>void
 ):Promise<NoTallyOriginalCensus>{
  const actionsByScope=new Map<string,ParsedAction[]>();
  const votesByScope=new Map<string,AcceptedVote[]>();
@@ -276,5 +322,5 @@ export async function readNoTallyOriginalCensus(
   'ORDER BY d.source_url,v.occurred_on,v.id LIMIT 2501'
  ].join(' '),[urls])).rows;
  if(dayAccepted.length>=2501)throw Error('Original-day accepted ballot cross-bill collision census truncated');
- return summarizeNoTallyOriginalCensus(votes,actions,docs,dayAccepted,previous);
+ return summarizeNoTallyOriginalCensus(votes,actions,docs,dayAccepted,previous,onStrongNested);
 }
