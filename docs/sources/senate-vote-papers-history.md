@@ -82,6 +82,57 @@ proximity are never evidence of exact question identity. Do not extrapolate
 the 697 into 697 distinct bills or conflate a correct question link with
 certified amended bill text.
 
+### 2021–22 original Senate passage exact-link promotion (#1498)
+
+The protected production replay from merge #1517 identified **101** independently
+verified mutually unique source-ballot/question candidates among the
+**132** unlinked 2021–22 passage events with existing printed tallies
+but incomplete persisted paper ballot hashes. **30** events share the
+same complete accepted named ballot with another accepted vote and **one**
+source passage ballot remains incomplete. Those 31 events must NOT be
+promoted by tally or proximity.
+
+A later, narrowly bounded repair in
+`src/operations/senate-2022-passage-link-repair.ts` is authorized only
+by the existing production paper-history marker, primary identity and
+migration-ledger guards. It creates **no schema migrations**.
+
+The repair operates in one `SERIALIZABLE READ WRITE` transaction and
+requires exact pre-repair baselines (**2,308** accepted votes, **890**
+exact question links, **697** same-Journal unlinked events, **132**
+original 2021–22 missing named passage ballots) before attempting
+anything. It reuses the original **37 fully source-verified Journal
+documents** and the unchanged independent printed quorum attendance
+names to reparse the original question, named choices and passage
+tallies. It must produce exactly **101** unique source/accepted pairs,
+with 30 repeated accepted ballots and one incomplete source ballot
+held. Before any write the source action must match the existing
+persisted v1 action's immutable SHA key, printed original character
+start/end, order, question wording, both tallies and bill/date. Any
+different action, previously filled ballot, existing link or changed
+source verification is rejected.
+
+For each proved unique pair, the operation changes ONLY the previously
+`NULL` **derived `senate_vote_paper_actions.ballot_sha256`** and inserts
+one existing-method `unique_question_full_ballot` edge to the exact
+accepted vote with a fingerprint of all identity-bearing accepted
+vote and member choice fields. It does NOT edit any original source
+body, existing non-null paper fingerprint, accepted vote/member record,
+bill version, complete amended state or serving model.
+
+The transaction must independently read back **exactly 991** exact
+question links and **596** unlinked same-Journal votes after those 101
+repairs, with zero question-only rechecks and zero hidden stored
+links. On *any* mismatch it rolls back the entire batch. A subsequent
+protected run permits a no-op only when the remaining **31** missing
+paper ballots partition into the same 30 duplicates and one incomplete
+named source ballot. It does not auto-promote any future newly discovered
+paper/action candidates.
+
+This is a *question-to-vote* linkage repair only. No claim is made that
+a complete cumulative amended bill version existed or was publicly
+available before passage.
+
 ### 2022 original Journal attendance-roster named-roll shadow replay
 
 The population audit establishes that **132** unlinked 2021–22 Senate
