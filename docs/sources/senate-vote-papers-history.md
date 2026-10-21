@@ -131,7 +131,24 @@ internal IDs or candidate hashes.
 A **source-only** keyless original government replay independently
 parses both `20230221025.pdf` (HF4) and
 `20240503111.pdf` (HF4124) to determine what the nested and raw
-parsers actually recover. No database writes, source/paper
+parsers actually recover.
+
+Original government PDF byte-verified receipts from keyless CI:
+
+- **2023-02-21** `20230221025.pdf`: 1,747,673 bytes, SHA-256
+  `b97fc9c01535ee55b9907a226598fc16ab86e08620abbd30b4d47fb9dae3ada9`.
+  HF4: **2** current v1 paper actions, **12** distinct nested amendment
+  sources with **12 complete named ballots**, **19** raw signed bill rolls.
+- **2024-05-03** `20240503111.pdf`: 7,350,157 bytes, SHA-256
+  `67792bd8d486d831a04c418b4fb3848fab395f453d87168aba0830daf166d04e`.
+  HF4124: **1** current v1 paper action, **3** distinct nested amendment
+  sources with **3 complete named ballots**, **16** raw signed bill rolls.
+
+These are **source-only parser outputs**, not 15 verified question-to-event
+links: repeated accepted ballots, question wording differences and parent
+amendment attribution remain independent holds. Full original SHA and
+minimum distinct nested/complete-ballot/raw-roll receipts now gate future
+keyless PR and main original-source runs. No database writes, source/paper
 replacement, new exact links, serving-model changes or text-state
 certification are part of this exploratory phase. A later generic
 parser repair must be separately source-pinned, reviewed and tested
