@@ -82,6 +82,66 @@ proximity are never evidence of exact question identity. Do not extrapolate
 the 697 into 697 distinct bills or conflate a correct question link with
 certified amended bill text.
 
+### Original-source nested amendment question exact-link promotion (#1498)
+
+The full protected read-only no-tally audit after the 2022 passage repair
+established **181** source-local accepted Senate vote events for which
+the original stored paper question has **no matching yea/nay totals**.
+Independent authentication of **68 original Senate Journals** and a
+complete original roll reparse found:
+
+- **31** cases where a complete source-printed nested
+  *amendment-to-an-amendment* question, exact full named vote,
+  bill, date and tally are one-to-one with the original accepted
+  event across **every accepted source-day vote**, including other
+  bills and unresolved bill identities.
+- **105** additional generic original raw-roll exact-question/full-
+  ballot candidates that need separate printed question/roll anchor
+  verification before any production promotion.
+- **45** remaining holds (repeated accepted ballots, substantive
+  question mismatch and different source question) not safe for
+  automatic relinking.
+
+The guarded production nested-question repair operates inside one
+`SERIALIZABLE READ WRITE` transaction, only after verifying
+the historical primary/role, approved migration ledger and
+marker-bearing `main` commit. It requires exact starting audit totals
+**2,308 official votes / 991 links / 596 unlinked same-original-Journal
+votes / 181 no-tally holds** and exactly 31 original nested matches.
+Every match must pass its source's original PDF verification against
+the stored extracted-text SHA; the unchanged original source literal
+and unique nested action hash, exact printed question start/end in
+the original source, accepted bill/date, full named ballot, both
+tallies, printed motion, and mutual uniqueness.
+
+A completely NEW original-question-only evidence action is inserted
+under the existing source-local paper action schema/serving-view
+parser-version namespace. The `action_key` uses a separate
+SHA-256 domain tag (`original-nested-amendment-question-v1`) and
+the original nested source/printed question character anchors.
+It has `kind='amendment'`, **NULL** `proposed_text`,
+no proposal capture, no base locator, `outcome='unknown'` and
+an empty prior-adoptions list: the nested amendment **does not
+automatically amend the bill**, and no amended-text state is
+certified. One immutable existing-method
+`unique_question_full_ballot` link is added to the unchanged
+accepted vote, authenticated with its full identity-bearing
+fingerprint. All previous actions/source documents/member votes,
+their votes, and serving models remain unmodified.
+
+The transaction independently recomputes the full population
+denominator: exactly **1022** links, **565** same-source unlinked
+votes, and **150** no-tally holds after 31 safe promotions, or
+*the whole transaction rolls back*. Future runs are a no-op
+only when the post-link population remains stable and zero
+additional eligible nested questions pass the strict checks.
+
+This is evidence of the original question, **not** proof of a
+historically publicly available complete amended bill text.
+The 105 generic raw-roll candidates and all other unresolved
+questions remain held until a distinct cross-bill source-location
+check has passed.
+
 ### Population-wide 181 Senate missing-paper-tally investigation (#1498)
 
 Following 101 strict original-source passage links, the independent
