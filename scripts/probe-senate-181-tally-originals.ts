@@ -11,14 +11,20 @@ import {independentlyPrintedAttendanceNames} from '../src/operations/senate-2022
 
 const originals=[
  {bill:'HF4',day:'2023-02-21',
-  url:'https://www.senate.mn/journals/2023-2024/20230221025.pdf'},
+  url:'https://www.senate.mn/journals/2023-2024/20230221025.pdf',
+  pdfSha256:'b97fc9c01535ee55b9907a226598fc16ab86e08620abbd30b4d47fb9dae3ada9',pdfBytes:1747673,
+  minimumNested:12,minimumRaw:19},
  {bill:'HF4124',day:'2024-05-03',
-  url:'https://www.senate.mn/journals/2023-2024/20240503111.pdf'}
+  url:'https://www.senate.mn/journals/2023-2024/20240503111.pdf',
+  pdfSha256:'67792bd8d486d831a04c418b4fb3848fab395f453d87168aba0830daf166d04e',pdfBytes:7350157,
+  minimumNested:3,minimumRaw:16}
 ] as const;
 async function main(){
  for(const item of originals){
   const pdf=await fetchSenateJournal(item.url);
   assert.ok(pdf.text.length>2000&&pdf.byteLength>1000);
+  assert.equal(pdf.pdfSha256,item.pdfSha256,'Official original Senate Journal SHA-256 changed');
+  assert.equal(pdf.byteLength,item.pdfBytes,'Original Senate Journal byte length changed');
   const names=independentlyPrintedAttendanceNames(pdf.text);
   const papers=parseJournalPaperActions(pdf.text,names).filter(p=>p.billIdentifier===item.bill);
   const nested=parseNestedSenateSourcePapers(pdf.text,names).filter(p=>p.billIdentifier===item.bill);
@@ -48,7 +54,12 @@ async function main(){
   console.log('SENATE_MISSING_TALLY_PUBLIC_ORIGINAL='+JSON.stringify(report));
   assert.ok(names.length>=55&&names.length<=67,'Printed quorum roster is required');
   assert.ok(tally.length>15&&papers.length>0,'Original Journal source missing question evidence');
-  assert.ok(nested.length>0,'No nested source amendments in this high-impact original');
+  assert.ok(nested.length>=item.minimumNested,
+   'Pinned original Journal lost previously verified distinct nested amendment actions');
+  assert.ok(nested.filter(p=>p.ballotSha256!==null).length>=item.minimumNested,
+   'Pinned original Journal lost previously complete nested named ballots');
+  assert.ok(raw.length>=item.minimumRaw,
+   'Pinned source Journal lost its previously complete independent raw roll-question count');
  }
 }
 void main().catch(err=>{
