@@ -82,6 +82,53 @@ proximity are never evidence of exact question identity. Do not extrapolate
 the 697 into 697 distinct bills or conflate a correct question link with
 certified amended bill text.
 
+### Append-only Senate nested amendment QUESTION identity repair (#1498)
+
+The independent original-Journal tally census found **181** unmatched
+same-source/day Senate vote questions, including **31** uniquely matched
+source nested-amendment questions and **105** preliminary raw roll
+questions. Protected original-source verification subsequently
+established that **all 31 nested candidates** are also independently
+source-unique across EVERY nested proposal ballot and separately
+parsed direct v1 paper within the original government Journal:
+**0** reused original nested ballots, **0** conflicting direct-paper
+ballots, **0** invalid original proposal or question spans.
+
+The guarded promotion requires EXACT baseline **2,308 accepted
+official votes, 991 question links, 596 same-Journal unlinked,
+181 no-matching-tally cases**. In a single `SERIALIZABLE`
+transaction it recomputes both accepted-event source-day
+uniqueness and original-source printed source-question
+uniqueness. Exactly **31** new records may pass, requiring
+the authentic original government-Journal extracted-text SHA
+proof, unchanged entire original amendment literal SHA and
+source action key, precise original question character offsets,
+bill identity, accepted question text, both vote totals,
+full **member-by-member ballot** and existing accepted identity
+fingerprint.
+
+Each successful original question receives a new **append-only**
+source-local paper action with deterministic SHA key using a
+separate `original-nested-amendment-question-v1` namespace,
+and an exact `unique_question_full_ballot` accepted-event edge.
+The action is **question-only** with `kind='amendment'`,
+`proposed_text=NULL`, `outcome='unknown'`, no base locator,
+no proposal capture and no prior adopted bill-amendment claims:
+an amendment to another amendment does NOT prove a direct
+bill-text change. No accepted votes, member choices, previous
+paper actions, original bodies, bill versions or serving
+models are changed.
+
+The protected transaction must independently read back
+**1,022 exact links, 565 same-Journal unlinked, and 150
+no-matching-tally** cases or **ROLL BACK all 31**.
+Subsequent protected executions only allow a verified
+no-op baseline with **zero** additional source-unique nested
+candidates; new sources cannot be silently promoted.
+The 105 raw-only candidates are analyzed separately and
+remain unlinked until their original printed question
+boundary and source ballot uniqueness are verified.
+
 ### Raw Senate Journal roll-question source-position proof (105 preliminary cases)
 
 The original-source-read-only census separately identified **105**
