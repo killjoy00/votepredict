@@ -10,6 +10,9 @@ on:
       - scripts/deploy-senate-paper-history-neon.ts
       - scripts/verify-senate-paper-history-original.ts
       - scripts/probe-senate-2022-passage-original.ts
+      - scripts/probe-senate-181-tally-originals.ts
+      - src/operations/senate-no-tally-original-census.ts
+      - tests/senate-no-tally-original-census.test.ts
       - src/operations/senate-2022-passage-roster-shadow.ts
       - src/operations/senate-2022-passage-link-repair.ts
       - tests/senate-2022-passage-link-repair.test.ts
@@ -50,6 +53,9 @@ on:
       - scripts/deploy-senate-paper-history-neon.ts
       - scripts/verify-senate-paper-history-original.ts
       - scripts/probe-senate-2022-passage-original.ts
+      - scripts/probe-senate-181-tally-originals.ts
+      - src/operations/senate-no-tally-original-census.ts
+      - tests/senate-no-tally-original-census.test.ts
       - src/operations/senate-2022-passage-roster-shadow.ts
       - src/operations/senate-2022-passage-link-repair.ts
       - tests/senate-2022-passage-link-repair.test.ts
@@ -134,6 +140,8 @@ jobs:
         run: npm run check
       - name: Source-only May 2022 Senate Journal named-roll extraction probe
         run: node --import tsx scripts/probe-senate-2022-passage-original.ts
+      - name: Probe authentic HF4 and HF4124 nested Senate amendment rolls
+        run: node --import tsx scripts/probe-senate-181-tally-originals.ts
 
   independent-main:
     if: >-
@@ -190,6 +198,8 @@ jobs:
         run: node --import tsx scripts/verify-senate-paper-history-original.ts
       - name: Replay original May 2022 Senate passage ballot source evidence
         run: node --import tsx scripts/probe-senate-2022-passage-original.ts
+      - name: Independently verify original HF4 and HF4124 Journal tallies
+        run: node --import tsx scripts/probe-senate-181-tally-originals.ts
       - name: Production dependency audit
         run: npm audit --omit=dev --audit-level=high
 
