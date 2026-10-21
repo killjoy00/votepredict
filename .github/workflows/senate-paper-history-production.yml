@@ -9,6 +9,7 @@ on:
       - tests/senate-paper-history.test.ts
       - scripts/deploy-senate-paper-history-neon.ts
       - scripts/verify-senate-paper-history-original.ts
+      - scripts/probe-senate-2022-passage-original.ts
       - docs/sources/senate-vote-papers-history.md
       - src/sources/minnesota/senate-assignment-pdf.ts
       - tests/senate-role-collection.test.ts
@@ -44,6 +45,7 @@ on:
       - tests/senate-paper-history.test.ts
       - scripts/deploy-senate-paper-history-neon.ts
       - scripts/verify-senate-paper-history-original.ts
+      - scripts/probe-senate-2022-passage-original.ts
       - docs/sources/senate-vote-papers-history.md
       - src/sources/minnesota/senate-assignment-pdf.ts
       - tests/senate-role-collection.test.ts
@@ -122,6 +124,8 @@ jobs:
         run: node --import tsx --test tests/senate-paper-history.test.ts
       - name: Full typecheck, tests and production build
         run: npm run check
+      - name: Source-only May 2022 Senate Journal named-roll extraction probe
+        run: node --import tsx scripts/probe-senate-2022-passage-original.ts
 
   independent-main:
     if: >-
@@ -176,6 +180,8 @@ jobs:
         run: npm run check
       - name: Verify original HF100 papers and dated leadership transitions
         run: node --import tsx scripts/verify-senate-paper-history-original.ts
+      - name: Replay original May 2022 Senate passage ballot source evidence
+        run: node --import tsx scripts/probe-senate-2022-passage-original.ts
       - name: Production dependency audit
         run: npm audit --omit=dev --audit-level=high
 
