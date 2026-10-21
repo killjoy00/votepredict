@@ -83,6 +83,7 @@ export function strictNestedQuestionLinks(
    ||text.slice(p.sourceStart,p.sourceEnd)!==p.literalText
    ||hash(p.literalText)!==p.literalSha256
    ||hash(JSON.stringify([p.sourceStart,p.sourceEnd,p.literalSha256]))!==p.sourceOnlyKey
+   ||text.slice(p.questionStart,p.questionEnd).trim()!==text.slice(p.questionStart,p.questionEnd)
    ||compact(text.slice(p.questionStart,p.questionEnd))!==p.questionText
    ||p.yeas!==v.yea_count||p.nays!==v.nay_count
    ||p.yeas===null||p.nays===null
