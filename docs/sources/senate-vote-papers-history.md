@@ -193,6 +193,40 @@ confusing printed *original* line coordinates; verify any remaining
 editorial/source differences and the original exact question. Historical
 public-before-vote remains a separate archival/release-clock question.
 
+### HF100 Hauschild public safety: original fiscal amount-delta audit
+
+Original Senate Journal's **second adopted Hauschild amendment** (original
+source sequence 6) replaces the first-UE Public Safety total appropriation
+`13,987,000 / 5,654,000` with `23,987,000 / 10,654,000`, adds explicit
+`$10,000,000` first year and `$5,000,000` second year general-fund
+language, preserves `$6,157,000` / `$2,218,000` trunk-highway funding,
+and ends **“Adjust amounts accordingly.”**
+
+The current official first-UE and second-UE Revisor HTML editions suggest
+an **apparent $500,000 second-year disagreement**: the total increases
+by $5,000,000, while the State Patrol subamount changes from $2,218,000
+to $7,718,000 (+$5,500,000); first-year totals and State Patrol both
+increase $10,000,000.
+
+An independent source-only canary now attempts to establish the same
+**numerical contradiction directly from BOTH original byte-SHA-pinned
+Revisor PDFs**, bounding all four money figures per edition to the exact
+`Sec. 16. PUBLIC SAFETY` section before `Sec. 17. REVENUE`.
+It refuses repeated or absent money values and wrong section boundaries,
+checks the complete Senate Journal money instruction framing, and reports
+only named delta counts. If original PDF extraction does not preserve
+enough table structure, the entire comparison is held: never resolve by
+jumping to the nearest section, making up a $500,000 adjustment, or
+automatically replacing a printed source amount.
+
+**This is an arithmetic-reconciliation hold, not a correction or proof
+of editorial error.** The public-safety fund accounting, actual second-UE
+PDF layout, and all consequences of `Adjust amounts accordingly`
+still require independent reconciliation. Whether the successor edition
+represents the *at-final-vote* text and its web availability *before* that
+vote remain separate, unproven questions. No full amended text, newly
+accepted vote, exact link, new migration, or serving modification is created.
+
 ## Historical text and role dates
 
 The collector stages exact numbered, unofficial-engrossment and conference-report URLs, including official PDF representations, from existing text stores and explicit journal references. Legacy-store discovery prioritizes bills with Senate official votes or raw proceedings links; it does not spend the historical retrieval budget on every unrelated House bill. Exact base references are also queued for current original-body acquisition. Publisher redirects are followed only within the same explicit bill/edition/representation and biennium, or between the exact assignment-sheet paths on www.senate.mn and assets.senate.mn. Resolved source URLs are retained; off-site, wrong-bill and wrong-edition redirects are rejected before fetching. A current download proves current wording, not historical availability.
