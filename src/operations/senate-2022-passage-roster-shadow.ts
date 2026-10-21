@@ -180,7 +180,13 @@ export function summarize2022PassageRosterShadow(
 export async function read2022PassageRosterShadow(
  db:PoolClient,votes:readonly AcceptedVote[],actions:readonly ParsedAction[],expected:number
 ):Promise<RosterShadowProof>{
- const ids=[...new Set(actions.filter(a=>a.original_source_verified
+ // Load only source documents relevant to unlinked 2021-22 passage votes,
+ // not every unrelated journal/action in the three-biennium census.
+ const candidateScopes=new Set(votes.filter(v=>v.session==='2021-2022'
+  &&v.vote_kind==='passage'&&!v.exact_linked).map(scope));
+ const ids=[...new Set(actions.filter(a=>candidateScopes.has(scope(a))
+  &&a.kind==='passage'&&a.original_source_verified
+  &&Number.isInteger(a.yea_count)&&Number.isInteger(a.nay_count)
   &&a.source_url.includes('/journals/2021-2022/'))
   .map(a=>a.source_id))];
  if(ids.length>150)throw Error('Original 2021-22 PDF source inventory exceeds shadow bound');
