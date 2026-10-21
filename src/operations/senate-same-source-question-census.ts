@@ -37,6 +37,17 @@ export interface StageGroup {
 export interface CohortExample {
  session:string;vote_kind:string;stage:FailureStage;bill:string;day:string;votes:number;
 }
+export interface Passage2021Focus {
+  missingPaperBallotVotes:number;
+  /** No parsed passage-kind action at the exact original URL/bill/day. */
+  noPassageAction:number;
+  /** A passage-kind paper action has printed tally, but lacks a complete roll. */
+  passageActionWithTallyButNoBallot:number;
+  /** Passage-kind paper exists but lacks both a printed tally and full ballot. */
+  passageActionWithoutTally:number;
+  /** Only public identifiers; priority locations for original-source canaries. */
+  examples:Array<{bill:string;day:string;votes:number;kind:'no_passage_action'|'passage_with_tally'|'passage_without_tally'}>;
+}
 export interface SameSourceQuestionCensus {
  schemaVersion:typeof SAME_SOURCE_QUESTION_CENSUS_VERSION;
  auditedAcceptedVotes:number;
@@ -48,6 +59,7 @@ export interface SameSourceQuestionCensus {
  totals:Record<FailureStage,number>;
  /** Strict unique ballot with exact, typography or question-intro-only difference. */
  candidateQuestionRechecks:number;
+ focused2021Passage:Passage2021Focus;
  examples:CohortExample[];
  newLinksAdded:0;sourceBodiesChanged:false;officialVotesChanged:false;
  completeTextStatesCertified:0;
@@ -174,6 +186,9 @@ export function summarizeSameSourceFailures(
  const examples=new Map<string,CohortExample>();
  const actionsByScope=new Map<string,ParsedAction[]>();
  const votesByScope=new Map<string,AcceptedVote[]>();
+ const focusCounts={noPassageAction:0,passageActionWithTallyButNoBallot:0,
+  passageActionWithoutTally:0};
+ const focusExamples=new Map<string,Passage2021Focus['examples'][number]>();
  for(const a of actions){const k=key(a),x=actionsByScope.get(k)??[];x.push(a);actionsByScope.set(k,x)}
  for(const v of votes){const k=key(v),x=votesByScope.get(k)??[];x.push(v);votesByScope.set(k,x)}
  for(const v of cohort){
@@ -184,6 +199,20 @@ export function summarizeSameSourceFailures(
   const k=key(v);
   const stage=classifySameSourceVote(v,actionsByScope.get(k)??[],votesByScope.get(k)??[]);
   totals[stage]++;
+  if(v.session==='2021-2022'&&v.vote_kind==='passage'&&stage==='paper_ballot_absent'){
+   const eligiblePaper=(actionsByScope.get(k)??[]).filter(a=>eligible(a,v));
+   const passage=eligiblePaper.filter(a=>a.kind==='passage');
+   const shape:Passage2021Focus['examples'][number]['kind']=passage.length===0
+    ?'no_passage_action'
+    :passage.some(a=>Number.isInteger(a.yea_count)&&Number.isInteger(a.nay_count))
+    ?'passage_with_tally':'passage_without_tally';
+   if(shape==='no_passage_action')focusCounts.noPassageAction++;
+   else if(shape==='passage_with_tally')focusCounts.passageActionWithTallyButNoBallot++;
+   else focusCounts.passageActionWithoutTally++;
+   const fk=JSON.stringify([v.bill,v.day,shape]);
+   const entry=focusExamples.get(fk)??{bill:v.bill,day:v.day,kind:shape,votes:0};
+   entry.votes++;focusExamples.set(fk,entry);
+  }
   const gk=JSON.stringify([v.session,v.vote_kind,stage]);
   const g=groups.get(gk)??{session:v.session,vote_kind:v.vote_kind,stage,count:0};
   g.count++;groups.set(gk,g);
@@ -194,6 +223,11 @@ export function summarizeSameSourceFailures(
  if([...groups.values()].reduce((n,g)=>n+g.count,0)!==cohort.length
   ||Object.values(totals).reduce((a,b)=>a+b,0)!==cohort.length)
   throw Error('Same-source census stage partition failed');
+  const focusCount=Object.values(focusCounts).reduce((n,v)=>n+v,0);
+  const focusGrouped=[...groups.values()].filter(g=>g.session==='2021-2022'
+   &&g.vote_kind==='passage'&&g.stage==='paper_ballot_absent')
+   .reduce((n,g)=>n+g.count,0);
+  if(focusCount!==focusGrouped)throw Error('Focused 2021 passage census did not partition eligible source actions');
  return {
   schemaVersion:SAME_SOURCE_QUESTION_CENSUS_VERSION,
   auditedAcceptedVotes:gap.auditedEvents,
@@ -207,6 +241,11 @@ export function summarizeSameSourceFailures(
    totals.strict_question_but_no_current_link+
    totals.typography_only_question_difference+
    totals.question_intro_difference,
+  focused2021Passage:{
+   missingPaperBallotVotes:focusCount,...focusCounts,
+   examples:[...focusExamples.values()].sort((a,b)=>b.votes-a.votes||
+    a.bill.localeCompare(b.bill)||a.day.localeCompare(b.day)).slice(0,12)
+  },
   examples:[...examples.values()].sort((a,b)=>b.votes-a.votes||
    a.session.localeCompare(b.session)||a.bill.localeCompare(b.bill)||a.day.localeCompare(b.day)).slice(0,18),
   newLinksAdded:0,sourceBodiesChanged:false,officialVotesChanged:false,completeTextStatesCertified:0
