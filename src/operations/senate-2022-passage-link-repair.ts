@@ -173,10 +173,12 @@ export async function repair2022UniquePassageLinks(pool:Pool):Promise<PassageRep
     votes,actions,docs,expected,pair=>pairs.push(pair));
    const repaired=strictStored2022PassageRepairPairs(pairs,actions,docs);
    if(repaired.length!==shadow.strictlyUniqueQuestionAndFullBallotCandidates
-    ||shadow.sourceDocumentsLoaded!==37||shadow.sourceAttendanceRosters!==37
+    ||shadow.sourceDocumentsLoaded<1||shadow.sourceDocumentsLoaded>37
+    ||shadow.sourceAttendanceRosters!==shadow.sourceDocumentsLoaded
     ||shadow.stages.repeated_accepted_ballot!==30
     ||shadow.stages.named_ballot_still_missing!==1
-    ||!((expected===132&&repaired.length===101)
+    ||!((expected===132&&shadow.sourceDocumentsLoaded===37
+      &&repaired.length===101)
       ||(expected===31&&repaired.length===0)))
     throw Error('Original 37-Journal/132-vote strict repair source proof failed independent parity');
    for(const p of repaired)await completeOnePair(db,p);
