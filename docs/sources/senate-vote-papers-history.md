@@ -82,6 +82,36 @@ proximity are never evidence of exact question identity. Do not extrapolate
 the 697 into 697 distinct bills or conflate a correct question link with
 certified amended bill text.
 
+### 2021–22 final-passage parser triage (source-only)
+
+The population-wide census shows **133 missing-paper-ballot final-passage
+events from 2021–22**, a concentrated defect class worth investigating
+before another bill-specific amendment reconstruction. These are only
+first-failure cases with an authentic paper on the **same original Journal
+URL / bill / date**, not 133 independent bills or 133 provable new links.
+
+The protected read-only census now subdivides these 133 events into:
+
+- **No passage action parsed at all:** the matched source/bill/day contains
+  other recognized actions (possibly voice or amendment papers), but
+  none identified as a passage action. Fixing ballot parsing alone would
+  not address this; inspect original question extraction and bill context.
+- **Passage action with printed yea/nay tally but no complete named ballot:**
+  prioritize exact government-PDF roll-call boundary, folio header and
+  voter-list parsing across multiple original 2021–22 journals.
+- **Passage action without printed tally:** investigate question/roll
+  association and whether the purported passage action actually precedes
+  an oral/voice disposition.
+
+The three mutually exclusive subcounts must sum **exactly** to the
+independently reconciled 2021–22 passage / missing-paper-ballot stage;
+original content and named member ballots are not emitted. At most
+twelve original **public bill/date/count** cases are logged for selecting
+government-original replay tests. None is automatically linked or
+treated as assembled vote-time bill text. Follow up with a generic
+source-backed parser repair only where complete named ballot plus
+unique question evidence passes.
+
 ### Original-source HF100/HF1/HF7 individual cases
 
 The guarded protected production readback also reports `coverage.caseAudit` from the
