@@ -155,7 +155,9 @@ That present-day metadata does **not** independently establish when that
 edition was historically public relative to the final Senate vote.
 
 The keyless original-source canary downloads the second-UE PDF separately,
-retains its original byte SHA-256 and size, rejects a different source URL
+requires the independently verified original **SHA-256**
+`fd4f28a4c1068e10faba827ab4142c108f05aca6d34fe6028b52ac30b0651e3a`
+(**5,749,963 bytes**) before parsing, rejects a different source URL
 or bill/edition identity, and checks bounded exact wording excerpts that are
 **absent** in the pinned first-UE body and appear **uniquely** in the second-UE
 body. The reviewed witness set covers Port's CanGrow/CanStartup account and
@@ -163,6 +165,14 @@ appropriation provisions, the successor's commissioner-held CanStartup
 repayment account (in contrast to the nonprofit's unqualified revolving
 account), Hauschild's local retail restrictions and public-safety changes,
 and Hoffman's fiscal-year transfers.
+
+At the original-pinned first keyless check, **8 of 9** distinct new
+successor wording witnesses were uniquely verified, spanning **all four
+adopted amendment sources**. The ninth, the public-safety totals as a single
+PDF table expression, was held because the PDF text layer did not yield that
+joint layout. Its two revised totals also appear in the official Revisor
+HTML successor, but that observation is **not** silently promoted into a
+PDF-table match, an exhaustive edition diff or vote-time proof.
 
 Witness checks tolerate whitespace text-extraction artifacts only;
 different letters, numbers, punctuation, repeated occurrences and missing
