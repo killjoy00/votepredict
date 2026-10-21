@@ -82,6 +82,57 @@ proximity are never evidence of exact question identity. Do not extrapolate
 the 697 into 697 distinct bills or conflate a correct question link with
 certified amended bill text.
 
+### 2022 original Journal attendance-roster named-roll shadow replay
+
+The population audit establishes that **132** unlinked 2021–22 Senate
+final-passage votes have a matching source-local *passage action and
+yea/nay tally*, but the stored paper lacks a complete named ballot. A
+further one vote has no parsed passage action. The 132 are not an
+authorization to infer or insert missing member choices.
+
+Independent keyless source-only replay checked the official **May 10,
+May 11, and May 20, 2022** Minnesota Senate Journals, including
+SF1391, SF2922, HF3845 and HF2665. The original PDFs are identified by
+their entire-body SHA-256 digests, **not** by a mutable webpage or copied
+text snippets:
+
+- 2022-05-10, `20220510106.pdf`, 3,402,568 bytes,
+  SHA-256 `160dee14bf8d824d4d332f87aa3154fbd96593197f639dc0398c13f11d139a5f`
+- 2022-05-11, `20220511107.pdf`, 1,210,956 bytes,
+  SHA-256 `d32e223bccbe2a3dc3892a84a12d4821a12609a65b90448cde9d2061967d4ff6`
+- 2022-05-20, `20220520113.pdf`, 669,374 bytes,
+  SHA-256 `bcdffbb63d711ba36b6613103f2daef2610ca3eabd0bb44aa916bbb06383a591`
+
+With names independently printed in each Journal's **opening quorum
+attendance list** as strict parsing hints, the source-only parser
+recovered complete source ballots for **all six tested passage rolls**,
+including the two distinct HF3845 (60–6, 57–9) and HF2665
+(65–0, 66–0) passage/repassage questions. Merely re-reading with no
+roster can be incomplete: the source-quorum hints retain original
+proper names without inventing vote choices. Each passed raw complete
+named-ballot cardinality checks. The source receipt is a positive
+reference example, not proof all 132 can be repaired.
+
+The protected `REPEATABLE READ READ ONLY` population shadow checker
+now probes *only* that independently reconciled 132-vote cohort against
+the existing authenticated stored Journal text, using the complete
+**source-internal** attendance list. The opening attendance extraction
+requires exactly one verified introductory roll, a printed quorum
+boundary, 55–67 unique normalized proper names, source URL/sha
+provenance and exact date/bill coordinates. A bad/partial attendance
+list refuses to guess. A recovered source paper MUST still match the
+accepted event's **complete independently accepted named ballot,
+both vote totals, and printed question** with **mutual uniqueness on
+both sides**. A repeated paper/accepted ballot or changed question is
+recorded as a hold.
+
+The shadow produces only safe counts and public bill/day/count examples;
+it does **not** modify, migrate, rescan, upsert or auto-link current
+paper actions, accepted events or serving models. In particular,
+`PAPER_PARSER` is unchanged. Promoting proven links or changing
+the production parser requires a separate reviewed, source-anchored
+change and protected readback verifying zero collisions.
+
 ### 2021–22 final-passage parser triage (source-only)
 
 The population-wide census shows **133 missing-paper-ballot final-passage

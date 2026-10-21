@@ -252,10 +252,16 @@ export function summarizeSameSourceFailures(
  };
 }
 /** Called only inside the protected READ ONLY coverage transaction. */
+export async function readSameSourceQuestionRows(
+ db:PoolClient
+):Promise<{votes:AcceptedVote[];actions:ParsedAction[]}> {
+ const votes=(await db.query<AcceptedVote>(voteQuery)).rows;
+ const actions=(await db.query<ParsedAction>(actionQuery)).rows;
+ return {votes,actions};
+}
 export async function readSameSourceQuestionCensus(
  db:PoolClient,gap:VoteTextGapAudit
 ):Promise<SameSourceQuestionCensus>{
- const votes=(await db.query<AcceptedVote>(voteQuery)).rows;
- const actions=(await db.query<ParsedAction>(actionQuery)).rows;
+ const {votes,actions}=await readSameSourceQuestionRows(db);
  return summarizeSameSourceFailures(votes,actions,gap);
 }
