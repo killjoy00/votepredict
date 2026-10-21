@@ -99,8 +99,8 @@ test('source Journal must contain both year replacement amounts and the literal 
   '$6,157,000 the first year and $2,218,000 the second year are from the trunk highway fund.',
   'Adjust amounts accordingly'
  ].join('\n');
- assert.throws(()=>assessHf100PublicSafetyAmounts(actions(text.replace('Adjust amounts accordingly','Adjust records accordingly')),first,second),/source amount instructions/);
- assert.throws(()=>assessHf100PublicSafetyAmounts(actions(text.replace('5,000,000','5,500,000')),first,second),/source amount instructions/);
+ assert.throws(()=>assessHf100PublicSafetyAmounts(actions(text.replace('Adjust amounts accordingly','Adjust records accordingly')),first,second),/public safety amount instructions/);
+ assert.throws(()=>assessHf100PublicSafetyAmounts(actions(text.replace('5,000,000','5,500,000')),first,second),/public safety amount instructions/);
  const rejected=actions();rejected[2]!.outcome='adopted';
  assert.throws(()=>assessHf100PublicSafetyAmounts(rejected,first,second),/adopted\/rejected/);
 });
