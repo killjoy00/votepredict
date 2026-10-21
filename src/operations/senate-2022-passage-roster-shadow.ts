@@ -21,6 +21,11 @@ export type ShadowStage='no_verified_original_source'|'original_attendance_missi
  'no_reparsed_passage_action'|'no_matching_tally'|'named_ballot_still_missing'|
  'named_ballot_disagrees'|'repeated_paper_ballot'|'repeated_accepted_ballot'|
  'substantive_question_difference'|'strict_unique_question_full_ballot_candidate';
+export interface StrictSourcePassageMatch {
+ acceptedVote:AcceptedVote;
+ sourceAction:PaperAction;
+ sourceDocumentId:string;
+}
 export interface RosterShadowProof {
  schemaVersion:typeof SENATE_2022_PASSAGE_ROSTER_SHADOW;
  targeted2021PassageVotes:number;
@@ -88,7 +93,8 @@ function recordExample(
  */
 export function summarize2022PassageRosterShadow(
  votes:readonly AcceptedVote[],storedActions:readonly ParsedAction[],
- docs:readonly StoredJournal[],expected:number
+ docs:readonly StoredJournal[],expected:number,
+ onStrict?: (match:StrictSourcePassageMatch)=>void
 ):RosterShadowProof{
  if(!Number.isInteger(expected)||expected<0||expected>300
   ||votes.length>2500||storedActions.length>6500||docs.length>150
@@ -137,11 +143,12 @@ export function summarize2022PassageRosterShadow(
   else if(!verified.some(id=>(parsed.get(id)?.names??0)>=55))
    stage='original_attendance_missing';
   else{
-   const papers=verified.flatMap(id=>parsed.get(id)?.actions.filter(a=>
-    a.billIdentifier===v.bill&&a.kind==='passage')??[]);
-   const tally=papers.filter(a=>a.yeas===v.yea_count&&a.nays===v.nay_count);
-   const signed=tally.filter(a=>a.ballotSignature!==null);
-   const matched=signed.filter(a=>a.ballotSignature===signature(v));
+   const papers=verified.flatMap(id=>(parsed.get(id)?.actions.filter(a=>
+    a.billIdentifier===v.bill&&a.kind==='passage')??[])
+    .map(action=>({sourceDocumentId:id,action})));
+   const tally=papers.filter(x=>x.action.yeas===v.yea_count&&x.action.nays===v.nay_count);
+   const signed=tally.filter(x=>x.action.ballotSignature!==null);
+   const matched=signed.filter(x=>x.action.ballotSignature===signature(v));
    if(papers.length===0)stage='no_reparsed_passage_action';
    else if(tally.length===0)stage='no_matching_tally';
    else if(signed.length===0)stage='named_ballot_still_missing';
@@ -152,10 +159,14 @@ export function summarize2022PassageRosterShadow(
     // original source URL / bill / date, not just missing passage votes.
     const reverse=(votesByScope.get(scope(v))??[]).filter(x=>
      x.yea_count===v.yea_count&&x.nay_count===v.nay_count
-     &&signature(x)===matched[0]!.ballotSignature);
+     &&signature(x)===matched[0]!.action.ballotSignature);
     if(reverse.length!==1)stage='repeated_accepted_ballot';
-    else if(!matchingQuestion(matched[0]!,v))stage='substantive_question_difference';
-    else stage='strict_unique_question_full_ballot_candidate';
+    else if(!matchingQuestion(matched[0]!.action,v))stage='substantive_question_difference';
+    else{
+     stage='strict_unique_question_full_ballot_candidate';
+     if(onStrict)onStrict({acceptedVote:v,sourceAction:matched[0]!.action,
+      sourceDocumentId:matched[0]!.sourceDocumentId});
+    }
    }
   }
   stages[stage]++;recordExample(examples,v,stage);
@@ -176,10 +187,10 @@ export function summarize2022PassageRosterShadow(
   fullBillTextsCertified:0
  };
 }
-/** The caller already has complete read-only accepted/source cohorts. */
-export async function read2022PassageRosterShadow(
- db:PoolClient,votes:readonly AcceptedVote[],actions:readonly ParsedAction[],expected:number
-):Promise<RosterShadowProof>{
+/** Source-documents are read only and never returned in logged summaries. */
+export async function read2022PassageRosterSourceDocs(
+ db:PoolClient,votes:readonly AcceptedVote[],actions:readonly ParsedAction[]
+):Promise<StoredJournal[]>{
  // Load only source documents relevant to unlinked 2021-22 passage votes,
  // not every unrelated journal/action in the three-biennium census.
  const candidateScopes=new Set(votes.filter(v=>v.session==='2021-2022'
@@ -196,5 +207,12 @@ export async function read2022PassageRosterShadow(
   " FROM source_documents WHERE id=ANY($1::uuid[]) ORDER BY id LIMIT 151",
   [ids]
  )).rows:[];
+ return docs;
+}
+/** The caller already has complete read-only accepted/source cohorts. */
+export async function read2022PassageRosterShadow(
+ db:PoolClient,votes:readonly AcceptedVote[],actions:readonly ParsedAction[],expected:number
+):Promise<RosterShadowProof>{
+ const docs=await read2022PassageRosterSourceDocs(db,votes,actions);
  return summarize2022PassageRosterShadow(votes,actions,docs,expected);
 }
