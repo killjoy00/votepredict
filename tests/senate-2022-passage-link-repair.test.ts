@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {strictStored2022PassageRepairPairs,SENATE_2022_PASSAGE_REPAIR}
+import {strictStored2022PassageRepairPairs,recognized2022PassageCoverageState,SENATE_2022_PASSAGE_REPAIR}
  from '../src/operations/senate-2022-passage-link-repair.js';
 import type {StrictSourcePassageMatch,StoredJournal}
  from '../src/operations/senate-2022-passage-roster-shadow.js';
@@ -95,4 +95,12 @@ test('source/action/vote id reuse is never promoted twice',()=>{
  assert.throws(()=>strictStored2022PassageRepairPairs(
   [match,match],[persisted],[original]),/Repeated persisted action|accepted vote/);
  assert.deepEqual(strictStored2022PassageRepairPairs([],[],[]),[]);
+});
+
+test('completed 2022 passage repair accepts ONLY the independent authenticated next-source question baselines',()=>{
+ for(const state of [[132,890,697],[31,991,596],[31,1022,565]])
+  assert.equal(recognized2022PassageCoverageState(...state as [number,number,number]),true);
+ for(const state of [[31,1022,596],[31,1023,564],[30,1022,565],
+  [132,991,596],[31,1127,460],[31,0,0]])
+  assert.equal(recognized2022PassageCoverageState(...state as [number,number,number]),false);
 });
