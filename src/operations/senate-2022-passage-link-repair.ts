@@ -165,7 +165,8 @@ export async function repair2022UniquePassageLinks(pool:Pool):Promise<PassageRep
    const expected=census.focused2021Passage.passageActionWithTallyButNoBallot;
    const previous=await exactCount(db);
    if(!((expected===132&&previous===890&&census.sameSourceUnlinked===697)
-    ||(expected===31&&previous===991&&census.sameSourceUnlinked===596))
+    ||(expected===31&&previous===991&&census.sameSourceUnlinked===596)
+    ||(expected===31&&previous===1022&&census.sameSourceUnlinked===565))
    )throw Error('Production official/paper exact-link baseline differs from reviewed 2022 receipt');
    const docs=await read2022PassageRosterSourceDocs(db,votes,actions);
    const pairs:StrictSourcePassageMatch[]=[];
