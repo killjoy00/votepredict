@@ -33,6 +33,55 @@ The original October 20, 2026 protected snapshot counted **2,308 accepted Senate
 
 Once the gaps are measured, first review journal-origin `same_source_day_bill_unlinked` votes by original question text, recorded ballot and amendment disposition. Every improvement must originate in authentic source evidence and pass exact-match conflict tests. The first source-backed pilot remains HF100 April 28, 2023: journal states first unofficial engrossment as the amendment base, with four amendments adopted and one rejected before final passage. The existing source-only PDF SHA ledger is not itself a stored event identity match. The live vote model and time-sensitive `senate_evidence_asof` remain untouched.
 
+### Population-wide same-journal exact-link failure census (#1498)
+
+The original protected read-only gap audit identifies **697 of 2,308** accepted
+Minnesota Senate votes in **2021–22 through 2025–26** that have a parsed
+paper on the **same original official journal URL, bill, and proceeding date**,
+but no exact accepted vote/question linkage. The preexisting population
+classification is **427 amendment votes, 203 passage votes, 55 motions
+and 12 other votes**, all in the Senate Journal source family.
+
+The protected paper-history readback now also performs an **independent
+source-only, population-wide first-failure census** within its verified
+`REPEATABLE READ READ ONLY` transaction. It enumerates all same-source
+eligible official votes (including already-linked votes to guard reverse
+uniqueness), all current source-local parsed actions in those scopes, and
+tests complete normalized **named ballots**, *both* yea/nay counts, source
+document identity, verified original-source cross-row provenance,
+and independently retained question text. A second strict count gate compares
+every unlinked vote to the previous `gapAudit` population by exact source
+URL/bill/date and rejects any missing, extra or duplicate event.
+
+Each unlinked vote receives **one exclusive first-failure reason**:
+
+- accepted named ballot incomplete (cannot determine a complete normalized roll)
+- parsed source paper lacks verified provenance across separate stored
+  source-document rows
+- paper lacks a complete named ballot, no matching tally, or different
+  complete named ballot
+- same named ballot appears on more than one paper or more than one
+  accepted event in the same source/bill/day context
+- identical source question/ballot but missing current link (possible
+  stale/hidden identity, backfill or fingerprint defect)
+- typography-only or question-intro-only wording difference, as a
+  **research candidate** and *not* a silent normalized exact question
+- substantive question difference (including motion-vs-passage wording)
+
+The instrument emits ONLY stage/session/vote-kind aggregate counts and at
+most eighteen **public bill/date/count** examples. It never logs member
+choices, names, original text, source URLs, internal event IDs, or bill
+version assumptions. It does not create provisional or exact links,
+change text captures, replay ordinal event identities, reclassify motions as
+passage, or change accepted official ballots.
+
+These stages should be used to choose one **reusable** parser/matcher
+repair, then re-run authentic-source and collision tests before enabling
+any individual link. In particular, tally-only similarity and same-bill/day
+proximity are never evidence of exact question identity. Do not extrapolate
+the 697 into 697 distinct bills or conflate a correct question link with
+certified amended bill text.
+
 ### Original-source HF100/HF1/HF7 individual cases
 
 The guarded protected production readback also reports `coverage.caseAudit` from the
