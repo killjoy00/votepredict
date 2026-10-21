@@ -25,6 +25,8 @@ on:
       - tests/senate-hf100-port-structural-pairs.test.ts
       - src/operations/senate-hf100-second-ue-successor-witness.ts
       - tests/senate-hf100-second-ue-successor-witness.test.ts
+      - src/operations/senate-hf100-public-safety-amount-audit.ts
+      - tests/senate-hf100-public-safety-amount-audit.test.ts
       - tests/senate-nested-hf1-original.test.ts
       - tests/senate-hf100-original-shadow.test.ts
       - src/operations/senate-history-archive.ts
@@ -56,6 +58,8 @@ on:
       - tests/senate-hf100-port-structural-pairs.test.ts
       - src/operations/senate-hf100-second-ue-successor-witness.ts
       - tests/senate-hf100-second-ue-successor-witness.test.ts
+      - src/operations/senate-hf100-public-safety-amount-audit.ts
+      - tests/senate-hf100-public-safety-amount-audit.test.ts
       - tests/senate-nested-hf1-original.test.ts
       - tests/senate-hf100-original-shadow.test.ts
       - src/operations/senate-history-archive.ts
