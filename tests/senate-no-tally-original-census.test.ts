@@ -64,6 +64,10 @@ test('source-verified original nested amendment full question and complete ballo
  assert.equal(a.verifiedOriginalDocuments,1);
  assert.equal(a.originalQuorumRostersRead,1);
  assert.equal(a.nestedUniqueQuestionBallotCandidates,1);
+ assert.equal(a.nestedStrongSourceUniqueCandidates,1);
+ assert.equal(a.nestedSourceBallotRepeated,0);
+ assert.equal(a.nestedConflictingV1PaperBallot,0);
+ assert.equal(a.nestedOriginalPrintedSpanInvalid,0);
  assert.equal(a.stages.nested_unique_question_ballot_candidate,1);
  assert.equal(a.exactLinksCreated,0);
  assert.equal(a.acceptedVotesChanged,false);
@@ -112,4 +116,51 @@ test('missing/truncated target cohort cannot pass an independent official denomi
   [source(),source()],[accepted()],baseline()),/bounds/);
  assert.throws(()=>summarizeNoTallyOriginalCensus([vote({bill:'private'})],[action()],
   [source()],[accepted()],baseline()),/Invalid public source bill/);
+});
+
+
+test('strong nested shadow releases callbacks ONLY with unique original printed source ballot and checked spans',()=>{
+ const ready:Array<{voteId:string;bill:string;questionOnly:boolean}>=[];
+ const r=summarizeNoTallyOriginalCensus([vote()],[action()],[source()],[accepted()],baseline(),
+  c=>ready.push({voteId:c.vote.id,bill:c.paper.billIdentifier,questionOnly:c.questionOnly}));
+ assert.deepEqual(ready,[{voteId:'vote-1',bill:'HF4',questionOnly:true}]);
+ assert.equal(r.nestedStrongSourceUniqueCandidates,1);
+});
+test('source repeated named ballot with another DISTINCT printed question never becomes a strong nested candidate',()=>{
+ const another=[
+  'Senator Abeler moved to amend the second Lucero amendment to H.F. No. 4 as follows:',
+  'Page 1, line 6, insert "SECOND WORDING".',
+  'The question was taken on the rejection of the amendment to the amendment.',
+  'The roll was called, and there were yeas 1 and nays 1, as follows:',
+  'Those who voted in the affirmative were:',
+  'Abeler',
+  'Those who voted in the negative were:',
+  'Boldon',
+  'The motion did not prevail. So the amendment to the amendment was not adopted.'
+ ].join('\n');
+ const calls:string[]=[];
+ const result=summarizeNoTallyOriginalCensus(
+  [vote()],[action()],[source({body:body(another)})],[accepted()],baseline(),
+  c=>calls.push(c.vote.id));
+ assert.equal(result.stages.nested_unique_question_ballot_candidate,1);
+ assert.equal(result.nestedStrongSourceUniqueCandidates,0);
+ assert.equal(result.nestedSourceBallotRepeated,1);
+ assert.equal(calls.length,0);
+});
+test('prior v1 source paper sharing the named ballot blocks nested source promotion',()=>{
+ const passage=[
+  'S.F. No. 999 was read the third time and placed on final passage.',
+  'The question was taken on the passage of the bill.',
+  'The roll was called, and there were yeas 1 and nays 1, as follows:',
+  'Those who voted in the affirmative were:',
+  'Abeler',
+  'Those who voted in the negative were:',
+  'Boldon',
+  'So the bill passed and its title was agreed to.'
+ ].join('\n');
+ const r=summarizeNoTallyOriginalCensus(
+  [vote()],[action()],[source({body:body(passage)})],[accepted()],baseline());
+ assert.equal(r.stages.nested_unique_question_ballot_candidate,1);
+ assert.equal(r.nestedStrongSourceUniqueCandidates,0);
+ assert.equal(r.nestedConflictingV1PaperBallot,1);
 });
