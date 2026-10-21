@@ -9,6 +9,7 @@ import {HF100_FIRST_UE_PDF,HF100_FIRST_UE_PDF_SHA256,HF100_FIRST_UE_PDF_BYTE_LEN
 import {assessHf100PortInstructionCoverage} from '../src/operations/senate-hf100-port-instruction-coverage.js';
 import {assessHf100PortStructuralPairs} from '../src/operations/senate-hf100-port-structural-pairs.js';
 import {assessHf100SecondUnofficialSuccessor,HF100_SECOND_UE_PDF,HF100_SECOND_UE_PDF_SHA256,HF100_SECOND_UE_PDF_BYTE_LENGTH} from '../src/operations/senate-hf100-second-ue-successor-witness.js';
+import {assessHf100PublicSafetyAmounts} from '../src/operations/senate-hf100-public-safety-amount-audit.js';
 import {fetchCanonicalGovernmentSource,boundedBody} from '../src/operations/senate-history-archive.js';
 import {hash} from '../src/operations/senate-vote-paper-parser.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
@@ -274,6 +275,28 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
   assert.equal(successor.completeAssembledBillText,false);
   assert.equal(successor.successorPreVotePublicAvailabilityCertified,false);
   assert.equal(successor.eventLinksAdded,0);
+  const fiscal=assessHf100PublicSafetyAmounts(actions,revisorText,successorText);
+  console.log('SENATE_HF100_HAUSCHILD_PUBLIC_SAFETY_ARITHMETIC='+JSON.stringify({
+   source:'original Journal + first-UE/second-UE SHA-pinned Revisor PDFs',
+   originalTablePairs:fiscal.editionTablePairsRead,
+   status:fiscal.status,
+   sourceSectionHolds:fiscal.sourceSectionHolds,
+   totalFirstYearDelta:fiscal.totalDelta?.first??null,
+   totalSecondYearDelta:fiscal.totalDelta?.second??null,
+   statePatrolFirstYearDelta:fiscal.statePatrolDelta?.first??null,
+   statePatrolSecondYearDelta:fiscal.statePatrolDelta?.second??null,
+   secondYearDeltaDisagreement:fiscal.secondYearDeltaDisagreement,
+   adjustmentReconciled:fiscal.adjustmentReconciled,
+   completeAmendedTextCertified:fiscal.completeAmendedTextCertified,
+   preVotePublicationCertified:fiscal.preVotePublicationCertified,
+   eventLinksAdded:fiscal.eventLinksAdded
+  }));
+  assert.equal(fiscal.status,'numeric_delta_hold_verified',
+   'Expected exact original-source numerical discrepancy is unverified; do not infer a corrected amount');
+  assert.equal(fiscal.secondYearDeltaDisagreement,500_000);
+  assert.equal(fiscal.adjustmentReconciled,false);
+  assert.equal(fiscal.completeAmendedTextCertified,false);
+  assert.equal(fiscal.eventLinksAdded,0);
   assert.equal(linePilot.fullyCheckedAdoptedAmendments,1);
   assert.equal(linePilot.adoptedAmendmentsStillHeldForCompositeApplication,4);
   assert.equal(linePilot.completeAssembledBillText,false);
