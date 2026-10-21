@@ -8,7 +8,7 @@ import {summarizeHf100TextChain} from '../src/operations/senate-hf100-text-chain
 import {HF100_FIRST_UE_PDF,HF100_FIRST_UE_PDF_SHA256,HF100_FIRST_UE_PDF_BYTE_LENGTH,assessHf100PrintedLinePilot} from '../src/operations/senate-hf100-printed-line-pilot.js';
 import {assessHf100PortInstructionCoverage} from '../src/operations/senate-hf100-port-instruction-coverage.js';
 import {assessHf100PortStructuralPairs} from '../src/operations/senate-hf100-port-structural-pairs.js';
-import {assessHf100SecondUnofficialSuccessor,HF100_SECOND_UE_PDF} from '../src/operations/senate-hf100-second-ue-successor-witness.js';
+import {assessHf100SecondUnofficialSuccessor,HF100_SECOND_UE_PDF,HF100_SECOND_UE_PDF_SHA256,HF100_SECOND_UE_PDF_BYTE_LENGTH} from '../src/operations/senate-hf100-second-ue-successor-witness.js';
 import {fetchCanonicalGovernmentSource,boundedBody} from '../src/operations/senate-history-archive.js';
 import {hash} from '../src/operations/senate-vote-paper-parser.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
@@ -237,6 +237,10 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
   assert.ok(secondBytes.length>20_000&&
    Buffer.from(secondBytes.subarray(0,5)).toString('ascii')==='%PDF-');
   const successorSha=hash(secondBytes);
+  assert.equal(secondBytes.length,HF100_SECOND_UE_PDF_BYTE_LENGTH,
+   'Independent original second-UE PDF byte length changed; review source before accepting');
+  assert.equal(successorSha,HF100_SECOND_UE_PDF_SHA256,
+   'Independent original second-UE PDF SHA drift: never substitute another edition');
   const successorParser=new PDFParse({data:Uint8Array.from(secondBytes),CanvasFactory});
   let successorText:string;
   try{successorText=(await successorParser.getText()).text}
@@ -256,6 +260,12 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
    completeAssembledBillText:successor.completeAssembledBillText,
    eventLinksAdded:successor.eventLinksAdded
   }));
+  assert.equal(successor.strictUniqueNewWitnesses,8,
+   'Original successor proof must retain eight uniquely new exact excerpts');
+  assert.equal(successor.heldWitnesses,1);
+  assert.deepEqual(successor.evidence.filter(x=>!x.verified).map(x=>x.id),
+   ['hauschild_public_safety_totals']);
+  assert.equal(successor.port1778FirstOccurrenceSuggestedBySuccessor,true);
   assert.equal(successor.amendmentsWithAtLeastOneSuccessorWitness,4,
    'Every adopted HF100 amendment requires at least one independently verified new successor wording witness');
   assert.ok(successor.strictUniqueNewWitnesses>=5,
