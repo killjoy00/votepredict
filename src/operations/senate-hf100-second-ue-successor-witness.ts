@@ -8,6 +8,9 @@ import {type PaperAction} from './senate-vote-paper-parser.js';
 import {assessHf100PrintedLinePilot} from './senate-hf100-printed-line-pilot.js';
 
 export const HF100_SECOND_UE_PDF='https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ue/2/pdf/';
+/** Independently downloaded from official Revisor in keyless PR CI. */
+export const HF100_SECOND_UE_PDF_SHA256='fd4f28a4c1068e10faba827ab4142c108f05aca6d34fe6028b52ac30b0651e3a';
+export const HF100_SECOND_UE_PDF_BYTE_LENGTH=5_749_963;
 export const HF100_SUCCESSOR_WITNESS_VERSION='senate-hf100-second-ue-successor-witness-v1' as const;
 type Owner='port'|'hauschild_local'|'hauschild_public_safety'|'hoffman';
 export const HF100_SUCCESSOR_WITNESS_TERMS:readonly {id:string;owner:Owner;wording:string}[]=[
