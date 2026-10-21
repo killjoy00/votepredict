@@ -99,6 +99,51 @@ An unresolved new anchor reduces the verified-local count and raises the
 held count; it never triggers a guessed amendment. No serving table or accepted
 vote/event link changes.
 
+### HF100 Port cross-line structural-pair preview (source-only)
+
+This second-stage verifier is deliberately separate from the preceding
+19-instruction **local-line** coverage audit. It pairs the exact FULL quoted
+original Senate Journal insertion wording with each immediately following
+line-deletion instruction and insists on the first-unofficial Revisor PDF's
+immutable printed coordinates. The journal and PDF original-byte SHA checks
+remain upstream hard gates.
+
+The three bounded pairs, collectively covering six previously held Port
+instructions, are:
+
+- **144.22 + delete 144.23:** preserve the unique `(a)` prefix,
+  replace its original remainder with the entire quoted *CanGrow revolving
+  loan account* language, delete original 144.23 and verify 144.24's
+  unchanged paragraph boundary.
+- **175.7 + delete 175.8:** likewise check complete quoted *CanStartup
+  revolving loan account* wording, consume original 175.8 and preserve
+  175.9's next paragraph.
+- **291.27 + delete 291.28-32:** require exactly two original commas,
+  replace only text after the **second** comma with the exact printed
+  `subdivision 4.`, consume all five original numbered lines, and
+  verify the unchanged 292.1 boundary. This last pair is held unless
+  prior Port instruction 291.26 has already passed its own unique
+  original-line anchor check.
+
+An isolated preview is **not** a cumulative layout-correct amendment:
+the PDF text extraction can fuse whitespace, original printed page.line
+references cannot be directly applied to an already reflowed edition,
+and the page **177.8** instruction says only `before "revolving"`
+although the printed line has *two* occurrences. It remains unresolved.
+The independent original-government canary enforces all three complete
+pairs and exactly 18 of Port's 19 source instructions having isolated
+operation checks (prior 12 local checks plus these six). **Port is still
+not completely applied** and *zero* composite bill states or pre-vote
+publication claims are authorized. The two adopted Hauschild amendments,
+including `Adjust amounts accordingly`, remain outstanding.
+
+If an original target line, span, punctuation or next-line boundary
+fails to match, the pair is **held**; it is never replaced by an inferred
+neighbor. Changed complete Senate quote/order or base-edition identity
+fails CI outright. The verifier produces only safe counts and static
+instruction ordinal/status labels, not bill text or ballots. No database
+migration, accepted vote or serving model is modified.
+
 ## Historical text and role dates
 
 The collector stages exact numbered, unofficial-engrossment and conference-report URLs, including official PDF representations, from existing text stores and explicit journal references. Legacy-store discovery prioritizes bills with Senate official votes or raw proceedings links; it does not spend the historical retrieval budget on every unrelated House bill. Exact base references are also queued for current original-body acquisition. Publisher redirects are followed only within the same explicit bill/edition/representation and biennium, or between the exact assignment-sheet paths on www.senate.mn and assets.senate.mn. Resolved source URLs are retained; off-site, wrong-bill and wrong-edition redirects are rejected before fetching. A current download proves current wording, not historical availability.

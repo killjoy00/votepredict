@@ -21,6 +21,8 @@ on:
       - tests/senate-hf100-printed-line-pilot.test.ts
       - src/operations/senate-hf100-port-instruction-coverage.ts
       - tests/senate-hf100-port-instruction-coverage.test.ts
+      - src/operations/senate-hf100-port-structural-pairs.ts
+      - tests/senate-hf100-port-structural-pairs.test.ts
       - tests/senate-nested-hf1-original.test.ts
       - tests/senate-hf100-original-shadow.test.ts
       - src/operations/senate-history-archive.ts
@@ -48,6 +50,8 @@ on:
       - tests/senate-hf100-printed-line-pilot.test.ts
       - src/operations/senate-hf100-port-instruction-coverage.ts
       - tests/senate-hf100-port-instruction-coverage.test.ts
+      - src/operations/senate-hf100-port-structural-pairs.ts
+      - tests/senate-hf100-port-structural-pairs.test.ts
       - tests/senate-nested-hf1-original.test.ts
       - tests/senate-hf100-original-shadow.test.ts
       - src/operations/senate-history-archive.ts

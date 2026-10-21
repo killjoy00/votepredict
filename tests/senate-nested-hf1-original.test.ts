@@ -7,6 +7,7 @@ import {identifyPrattSourceAction,HF100_ORIGINAL_SHADOW_VERSION} from '../src/op
 import {summarizeHf100TextChain} from '../src/operations/senate-hf100-text-chain-readiness.js';
 import {HF100_FIRST_UE_PDF,HF100_FIRST_UE_PDF_SHA256,HF100_FIRST_UE_PDF_BYTE_LENGTH,assessHf100PrintedLinePilot} from '../src/operations/senate-hf100-printed-line-pilot.js';
 import {assessHf100PortInstructionCoverage} from '../src/operations/senate-hf100-port-instruction-coverage.js';
+import {assessHf100PortStructuralPairs} from '../src/operations/senate-hf100-port-structural-pairs.js';
 import {fetchCanonicalGovernmentSource,boundedBody} from '../src/operations/senate-history-archive.js';
 import {hash} from '../src/operations/senate-vote-paper-parser.js';
 import {parseSenateJournalText} from '../src/sources/minnesota/senate-journals.js';
@@ -189,6 +190,34 @@ test('HF100 original paper verifier replay has complete named rolls and explicit
    completeAssembledBillText:portCoverage.completeAssembledBillText,
    eventLinksAdded:portCoverage.eventLinksAdded
   }));
+  // Additional source-only proof pairs the exact FULL original Port quotes
+  // with their next-line deletions. Original printed coordinates remain stable:
+  // no bill reflow, no guessed 177.8 occurrence, no composite passage text.
+  const portStructural=assessHf100PortStructuralPairs(actions,revisorText);
+  console.log('SENATE_HF100_PORT_STRUCTURAL_PAIRS='+JSON.stringify({
+   source:'HF100 first UE + April 28 original Journal',
+   journalStructuralInstructions:portStructural.journalStructuralInstructions,
+   pairedStructuralInstructionsVerified:portStructural.structurallyPairedInstructionsVerified,
+   previewPairs:portStructural.structuralPairsVerified,
+   priorIsolatedLocalInstructionsVerified:portStructural.priorIsolatedLocalInstructionsVerified,
+   totalIsolatedPortInstructionsVerified:portStructural.totalIsolatedPortInstructionsVerified,
+   portInstructionsStillHeld:portStructural.portInstructionsStillHeld,
+   exactFinalTextWhitespaceCertified:portStructural.exactFinalTextWhitespaceCertified,
+   portFullyApplied:portStructural.portFullyApplied,
+   completeAssembledBillText:portStructural.completeAssembledBillText,
+   eventLinksAdded:portStructural.eventLinksAdded
+  }));
+  assert.equal(portStructural.structuralPairsVerified,3,
+    'Each of three Port structural pairs must verify entire original quoted text, deletion and printed target');
+  assert.equal(portStructural.structurallyPairedInstructionsVerified,6);
+  assert.equal(portStructural.priorIsolatedLocalInstructionsVerified,12);
+  assert.equal(portStructural.totalIsolatedPortInstructionsVerified,18);
+  assert.equal(portStructural.portInstructionsStillHeld,1);
+  assert.equal(portStructural.portFullyApplied,false);
+  assert.equal(portStructural.completeAssembledBillText,false);
+  assert.equal(portStructural.exactFinalTextWhitespaceCertified,false);
+  assert.equal(portStructural.preVotePublicationProven,false);
+  assert.equal(portStructural.eventLinksAdded,0);
   assert.equal(portCoverage.sourceInstructionsIdentified,19);
   assert.ok(portCoverage.additionalLocalEditsVerified>=5,
    'Port must verify at least five NEW strict printed-line edits, or hold CI for review');
