@@ -97,3 +97,30 @@ test('unlinked cohort must match independent official 697-stage equivalent, not 
  assert.throws(()=>summarizeSameSourceFailures([vote({bill:'PRIVATE BILL'})],[action()],audit()),
   /unsafe public bill/);
 });
+
+
+test('2021-22 passage parser focus separates no passage action from incomplete printed passage ballot',()=>{
+ const v=vote({session:'2021-2022',vote_kind:'passage',bill:'SF123',
+  day:'2022-04-12'});
+ const a=action({kind:'amendment',ballot_sha256:null,day:v.day});
+ const noPassage=summarizeSameSourceFailures([v],[a],audit());
+ assert.equal(noPassage.totals.paper_ballot_absent,1);
+ assert.deepEqual(noPassage.focused2021Passage,{
+  missingPaperBallotVotes:1,noPassageAction:1,
+  passageActionWithTallyButNoBallot:0,passageActionWithoutTally:0,
+  examples:[{bill:'SF123',day:'2022-04-12',kind:'no_passage_action',votes:1}]
+ });
+ const withTally=summarizeSameSourceFailures([v],[action({
+  kind:'passage',ballot_sha256:null,day:v.day
+ })],audit()).focused2021Passage;
+ assert.equal(withTally.noPassageAction,0);
+ assert.equal(withTally.passageActionWithTallyButNoBallot,1);
+ assert.equal(withTally.passageActionWithoutTally,0);
+ const withoutTally=summarizeSameSourceFailures([v],[action({
+  kind:'passage',ballot_sha256:null,yea_count:null,nay_count:null,day:v.day
+ })],audit()).focused2021Passage;
+ assert.equal(withoutTally.noPassageAction,0);
+ assert.equal(withoutTally.passageActionWithTallyButNoBallot,0);
+ assert.equal(withoutTally.passageActionWithoutTally,1);
+ assert.equal(summarizeSameSourceFailures([vote()],[action()],audit()).focused2021Passage.missingPaperBallotVotes,0);
+});
