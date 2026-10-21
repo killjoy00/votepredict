@@ -36,7 +36,10 @@ function original(args:{additionalRoll?:boolean;quorum?:boolean}={}):string{
   'Housley',
   'So the bill passed and its title was agreed to.'
  ].join('\n');
- return attending.join('\n')+'\n'+roll+(args.additionalRoll?'\n'+roll:'');
+ // Source shadow intentionally rejects tiny/truncated originals; preserve a
+ // full-length fixture without changing the source roll or named ballots.
+ return attending.join('\n')+'\n'+roll+(args.additionalRoll?'\n'+roll:'')+
+  '\n'+('Official Senate Journal proceedings continued. '.repeat(45));
 }
 function action(changes:Partial<ParsedAction>={}):ParsedAction{
  return {id:'action-a',source_id:sourceId,source_url:url,bill_id:'bill-1',
