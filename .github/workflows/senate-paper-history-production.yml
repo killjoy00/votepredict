@@ -13,6 +13,8 @@ on:
       - scripts/probe-senate-181-tally-originals.ts
       - src/operations/senate-no-tally-original-census.ts
       - src/operations/senate-raw-original-strong-source-audit.ts
+      - src/operations/senate-nested-question-exact-repair.ts
+      - tests/senate-nested-question-exact-repair.test.ts
       - tests/senate-raw-original-strong-source-audit.test.ts
       - tests/senate-no-tally-original-census.test.ts
       - src/operations/senate-2022-passage-roster-shadow.ts
@@ -58,6 +60,8 @@ on:
       - scripts/probe-senate-181-tally-originals.ts
       - src/operations/senate-no-tally-original-census.ts
       - src/operations/senate-raw-original-strong-source-audit.ts
+      - src/operations/senate-nested-question-exact-repair.ts
+      - tests/senate-nested-question-exact-repair.test.ts
       - tests/senate-raw-original-strong-source-audit.test.ts
       - tests/senate-no-tally-original-census.test.ts
       - src/operations/senate-2022-passage-roster-shadow.ts
