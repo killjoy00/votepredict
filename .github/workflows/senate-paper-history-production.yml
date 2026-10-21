@@ -13,6 +13,8 @@ on:
       - src/sources/minnesota/senate-assignment-pdf.ts
       - tests/senate-role-collection.test.ts
       - src/operations/senate-vote-paper-parser.ts
+      - src/operations/senate-same-source-question-census.ts
+      - tests/senate-same-source-question-census.test.ts
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-hf100-original-shadow.ts
       - src/operations/senate-hf100-text-chain-readiness.ts
@@ -46,6 +48,8 @@ on:
       - src/sources/minnesota/senate-assignment-pdf.ts
       - tests/senate-role-collection.test.ts
       - src/operations/senate-vote-paper-parser.ts
+      - src/operations/senate-same-source-question-census.ts
+      - tests/senate-same-source-question-census.test.ts
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-hf100-original-shadow.ts
       - src/operations/senate-hf100-text-chain-readiness.ts
