@@ -42,7 +42,7 @@ const STAGES:readonly TallyFailure[]=[
  'raw_roll_different_question','raw_roll_different_bill',
  'printed_tally_without_full_named_match'
 ];
-interface OriginalJournal {
+export interface OriginalJournal {
  id:string;source_url:string;source_type:string|null;body:string|null;
  original_verified:boolean;
 }
@@ -51,6 +51,9 @@ export interface DayAccepted {
  billIdentifier:string|null;voteKind:string;motionText:string;
  yeas:number;nays:number;votes:Array<{name:string;choice:string}>;
  existingExact:boolean;
+}
+export interface NestedOriginalCandidate {
+ accepted:AcceptedVote;paper:NestedSenateSourcePaper;source:OriginalJournal;
 }
 export interface NoTallyOriginalCensus {
  schemaVersion:typeof SENATE_NO_TALLY_ORIGINAL_CENSUS;
@@ -125,7 +128,8 @@ function acceptedPeers(v:AcceptedVote,day:readonly DayAccepted[]):DayAccepted[]{
 export function summarizeNoTallyOriginalCensus(
  votes:readonly AcceptedVote[],actions:readonly ParsedAction[],
  docs:readonly OriginalJournal[],dayAccepted:readonly DayAccepted[],
- existing:SameSourceQuestionCensus
+ existing:SameSourceQuestionCensus,
+ onUniqueNested?: (candidate:NestedOriginalCandidate)=>void
 ):NoTallyOriginalCensus{
  if(votes.length>2500||actions.length>6500||docs.length>220
   ||dayAccepted.length>2500||new Set(docs.map(d=>d.id)).size!==docs.length)
@@ -180,7 +184,10 @@ export function summarizeNoTallyOriginalCensus(
       stage='nested_repeated_accepted_ballot';
      else if(exactlySame.length!==1)stage='nested_repeated_source_question';
      else if(v.vote_kind!=='amendment')stage='nested_different_question';
-     else stage='nested_unique_question_ballot_candidate';
+     else{
+      stage='nested_unique_question_ballot_candidate';
+      if(onUniqueNested)onUniqueNested({accepted:v,paper:exactlySame[0]!,source:d.source});
+     }
     }else if(sameBallot.length)stage='nested_different_question';
     else if(matches.length && matches.every(p=>p.ballotSha256===null))
      stage='nested_matching_tally_no_full_ballot';
@@ -230,10 +237,10 @@ export function summarizeNoTallyOriginalCensus(
 /** Protected caller holds verified REPEATABLE READ READ ONLY. Only original
  * government-source-verified same-day Journal docs are eligible.
  */
-export async function readNoTallyOriginalCensus(
+export async function readNoTallyOriginalRows(
  db:PoolClient,votes:readonly AcceptedVote[],actions:readonly ParsedAction[],
  previous:SameSourceQuestionCensus
-):Promise<NoTallyOriginalCensus>{
+):Promise<{docs:OriginalJournal[];dayAccepted:DayAccepted[]}>{
  const actionsByScope=new Map<string,ParsedAction[]>();
  const votesByScope=new Map<string,AcceptedVote[]>();
  for(const a of actions){const k=scoped(a),x=actionsByScope.get(k)??[];x.push(a);actionsByScope.set(k,x)}
@@ -276,5 +283,13 @@ export async function readNoTallyOriginalCensus(
   'ORDER BY d.source_url,v.occurred_on,v.id LIMIT 2501'
  ].join(' '),[urls])).rows;
  if(dayAccepted.length>=2501)throw Error('Original-day accepted ballot cross-bill collision census truncated');
+ return {docs,dayAccepted};
+}
+/** Original source no-tally diagnostic still runs entirely inside caller's read-only transaction. */
+export async function readNoTallyOriginalCensus(
+ db:PoolClient,votes:readonly AcceptedVote[],actions:readonly ParsedAction[],
+ previous:SameSourceQuestionCensus
+):Promise<NoTallyOriginalCensus>{
+ const {docs,dayAccepted}=await readNoTallyOriginalRows(db,votes,actions,previous);
  return summarizeNoTallyOriginalCensus(votes,actions,docs,dayAccepted,previous);
 }
