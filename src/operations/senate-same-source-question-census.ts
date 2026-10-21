@@ -27,6 +27,8 @@ export interface AcceptedVote {
 export interface ParsedAction {
  id:string;source_id:string;source_url:string;bill_id:string;
  day:string;kind:string;sequence:number;
+ /** Immutable v1 printed offsets/key; required before promoting a source-only reparse. */
+ action_key?:string;source_start?:number;source_end?:number;source_payload_sha256?:string;
  question_text:string;motion_text:string;
  yea_count:number|null;nay_count:number|null;
  ballot_sha256:string|null;original_source_verified:boolean;
@@ -102,7 +104,8 @@ const voteQuery=[
 const actionQuery=[
  "SELECT a.id::text AS id,a.source_document_id::text AS source_id,",
  "a.source_url,a.bill_id::text AS bill_id,a.occurred_on::text AS day,",
- "a.kind,a.sequence,a.question_text,a.motion_text,a.yea_count,a.nay_count,",
+ "a.kind,a.sequence,a.action_key,a.source_start,a.source_end,a.source_payload_sha256,",
+ "a.question_text,a.motion_text,a.yea_count,a.nay_count,",
  "a.ballot_sha256,a.original_source_verified",
  "FROM senate_vote_paper_current_v a",
  "WHERE EXISTS(SELECT 1 FROM vote_events v",

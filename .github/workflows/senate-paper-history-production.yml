@@ -11,6 +11,8 @@ on:
       - scripts/verify-senate-paper-history-original.ts
       - scripts/probe-senate-2022-passage-original.ts
       - src/operations/senate-2022-passage-roster-shadow.ts
+      - src/operations/senate-2022-passage-link-repair.ts
+      - tests/senate-2022-passage-link-repair.test.ts
       - tests/senate-2022-passage-roster-shadow.test.ts
       - docs/sources/senate-vote-papers-history.md
       - src/sources/minnesota/senate-assignment-pdf.ts
@@ -49,6 +51,8 @@ on:
       - scripts/verify-senate-paper-history-original.ts
       - scripts/probe-senate-2022-passage-original.ts
       - src/operations/senate-2022-passage-roster-shadow.ts
+      - src/operations/senate-2022-passage-link-repair.ts
+      - tests/senate-2022-passage-link-repair.test.ts
       - tests/senate-2022-passage-roster-shadow.test.ts
       - docs/sources/senate-vote-papers-history.md
       - src/sources/minnesota/senate-assignment-pdf.ts
