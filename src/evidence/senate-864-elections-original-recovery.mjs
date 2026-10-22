@@ -160,7 +160,8 @@ function conflictsPotentially(same,q,doc){
  return same.some(e=>{
    if(e.bill_identifier&&e.bill_identifier!==q.bill)return false;
    if(e.yea_count!==q.yea||e.nay_count!==q.nay)return false;
-   if(e.source_document_id&&e.source_document_id!==doc.id)return false;
+   // A different source-document representation is a potential duplicate, not proof of absence.
+   if(e.source_document_id&&e.source_document_id!==doc.id)return true;
    if(e.bill_identifier===q.bill&&e.amendment_ref&&q.ref&&ref(e.amendment_ref)!==ref(q.ref)&&
       new RegExp('\\b'+ref(e.amendment_ref)+'\\b').test(norm(e.motion_text)))return false;
    return true;
@@ -184,7 +185,8 @@ export function recoveryPlan(proof,s){
    if(new Set(votes.map(x=>x.membershipId)).size!==votes.length)throw Error('Duplicated active historical person');
   }catch{holds.push({date:q.date,question:q.question,reason:'unresolved_historical_full_name_or_session'});continue;}
   const same=s.events.filter(e=>e.occurred_on===q.date&&
-    (e.source_document_id===doc.id||e.metadata?.committeeName==='Elections'));
+    (e.source_document_id===doc.id||['Elections','Committee on Elections'].includes(e.metadata?.committeeName)||
+     e.metadata?.committeeVote===true&&e.bill_identifier===q.bill));
   const anchors=same.filter(e=>e.bill_identifier===q.bill&&anchor(q,e));
   if(anchors.length>1){holds.push({date:q.date,question:q.question,reason:'multiple_existing_parliamentary_anchors'});continue;}
   if(anchors.length===1){
