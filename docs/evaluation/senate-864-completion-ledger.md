@@ -991,7 +991,7 @@ independently re-fetched and SHA-verified, with exact original printed
 YEA/NAY partitions. [PR #1534](https://github.com/killjoy00/votepredict/pull/1534)
 contains the fixed original-source proof and guarded single-cohort readback.
 
-| Source-only denominator | Original proof | Admitted source question | Held original source |
+| Original-source denominator | Original proof | Admitted source question | Held original source |
 | --- | ---: | ---: | ---: |
 | Official 2023 Elections Minutes | **7/7** PDFs/texts | Seven source identities verified | Zero original acquisition failures |
 | Individually named rolls | **10** | **1** uniquely linked original motion | **9** unresolved question/outcome links |
@@ -1011,30 +1011,73 @@ These are authenticated **source roll passages**, not certified omitted
 database events. No ordinal key, matching voting slate, attendance, aggregate
 tally, or formal result alone is allowed to identify their parliamentary motion.
 
-**Candidate requiring protected production parity:** the single original
-February 7 SF3 A35 amendment, 14 expressly printed named YEA/NAY sides,
-failed 6–8. Source-only proof does **not** prove the event is missing in Neon.
-The guarded readback must establish whether it is already stored, contains
-only some choices, conflicts with legacy representation, or is absent.
-Until its protected receipt exists, the safe new production deltas for this
-2023 cohort are **0 verified events / 0 verified choices**. Historic production
-baselines elsewhere in this ledger are not refreshed by the source-only pass.
+**Protected production comparison and verified correction (October 22, 2026 UTC):**
+[PR #1534](https://github.com/killjoy00/votepredict/pull/1534)
+merged as commit `d310a3ba2f3c634910b0b71ae052609e32fd20b0` with protected
+source-recovery marker `SENATE864_ELECTIONS_2023_ORIGINAL_GUARDED_V1`.
+[Successful GitHub Actions run #39831554208](https://github.com/killjoy00/votepredict/actions/runs/39831554208),
+on that exact SHA, completed independent keyless source proofs, application
+checks, focused regression tests, high-severity dependency audit, protected
+Neon production reconciliation and **independent post-write read-back** at
+`2026-10-22T18:31:44.428Z` (receipt artifact
+`senate864-elections-2023-original-production-verified`, artifact ID
+`12449217877`). The workflow independently authenticated the seven original
+PDF/text fingerprints and all ten source rolls before opening production
+credentials.
 
-**Source/CI and dependency history:** the exact seven-original source check,
-full application checks and focused tests passed
-[Actions #39824307748](https://github.com/killjoy00/votepredict/actions/runs/39824307748);
-that earlier run and regular CI #39824307788 then failed their final
-critical npm audit because the branch predated the upstream Next.js fix.
-This dependency blocker **has since been resolved on main** with
-Next.js 16.4.2, matching SWC packages and
-[successful main CI #39824907445](https://github.com/killjoy00/votepredict/actions/runs/39824907445)
-(including the production dependency audit). Previous failed attempts made
-**zero production changes**. Production write/readback success must be stated
-only after a new independently passing protected main push and exact receipt.
+Within a bounded, explicit `REPEATABLE READ READ ONLY` production snapshot
+(explicit `ROLLBACK`), all seven exact source documents matched by URL,
+SHA and meeting date, with **0 previously materialized candidate events
+and 0 named choices** on the seven selected meeting dates. Historical
+membership identities and seven Senate bill references were resolved without
+surname-only matching. Only **one original question** satisfied the
+source-specific parliamentary proof: **February 7, 2023 SF3 A35 amendment,
+failed 6–8, with 14 original named YEA/NAY sides**.
 
-**Stopping rule:** no larger parser exploration or ambiguous source-motion
-reconstruction; compare only the one separately authenticated question
-through the guarded GitHub Actions → existing Neon primary, keep all others
-held. Preserve existing historical event IDs and choices, next-day eligibility,
-Senate floor, serving/weights/training/evaluation freezes, Vercel and schedulers.
-Issue #864 remains open; population-wide completeness is not certified.
+The guarded **SERIALIZABLE** transaction rechecked the same source, session,
+committee/date, question and member/choice identities, then committed
+**1 new committee event and 14 explicit individual choices**. No pre-existing
+event or choice was modified or removed; **0 classification corrections**
+were necessary. A separate `REPEATABLE READ READ ONLY` transaction with
+explicit `ROLLBACK` confirmed the original question as exactly stored,
+**14/14 choices present**, and **zero additional writes on replay**.
+Source-choice ordinals were not fabricated. Official hearing-day timestamps
+with next-day eligibility and same-day exclusion were preserved.
+
+**Production source-to-stored read-back by year** (each row is a live
+before/after result from the successful protected execution, not an estimate):
+
+| Hearing year | Events before → after | Explicit choices before → after | New events | New choices |
+| --- | ---: | ---: | ---: | ---: |
+| 2022 | 38 → 38 | 259 → 259 | 0 | 0 |
+| 2023 | **35 → 36** | **217 → 231** | **1** | **14** |
+| 2024 | 56 → 56 | 297 → 297 | 0 | 0 |
+| 2025 | 53 → 53 | 539 → 539 | 0 | 0 |
+| **2022–2025** | **182 → 183** | **1,312 → 1,326** | **1** | **14** |
+
+The 2023 named-vote-bearing materialized event count changed **24 → 25**;
+hearing-date-timing-classified events changed **2 → 3**. The source holds remain
+**9 questions / 119 printed YEA/NAY choice occurrences**, and have **not**
+been promoted, deduplicated by voting slate or claimed as absent from storage.
+These fixed original-source counts do **not** imply population-wide Minutes
+motion completeness or authorization to expand the cohort.
+
+**CI and dependency chronology:** source proof, `npm run check` and
+focused tests passed the earlier
+[prepatch source run #39824307748](https://github.com/killjoy00/votepredict/actions/runs/39824307748),
+but that attempt and standard CI were blocked by the then-critical Next.js
+16.4.0 audit. After main pinned patched Next.js **16.4.2** and matching SWC
+dependencies, [PR #1534 source-only CI #39830904035](https://github.com/killjoy00/votepredict/actions/runs/39830904035)
+and [standard PR CI #39830903943](https://github.com/killjoy00/votepredict/actions/runs/39830903943)
+both passed, including the production dependency audit. Exact post-merge
+[production run #39831554208](https://github.com/killjoy00/votepredict/actions/runs/39831554208)
+also passed all gates and its protected write/readback job. Older failed
+attempts did **not** write to production.
+
+**Bounded stopping rule met:** the one separately authenticated source
+question is now reconciled and verified in production. Do not expand these
+seven Minutes or reconstruct the nine held questions without new
+independent exact-question evidence. Existing historical event IDs and
+choices, Senate floor, serving/weights/training/evaluation freezes, Vercel,
+and scheduler state are unchanged. **Issue #864 remains open** because this
+one repaired question is not a population-wide completeness certificate.
