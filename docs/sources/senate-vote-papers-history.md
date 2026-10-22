@@ -135,6 +135,38 @@ The 105 raw-only candidates are analyzed separately and
 remain unlinked until their original printed question
 boundary and source ballot uniqueness are verified.
 
+### Strict source-unique raw Senate Journal question-only promotion (#1498)
+
+The independent original-government-source census identifies **105**
+preliminary raw Journal question matches, but the stronger printed-question
+source-side audit clears only **89 of those 105**, in **57** authenticated
+source documents. The remaining **12** have insufficiently proved original
+question spans or bill context and **4** share their complete source ballot
+with a separate parsed original paper. They remain HELD. Both the
+independent HF4 and HF4124 original SHA-pinned Journal PDF canaries are
+mandatory.
+
+The optional promotion is permitted only after the separately verified
+31 nested question links, from **1,022 exact / 565 same-Journal
+unlinked / 150 no-matching-tally**. It recomputes all 105 original
+source-side proofs in a single serializable transaction and must obtain
+**exactly 89** mutually unique printed questions and full named ballots.
+Each is independently bound to the exact original roll-header and question
+character offsets, authenticated full Journal extracted-text SHA, original
+printed bill/day, yea/nay, accepted question, accepted full normalized member
+votes and the database's existing event identity fingerprint.
+
+The repair inserts only a namespaced append-only **question-only** paper
+action (unknown outcome, no proposed amendment text, no bill-text base, no
+prior-adoption assertion) and one strict exact event edge. It does not touch
+a source body, old paper action, accepted vote/member choice, bill version,
+serving model or schema. Any conflict must roll the **whole 89-link batch
+back**. A successful committed readback must prove **1,111 exact links
+and 476 same-Journal unlinked**; later protected runs must be strict
+zero-insert no-ops. No claim of complete amended bill text follows from
+question identity. The original **16 source-side holds** and all separately
+ambiguous ballots are preserved.
+
 ### Raw Senate Journal roll-question source-position proof (105 preliminary cases)
 
 The original-source-read-only census separately identified **105**
