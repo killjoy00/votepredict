@@ -133,6 +133,23 @@ function proofOfMotion(text,spec,nextAt){
   throw Error('Original source result disagrees with selected parliamentary question');
  return {passed,contextSha256:sha(context+'|'+segment.slice(0,(outcome.index??0)+outcome[0].length))};
 }
+/**
+ * Narrow original-question holds cannot waive original bytes, named sides,
+ * numeric-tally parity, or historical member identity checks. Never turn an
+ * arbitrary parsing/network exception into a silent skip.
+ */
+export function sourceProofHoldReason(reason){
+ const eligible={
+  'Original question bill identity not separately proven':'original_bill_context_unproved',
+  'Original numbered amendment identity not proven':'original_amendment_identity_unproved',
+  'Original oral amendment identity not proven':'original_oral_amendment_unproved',
+  'Original committee recommendation identity not proven':'original_recommendation_unproved',
+  'Original source result disagrees with selected parliamentary question':'original_question_outcome_conflict'
+ };
+ return Object.hasOwn(eligible,reason)?eligible[reason]:
+  (/^Original source outcome unbound on 2023-0[1-3]-\d\d offset \d{3,5}$/.test(reason)
+   ?'original_named_roll_outcome_unbound':null);
+}
 export function verifyOriginals(originals){
  const queue=sourceQueue();
  if(originals.length!==7||new Set(originals.map(x=>x.date)).size!==7)
@@ -170,17 +187,7 @@ export function verifyOriginals(originals){
     // A source question that cannot be bound to one authenticated exact
     // parliamentary motion is a HOLD, never a guessed vote. Original YEA/NAY
     // names, numeric tally, 14-person partition and PDF SHA remain verified.
-    const reason=String(error?.message||'');
-    const allowed={
-     'Original question bill identity not separately proven':'original_bill_context_unproved',
-     'Original numbered amendment identity not proven':'original_amendment_identity_unproved',
-     'Original oral amendment identity not proven':'original_oral_amendment_unproved',
-     'Original committee recommendation identity not proven':'original_recommendation_unproved',
-     'Original source result disagrees with selected parliamentary question':'original_question_outcome_conflict'
-    };
-    const hold=allowed[reason]||
-     (/^Original source outcome unbound on 2023-0[1-3]-\d\d offset \d{3,5}$/.test(reason)
-      ?'original_named_roll_outcome_unbound':null);
+    const hold=sourceProofHoldReason(String(error?.message||''));
     if(!hold)throw error;
     sourceHolds.push({date:selectedSpec.date,offset:selectedSpec.offset,
       choices:votes.length,reason:hold});
