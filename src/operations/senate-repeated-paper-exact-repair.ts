@@ -226,7 +226,12 @@ export async function repairRepeatedOriginalSenateQuestions(pool:Pool):Promise<R
    const postNamed=before===1255&&census.sameSourceUnlinked===332
     &&census.totals.no_matching_tally<=61
     &&census.totals.paper_ballot_absent<=56;
-   if(!initial&&!already&&!postAccepted&&!postNamed)
+   // Exactly 99 certified source questions may reclassify only the other
+   // 51 paperless accepted votes; this old 64-link writer remains a no-op.
+   const postOrphan=before===1354&&census.sameSourceUnlinked>=332
+    &&census.sameSourceUnlinked<=383
+    &&census.totals.no_matching_tally<=112;
+   if(!initial&&!already&&!postAccepted&&!postNamed&&!postOrphan)
     throw Error('Original repeated paper exact-link protected population baseline drifted');
    const uniques:UniqueOriginalRoll[]=[];
    const original=await readRepeatedOriginalRollAudit(
@@ -235,10 +240,10 @@ export async function repairRepeatedOriginalSenateQuestions(pool:Pool):Promise<R
    if(original.repeatedPaperVoteCohort!==census.totals.ballot_repeated_across_papers
     ||original.sourceUniqueQuestionBallotCandidates!==uniques.length
     ||pairs.length!==uniques.length
-    ||original.stages.original_source_not_unique_verified!==0
-    ||original.stages.original_roster_or_raw_header_unreadable!==0
-    ||(!postAccepted&&!postNamed&&original.stages.original_printed_question_and_ballot_absent!==0)
-    ||(!postNamed&&original.stages.accepted_day_question_and_ballot_repeated!==0)
+    ||(!postOrphan&&original.stages.original_source_not_unique_verified!==0)
+    ||(!postOrphan&&original.stages.original_roster_or_raw_header_unreadable!==0)
+    ||(!postAccepted&&!postNamed&&!postOrphan&&original.stages.original_printed_question_and_ballot_absent!==0)
+    ||(!postNamed&&!postOrphan&&original.stages.accepted_day_question_and_ballot_repeated!==0)
     ||!((initial&&original.originalDocumentsInspected===40&&pairs.length===64
       &&original.stages.original_printed_question_and_ballot_repeated===143
       &&original.stages.original_question_span_or_bill_unproven===3)
@@ -252,7 +257,10 @@ export async function repairRepeatedOriginalSenateQuestions(pool:Pool):Promise<R
       &&original.stages.original_question_span_or_bill_unproven<=6)
      ||(postNamed&&pairs.length===0
       &&original.originalDocumentsInspected<=220
-      &&original.repeatedPaperVoteCohort<=332)))
+      &&original.repeatedPaperVoteCohort<=332)
+     ||(postOrphan&&pairs.length===0
+      &&original.originalDocumentsInspected<=220
+      &&original.repeatedPaperVoteCohort<=383)))
     throw Error('Independent entire ORIGINAL Journal repeated question roll or 64-candidate proof drifted');
    for(const p of pairs)await insertOne(db,p);
    const after=await exactCount(db);
