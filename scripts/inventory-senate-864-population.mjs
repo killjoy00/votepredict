@@ -66,7 +66,22 @@ export function summarize(rows,questions,snapshot){
  const committee=[...groups.values()].sort((a,b)=>a.year-b.year||a.committee.localeCompare(b.committee)),numeric=Object.keys(committee[0]).filter(k=>!['year','committee'].includes(k));
  const year=[2022,2023,2024,2025].map(year=>Object.fromEntries([['year',year],...numeric.map(k=>[k,committee.filter(m=>m.year===year).reduce((n,m)=>n+m[k],0)])]));
  const stored=year.map(({year})=>{const e=snapshot.events.filter(e=>e.occurred_on.startsWith(String(year))),ids=new Set(e.map(e=>e.id));return {year,storedEvents:e.length,storedExplicitChoices:snapshot.choices.filter(v=>ids.has(v.vote_event_id)).length};});
- return {byYear:year,byCommittee:committee,productionCategories:categories,storedByYear:stored};
+ const productionGroups=new Map();
+ for(const e of snapshot.events){
+  const year=Number(e.occurred_on.slice(0,4)),committee=e.metadata?.committeeName||'(unclassified committee label)',k=year+'|'+committee;
+  const m=productionGroups.get(k)||{year,committee,storedEvents:0,storedExplicitChoices:0};
+  m.storedEvents++;m.storedExplicitChoices+=snapshot.choices.filter(v=>v.vote_event_id===e.id).length;productionGroups.set(k,m);
+ }
+ const storedByCommittee=[...productionGroups.values()].sort((a,b)=>a.year-b.year||a.committee.localeCompare(b.committee));
+ return {byYear:year,byCommittee:committee,productionCategories:categories,storedByYear:stored,storedByCommittee};
+}
+function committeeMatrix(summary){
+ const fields=Object.keys(summary.byCommittee[0]),groups=new Map(summary.byCommittee.map(m=>[m.year+'|'+m.committee,{...m,storedEventsForExactCommitteeLabel:0,storedExplicitChoicesForExactCommitteeLabel:0}]));
+ for(const p of summary.storedByCommittee){
+  const k=p.year+'|'+p.committee,m=groups.get(k)||Object.fromEntries(fields.map(f=>[f,f==='year'?p.year:f==='committee'?p.committee:null]));
+  m.storedEventsForExactCommitteeLabel=p.storedEvents;m.storedExplicitChoicesForExactCommitteeLabel=p.storedExplicitChoices;groups.set(k,m);
+ }
+ return [...groups.values()].sort((a,b)=>a.year-b.year||a.committee.localeCompare(b.committee));
 }
 const csv=rows=>{const keys=Object.keys(rows[0]),cell=x=>'"'+String(x??'').replaceAll('"','""')+'"';return keys.map(cell).join(',')+'\n'+rows.map(r=>keys.map(k=>cell(r[k])).join(',')).join('\n')+'\n';};
 
@@ -132,8 +147,8 @@ async function main(){
  save(OUT+'/senate-864-population-original-registry-20261022.json',rows.map(({sourceId,sourceUrl,originalSha256,extractedTextSha256,date,committee,session,format,authenticated,readable,extractionMethod})=>({sourceId,sourceUrl,originalSha256,extractedTextSha256,date,committee,session,format,authenticated,readable,extractionMethod})));
  save(OUT+'/senate-864-population-original-inventory-20261022.json',{...summary,originals:rows,distinctRowQuestions:questions});
  save(OUT+'/senate-864-population-summary-20261022.json',summary);
- writeFileSync(OUT+'/senate-864-population-committee-before-20261022.csv',csv(before.byCommittee));writeFileSync(OUT+'/senate-864-population-committee-after-20261022.csv',csv(after.byCommittee));
- console.log('SENATE864_POPULATION_INVENTORY='+JSON.stringify({...summary,before:{...before,byCommittee:undefined},after:{...after,byCommittee:undefined}}));
+ writeFileSync(OUT+'/senate-864-population-committee-before-20261022.csv',csv(committeeMatrix(before)));writeFileSync(OUT+'/senate-864-population-committee-after-20261022.csv',csv(committeeMatrix(after)));
+ console.log('SENATE864_POPULATION_INVENTORY='+JSON.stringify({...summary,before:{...before,byCommittee:undefined,storedByCommittee:undefined},after:{...after,byCommittee:undefined,storedByCommittee:undefined}}));
  }finally{await pool.end();}
 }
 if(process.argv[1]===import.meta.filename){
