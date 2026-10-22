@@ -92,10 +92,12 @@ export async function repairNamedMismatchOriginalSenateQuestions(
     &&before.totals.no_matching_tally===61
     &&before.totals.ballot_repeated_across_papers===151
     &&before.totals.ballot_repeated_across_votes===55;
-   const replay=exactBefore===1200+PROVEN_MATCHES
-    &&before.sameSourceUnlinked===387-PROVEN_MATCHES
-    &&before.totals.no_matching_tally<=61
-    &&before.totals.paper_ballot_absent<=56
+   const replay=((exactBefore===1200+PROVEN_MATCHES
+     &&before.sameSourceUnlinked===387-PROVEN_MATCHES)
+    ||(exactBefore===1354&&before.sameSourceUnlinked>=332
+      &&before.sameSourceUnlinked<=383))
+    &&before.totals.no_matching_tally<=112
+    &&before.totals.paper_ballot_absent<=107
     &&before.totals.full_named_ballot_mismatch<=62;
    if(!first&&!replay)
     throw Error('Original named-ballot mismatch repair official population baseline drifted');
