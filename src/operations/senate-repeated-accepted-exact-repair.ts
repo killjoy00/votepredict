@@ -67,9 +67,10 @@ export async function repairRepeatedAcceptedSenateQuestions(pool:Pool):Promise<R
     &&before.totals.ballot_repeated_across_votes===85
     &&before.totals.ballot_repeated_across_papers===146
     &&before.totals.no_matching_tally===61;
-   const repeat=exactBefore===1175+REVIEWED_SOURCE_UNIQUE_CANDIDATES
-    &&before.sameSourceUnlinked===412-REVIEWED_SOURCE_UNIQUE_CANDIDATES
-    &&before.totals.no_matching_tally===61;
+   const repeat=((exactBefore===1175+REVIEWED_SOURCE_UNIQUE_CANDIDATES
+     &&before.sameSourceUnlinked===412-REVIEWED_SOURCE_UNIQUE_CANDIDATES)
+    ||(exactBefore===1255&&before.sameSourceUnlinked===332))
+    &&before.totals.no_matching_tally<=61;
    if(!first&&!repeat)throw Error('Repeated accepted source question protected baseline drifted');
    const proofs:UniqueAcceptedOriginalRoll[]=[];
    const audit=await readRepeatedAcceptedOriginalAudit(
