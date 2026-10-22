@@ -1,0 +1,132 @@
+{
+  "version": "senate864-population-named-rolls-v1",
+  "cohort": "prior",
+  "reviewedCommit": "740f401616014443d43d3cc58c83e1c6106beb68",
+  "verifiedAt": "2026-10-22T21:24:37.998Z",
+  "sourceOriginals": 8,
+  "independentlyReverifiedPriorQuestions": 1,
+  "sourceProvenQuestions": 1,
+  "sourceProvenChoices": 14,
+  "previousExact": 0,
+  "insertedEvents": 1,
+  "insertedChoices": 14,
+  "correctedClassifications": 0,
+  "preservedExistingTargetEventIds": 0,
+  "verifiedExact": 1,
+  "verifiedChoices": 14,
+  "zeroWriteReplay": true,
+  "yearCountsBefore": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 49,
+      "declared_named_events": 38,
+      "explicit_stored_choices": 402,
+      "hearing_date_timing_events": 16
+    },
+    {
+      "year": 2024,
+      "stored_events": 58,
+      "declared_named_events": 42,
+      "explicit_stored_choices": 430,
+      "hearing_date_timing_events": 20
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "yearCountsAfter": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 50,
+      "declared_named_events": 39,
+      "explicit_stored_choices": 416,
+      "hearing_date_timing_events": 17
+    },
+    {
+      "year": 2024,
+      "stored_events": 58,
+      "declared_named_events": 42,
+      "explicit_stored_choices": 430,
+      "hearing_date_timing_events": 20
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "existingEventIdsAndChoicesPreserved": true,
+  "verifiedRepeatableReadReadOnlyAndRollback": true,
+  "serializableWrites": true,
+  "recoveredEvents": [
+    {
+      "questionKey": "eb92023662d714175d4a5ad0bf35e9dd6b58f6a33c7dcacf847c621a27dec019",
+      "eventId": "bf0ca680-aac0-4997-a47f-481af526353c",
+      "createdAt": "2026-10-22 21:24:37.026911+00",
+      "choices": 14
+    }
+  ],
+  "pr": 1552,
+  "protectedRun": 39856488099,
+  "productionJob": 120097392311,
+  "sourceGateJob": 120095919119,
+  "artifact": 12459957160,
+  "artifactZipSha256": "acd1d1994ac696c1d4f7c35da3bc2f56a6c8f6c8b5f3de15f51c5fc01b856f8b",
+  "independentConnectorRead": {
+    "readAt": "2026-10-22T21:25:15.269Z",
+    "readOnly": true,
+    "exactSourceQuestion": true,
+    "exactNamedChoices": 14,
+    "activeHistoricalMemberships": 14,
+    "yearCounts": [
+      {
+        "read_at": "2026-10-22T21:24:53.853Z",
+        "ro": "on",
+        "year": 2022,
+        "events": 38,
+        "choices": 259
+      },
+      {
+        "read_at": "2026-10-22T21:24:53.853Z",
+        "ro": "on",
+        "year": 2023,
+        "events": 50,
+        "choices": 416
+      },
+      {
+        "read_at": "2026-10-22T21:24:53.853Z",
+        "ro": "on",
+        "year": 2024,
+        "events": 58,
+        "choices": 430
+      },
+      {
+        "read_at": "2026-10-22T21:24:53.854Z",
+        "ro": "on",
+        "year": 2025,
+        "events": 53,
+        "choices": 539
+      }
+    ]
+  }
+}
