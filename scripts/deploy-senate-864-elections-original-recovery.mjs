@@ -77,12 +77,20 @@ export async function freshOriginals(){
 }
 const bounded=async(db,sql,params,max)=>{const rows=(await db.query(sql,params)).rows;
  if(rows.length>=max)throw Error('Bounded SQL snapshot truncated');return rows;};
+/** Bind counts are part of the SQL contract: DOCS uses $1/$2; EVENT/CHOICE use $1/$2/$3.
+ * Passing the three event arguments to DOCS triggers PostgreSQL 08P01 and prevents
+ * any source-to-store audit; keep this pure mapping independently testable.
+ */
+export function sourceSnapshotBindings(originals){
+ const urls=originals.docs.map(x=>x.url),hashes=originals.docs.map(x=>x.rawSha),
+       dates=originals.docs.map(x=>x.date);
+ return {documents:[urls,hashes],events:[urls,hashes,dates],choices:[urls,hashes,dates]};
+}
 async function privateSnapshot(db,originals){
- const params=[originals.docs.map(x=>x.url),originals.docs.map(x=>x.rawSha),
-   originals.docs.map(x=>x.date)];
- const docs=await bounded(db,DOCS,params,MAX.docs);
- const events=await bounded(db,EVENTS,params,MAX.events);
- const choices=await bounded(db,CHOICES,params,MAX.choices);
+ const bind=sourceSnapshotBindings(originals);
+ const docs=await bounded(db,DOCS,bind.documents,MAX.docs);
+ const events=await bounded(db,EVENTS,bind.events,MAX.events);
+ const choices=await bounded(db,CHOICES,bind.choices,MAX.choices);
  const people=await bounded(db,ROSTER,[],MAX.roster);
  const aliases=await bounded(db,ALIASES,[],MAX.aliases);
  const bills=await bounded(db,BILLS,[],MAX.bills);
