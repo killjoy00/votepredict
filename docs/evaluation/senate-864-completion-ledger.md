@@ -13,6 +13,113 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 22 UTC: nine source-pinned 2025 Elections rolls inserted and independently verified
+
+**Completed bounded correction; not a statewide completion certificate.** This engagement
+was limited to **four already acquired official 2025 Elections Minutes** dated February 6,
+February 11, March 25, and April 8, 2025. The original-PDF bytes and extracted-text
+SHA256s were independently reauthenticated against the existing immutable source-proof
+ledger, and the live Neon primary already contained **exactly one matching original
+source-document row for each of the four URLs/SHA256s**. The independent source and
+historical-roster evidence is in
+[`senate-2025-elections-four-other-originals-thirteen-attendance-source-proof.json`](source-proof/senate-2025-elections-four-other-originals-thirteen-attendance-source-proof.json),
+the [eight-motion original-context checkpoint](source-proof/senate-2025-elections-eight-original-motion-context-success-ledger.json)
+and the existing official 94th-Session Elections membership review.
+
+**Exact selected supplemental-subset denominator:** 4 authenticated original Minutes;
+**13 preidentified candidate explicit named YEA/NAY passages / 143 printed individual
+YEA/NAY choices**. This is explicitly *not* the exhaustive named-roll denominator of
+those four complete Minutes or of the wider 2021–2025 Senate source corpus.
+In particular, separately examined April 8 A10 (7/3/1), A11 (10/0/1) and the other
+10/0/1 result are not silently counted, inferred, or represented as newly complete.
+
+The source-only verifier isolated **nine uniquely identified parliamentary questions,
+with exactly 99 printed YEA/NAY choices**: February 6 SF529 Lucero A1 amendment,
+Limmer table motion, and Boldon recommendation; February 11 SF569 recommendation
+and Rules referral; March 25 SF1812 as-amended Judiciary referral; April 8 SF2384
+A20, A32, A21 and A19 amendments. Failed amendments and distinct recommendations
+remain separate events; no source choice was inferred from opening attendance,
+slate similarity, aggregate totals or adjacently printed formal results.
+All printed names were cross-checked to full historical identities and active
+2025–2026 Senate memberships, rather than surname-only matches.
+
+**Exact source-to-production correction result, from successful protected
+[#39705363063](https://github.com/killjoy00/votepredict/actions/runs/39705363063),
+job `119585092385` (2026-10-22T01:27:32.307Z):**
+
+| Frozen selected cohort | Previously stored / preflight | Newly inserted or corrected | Independently verified after |
+| --- | ---: | ---: | ---: |
+| Authenticated original Minutes | 4 matched source documents | 0 new documents | 4 original matches, 1 each |
+| Source-proven independently classified questions (9) | 0 events | **9 new events**; 0 event corrections | **9/9 exact** |
+| Printed named choices on those nine questions (99) | 0 individual choices | **99 new choices** | **99/99 exact** |
+| Remaining ambiguous supplemental questions (4) | Not accepted as recoverable | **0** | 4 source holds / 44 YEA-NAY tokens, no imputation |
+| Idempotent replay of the verified nine | N/A | **0 additional writes** | Confirmed 0 |
+
+The production runner independently confirmed **4 source rows, 0 old matching
+committee events, 0 old matching named-choice rows, 70 historical Senate memberships
+in its bounded 2025–2026 roster snapshot, and four exact bill identities** before
+applying the guarded plans. The **four held source questions** are not four additional
+proven absent events: two February 6 A2 passages cannot be uniquely distinguished
+under repeated wording/slates (22 printed choices), the February 11 Mathews A2 passage
+has an original SF0529 versus official SF0828 bill-reference conflict (11), and the
+April 8 procedural/result passage combines SF2384 with SF3096 and does not have
+a independently safe target question association (11). There were **zero live
+identity holds among the nine separately verified motions**.
+
+| Year | Events before | Events after | Choices before | Choices after |
+| --- | ---: | ---: | ---: | ---: |
+| 2022 | 38 | 38 | 259 | 259 |
+| 2023 | 35 | 35 | 217 | 217 |
+| 2024 | 56 | 56 | 297 | 297 |
+| **2025** | **44** | **53** | **440** | **539** |
+| **Total of returned 2022–2025 committee rows** | **173** | **182** | **1,213** | **1,312** |
+
+The returned protected census contained no 2021 committee row; this is **not**
+evidence that no 2021 committee vote exists. Named-availability-flagged 2025
+events increased **40 → 49**, and 2025 hearing-date-timing-marked events
+increased **16 → 25**. Each new event has official-hearing
+`eventOccurredOn`/`availableOn` on the hearing date and `sameDayEligible=false`.
+The source-proven addition preserved **every prior valid event ID and choice**
+and changed no Senate floor votes, training, immutable freezes, serving,
+forecasting, model weights, Vercel deployment or schedulers.
+
+**Implementation / operational receipts:** [PR #1526](https://github.com/killjoy00/votepredict/pull/1526)
+merged at `b5363349b616b7e96988419051d28c93d4aba973`, introducing an
+idempotent, bounded original-source/question reconciliation with explicit
+historical membership, amendment and existing-record duplicate guards; PR
+[#1528](https://github.com/killjoy00/votepredict/pull/1528) merged at
+`5e7b240426d4486fd049131b77d748254aa8f784` to give safe bounded
+diagnostics; PR [#1529](https://github.com/killjoy00/votepredict/pull/1529)
+merged at **`615c2f83433a27231aa0f6fa213eab4347406e80`** to fix the
+**demonstrated PostgreSQL `08P01` bind-arity defect** in the new preflight
+(a two-parameter source-document query had been supplied three date/URL/SHA
+arguments). The fix has a regression test validating all three query shapes.
+Earlier protected executions [#39703572710](https://github.com/killjoy00/votepredict/actions/runs/39703572710)
+and [#39704484541](https://github.com/killjoy00/votepredict/actions/runs/39704484541)
+**failed closed** during preflight; neither was falsely counted as a completed
+source-to-production repair. The final full CI and SHA-source verification,
+followed by protected production write/read-back, both **succeeded** on the
+reviewed `615c2f8...` main SHA in [#39705363063](https://github.com/killjoy00/votepredict/actions/runs/39705363063)
+(independent-test job `119584019977`, production job `119585092385`,
+artifact `senate864-elections-original-production-verified`, ID
+`12394343569`). Production reads used bounded `REPEATABLE READ READ ONLY`
+with explicit `ROLLBACK` both before and after a revalidated
+`SERIALIZABLE` write, with schema/primary identity checks. The subsequent
+independent read-back verified all nine questions and 99 named choices, with
+**zero** remaining writes on replay.
+
+**Systematic limitation:** The verified omissions demonstrate that matching
+meeting-date Minutes or the availability of an authenticated source PDF does
+not establish materialization of its individual explicit named motions. This
+bounded repair adds a reusable fail-closed question-specific reconciliation;
+it does **not** claim a population-wide reusable parsing fix or extrapolate
+the four-source yield to all 1,586 authenticated meeting dates. The next
+cohort, if pursued, must independently inventory original named questions and
+their live event/choice parity, without confusing the 1,586/1,592
+meeting-date availability observation with vote-level coverage. Issue #864
+remains **OPEN** for the precise held original questions and wider
+uncertified motion population.
+
 ## October 20 UTC: three bounded production changes executed and verified
 
 **Complete in the authorized scope.** [#1489](https://github.com/killjoy00/votepredict/pull/1489)
