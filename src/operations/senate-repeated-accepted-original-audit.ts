@@ -221,7 +221,7 @@ export async function readRepeatedAcceptedOriginalAudit(
  if(candidatePaperIds.length>6500)throw Error('Original repeated accepted paper-link corpus truncated');
  const claimed=candidatePaperIds.length?(await db.query<{id:string}>([
   'SELECT DISTINCT action_id::text AS id FROM senate_vote_paper_event_links',
-  'WHERE action_id=ANY($1::uuid[]) ORDER BY action_id LIMIT 6501'
+  'WHERE action_id=ANY($1::uuid[]) ORDER BY id LIMIT 6501'
  ].join(' '),[candidatePaperIds])).rows:[];
  if(claimed.length>6500)throw Error('Original accepted existing paper link corpus exceeded');
  return summarizeRepeatedAcceptedOriginals(votes,actions,docs,allDay,census,
