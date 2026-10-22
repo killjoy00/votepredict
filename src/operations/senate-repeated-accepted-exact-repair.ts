@@ -13,6 +13,8 @@ import {readSameSourceQuestionRows,summarizeSameSourceFailures}
  from './senate-same-source-question-census.js';
 import {readRepeatedAcceptedOriginalAudit,type UniqueAcceptedOriginalRoll}
  from './senate-repeated-accepted-original-audit.js';
+import {readRepeatedOriginalRollAudit}
+ from './senate-repeated-paper-original-roll-audit.js';
 import {strictRepeatedOriginalQuestionLinks,insertOne}
  from './senate-repeated-paper-exact-repair.js';
 
@@ -100,6 +102,13 @@ export async function repairRepeatedAcceptedSenateQuestions(pool:Pool):Promise<R
     db,next.votes,next.actions,nextCensus);
    if(postAudit.sourceAndAcceptedUniqueCandidates!==0)
     throw Error('Remaining accepted-side question recovery not idempotently exhausted');
+   // Newly appended question-only papers can reclassify sibling votes from
+   // repeated-accepted to repeated-paper. Verify no newly source-unique
+   // repeated-paper question remains, or roll the ENTIRE 85-side batch back.
+   const existingPaperAudit=await readRepeatedOriginalRollAudit(
+    db,next.votes,next.actions,nextCensus);
+   if(existingPaperAudit.sourceUniqueQuestionBallotCandidates!==0)
+    throw Error('Accepted-side additions exposed an unpromoted original paper question');
    await db.query('COMMIT');
    return {
     schemaVersion:SENATE_REPEATED_ACCEPTED_REPAIR,
