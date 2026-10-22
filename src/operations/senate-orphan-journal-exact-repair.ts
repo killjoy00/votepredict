@@ -6,7 +6,7 @@
  */
 import type {Pool,PoolClient} from 'pg';
 import {billIdentifier,ballotSignature,hash} from './senate-vote-paper-parser.js';
-import {readVoteTextGapAudit,verifyVoteTextGapAudit}
+import {readVoteTextGapAudit,verifyVoteTextGapAudit,type VoteTextGapAudit}
  from './senate-vote-text-gap-audit.js';
 import {readOrphanJournalOriginalAudit,type OrphanProof,type OrphanReport}
  from './senate-orphan-journal-original-audit.js';
