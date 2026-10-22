@@ -3,6 +3,7 @@ import { gzipSync } from 'node:zlib';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
+import { certifiedHistoricalFinanceAvailableOnSql } from '../src/evaluation/historical-finance-asof-proof.js';
 import {
   QUICK_EVIDENCE_COMMITTEE_ROLLCALL_FEATURES,
   type QuickEvidenceCommitteeRollcallCandidateArtifact,
@@ -524,10 +525,10 @@ async function main(): Promise<void> {
     }
 
     const financeResult = await pool.query<FinanceRow>(`
-      SELECT DISTINCT ON (ei.metadata->>'rowKey', ei.membership_id)
+      SELECT DISTINCT ON (sd.source_kind, ei.metadata->>'filerRegistrationNumber', ei.metadata->>'year', ei.metadata->>'rowKey', ei.membership_id)
              ei.membership_id::text AS "membershipId",
              ei.metadata->>'rowKey' AS "rowKey",
-             ei.published_at::date::text AS "publishedOn",
+             ${certifiedHistoricalFinanceAvailableOnSql()} AS "publishedOn",
              ei.metadata->>'subtype' AS subtype,
              CASE
                WHEN ei.metadata->>'subtype'='candidate_expenditure_record'
@@ -546,7 +547,13 @@ async function main(): Promise<void> {
          AND ei.metadata->>'asOfEligible'='true'
          AND ei.published_at IS NOT NULL
          AND ei.metadata->>'transactionDateIsAvailability'='false'
-       ORDER BY ei.metadata->>'rowKey', ei.membership_id, ei.published_at, ei.id
+         AND ${certifiedHistoricalFinanceAvailableOnSql()} IS NOT NULL
+         AND ((sd.source_kind='campaign_finance_candidate_contribution_bulk' AND ei.metadata->>'subtype'='candidate_contribution_record')
+           OR (sd.source_kind='campaign_finance_candidate_expenditure_bulk' AND ei.metadata->>'subtype'='candidate_expenditure_record'))
+         AND ei.metadata->>'year' IN ('2021','2022','2023','2024','2025')
+         AND NULLIF(ei.metadata->>'filerRegistrationNumber','') IS NOT NULL
+       ORDER BY sd.source_kind, ei.metadata->>'filerRegistrationNumber', ei.metadata->>'year',
+                ei.metadata->>'rowKey', ei.membership_id, ${certifiedHistoricalFinanceAvailableOnSql()}, ei.id
     `);
     const financeCoverage = await pool.query(`
       SELECT s.slug AS session,
@@ -567,6 +574,11 @@ async function main(): Promise<void> {
          AND ei.metadata->>'asOfEligible'='true'
          AND ei.published_at IS NOT NULL
          AND ei.metadata->>'transactionDateIsAvailability'='false'
+         AND ${certifiedHistoricalFinanceAvailableOnSql()} IS NOT NULL
+         AND ((sd.source_kind='campaign_finance_candidate_contribution_bulk' AND ei.metadata->>'subtype'='candidate_contribution_record')
+           OR (sd.source_kind='campaign_finance_candidate_expenditure_bulk' AND ei.metadata->>'subtype'='candidate_expenditure_record'))
+         AND ei.metadata->>'year' IN ('2021','2022','2023','2024','2025')
+         AND NULLIF(ei.metadata->>'filerRegistrationNumber','') IS NOT NULL
          AND s.slug IN ('2021-2022','2023-2024','2025-2026')
        GROUP BY s.slug,c.slug
        ORDER BY s.slug,c.slug

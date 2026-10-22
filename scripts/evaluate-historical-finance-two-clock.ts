@@ -1,6 +1,7 @@
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
+import { certifiedHistoricalFinanceAvailableOnSql } from '../src/evaluation/historical-finance-asof-proof.js';
 import {
   QUICK_EVIDENCE_COMMITTEE_ROLLCALL_FEATURES,
   type QuickEvidenceCommitteeRollcallCandidateArtifact,
@@ -483,19 +484,13 @@ async function main(): Promise<void> {
     }
 
     const financeResult = await pool.query<FinanceDbRow>(`
-      SELECT DISTINCT ON (ei.metadata->>'rowKey', ei.membership_id)
+      SELECT DISTINCT ON (sd.source_kind, ei.metadata->>'filerRegistrationNumber', ei.metadata->>'year', ei.metadata->>'rowKey', ei.membership_id)
              ei.membership_id::text AS "membershipId",
              ei.metadata->>'rowKey' AS "rowKey",
              s.slug AS session,
              c.slug AS chamber,
              ei.metadata->>'transactionDate' AS "activityOn",
-             CASE
-               WHEN ei.metadata->>'asOfEligible'='true'
-                AND ei.published_at IS NOT NULL
-                AND ei.metadata->>'transactionDateIsAvailability'='false'
-               THEN ei.published_at::date::text
-               ELSE NULL
-             END AS "availableOn",
+             ${certifiedHistoricalFinanceAvailableOnSql()} AS "availableOn",
              ei.metadata->>'subtype' AS subtype,
              CASE
                WHEN ei.metadata->>'subtype'='candidate_expenditure_record'
@@ -522,19 +517,16 @@ async function main(): Promise<void> {
                'candidate_expenditure_record'
              )
          AND ei.metadata->>'transactionDate' ~ '^\\d{4}-\\d{2}-\\d{2}$'
+         AND ei.metadata->>'year' IN ('2021','2022','2023','2024','2025')
+         AND NULLIF(ei.metadata->>'filerRegistrationNumber','') IS NOT NULL
+         AND ((sd.source_kind='campaign_finance_candidate_contribution_bulk' AND ei.metadata->>'subtype'='candidate_contribution_record')
+           OR (sd.source_kind='campaign_finance_candidate_expenditure_bulk' AND ei.metadata->>'subtype'='candidate_expenditure_record'))
          AND s.slug IN ('2021-2022','2023-2024','2025-2026')
          AND c.slug IN ('house','senate')
-       ORDER BY ei.metadata->>'rowKey',
-                ei.membership_id,
-                CASE
-                  WHEN ei.metadata->>'asOfEligible'='true'
-                   AND ei.published_at IS NOT NULL
-                   AND ei.metadata->>'transactionDateIsAvailability'='false'
-                  THEN 0
-                  ELSE 1
-                END,
-                ei.published_at ASC NULLS LAST,
-                ei.id
+       ORDER BY sd.source_kind, ei.metadata->>'filerRegistrationNumber',
+                ei.metadata->>'year', ei.metadata->>'rowKey', ei.membership_id,
+                CASE WHEN ${certifiedHistoricalFinanceAvailableOnSql()} IS NOT NULL THEN 0 ELSE 1 END,
+                ${certifiedHistoricalFinanceAvailableOnSql()} ASC NULLS LAST, ei.id
     `);
 
     const financeRows = financeResult.rows;
