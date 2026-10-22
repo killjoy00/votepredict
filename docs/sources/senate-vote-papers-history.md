@@ -677,6 +677,33 @@ Role recovery has three explicit bases:
 
 ## Coverage and remaining uncertainty
 
+### Source-original question audit for missing papers and unresolved bills (#1498)
+
+The next two full-population first-failure cohorts are **150** accepted Senate
+Journal votes with a known bill but *no parsed paper anywhere for that bill*,
+and **372** Senate Journal votes without a resolved bill ID. The original
+2026/2021–2025 distinction remains intact. `senate-orphan-journal-original-audit.ts`
+replays all authenticated original Minnesota Senate Journals across both
+cohorts in one independently verified protected `REPEATABLE READ READ ONLY`
+transaction. Every accepted vote must have an independent *physical* printed
+question+complete named ballot, matching yea/nay, a single identical source
+roll and a single matching accepted source/day event among **all** bills and
+already-linked peers. Source bodies require exact original PDF extract SHA and
+verification receipt; source URLs, member names, original question text, and
+UUIDs are never emitted from the protected runner.
+
+For known bills the printed original bill must equal the already established
+bill. For missing bill IDs, a unique bill must be printed **inside the same
+full original question** and also agree with the physical roll's printed bill;
+the bill catalog must have exactly one matching identifier in the correct
+session. Merely appearing nearby on the page or in an adjacent motion is not
+bill identity evidence. Original source/accepted collisions, unreadable
+rosters, non-bill procedural questions, conflicting questions/ballots, and
+preexisting stored links all hold. The initial stage is **read-only** and
+produces **zero** links or official bill-ID changes. Counts from the protected
+entire-population audit, not synthetic canaries, are required before any
+separate exact-source guarded writer can be authorized.
+
 ### Full named-ballot mismatches against stored Senate papers (#1498)
 **Independent protected source audit completed:** [PR #1540](https://github.com/killjoy00/votepredict/pull/1540)
 merged and [protected original Neon run #39835363900](https://github.com/killjoy00/votepredict/actions/runs/39835363900)
