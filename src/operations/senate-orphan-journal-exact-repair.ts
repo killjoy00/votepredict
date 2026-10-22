@@ -263,10 +263,30 @@ export async function repairOrphanJournalOriginalQuestions(
    // source question/ballot action and exact link are atomically inserted
    // in the same SERIALIZABLE transaction. One failure rolls all back.
    safeProgress('certified_stage_distribution',{authorized:prepared.length});
+   let completed=0;
    for(const p of prepared){
-    if(p.original.resolution==='printed_bill')
-     await attachStrictPrintedBill(db,p);
-    await insertOne(db,p.link);
+    try{
+     if(p.original.resolution==='printed_bill')
+      await attachStrictPrintedBill(db,p);
+     await insertOne(db,p.link);
+     completed++;
+    }catch(error){
+     const msg=error instanceof Error?error.message:'unknown';
+     safeProgress('source_action_failed',{
+      actionsCompleted:completed,
+      acceptedFingerprintOrFullBallotDrift:Number(msg==='Official accepted identity or complete member choices changed'),
+      conflictingLegacyQuestion:Number(msg==='Legacy linked original question conflicts with proven source roll'),
+      originalSourceReceiptOrActionConflict:Number(msg==='Verified original distinct-question append-only action insert failed'),
+      oneToOneEdgeConflict:Number(msg==='Original repeated question exact-event one-to-one CAS failed'),
+      otherKnownGuard:Number(![
+       'Official accepted identity or complete member choices changed',
+       'Legacy linked original question conflicts with proven source roll',
+       'Verified original distinct-question append-only action insert failed',
+       'Original repeated question exact-event one-to-one CAS failed'
+      ].includes(msg))
+     });
+     throw error;
+    }
    }
    safeProgress('source_link_actions_prepared',{actions:prepared.length});
    const exactAfter=await count(db);
