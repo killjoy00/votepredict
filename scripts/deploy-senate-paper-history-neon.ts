@@ -19,6 +19,7 @@ import {repairRawSenateExactLinks} from '../src/operations/senate-raw-question-e
 import {repairRepeatedOriginalSenateQuestions} from '../src/operations/senate-repeated-paper-exact-repair.js';
 import {repairRepeatedAcceptedSenateQuestions} from '../src/operations/senate-repeated-accepted-exact-repair.js';
 import {repairNamedMismatchOriginalSenateQuestions} from '../src/operations/senate-named-mismatch-exact-repair.js';
+import {repairOrphanJournalOriginalQuestions} from '../src/operations/senate-orphan-journal-exact-repair.js';
 import {read2022PassageRosterShadow} from '../src/operations/senate-2022-passage-roster-shadow.js';
 import {repair2022UniquePassageLinks} from '../src/operations/senate-2022-passage-link-repair.js';
 import {readSenateSourceCaseAudit} from '../src/operations/senate-vote-paper-case-audit.js';
@@ -100,6 +101,10 @@ async function main(){
   // 55 source+accepted-unique named ballots despite 62 wrong stored papers.
   // This is a different, readback-bounded and SERIALIZABLE append-only batch.
   phase='original_full_named_ballot_mismatch_exact_repair';const namedMismatchRepair=await repairNamedMismatchOriginalSenateQuestions(pool);progress(phase,namedMismatchRepair);
+  // Independently protected original government source audit proved exactly
+  // 99 unique full question+member-ballot links from 150 entirely missing
+  // bill papers; NO safe bill-ID promotions from 372 original nonbill events.
+  phase='original_missing_paper_printed_bill_repair';const orphanJournalRepair=await repairOrphanJournalOriginalQuestions(pool);progress(phase,orphanJournalRepair);
   phase='explicit_base_bodies';const baseBodies=await recoverExplicitBaseBodies(pool,{max:push?60:30,retryFailedNow:push});progress(phase,baseBodies);
   phase='dated_assignment_facts';const datedAssignments=await collectDatedAssignmentFacts(pool,{retryUnavailableNow:push});progress(phase,datedAssignments);
   phase='stage_historical_sources';const historyJobs=await stageHistoryJobs(pool);progress(phase,{eligibleUrls:historyJobs});
@@ -198,7 +203,7 @@ async function main(){
    if(!links.exact_raw_questions||!actions.some(a=>a.literal_papers>0)||!links.historical_roles)throw Error('Paper/history acceptance counts are empty');
    return {events,actions,links,gapAudit,orphanJournalAudit,sameSourceCensus,repeatedPaperQuestionAudit,repeatedPaperOriginalRollAudit,repeatedAcceptedOriginalAudit,namedMismatchOriginalAudit,noTallyOriginalCensus,rawStrongSourceAudit,passage2022RosterShadow,caseAudit,nestedCandidateAudit,prattShadowReadback,hf100TextChainReadiness,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
   });
-  const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,passageRepair,nestedQuestionRepair,rawQuestionRepair,repeatedOriginalQuestionRepair,repeatedAcceptedQuestionRepair,namedMismatchRepair,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
+  const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,passageRepair,nestedQuestionRepair,rawQuestionRepair,repeatedOriginalQuestionRepair,repeatedAcceptedQuestionRepair,namedMismatchRepair,orphanJournalRepair,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
    officialVotesUnchanged:true,sourceBodiesUnchanged:true,servingModelsUnchanged:true,completeStateClaims:false};
   console.log('SENATE_PAPER_HISTORY_PRODUCTION='+JSON.stringify(report));
   if(process.env.GITHUB_STEP_SUMMARY)appendFileSync(process.env.GITHUB_STEP_SUMMARY,'Senate paper identity and historical evidence coverage\n'+JSON.stringify(report,null,2)+'\n');
