@@ -677,6 +677,30 @@ Role recovery has three explicit bases:
 
 ## Coverage and remaining uncertainty
 
+### Repeated-accepted-ballot question collisions (#1498)
+
+After protected PR #1533, **85** additional same-original-Journal bill/date
+accepted Senate votes have precisely one parsed complete paper ballot, but at
+least one other accepted bill/day event has the same complete member choices.
+They must NOT be associated by ballot, tally, event ordinal or question
+proximity. \`senate-repeated-accepted-original-audit.ts\` now independently
+replays the entire authenticated original Journal's printed physical roll
+headers, original question boundaries, source bill, yea/nay and complete
+named votes, and demands exactly one **full printed question + full ballot**
+across every original roll and exactly one accepted source-day event across
+**all** bill identities, including unresolved bill assignments. This original
+source replay reuses the provenance-verified and entire-Journal-aligned
+physical parser independently exercised by PR #1532; a source-bill or
+question span uncertainty is an explicit hold. A previously linked legacy
+paper question is another explicit hold. The protected production report
+contains only stage counts and public bill/day summaries. Candidate
+observations are not links; a later separately guarded append-only writer
+will need actual production source uniqueness counts, exact source extract
+hash and receipt, printed roll offset/header, accepted fingerprint, and an
+independent post-commit full-population readback. No bill text, member choices,
+accepted vote events or serving weights change during this READ ONLY audit.
+
+
 ### Repeated-paper complete-ballot cases (#1498)
 **Protected original-government release #39808559911** proved 64 physically
 source-unique full printed question+named-ballot accepted-event candidates across
