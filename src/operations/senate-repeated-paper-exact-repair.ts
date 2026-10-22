@@ -120,7 +120,7 @@ export function strictRepeatedOriginalQuestionLinks(
   throw Error('Repeated original question/source roll or accepted event promoted twice');
  return result;
 }
-async function insertOne(db:PoolClient,p:StrictRepeatedOriginalLink):Promise<void>{
+export async function insertOne(db:PoolClient,p:StrictRepeatedOriginalLink):Promise<void>{
  const accepted=(await db.query<{
   fingerprint:string;votes:Array<{name:string;choice:string}>;
  }>([
