@@ -6,6 +6,7 @@ on:
       - scripts/inventory-senate-864-population.mjs
       - scripts/publish-senate-864-population-reports.mjs
       - tests/senate-864-population-inventory.test.mjs
+      - docs/evaluation/source-proof/senate-864-population-prior-inventory.json
   push:
     branches: [main]
     paths:
@@ -13,6 +14,7 @@ on:
       - scripts/inventory-senate-864-population.mjs
       - scripts/publish-senate-864-population-reports.mjs
       - tests/senate-864-population-inventory.test.mjs
+      - docs/evaluation/source-proof/senate-864-population-prior-inventory.json
 permissions:
   contents: read
 concurrency:
@@ -66,6 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
+      SENATE864_INVENTORY_REUSE_PUBLIC: ${{ contains(github.event.head_commit.message, 'SENATE864_POPULATION_INVENTORY_RECONCILE_V1') && 'true' || 'false' }}
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
       VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
@@ -84,6 +87,22 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - name: Read immutable prior protected public-report commit
+        if: env.SENATE864_INVENTORY_REUSE_PUBLIC == 'true'
+        id: prior
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync,appendFileSync} from 'node:fs';
+          const p=JSON.parse(readFileSync('docs/evaluation/source-proof/senate-864-population-prior-inventory.json'));
+          if(!/^[a-f0-9]{40}$/.test(p.commit)||!/^[a-f0-9]{40}$/.test(p.reportGitBlobSha)||!/^\d+$/.test(p.runId))throw Error('Invalid prior public report pin');
+          appendFileSync(process.env.GITHUB_OUTPUT,'commit='+p.commit+'\n');
+          NODE
+      - uses: actions/checkout@v7
+        if: env.SENATE864_INVENTORY_REUSE_PUBLIC == 'true'
+        with:
+          ref: ${{ steps.prior.outputs.commit }}
+          path: prior-inventory
+          persist-credentials: false
       - name: Install official PDF extraction prerequisites
         run: sudo apt-get update && sudo apt-get install -y poppler-utils tesseract-ocr
       - name: Authenticate population originals and compare source questions with READ ONLY production
