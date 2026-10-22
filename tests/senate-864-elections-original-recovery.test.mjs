@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {sourceSnapshotBindings} from '../scripts/deploy-senate-864-elections-original-recovery.mjs';
 import assert from 'node:assert/strict';
 import {QUESTIONS,HELD,OFFICIAL_FULL,recoveryPlan,meta,VERSION,MARKER} from
  '../src/evidence/senate-864-elections-original-recovery.mjs';
@@ -100,4 +101,22 @@ test('hearing date is available on action day, never date-only same-day eligible
  assert.equal(m.availableOn,p.date);assert.equal(m.eventOccurredOn,p.date);
  assert.equal(m.sameDayEligible,false);assert.equal(m.modelWeight,0);
  assert.equal(m.finalPassageStanceInferred,false);
+});
+
+test('original document query never receives the third event/date PostgreSQL bind (08P01 regression)',()=>{
+ const docs=[
+  {url:'https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250206/Elections_20250206_Minutes.pdf',
+   rawSha:'a'.repeat(64),date:'2025-02-06'},
+  {url:'https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250211/Elections_20250211_Minutes.pdf',
+   rawSha:'b'.repeat(64),date:'2025-02-11'}
+ ];
+ const bind=sourceSnapshotBindings({docs});
+ assert.equal(bind.documents.length,2);
+ assert.equal(bind.events.length,3);assert.equal(bind.choices.length,3);
+ assert.deepEqual(bind.documents[0],docs.map(x=>x.url));
+ assert.deepEqual(bind.documents[1],docs.map(x=>x.rawSha));
+ assert.deepEqual(bind.events[2],docs.map(x=>x.date));
+ assert.deepEqual(bind.choices[2],docs.map(x=>x.date));
+ assert.deepEqual(bind.events.slice(0,2),bind.documents);
+ assert.deepEqual(bind.choices.slice(0,2),bind.documents);
 });
