@@ -119,7 +119,8 @@ async function main(){
   if(priorReport.issue!==864||priorReport.schemaVersion!=='senate864-population-original-inventory-v1'||priorReport.reviewedCommit!==priorPlan.reviewedCommit||priorReport.runId!==priorPlan.runId||priorReport.originals.length!==2860||priorReport.productionWrites!==0||priorReport.readOnlyRepeatableReadAndExplicitRollback!==true)throw Error('Prior protected population proof changed');
  }
  const priorRows=new Map((priorReport?.originals||[]).map(d=>[d.sourceUrl+'|'+d.originalSha256,d]));
- const wanted=[...registry.values()].filter(d=>!priorReport||priorRows.get(key(d))?.rowQuestions.some(q=>q.confidence==='source_proven_question'));
+ const priorOriginalUrls=new Set(priorOriginalQueue().map(p=>p.officialSourcePdfUrl));
+ const wanted=[...registry.values()].filter(d=>!priorReport||priorOriginalUrls.has(d.source_url)||priorRows.get(key(d))?.rowQuestions.some(q=>q.confidence==='source_proven_question'));
  if(priorReport)for(const d of registry.values()){const r=priorRows.get(key(d));if(!r||r.date!==d.date||r.committee!==d.committee||r.session!==d.session_slug)throw Error('Prior population source registry drift');}
  const freshPdfs=await acquirePdfs(wanted),freshKeys=new Set(freshPdfs.map(key));
  const fetched=[...freshPdfs,...[...registry.values()].filter(d=>!freshKeys.has(key(d))).map(d=>({...d,reusePublicRow:priorRows.get(key(d)),authenticated:priorRows.get(key(d)).authenticated,text:''}))];
