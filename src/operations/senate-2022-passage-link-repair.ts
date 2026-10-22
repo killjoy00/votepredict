@@ -155,7 +155,8 @@ export function recognized2022PassageCoverageState(
  return (missingOriginalPassageRolls===132&&exactLinks===890&&sameSourceUnlinked===697)
   ||(missingOriginalPassageRolls===31&&exactLinks===991&&sameSourceUnlinked===596)
   ||(missingOriginalPassageRolls===31&&exactLinks===1022&&sameSourceUnlinked===565)
-  ||(missingOriginalPassageRolls===31&&exactLinks===1111&&sameSourceUnlinked===476);
+  ||(missingOriginalPassageRolls===31&&exactLinks===1111&&sameSourceUnlinked===476)
+  ||(missingOriginalPassageRolls===31&&exactLinks===1175&&sameSourceUnlinked===412);
 }
 /** The guarded deployment runner owns the primary identity check, migration
  * checksum parity and main-branch marker before calling this operation.
