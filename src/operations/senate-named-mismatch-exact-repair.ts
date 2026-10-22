@@ -1,6 +1,6 @@
 /**
- * #1498: unique ORIGINAL full-question + complete named ballot exact links
- * for the 62 same-Journal/day/bill v1 PAPER named-ballot mismatch cohort.
+ * #1498: exactly 55 original-source unique full-question + named-ballot links
+ * out of 62 same-Journal/day/bill v1 PAPER named-ballot mismatch cases.
  *
  * The stored v1 named ballot is NOT rewritten. The original full PDF-extract
  * source question/header/member roll must independently agree with the
@@ -24,11 +24,25 @@ import type {UniqueOriginalRoll}
 export const SENATE_NAMED_MISMATCH_EXACT_REPAIR=
  'senate-original-full-named-ballot-mismatch-exact-links-v1' as const;
 /** These values are deliberately BLOCKING until independently certified by
- * protected READ ONLY original-source run #39835363900. Not a release plan.
+ * successful protected READ ONLY original-source run #39835363900.
  */
-const PROVEN_MATCHES=0;
-const PROVEN_ORIGINAL_DOCUMENTS=0;
-const REVIEWED_HELD_STAGE_COUNTS:Readonly<Record<string,number>>={};
+const PROVEN_MATCHES=55;
+const PROVEN_ORIGINAL_DOCUMENTS=32;
+const REVIEWED_HELD_STAGE_COUNTS:Readonly<Record<string,number>>={
+ original_source_not_one_verified_journal:0,
+ original_rolls_or_roster_unreadable:0,
+ original_question_and_tally_absent:0,
+ accepted_ballot_only_on_different_original_question:1,
+ original_question_and_tally_unreadable_ballot:0,
+ original_question_and_tally_different_named_ballot:0,
+ original_question_and_full_ballot_repeated:3,
+ original_question_has_unreadable_duplicate_roll:0,
+ original_printed_question_or_bill_span_unproven:3,
+ original_accepted_source_day_collision:0,
+ original_question_already_claimed_by_paper:0,
+ unique_original_v1_question_wrong_named_ballot:24,
+ unique_original_v1_wrong_question_association:31
+};
 export interface NamedMismatchExactRepairResult{
  schemaVersion:typeof SENATE_NAMED_MISMATCH_EXACT_REPAIR;
  result:'linked_verified_originals'|'already_applied';
