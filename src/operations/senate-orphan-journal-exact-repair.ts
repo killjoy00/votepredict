@@ -1,8 +1,8 @@
 /**
  * #1498: whole-population original Senate Journal recovery for accepted votes
  * with known bills but no parsed paper, and for missing bill associations.
- * Keep release blocked until a separate protected READ ONLY original audit
- * certifies exact counts. Never reconstruct a bill by roll order or tally.
+ * Independent protected original audit #39846423630 certified 99
+ * missing-paper questions and zero safe null-bill assignments. Never reconstruct a bill by roll order or tally.
  */
 import type {Pool,PoolClient} from 'pg';
 import {billIdentifier,ballotSignature,hash} from './senate-vote-paper-parser.js';
@@ -22,10 +22,19 @@ export const SENATE_ORPHAN_QUESTION_REPAIR='senate-1498-missing-paper-and-printe
 /** BLOCKING until independently verified run from PR #1544 returns counts.
  * A zero or omitted held-stage record never authorizes production mutation.
  */
-const CERTIFIED_KNOWN_BILL_PAPERS=0;
+const CERTIFIED_KNOWN_BILL_PAPERS=99;
 const CERTIFIED_PRINTED_BILL_ASSOCIATIONS=0;
-const CERTIFIED_AUTHENTICATED_ORIGINALS=0;
-const CERTIFIED_SOURCE_STAGE_COUNTS:Readonly<Record<string,number>>={};
+const CERTIFIED_AUTHENTICATED_ORIGINALS=107;
+const CERTIFIED_SOURCE_STAGE_COUNTS:Readonly<Record<string,number>>={
+ 'missing_paper.original_unverified_or_duplicated':3,
+ 'missing_paper.original_question_ballot_repeated':42,
+ 'missing_paper.original_question_span_unproven':6,
+ 'missing_paper.unique_missing_paper_question':99,
+ 'unresolved_bill.original_unverified_or_duplicated':43,
+ 'unresolved_bill.original_question_ballot_repeated':80,
+ 'unresolved_bill.original_question_span_unproven':12,
+ 'unresolved_bill.bill_not_printed_in_question':237
+};
 const SHA=/^[0-9a-f]{64}$/;
 export interface OrphanRepairResult{
  schemaVersion:typeof SENATE_ORPHAN_QUESTION_REPAIR;
@@ -152,8 +161,12 @@ function stageCountAudit(s:OrphanReport):boolean{
  const actual=new Map<string,number>();
  for(const [cohort,group] of Object.entries(s.stages))
   for(const [stage,n] of Object.entries(group))actual.set(cohort+'.'+stage,n);
- return actual.size===Object.keys(CERTIFIED_SOURCE_STAGE_COUNTS).length
-  &&[...actual].every(([stage,n])=>CERTIFIED_SOURCE_STAGE_COUNTS[stage]===n);
+ // Entire official ledger sums to 522; the reviewed nonzero stages alone
+ // also sum to 522, hence EVERY unspecified stage must remain zero.
+ return Object.values(CERTIFIED_SOURCE_STAGE_COUNTS).reduce((n,v)=>n+v,0)===s.targeted
+  &&[...actual.values()].reduce((n,v)=>n+v,0)===s.targeted
+  &&Object.entries(CERTIFIED_SOURCE_STAGE_COUNTS)
+    .every(([stage,n])=>actual.get(stage)===n);
 }
 export async function repairOrphanJournalOriginalQuestions(
  pool:Pool
