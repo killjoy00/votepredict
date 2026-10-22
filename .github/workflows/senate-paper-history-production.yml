@@ -40,6 +40,8 @@ on:
       - tests/senate-repeated-accepted-exact-repair.test.ts
       - src/operations/senate-named-mismatch-original-audit.ts
       - tests/senate-named-mismatch-original-audit.test.ts
+      - src/operations/senate-named-mismatch-exact-repair.ts
+      - tests/senate-named-mismatch-exact-repair.test.ts
       - tests/senate-same-source-question-census.test.ts
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-hf100-original-shadow.ts
@@ -101,6 +103,8 @@ on:
       - tests/senate-repeated-accepted-exact-repair.test.ts
       - src/operations/senate-named-mismatch-original-audit.ts
       - tests/senate-named-mismatch-original-audit.test.ts
+      - src/operations/senate-named-mismatch-exact-repair.ts
+      - tests/senate-named-mismatch-exact-repair.test.ts
       - tests/senate-same-source-question-census.test.ts
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-hf100-original-shadow.ts
