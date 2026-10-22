@@ -13,44 +13,83 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
-## October 22: population-wide named-roll continuation — implementation in progress
+## October 22: population-wide original inventory and first reusable repair — production verified
 
-Fresh existing-primary Neon read with `REPEATABLE READ READ ONLY` and explicit
-`ROLLBACK` independently reconfirmed the latest **183 committee events / 1,326
-explicit choices**: 2022 **38/259**, 2023 **36/231**, 2024 **56/297**, 2025
-**53/539**. The older 182/1,312 table below is a dated prior receipt.
+**Actual production improvement:** [PR #1546](https://github.com/killjoy00/votepredict/pull/1546)
+merged at **`7e4489eab64d282ff996c7dc43c985a051309bd4`**. Protected
+[run #39849422268](https://github.com/killjoy00/votepredict/actions/runs/39849422268)
+passed the full normal checks, security audit, regression suites, independent
+original authentication and guarded production correction. Source gate job
+`120071292742`, production job `120072809843`, artifact `12456782133`
+(`senate864-population-row-production-verified`, ZIP SHA256
+`8d3a54b8c1ec3a272e49e419ba9b3978f4118e294b8c8740e19d8cc722741ea0`).
+The [durable independent receipt](source-proof/senate-864-population-row-production-20261022.json)
+records all fourteen new event IDs and timestamps.
 
-All **1,379 acquired 2022–2025 Clerk Minutes texts** were enumerated by exact
-URL, text SHA, committee, hearing date and session. Every text matched its stored
-original SHA. Independent recognizers found **196 candidate rolls / 2,044
-candidate printed YEA/NAY occurrences**; these are NOT distinct source-proven
-questions or demonstrated production omissions. Row-form strict extraction
-currently identifies 42 candidate blocks: **17 source-proven questions**, 25
-question holds. Conservative live comparison finds **14 missing events / 181
-explicit choices** across ten original 2023 Elections / 2024 Taxes Minutes, one alternate
-source representation, and two ambiguous pre-existing question joins. The 25
-question holds and other parser formats are not accepted missing events.
+The reusable omitted-row-format correction added **14 events / 181 explicit
+choices** across ten official 2023 Elections / 2024 Taxes Minutes. Every question
+and named side was reauthenticated from its original. Pre/post snapshots used
+`REPEATABLE READ READ ONLY` and explicit `ROLLBACK`; the atomic write used
+`SERIALIZABLE` rechecks. Exact post-write verification and zero-write replay
+passed. An independent Neon-connector read at **2026-10-22T20:34:40.840Z**, plus a
+separate fresh-original/full-membership/side comparison, verified **14/14 events
+and 181/181 choices**, zero unresolved identities, hearing-day availability and
+same-day exclusion. Separately reading all committee records confirmed **every
+previous 183 event and 1,326 choice record unchanged** in the compared fields.
 
-The highest-yield demonstrated reusable defect is the legacy ingest parser's
-failure to recognize `Senator NAME - Yea/Nay` row-form choices. The new generic
-extractor bounds the exact introduction, bill, amendment and printed outcome;
-resolves printed surnames through original full-name headers to independently
-active historical full identities; and never uses an ordinal, tally or slate as
-question identity. The [population-generated bounded correction plan](source-proof/senate-864-population-row-repair-plan.json)
-contains the fourteen questions and ten original text SHAs. A new protected
-workflow reauthenticates all originals, checks schema, replans under serializable
-locks and verifies a separate read-only post-write snapshot plus zero-write replay.
-Consistent result restatements corroborate a single question; contradictory outcomes
-remain held. Regression tests reproduce the actual original failure and negative identity,
-bill, withdrawal, duplicate wording, alternate-source, attendance and tally cases;
-the earlier 2023/2025 Elections regression suites remain passing.
+| Year | Events before this engagement | Events after first repair | Choices before | Choices after first repair |
+| --- | ---: | ---: | ---: | ---: |
+| 2022 | 38 | 38 | 259 | 259 |
+| 2023 | 36 | 49 | 231 | 402 |
+| 2024 | 56 | 57 | 297 | 307 |
+| 2025 | 53 | 53 | 539 | 539 |
+| **Total** | **183** | **197** | **1,326** | **1,507** |
 
-**Not yet a production recovery:** source-only verification passed 10/10 originals
-and 14/181 question/choice bounds; protected production execution and read-back
-are pending. A fresh population PDF text examination and by-committee inventory
-are continuing. Written-date coverage remains **1,586/1,592** with all six exact
-missing-Minutes holds and the unresolved 2021 print scope preserved. No complete
-original named-motion denominator is certified, and **#864 stays OPEN**.
+**Population source examination:** 2,860 distinct acquired URL/SHA originals were
+enumerated: **1,452 linked LRL PDFs + 28 supplementary LRL PDFs + 1,379 stored
+Clerk text originals + one previously authenticated unstored Clerk body**. All
+**2,859 readable originals** were examined, including **1,479 PDFs** with embedded
+text or OCR and **1,380 Clerk originals**. The May 19, 2022 Finance PDF remains
+unparseable; this is an extraction hold on an acquired original, not a seventh
+missing-Minutes date. **233 originals have named-roll candidates**; **2,626**
+have no named roll detected by the bounded examination. The candidate streams
+are overlapping: raw prose yields **415** observations, supplemental labels
+**353**; neither sum is a distinct parliamentary-question denominator.
+
+The strict row-form question proof finds **28 question keys**; four keys in two
+cross-original wording/committee-alias groups remain uncertified as distinct or
+equivalent and are excluded from the distinct-question denominator. The current
+certifiable row cohort is **24 distinct questions / 319 explicit choices**.
+This is a conservative identified subset across the examined corpus, **not** the
+complete original named-roll denominator. Other formats, 64 held row occurrences,
+and cross-original joins remain explicit verification debt. No zero 2021 history
+or complete 2022 print/electronic equivalence is inferred.
+
+**Next source-proven reusable correction, not yet counted as deployed:** PDF
+headers wrap full names across lines. Correct whitespace handling resolves these
+identities without surname-only joins. Exact original paragraph binding also
+reproduces a forward-context defect: the legacy parser attached a later amendment
+label or bill heading to an earlier complete named roll. A stored event is now
+bound only when its exact source context is uniquely located in the authenticated
+original and contains one complete question, every printed named row, and the
+printed result. Merely mentioning an earlier motion, sharing a bill/date, tally,
+slate or passage ordinal is insufficient.
+
+The [population-generated second source plan](source-proof/senate-864-population-wrapped-row-repair-plan.json)
+contains **nine questions / 123 printed choices in five 2024 Elections originals**:
+**eight existing IDs are preserved**, **five classification/bill associations
+corrected**, all missing named choices added, and **one genuinely absent event**
+inserted. The earlier apparent three missing events were corrected during review:
+two were existing records with wrong future references, so they must not be
+reinserted. Regression tests cover the real wrapped original, complete-passage
+binding, ambiguous multi-motion snippets, wrong bill/ref, explicit sides, and an
+actual disposable-Postgres update/insert/readback/zero-replay cycle. Deployment of
+this second bounded plan remains pending; no count above assumes it succeeded.
+
+The exact six missing-Minutes holds, **1,586/1,592 written-date coverage**, and
+unresolved 2021 print scope are preserved. No accepted Senate floor vote, serving
+model, weight, forecast, training/frozen evaluation, Vercel deployment or scheduler
+change is part of this work. **#864 remains OPEN**.
 
 ## October 22 UTC: nine source-pinned 2025 Elections rolls inserted and independently verified
 
