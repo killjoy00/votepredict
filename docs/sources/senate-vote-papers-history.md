@@ -677,6 +677,25 @@ Role recovery has three explicit bases:
 
 ## Coverage and remaining uncertainty
 
+### Repeated-paper complete-ballot cases (#1498)
+
+The independently reconciled readback after the original-source +89 question
+repair has **210 unlinked official votes whose complete named ballot appears in
+multiple stored paper actions**. This is a first-failure diagnostic bucket, not
+210 automatically recoverable links. `senate-repeated-paper-question-audit.ts`
+compares the *full*, non-800-character-truncated printed paper question against
+the accepted motion, requiring exactly one question-and-full-ballot paper across
+the entire original Journal source-day (including other bills), exactly one
+same-day accepted official event even when its bill is unresolved, verified
+original-paper provenance, and an action not already linked. It runs only in
+`REPEATABLE READ READ ONLY` within protected Neon and reports aggregate stage
+counts and public bill/date examples; member names, source bodies, IDs, URLs and
+question text remain private to the transaction. Its candidate count is
+**not an exact link**. Original source byte/SHA, printed source question/span,
+all original roll-header/ballot identities, existing event fingerprint and
+mutual uniqueness must be independently proved before any bounded write.
+
+
 ```sql
 SELECT * FROM senate_vote_paper_coverage_v ORDER BY session, vote_kind;
 SELECT session_slug, kind, count(*), count(proposed_text)
