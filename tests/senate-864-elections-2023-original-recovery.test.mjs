@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {sourceQueue,SPECS,HELD,OFFICIAL_FULL,VERSION,MARKER,
- recoveryPlan,verifyOriginals,eventMetadata} from '../src/evidence/senate-864-elections-2023-original-recovery.mjs';
+ recoveryPlan,verifyOriginals,eventMetadata,sourceProofHoldReason} from '../src/evidence/senate-864-elections-2023-original-recovery.mjs';
 import {freshOriginals,snapshotBindings} from '../scripts/deploy-senate-864-elections-2023-original-recovery.mjs';
 
 const uuid=i=>'00000000-0000-4000-8000-'+String(i).padStart(12,'0');
@@ -44,6 +44,14 @@ test('seven fixed 2023 originals cover ten actual named divisions with 133 vote 
  assert.equal(OFFICIAL_FULL.length,14);
  assert.match(VERSION,/elections-2023/);
  assert.match(MARKER,/2023_ORIGINAL_GUARDED/);
+});
+test('only separately source-certified but question-unresolved rolls become holds; source integrity errors remain fatal',()=>{
+ assert.equal(sourceProofHoldReason('Original question bill identity not separately proven'),'original_bill_context_unproved');
+ assert.equal(sourceProofHoldReason('Original source outcome unbound on 2023-01-17 offset 1399'),'original_named_roll_outcome_unbound');
+ assert.equal(sourceProofHoldReason('Original source result disagrees with selected parliamentary question'),'original_question_outcome_conflict');
+ assert.equal(sourceProofHoldReason('Authenticated original official Senate PDF or text SHA drift'),null);
+ assert.equal(sourceProofHoldReason('Original named-choice source is incomplete'),null);
+ assert.equal(sourceProofHoldReason('Fake event 2023-01-17 offset 1399'),null);
 });
 test('no source offset, voting slate or committee attendance substitutes for original question identity',()=>{
  assert(SPECS.every(x=>x.question.includes(x.bill)));
