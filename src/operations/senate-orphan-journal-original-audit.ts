@@ -1,0 +1,220 @@
+/**
+ * #1498: original-government Journal source-only audit of (1) known-bill
+ * accepted votes with NO parsed bill paper and (2) accepted votes without a
+ * resolved bill. Exact question+full named ballot and original PDF provenance
+ * are mandatory. The latter requires a UNIQUE bill printed INSIDE the same
+ * source question; neighboring bill context NEVER assigns a bill.
+ *
+ * Protected REPEATABLE READ READ ONLY. Reports contain counts and public
+ * bill/date only, not vote IDs, original questions, names, source URLs or text.
+ */
+import type {PoolClient} from 'pg';
+import {ballotSignature,billIdentifier,hash} from './senate-vote-paper-parser.js';
+import {parseOriginal,fullQuestion} from './senate-repeated-paper-original-roll-audit.js';
+import type {OriginalJournal,DayAccepted} from './senate-no-tally-original-census.js';
+import type {VoteTextGapAudit} from './senate-vote-text-gap-audit.js';
+
+export const ORPHAN_JOURNAL_AUDIT='senate-1498-orphan-journal-source-v1' as const;
+export type Cohort='missing_paper'|'unresolved_bill';
+export type Stage='original_unverified_or_duplicated'|'original_roll_unreadable'|
+ 'accepted_ballot_incomplete'|'no_original_exact_question_ballot'|
+ 'original_question_different_ballot'|'original_ballot_different_question'|
+ 'original_question_ballot_repeated'|'original_unreadable_duplicate'|
+ 'original_question_span_unproven'|'printed_bill_disagrees'|
+ 'bill_not_printed_in_question'|'multiple_bills_in_question'|
+ 'question_bill_differs_from_source'|'unique_catalog_bill_missing'|
+ 'accepted_source_day_question_collision'|'question_claimed_by_other_vote'|
+ 'existing_unverified_link'|'unique_missing_paper_question'|'unique_printed_bill';
+const STAGES:readonly Stage[]=[
+ 'original_unverified_or_duplicated','original_roll_unreadable',
+ 'accepted_ballot_incomplete','no_original_exact_question_ballot',
+ 'original_question_different_ballot','original_ballot_different_question',
+ 'original_question_ballot_repeated','original_unreadable_duplicate',
+ 'original_question_span_unproven','printed_bill_disagrees',
+ 'bill_not_printed_in_question','multiple_bills_in_question',
+ 'question_bill_differs_from_source','unique_catalog_bill_missing',
+ 'accepted_source_day_question_collision','question_claimed_by_other_vote',
+ 'existing_unverified_link','unique_missing_paper_question','unique_printed_bill'];
+const VALID_JOURNAL=/^https:\/\/www\.senate\.mn\/journals\/20\d\d-20\d\d\/20\d{8,9}\.pdf$/;
+const VALID_BILL=/^(HF|SF)[1-9]\d{0,5}$/;
+export interface OrphanVote {
+ id:string;source_id:string;source_url:string;session:string;day:string;
+ vote_kind:string;bill_id:string|null;bill:string|null;motion_text:string;
+ yea_count:number;nay_count:number;votes:Array<{name:string;choice:string}>;
+ exact_linked:boolean;stored_link:boolean;
+}
+export interface BillRow {id:string;session:string;identifier:string}
+export interface ClaimedQuestion{
+ source_url:string;day:string;question_text:string;
+ yea_count:number|null;nay_count:number|null;
+ ballot_sha256:string|null;vote_event_id:string;
+}
+export interface OrphanProof{
+ vote:OrphanVote;source:OriginalJournal;resolvedBillId:string;printedBill:string;
+ printedQuestion:string;questionStart:number;rollStart:number;
+ rollOrdinal:number;ballot:string;originalTextSha:string;
+ resolution:'existing_bill'|'printed_bill';
+}
+export interface OrphanReport{
+ schemaVersion:typeof ORPHAN_JOURNAL_AUDIT;
+ targeted:number;missingPaper:number;unresolvedBill:number;
+ retrievedOriginalDocuments:number;authenticatedOriginalDocuments:number;
+ acceptedSourceDayPeers:number;
+ eligibleKnownBillQuestions:number;eligiblePrintedBillAssociations:number;
+ stages:Record<Cohort,Record<Stage,number>>;
+ groups:Array<{session:string;vote_kind:string;cohort:Cohort;stage:Stage;count:number}>;
+ examples:Array<{session:string;bill:string;day:string;cohort:Cohort;stage:Stage;count:number}>;
+ officialVotesChanged:false;originalDocumentsChanged:false;
+ oldPaperActionsChanged:false;exactLinksCreated:0;
+ servingModelsChanged:false;completeAmendedStatesCertified:0;
+}
+const scope=(source_url:string,day:string)=>JSON.stringify([source_url,day]);
+const named=(v:DayAccepted)=>ballotSignature(v.votes,v.yeas,v.nays);
+const getCohort=(v:OrphanVote):Cohort=>v.bill_id===null?'unresolved_bill':'missing_paper';
+function billsInQuestion(q:string):string[]{
+ return [...new Set([...q.matchAll(/\b[HS]\s*\.?\s*F\s*\.?\s*(?:No\.?\s*)?\d{1,6}\b/gi)]
+  .map(x=>billIdentifier(x[0])).filter((x):x is string=>!!x))];
+}
+export function summarizeOrphanJournalOriginals(
+ votes:readonly OrphanVote[],docs:readonly OriginalJournal[],
+ dayVotes:readonly DayAccepted[],catalog:readonly BillRow[],
+ claims:readonly ClaimedQuestion[],gap:VoteTextGapAudit,
+ onUnique?:(proof:OrphanProof)=>void
+):OrphanReport{
+ if(votes.length>1100||docs.length>650||dayVotes.length>8000||
+  catalog.length>8000||claims.length>8000||
+  new Set(votes.map(v=>v.id)).size!==votes.length||
+  new Set(docs.map(d=>d.id)).size!==docs.length||
+  new Set(dayVotes.map(v=>v.eventId)).size!==dayVotes.length)
+  throw Error('Orphan original census source/identity limit exceeded');
+ const expected=(stage:string)=>gap.groups.filter(g=>g.source_family==='senate_journal'
+  &&g.evidence_stage===stage).reduce((n,g)=>n+g.event_count,0);
+ const missing=votes.filter(v=>v.bill_id!==null).length,unresolved=votes.length-missing;
+ if(missing!==expected('no_parsed_paper_for_bill')||
+  unresolved!==expected('no_resolved_bill'))
+  throw Error('Orphan original census disagrees with official full-population gaps');
+ const byUrl=new Map<string,OriginalJournal[]>(),byDay=new Map<string,DayAccepted[]>();
+ const catalogByKey=new Map<string,string[]>();
+ for(const d of docs){
+  const x=byUrl.get(d.source_url)??[];x.push(d);byUrl.set(d.source_url,x);
+ }
+ for(const v of dayVotes){
+  const k=scope(v.sourceUrl,v.day),x=byDay.get(k)??[];x.push(v);byDay.set(k,x);
+ }
+ for(const b of catalog){
+  const k=b.session+'|'+b.identifier,x=catalogByKey.get(k)??[];
+  x.push(b.id);catalogByKey.set(k,x);
+ }
+ const original=new Map(docs.map(d=>[d.id,parseOriginal(d)]));
+ const stages={
+  missing_paper:Object.fromEntries(STAGES.map(s=>[s,0])) as Record<Stage,number>,
+  unresolved_bill:Object.fromEntries(STAGES.map(s=>[s,0])) as Record<Stage,number>
+ };
+ const groups=new Map<string,OrphanReport['groups'][number]>();
+ const examples=new Map<string,OrphanReport['examples'][number]>();
+ for(const v of votes){
+  const cohort=getCohort(v);
+  if(!['2021-2022','2023-2024','2025-2026'].includes(v.session)||
+   !/^202[1-6]-\d\d-\d\d$/.test(v.day)||!VALID_JOURNAL.test(v.source_url)
+   ||v.exact_linked||(v.bill_id!==null&&!VALID_BILL.test(v.bill??'')))
+   throw Error('Non-Minnesota original Senate accepted event in orphan audit');
+  const authentic=(byUrl.get(v.source_url)??[]).filter(d=>d.original_verified
+   &&d.source_type==='mn_senate_journal');
+  const d=authentic.length===1?authentic[0]!:undefined;
+  const physical=d?original.get(d.id):undefined;
+  let stage:Stage|null=null;
+  if(!d||!(v.source_url.split('/').at(-1)??'').startsWith(v.day.replace(/-/g,'')))
+   stage='original_unverified_or_duplicated';
+  else if(!physical?.aligned)stage='original_roll_unreadable';
+  else {
+   const sig=ballotSignature(v.votes,v.yea_count,v.nay_count),q=fullQuestion(v.motion_text);
+   if(!sig)stage='accepted_ballot_incomplete';
+   else{
+    const sameQuestion=physical.rolls.filter(r=>r.question===q
+     &&r.yeas===v.yea_count&&r.nays===v.nay_count);
+    const sameBallot=physical.rolls.filter(r=>r.ballot===sig
+     &&r.yeas===v.yea_count&&r.nays===v.nay_count);
+    const exact=sameQuestion.filter(r=>r.ballot===sig);
+    if(!exact.length)stage=sameQuestion.length?'original_question_different_ballot'
+     :sameBallot.length?'original_ballot_different_question'
+     :'no_original_exact_question_ballot';
+    else if(exact.length!==1)stage='original_question_ballot_repeated';
+    else if(sameQuestion.some(r=>r!==exact[0]&&r.ballot===null))
+     stage='original_unreadable_duplicate';
+    else{
+     const r=exact[0]!;
+     if(r.questionStart===null||r.questionStart<0||r.questionStart>=r.start
+      ||r.start-r.questionStart>2600||q.length<40||q.length>2600
+      ||!/^The question (?:was taken|recurred)\b/i.test(q)
+      ||q.includes('The roll was called,')
+      ||/JOURNAL OF THE SENATE|\d{1,3}(?:ST|ND|RD|TH) DAY\]/i.test(q))
+      stage='original_question_span_unproven';
+     else if(cohort==='missing_paper'&&r.bill!==v.bill)
+      stage='printed_bill_disagrees';
+     else{
+      let billId=v.bill_id,printedBill=v.bill;
+      if(cohort==='unresolved_bill'){
+       const namedBills=billsInQuestion(q);
+       if(!namedBills.length)stage='bill_not_printed_in_question';
+       else if(namedBills.length!==1)stage='multiple_bills_in_question';
+       else if(namedBills[0]!==r.bill)stage='question_bill_differs_from_source';
+       else {
+        const bs=catalogByKey.get(v.session+'|'+namedBills[0])??[];
+        if(bs.length!==1)stage='unique_catalog_bill_missing';
+        else{billId=bs[0]!;printedBill=namedBills[0]!}
+       }
+      }
+      if(stage===null){
+       const peers=(byDay.get(scope(v.source_url,v.day))??[]).filter(a=>
+        a.yeas===v.yea_count&&a.nays===v.nay_count&&named(a)===sig
+        &&fullQuestion(a.motionText)===q);
+       if(peers.length!==1||peers[0]!.eventId!==v.id)
+        stage='accepted_source_day_question_collision';
+       else if(claims.some(c=>c.source_url===v.source_url&&c.day===v.day
+        &&c.yea_count===v.yea_count&&c.nay_count===v.nay_count
+        &&c.question_text===q&&c.ballot_sha256===sig&&c.vote_event_id!==v.id))
+        stage='question_claimed_by_other_vote';
+       else if(v.stored_link)stage='existing_unverified_link';
+       else {
+        if(!billId||!printedBill||!VALID_BILL.test(printedBill))
+         throw Error('Source-original orphan proof lacks independently printed bill');
+        stage=cohort==='missing_paper'?'unique_missing_paper_question':'unique_printed_bill';
+        onUnique?.({vote:v,source:d,resolvedBillId:billId,printedBill,
+         printedQuestion:q,questionStart:r.questionStart,rollStart:r.start,
+         rollOrdinal:r.ordinal,ballot:sig,originalTextSha:hash(d.body!),
+         resolution:cohort==='missing_paper'?'existing_bill':'printed_bill'});
+       }
+      }
+     }
+    }
+   }
+  }
+  if(stage===null)throw Error('Original orphan Journal vote was not classified');
+  stages[cohort][stage]++;
+  const k=JSON.stringify([v.session,v.vote_kind,cohort,stage]);
+  const g=groups.get(k)??{session:v.session,vote_kind:v.vote_kind,cohort,stage,count:0};
+  g.count++;groups.set(k,g);
+  if(v.bill&&VALID_BILL.test(v.bill)){
+   const ek=JSON.stringify([v.session,v.bill,v.day,cohort,stage]);
+   const e=examples.get(ek)??{session:v.session,bill:v.bill,day:v.day,cohort,stage,count:0};
+   e.count++;examples.set(ek,e);
+  }
+ }
+ if(Object.values(stages.missing_paper).reduce((a,b)=>a+b,0)!==missing
+  ||Object.values(stages.unresolved_bill).reduce((a,b)=>a+b,0)!==unresolved)
+  throw Error('Original question/bill cohort partition does not conserve votes');
+ return{
+  schemaVersion:ORPHAN_JOURNAL_AUDIT,targeted:votes.length,
+  missingPaper:missing,unresolvedBill:unresolved,
+  retrievedOriginalDocuments:docs.length,
+  authenticatedOriginalDocuments:[...original.values()].filter(x=>x.verified&&x.aligned).length,
+  acceptedSourceDayPeers:dayVotes.length,
+  eligibleKnownBillQuestions:stages.missing_paper.unique_missing_paper_question,
+  eligiblePrintedBillAssociations:stages.unresolved_bill.unique_printed_bill,
+  stages,groups:[...groups.values()].sort((a,b)=>b.count-a.count),
+  examples:[...examples.values()].sort((a,b)=>b.count-a.count).slice(0,20),
+  officialVotesChanged:false,originalDocumentsChanged:false,
+  oldPaperActionsChanged:false,exactLinksCreated:0,
+  servingModelsChanged:false,completeAmendedStatesCertified:0
+ };
+}
