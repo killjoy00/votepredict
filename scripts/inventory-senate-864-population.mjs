@@ -61,6 +61,13 @@ function candidateContext(text,offset){
  const end=Math.min(text.length,offset+(next>=0?Math.min(next,4000):4000)),context=text.slice(start,end);
  return {sourceContextStart:start,sourceContextEnd:end,sourceContextText:context,sourceContextSha256:sha(context),sourceContextIsUncertified:true};
 }
+export function compareAcquiredPdfExtraction(previous,d){
+ if(d.authenticated!==true)throw Error('Named-candidate original reauthentication failed');
+ if(d.textSha256!==previous){
+  if(d.extractionMethod!=='ocr_tesseract')throw Error('Embedded original text extraction SHA drift');
+  d.extractionTextChangedFromAcquiredCache=true;d.previousExtractedTextSha256=previous;
+ }
+}
 export function coalesceQuestionSources(occurrences,snapshot){
  const results=occurrences.map(({q,d})=>d.id?reconcileRowQuestion(q,d,snapshot):{status:'stored_source_identity_hold',reason:'original_not_uniquely_stored'});
  const ids=new Set(results.map(r=>r.eventId).filter(Boolean));
@@ -134,14 +141,7 @@ async function main(){
  if(priorReport)for(const d of registry.values()){const r=priorRows.get(key(d));if(!r||r.date!==d.date||r.committee!==d.committee||r.session!==d.session_slug)throw Error('Prior population source registry drift');}
  const freshPdfs=await acquirePdfs(wanted),freshKeys=new Set(freshPdfs.map(key));
  const fetched=[...freshPdfs,...[...registry.values()].filter(d=>!freshKeys.has(key(d))).map(d=>({...d,reusePublicRow:priorRows.get(key(d)),authenticated:priorRows.get(key(d)).authenticated,text:''}))];
- if(priorReport)for(const d of freshPdfs){
-  const previous=priorRows.get(key(d)).extractedTextSha256;
-  if(!d.authenticated)throw Error('Named-candidate original reauthentication failed');
-  if(d.textSha256!==previous){
-   if(d.extractionMethod!=='ocr_tesseract')throw Error('Embedded original text extraction SHA drift');
-   d.extractionTextChangedFromAcquiredCache=true;d.previousExtractedTextSha256=previous;
-  }
- }
+ if(priorReport)for(const d of freshPdfs)compareAcquiredPdfExtraction(priorRows.get(key(d)).extractedTextSha256,d);
  const rawSpec=load(ROOT+'senate-864-2022-25-141-official-no-pdf-meeting-to-Clerk-crosswalk.json').perOriginallyIndexedNoPdfMeeting.find(d=>d.originalSenateHearingId===17034);
  if(!rawSpec)throw Error('Unstored Clerk original missing');
  const url='https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17034&ls=92&type=minutes',raw=await fetchSenateMinutesHtml(url);

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {DOC_SQL,supplemental,summarize,coalesceQuestionSources} from '../scripts/inventory-senate-864-population.mjs';
+import {DOC_SQL,supplemental,summarize,coalesceQuestionSources,compareAcquiredPdfExtraction} from '../scripts/inventory-senate-864-population.mjs';
 test('supplementary registry has 28 exact official original identities scoped to 2022–25',()=>{
  const docs=supplemental();assert.equal(docs.length,28);assert.equal(new Set(docs.map(d=>d.source_url+'|'+d.content_sha256)).size,28);
  assert.ok(docs.every(d=>/^202[2-5]-\d\d-\d\d$/.test(d.date)&&/^https:\/\/www\.lrl\.mn\.gov\/archive\/minutes\/senate\//.test(d.source_url)&&/^[a-f0-9]{64}$/.test(d.content_sha256)));
@@ -50,4 +50,14 @@ test('immutable acquired-source cache has the pinned blob/content identities and
  const report=JSON.parse(decoded);assert.equal(report.originals.length,2860);assert.equal(report.reviewedCommit,plan.reviewedCommit);assert.equal(report.runId,plan.runId);
  assert.equal(report.productionWrites,0);assert.equal(report.distinctRowQuestions.length,24);
  assert.ok(report.originals.every(d=>d.sourceUrl&&/^[a-f0-9]{64}$/.test(d.originalSha256)));
+});
+
+test('OCR differences preserve byte proof and prior text hashes as holds; embedded drift or unauthenticated bytes fail',()=>{
+ const digest='a'.repeat(64),other='b'.repeat(64);
+ const stable={authenticated:true,textSha256:digest,extractionMethod:'embedded_text'};
+ compareAcquiredPdfExtraction(digest,stable);assert.equal(stable.extractionTextChangedFromAcquiredCache,undefined);
+ assert.throws(()=>compareAcquiredPdfExtraction(digest,{...stable,textSha256:other}));
+ assert.throws(()=>compareAcquiredPdfExtraction(digest,{...stable,authenticated:false}));
+ const ocr={authenticated:true,textSha256:other,extractionMethod:'ocr_tesseract'};
+ compareAcquiredPdfExtraction(digest,ocr);assert.equal(ocr.extractionTextChangedFromAcquiredCache,true);assert.equal(ocr.previousExtractedTextSha256,digest);assert.equal(ocr.authenticated,true);
 });
