@@ -53,8 +53,15 @@ async function acquirePdfs(docs){
   });all.push(...load(output));console.log('INVENTORY_PUBLIC_PDF_PROGRESS='+all.length+'/'+docs.length);
  }}));return all;
 }
+function candidateContext(text,offset){
+ const before=text.slice(0,offset),motions=[...before.matchAll(/\b(?:Senator|Chair|Vice\s+Chair)\s+[\p{L}.' -]{2,90}?\s+(?:moved|moves|offered|offers)\b/giu)],last=motions.at(-1);
+ const start=Math.max(0,offset-4000,last?.index??offset-1800);
+ const after=text.slice(offset),next=after.search(/\b(?:Senator|Chair|Vice\s+Chair)\s+[\p{L}.' -]{2,90}?\s+(?:moved|moves|offered|offers)\b/iu);
+ const end=Math.min(text.length,offset+(next>=0?Math.min(next,4000):4000)),context=text.slice(start,end);
+ return {sourceContextStart:start,sourceContextEnd:end,sourceContextText:context,sourceContextSha256:sha(context),sourceContextIsUncertified:true};
+}
 export function coalesceQuestionSources(occurrences,snapshot){
- const results=occurrences.map(({q,d})=>reconcileRowQuestion(q,d,snapshot));
+ const results=occurrences.map(({q,d})=>d.id?reconcileRowQuestion(q,d,snapshot):{status:'stored_source_identity_hold',reason:'original_not_uniquely_stored'});
  const ids=new Set(results.map(r=>r.eventId).filter(Boolean));
  if(ids.size>1)return {status:'ambiguous_production_match',reason:'different_originals_anchor_different_events',classification:false,missingChoices:0,alternateSourceParityVerified:false};
  let r=results.find(r=>r.status==='exact')||results.find(r=>r.alternateSourceParityVerified===true)||
@@ -67,8 +74,8 @@ export function coalesceQuestionSources(occurrences,snapshot){
 export function summarize(rows,questions,snapshot){
  const categories={},groups=new Map();
  for(const d of rows){
-  const k=d.date.slice(0,4)+'|'+d.committee,m=groups.get(k)||{year:Number(d.date.slice(0,4)),committee:d.committee,originals:0,pdf:0,clerk:0,authenticatedReadable:0,namedCandidateOriginals:0,examinedTextNoNamedDetected:0,unparseableOrUnavailable:0,ocrQualityUncertifiedOriginals:0,detectorCandidateOccurrences:0,detectorChoiceOccurrences:0,strictDistinctQuestions:0,strictExplicitChoices:0,correctlyRepresentedQuestions:0,correctlyRepresentedChoices:0,missingEvents:0,missingIndividualChoices:0,classificationDefects:0,questionOrIdentityHolds:0,alternateSourceVerified:0};
-  m.originals++;m[d.format==='pdf'?'pdf':'clerk']++;m.authenticatedReadable+=Number(d.readable);m.namedCandidateOriginals+=Number(d.status==='named_candidate_original');m.examinedTextNoNamedDetected+=Number(d.status==='examined_no_named_roll');m.unparseableOrUnavailable+=Number(!d.readable);m.ocrQualityUncertifiedOriginals+=Number(d.extractionMethod==='ocr_tesseract');m.detectorCandidateOccurrences+=d.detectorCandidates;m.detectorChoiceOccurrences+=d.detectorChoiceOccurrences;groups.set(k,m);
+  const k=d.date.slice(0,4)+'|'+d.committee,m=groups.get(k)||{year:Number(d.date.slice(0,4)),committee:d.committee,originals:0,pdf:0,clerk:0,authenticatedReadable:0,namedCandidateOriginals:0,examinedTextNoNamedDetected:0,unparseableOrUnavailable:0,ocrQualityUncertifiedOriginals:0,rawCandidateOccurrences:0,supplementalCandidateOccurrences:0,heldRowOccurrences:0,originalsRequiringQuestionOrExtractionReview:0,sourceHeaderOrWeekdayReviewOriginals:0,repeatedBodyDifferentDateOriginals:0,absenteeConflictCandidateOccurrences:0,detectorCandidateOccurrences:0,detectorChoiceOccurrences:0,strictDistinctQuestions:0,strictExplicitChoices:0,correctlyRepresentedQuestions:0,correctlyRepresentedChoices:0,missingEvents:0,missingIndividualChoices:0,classificationDefects:0,questionOrIdentityHolds:0,alternateSourceVerified:0};
+  m.originals++;m[d.format==='pdf'?'pdf':'clerk']++;m.authenticatedReadable+=Number(d.readable);m.namedCandidateOriginals+=Number(d.status==='named_candidate_original');m.examinedTextNoNamedDetected+=Number(d.status==='examined_no_named_roll');m.unparseableOrUnavailable+=Number(!d.readable);m.ocrQualityUncertifiedOriginals+=Number(d.extractionMethod==='ocr_tesseract');m.rawCandidateOccurrences+=(d.rawNamedCandidates||[]).length;m.supplementalCandidateOccurrences+=(d.supplementalNamedCandidates||[]).length;m.heldRowOccurrences+=(d.rowQuestions||[]).filter(q=>q.confidence!=='source_proven_question').length;m.originalsRequiringQuestionOrExtractionReview+=Number((d.rowQuestions||[]).some(q=>q.holds.length)||d.unresolvedExtractionSignals>0||d.header?.sourceDateHeaderNeedsReview===true||d.repeatedIdenticalBodyDifferentDate===true);m.sourceHeaderOrWeekdayReviewOriginals+=Number(d.header?.sourceDateHeaderNeedsReview===true);m.repeatedBodyDifferentDateOriginals+=Number(d.repeatedIdenticalBodyDifferentDate===true);m.absenteeConflictCandidateOccurrences+=(d.supplementalNamedCandidates||[]).filter(q=>q.attendance?.explicitChoiceFingerprintMatchesAbsentee>0).length;m.detectorCandidateOccurrences+=d.detectorCandidates;m.detectorChoiceOccurrences+=d.detectorChoiceOccurrences;groups.set(k,m);
  }
  for(const x of questions){
   categories[x.production.status]=(categories[x.production.status]||0)+1;const m=groups.get(x.date.slice(0,4)+'|'+x.committee),good=x.production.status==='exact'||x.production.alternateSourceParityVerified===true;
@@ -120,7 +127,7 @@ async function main(){
  }
  const priorRows=new Map((priorReport?.originals||[]).map(d=>[d.sourceUrl+'|'+d.originalSha256,d]));
  const priorOriginalUrls=new Set(priorOriginalQueue().map(p=>p.officialSourcePdfUrl));
- const wanted=[...registry.values()].filter(d=>!priorReport||priorOriginalUrls.has(d.source_url)||priorRows.get(key(d))?.rowQuestions.some(q=>q.confidence==='source_proven_question'));
+ const wanted=[...registry.values()].filter(d=>!priorReport||priorOriginalUrls.has(d.source_url)||priorRows.get(key(d))?.status==='named_candidate_original');
  if(priorReport)for(const d of registry.values()){const r=priorRows.get(key(d));if(!r||r.date!==d.date||r.committee!==d.committee||r.session!==d.session_slug)throw Error('Prior population source registry drift');}
  const freshPdfs=await acquirePdfs(wanted),freshKeys=new Set(freshPdfs.map(key));
  const fetched=[...freshPdfs,...[...registry.values()].filter(d=>!freshKeys.has(key(d))).map(d=>({...d,reusePublicRow:priorRows.get(key(d)),authenticated:priorRows.get(key(d)).authenticated,text:''}))];
@@ -132,7 +139,9 @@ async function main(){
  const text=extractSenateMinutesText(raw);if(sha(text)!==rawSpec.originalClerkTextSha256)throw Error('Unstored Clerk text SHA changed');
  const all=[...fetched,...html,{source_url:url,content_sha256:sha(raw),date:rawSpec.hearingDate,committee:rawSpec.committeeName,session_slug:session(rawSpec.hearingDate),format:'html_raw',text,authenticated:true,extractionMethod:'fresh_official_clerk_html',textSha256:sha(text)}].sort((a,b)=>a.date.localeCompare(b.date)||a.committee.localeCompare(b.committee)||a.source_url.localeCompare(b.source_url));
  if(all.length!==2860)throw Error('Population bound changed');
- const candidates=all.flatMap(d=>d.authenticated&&d.text?extractRowRollQuestions(d.text,d).filter(q=>q.confidence==='source_proven_question').map(q=>({q,d})):[]),identifiers=[...new Set(candidates.map(x=>x.q.billIdentifier))];
+ const repeatedHearingBodies=new Set(all.filter(d=>all.some(other=>other.content_sha256===d.content_sha256&&other.date!==d.date)).map(key));
+ const sourceIdentityHeld=d=>repeatedHearingBodies.has(key(d))||d.format==='pdf'&&d.text&&inspectOfficialSenatePdfHeader(d.text,d.date).sourceDateHeaderNeedsReview===true;
+ const candidates=all.flatMap(d=>d.authenticated&&d.text&&!sourceIdentityHeld(d)?extractRowRollQuestions(d.text,d).filter(q=>q.confidence==='source_proven_question').map(q=>({q,d})):[]),identifiers=[...new Set(candidates.map(x=>x.q.billIdentifier))];
  const latest=await readOnly(pool,target,async db=>{
   const events=(await db.query(SNAPSHOT_SQL.events)).rows,choices=(await db.query(SNAPSHOT_SQL.choices)).rows,roster=(await db.query(SNAPSHOT_SQL.roster)).rows;
   const bills=(await db.query("SELECT b.id::text,b.identifier,b.session_id::text,b.originating_chamber_id::text AS chamber_id,s.slug AS session_slug FROM bills b JOIN legislative_sessions s ON s.id=b.session_id JOIN jurisdictions j ON j.id=s.jurisdiction_id WHERE j.slug='us-mn' AND s.slug IN ('2021-2022','2023-2024','2025-2026') AND (b.identifier=ANY($1::text[]) OR b.id=ANY($2::uuid[])) ORDER BY b.id LIMIT 301",[identifiers,events.map(e=>e.metadata?.issue864OriginalClassification?.billId).filter(Boolean)])).rows;
@@ -154,9 +163,10 @@ async function main(){
  for(const d of all){
   if(d.reusePublicRow){rows.push(d.reusePublicRow);continue;}
   const inspected=inspectOriginal(d),raw=d.authenticated&&d.text?parseSenateCommitteeMinutesRaw(d.text).filter(q=>q.memberVotes.some(v=>['yea','nay'].includes(v.choice))):[],supp=d.authenticated&&d.text?extractSupplementalNamedSenateRollCandidates(d.text):[];
+  if(sourceIdentityHeld(d))for(const q of inspected.questions){q.holds.push('source_to_hearing_date_identity_requires_review');q.confidence='held_question';}
   rows.push({sourceId:sha(key(d)),sourceUrl:d.source_url,originalSha256:d.content_sha256,extractedTextSha256:d.textSha256||null,date:d.date,committee:d.committee,session:d.session_slug,format:d.format,authenticated:d.authenticated,readable:!!d.text,extractionMethod:d.extractionMethod,status:inspected.status,acquisitionHold:d.acquisitionHold||null,extractionError:d.error||null,ocrVisualQualityCertified:false,header:d.format==='pdf'&&d.text?inspectOfficialSenatePdfHeader(d.text,d.date):null,repeatedIdenticalBodyDifferentDate:(byBody.get(d.content_sha256)||[]).some(x=>x.date!==d.date),detectorCandidates:inspected.candidates,detectorChoiceOccurrences:inspected.choiceOccurrences,parserCounts:inspected.parserCounts||null,unresolvedExtractionSignals:inspected.unresolvedExtractionSignals,
-  rawNamedCandidates:raw.map(q=>({billIdentifier:q.billIdentifier||null,motionText:q.motionText||null,voteKind:q.voteKind||null,amendmentRef:q.amendmentRef||null,yea:q.memberVotes.filter(v=>v.choice==='yea').length,nay:q.memberVotes.filter(v=>v.choice==='nay').length,choiceFingerprintSha256:q.memberVotes.filter(v=>['yea','nay'].includes(v.choice)).map(v=>sha(v.choice+':'+norm(v.name))).sort(),certifiedDistinctQuestion:false})),
-  supplementalNamedCandidates:supp.map(q=>({sourceOffset:q.sourceOffset,namedYeaCount:q.namedYeaCount,namedNayCount:q.namedNayCount,choiceFingerprintSha256:q.choiceIdentitySha256,numericTallyMatches:q.numericTallyMatchesExplicitNamedList,namesUniqueAndExclusive:q.namesUniqueAndExclusive,attendance:sourceAbsenteeChoiceConflicts(d.text,q),certifiedDistinctQuestion:false})),
+  rawNamedCandidates:raw.map(q=>({billIdentifier:q.billIdentifier||null,motionText:q.motionText||null,voteKind:q.voteKind||null,amendmentRef:q.amendmentRef||null,printedOutcome:q.outcome||null,namesMatchTally:q.namesMatchTally??null,yea:q.memberVotes.filter(v=>v.choice==='yea').length,nay:q.memberVotes.filter(v=>v.choice==='nay').length,choiceFingerprintSha256:q.memberVotes.filter(v=>['yea','nay'].includes(v.choice)).map(v=>sha(v.choice+':'+norm(v.name))).sort(),certifiedDistinctQuestion:false})),
+  supplementalNamedCandidates:supp.map(q=>({sourceOffset:q.sourceOffset,...candidateContext(d.text,q.sourceOffset),namedYeaCount:q.namedYeaCount,namedNayCount:q.namedNayCount,choiceFingerprintSha256:q.choiceIdentitySha256,numericTallyMatches:q.numericTallyMatchesExplicitNamedList,namesUniqueAndExclusive:q.namesUniqueAndExclusive,attendance:sourceAbsenteeChoiceConflicts(d.text,q),certifiedDistinctQuestion:false})),
   rowQuestions:inspected.questions.map(q=>({questionKey:q.questionKey||null,billIdentifier:q.billIdentifier||null,voteKind:q.voteKind||null,amendmentRef:q.amendmentRef||null,motionText:q.motionText||null,choices:q.choices.length,confidence:q.confidence,holds:q.holds,sourcePassageSha256:q.fullQuestionPassageSha256||null}))});
  }
  const unique=new Map(),aliasGroups=new Map();
