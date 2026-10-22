@@ -78,12 +78,11 @@ test('different original source body or forged printed question offsets invalida
  assert.throws(()=>bindOrphanSourceProofs([{...p,originalTextSha:'0'.repeat(64)}]),/source question/);
  assert.throws(()=>bindOrphanSourceProofs([{...p,questionStart:p.questionStart+1}]),/source question/);
 });
-test('unreviewed production writer fails before attempting to connect to Neon',async()=>{
+test('certified 99-link writer never treats a mocked pool as a production transaction',async()=>{
  let connected=false;
- const pool={connect:async()=>{connected=true;throw Error('MUST NOT CONNECT')}} as unknown as Pool;
- await assert.rejects(repairOrphanJournalOriginalQuestions(pool),
-  /No independently certified original/);
- assert.equal(connected,false);
+ const pool={connect:async()=>{connected=true;throw Error('MOCK_NEON_REFUSED')}} as unknown as Pool;
+ await assert.rejects(repairOrphanJournalOriginalQuestions(pool),/MOCK_NEON_REFUSED/);
+ assert.equal(connected,true);
 });
 test('correcting a uniquely proven null-bill event changes exactly bill_id, and only inside the guarded original match',async()=>{
  const [p]=bindOrphanSourceProofs([
