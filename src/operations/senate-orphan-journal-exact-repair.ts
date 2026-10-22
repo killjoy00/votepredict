@@ -67,6 +67,12 @@ const CERTIFIED_AUTHENTICATED_ORIGINALS=107;
  * Keep this a FIXED official-denominator receipt, not a permissive range.
  */
 const CERTIFIED_ACCEPTED_VOTE_EVENTS=2332;
+/** Narrow, deterministic accepted-population receipt. Never use >= or <=
+ * around the official denominator: concurrent new ingest must be re-audited.
+ */
+export function officialOrphanAcceptedPopulationCertified(observed:number):boolean{
+ return observed===CERTIFIED_ACCEPTED_VOTE_EVENTS;
+}
 const CERTIFIED_SOURCE_STAGE_COUNTS:Readonly<Record<string,number>>={
  'missing_paper.original_unverified_or_duplicated':3,
  'missing_paper.original_question_ballot_repeated':42,
@@ -238,10 +244,10 @@ export async function repairOrphanJournalOriginalQuestions(
    const originalBefore=await readSameSourceQuestionRows(db);
    const sameBefore=summarizeSameSourceFailures(
     originalBefore.votes,originalBefore.actions,previous);
-   const first=exactBefore===1255&&previous.auditedEvents===CERTIFIED_ACCEPTED_VOTE_EVENTS
+   const first=exactBefore===1255&&officialOrphanAcceptedPopulationCertified(previous.auditedEvents)
     &&sameBefore.sameSourceUnlinked===332;
    const replay=exactBefore===1255+expectedNew
-    &&previous.auditedEvents===CERTIFIED_ACCEPTED_VOTE_EVENTS;
+    &&officialOrphanAcceptedPopulationCertified(previous.auditedEvents);
    safeProgress('original_population_guard',{known:previous.groups.filter(g=>g.evidence_stage==='no_parsed_paper_for_bill'&&g.source_family==='senate_journal').reduce((n,g)=>n+g.event_count,0),unresolved:previous.groups.filter(g=>g.evidence_stage==='no_resolved_bill'&&g.source_family==='senate_journal').reduce((n,g)=>n+g.event_count,0)});
    if(!first&&!replay)
     throw Error('Source-original orphan vote denominator drifted; no bill/paper mutations');
