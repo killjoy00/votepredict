@@ -175,7 +175,7 @@ function fullIdentity(snapshot,surname,date){
  if(!publicName)throw Error('No independent official first and family name');
  const matched=snapshot.roster.filter(r=>r.session_slug==='2023-2024'&&
    r.starts_on&&r.ends_on&&r.starts_on<=date&&r.ends_on>=date&&
-   [r.name,r.normalized_name,...(r.aliases||[])].some(n=>publicName.keys.has(norm(n))));
+   [r.name,r.normalized_name,...(r.aliases||[])].some(n=>[...normalForms(n)].some(k=>publicName.keys.has(k))));
  return unique(matched,'Historical full-name session membership identity not unique');
 }
 const ref=s=>norm(s).replace(/^(?:a\s*)(\d+)$/,'a$1');
