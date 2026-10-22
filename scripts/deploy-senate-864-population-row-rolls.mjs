@@ -11,9 +11,11 @@ import {senateCommitteeHearingTiming} from '../src/evidence/senate-committee-mee
 import {COMMITTEE_YEAR_SQL} from '../src/evidence/senate-864-completion-audit.mjs';
 import {assertHistoricalMainPush} from '../src/evidence/senate-864-72-protected-event.mjs';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.ts';
+import {priorOriginalQueue,authenticatePriorQuestionOriginals,verifiedPriorQuestionEvents} from '../src/evidence/senate-864-prior-question-bridge.mjs';
+export const PRIOR_MARKER='SENATE864_POPULATION_PRIOR_QUESTION_V1';
 export const PLAN_PATH='docs/evaluation/source-proof/senate-864-population-row-repair-plan.json';
 export const WRAPPED_MARKER='SENATE864_POPULATION_WRAPPED_ROWS_V1';
-const profiles={base:{path:PLAN_PATH,documents:10,questions:14,choices:181,add:14,correct:0},wrapped:{path:'docs/evaluation/source-proof/senate-864-population-wrapped-row-repair-plan.json',documents:5,questions:9,choices:123,add:1,correct:5}};
+const profiles={prior:{path:'docs/evaluation/source-proof/senate-864-population-prior-question-plan.json',documents:1,questions:1,choices:14,add:1,correct:0},base:{path:PLAN_PATH,documents:10,questions:14,choices:181,add:14,correct:0},wrapped:{path:'docs/evaluation/source-proof/senate-864-population-wrapped-row-repair-plan.json',documents:5,questions:9,choices:123,add:1,correct:5}};
 export function planSource(cohort='base'){
  const p=profiles[cohort];if(!p)throw Error('Unknown bounded source cohort');
  const pins=JSON.parse(readFileSync(p.path,'utf8'));
@@ -44,7 +46,16 @@ export async function freshOriginals(fetcher=fetchSenateMinutesHtml,cohort='base
   }
   docs.push(doc);
  }
- return {docs,pins,cohort};
+ const priorDocs=[];let priorProof;
+ if(cohort==='prior'){
+  for(const p of priorOriginalQueue()){
+   const pdf=await pdfFetcher({url:p.officialSourcePdfUrl});
+   if(pdf.contentSha256!==p.originalSourcePdfSha256||sha(pdf.text)!==p.originalEmbeddedTextSha256)throw Error('Prior original PDF byte/text SHA drift');
+   priorDocs.push({url:p.officialSourcePdfUrl,source_url:p.officialSourcePdfUrl,date:p.hearingDate,rawSha:pdf.contentSha256,sha256:pdf.contentSha256,text:pdf.text,committee:'Elections',session_slug:'2023-2024'});
+  }
+  priorProof=authenticatePriorQuestionOriginals(priorDocs);
+ }
+ return {docs,pins,cohort,priorDocs,priorProof};
 }
 export const SNAPSHOT_SQL={
  documents:`SELECT sd.id::text,sd.source_url,sd.content_sha256,sd.session_id::text,sd.chamber_id::text,
@@ -62,7 +73,8 @@ export const SNAPSHOT_SQL={
  m.choice,m.source_ordinal,m.metadata,m.created_at::text FROM member_votes m JOIN vote_events v ON v.id=m.vote_event_id
  WHERE v.metadata->>'committeeVote'='true' AND v.occurred_on>=DATE '2022-01-01' AND v.occurred_on<DATE '2026-01-01'
  ORDER BY m.id LIMIT 4001`,
- roster:`SELECT m.id::text AS membership_id,l.name,l.normalized_name,m.starts_on::text,m.ends_on::text,s.slug AS session_slug
+ roster:`SELECT m.id::text AS membership_id,l.name,l.normalized_name,m.starts_on::text,m.ends_on::text,s.slug AS session_slug,
+ ARRAY(SELECT a.source_name FROM membership_source_aliases a WHERE a.membership_id=m.id ORDER BY a.source_name) AS aliases
  FROM memberships m JOIN legislators l ON l.id=m.legislator_id JOIN legislative_sessions s ON s.id=m.session_id
  JOIN chambers c ON c.id=m.chamber_id JOIN jurisdictions j ON j.id=s.jurisdiction_id
  WHERE c.slug='senate' AND j.slug='us-mn' AND s.slug IN ('2021-2022','2023-2024','2025-2026') ORDER BY m.id LIMIT 401`,
@@ -72,9 +84,12 @@ export const SNAPSHOT_SQL={
 };
 async function snapshot(db,o){
  const bounded=async(sql,args,max)=>{const r=(await db.query(sql,args)).rows;if(r.length>=max)throw Error('Snapshot truncated');return r;};
- const docs=await bounded(SNAPSHOT_SQL.documents,[o.docs.map(d=>d.url)],21);
- for(const original of o.docs){const matches=docs.filter(d=>d.source_url===original.url&&d.content_sha256===original.sha256&&d.date===original.date&&d.committee===original.committee&&d.session_slug===original.session_slug);if(matches.length!==1)throw Error('Exact stored original provenance missing or duplicated');}
- return {docs,events:await bounded(SNAPSHOT_SQL.events,[],601),choices:await bounded(SNAPSHOT_SQL.choices,[],4001),roster:await bounded(SNAPSHOT_SQL.roster,[],401),bills:await bounded(SNAPSHOT_SQL.bills,[[...new Set(o.pins.questions.map(q=>q.billIdentifier))]],21),year:await bounded(COMMITTEE_YEAR_SQL,[],6)};
+ const originals=[...o.docs,...(o.priorDocs||[])];
+ const docs=await bounded(SNAPSHOT_SQL.documents,[originals.map(d=>d.url)],21);
+ for(const original of originals){const matches=docs.filter(d=>d.source_url===original.url&&d.content_sha256===original.sha256&&d.date===original.date&&d.committee===original.committee&&d.session_slug===original.session_slug);if(matches.length!==1)throw Error('Exact stored original provenance missing or duplicated');}
+ const state={docs,events:await bounded(SNAPSHOT_SQL.events,[],601),choices:await bounded(SNAPSHOT_SQL.choices,[],4001),roster:await bounded(SNAPSHOT_SQL.roster,[],401),bills:await bounded(SNAPSHOT_SQL.bills,[[...new Set(o.pins.questions.map(q=>q.billIdentifier))]],21),year:await bounded(COMMITTEE_YEAR_SQL,[],6)};
+ if(o.priorProof)state.verifiedPriorQuestions=verifiedPriorQuestionEvents(o.priorProof,state);
+ return state;
 }
 async function schemaCheck(db){
  const expected=readdirSync('migrations').filter(f=>/^\d{4}_[\w-]+\.sql$/.test(f)).sort().map(filename=>({filename,checksum:sha(readFileSync('migrations/'+filename))}));
@@ -114,7 +129,7 @@ export async function runProduction(pool,target,o){
  if(changed.length&&(add.length!==profile.add||expectedChoices!==profile.choices||expectedCorrections!==profile.correct))throw Error('Reviewed write bounds or partial production state changed');
  let insertedEvents=0,insertedChoices=0,correctedClassifications=0;
  if(changed.length){const db=await pool.connect();try{await db.query('BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE');try{
- await db.query('LOCK TABLE vote_events,member_votes,source_documents,memberships,legislators,bills,legislative_sessions,chambers,jurisdictions IN SHARE ROW EXCLUSIVE MODE');
+ await db.query('LOCK TABLE vote_events,member_votes,source_documents,memberships,membership_source_aliases,legislators,bills,legislative_sessions,chambers,jurisdictions IN SHARE ROW EXCLUSIVE MODE');
  await schemaCheck(db);const locked=await snapshot(db,o);if(!same(before,locked)||!same(plan,correctionPlan(o,locked)))throw Error('Concurrent source or production drift');
  for(const x of changed){const {q,doc,bill,result}=x;
  const metadata={committeeVote:true,committeeName:doc.committee,individualVotesAvailable:true,sourceQuestionKey:q.questionKey,
@@ -143,18 +158,18 @@ export async function runProduction(pool,target,o){
   else for(const k of Object.keys(old).filter(k=>!['bill_id','bill_identifier','vote_kind','amendment_ref','passed','is_passage','metadata'].includes(k)))if(!same(old[k],now[k]))throw Error('Original event identity, source context or count changed');
  }
  const ids=replay.map(x=>{const e=after.events.find(e=>e.id===x.result.eventId);if(!e.created_at||e.metadata?.sourceQuestionKey!==x.q.questionKey||e.metadata?.sameDayEligible!==false||e.metadata?.availableOn!==x.doc.date)throw Error('Exact new event/timestamp/timing readback failed');return {questionKey:x.q.questionKey,eventId:e.id,createdAt:e.created_at,choices:x.q.choices.length};});
- return {sourceOriginals:o.docs.length,sourceProvenQuestions:o.pins.expectedQuestions,sourceProvenChoices:o.pins.expectedChoices,previousExact:plan.filter(x=>x.result.status==='exact').length,insertedEvents,insertedChoices,correctedClassifications,preservedExistingTargetEventIds:edited.size,verifiedExact:o.pins.expectedQuestions,verifiedChoices:o.pins.expectedChoices,zeroWriteReplay:true,yearCountsBefore:before.year,yearCountsAfter:after.year,existingEventIdsAndChoicesPreserved:true,verifiedRepeatableReadReadOnlyAndRollback:true,serializableWrites:true,recoveredEvents:ids};
+ return {sourceOriginals:o.docs.length+(o.priorDocs||[]).length,independentlyReverifiedPriorQuestions:o.priorProof?.length||0,sourceProvenQuestions:o.pins.expectedQuestions,sourceProvenChoices:o.pins.expectedChoices,previousExact:plan.filter(x=>x.result.status==='exact').length,insertedEvents,insertedChoices,correctedClassifications,preservedExistingTargetEventIds:edited.size,verifiedExact:o.pins.expectedQuestions,verifiedChoices:o.pins.expectedChoices,zeroWriteReplay:true,yearCountsBefore:before.year,yearCountsAfter:after.year,existingEventIdsAndChoicesPreserved:true,verifiedRepeatableReadReadOnlyAndRollback:true,serializableWrites:true,recoveredEvents:ids};
 }
 async function main(){let phase='main_push_guard',pool;try{
- if(process.argv.length===3&&['--source-only','--source-only=wrapped'].includes(process.argv[2])){const o=await freshOriginals(undefined,process.argv[2].endsWith('=wrapped')?'wrapped':'base');console.log('SENATE864_POPULATION_ROW_SOURCE_OK='+JSON.stringify({originals:o.docs.length,questions:o.pins.expectedQuestions,choices:o.pins.expectedChoices,productionWrites:0}));return;}
+ if(process.argv.length===3&&['--source-only','--source-only=wrapped','--source-only=prior'].includes(process.argv[2])){const o=await freshOriginals(undefined,process.argv[2].endsWith('=prior')?'prior':process.argv[2].endsWith('=wrapped')?'wrapped':'base');console.log('SENATE864_POPULATION_ROW_SOURCE_OK='+JSON.stringify({originals:o.docs.length+(o.priorDocs||[]).length,verifiedPriorQuestions:o.priorProof?.length||0,questions:o.pins.expectedQuestions,choices:o.pins.expectedChoices,productionWrites:0}));return;}
  if(process.argv.length!==2)throw Error('Fixed modes only');const env=process.env,event=JSON.parse(readFileSync(env.GITHUB_EVENT_PATH||''));
  const cohort=env.SENATE864_ROW_COHORT||'base';if(!profiles[cohort])throw Error('Unknown production cohort');
- assertHistoricalMainPush({...env,VOTEPREDICT_864_72_INDEPENDENT_CI:env.SENATE864_INDEPENDENT_MAIN},event);if(!event.head_commit.message.includes(cohort==='wrapped'?WRAPPED_MARKER:MARKER))throw Error('Reviewed marker absent');
+ assertHistoricalMainPush({...env,VOTEPREDICT_864_72_INDEPENDENT_CI:env.SENATE864_INDEPENDENT_MAIN},event);if(!event.head_commit.message.includes(cohort==='prior'?PRIOR_MARKER:cohort==='wrapped'?WRAPPED_MARKER:MARKER))throw Error('Reviewed marker absent');
  phase='independent_originals';const o=await freshOriginals(undefined,cohort);phase='existing_primary';
  const target=await discoverExistingVotePredictNeonConnection({apiKey:env.NEON_API_KEY||'',projectId:env.VOTEPREDICT_NEON_PROJECT_ID||'',preferredDatabase:env.VOTEPREDICT_MEDIA_EXISTING_DATABASE||undefined,requirePrimary:true});
  pool=new Pool({host:target.host,port:target.port,user:target.role,password:target.password,database:target.database,ssl:{rejectUnauthorized:true},max:1,connectionTimeoutMillis:10000,query_timeout:60000,statement_timeout:55000,options:'-c lock_timeout=4000',application_name:VERSION});
  phase='protected_repair_and_independent_readback';const result=await runProduction(pool,target,o);
  const receipt={version:VERSION,cohort,reviewedCommit:env.GITHUB_SHA,verifiedAt:new Date().toISOString(),...result};
- mkdirSync('artifacts',{recursive:true});writeFileSync('artifacts/senate864-population-'+(cohort==='wrapped'?'wrapped-row':'row')+'-readback.json',JSON.stringify(receipt,null,2)+'\n');console.log('SENATE864_POPULATION_ROW_PRODUCTION='+JSON.stringify(receipt));
+ mkdirSync('artifacts',{recursive:true});writeFileSync('artifacts/senate864-population-'+(cohort==='prior'?'prior-row':cohort==='wrapped'?'wrapped-row':'row')+'-readback.json',JSON.stringify(receipt,null,2)+'\n');console.log('SENATE864_POPULATION_ROW_PRODUCTION='+JSON.stringify(receipt));
  }catch(e){console.error('SENATE864_POPULATION_ROW_HOLD_AT='+phase);if(e?.code&&/^[A-Z0-9]{5}$/.test(e.code))console.error('SQLSTATE='+e.code);process.exitCode=1;}finally{if(pool)await pool.end();}}
 if(process.argv[1]?.endsWith('/deploy-senate-864-population-row-rolls.mjs'))void main();

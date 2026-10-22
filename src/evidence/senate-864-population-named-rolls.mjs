@@ -140,9 +140,12 @@ export function reconcileRowQuestion(q,doc,snapshot){
   const complete=originalQuestions.filter(r=>stored.includes(canonical(r.fullQuestionPassage)));
   return complete.length===1&&complete[0].questionKey===q.questionKey;
  };
- const anchored=same.filter(e=>passageBound(e)||e.bill_identifier===q.billIdentifier&&q.questionCanonical&&
+ const prior=e=>(snapshot.verifiedPriorQuestions||[]).find(p=>p.independentlyAuthenticated===true&&p.eventId===e.id&&p.bill===q.billIdentifier&&p.date===doc.date);
+ const priorSame=e=>{const p=prior(e);return !!p&&p.kind===q.voteKind&&!!q.amendmentRef&&ref(p.amendmentRef)===ref(q.amendmentRef);};
+ const priorDifferent=e=>{const p=prior(e);return !!p&&(p.kind!==q.voteKind||!!p.amendmentRef&&!!q.amendmentRef&&ref(p.amendmentRef)!==ref(q.amendmentRef));};
+ const anchored=same.filter(e=>!priorDifferent(e)&&(priorSame(e)||passageBound(e)||e.bill_identifier===q.billIdentifier&&q.questionCanonical&&
   canonical(e.motion_text).includes(q.questionCanonical)&&
-  (canonical(e.motion_text)===q.questionCanonical||[...e.motion_text.matchAll(MOTION)].length===1));
+  (canonical(e.motion_text)===q.questionCanonical||[...e.motion_text.matchAll(MOTION)].length===1)));
  if(anchored.length>1)return {status:'ambiguous_production_match',reason:'multiple_exact_question_anchors'};
  if(anchored.length===1){
   const e=anchored[0],actual=snapshot.choices.filter(v=>v.vote_event_id===e.id);
@@ -150,12 +153,13 @@ export function reconcileRowQuestion(q,doc,snapshot){
   if(e.session_id!==doc.session_id||e.chamber_id!==doc.chamber_id||e.yea_count!==q.yea||e.nay_count!==q.nay||actual.some(v=>!choices.some(x=>x.membershipId===v.membership_id&&x.choice===v.choice)))return {status:'conflicting_choices_or_tally',eventId:e.id};
   const missing=choices.filter(x=>!actual.some(v=>v.membership_id===x.membershipId&&v.choice===x.choice));
   const classification=e.bill_identifier!==q.billIdentifier||e.vote_kind!==q.voteKind||ref(e.amendment_ref)!==ref(q.amendmentRef)||e.passed!==q.passed||e.is_passage!==false;
-  if(e.source_document_id!==doc.id)return {status:'different_source_identity',eventId:e.id,missingChoices:missing.length,classification};
+  if(e.source_document_id!==doc.id)return {status:'different_source_identity',eventId:e.id,missingChoices:missing.length,classification,alternateSourceParityVerified:priorSame(e)&&!classification&&!missing.length};
   return {status:classification?'classification_defect':missing.length?'missing_choices':'exact',eventId:e.id,choices,missingChoices:missing,classification};
  }
  // An event with a different question can be excluded only by explicit differing
  // amendment refs. All uncertain alternate source or final-motion joins remain held.
  const potential=same.filter(e=>{
+  if(priorDifferent(e))return false;
   if(canonical(e.motion_text).includes(q.questionCanonical))return true;
   if(e.bill_identifier!==q.billIdentifier)return false;
   // A different *metadata* ref is not independent proof of a different

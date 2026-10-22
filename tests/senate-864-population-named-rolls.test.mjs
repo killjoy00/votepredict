@@ -104,7 +104,7 @@ test('disposable PostgreSQL: preserve eight event IDs, correct five classificati
  const admin=new Pool({connectionString:url,max:1}),schema='row_repair_'+randomUUID().replaceAll('-','');let pool;
  try{
   await admin.query('CREATE SCHEMA '+schema);
-  for(const table of ['jurisdictions','chambers','legislative_sessions','legislators','memberships','bills','source_documents','vote_events','member_votes','votepredict_schema_migrations'])await admin.query(`CREATE TABLE ${schema}.${table} (LIKE public.${table} INCLUDING ALL)`);
+  for(const table of ['jurisdictions','chambers','legislative_sessions','legislators','memberships','membership_source_aliases','bills','source_documents','vote_events','member_votes','votepredict_schema_migrations'])await admin.query(`CREATE TABLE ${schema}.${table} (LIKE public.${table} INCLUDING ALL)`);
   await admin.query(`INSERT INTO ${schema}.votepredict_schema_migrations SELECT * FROM public.votepredict_schema_migrations`);
   pool=new Pool({connectionString:url,max:1,options:'-c search_path='+schema+',public'});
   const one=async(sql,args=[])=>{const r=await pool.query(sql,args);return r.rows[0];};
@@ -137,4 +137,19 @@ test('disposable PostgreSQL: preserve eight event IDs, correct five classificati
   const replay=await runProduction(pool,target,o);assert.equal(replay.insertedEvents,0);assert.equal(replay.insertedChoices,0);assert.equal(replay.correctedClassifications,0);
   assert.ok(oldIds.every(id=>first.recoveredEvents.some(e=>e.eventId===id)));
  }finally{if(pool)await pool.end();await admin.query('DROP SCHEMA '+schema+' CASCADE');await admin.end();}
+});
+
+test('only an independently authenticated different prior question removes a duplicate hold',()=>{
+ const q=qs()[0],s=snap();
+ s.events=[{id:'prior',occurred_on:doc.date,session_slug:doc.session_slug,source_document_id:'prior-doc',bill_identifier:q.billIdentifier,motion_text:'Prior original amendment question',metadata:{committeeName:doc.committee}}];
+ assert.equal(reconcileRowQuestion(q,doc,s).status,'ambiguous_production_match');
+ const proof={eventId:'prior',bill:q.billIdentifier,date:doc.date,kind:'amendment',amendmentRef:'A35',independentlyAuthenticated:false};
+ s.verifiedPriorQuestions=[proof];assert.equal(reconcileRowQuestion(q,doc,s).status,'ambiguous_production_match');
+ proof.independentlyAuthenticated=true;assert.equal(reconcileRowQuestion(q,doc,s).status,'missing_event');
+ proof.bill='SF9999';assert.equal(reconcileRowQuestion(q,doc,s).status,'ambiguous_production_match');
+});
+test('prior-source profile selects the separate final SF3 recommendation, not the accepted A35 amendment',()=>{
+ const p=planSource('prior');assert.equal(p.sourceDocuments.length,1);assert.equal(p.expectedChoices,14);
+ assert.equal(p.questions.length,1);assert.equal(p.questions[0].billIdentifier,'SF3');
+ assert.equal(p.questions[0].voteKind,'motion');assert.equal(p.questions[0].amendmentRef,null);assert.equal(p.questions[0].passed,true);
 });

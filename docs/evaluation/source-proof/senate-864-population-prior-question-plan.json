@@ -1,0 +1,29 @@
+{
+  "version": "senate864-population-prior-question-plan-v1",
+  "profile": "prior",
+  "sourceDocuments": [
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17523&ls=93&type=minutes",
+      "sha256": "066eb384d2d808eef339d65d9b2af775ea3bcbf358bad3608feb31329fb5e738",
+      "date": "2023-02-07",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    }
+  ],
+  "questions": [
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17523&ls=93&type=minutes",
+      "questionKey": "eb92023662d714175d4a5ad0bf35e9dd6b58f6a33c7dcacf847c621a27dec019",
+      "billIdentifier": "SF3",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 6,
+      "motionText": "Senator Marty moved that SF3, as amended, by recommended to pass and re-referred to the Transportation Committee. Senator Koran requested a roll call vote and a roll call was granted."
+    }
+  ],
+  "expectedQuestions": 1,
+  "expectedChoices": 14,
+  "priorOriginalVerification": "Reuse the SHA-pinned seven-PDF 2023 Elections verifier and exact live A35 recovery planner; the accepted failed A35 amendment is an independently identified different question."
+}
