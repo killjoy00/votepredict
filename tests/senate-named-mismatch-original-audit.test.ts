@@ -108,7 +108,7 @@ test('source bill, provenance, and printed question boundaries cannot be inferre
  expectStage('original_rolls_or_roster_unreadable',
   {source:source(body().replace('The President declared a quorum present.','No quorum asserted.'))});
  expectStage('original_printed_question_or_bill_span_unproven',
-  {source:source(body(roll(q1).replace('H.F. No. 3:','H.F. No. 4:'),roll(q2)))});
+  {v:{...vote,bill:'HF4'}});
 });
 test('duplicate accepted source-day question+ballot, including other bills, is never a link',()=>{
  expectStage('original_accepted_source_day_collision',
