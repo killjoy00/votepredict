@@ -87,7 +87,7 @@ export function summarizeSourceStateChain(
  for(const a of actions){
   if(!VALID_SESSIONS.includes(a.session as typeof VALID_SESSIONS[number])
    ||!KEY.test(a.actionKey)||!Number.isSafeInteger(a.sequence)
-   ||a.sequence<0||a.sequence>1000000
+   ||a.sequence<0||a.sequence>2147483647
    ||!/^\d{4}-\d\d-\d\d$/.test(a.day)
    ||!Array.isArray(a.priorAdoptedKeys)
    ||a.priorAdoptedKeys.some(x=>typeof x!=='string'||!KEY.test(x))
