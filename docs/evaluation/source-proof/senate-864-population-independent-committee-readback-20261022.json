@@ -1,0 +1,295 @@
+{
+  "schemaVersion": "senate864-population-independent-committee-readback-v1",
+  "issue": 864,
+  "readAt": "2026-10-22T21:39:07.263Z",
+  "repeatableReadReadOnlyAndExplicitRollback": true,
+  "scopeCheck": [
+    {
+      "jurisdiction": "us-mn",
+      "chamber": "senate",
+      "events": 199,
+      "choices": 1644
+    }
+  ],
+  "baselineReconstruction": "Remove only events and named choices inserted with issue864SourceRepair=senate864-population-named-rolls-v1; retained event committee labels are unchanged. Classification preservation is separately verified by guarded production receipts.",
+  "totals": {
+    "eventsBefore": 183,
+    "eventsAfter": 199,
+    "choicesBefore": 1326,
+    "choicesAfter": 1644
+  },
+  "exactCommitteeLabelRows": [
+    {
+      "year": 2022,
+      "committee": "Education Finance and Policy",
+      "events_before": 1,
+      "events_after": 1,
+      "choices_before": 0,
+      "choices_after": 0
+    },
+    {
+      "year": 2022,
+      "committee": "Environment and Natural Resources Policy and Legacy Finance",
+      "events_before": 1,
+      "events_after": 1,
+      "choices_before": 0,
+      "choices_after": 0
+    },
+    {
+      "year": 2022,
+      "committee": "Finance",
+      "events_before": 34,
+      "events_after": 34,
+      "choices_before": 249,
+      "choices_after": 249
+    },
+    {
+      "year": 2022,
+      "committee": "Labor and Industry Policy",
+      "events_before": 2,
+      "events_after": 2,
+      "choices_before": 10,
+      "choices_after": 10
+    },
+    {
+      "year": 2023,
+      "committee": "Elections",
+      "events_before": 1,
+      "events_after": 15,
+      "choices_before": 14,
+      "choices_after": 199
+    },
+    {
+      "year": 2023,
+      "committee": "Environment, Climate, and Legacy",
+      "events_before": 2,
+      "events_after": 2,
+      "choices_before": 18,
+      "choices_after": 18
+    },
+    {
+      "year": 2023,
+      "committee": "Finance",
+      "events_before": 4,
+      "events_after": 4,
+      "choices_before": 0,
+      "choices_after": 0
+    },
+    {
+      "year": 2023,
+      "committee": "Health and Human Services",
+      "events_before": 15,
+      "events_after": 15,
+      "choices_before": 107,
+      "choices_after": 107
+    },
+    {
+      "year": 2023,
+      "committee": "Judiciary and Public Safety",
+      "events_before": 12,
+      "events_after": 12,
+      "choices_before": 72,
+      "choices_after": 72
+    },
+    {
+      "year": 2023,
+      "committee": "Rules and Administration",
+      "events_before": 2,
+      "events_after": 2,
+      "choices_before": 20,
+      "choices_after": 20
+    },
+    {
+      "year": 2024,
+      "committee": "Agriculture, Broadband and Rural Development",
+      "events_before": 2,
+      "events_after": 2,
+      "choices_before": 18,
+      "choices_after": 18
+    },
+    {
+      "year": 2024,
+      "committee": "Capital Investment",
+      "events_before": 1,
+      "events_after": 1,
+      "choices_before": 9,
+      "choices_after": 9
+    },
+    {
+      "year": 2024,
+      "committee": "Commerce and Consumer Protection",
+      "events_before": 4,
+      "events_after": 4,
+      "choices_before": 18,
+      "choices_after": 18
+    },
+    {
+      "year": 2024,
+      "committee": "Education Finance",
+      "events_before": 6,
+      "events_after": 6,
+      "choices_before": 54,
+      "choices_after": 54
+    },
+    {
+      "year": 2024,
+      "committee": "Education Policy",
+      "events_before": 2,
+      "events_after": 2,
+      "choices_before": 20,
+      "choices_after": 20
+    },
+    {
+      "year": 2024,
+      "committee": "Elections",
+      "events_before": 16,
+      "events_after": 17,
+      "choices_before": 0,
+      "choices_after": 123
+    },
+    {
+      "year": 2024,
+      "committee": "Finance",
+      "events_before": 5,
+      "events_after": 5,
+      "choices_before": 0,
+      "choices_after": 0
+    },
+    {
+      "year": 2024,
+      "committee": "Housing and Homelessness Prevention",
+      "events_before": 1,
+      "events_after": 1,
+      "choices_before": 8,
+      "choices_after": 8
+    },
+    {
+      "year": 2024,
+      "committee": "Human Services",
+      "events_before": 2,
+      "events_after": 2,
+      "choices_before": 20,
+      "choices_after": 20
+    },
+    {
+      "year": 2024,
+      "committee": "Judiciary and Public Safety",
+      "events_before": 15,
+      "events_after": 15,
+      "choices_before": 131,
+      "choices_after": 131
+    },
+    {
+      "year": 2024,
+      "committee": "Rules and Administration",
+      "events_before": 2,
+      "events_after": 2,
+      "choices_before": 19,
+      "choices_after": 19
+    },
+    {
+      "year": 2024,
+      "committee": "Taxes",
+      "events_before": 0,
+      "events_after": 1,
+      "choices_before": 0,
+      "choices_after": 10
+    },
+    {
+      "year": 2025,
+      "committee": "Agriculture, Veterans, Broadband and Rural Development - Subcommittee on Veterans",
+      "events_before": 1,
+      "events_after": 1,
+      "choices_before": 0,
+      "choices_after": 0
+    },
+    {
+      "year": 2025,
+      "committee": "Commerce and Consumer Protection",
+      "events_before": 1,
+      "events_after": 1,
+      "choices_before": 11,
+      "choices_after": 11
+    },
+    {
+      "year": 2025,
+      "committee": "Education Finance",
+      "events_before": 11,
+      "events_after": 11,
+      "choices_before": 142,
+      "choices_after": 142
+    },
+    {
+      "year": 2025,
+      "committee": "Education Policy",
+      "events_before": 1,
+      "events_after": 1,
+      "choices_before": 12,
+      "choices_after": 12
+    },
+    {
+      "year": 2025,
+      "committee": "Elections",
+      "events_before": 9,
+      "events_after": 9,
+      "choices_before": 99,
+      "choices_after": 99
+    },
+    {
+      "year": 2025,
+      "committee": "Health and Human Services",
+      "events_before": 4,
+      "events_after": 4,
+      "choices_before": 19,
+      "choices_after": 19
+    },
+    {
+      "year": 2025,
+      "committee": "Human Services",
+      "events_before": 2,
+      "events_after": 2,
+      "choices_before": 18,
+      "choices_after": 18
+    },
+    {
+      "year": 2025,
+      "committee": "Judiciary and Public Safety",
+      "events_before": 1,
+      "events_after": 1,
+      "choices_before": 8,
+      "choices_after": 8
+    },
+    {
+      "year": 2025,
+      "committee": "Labor",
+      "events_before": 5,
+      "events_after": 5,
+      "choices_before": 40,
+      "choices_after": 40
+    },
+    {
+      "year": 2025,
+      "committee": "Rules and Administration",
+      "events_before": 3,
+      "events_after": 3,
+      "choices_before": 30,
+      "choices_after": 30
+    },
+    {
+      "year": 2025,
+      "committee": "State and Local Government",
+      "events_before": 11,
+      "events_after": 11,
+      "choices_before": 124,
+      "choices_after": 124
+    },
+    {
+      "year": 2025,
+      "committee": "Taxes",
+      "events_before": 4,
+      "events_after": 4,
+      "choices_before": 36,
+      "choices_after": 36
+    }
+  ]
+}

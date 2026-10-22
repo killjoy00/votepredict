@@ -82,32 +82,138 @@ Production artifacts, also preserved as permanent JSON receipts above:
 | Wrapped originals | 12459450098, senate864-population-wrapped-production-verified | 32ff63f743ac884af7bd75f56c3205968e033a36df182492e71af41bf8ca8451 |
 | Prior-question bridge | 12459957160, senate864-population-prior-production-verified | acd1d1994ac696c1d4f7c35da3bc2f56a6c8f6c8b5f3de15f51c5fc01b856f8b |
 
-**Population source examination (initial acquired-original scan):** 2,860
-distinct URL/SHA originals were enumerated: **1,452 linked LRL PDFs + 28
-supplementary LRL PDFs + 1,379 stored Clerk text originals + one authenticated
-unstored Clerk body**. All **2,859 readable originals** were examined: **1,479
-PDFs** with embedded text or OCR and **1,380 Clerk originals**. The May 19, 2022
-Finance PDF was acquired but remains unparseable. This is an extraction hold,
-not a seventh missing-Minutes date. **233 originals have named candidates**;
-**2,626** have no named roll detected in extracted text. Raw prose contributes
-415 candidate observations and supplemental labels 353; these overlap and are
-not distinct-question counts or additive coverage.
+**Population inventory and reconciliation:** [PR #1553](https://github.com/killjoy00/votepredict/pull/1553)
+made the full source examination reproducible; [PR #1555](https://github.com/killjoy00/votepredict/pull/1555)
+corrects source-order-dependent reporting by comparing every authenticated
+original for an identical complete question and named-choice fingerprint.
+Distinct production event IDs across originals remain an ambiguity hold.
+[PR #1556](https://github.com/killjoy00/votepredict/pull/1556) binds the unstored
+Clerk page's fresh extraction to the immutable acquired text hash; its raw
+HTML is unchanged. Historical crosswalk text hashes remain recorded as
+provenance. [PR #1557](https://github.com/killjoy00/votepredict/pull/1557)
+ensures complete extracted text is retained for legacy-only and signal-only
+candidate originals as well; the public publisher verifies every such text
+SHA256 before creating the report branch. The earlier parity attempt [39865482035](https://github.com/killjoy00/votepredict/actions/runs/39865482035)
+stopped before reports or writes on the historical/current extractor hash
+mismatch and is not accepted as a completed check.
+The acquired corpus was fully examined from authenticated originals during
+this session (PDF source completions **2026-10-22T20:06:56.724Z through
+2026-10-22T20:28:00.852Z**). Its immutable
+[compressed acquisition input](source-proof/senate-864-population-acquired-cache-20261022.json.gz)
+and [reuse descriptor](source-proof/senate-864-population-prior-inventory.json)
+preserve all extraction findings. Git blob SHA
+`f330e19bee23c4688574d1caac585a96d3ad6e4c` and uncompressed content SHA256
+`3206b8558cc7db5f8e809ce370ba4efe9e5022935dab7e85d2d037dfe582651e` pin this input. Its internal runId=0 explicitly denotes a
+local source-cache scan, not a claimed Actions acquisition success; provisional
+production numerators in the cache are never accepted as the final readback.
 
-The row-form proof identifies **28 question keys**; four keys in two
-cross-original wording/committee-alias groups remain uncertified as distinct
-or equivalent and are excluded from the **24-question / 319-choice** strict
-cohort. Other formats, 64 held row occurrences, source header/weekday and
-attendance conflicts, identical Clerk bodies reused across hearing dates,
-OCR visual quality, and alternate-source identity joins remain explicit
-verification debt. No extracted-text negative is a visually certified absence.
+Final protected bounded READ ONLY parity is
+[39868107260](https://github.com/killjoy00/votepredict/actions/runs/39868107260),
+reviewed main `369c6aca2169b11e8b9b893a714803f385350ec5`. It reauthenticates every named-candidate PDF and
+the seven prior-question originals, revalidates all 1,379 stored Clerk text
+hashes, and independently recomputes all production numerators. The full
+corpus's other extraction findings are reused by immutable SHA. It performs
+**zero production writes**. Fresh readback time is **2026-10-22T22:57:47.700Z**.
+The checked artifact is `12465391672` (`senate864-public-population-reports`), ZIP SHA256
+`5458227c38ac6112bac9da28aa8c0b955a93bcce2b392c8afc1947bb236d80c6`; its fixed five files were published to
+review branch `work/864-population-results-39868107260`, commit
+`058a2dcb5e641b35b9a1279f541067c9023cb7a9`, before this ordinary report PR. The
+[permanent publication and file-hash receipt](source-proof/senate-864-population-report-publication-20261022.json)
+preserves every file's SHA256/Git blob identity, exact reviewed main commits
+and successful gate/job identifiers. Independent report review verified all
+**233 complete candidate-original texts and their hashes**, both **111-row**
+committee matrices, source populations, production totals and public-data bounds. The reviewed reporting implementation passed all
+2,459 standard checks, 23 focused regression/integration tests and a clean
+production-dependency security audit before merge. Changed OCR text is preserved as explicit
+extraction debt with both text hashes; changed PDF bytes or embedded-text
+drift fail verification. The redundant all-PDF refetch
+[39857810406](https://github.com/killjoy00/votepredict/actions/runs/39857810406)
+is not counted as completed production or parity evidence.
 
-[PR #1553](https://github.com/killjoy00/votepredict/pull/1553) adds a reproducible
-population reader and fixed public-report publisher. The protected read-only
-rerun at `2a2d6050561c1ac6a3e888c8106f5fa8e492d36f` is in progress. Its detailed
-per-original registry, overlapping candidate streams, paired year/committee
-matrices and current source-to-production classifications will be linked here
-after the generated report branch passes ordinary PR review and merge.
-No pending result is counted as a completed population certificate.
+The [original URL/SHA registry](source-proof/senate-864-population-original-registry-20261022.json),
+[per-original candidate and question evidence](source-proof/senate-864-population-original-inventory-20261022.json),
+[paired summary](source-proof/senate-864-population-summary-20261022.json), and
+[before](source-proof/senate-864-population-committee-before-20261022.csv) /
+[after](source-proof/senate-864-population-committee-after-20261022.csv)
+year/committee matrices are appendices of this maintained ledger. They contain
+every acquired original's scope, exact fingerprints, extraction result, all
+recognizer streams and held row questions. All named-candidate originals retain their complete extracted text, while
+uncertified supplemental contexts also retain literal snippets, offsets and
+hashes without promoting them to distinct votes. Exact committee labels are retained; no unproved committee
+alias joins are inferred. A separate
+[independent committee readback](source-proof/senate-864-population-independent-committee-readback-20261022.json)
+checks all 34 materialized year/committee groups and confirms that all 199
+events / 1,644 choices belong to **us-mn / senate**.
+
+**Acquired population: 2,860 distinct URL/SHA originals** — 1,452 linked LRL
+PDFs, 28 supplementary authenticated LRL PDFs, 1,379 stored Clerk text
+originals, and one authenticated unstored Clerk body. All **2,859 readable originals** were examined (**1,479 PDFs / 1,380 Clerk bodies**); the acquired May 19, 2022 Finance PDF remains unparseable. **233 originals have named candidates** and **2,626 have no named roll detected in bounded extracted text**, which is not a visually certified absence. The overlapping streams contain **415 raw-prose observations**, **353 supplemental-label observations**, and **64 held row occurrences**; per-original detector maxima total **574 candidate occurrences / 5,576 choice occurrences**, not distinct votes. **247 originals rely on visually uncertified OCR** and **284 require question or extraction review**. Fresh parity authenticated **121 named/prior-question PDFs**, checked all **1,379 stored Clerk hashes** and the unchanged unstored Clerk HTML, and found **zero changed OCR extractions**.
+
+| Year | Originals (PDF / Clerk) | Readable | Named-candidate originals | Bounded text negatives | Strict questions / choices | Correct questions before → after | Correct choices before → after |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 2022 | 608 (328 / 280) | 607 | 28 | 579 | 0 / 0 | 0 → 0 | 0 → 0 |
+| 2023 | 933 (462 / 471) | 933 | 73 | 860 | 14 / 186 | 1 → 14 | 14 → 186 |
+| 2024 | 518 (271 / 247) | 518 | 78 | 440 | 10 / 133 | 0 → 10 | 0 → 133 |
+| 2025 | 801 (419 / 382) | 801 | 54 | 747 | 0 / 0 | 0 → 0 | 0 → 0 |
+
+**Valid strict question denominator:** 28 exact row-question keys are found.
+Four keys in two cross-original wording/committee-alias groups are not
+independently certified distinct or equivalent and are excluded from the
+**24 distinct questions / 319 explicit choices** denominator. These groups are
+March 9, 2023 Elections SF2270 and March 3, 2025 Veterans Subcommittee SF1894.
+Neither unmatched source occurrences nor detector totals are additional
+certified parliamentary questions.
+
+| Same strict source cohort | Before this pass | Independently verified after |
+| --- | ---: | ---: |
+| Correctly represented distinct questions | **1/24** | **24/24** |
+| Choices on correctly represented questions | **14/319** | **319/319** |
+| Same-source exact questions | 0 | **23** |
+| Independently verified alternate-source question | **1** | **1** |
+| Demonstrably missing events | **15** | **0** |
+| Existing questions missing named choices, correct classification | **3** | **0** |
+| Existing questions with classification defects and missing choices | **5** | **0** |
+| Missing choices on those eight existing questions | **109** | **0** |
+
+The alternate-source question is the previously accepted A35 amendment.
+This strict source cohort includes its fourteen existing choices and excludes
+the repaired SF2270 Clerk question's thirteen choices pending cross-original
+wording proof. Therefore the strict coverage gain of **305 choices** differs
+from the actual production gain of **318 new choices**. Both measures are
+reported; they are not interchangeable denominators.
+
+**Ranked systematic mechanisms and actual recoveries:** individually labeled
+rows omitted by the legacy parser had the highest proven event yield (14 new
+events / 181 choices). Wrapped full-name headers and forward-looking bill/ref
+association produced the next proven defect class (eight existing questions
+with 109 missing choices, five wrong classifications, plus one absent
+14-choice question). Independently authenticating an already accepted
+different question then safely released one further 14-choice recommendation.
+Regression tests cover the actual original formats, compound/withdrawn and
+repeated motions, contradictory names and outcomes, duplicate events,
+identical slates/tallies, later bill/ref contamination, source-order
+independence, active historical identities and zero-write replay. No isolated
+ambiguous bill was manually reconstructed.
+
+**Remaining evidence holds and reopening proof:**
+
+| Hold | Specific proof required before promotion |
+| --- | --- |
+| Other named formats and **64 held row-candidate occurrences** | A reusable extractor must bind one complete original question, bill/ref, explicit named sides and printed outcome; unrelated result restatements, withdrawals and repeated questions must remain separate. These are candidate occurrences, not 64 certified absent votes. |
+| SF2270 / SF1894 cross-original aliases | Independent official evidence of exact question equivalence or distinctness, with committee/date identity; shared tallies or slates are insufficient. |
+| PDF printed date/weekday and absentee conflicts | An authenticated corrected original or independent official record resolving the contradiction. In particular, the 2025 Elections February 13 and March 27 originals remain held. |
+| Identical Clerk body on 2023 Education Finance March 15 and March 29 | Authenticated date-correct originals or an official correction establishing which hearing each body documents. |
+| Acquired May 19, 2022 Finance PDF is unparseable | A readable, authenticated extraction with separately verified printed question and named choices; extraction failure is not evidence of no votes. |
+| Bounded text negatives and OCR quality | Sufficient extraction/visual verification to certify absence of a named roll in the entire original; parser silence alone is insufficient. |
+| Six absent Minutes and print/electronic boundaries | New authenticated written originals or independently verified collection equivalence. Existing meeting/agenda coverage does not supply a roll denominator. |
+
+The complete **all-format original named-roll denominator remains uncertified**.
+The per-year zero strict-row denominators for 2022 and 2025 do not mean those
+years had no named committee votes, and do not invalidate their previously
+accepted stored choices. The stopping rule is met for the source-proven
+reusable categories above; remaining identity questions require new evidence
+or a separately validated extraction rule.
+
 
 The six exact missing-Minutes dates remain: **2022-03-15 Housing Finance and
 Policy; 2022-08-10 and 2022-10-03 Environment and Natural Resources Finance;
