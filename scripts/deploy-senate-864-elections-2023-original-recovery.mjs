@@ -247,6 +247,7 @@ async function main(){
  try{
   const args=process.argv.slice(2);
   if(args.length===1&&args[0]==='--source-only'){
+   stage='keyless_independent_public_original_source_checks';
    const o=await freshOriginals();
    console.log('SENATE864_2023_ELECTIONS_SOURCE_VERIFIED='+JSON.stringify({
     officialOriginalMinutes:o.docs.length,sourceQuestionRolls:10,
@@ -286,7 +287,23 @@ async function main(){
    'Concurrent pre-write historical evidence drift',
    'Unsafe concurrent question or membership drift',
    'Production original named-choice independent readback not exact',
-   'Post-write insert/update expected row counts disagree']);
+   'Post-write insert/update expected row counts disagree',
+   'Official original PDF byte or text fingerprint changed',
+   'Original exact-offset roll / source tally mismatch',
+   'Original source result disagrees with selected parliamentary question',
+   'Original named vote lacks one locally bound printed tally and motion result',
+   'Original question bill identity not separately proven',
+   'Original numbered amendment identity not proven',
+   'Original oral amendment identity not proven',
+   'Original committee recommendation identity not proven',
+   'Original printed surname/side not proved by roster',
+   'Original named-choice source is incomplete',
+   'Original vote roster and explicitly printed side totals disagree',
+   'Selected original exact question and choice totals not certified',
+   'Original 2023 Elections roll denominator drift',
+   'Authenticated original official Senate PDF or text SHA drift',
+   'Exactly seven independent 2023 original Minutes required',
+   'Unaccounted source-only held motion']);
   const label=e instanceof Error&&known.has(e.message)?e.message:'fail_closed_original_source_or_private_database_guard';
   const sqlstate=e&&typeof e==='object'&&typeof e.code==='string'&&/^[0-9A-Z]{5}$/.test(e.code)
    ?e.code:'none';
