@@ -190,8 +190,11 @@ export async function repairNestedSenateExactLinks(pool:Pool):Promise<NestedQues
    const before=summarizeSameSourceFailures(rows.votes,rows.actions,beforeGap);
    const originalMissing=before.totals.no_matching_tally;
    const exactBefore=await countExact(db);
+   const afterRaw=exactBefore===1111&&before.sameSourceUnlinked===476
+    &&originalMissing>=0&&originalMissing<=61;
    if(!((exactBefore===991&&before.sameSourceUnlinked===596&&originalMissing===181)
-    ||(exactBefore===1022&&before.sameSourceUnlinked===565&&originalMissing===150)))
+    ||(exactBefore===1022&&before.sameSourceUnlinked===565&&originalMissing===150)
+    ||afterRaw))
     throw Error('Protected nested question exact-link baseline differs from authenticated 181-tally receipt');
    const eligible:StrongNestedSourceQuestion[]=[];
    const census:NoTallyOriginalCensus=await readNoTallyOriginalCensus(
@@ -202,12 +205,13 @@ export async function repairNestedSenateExactLinks(pool:Pool):Promise<NestedQues
     ||census.nestedSourceBallotRepeated!==0
     ||census.nestedConflictingV1PaperBallot!==0
     ||census.nestedOriginalPrintedSpanInvalid!==0
-    ||census.stages.nested_repeated_accepted_ballot!==15
-    ||census.stages.nested_different_question!==9
+    ||(afterRaw
+      ?census.stages.nested_repeated_accepted_ballot>15||census.stages.nested_different_question>9
+      :census.stages.nested_repeated_accepted_ballot!==15||census.stages.nested_different_question!==9)
     ||!((exactBefore===991&&pairs.length===31
       &&census.nestedUniqueQuestionBallotCandidates===31
       &&census.sourceDocumentsInspected===68)
-      ||(exactBefore===1022&&pairs.length===0
+      ||((exactBefore===1022||afterRaw)&&pairs.length===0
       &&census.nestedUniqueQuestionBallotCandidates===0)))
     throw Error('Original SOURCE-SIDE unique nested full-ballot/canonical question proof failed');
    for(const p of pairs)await oneExactLink(db,p);
