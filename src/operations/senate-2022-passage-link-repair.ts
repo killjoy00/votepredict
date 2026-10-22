@@ -145,6 +145,17 @@ async function exactCount(db:PoolClient):Promise<number>{
  const row=(await db.query<{n:number}>('SELECT count(*)::int AS n FROM senate_vote_paper_exact_event_v')).rows[0];
  return row?.n??-1;
 }
+/** Only source-verified subsequent EXACT question cohorts can expand the
+ * accepted coverage baseline for a previously completed 2022 passage
+ * repair. Refuse all unspecified head counts and source-day drifts.
+ */
+export function recognized2022PassageCoverageState(
+ missingOriginalPassageRolls:number,exactLinks:number,sameSourceUnlinked:number
+):boolean{
+ return (missingOriginalPassageRolls===132&&exactLinks===890&&sameSourceUnlinked===697)
+  ||(missingOriginalPassageRolls===31&&exactLinks===991&&sameSourceUnlinked===596)
+  ||(missingOriginalPassageRolls===31&&exactLinks===1022&&sameSourceUnlinked===565);
+}
 /** The guarded deployment runner owns the primary identity check, migration
  * checksum parity and main-branch marker before calling this operation.
  * Repeatable-run safety: either one tightly frozen 101-link cohort, or a
@@ -164,9 +175,9 @@ export async function repair2022UniquePassageLinks(pool:Pool):Promise<PassageRep
    const census=summarizeSameSourceFailures(votes,actions,gap);
    const expected=census.focused2021Passage.passageActionWithTallyButNoBallot;
    const previous=await exactCount(db);
-   if(!((expected===132&&previous===890&&census.sameSourceUnlinked===697)
-    ||(expected===31&&previous===991&&census.sameSourceUnlinked===596))
-   )throw Error('Production official/paper exact-link baseline differs from reviewed 2022 receipt');
+   if(!recognized2022PassageCoverageState(
+    expected,previous,census.sameSourceUnlinked))
+    throw Error('Production official/paper exact-link baseline differs from reviewed original source receipts');
    const docs=await read2022PassageRosterSourceDocs(db,votes,actions);
    const pairs:StrictSourcePassageMatch[]=[];
    const shadow:RosterShadowProof=summarize2022PassageRosterShadow(
