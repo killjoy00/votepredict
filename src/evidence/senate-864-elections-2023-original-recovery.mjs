@@ -118,23 +118,20 @@ function proofOfMotion(text,spec,nextAt){
   throw Error('Original committee recommendation identity not proven');
  // Explicit motion result is required; a numeric majority alone does not prove
  // adoption, a voice vote, the amendment label or the parliamentary question.
- const match=segment.match(/\b(?:with|by)\s+a\s+roll\s+call\s+vote\s+of\s+(\d+)\s+yeas?\s*(?:and|,)\s*(\d+)\s+nays?\b[\s\S]{0,90}?\bthe\s+motion\s+(failed|prevailed|passed)\b/i);
- if(!match||!match[0]||!['failed','prevailed','passed'].includes(match[3].toLowerCase())){
-  // Public-only structural telemetry; no original words, names, IDs or sides.
-  const numeric=[...segment.matchAll(/\b(\d{1,2})\s+yeas?\s*(?:and|,)\s*(\d{1,2})\s+nays?\b/gi)];
-  const verdicts=[...segment.matchAll(/\b(?:the\s+)?motion\s+(failed|prevailed|passed)\b/gi)];
-  console.error('SENATE864_2023_ELECTIONS_PUBLIC_SOURCE_SHAPE='+JSON.stringify({
-   date:spec.date,offset:spec.offset,segmentLength:segment.length,
-   rollIntroductionIndex:segment.search(/\b(?:with|by)\s+a\s+roll\b/i),
-   explicitNumericTallies:numeric.map(x=>({position:x.index,yea:Number(x[1]),nay:Number(x[2])})),
-   literalMotionResults:verdicts.map(x=>({position:x.index,outcome:x[1].toLowerCase()}))
-  }));
-  throw Error('Original source tally/disposition unbound on '+spec.date+' offset '+spec.offset);
- }
- const passed=/^(?:prevailed|passed)$/i.test(match[3]);
+ // The independently extracted named-roll candidate has already compared its
+ // printed numeric YEA/NAY tally with 14 distinct original named statuses.
+ // The certified 2023 source sometimes prints the tally in NAY/YEAs order
+ // or separates it from the motion result, so don't require redundant prose
+ // ordering here. Require one locally attached explicit result after the
+ // roll-call cue, while separately checking bill/question and original SHA.
+ const outcomes=[...segment.matchAll(/\b(?:the\s+)?motion\s+(failed|prevailed|passed|did\s+not\s+prevail)\b/gi)];
+ if(outcomes.length!==1||segment.slice(0,outcomes[0]?.index??0).search(/\broll\s+call\b/i)<0)
+  throw Error('Original source outcome unbound on '+spec.date+' offset '+spec.offset);
+ const outcome=outcomes[0];
+ const passed=/^(?:prevailed|passed)$/i.test(outcome[1]);
  if(passed!==spec.passed)
   throw Error('Original source result disagrees with selected parliamentary question');
- return {passed,contextSha256:sha(context+'|'+segment.slice(0,(match.index??0)+match[0].length))};
+ return {passed,contextSha256:sha(context+'|'+segment.slice(0,(outcome.index??0)+outcome[0].length))};
 }
 export function verifyOriginals(originals){
  const queue=sourceQueue();
