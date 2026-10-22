@@ -190,7 +190,10 @@ export async function repairNestedSenateExactLinks(pool:Pool):Promise<NestedQues
    const before=summarizeSameSourceFailures(rows.votes,rows.actions,beforeGap);
    const originalMissing=before.totals.no_matching_tally;
    const exactBefore=await countExact(db);
-   const afterRaw=exactBefore===1111&&before.sameSourceUnlinked===476
+   // Both authenticated post-raw and post-repeated-original-question states
+   // are accepted as strict idempotent no-ops for this 31-link cohort.
+   const afterRaw=((exactBefore===1111&&before.sameSourceUnlinked===476)
+    ||(exactBefore===1175&&before.sameSourceUnlinked===412))
     &&originalMissing>=0&&originalMissing<=61;
    if(!((exactBefore===991&&before.sameSourceUnlinked===596&&originalMissing===181)
     ||(exactBefore===1022&&before.sameSourceUnlinked===565&&originalMissing===150)
