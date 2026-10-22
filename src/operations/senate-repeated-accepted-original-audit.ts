@@ -18,6 +18,11 @@ import type {OriginalJournal,DayAccepted} from './senate-no-tally-original-censu
 
 export const SENATE_REPEATED_ACCEPTED_ORIGINAL_AUDIT=
  'senate-repeated-accepted-original-question-audit-v1' as const;
+// PostgreSQL SELECT DISTINCT requires ORDER BY the selected expression/alias.
+export const REPEATED_ACCEPTED_CLAIMED_ACTION_SQL=[
+ 'SELECT DISTINCT action_id::text AS id FROM senate_vote_paper_event_links',
+ 'WHERE action_id=ANY($1::uuid[]) ORDER BY id LIMIT 6501'
+].join(' ');
 export type RepeatedAcceptedStage=
  'original_source_not_one_verified_journal'|
  'original_rolls_or_roster_unreadable'|
@@ -219,10 +224,8 @@ export async function readRepeatedAcceptedOriginalAudit(
   &&Number.isInteger(a.yea_count)&&Number.isInteger(a.nay_count)
   &&a.ballot_sha256!==null).map(a=>a.id))];
  if(candidatePaperIds.length>6500)throw Error('Original repeated accepted paper-link corpus truncated');
- const claimed=candidatePaperIds.length?(await db.query<{id:string}>([
-  'SELECT DISTINCT action_id::text AS id FROM senate_vote_paper_event_links',
-  'WHERE action_id=ANY($1::uuid[]) ORDER BY action_id LIMIT 6501'
- ].join(' '),[candidatePaperIds])).rows:[];
+ const claimed=candidatePaperIds.length?(await db.query<{id:string}>(
+  REPEATED_ACCEPTED_CLAIMED_ACTION_SQL,[candidatePaperIds])).rows:[];
  if(claimed.length>6500)throw Error('Original accepted existing paper link corpus exceeded');
  return summarizeRepeatedAcceptedOriginals(votes,actions,docs,allDay,census,
   new Set(claimed.map(x=>x.id)),onUnique);

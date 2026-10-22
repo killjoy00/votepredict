@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {ballotSignature} from '../src/operations/senate-vote-paper-parser.js';
 import {summarizeRepeatedAcceptedOriginals,SENATE_REPEATED_ACCEPTED_ORIGINAL_AUDIT,
+ REPEATED_ACCEPTED_CLAIMED_ACTION_SQL,
  type UniqueAcceptedOriginalRoll}
  from '../src/operations/senate-repeated-accepted-original-audit.js';
 import type {AcceptedVote,ParsedAction,SameSourceQuestionCensus}
@@ -117,4 +118,10 @@ test('the independently reconciled source-day cohort cannot drift or repeat an a
   [day(votes[0]!),day(votes[0]!)],census),/duplicate identity/);
  assert.deepEqual(run().result.examples,[{session:'2023-2024',bill:'HF3',day:'2023-04-26',
   stage:'unique_original_question_and_full_ballot',votes:2}]);
+});
+
+test('SELECT DISTINCT existing-paper link query orders by projected id alias, not hidden UUID column',()=>{
+ assert.match(REPEATED_ACCEPTED_CLAIMED_ACTION_SQL,
+  /^SELECT DISTINCT action_id::text AS id FROM senate_vote_paper_event_links WHERE action_id=ANY\(\$1::uuid\[\]\) ORDER BY id LIMIT 6501$/);
+ assert.doesNotMatch(REPEATED_ACCEPTED_CLAIMED_ACTION_SQL,/ORDER BY action_id\b/);
 });
