@@ -678,12 +678,37 @@ Role recovery has three explicit bases:
 ## Coverage and remaining uncertainty
 
 ### Repeated-accepted-ballot question collisions (#1498)
+**Protected original replay #39826840419**: 85 unlinked accepted votes
+with duplicated complete ballots were checked against 39 authenticated original
+Senate Journals and 744 complete accepted source-day records, with all original
+quorum rosters and physical roll headers aligned. The exact first-failure
+partition was **25** source-and-accepted unique complete printed questions and
+named ballots, **55** no matching original full question+ballot (55 passage),
+**2** physically repeated original question+ballots and **3** unproved printed
+question/bill spans. Zero sources or accepted votes were unverified, and zero
+existing paper link collisions were observed. No link was written by the audit.
+See merged PR #1535, correction PR #1538 and protected
+https://github.com/killjoy00/votepredict/actions/runs/39826840419.
+
+The separately gated append-only
+`senate-repeated-accepted-exact-repair.ts` proposes to promote precisely
+those **25** original source-unique question-only actions and independent
+accepted-event fingerprint edges, in a single SERIALIZABLE transaction.
+Its reviewed baseline is 1,175/2,308 exact links and 412 same-original-Journal
+unlinked; expected state after a successful independently read-back commit is
+**1,200** exact and **387** same-Journal unlinked. The preceding 2022 passage,
+nested, raw and earlier repeated-paper repairs recognize ONLY this additional
+reviewed state as an idempotent no-op, with the previous 143 original repeated
+questions and three uncertain source spans held. This work does not reconstruct
+or date any complete amended bill text, alter previous source actions, mutate
+accepted member votes or affect serving/forecasting.
+
 
 After protected PR #1533, **85** additional same-original-Journal bill/date
 accepted Senate votes have precisely one parsed complete paper ballot, but at
 least one other accepted bill/day event has the same complete member choices.
 They must NOT be associated by ballot, tally, event ordinal or question
-proximity. \`senate-repeated-accepted-original-audit.ts\` now independently
+proximity. `senate-repeated-accepted-original-audit.ts` now independently
 replays the entire authenticated original Journal's printed physical roll
 headers, original question boundaries, source bill, yea/nay and complete
 named votes, and demands exactly one **full printed question + full ballot**
@@ -709,13 +734,13 @@ repetitions remain ambiguous and three original bill/question boundaries remain
 unproven. The stored-paper question audit had no candidates (82 missing exact
 paper question and 128 repeated paper question), so it is not the writer.
 
-The guarded follow-on \`senate-repeated-paper-exact-repair.ts\` does not infer
+The guarded follow-on `senate-repeated-paper-exact-repair.ts` does not infer
 identity from repeated ballots: within an independently authenticated
 SERIALIZABLE production transaction it replays the exact source Journal,
 rechecks physical question/header offsets, source bill, full question, every
 member choice, source byte-extract digest, printed-day identity and uniqueness
 across entire source and accepted events. It appends source-anchored question-only
-paper actions and \`unique_question_full_ballot\` edges for precisely verified
+paper actions and `unique_question_full_ballot` edges for precisely verified
 candidates; no amendment outcomes, amended bill-state claims, bill text,
 accepted event/member edits or serving weights are allowed. The entire batch
 rolls back on a single source/identity drift. The post-commit exact-link and

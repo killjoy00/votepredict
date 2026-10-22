@@ -98,9 +98,9 @@ test('source/action/vote id reuse is never promoted twice',()=>{
 });
 
 test('completed 2022 passage repair accepts ONLY the independent authenticated next-source question baselines',()=>{
- for(const state of [[132,890,697],[31,991,596],[31,1022,565],[31,1111,476],[31,1175,412]])
+ for(const state of [[132,890,697],[31,991,596],[31,1022,565],[31,1111,476],[31,1175,412],[31,1200,387]])
   assert.equal(recognized2022PassageCoverageState(...state as [number,number,number]),true);
  for(const state of [[31,1022,596],[31,1023,564],[30,1022,565],
-  [132,991,596],[31,1127,460],[31,1176,411],[31,1111,477],[31,1112,476],[31,0,0]])
+  [132,991,596],[31,1127,460],[31,1176,411],[31,1201,386],[31,1111,477],[31,1112,476],[31,0,0]])
   assert.equal(recognized2022PassageCoverageState(...state as [number,number,number]),false);
 });
