@@ -6,6 +6,8 @@ on:
       - scripts/inventory-senate-864-population.mjs
       - scripts/publish-senate-864-population-reports.mjs
       - tests/senate-864-population-inventory.test.mjs
+      - docs/evaluation/source-proof/senate-864-population-prior-inventory.json
+      - docs/evaluation/source-proof/senate-864-population-acquired-cache-20261022.json.gz
   push:
     branches: [main]
     paths:
@@ -13,6 +15,8 @@ on:
       - scripts/inventory-senate-864-population.mjs
       - scripts/publish-senate-864-population-reports.mjs
       - tests/senate-864-population-inventory.test.mjs
+      - docs/evaluation/source-proof/senate-864-population-prior-inventory.json
+      - docs/evaluation/source-proof/senate-864-population-acquired-cache-20261022.json.gz
 permissions:
   contents: read
 concurrency:
@@ -66,6 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
+      SENATE864_INVENTORY_REUSE_PUBLIC: ${{ contains(github.event.head_commit.message, 'SENATE864_POPULATION_INVENTORY_RECONCILE_V1') && 'true' || 'false' }}
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
       VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
