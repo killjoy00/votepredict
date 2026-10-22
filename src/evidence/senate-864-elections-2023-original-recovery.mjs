@@ -119,8 +119,18 @@ function proofOfMotion(text,spec,nextAt){
  // Explicit motion result is required; a numeric majority alone does not prove
  // adoption, a voice vote, the amendment label or the parliamentary question.
  const match=segment.match(/\b(?:with|by)\s+a\s+roll\s+call\s+vote\s+of\s+(\d+)\s+yeas?\s*(?:and|,)\s*(\d+)\s+nays?\b[\s\S]{0,90}?\bthe\s+motion\s+(failed|prevailed|passed)\b/i);
- if(!match||!match[0]||!['failed','prevailed','passed'].includes(match[3].toLowerCase()))
+ if(!match||!match[0]||!['failed','prevailed','passed'].includes(match[3].toLowerCase())){
+  // Public-only structural telemetry; no original words, names, IDs or sides.
+  const numeric=[...segment.matchAll(/\b(\d{1,2})\s+yeas?\s*(?:and|,)\s*(\d{1,2})\s+nays?\b/gi)];
+  const verdicts=[...segment.matchAll(/\b(?:the\s+)?motion\s+(failed|prevailed|passed)\b/gi)];
+  console.error('SENATE864_2023_ELECTIONS_PUBLIC_SOURCE_SHAPE='+JSON.stringify({
+   date:spec.date,offset:spec.offset,segmentLength:segment.length,
+   rollIntroductionIndex:segment.search(/\b(?:with|by)\s+a\s+roll\b/i),
+   explicitNumericTallies:numeric.map(x=>({position:x.index,yea:Number(x[1]),nay:Number(x[2])})),
+   literalMotionResults:verdicts.map(x=>({position:x.index,outcome:x[1].toLowerCase()}))
+  }));
   throw Error('Original source tally/disposition unbound on '+spec.date+' offset '+spec.offset);
+ }
  const passed=/^(?:prevailed|passed)$/i.test(match[3]);
  if(passed!==spec.passed)
   throw Error('Original source result disagrees with selected parliamentary question');
