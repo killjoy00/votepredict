@@ -196,7 +196,7 @@ export async function repairOrphanJournalOriginalQuestions(
    const newBill=prepared.filter(p=>p.original.resolution==='printed_bill');
    if(initial.eligibleKnownBillQuestions!==papers.length||
     initial.eligiblePrintedBillAssociations!==newBill.length||
-    initial.certifiedOriginalSourceQuestions!==prepared.length||
+    initial.eligibleKnownBillQuestions+initial.eligiblePrintedBillAssociations!==prepared.length||
     !(first&&initial.missingPaper===150&&initial.unresolvedBill===372
       &&initial.authenticatedOriginalDocuments===CERTIFIED_AUTHENTICATED_ORIGINALS
       &&papers.length===CERTIFIED_KNOWN_BILL_PAPERS
