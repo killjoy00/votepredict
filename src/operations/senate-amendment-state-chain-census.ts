@@ -145,6 +145,10 @@ export function summarizeSourceStateChain(
    // state. This guards following actions even if their text captured.
    if(a.kind==='amendment'&&a.outcome==='adopted')
     adoptedBefore.push(a.actionKey);
+   // Conference/other textual substitutes may replace a bill body but
+   // are not represented as a bounded literal amendment patch here.
+   // Later source-local replay readiness must HOLD after such an action.
+   if(a.kind==='conference')previousSourceEditsReady=false;
   }
  }
  if(amended!==Object.values(stage).reduce((n,x)=>n+x,0)
