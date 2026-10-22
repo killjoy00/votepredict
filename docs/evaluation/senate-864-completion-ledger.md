@@ -980,3 +980,25 @@ No indefinite parser/archive continuation is proposed.
 No forecasting/serving models or weights, production training pipeline, earlier immutable evaluation freezes, accepted Senate
 floor processing, Vercel deployment or scheduler reactivation changed. The isolated v2 research fit is explicitly reported above. No offices were contacted
 and no manual audio listening was requested.
+
+---
+
+## October 22, 2026: seven original 2023 Elections Minutes — bounded next-cohort source holds
+
+**Disposition: source-only original cohort checked; poor recoverable yield, no protected production writes.** This is a separate selected cohort from the completed 2025 Elections corrections. Source proof is on [PR #1534](https://github.com/killjoy00/votepredict/pull/1534), currently **unmerged**; this source-only result is not a production correction or all-years certificate.
+
+| Fixed original-source population | Authenticated source | Strictly selected for new source-to-live parity | Source question holds |
+| --- | ---: | ---: | ---: |
+| 2023 Elections original electronic Minutes | **7/7** SHA-pinned official PDFs and extracted texts | 7 source identity verifications | 0 acquisition errors |
+| Distinct printed named roll-call questions | **10** | **1** precise original question (2023-02-07 SF3 A35, failed 6–8) | **9** |
+| Explicit printed YEA/NAY choices | **133**, excluding 7 Absent/Pass statuses | **14** source named choices | **119** source named choices not admitted |
+
+**Storage parity is unknown for the 1/14 question.** This source-only pass did not read the live database: there are zero independently proven new omissions, **0 actual event inserts, 0 choice inserts, 0 classification corrections**, no verified current production readback. Previous authenticated baselines (2023 **35 events/217 choices**, 2022–2025 **182 events/1,312 choices**) are **not** refreshed production totals from this continuation.
+
+Nine separately authenticated named roll passages remain held for exact source question/outcome association: 2023-01-17 SF26 (13 votes; result unbound); 2023-02-07 A36/oral (14; amendment identity discrepancy), SF3 recommendation (14; result unbound); 2023-02-14 SF1515 and SF1507 recommendations (13 and 13; results unbound); 2023-02-21 SF749 (13; result unbound); 2023-03-02 SF1434 oral amendment (14; result unbound); 2023-03-07 A2 (13; exact bill/question hold); 2023-03-14 SF1827 (12; result unbound). Total **9/119 held**. Separate Pass/Absent statuses remain nonvotes. Same vote totals/slates or legacy positional keys never certify distinct motions.
+
+A source-review-only question verifier now tolerates original Minutes numerical prose order while retaining independent PDF SHA, source numeric-tally/name parity, bounded literal outcome and full-name historical identity gates. **No production ingester or stored historical event was changed.**
+
+**Verified CI outcome:** [source-run #39824307748](https://github.com/killjoy00/votepredict/actions/runs/39824307748) passed original seven-PDF source validation, full npm run check, and focused source-recovery tests. Final dependency audit failed because the already pinned Next.js 16.4.0 has a **critical** [GHSA-2464-fhr4-w9xw](https://github.com/advisories/GHSA-2464-fhr4-w9xw) advisory (npm reports a fix in 16.4.2). [Standard CI #39824307788](https://github.com/killjoy00/votepredict/actions/runs/39824307788) failed at the same audit. **Protected Neon job skipped**; no production read or write, merge SHA, Vercel deployment, scheduler or model/forecast modification. Do not waive unrelated security/branch/environment checks.
+
+**Stopping rule:** One source-admissible question/14 of 133 named votes, with nine exact-question holds and the inherited critical CI gate, is poor safe recoverable yield. Do not expand this seven-document cohort or endlessly improve the parser. Its one-question live-parity check can resume only after the unrelated security issue is resolved through the normal reviewed path. **#864 stays open.**
