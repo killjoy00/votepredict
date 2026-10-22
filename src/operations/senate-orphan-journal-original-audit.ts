@@ -218,3 +218,97 @@ export function summarizeOrphanJournalOriginals(
   servingModelsChanged:false,completeAmendedStatesCertified:0
  };
 }
+
+const targetSQL=[
+ 'SELECT v.id::text AS id,v.source_document_id::text AS source_id,',
+ 'd.source_url,s.slug AS session,v.occurred_on::text AS day,',
+ 'v.vote_kind,v.bill_id::text AS bill_id,b.identifier AS bill,',
+ 'v.motion_text,v.yea_count,v.nay_count,',
+ "coalesce((SELECT jsonb_agg(jsonb_build_object('name',m.source_member_name,",
+ "'choice',m.choice)) FROM member_votes m WHERE m.vote_event_id=v.id),'[]'::jsonb) AS votes,",
+ 'EXISTS(SELECT 1 FROM senate_vote_paper_exact_event_v x',
+ 'WHERE x.vote_event_id=v.id) AS exact_linked,',
+ 'EXISTS(SELECT 1 FROM senate_vote_paper_event_links e',
+ 'WHERE e.vote_event_id=v.id) AS stored_link',
+ 'FROM vote_events v JOIN source_documents d ON d.id=v.source_document_id',
+ "JOIN chambers c ON c.id=v.chamber_id AND c.slug='senate'",
+ 'JOIN legislative_sessions s ON s.id=v.session_id',
+ "JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'",
+ 'LEFT JOIN bills b ON b.id=v.bill_id',
+ "WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')",
+ "AND (d.metadata#>>'{rawPrepassageVotes,sourceType}'='mn_senate_journal'",
+ "OR d.source_url LIKE 'https://www.senate.mn/journals/%')",
+ 'AND NOT EXISTS(SELECT 1 FROM senate_vote_paper_exact_event_v x',
+ 'WHERE x.vote_event_id=v.id)',
+ 'AND (v.bill_id IS NULL OR NOT EXISTS(',
+ 'SELECT 1 FROM senate_vote_paper_current_v a WHERE a.bill_id=v.bill_id))',
+ 'ORDER BY s.slug,v.id LIMIT 1101'
+].join(' ');
+
+/** Caller has pinned independently verified VotePredict primary and opened a
+ * REPEATABLE READ READ ONLY transaction. This function never logs source rows.
+ */
+export async function readOrphanJournalOriginalAudit(
+ db:PoolClient,gap:VoteTextGapAudit,
+ onUnique?:(proof:OrphanProof)=>void
+):Promise<OrphanReport>{
+ const votes=(await db.query<OrphanVote>(targetSQL)).rows;
+ if(votes.length>=1101)throw Error('Original orphan accepted votes truncated');
+ const urls=[...new Set(votes.map(x=>x.source_url))];
+ if(urls.length>650)throw Error('Original orphan distinct URLs exceeded bound');
+ const docs:OriginalJournal[]=urls.length?(await db.query<OriginalJournal>([
+  'SELECT d.id::text,d.source_url,',
+  "d.metadata#>>'{rawPrepassageVotes,sourceType}' AS source_type,",
+  "d.metadata#>>'{rawPrepassageVotes,text}' AS body,",
+  'EXISTS(SELECT 1 FROM senate_paper_source_verifications p',
+  'WHERE p.source_document_id=d.id AND p.source_url=d.source_url',
+  "AND p.extracted_text_sha256=encode(sha256(convert_to(d.metadata#>>'{rawPrepassageVotes,text}','UTF8')),'hex'))",
+  'AS original_verified',
+  'FROM source_documents d WHERE d.source_url=ANY($1::text[])',
+  'ORDER BY d.id LIMIT 651'
+ ].join(' '),[urls])).rows:[];
+ if(docs.length>=651)throw Error('Original orphan full source corpus truncated');
+ const dayVotes:DayAccepted[]=urls.length?(await db.query<DayAccepted>([
+  'SELECT v.id::text AS "eventId",d.source_url AS "sourceUrl",',
+  'v.occurred_on::text AS day,b.identifier AS "billIdentifier",',
+  'v.vote_kind AS "voteKind",v.motion_text AS "motionText",',
+  'v.yea_count AS yeas,v.nay_count AS nays,',
+  "coalesce((SELECT jsonb_agg(jsonb_build_object('name',mv.source_member_name,",
+  "'choice',mv.choice)) FROM member_votes mv WHERE mv.vote_event_id=v.id),'[]'::jsonb) AS votes,",
+  'EXISTS(SELECT 1 FROM senate_vote_paper_exact_event_v e WHERE e.vote_event_id=v.id)',
+  'AS "existingExact"',
+  'FROM vote_events v JOIN source_documents d ON d.id=v.source_document_id',
+  "JOIN chambers c ON c.id=v.chamber_id AND c.slug='senate'",
+  'JOIN legislative_sessions s ON s.id=v.session_id',
+  "JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'",
+  'LEFT JOIN bills b ON b.id=v.bill_id',
+  'WHERE d.source_url=ANY($1::text[])',
+  "AND s.slug IN ('2021-2022','2023-2024','2025-2026')",
+  'ORDER BY d.source_url,v.occurred_on,v.id LIMIT 8001'
+ ].join(' '),[urls])).rows:[];
+ if(dayVotes.length>=8001)throw Error('Original orphan accepted source-day corpus truncated');
+ const claims:ClaimedQuestion[]=urls.length?(await db.query<ClaimedQuestion>([
+  'SELECT p.source_url,p.occurred_on::text AS day,p.question_text,',
+  'p.yea_count,p.nay_count,p.ballot_sha256,l.vote_event_id::text',
+  'FROM senate_vote_paper_current_v p',
+  'JOIN senate_vote_paper_event_links l ON l.action_id=p.id',
+  'WHERE p.source_url=ANY($1::text[])',
+  'ORDER BY p.source_url,p.occurred_on,p.id LIMIT 8001'
+ ].join(' '),[urls])).rows:[];
+ if(claims.length>=8001)throw Error('Original orphan existing linked questions truncated');
+ const identifiers=[...new Set(docs.flatMap(d=>{
+  const view=parseOriginal(d);
+  return view.aligned?view.rolls.map(r=>r.bill).filter((x):x is string=>!!x):[];
+ }))];
+ if(identifiers.length>8000)throw Error('Original orphan printed bill catalog exceeded bound');
+ const catalog:BillRow[]=identifiers.length?(await db.query<BillRow>([
+  'SELECT b.id::text,s.slug AS session,b.identifier',
+  'FROM bills b JOIN legislative_sessions s ON s.id=b.session_id',
+  "JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'",
+  'WHERE b.identifier=ANY($1::text[])',
+  "AND s.slug IN ('2021-2022','2023-2024','2025-2026')",
+  'ORDER BY s.slug,b.identifier,b.id LIMIT 8001'
+ ].join(' '),[identifiers])).rows:[];
+ if(catalog.length>=8001)throw Error('Original orphan session bill catalog truncated');
+ return summarizeOrphanJournalOriginals(votes,docs,dayVotes,catalog,claims,gap,onUnique);
+}
