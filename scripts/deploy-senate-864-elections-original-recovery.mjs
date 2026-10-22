@@ -175,13 +175,29 @@ async function apply(pool,originals,before,planned){
  return count;
 }
 export async function runProduction(pool,target,originals){
+ console.log('SENATE864_ELECTIONS_STAGE=before_rr_readonly');
  const before=await readOnly(pool,target,originals);
+ console.log('SENATE864_ELECTIONS_SAFE_SNAPSHOT='+JSON.stringify({
+   documents:before.docs.length,events:before.events.length,choices:before.choices.length,
+   historicalMembers:before.roster.length,historicalBills:before.bills.length,
+   sourceMatches:originals.docs.map(x=>before.docs.filter(d=>d.source_url===x.url&&d.content_sha256===x.rawSha).length)
+ }));
+ console.log('SENATE864_ELECTIONS_STAGE=independent_parliamentary_reconciliation');
  const plan=recoveryPlan(originals.proof,before);
+ console.log('SENATE864_ELECTIONS_SAFE_PLAN='+JSON.stringify({
+  verifiedSourceQuestions:originals.proof.length,
+  toAddEvents:plan.add.length,toAddChoices:plan.add.reduce((n,x)=>n+x.votes.length,0)+plan.addChoices.length,
+  toCorrectClassification:plan.updates.length,
+  preExistingExact:plan.exact.length,held:plan.holds.length,
+  holdCategories:plan.holds.reduce((a,x)=>(a[x.reason]=(a[x.reason]||0)+1,a),{})
+ }));
  const expected={insertedEvents:plan.add.length,
    insertedChoices:plan.add.reduce((n,x)=>n+x.votes.length,0)+plan.addChoices.length,
    correctedEventClassification:plan.updates.length};
+ console.log('SENATE864_ELECTIONS_STAGE=guarded_serializable_apply');
  const count=await apply(pool,originals,before,plan);
  if(!same(expected,count))throw Error('Production row count drift');
+ console.log('SENATE864_ELECTIONS_STAGE=post_write_rr_readonly');
  const after=await readOnly(pool,target,originals);
  preserved(before,after,plan);
  const replay=recoveryPlan(originals.proof,after);
@@ -239,8 +255,23 @@ async function main(){
   mkdirSync('artifacts',{recursive:true});
   writeFileSync('artifacts/senate864-elections-production-readback.json',body+'\n');
   console.log('SENATE864_ELECTIONS_PRODUCTION_VERIFIED='+JSON.stringify(receipt));
- }catch{
-  // Never emit private SQL rows, names, source contexts or credentials in Actions logs.
+ }catch(error){
+  // Exact static guard labels and driver SQLSTATE only; no raw error strings,
+  // credentials, query text, private source rows, or names may leave the runner.
+  const safe=new Set([
+    'Production schema ledger drift','Read-only primary identity proof failed',
+    'Authenticated stored original document absent or duplicated',
+    'Exact historical bill/session/chamber context absent',
+    'Historical exact full name/alias and service session unresolved',
+    'Original given/family proof','Bounded SQL snapshot truncated',
+    'Duplicate original named-choice source','Concurrent historical record drift',
+    'Unsafe concurrent source reconciliation','Independent post-write original question/choice read-back failed',
+    'Production row count drift'
+  ]);
+  const label=error instanceof Error&&safe.has(error.message)?error.message:'unclassified_guard_or_database_error';
+  const sqlstate=error&&typeof error==='object'&&typeof error.code==='string'&&/^[0-9A-Z]{5}$/.test(error.code)
+    ?error.code:'none';
+  console.error('SENATE864_ELECTIONS_SAFE_FAILURE='+JSON.stringify({label,sqlstate}));
   console.error('SENATE864_ELECTIONS_PRODUCTION_HOLD_AT='+phase);process.exitCode=1;
  }finally{if(pool)await pool.end()}
 }
