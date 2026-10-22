@@ -1,0 +1,123 @@
+name: "#864 Historical Senate finance as-of exposure (protected READ ONLY)"
+on:
+  pull_request:
+    paths:
+      - "src/evaluation/historical-finance-asof-proof.ts"
+      - "src/evidence/cfb-864-finance-asof-exposure.mjs"
+      - "scripts/closeout-historical-evidence.ts"
+      - "scripts/evaluate-historical-finance-two-clock.ts"
+      - "scripts/audit-cfb-864-finance-asof-exposure-readonly.mjs"
+      - "scripts/verify-cfb-864-finance-asof-exposure-sql-local.mjs"
+      - "tests/historical-finance-asof-proof.test.ts"
+      - "tests/cfb-864-finance-asof-exposure.test.mjs"
+      - ".github/workflows/senate-864-finance-asof-exposure-readonly.yml"
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: senate864-finance-asof-exposure-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  preflight-no-neon:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+       (github.event_name == 'push' &&
+        github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        github.event.after == github.sha &&
+        github.event.head_commit.id == github.sha &&
+        github.event.deleted != true &&
+        github.event.forced != true &&
+        contains(github.event.head_commit.message, 'SENATE864_FINANCE_ASOF_EXPOSURE_READONLY_V1')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - name: Checkout exact reviewed branch or merged main
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'push' && github.sha || github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Verify head identity
+        env:
+          EXPECTED: ${{ github.event_name == 'push' && github.sha || github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Guard source proof and protected query with synthetic tests
+        run: |
+          node --import tsx --test tests/historical-finance-asof-proof.test.ts
+          node --import tsx --test tests/cfb-864-finance-asof-exposure.test.mjs
+          node --check src/evidence/cfb-864-finance-asof-exposure.mjs
+          node --check scripts/audit-cfb-864-finance-asof-exposure-readonly.mjs
+      - name: Compile fixed SQL against disposable migrated PostgreSQL only
+        run: |
+          npm run db:migrate
+          node --import tsx scripts/verify-cfb-864-finance-asof-exposure-sql-local.mjs
+      - name: Full application tests, TypeScript and build before any protected key
+        run: npm run check
+      - name: Dependency security check before any protected key
+        run: npm audit --omit=dev --audit-level=high
+  protected-neon-readonly:
+    needs: [preflight-no-neon]
+    if: >-
+      needs.preflight-no-neon.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha &&
+      github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE864_FINANCE_ASOF_EXPOSURE_READONLY_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_FINANCE_EXPOSURE_PREFLIGHT: ${{ needs.preflight-no-neon.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_FINANCE_EXPOSURE_MARKER: "SENATE864_FINANCE_ASOF_EXPOSURE_READONLY_V1"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify independently reviewed exact main SHA
+        env:
+          EXPECTED: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Protected existing-Neon default branch, only aggregate SELECT under repeatable read with ROLLBACK
+        id: audit
+        run: node --import tsx scripts/audit-cfb-864-finance-asof-exposure-readonly.mjs
