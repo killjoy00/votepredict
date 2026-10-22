@@ -107,16 +107,16 @@ test('correcting a uniquely proven null-bill event changes exactly bill_id, and 
 });
 
 test('whole-population denominator can grow only outside independently pinned 2135-Journal source family',()=>{
- const current=(extra:number,journal=2135)=>({
+ const current=(extra:number,journal=2135):import('../src/operations/senate-vote-text-gap-audit.js').VoteTextGapAudit=>({
   auditedEvents:journal+183+extra,
   groups:[
    {session:'2023-2024',vote_kind:'amendment',
-    source_family:'senate_journal',evidence_stage:'exact_question',event_count:journal},
+    source_family:'senate_journal',evidence_stage:'exact_question',event_count:journal,exact_proposed_text:0,exact_explicit_base:0,exact_captured_base:0,exact_in_journal_prior_adoptions:0,exact_verified_original:0},
    {session:'2023-2024',vote_kind:'amendment',
-    source_family:'other_source',evidence_stage:'no_resolved_bill',event_count:183+extra}
+    source_family:'other_source',evidence_stage:'no_resolved_bill',event_count:183+extra,exact_proposed_text:0,exact_explicit_base:0,exact_captured_base:0,exact_in_journal_prior_adoptions:0,exact_verified_original:0}
   ],
   examples:[],hf100Pilot:[],schemaVersion:'senate-vote-text-gap-v1'
- }) as import('../src/operations/senate-vote-text-gap-audit.js').VoteTextGapAudit;
+ });
  assert.equal(officialOrphanJournalPopulationCertified(current(0)),true);
  assert.equal(officialOrphanJournalPopulationCertified(current(14)),true);
  assert.equal(officialOrphanJournalPopulationCertified(current(15)),true);
