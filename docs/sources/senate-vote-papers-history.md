@@ -678,6 +678,39 @@ Role recovery has three explicit bases:
 ## Coverage and remaining uncertainty
 
 ### Source-original question audit for missing papers and unresolved bills (#1498)
+**Protected original source audit verified:** [PR #1544](https://github.com/killjoy00/votepredict/pull/1544)
+merged after both exact-head source-PDF and general CI passed, and [protected
+production run #39846423630](https://github.com/killjoy00/votepredict/actions/runs/39846423630)
+returned `committed_and_readback_verified`. The entire original-Journal
+cohort: **522** accepted votes; **150** known bills without ANY parsed
+paper for that bill, and **372** accepted source votes without a resolved
+bill. Read-only: **240** stored original document entries, **107** original
+PDF-attested full-roll readable documents, **1,619** complete accepted
+source-day peers inspected across every known/unassigned bill.
+
+For the 150: **99** uniquely authenticated full printed question + complete
+member ballot + original bill/day/source proven, **42** physically repeated
+source question/ballots, **6** unproven original question spans, **3** without
+one verified government original. For the 372: **zero** safely evidenced
+bill-ID assignments under the strict rule requiring a bill identifier printed
+within the SAME full original question. **237** have no bill printed in the
+question (potentially genuine non-bill procedure); **80** source question/
+ballot repeats; **43** non-unique/unverified originals; **12** unproven source
+spans. Do NOT infer a bill from a nearby heading/previous motion. This
+original-source audit created **0** links and changed **0** bill IDs.
+
+The separately guarded source proof writer authorizes only the **99** unique
+original question-only actions + exact accepted links, while keeping all
+**51** known-bill paper holds and **372** unassigned bills unchanged. It
+replays all 522 and their government PDF receipt/SHA, exact physical question/
+header offsets, full named choices, printed bill/session identity and entire
+accepted source-day collision universe inside a single `SERIALIZABLE`
+transaction. Full bill state and adoption claims remain **zero**. Initially
+**1,255/2,318** accepted exact question links; reviewed poststate
+**1,354/2,318**, with unchanged source documents, original member choices,
+previous parsed paper actions and serving models. Exact independent Neon
+read-back still required before recording this as deployed.
+
 
 The next two full-population first-failure cohorts are **150** accepted Senate
 Journal votes with a known bill but *no parsed paper anywhere for that bill*,
