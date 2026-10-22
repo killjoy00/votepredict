@@ -137,7 +137,7 @@ export function verifyOriginals(originals){
  const queue=sourceQueue();
  if(originals.length!==7||new Set(originals.map(x=>x.date)).size!==7)
   throw Error('Exactly seven independent 2023 original Minutes required');
- const selected=[];
+ const selected=[],sourceHolds=[];
  for(const original of originals){
   const pin=queue.find(x=>x.hearingDate===original.date);
   if(!pin||pin.officialSourcePdfUrl!==original.url||
@@ -164,17 +164,43 @@ export function verifyOriginals(originals){
     continue;
    }
    const next=pin.sourceRollBlocks.find(x=>x.sourceTextOffset>check.sourceTextOffset)?.sourceTextOffset;
-   const motion=proofOfMotion(original.text,selectedSpec,next);
+   let motion;
+   try{motion=proofOfMotion(original.text,selectedSpec,next)}
+   catch(error){
+    // A source question that cannot be bound to one authenticated exact
+    // parliamentary motion is a HOLD, never a guessed vote. Original YEA/NAY
+    // names, numeric tally, 14-person partition and PDF SHA remain verified.
+    const reason=String(error?.message||'');
+    const allowed={
+     'Original question bill identity not separately proven':'original_bill_context_unproved',
+     'Original numbered amendment identity not proven':'original_amendment_identity_unproved',
+     'Original oral amendment identity not proven':'original_oral_amendment_unproved',
+     'Original committee recommendation identity not proven':'original_recommendation_unproved',
+     'Original source result disagrees with selected parliamentary question':'original_question_outcome_conflict'
+    };
+    const hold=allowed[reason]||
+     (/^Original source outcome unbound on 2023-0[1-3]-\d\d offset \d{3,5}$/.test(reason)
+      ?'original_named_roll_outcome_unbound':null);
+    if(!hold)throw error;
+    sourceHolds.push({date:selectedSpec.date,offset:selectedSpec.offset,
+      choices:votes.length,reason:hold});
+    continue;
+   }
    selected.push({...selectedSpec,choices:votes,contextSha256:motion.contextSha256,
      sourceSha:original.rawSha,sourceUrl:original.url,
      key:'senate-committee-source-v1:'+sha(JSON.stringify([
        original.rawSha,original.date,selectedSpec.bill,selectedSpec.question]))});
   }
  }
- if(selected.length!==8||selected.reduce((n,q)=>n+q.choices.length,0)!==106||
-   new Set(selected.map(x=>x.key)).size!==8)
-  throw Error('Selected original exact question and choice totals not certified');
- return selected.sort((a,b)=>a.date.localeCompare(b.date)||a.question.localeCompare(b.question));
+ const held=[...HELD,...sourceHolds];
+ const selectedChoices=selected.reduce((n,q)=>n+q.choices.length,0);
+ if(selected.length+held.length!==10||
+   selectedChoices+held.reduce((n,h)=>n+h.choices,0)!==133||
+   selected.length>8||new Set(selected.map(x=>x.key)).size!==selected.length||
+   new Set([...selected,...held].map(x=>x.date+'|'+x.offset)).size!==10)
+  throw Error('Selected original source question/hold accounting did not partition all ten named rolls');
+ return {selected:selected.sort((a,b)=>a.date.localeCompare(b.date)||a.question.localeCompare(b.question)),
+   sourceHolds:held.sort((a,b)=>a.date.localeCompare(b.date)||a.offset-b.offset)};
 }
 const unique=(rows,reason)=>{if(rows.length!==1)throw Error(reason);return rows[0]};
 function fullIdentity(snapshot,surname,date){
