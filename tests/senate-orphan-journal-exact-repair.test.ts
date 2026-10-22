@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import type {Pool,PoolClient} from 'pg';
 import {hash,ballotSignature} from '../src/operations/senate-vote-paper-parser.js';
 import {bindOrphanSourceProofs,attachStrictPrintedBill,
- repairOrphanJournalOriginalQuestions,officialOrphanAcceptedPopulationCertified}
+ repairOrphanJournalOriginalQuestions,officialOrphanJournalPopulationCertified}
  from '../src/operations/senate-orphan-journal-exact-repair.js';
 import type {OrphanProof,OrphanVote} from '../src/operations/senate-orphan-journal-original-audit.js';
 import type {OriginalJournal} from '../src/operations/senate-no-tally-original-census.js';
@@ -106,9 +106,23 @@ test('correcting a uniquely proven null-bill event changes exactly bill_id, and 
  assert.equal(calls[1]!.args[3],'SF5');
 });
 
-test('read-only certified Journal cohorts remain pinned while separate 14 original committee votes raise total to 2332',()=>{
- assert.equal(officialOrphanAcceptedPopulationCertified(2332),true);
- assert.equal(officialOrphanAcceptedPopulationCertified(2318),false);
- assert.equal(officialOrphanAcceptedPopulationCertified(2333),false);
- assert.equal(officialOrphanAcceptedPopulationCertified(2500),false);
+test('whole-population denominator can grow only outside independently pinned 2135-Journal source family',()=>{
+ const current=(extra:number,journal=2135):import('../src/operations/senate-vote-text-gap-audit.js').VoteTextGapAudit=>({
+  auditedEvents:journal+183+extra,
+  groups:[
+   {session:'2023-2024',vote_kind:'amendment',
+    source_family:'senate_journal',evidence_stage:'exact_question',event_count:journal,exact_proposed_text:0,exact_explicit_base:0,exact_captured_base:0,exact_in_journal_prior_adoptions:0,exact_verified_original:0},
+   {session:'2023-2024',vote_kind:'amendment',
+    source_family:'other_source',evidence_stage:'no_resolved_bill',event_count:183+extra,exact_proposed_text:0,exact_explicit_base:0,exact_captured_base:0,exact_in_journal_prior_adoptions:0,exact_verified_original:0}
+  ],
+  examples:[],hf100Pilot:[],schemaVersion:'senate-vote-text-gap-v1'
+ });
+ assert.equal(officialOrphanJournalPopulationCertified(current(0)),true);
+ assert.equal(officialOrphanJournalPopulationCertified(current(14)),true);
+ assert.equal(officialOrphanJournalPopulationCertified(current(15)),true);
+ assert.equal(officialOrphanJournalPopulationCertified(current(30)),true);
+ assert.equal(officialOrphanJournalPopulationCertified(current(15,2136)),false);
+ assert.equal(officialOrphanJournalPopulationCertified(current(15,2134)),false);
+ assert.equal(officialOrphanJournalPopulationCertified({...current(15),auditedEvents:2332}),false);
+ assert.equal(officialOrphanJournalPopulationCertified({...current(0),auditedEvents:2200}),false);
 });

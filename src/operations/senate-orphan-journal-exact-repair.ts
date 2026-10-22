@@ -6,7 +6,7 @@
  */
 import type {Pool,PoolClient} from 'pg';
 import {billIdentifier,ballotSignature,hash} from './senate-vote-paper-parser.js';
-import {readVoteTextGapAudit,verifyVoteTextGapAudit}
+import {readVoteTextGapAudit,verifyVoteTextGapAudit,type VoteTextGapAudit}
  from './senate-vote-text-gap-audit.js';
 import {readOrphanJournalOriginalAudit,type OrphanProof,type OrphanReport}
  from './senate-orphan-journal-original-audit.js';
@@ -60,18 +60,32 @@ function safeProofFailures(proofs:readonly OrphanProof[]):void{
 const CERTIFIED_KNOWN_BILL_PAPERS=99;
 const CERTIFIED_PRINTED_BILL_ASSOCIATIONS=0;
 const CERTIFIED_AUTHENTICATED_ORIGINALS=107;
-/** Independent original Journal #1498 audit was initially 2,318. Separate
- * source-proven committee named-roll recovery PR #1546 then appended 14
- * non-Journal accepted questions: official count is now 2,332, while the
- * independently rechecked Journal 150/372 source target counts are unchanged.
- * Keep this a FIXED official-denominator receipt, not a permissive range.
+/** Independently verified source-family population from the whole 2,318
+ * accepted-event protected #1498 original source audit: 2,135 *Senate Journal*
+ * accepted votes. Separate authenticated #864 committee source recoveries
+ * subsequently added 14 + 1 events outside that same-Journal population.
+ *
+ * Hard-coding ALL accepted events races unrelated ingestion. Freeze instead
+ * the complete *at-risk* source-family count and full 150/372 candidate/held
+ * stage census, together with 240 originals, 107 independently verified
+ * journals, 1,619 all-source-day accepted peers, exact links and original
+ * question/ballot proof. Every official event still reconciles to the full
+ * denominator through verifyVoteTextGapAudit().
  */
-const CERTIFIED_ACCEPTED_VOTE_EVENTS=2332;
-/** Narrow, deterministic accepted-population receipt. Never use >= or <=
- * around the official denominator: concurrent new ingest must be re-audited.
- */
-export function officialOrphanAcceptedPopulationCertified(observed:number):boolean{
- return observed===CERTIFIED_ACCEPTED_VOTE_EVENTS;
+const CERTIFIED_SENATE_JOURNAL_EVENTS=2135;
+const MINIMUM_ALREADY_AUDITED_ACCEPTED_EVENTS=2318;
+export function officialOrphanJournalPopulationCertified(
+ audit:VoteTextGapAudit
+):boolean{
+ if(!Number.isSafeInteger(audit.auditedEvents)||
+  audit.auditedEvents<MINIMUM_ALREADY_AUDITED_ACCEPTED_EVENTS||
+  !Array.isArray(audit.groups)||audit.groups.some(g=>
+   !Number.isSafeInteger(g.event_count)||g.event_count<1))
+  return false;
+ const all=audit.groups.reduce((sum,g)=>sum+g.event_count,0);
+ const journal=audit.groups.filter(g=>g.source_family==='senate_journal')
+  .reduce((sum,g)=>sum+g.event_count,0);
+ return all===audit.auditedEvents&&journal===CERTIFIED_SENATE_JOURNAL_EVENTS;
 }
 const CERTIFIED_SOURCE_STAGE_COUNTS:Readonly<Record<string,number>>={
  'missing_paper.original_unverified_or_duplicated':3,
@@ -240,14 +254,15 @@ export async function repairOrphanJournalOriginalQuestions(
    const previous=await readVoteTextGapAudit(db);
    verifyVoteTextGapAudit(previous,coverage);
    const exactBefore=await count(db);
-   safeProgress('official_exact_prestate',{exact:exactBefore,events:previous.auditedEvents});
+   safeProgress('official_exact_prestate',{exact:exactBefore,events:previous.auditedEvents,
+    senateJournalEvents:previous.groups.filter(g=>g.source_family==='senate_journal').reduce((n,g)=>n+g.event_count,0)});
    const originalBefore=await readSameSourceQuestionRows(db);
    const sameBefore=summarizeSameSourceFailures(
     originalBefore.votes,originalBefore.actions,previous);
-   const first=exactBefore===1255&&officialOrphanAcceptedPopulationCertified(previous.auditedEvents)
+   const first=exactBefore===1255&&officialOrphanJournalPopulationCertified(previous)
     &&sameBefore.sameSourceUnlinked===332;
    const replay=exactBefore===1255+expectedNew
-    &&officialOrphanAcceptedPopulationCertified(previous.auditedEvents);
+    &&officialOrphanJournalPopulationCertified(previous);
    safeProgress('original_population_guard',{known:previous.groups.filter(g=>g.evidence_stage==='no_parsed_paper_for_bill'&&g.source_family==='senate_journal').reduce((n,g)=>n+g.event_count,0),unresolved:previous.groups.filter(g=>g.evidence_stage==='no_resolved_bill'&&g.source_family==='senate_journal').reduce((n,g)=>n+g.event_count,0)});
    if(!first&&!replay)
     throw Error('Source-original orphan vote denominator drifted; no bill/paper mutations');
@@ -310,8 +325,9 @@ export async function repairOrphanJournalOriginalQuestions(
    )).rows;
    const postGap=await readVoteTextGapAudit(db);
    verifyVoteTextGapAudit(postGap,postRows);
-   if(postGap.auditedEvents!==previous.auditedEvents)
-    throw Error('Original orphan bill correction changed accepted vote denominator');
+   if(postGap.auditedEvents!==previous.auditedEvents||
+    !officialOrphanJournalPopulationCertified(postGap))
+    throw Error('Original orphan repair changed original Journal accepted population');
    safeProgress('official_exact_poststate',{exact:exactAfter,events:postGap.auditedEvents});
    const again=await readOrphanJournalOriginalAudit(db,postGap);
    if(again.eligibleKnownBillQuestions!==0||
