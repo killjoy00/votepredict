@@ -202,7 +202,8 @@ export async function repairRawSenateExactLinks(pool:Pool):Promise<RawQuestionRe
    const initial=exactBefore===1022&&before.sameSourceUnlinked===565&&noTallyBefore===150;
    const repeated=((exactBefore===1111&&before.sameSourceUnlinked===476)
     ||(exactBefore===1175&&before.sameSourceUnlinked===412)
-    ||(exactBefore===1200&&before.sameSourceUnlinked===387))
+    ||(exactBefore===1200&&before.sameSourceUnlinked===387)
+    ||(exactBefore===1255&&before.sameSourceUnlinked===332))
     &&noTallyBefore>=0&&noTallyBefore<=61;
    if(!initial&&!repeated)throw Error('Original raw-question repair baseline drifted');
    const preliminary:PreliminaryRawOriginalCandidate[]=[];
