@@ -678,6 +678,38 @@ Role recovery has three explicit bases:
 ## Coverage and remaining uncertainty
 
 ### Full named-ballot mismatches against stored Senate papers (#1498)
+**Independent protected source audit completed:** [PR #1540](https://github.com/killjoy00/votepredict/pull/1540)
+merged and [protected original Neon run #39835363900](https://github.com/killjoy00/votepredict/actions/runs/39835363900)
+returned `committed_and_readback_verified`. The entire first-failure **62**
+partition was reconciled across **32** authenticated official original Senate
+Journals, with **682** complete accepted source/day vote records checked for
+collisions. **24** original-source-unique printed questions and complete named
+ballots reveal a stored-v1 named-ballot mismatch; **31** other original-source
+unique matches reveal a wrong v1 paper-question association. Exactly **55**
+source-and-accepted unique candidates qualify for a separate atomic writer.
+**Seven** must stay held: three physically repeated source question+ballots,
+three unproven printed source question/bill boundaries, and one complete
+accepted named ballot that is printed only under a *different* original
+question. There were **zero** unknown government sources, unreadable opening
+rosters, original question+tally absent, genuine original vs accepted named
+choice conflicts, or competing accepted/question link collisions in this
+bounded audit. The audit alone created **zero** links.
+
+The separately authenticated follow-on `senate-named-mismatch-exact-repair.ts`
+requires this exact first-failure distribution, the complete 32 original PDF
+extract SHA/verification receipts, original physical printed question/roll
+start and header, complete named choices, source bill/date, all accepted
+source-day peer uniqueness, and the immutable accepted event fingerprint. It
+appends only **55** original question-only actions and accepted-event edges
+inside one `SERIALIZABLE` all-or-nothing guarded transaction; an identity or
+population drift rolls the **entire batch** back. The protected prestate is
+**1,200** exact accepted events/2,308 and **387** same-Journal unlinked; the
+reviewed expected poststate is **1,255** exact and **332** same-Journal
+unlinked. This does not correct, overwrite or infer the old v1 parsed action,
+accepted member choices, original source, serving model or amended bill text.
+The seven evidence holds stay explicit; question-only identity is NOT proof
+of an adopted amendment or complete pre-vote amended bill state.
+
 
 After production-verified +25 exact links in PR #1537, **62** accepted Minnesota
 Senate votes have a parsed paper at the same original Journal, bill and day,
