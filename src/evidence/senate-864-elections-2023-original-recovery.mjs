@@ -118,13 +118,13 @@ function proofOfMotion(text,spec,nextAt){
   throw Error('Original committee recommendation identity not proven');
  // Explicit motion result is required; a numeric majority alone does not prove
  // adoption, a voice vote, the amendment label or the parliamentary question.
- const disposition=[...segment.matchAll(/\b(?:the\s+)?motion\s+(failed|prevailed|passed|did\s+not\s+prevail)\b/gi)];
- if(disposition.length!==1)
-  throw Error('Original named vote does not bind to one literal motion result');
- const passed=/^(?:prevailed|passed)$/i.test(disposition[0][1]);
+ const match=segment.match(/\b(?:with|by)\s+a\s+roll\s+call\s+vote\s+of\s+(\d+)\s+yeas?\s*(?:and|,)\s*(\d+)\s+nays?\b[\s\S]{0,90}?\bthe\s+motion\s+(failed|prevailed|passed)\b/i);
+ if(!match||!match[0]||!['failed','prevailed','passed'].includes(match[3].toLowerCase()))
+  throw Error('Original named vote lacks one locally bound printed tally and motion result');
+ const passed=/^(?:prevailed|passed)$/i.test(match[3]);
  if(passed!==spec.passed)
   throw Error('Original source result disagrees with selected parliamentary question');
- return {passed,contextSha256:sha(context+'|'+segment.slice(0,(disposition[0].index??0)+disposition[0][0].length))};
+ return {passed,contextSha256:sha(context+'|'+segment.slice(0,(match.index??0)+match[0].length))};
 }
 export function verifyOriginals(originals){
  const queue=sourceQueue();
