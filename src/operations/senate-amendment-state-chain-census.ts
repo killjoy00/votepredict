@@ -106,6 +106,10 @@ export function summarizeSourceStateChain(
     source.some((a,i)=>i>0&&a.sequence===source[i-1]!.sequence))
    throw Error('Same-source action keys/sequence reused; cannot prove state order');
   const adoptedBefore:string[]=[];
+  // If ANY earlier adopted operation lacks a source-attested proposal/base,
+  // every following text-state candidate must hold even if its own edit
+  // is well evidenced. A proposed patch is not the amended base state.
+  let previousSourceEditsReady=true;
   for(const a of source){
    const expected=adoptedBefore;
    const chainMatched=JSON.stringify(a.priorAdoptedKeys)===JSON.stringify(expected);
@@ -124,13 +128,16 @@ export function summarizeSourceStateChain(
     else if(a.baseComponentCount!==1)reason='base_capture_ambiguous';
     else if(a.outcome!=='adopted'&&a.outcome!=='rejected')
      reason='adoption_outcome_unknown';
-    else if(!chainMatched)reason='source_local_predecessor_chain_unproved';
+    else if(!chainMatched||!previousSourceEditsReady)reason='source_local_predecessor_chain_unproved';
     else if(a.outcome==='rejected'){
      reason='rejected_excluded_from_current_state';rejected++;
     }else{
      reason='adopted_ready_for_instruction_replay';replay++;
     }
     stage[reason]++;
+    if(a.outcome==='adopted'&&reason!=='adopted_ready_for_instruction_replay')
+     previousSourceEditsReady=false;
+    if(a.outcome==='unknown')previousSourceEditsReady=false;
     const gk=a.session+'|'+reason,prev=group.get(gk)??{session:a.session,stage:reason,count:0};
     prev.count++;group.set(gk,prev);
    }
