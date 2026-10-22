@@ -146,3 +146,113 @@ export async function attachStrictPrintedBill(
  ]);
  if(written.rowCount!==1)throw Error('Original printed Senate question did not produce one unchanged null-bill assignment');
 }
+
+function stageCountAudit(s:OrphanReport):boolean{
+ if(Object.keys(CERTIFIED_SOURCE_STAGE_COUNTS).length<2)return false;
+ const actual=new Map<string,number>();
+ for(const [cohort,group] of Object.entries(s.stages))
+  for(const [stage,n] of Object.entries(group))actual.set(cohort+'.'+stage,n);
+ return actual.size===Object.keys(CERTIFIED_SOURCE_STAGE_COUNTS).length
+  &&[...actual].every(([stage,n])=>CERTIFIED_SOURCE_STAGE_COUNTS[stage]===n);
+}
+export async function repairOrphanJournalOriginalQuestions(
+ pool:Pool
+):Promise<OrphanRepairResult>{
+ const expectedNew=CERTIFIED_KNOWN_BILL_PAPERS+CERTIFIED_PRINTED_BILL_ASSOCIATIONS;
+ if(expectedNew<1||expectedNew>522||
+  CERTIFIED_KNOWN_BILL_PAPERS<0||CERTIFIED_KNOWN_BILL_PAPERS>150||
+  CERTIFIED_PRINTED_BILL_ASSOCIATIONS<0||
+  CERTIFIED_PRINTED_BILL_ASSOCIATIONS>372||
+  CERTIFIED_AUTHENTICATED_ORIGINALS<1||
+  CERTIFIED_AUTHENTICATED_ORIGINALS>650||
+  Object.keys(CERTIFIED_SOURCE_STAGE_COUNTS).length===0)
+  throw Error('No independently certified original 150/372 Senate orphan question repair; refusing database access');
+ const db=await pool.connect();
+ try{
+  await db.query('BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE READ WRITE');
+  try{
+   await db.query("SET LOCAL lock_timeout='5s'");
+   await db.query("SELECT pg_advisory_xact_lock(hashtext('votepredict-senate-original-question-links'))");
+   const coverage=(await db.query(
+    'SELECT * FROM senate_vote_paper_coverage_v ORDER BY session,vote_kind'
+   )).rows;
+   const previous=await readVoteTextGapAudit(db);
+   verifyVoteTextGapAudit(previous,coverage);
+   const exactBefore=await count(db);
+   const originalBefore=await readSameSourceQuestionRows(db);
+   const sameBefore=summarizeSameSourceFailures(
+    originalBefore.votes,originalBefore.actions,previous);
+   const first=exactBefore===1255&&previous.auditedEvents===2318
+    &&sameBefore.sameSourceUnlinked===332;
+   const replay=exactBefore===1255+expectedNew
+    &&previous.auditedEvents===2318;
+   if(!first&&!replay)
+    throw Error('Source-original orphan vote denominator drifted; no bill/paper mutations');
+   const proofs:OrphanProof[]=[];
+   const initial=await readOrphanJournalOriginalAudit(db,previous,
+    p=>proofs.push(p));
+   const prepared=bindOrphanSourceProofs(proofs);
+   const papers=prepared.filter(p=>p.original.resolution==='existing_bill');
+   const newBill=prepared.filter(p=>p.original.resolution==='printed_bill');
+   if(initial.eligibleKnownBillQuestions!==papers.length||
+    initial.eligiblePrintedBillAssociations!==newBill.length||
+    initial.certifiedOriginalSourceQuestions!==prepared.length||
+    !(first&&initial.missingPaper===150&&initial.unresolvedBill===372
+      &&initial.authenticatedOriginalDocuments===CERTIFIED_AUTHENTICATED_ORIGINALS
+      &&papers.length===CERTIFIED_KNOWN_BILL_PAPERS
+      &&newBill.length===CERTIFIED_PRINTED_BILL_ASSOCIATIONS
+      &&stageCountAudit(initial)
+     ||replay&&prepared.length===0))
+    throw Error('Entire original 150/372 original question and printed bill source proof drifted');
+   // The printed bill correction is a scoped mutation of bill_id ONLY; the
+   // source question/ballot action and exact link are atomically inserted
+   // in the same SERIALIZABLE transaction. One failure rolls all back.
+   for(const p of prepared){
+    if(p.original.resolution==='printed_bill')
+     await attachStrictPrintedBill(db,p);
+    await insertOne(db,p.link);
+   }
+   const exactAfter=await count(db);
+   if(exactAfter!==exactBefore+prepared.length)
+    throw Error('Source-original orphan exact question links did not reconcile atomically');
+   const postRows=(await db.query(
+    'SELECT * FROM senate_vote_paper_coverage_v ORDER BY session,vote_kind'
+   )).rows;
+   const postGap=await readVoteTextGapAudit(db);
+   verifyVoteTextGapAudit(postGap,postRows);
+   if(postGap.auditedEvents!==previous.auditedEvents)
+    throw Error('Original orphan bill correction changed accepted vote denominator');
+   const again=await readOrphanJournalOriginalAudit(db,postGap);
+   if(again.eligibleKnownBillQuestions!==0||
+    again.eligiblePrintedBillAssociations!==0)
+    throw Error('Original orphan promoted question remains independently recoverable after atomic write');
+   const postSource=await readSameSourceQuestionRows(db);
+   const postSame=summarizeSameSourceFailures(postSource.votes,postSource.actions,postGap);
+   if(postSame.candidateQuestionRechecks!==0||
+    postSame.unlinkedWithExistingStoredLink!==0||
+    postSame.sameSourceUnlinked>previous.auditedEvents)
+    throw Error('Original orphan source actions exposed speculative exact question claims');
+   await db.query('COMMIT');
+   return{
+    schemaVersion:SENATE_ORPHAN_QUESTION_REPAIR,
+    result:prepared.length?'linked_original_question_ballots':'already_applied',
+    auditedSourceVotes:initial.targeted,
+    authenticatedOriginals:initial.authenticatedOriginalDocuments,
+    linkedMissingPaperQuestions:papers.length,
+    correctedExplicitPrintedBillAssociations:newBill.length,
+    originalQuestionActionsCreated:prepared.length,
+    exactAcceptedLinksCreated:prepared.length,
+    exactBefore,exactAfter,
+    sameJournalUnlinkedBefore:sameBefore.sameSourceUnlinked,
+    sameJournalUnlinkedAfter:postSame.sameSourceUnlinked,
+    missingBillWithoutPaperBefore:initial.missingPaper,
+    missingBillWithoutPaperAfter:again.missingPaper,
+    unresolvedBillBefore:initial.unresolvedBill,
+    unresolvedBillAfter:again.unresolvedBill,
+    originalNamedVotesChanged:false,originalMotionTextChanged:false,
+    originalSourceBodiesChanged:false,oldPaperActionsChanged:false,
+    servingModelsChanged:false,completeAmendedStatesCertified:0
+   };
+  }catch(e){await db.query('ROLLBACK');throw e}
+ }finally{db.release(true)}
+}
