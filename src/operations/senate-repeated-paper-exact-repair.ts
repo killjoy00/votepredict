@@ -221,7 +221,13 @@ export async function repairRepeatedOriginalSenateQuestions(pool:Pool):Promise<R
     &&census.totals.ballot_repeated_across_papers<=206
     &&census.totals.ballot_repeated_across_votes<=60
     &&census.totals.no_matching_tally<=61;
-   if(!initial&&!already&&!postAccepted)throw Error('Original repeated paper exact-link protected population baseline drifted');
+   // SOURCE-CERTIFIED 55 named-ballot mismatch promotion is a distinct
+   // no-op poststate for this earlier 64-link repair, never a new vote link.
+   const postNamed=before===1255&&census.sameSourceUnlinked===332
+    &&census.totals.no_matching_tally<=61
+    &&census.totals.paper_ballot_absent<=56;
+   if(!initial&&!already&&!postAccepted&&!postNamed)
+    throw Error('Original repeated paper exact-link protected population baseline drifted');
    const uniques:UniqueOriginalRoll[]=[];
    const original=await readRepeatedOriginalRollAudit(
     db,rows.votes,rows.actions,census,p=>uniques.push(p));
@@ -231,8 +237,8 @@ export async function repairRepeatedOriginalSenateQuestions(pool:Pool):Promise<R
     ||pairs.length!==uniques.length
     ||original.stages.original_source_not_unique_verified!==0
     ||original.stages.original_roster_or_raw_header_unreadable!==0
-    ||(!postAccepted&&original.stages.original_printed_question_and_ballot_absent!==0)
-    ||original.stages.accepted_day_question_and_ballot_repeated!==0
+    ||(!postAccepted&&!postNamed&&original.stages.original_printed_question_and_ballot_absent!==0)
+    ||(!postNamed&&original.stages.accepted_day_question_and_ballot_repeated!==0)
     ||!((initial&&original.originalDocumentsInspected===40&&pairs.length===64
       &&original.stages.original_printed_question_and_ballot_repeated===143
       &&original.stages.original_question_span_or_bill_unproven===3)
@@ -243,7 +249,10 @@ export async function repairRepeatedOriginalSenateQuestions(pool:Pool):Promise<R
       &&original.originalDocumentsInspected<=75
       &&original.stages.original_printed_question_and_ballot_absent<=55
       &&original.stages.original_printed_question_and_ballot_repeated<=145
-      &&original.stages.original_question_span_or_bill_unproven<=6)))
+      &&original.stages.original_question_span_or_bill_unproven<=6)
+     ||(postNamed&&pairs.length===0
+      &&original.originalDocumentsInspected<=220
+      &&original.repeatedPaperVoteCohort<=332)))
     throw Error('Independent entire ORIGINAL Journal repeated question roll or 64-candidate proof drifted');
    for(const p of pairs)await insertOne(db,p);
    const after=await exactCount(db);

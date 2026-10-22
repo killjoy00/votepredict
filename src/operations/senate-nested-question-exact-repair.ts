@@ -194,7 +194,8 @@ export async function repairNestedSenateExactLinks(pool:Pool):Promise<NestedQues
    // are accepted as strict idempotent no-ops for this 31-link cohort.
    const afterRaw=((exactBefore===1111&&before.sameSourceUnlinked===476)
     ||(exactBefore===1175&&before.sameSourceUnlinked===412)
-    ||(exactBefore===1200&&before.sameSourceUnlinked===387))
+    ||(exactBefore===1200&&before.sameSourceUnlinked===387)
+    ||(exactBefore===1255&&before.sameSourceUnlinked===332))
     &&originalMissing>=0&&originalMissing<=61;
    if(!((exactBefore===991&&before.sameSourceUnlinked===596&&originalMissing===181)
     ||(exactBefore===1022&&before.sameSourceUnlinked===565&&originalMissing===150)
