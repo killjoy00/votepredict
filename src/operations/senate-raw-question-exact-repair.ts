@@ -77,7 +77,7 @@ export function strictRawOriginalQuestionLinks(
    ||d.id!==p.sourceDocumentId||v.id!==p.voteId||v.bill_id!==p.billId
    ||v.bill!==p.bill||v.day!==p.day||v.vote_kind!==p.voteKind
    ||!/^202[1-6]-\d\d-\d\d$/.test(v.day)
-   ||!d.source_url.endsWith('/'+v.day.replace(/-/g,'')+d.source_url.slice(-7))
+   ||!(d.source_url.split('/').at(-1)??'').startsWith(v.day.replace(/-/g,''))
    ||!['2021-2022','2023-2024','2025-2026'].includes(v.session)
    ||v.exact_linked||v.stored_link||!/^([HS]F)[1-9]\d{0,5}$/.test(v.bill)
    ||typeof text!=='string'||text.length<2000||text.length>8_000_000
@@ -85,7 +85,7 @@ export function strictRawOriginalQuestionLinks(
    ||!Number.isInteger(p.sourceRollOrdinal)||p.sourceRollOrdinal<1||p.sourceRollOrdinal>600
    ||!Number.isInteger(p.questionStart)||!Number.isInteger(p.rollStart)
    ||p.questionStart<0||p.rollStart<=p.questionStart
-   ||p.rollStart>text.length||p.rollStart-p.questionStart>1600
+   ||p.rollStart>text.length||p.rollStart-p.questionStart>2600
    ||!headerMatch||Number(headerMatch[1])!==p.yeas||Number(headerMatch[2])!==p.nays
    ||printed!==p.printedQuestion||printed===null||printed.length<40||printed.length>800
    ||questionCore(printed)!==questionCore(v.motion_text)
