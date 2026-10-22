@@ -678,6 +678,31 @@ Role recovery has three explicit bases:
 ## Coverage and remaining uncertainty
 
 ### Repeated-accepted-ballot question collisions (#1498)
+**Protected original replay #39826840419**: 85 unlinked accepted votes
+with duplicated complete ballots were checked against 39 authenticated original
+Senate Journals and 744 complete accepted source-day records, with all original
+quorum rosters and physical roll headers aligned. The exact first-failure
+partition was **25** source-and-accepted unique complete printed questions and
+named ballots, **55** no matching original full question+ballot (55 passage),
+**2** physically repeated original question+ballots and **3** unproved printed
+question/bill spans. Zero sources or accepted votes were unverified, and zero
+existing paper link collisions were observed. No link was written by the audit.
+See merged PR #1535, correction PR #1538 and protected
+https://github.com/killjoy00/votepredict/actions/runs/39826840419.
+
+The separately gated append-only
+\`senate-repeated-accepted-exact-repair.ts\` proposes to promote precisely
+those **25** original source-unique question-only actions and independent
+accepted-event fingerprint edges, in a single SERIALIZABLE transaction.
+Its reviewed baseline is 1,175/2,308 exact links and 412 same-original-Journal
+unlinked; expected state after a successful independently read-back commit is
+**1,200** exact and **387** same-Journal unlinked. The preceding 2022 passage,
+nested, raw and earlier repeated-paper repairs recognize ONLY this additional
+reviewed state as an idempotent no-op, with the previous 143 original repeated
+questions and three uncertain source spans held. This work does not reconstruct
+or date any complete amended bill text, alter previous source actions, mutate
+accepted member votes or affect serving/forecasting.
+
 
 After protected PR #1533, **85** additional same-original-Journal bill/date
 accepted Senate votes have precisely one parsed complete paper ballot, but at
