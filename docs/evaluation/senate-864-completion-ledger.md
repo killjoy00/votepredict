@@ -25,10 +25,10 @@ URL, text SHA, committee, hearing date and session. Every text matched its store
 original SHA. Independent recognizers found **196 candidate rolls / 2,044
 candidate printed YEA/NAY occurrences**; these are NOT distinct source-proven
 questions or demonstrated production omissions. Row-form strict extraction
-currently identifies 42 candidate blocks: **12 source-proven questions**, 30
-question holds. Conservative live comparison finds **10 missing events / 131
-explicit choices** across eight original 2023 Elections Minutes, one alternate
-source representation, and one ambiguous pre-existing question join. The 30
+currently identifies 42 candidate blocks: **17 source-proven questions**, 25
+question holds. Conservative live comparison finds **14 missing events / 181
+explicit choices** across ten original 2023 Elections / 2024 Taxes Minutes, one alternate
+source representation, and two ambiguous pre-existing question joins. The 25
 question holds and other parser formats are not accepted missing events.
 
 The highest-yield demonstrated reusable defect is the legacy ingest parser's
@@ -37,15 +37,16 @@ extractor bounds the exact introduction, bill, amendment and printed outcome;
 resolves printed surnames through original full-name headers to independently
 active historical full identities; and never uses an ordinal, tally or slate as
 question identity. The [population-generated bounded correction plan](source-proof/senate-864-population-row-repair-plan.json)
-contains the ten questions and eight original text SHAs. A new protected
+contains the fourteen questions and ten original text SHAs. A new protected
 workflow reauthenticates all originals, checks schema, replans under serializable
 locks and verifies a separate read-only post-write snapshot plus zero-write replay.
-Regression tests reproduce the actual original failure and negative identity,
+Consistent result restatements corroborate a single question; contradictory outcomes
+remain held. Regression tests reproduce the actual original failure and negative identity,
 bill, withdrawal, duplicate wording, alternate-source, attendance and tally cases;
 the earlier 2023/2025 Elections regression suites remain passing.
 
-**Not yet a production recovery:** source-only verification passed 8/8 originals
-and 10/131 question/choice bounds; protected production execution and read-back
+**Not yet a production recovery:** source-only verification passed 10/10 originals
+and 14/181 question/choice bounds; protected production execution and read-back
 are pending. A fresh population PDF text examination and by-committee inventory
 are continuing. Written-date coverage remains **1,586/1,592** with all six exact
 missing-Minutes holds and the unresolved 2021 print scope preserved. No complete

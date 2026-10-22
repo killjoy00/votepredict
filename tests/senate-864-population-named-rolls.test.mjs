@@ -54,11 +54,18 @@ test('exact question identity precedes side/tally validation; alternate sources,
  s.choices=votes.map(v=>({vote_event_id:'event',membership_id:v.membershipId,choice:v.choice}));event.vote_kind='amendment';assert.equal(reconcileRowQuestion(q,doc,s).status,'classification_defect');event.vote_kind='motion';
  event.source_document_id='other';assert.equal(reconcileRowQuestion(q,doc,s).status,'different_source_identity');event.motion_text='Unidentified different motion with the same tally';assert.equal(reconcileRowQuestion(q,doc,s).status,'ambiguous_production_match');
 });
-test('eight-document population-generated plan has exact bounds and source-specific overrides are unnecessary',()=>{
- const p=planSource();assert.equal(p.sourceDocuments.length,8);assert.equal(p.questions.length,10);assert.equal(p.questions.reduce((n,q)=>n+q.yea+q.nay,0),131);assert.equal(new Set(p.questions.map(q=>q.questionKey)).size,10);
+test('ten-document population-generated plan has exact bounds and source-specific overrides are unnecessary',()=>{
+ const p=planSource();assert.equal(p.sourceDocuments.length,10);assert.equal(p.questions.length,14);assert.equal(p.questions.reduce((n,q)=>n+q.yea+q.nay,0),181);assert.equal(new Set(p.questions.map(q=>q.questionKey)).size,14);
  assert.ok(p.questions.every(q=>q.motionText.length>20&&q.questionKey.length===64));
 });
 test('static bounded production SQL compiles against migrated disposable Postgres',async t=>{
  const url=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;if(!url)return t.skip('CI supplies disposable database');
  const {Pool}=await import('pg'),pool=new Pool({connectionString:url,max:1});try{for(const [key,sql] of Object.entries(SNAPSHOT_SQL)){const args=['documents','bills'].includes(key)?[[]]:[];await pool.query('EXPLAIN '+sql,args);}}finally{await pool.end();}
+});
+
+test('consistent result restatements corroborate one question; contradictory outcomes hold',()=>{
+ const consistent=f.text.replace('With a roll call vote of 8 Yeas, 5 Nays, and 1 Absence, the motion prevailed.','With a roll call vote of 8 Yeas, 5 Nays, and 1 Absence, the motion prevailed and the motion passed.');
+ assert.equal(extractRowRollQuestions(consistent,doc)[0].confidence,'source_proven_question');
+ const contradictory=f.text.replace('With a roll call vote of 8 Yeas, 5 Nays, and 1 Absence, the motion prevailed.','With a roll call vote of 8 Yeas, 5 Nays, and 1 Absence, the motion prevailed and the motion failed.');
+ assert.ok(extractRowRollQuestions(contradictory,doc)[0].holds.includes('ambiguous_or_missing_printed_outcome'));
 });

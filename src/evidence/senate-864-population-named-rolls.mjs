@@ -88,8 +88,9 @@ export function extractRowRollQuestions(text,doc){
   const next=[...tail.matchAll(MOTION)][0];
   const bounded=next?tail.slice(0,next.index):tail;
   const outcomes=[...bounded.matchAll(OUTCOME)];
-  if(outcomes.length!==1)row.holds.push('ambiguous_or_missing_printed_outcome');
-  else row.passed=!/not|fail|lost/i.test(outcomes[0][1]);
+  const printedSides=new Set(outcomes.map(m=>!/not|fail|lost/i.test(m[1])));
+  if(printedSides.size!==1)row.holds.push('ambiguous_or_missing_printed_outcome');
+  else row.passed=[...printedSides][0];
   const totals=tally(bounded);
   row.yea=choices.filter(v=>v.choice==='yea').length;row.nay=choices.filter(v=>v.choice==='nay').length;
   if(!totals||totals.yea!==row.yea||totals.nay!==row.nay)row.holds.push('missing_or_disagreeing_printed_tally');

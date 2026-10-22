@@ -15,10 +15,10 @@ export const planSource=()=>JSON.parse(readFileSync(PLAN_PATH,'utf8'));
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 export async function freshOriginals(fetcher=fetchSenateMinutesHtml){
  const pins=planSource(),docs=[];
- if(pins.expectedQuestions!==10||pins.expectedChoices!==131||pins.sourceDocuments.length!==8||pins.questions.length!==10)throw Error('Reviewed source bounds changed');
+ if(pins.expectedQuestions!==14||pins.expectedChoices!==181||pins.sourceDocuments.length!==10||pins.questions.length!==14)throw Error('Reviewed source bounds changed');
  for(const p of pins.sourceDocuments){
   const u=new URL(p.url);
-  if(u.origin!=='https://www.senate.mn'||u.pathname!=='/schedule/hearing_minutes.html'||!/^2023-0[1-4]-\d\d$/.test(p.date)||p.committee!=='Elections'||p.session_slug!=='2023-2024')throw Error('Reviewed original source scope changed');
+  if(u.origin!=='https://www.senate.mn'||u.pathname!=='/schedule/hearing_minutes.html'||!/^202[34]-0[1-4]-\d\d$/.test(p.date)||!['Elections','Taxes'].includes(p.committee)||p.session_slug!=='2023-2024')throw Error('Reviewed original source scope changed');
   const text=extractSenateMinutesText(await fetcher(p.url));
   if(sha(text)!==p.sha256)throw Error('Independently fetched original text SHA drift');
   const doc={...p,source_url:p.url,content_sha256:p.sha256,text,authenticated:true};
@@ -86,12 +86,12 @@ export function correctionPlan(o,s){
   if(bills.length!==1)throw Error('Bill/session/chamber identity hold');
   work.push({q,doc,bill:bills[0],result});
  }
- if(new Set(work.map(x=>x.q.questionKey)).size!==10||work.reduce((n,x)=>n+x.q.choices.length,0)!==131)throw Error('Bounded reviewed questions drift');
+ if(new Set(work.map(x=>x.q.questionKey)).size!==14||work.reduce((n,x)=>n+x.q.choices.length,0)!==181)throw Error('Bounded reviewed questions drift');
  return work;
 }
 export async function runProduction(pool,target,o){
  const before=await readOnly(pool,target,o),plan=correctionPlan(o,before),add=plan.filter(x=>x.result.status==='missing_event');
- if(add.length!==0&&add.length!==10)throw Error('Partial population repair state held');
+ if(add.length!==0&&add.length!==14)throw Error('Partial population repair state held');
  let insertedEvents=0,insertedChoices=0;
  if(add.length){const db=await pool.connect();try{await db.query('BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE');try{
  await db.query('LOCK TABLE vote_events,member_votes,source_documents,memberships,legislators,bills,legislative_sessions,chambers,jurisdictions IN SHARE ROW EXCLUSIVE MODE');
@@ -109,10 +109,10 @@ export async function runProduction(pool,target,o){
  for(const field of ['docs','roster','bills'])if(!same(before[field],after[field]))throw Error('Existing context changed');
  for(const field of ['events','choices'])for(const old of before[field])if(!same(old,after[field].find(x=>x.id===old.id)))throw Error('Previously valid record mutated');
  const ids=replay.map(x=>{const e=after.events.find(e=>e.id===x.result.eventId);if(!e.created_at||e.metadata?.sourceQuestionKey!==x.q.questionKey||e.metadata?.sameDayEligible!==false||e.metadata?.availableOn!==x.doc.date)throw Error('Exact new event/timestamp/timing readback failed');return {questionKey:x.q.questionKey,eventId:e.id,createdAt:e.created_at,choices:x.q.choices.length};});
- return {sourceOriginals:8,sourceProvenQuestions:10,sourceProvenChoices:131,previousExact:plan.filter(x=>x.result.status==='exact').length,insertedEvents,insertedChoices,verifiedExact:10,verifiedChoices:131,zeroWriteReplay:true,yearCountsBefore:before.year,yearCountsAfter:after.year,existingEventIdsAndChoicesPreserved:true,verifiedRepeatableReadReadOnlyAndRollback:true,serializableWrites:true,recoveredEvents:ids};
+ return {sourceOriginals:10,sourceProvenQuestions:14,sourceProvenChoices:181,previousExact:plan.filter(x=>x.result.status==='exact').length,insertedEvents,insertedChoices,verifiedExact:14,verifiedChoices:181,zeroWriteReplay:true,yearCountsBefore:before.year,yearCountsAfter:after.year,existingEventIdsAndChoicesPreserved:true,verifiedRepeatableReadReadOnlyAndRollback:true,serializableWrites:true,recoveredEvents:ids};
 }
 async function main(){let phase='main_push_guard',pool;try{
- if(process.argv.length===3&&process.argv[2]==='--source-only'){const o=await freshOriginals();console.log('SENATE864_POPULATION_ROW_SOURCE_OK='+JSON.stringify({originals:o.docs.length,questions:10,choices:131,productionWrites:0}));return;}
+ if(process.argv.length===3&&process.argv[2]==='--source-only'){const o=await freshOriginals();console.log('SENATE864_POPULATION_ROW_SOURCE_OK='+JSON.stringify({originals:o.docs.length,questions:14,choices:181,productionWrites:0}));return;}
  if(process.argv.length!==2)throw Error('Fixed modes only');const env=process.env,event=JSON.parse(readFileSync(env.GITHUB_EVENT_PATH||''));
  assertHistoricalMainPush({...env,VOTEPREDICT_864_72_INDEPENDENT_CI:env.SENATE864_INDEPENDENT_MAIN},event);if(!event.head_commit.message.includes(MARKER))throw Error('Reviewed marker absent');
  phase='independent_originals';const o=await freshOriginals();phase='existing_primary';

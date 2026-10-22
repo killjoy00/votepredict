@@ -53,7 +53,7 @@ jobs:
       - run: npm run db:migrate
       - run: npm run check
       - run: node --import tsx --test tests/senate-864-population-named-rolls.test.mjs tests/senate-864-elections-original-recovery.test.mjs tests/senate-864-elections-2023-original-recovery.test.mjs
-      - name: Independently refetch and SHA-verify eight official Minutes and ten source-proven questions
+      - name: Independently refetch and SHA-verify ten official Minutes and fourteen source-proven questions
         run: node --import tsx scripts/deploy-senate-864-population-row-rolls.mjs --source-only
       - run: npm audit --omit=dev --audit-level=high
   protected-original-committee-correction:
