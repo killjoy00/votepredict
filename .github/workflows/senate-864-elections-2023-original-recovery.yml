@@ -49,10 +49,10 @@ jobs:
       - run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
       - run: npm ci --no-fund --no-audit
       - run: npm run db:migrate
-      - run: npm run check
-      - run: node --import tsx --test tests/senate-864-elections-2023-original-recovery.test.mjs
       - name: Refetch all seven SHA-pinned original 2023 Elections Minutes and verify eight selected motion-specific named rolls
         run: node --import tsx scripts/deploy-senate-864-elections-2023-original-recovery.mjs --source-only
+      - run: npm run check
+      - run: node --import tsx --test tests/senate-864-elections-2023-original-recovery.test.mjs
       - run: npm audit --omit=dev --audit-level=high
   protected-original-committee-correction:
     needs: independent-originals-and-tests
