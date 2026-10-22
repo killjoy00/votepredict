@@ -22,8 +22,8 @@ export const SENATE_REPEATED_ACCEPTED_REPAIR=
  'senate-original-repeated-accepted-question-link-v1' as const;
 // Fill from independently protected READ ONLY 85-case audit before merge.
 // ZERO is never authorized for a production new-link release.
-const REVIEWED_SOURCE_UNIQUE_CANDIDATES=0;
-const REVIEWED_ORIGINAL_DOCUMENTS=0;
+const REVIEWED_SOURCE_UNIQUE_CANDIDATES=25;
+const REVIEWED_ORIGINAL_DOCUMENTS=39;
 export interface RepeatedAcceptedRepairResult {
  schemaVersion:typeof SENATE_REPEATED_ACCEPTED_REPAIR;
  result:'linked_verified_originals'|'already_applied';
@@ -76,6 +76,13 @@ export async function repairRepeatedAcceptedSenateQuestions(pool:Pool):Promise<R
     db,rows.votes,rows.actions,before,p=>proofs.push(p));
    const pairs=strictRepeatedOriginalQuestionLinks(proofs);
    if(audit.repeatedAcceptedBallotVotes!==before.totals.ballot_repeated_across_votes
+    ||(first&&(audit.stages.original_source_not_one_verified_journal!==0
+      ||audit.stages.original_rolls_or_roster_unreadable!==0
+      ||audit.stages.no_original_roll_with_exact_full_question_and_ballot!==55
+      ||audit.stages.original_question_and_ballot_repeated_across_rolls!==2
+      ||audit.stages.printed_question_or_bill_span_not_proven!==3
+      ||audit.stages.question_and_ballot_repeated_across_accepted_day!==0
+      ||audit.stages.already_linked_original_question_on_other_paper!==0))
     ||audit.sourceAndAcceptedUniqueCandidates!==proofs.length
     ||pairs.length!==proofs.length
     ||!((first&&audit.originalsInspected===REVIEWED_ORIGINAL_DOCUMENTS
