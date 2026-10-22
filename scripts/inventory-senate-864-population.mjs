@@ -2,6 +2,7 @@
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
+import {gunzipSync} from 'node:zlib';
 import {Pool} from 'pg';
 import {sha,norm,VERSION,inspectOriginal,extractRowRollQuestions,reconcileRowQuestion} from '../src/evidence/senate-864-population-named-rolls.mjs';
 import {parseSenateCommitteeMinutesRaw} from '../src/sources/minnesota/senate-raw-votes.ts';
@@ -44,7 +45,7 @@ async function readOnly(pool,target,fn){
 }
 async function acquirePdfs(docs){
  const batches=[];for(let i=0;i<docs.length;i+=80)batches.push(docs.slice(i,i+80));
- const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>['PATH','HOME','TMPDIR','LANG','NODE_OPTIONS'].includes(k)));env.VOTEPREDICT_SENATE_COMMITTEE_OCR='1';
+ const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>['PATH','HOME','TMPDIR','LANG','NODE_OPTIONS'].includes(k)));env.VOTEPREDICT_SENATE_COMMITTEE_OCR='1';env.OMP_THREAD_LIMIT='1';
  let next=0;const all=[];
  await Promise.all(Array.from({length:3},async()=>{while(next<batches.length){
   const n=next++,input=OUT+'/batch-'+n+'.json',output=OUT+'/result-'+n+'.json';save(input,batches[n]);
@@ -119,11 +120,13 @@ async function main(){
  let priorReport=null,priorPlan=null;
  if(env.SENATE864_INVENTORY_REUSE_PUBLIC==='true'){
   priorPlan=load(ROOT+'senate-864-population-prior-inventory.json');
-  const bytes=readFileSync('prior-inventory/'+ROOT+'senate-864-population-original-inventory-20261022.json');
+  const bytes=readFileSync(ROOT+'senate-864-population-acquired-cache-20261022.json.gz');
   const gitSha=createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex');
-  if(gitSha!==priorPlan.reportGitBlobSha)throw Error('Prior protected public report blob identity changed');
-  priorReport=JSON.parse(bytes);
-  if(priorReport.issue!==864||priorReport.schemaVersion!=='senate864-population-original-inventory-v1'||priorReport.reviewedCommit!==priorPlan.reviewedCommit||priorReport.runId!==priorPlan.runId||priorReport.originals.length!==2860||priorReport.productionWrites!==0||priorReport.readOnlyRepeatableReadAndExplicitRollback!==true)throw Error('Prior protected population proof changed');
+  if(gitSha!==priorPlan.reportGitBlobSha)throw Error('Prior acquired public report blob identity changed');
+  const decoded=gunzipSync(bytes,{maxOutputLength:15000000});
+  if(sha(decoded)!==priorPlan.reportContentSha256)throw Error('Acquired source cache content SHA drift');
+  priorReport=JSON.parse(decoded);
+  if(priorReport.issue!==864||priorReport.schemaVersion!=='senate864-population-original-inventory-v1'||priorReport.reviewedCommit!==priorPlan.reviewedCommit||priorReport.runId!==priorPlan.runId||priorReport.originals.length!==2860||priorReport.productionWrites!==0||priorReport.readOnlyRepeatableReadAndExplicitRollback!==true)throw Error('Prior acquired population proof changed');
  }
  const priorRows=new Map((priorReport?.originals||[]).map(d=>[d.sourceUrl+'|'+d.originalSha256,d]));
  const priorOriginalUrls=new Set(priorOriginalQueue().map(p=>p.officialSourcePdfUrl));
@@ -180,7 +183,7 @@ async function main(){
  const questions=[...unique.values()].filter(x=>!excluded.has(x.q.questionKey)).map(x=>({questionKey:x.q.questionKey,date:x.d.date,committee:x.d.committee,billIdentifier:x.q.billIdentifier,voteKind:x.q.voteKind,amendmentRef:x.q.amendmentRef,motionText:x.q.motionText,choices:x.q.choices.length,choiceFingerprintSha256:x.fp,sourceUrls:x.sources,production:coalesceQuestionSources(x.occurrences,state),baseline:coalesceQuestionSources(x.occurrences,baseline)}));
  const after=summarize(rows,questions,state),before=summarize(rows,questions.map(x=>({...x,production:x.baseline})),baseline);
  const limits=['This acquired-original inventory is not a certified all-format named-question denominator.','Parser streams overlap; maxima and choice occurrences are not additive distinct votes.','No detected roll in extracted text is not a visually certified negative; OCR quality remains uncertified.','Cross-original aliases, header/weekday and absentee conflicts, and repeated bodies across dates remain holds.','Six indexed dates still lack authenticated Minutes; 1586/1592 meeting coverage is not a vote denominator.','2021 print research and 2022 print/electronic equivalence remain unresolved; neither is certified zero.'];
- const summary={schemaVersion:'senate864-population-original-inventory-v1',issue:864,reviewedCommit:env.GITHUB_SHA,runId:env.GITHUB_RUN_ID,readAt:latest.readAt,reusedPopulationAcquisition:priorPlan?{runId:priorPlan.runId,reviewedCommit:priorPlan.reviewedCommit,reportGitBlobSha:priorPlan.reportGitBlobSha}:null,freshPdfBodies:freshPdfs.length,storedClerkTextOriginalsRevalidated:html.length,productionWrites:0,readOnlyRepeatableReadAndExplicitRollback:true,originals:all.length,readableOriginals:rows.filter(r=>r.readable).length,unavailableOrUnparseable:rows.filter(r=>!r.readable).length,namedCandidateOriginals:rows.filter(r=>r.status==='named_candidate_original').length,extractedTextNoNamedDetected:rows.filter(r=>r.status==='examined_no_named_roll').length,uniqueStrictQuestionKeys:unique.size,crossOriginalAliasGroups:aliases,certifiedDistinctRowQuestions:questions.length,certifiedDistinctRowChoices:questions.reduce((n,q)=>n+q.choices,0),before,after,limitations:limits};
+ const summary={schemaVersion:'senate864-population-original-inventory-v1',issue:864,reviewedCommit:env.GITHUB_SHA,runId:env.GITHUB_RUN_ID,readAt:latest.readAt,reusedPopulationAcquisition:priorPlan?{runId:priorPlan.runId,reviewedCommit:priorPlan.reviewedCommit,reportGitBlobSha:priorPlan.reportGitBlobSha,reportContentSha256:priorPlan.reportContentSha256,origin:priorPlan.origin,cacheCommit:priorPlan.commit}:null,freshPdfBodies:freshPdfs.length,storedClerkTextOriginalsRevalidated:html.length,productionWrites:0,readOnlyRepeatableReadAndExplicitRollback:true,originals:all.length,readableOriginals:rows.filter(r=>r.readable).length,unavailableOrUnparseable:rows.filter(r=>!r.readable).length,namedCandidateOriginals:rows.filter(r=>r.status==='named_candidate_original').length,extractedTextNoNamedDetected:rows.filter(r=>r.status==='examined_no_named_roll').length,uniqueStrictQuestionKeys:unique.size,crossOriginalAliasGroups:aliases,certifiedDistinctRowQuestions:questions.length,certifiedDistinctRowChoices:questions.reduce((n,q)=>n+q.choices,0),before,after,limitations:limits};
  save(OUT+'/senate-864-population-original-registry-20261022.json',rows.map(({sourceId,sourceUrl,originalSha256,extractedTextSha256,date,committee,session,format,authenticated,readable,extractionMethod})=>({sourceId,sourceUrl,originalSha256,extractedTextSha256,date,committee,session,format,authenticated,readable,extractionMethod})));
  save(OUT+'/senate-864-population-original-inventory-20261022.json',{...summary,originals:rows,distinctRowQuestions:questions});
  save(OUT+'/senate-864-population-summary-20261022.json',summary);

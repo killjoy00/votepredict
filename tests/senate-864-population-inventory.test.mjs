@@ -40,3 +40,14 @@ test('same exact question from multiple originals uses the matching source, inde
  snapshot.events.push({...event,id:'other-event',source_document_id:a.id});
  assert.equal(coalesceQuestionSources([{q,d:a},{q,d:b}],snapshot).status,'ambiguous_production_match');
 });
+
+test('immutable acquired-source cache has the pinned blob/content identities and complete public population',async()=>{
+ const {readFileSync}=await import('node:fs'),{createHash}=await import('node:crypto'),{gunzipSync}=await import('node:zlib');
+ const plan=JSON.parse(readFileSync('docs/evaluation/source-proof/senate-864-population-prior-inventory.json'));
+ const bytes=readFileSync('docs/evaluation/source-proof/senate-864-population-acquired-cache-20261022.json.gz');
+ assert.equal(createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex'),plan.reportGitBlobSha);
+ const decoded=gunzipSync(bytes);assert.equal(createHash('sha256').update(decoded).digest('hex'),plan.reportContentSha256);
+ const report=JSON.parse(decoded);assert.equal(report.originals.length,2860);assert.equal(report.reviewedCommit,plan.reviewedCommit);assert.equal(report.runId,plan.runId);
+ assert.equal(report.productionWrites,0);assert.equal(report.distinctRowQuestions.length,24);
+ assert.ok(report.originals.every(d=>d.sourceUrl&&/^[a-f0-9]{64}$/.test(d.originalSha256)));
+});

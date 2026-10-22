@@ -1,0 +1,12 @@
+{
+  "version": "senate864-population-acquired-source-reuse-v1",
+  "commit": "d1b0bb4f1b289c7bcc6902994a33f1916710c6e2",
+  "reportGitBlobSha": "f330e19bee23c4688574d1caac585a96d3ad6e4c",
+  "reportContentSha256": "3206b8558cc7db5f8e809ce370ba4efe9e5022935dab7e85d2d037dfe582651e",
+  "reviewedCommit": "174e9b5931f970b1b8481bf006e5c64ffe36163a",
+  "runId": "0",
+  "origin": "Same-session full authenticated acquired-source cache, not an Actions acquisition run. PDF source completions 2026-10-22T20:06:56.724Z–2026-10-22T20:28:00.852Z; public source hashes and exact original text hashes were revalidated locally. Existing READ ONLY snapshots and protected production preservation/readback support the provisional comparison; protected reconciliation recomputes all production numerators.",
+  "originals": 2860,
+  "readableOriginals": 2859,
+  "purpose": "Reuse acquisition and extraction findings only. Reauthenticate every named-candidate PDF plus seven prior-question originals; revalidate all stored Clerk text hashes; independently recompute production parity."
+}
