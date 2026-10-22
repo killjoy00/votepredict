@@ -50,6 +50,8 @@ on:
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-hf100-original-shadow.ts
       - src/operations/senate-hf100-text-chain-readiness.ts
+      - src/operations/senate-amendment-state-chain-census.ts
+      - tests/senate-amendment-state-chain-census.test.ts
       - tests/senate-hf100-text-chain-readiness.test.ts
       - src/operations/senate-hf100-printed-line-pilot.ts
       - tests/senate-hf100-printed-line-pilot.test.ts
@@ -117,6 +119,8 @@ on:
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-hf100-original-shadow.ts
       - src/operations/senate-hf100-text-chain-readiness.ts
+      - src/operations/senate-amendment-state-chain-census.ts
+      - tests/senate-amendment-state-chain-census.test.ts
       - tests/senate-hf100-text-chain-readiness.test.ts
       - src/operations/senate-hf100-printed-line-pilot.ts
       - tests/senate-hf100-printed-line-pilot.test.ts
