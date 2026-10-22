@@ -120,7 +120,7 @@ function proofOfMotion(text,spec,nextAt){
  // adoption, a voice vote, the amendment label or the parliamentary question.
  const match=segment.match(/\b(?:with|by)\s+a\s+roll\s+call\s+vote\s+of\s+(\d+)\s+yeas?\s*(?:and|,)\s*(\d+)\s+nays?\b[\s\S]{0,90}?\bthe\s+motion\s+(failed|prevailed|passed)\b/i);
  if(!match||!match[0]||!['failed','prevailed','passed'].includes(match[3].toLowerCase()))
-  throw Error('Original named vote lacks one locally bound printed tally and motion result');
+  throw Error('Original source tally/disposition unbound on '+spec.date+' offset '+spec.offset);
  const passed=/^(?:prevailed|passed)$/i.test(match[3]);
  if(passed!==spec.passed)
   throw Error('Original source result disagrees with selected parliamentary question');
