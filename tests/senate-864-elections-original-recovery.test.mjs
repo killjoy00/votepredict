@@ -77,6 +77,16 @@ test('a separately labeled A2 event with same slate cannot stand in for A1',()=>
  const plan=recoveryPlan([p],s);
  assert.equal(plan.add.length,1);assert.equal(plan.holds.length,0);
 });
+test('same-date named question under another stored source document is held, not duplicated',()=>{
+ const {p,s}=fixture();
+ s.events=[{...stored(p),id:'other-doc',source_document_id:'old-document',
+   external_key:'old-key',metadata:{committeeVote:true,committeeName:'Committee on Elections'},
+   motion_text:'Unidentified roll',amendment_ref:null}];
+ const plan=recoveryPlan([p],s);
+ assert.equal(plan.add.length,0);
+ assert.equal(plan.holds.length,1);
+ assert.equal(plan.holds[0].reason,'ambiguous_preexisting_same_question_or_tally');
+});
 test('surname-only historical roster is not enough to write individual choices',()=>{
  const {p,s}=fixture();
  s.roster=s.roster.map((x,i)=>({...x,name:OFFICIAL_FULL[i][0],normalized_name:OFFICIAL_FULL[i][0].toLowerCase()}));
