@@ -908,3 +908,33 @@ The coverage denominator is accepted official Senate **events**, split by sessio
 `.github/workflows/senate-paper-history-production.yml` runs after a reviewed main merge bearing `SENATE_PAPER_HISTORY_PRODUCTION`, then at `11 * * * *` UTC. It independently applies all migrations to disposable Postgres, runs full checks, verifies four pinned original Senate PDFs and audits production dependencies before entering the existing protected Neon environment. The production job checks primary identity and the complete checksum ledger, applies only 0035, performs bounded idempotent recovery, then uses READ ONLY / ROLLBACK for coverage. Main continuation can coexist with later reviewed migrations only when the complete ledger matches; it never silently skips pending migrations.
 
 The initial run scans up to four 1,000-document batches, independently verifies up to 400 original journals within a ten-minute budget, fetches up to 60 explicitly named base URLs and checks up to 30 historical archive jobs. Later runs verify up to 30 journals within three minutes and use smaller acquisition budgets. A freshly reviewed push may immediately retry earlier canonical-URL failures while retaining the three-attempt cap. Archive jobs alternate between text/role families and all three biennia, prioritizing actual Senate floor-voted bills within each text family. Committee URL variants are discovery leads whose bodies must independently pass session-specific parsing. Counts and hashes are logged; raw bodies, ballots, UUIDs and credentials are not emitted.
+
+### Next step: entire Senate amendment source state prerequisites (#1498)
+
+Exact paper-to-vote links and literal bill states are separate proof problems.
+The read-only `senate-amendment-state-chain-census.ts` inspects **every**
+current source-local Senate paper action, including voice and procedural
+source actions with no accepted roll-call edge, so an adopted predecessor
+cannot be erased merely because no named ballot exists. It inventories the
+source-attested original Journal, literal proposed amendment capture,
+explicitly selected base edition, unique source-backed base capture,
+source-local chronological adopted-action keys, and adopted/rejected outcome.
+The summary has disjoint first-failure stages and a fully reconciled action
+population denominator. Every prior adopted action must itself satisfy the
+source evidence prerequisite before later actions can be described as ready
+for literal instruction replay; rejected and unknown actions never become
+an adopted amendment.
+
+Even an `adopted_ready_for_instruction_replay` row is **not** an applied
+amendment, a page/line accurate result, an assembled-at-vote bill version,
+or publication-by-vote-time proof. All original text, IDs, roster ballots,
+private source keys and full amendment instructions remain inside the
+independently authenticated read-only transaction and do not appear in the
+report. Accepted official votes, historic original bill versions, old paper
+actions, member choices, link tables and serving models remain unchanged.
+This is the population-level dependency audit needed before a separately
+proved textual edit/reconciliation writer, not permission to certify an
+assembled bill state. HF100 source evidence already independently has 5
+captured proposals/unique bases, 4 adopted actions, and 1 rejected action;
+its existing Port/source-line and first-UE/second-UE witnesses preserve their
+explicit incomplete composite and unknown as-of publication holds.
