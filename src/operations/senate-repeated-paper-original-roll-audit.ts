@@ -37,13 +37,13 @@ const STAGES:readonly RepeatedOriginalStage[]=[
 ];
 const journalRoll=/The roll was called,\s*and there were yeas\s+(\d+)\s+and nays\s+(\d+), as follows:\s*Those who voted in the affirmative were:\s*([\s\S]*?)(?=Those who voted in the negative were:|The motion|So(?:\s|,)|The amendment|RECONSIDERATION|MOTIONS|SPECIAL|MESSAGES|CALENDAR|CONSENT|GENERAL ORDERS|MEMBERS EXCUSED|ADJOURNMENT)/gi;
 const URL=/^https:\/\/www\.senate\.mn\/journals\/20\d\d-20\d\d\/20\d{8,9}\.pdf$/;
-interface PrintedRoll {
+export interface PrintedRoll {
  start:number;ordinal:number;
  questionStart:number|null;question:string|null;
  bill:string|null;
  yeas:number;nays:number;ballot:string|null;
 }
-interface ParsedOriginal {
+export interface ParsedOriginal {
  verified:boolean;aligned:boolean;rolls:PrintedRoll[];
 }
 export interface UniqueOriginalRoll {
@@ -67,11 +67,11 @@ export interface RepeatedOriginalAudit {
 function scope(v:{source_url:string;bill_id:string;day:string}):string{
  return JSON.stringify([v.source_url,v.bill_id,v.day]);
 }
-function fullQuestion(s:string):string{
+export function fullQuestion(s:string):string{
  const ms=[...s.matchAll(/The question (?:was taken|recurred)/gi)];
  return compact(ms.length?s.slice(ms.at(-1)!.index):s);
 }
-function parseOriginal(d:OriginalJournal):ParsedOriginal{
+export function parseOriginal(d:OriginalJournal):ParsedOriginal{
  const empty:ParsedOriginal={verified:false,aligned:false,rolls:[]};
  if(!d.original_verified||d.source_type!=='mn_senate_journal'||!URL.test(d.source_url)
   ||typeof d.body!=='string'||d.body.length<2000||d.body.length>8_000_000
