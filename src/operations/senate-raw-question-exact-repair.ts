@@ -41,6 +41,10 @@ export interface RawQuestionRepairResult {
  oldPaperActionsChanged:false;servingModelsChanged:false;
  completeAmendedBillStatesCertified:0;
 }
+function entireQuestion(t:string):string{
+ const markers=[...t.matchAll(/The question (?:was taken|recurred)/gi)];
+ return compact(markers.length?t.slice(markers.at(-1)!.index):t);
+}
 function kind(v:string):StrictRawQuestionLink['actionKind']{
  if(v==='amendment')return 'amendment';
  if(v==='passage')return 'passage';
@@ -89,7 +93,8 @@ export function strictRawOriginalQuestionLinks(
    ||!headerMatch||Number(headerMatch[1])!==p.yeas||Number(headerMatch[2])!==p.nays
    ||printed!==p.printedQuestion||printed===null||printed.length<40||printed.length>800
    ||questionCore(printed)!==questionCore(v.motion_text)
-   ||questionCore(printed)!==questionCore(p.acceptedMotion)
+   ||entireQuestion(printed)!==entireQuestion(v.motion_text)
+   ||entireQuestion(printed)!==entireQuestion(p.acceptedMotion)
    ||p.acceptedMotion!==v.motion_text
    ||p.yeas!==v.yea_count||p.nays!==v.nay_count
    ||signature===null||signature!==p.ballotSha256||!SHA.test(p.ballotSha256)
