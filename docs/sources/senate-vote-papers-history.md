@@ -691,7 +691,7 @@ See merged PR #1535, correction PR #1538 and protected
 https://github.com/killjoy00/votepredict/actions/runs/39826840419.
 
 The separately gated append-only
-\`senate-repeated-accepted-exact-repair.ts\` proposes to promote precisely
+`senate-repeated-accepted-exact-repair.ts` proposes to promote precisely
 those **25** original source-unique question-only actions and independent
 accepted-event fingerprint edges, in a single SERIALIZABLE transaction.
 Its reviewed baseline is 1,175/2,308 exact links and 412 same-original-Journal
@@ -708,7 +708,7 @@ After protected PR #1533, **85** additional same-original-Journal bill/date
 accepted Senate votes have precisely one parsed complete paper ballot, but at
 least one other accepted bill/day event has the same complete member choices.
 They must NOT be associated by ballot, tally, event ordinal or question
-proximity. \`senate-repeated-accepted-original-audit.ts\` now independently
+proximity. `senate-repeated-accepted-original-audit.ts` now independently
 replays the entire authenticated original Journal's printed physical roll
 headers, original question boundaries, source bill, yea/nay and complete
 named votes, and demands exactly one **full printed question + full ballot**
@@ -734,13 +734,13 @@ repetitions remain ambiguous and three original bill/question boundaries remain
 unproven. The stored-paper question audit had no candidates (82 missing exact
 paper question and 128 repeated paper question), so it is not the writer.
 
-The guarded follow-on \`senate-repeated-paper-exact-repair.ts\` does not infer
+The guarded follow-on `senate-repeated-paper-exact-repair.ts` does not infer
 identity from repeated ballots: within an independently authenticated
 SERIALIZABLE production transaction it replays the exact source Journal,
 rechecks physical question/header offsets, source bill, full question, every
 member choice, source byte-extract digest, printed-day identity and uniqueness
 across entire source and accepted events. It appends source-anchored question-only
-paper actions and \`unique_question_full_ballot\` edges for precisely verified
+paper actions and `unique_question_full_ballot` edges for precisely verified
 candidates; no amendment outcomes, amended bill-state claims, bill text,
 accepted event/member edits or serving weights are allowed. The entire batch
 rolls back on a single source/identity drift. The post-commit exact-link and
