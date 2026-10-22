@@ -113,3 +113,12 @@ test('original current-view population count, duplicate action identity, sequenc
  assert.throws(()=>summarizeSourceStateChain([{...rows[0]!,sequence:2},...rows.slice(1)],8),/reused/);
  assert.throws(()=>summarizeSourceStateChain([{...rows[0]!,priorAdoptedKeys:['notSHA']},...rows.slice(1)],8),/invalid source/);
 });
+
+test('conference substitution is not a literal adopted page edit and holds subsequent source-local readiness',()=>{
+ const rows=hf100();
+ rows[3]!.kind='conference';
+ const s=summarizeSourceStateChain(rows,8);
+ assert.equal(s.stages.adopted_ready_for_instruction_replay,2);
+ assert.equal(s.stages.source_local_predecessor_chain_unproved,2);
+ assert.equal(s.completeAssembledStatesCertified,0);
+});
