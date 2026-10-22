@@ -1,0 +1,176 @@
+{
+  "version": "senate864-population-row-repair-source-plan-v1",
+  "sourceDocuments": [
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17357&ls=93&type=minutes",
+      "sha256": "0afff88030721505fbf62df2a224b27e9e5f59bdcd4a71b8b6da87828e9e8976",
+      "date": "2023-01-17",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17464&ls=93&type=minutes",
+      "sha256": "81b1cb17caac3a9df483bea795edbf14629a3316b36723fced79cd26b47675dd",
+      "date": "2023-01-31",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17600&ls=93&type=minutes",
+      "sha256": "027d2fcb5b2ad68368c77613c52f2d8e6f12c5ab398c7f0e4c35946d8b2dad66",
+      "date": "2023-02-14",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17646&ls=93&type=minutes",
+      "sha256": "f573098307f7a46aa723395f73627f9e230d05746aab76ebfa368138732117da",
+      "date": "2023-02-21",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17688&ls=93&type=minutes",
+      "sha256": "b730982d0b81b341c97a8a79ffa029ba9652383955915753626637de349803a0",
+      "date": "2023-03-09",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17824&ls=93&type=minutes",
+      "sha256": "ee12e5bc0f5a2ce016d1d83bba9fcde3c329ec9e4e66322a5f20a0f53ee1e7b4",
+      "date": "2023-03-14",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17825&ls=93&type=minutes",
+      "sha256": "18af4f426add860df5f03d2d764ecfe0cb9a42072d99e32efe9f6b5b0f934c7b",
+      "date": "2023-03-16",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17949&ls=93&type=minutes",
+      "sha256": "2bc8b017bb648e22f8e9e4e799d448a901e84448eb7ae2b9fd47426cec9bd4d2",
+      "date": "2023-04-03",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    }
+  ],
+  "questions": [
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17357&ls=93&type=minutes",
+      "questionKey": "e6f47803c373538422e1009a94d4706fecae5a04cf79ab21bc58243be079e4b5",
+      "billIdentifier": "SF26",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 7,
+      "nay": 6,
+      "motionText": "Senator Westlin moved that SF 26 be recommended to pass as amended and re-referred to the Judiciary and Public Safety Committee. Senator Koran requested a roll call vote and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17464&ls=93&type=minutes",
+      "questionKey": "9dd16a7d2bb16ef312a17ab5eef8f90cb7c38906fe60d53fe340cfd373e94a16",
+      "billIdentifier": "SF538",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 6,
+      "motionText": "Senator Marty moved that SF 538 be recommended to pass. Senator Koran requested a roll call vote and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17600&ls=93&type=minutes",
+      "questionKey": "3db07afa8fa2bc437bba420ec90972790a08b91e215acb50333c14bffe088015",
+      "billIdentifier": "SF1507",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 5,
+      "motionText": "Senator Boldon moved that SF 1507, as amended, by recommended to pass and re-referred to the Judiciary and Public Safety Committee. Senator Koran requested a roll call."
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17600&ls=93&type=minutes",
+      "questionKey": "417a51f681afd8b373a8f382726f297150b2f127eeddd987230f253deb6e8cf4",
+      "billIdentifier": "SF1515",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 5,
+      "motionText": "Senator Mitchell moved that SF 1515, as amended, be recommended to pass and re-referred to the Higher Education Committee. Senator Koran requested a roll call vote."
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17646&ls=93&type=minutes",
+      "questionKey": "14d4c76e9b7c8a697cc33549e4c865e2cc8338f3fca00bfa11be798ac01d77da",
+      "billIdentifier": "SF749",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 7,
+      "nay": 6,
+      "motionText": "Senator Westlin moved that SF 749, as amended, be recommended to pass and placed on general orders. Senator Koran requested a roll call and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17688&ls=93&type=minutes",
+      "questionKey": "be27478e8724fe29bfb9aec6106c513a4c56c072776f113c99a60bf09c50205c",
+      "billIdentifier": "SF2270",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 5,
+      "motionText": "Senator Port moved that SF 2270 be recommended to pass and re-referred to the State and Loval Government and Veterans Committee. Senator Anderson requested a roll call and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17824&ls=93&type=minutes",
+      "questionKey": "11de96b46563778139add6d0492d04d77160ea620b17301955655b88cd147946",
+      "billIdentifier": "SF1827",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 4,
+      "motionText": "Senator Carlson moved that SF 1827, as amended, be recommended to pass. Senator Koran requested a roll call, and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17825&ls=93&type=minutes",
+      "questionKey": "0ef6eae3c2e20900ca1b529dcc5eaf6e54db7abf855039b4b521a92c6d4635b5",
+      "billIdentifier": "SF1362",
+      "amendmentRef": "A13",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 7,
+      "motionText": "Senator Mathews moved the A13 Amendment and requested a roll call, and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17825&ls=93&type=minutes",
+      "questionKey": "754f819bb76c724d019466aa15df70b08639fc1264474d18ed3242c78c20e348",
+      "billIdentifier": "SF1362",
+      "amendmentRef": "A12",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 7,
+      "motionText": "Senator Mathews moved the A12 Amendment and requested a roll call, and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17949&ls=93&type=minutes",
+      "questionKey": "0463d1396118dde64d7d4dcd5ed1982cd7d4267808e8bde3064480b83883336c",
+      "billIdentifier": "SF1636",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 6,
+      "motionText": "Senator Westlin moved that SF 1636, as amended, be recommended to pass and re-referred to the Committee on Finance. Senator Koran requested a roll call and a roll call was granted."
+    }
+  ],
+  "expectedQuestions": 10,
+  "expectedChoices": 131,
+  "scope": "Generated by population-wide acquired Clerk text scan; no source-specific question semantics in extractor; candidate formats other than explicit labeled rows are held."
+}

@@ -13,6 +13,44 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 22: population-wide named-roll continuation — implementation in progress
+
+Fresh existing-primary Neon read with `REPEATABLE READ READ ONLY` and explicit
+`ROLLBACK` independently reconfirmed the latest **183 committee events / 1,326
+explicit choices**: 2022 **38/259**, 2023 **36/231**, 2024 **56/297**, 2025
+**53/539**. The older 182/1,312 table below is a dated prior receipt.
+
+All **1,379 acquired 2022–2025 Clerk Minutes texts** were enumerated by exact
+URL, text SHA, committee, hearing date and session. Every text matched its stored
+original SHA. Independent recognizers found **196 candidate rolls / 2,044
+candidate printed YEA/NAY occurrences**; these are NOT distinct source-proven
+questions or demonstrated production omissions. Row-form strict extraction
+currently identifies 42 candidate blocks: **12 source-proven questions**, 30
+question holds. Conservative live comparison finds **10 missing events / 131
+explicit choices** across eight original 2023 Elections Minutes, one alternate
+source representation, and one ambiguous pre-existing question join. The 30
+question holds and other parser formats are not accepted missing events.
+
+The highest-yield demonstrated reusable defect is the legacy ingest parser's
+failure to recognize `Senator NAME - Yea/Nay` row-form choices. The new generic
+extractor bounds the exact introduction, bill, amendment and printed outcome;
+resolves printed surnames through original full-name headers to independently
+active historical full identities; and never uses an ordinal, tally or slate as
+question identity. The [population-generated bounded correction plan](source-proof/senate-864-population-row-repair-plan.json)
+contains the ten questions and eight original text SHAs. A new protected
+workflow reauthenticates all originals, checks schema, replans under serializable
+locks and verifies a separate read-only post-write snapshot plus zero-write replay.
+Regression tests reproduce the actual original failure and negative identity,
+bill, withdrawal, duplicate wording, alternate-source, attendance and tally cases;
+the earlier 2023/2025 Elections regression suites remain passing.
+
+**Not yet a production recovery:** source-only verification passed 8/8 originals
+and 10/131 question/choice bounds; protected production execution and read-back
+are pending. A fresh population PDF text examination and by-committee inventory
+are continuing. Written-date coverage remains **1,586/1,592** with all six exact
+missing-Minutes holds and the unresolved 2021 print scope preserved. No complete
+original named-motion denominator is certified, and **#864 stays OPEN**.
+
 ## October 22 UTC: nine source-pinned 2025 Elections rolls inserted and independently verified
 
 **Completed bounded correction; not a statewide completion certificate.** This engagement
