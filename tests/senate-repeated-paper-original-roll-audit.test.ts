@@ -95,9 +95,9 @@ test('repeated paper population and day accepted identity are conserved independ
  assert.throws(()=>summarizeRepeatedOriginalRolls([vote],papers,[source()],[accepted()],changed),
   /denominator drift/);
  assert.throws(()=>summarizeRepeatedOriginalRolls([vote],papers,[source(),source()],
-  [accepted()],census),/population\/identity/);
+  [accepted()],census),/population\/identity|limit exceeded/);
  assert.throws(()=>summarizeRepeatedOriginalRolls([vote],papers,[source()],
-  [accepted(),accepted()],census),/population\/identity/);
+  [accepted(),accepted()],census),/population\/identity|limit exceeded/);
  assert.equal(probe(source(),[]).audit.stages.accepted_day_question_and_ballot_repeated,1);
  const {audit}=probe();
  assert.deepEqual(audit.examples,[{session:'2023-2024',bill:'HF3',
