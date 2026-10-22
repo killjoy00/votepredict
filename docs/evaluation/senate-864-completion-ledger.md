@@ -983,22 +983,58 @@ and no manual audio listening was requested.
 
 ---
 
-## October 22, 2026: seven original 2023 Elections Minutes — bounded next-cohort source holds
+## October 22, 2026: 2023 Elections seven-original named roll cohort — exact opportunity and holds
 
-**Disposition: source-only original cohort checked; poor recoverable yield, no protected production writes.** This is a separate selected cohort from the completed 2025 Elections corrections. Source proof is on [PR #1534](https://github.com/killjoy00/votepredict/pull/1534), currently **unmerged**; this source-only result is not a production correction or all-years certificate.
+This is a **bounded, separate source cohort** from the completed 2025 Elections
+recovery. All seven already acquired official 2023 Elections Minutes were
+independently re-fetched and SHA-verified, with exact original printed
+YEA/NAY partitions. [PR #1534](https://github.com/killjoy00/votepredict/pull/1534)
+contains the fixed original-source proof and guarded single-cohort readback.
 
-| Fixed original-source population | Authenticated source | Strictly selected for new source-to-live parity | Source question holds |
+| Source-only denominator | Original proof | Admitted source question | Held original source |
 | --- | ---: | ---: | ---: |
-| 2023 Elections original electronic Minutes | **7/7** SHA-pinned official PDFs and extracted texts | 7 source identity verifications | 0 acquisition errors |
-| Distinct printed named roll-call questions | **10** | **1** precise original question (2023-02-07 SF3 A35, failed 6–8) | **9** |
-| Explicit printed YEA/NAY choices | **133**, excluding 7 Absent/Pass statuses | **14** source named choices | **119** source named choices not admitted |
+| Official 2023 Elections Minutes | **7/7** PDFs/texts | Seven source identities verified | Zero original acquisition failures |
+| Individually named rolls | **10** | **1** uniquely linked original motion | **9** unresolved question/outcome links |
+| Explicit YEA/NAY choice occurrences | **133** | **14** choices on SF3 A35 failed 6–8, Feb 7 | **119** choices not admitted |
+| Separate source Pass/Absent statuses | **7** | **0 inferred yea/nay** | Excluded as nonvoting statuses |
 
-**Storage parity is unknown for the 1/14 question.** This source-only pass did not read the live database: there are zero independently proven new omissions, **0 actual event inserts, 0 choice inserts, 0 classification corrections**, no verified current production readback. Previous authenticated baselines (2023 **35 events/217 choices**, 2022–2025 **182 events/1,312 choices**) are **not** refreshed production totals from this continuation.
+**Historical source holds (9 questions /119 printed choice occurrences):**
+January 17 SF26 recommendation (13, result linkage unbound);
+February 7 A36/oral amendment (14, exact amendment identity ambiguous)
+and SF3 recommendation (14, result linkage unbound);
+February 14 SF1515 and SF1507 recommendations (13+13, outcomes unbound);
+February 21 SF749 recommendation (13, outcome unbound);
+March 2 SF1434 oral amendment (14, outcome unbound);
+March 7 A2 (13, bill/question identity hold);
+March 14 SF1827 recommendation (12, outcome unbound).
+These are authenticated **source roll passages**, not certified omitted
+database events. No ordinal key, matching voting slate, attendance, aggregate
+tally, or formal result alone is allowed to identify their parliamentary motion.
 
-Nine separately authenticated named roll passages remain held for exact source question/outcome association: 2023-01-17 SF26 (13 votes; result unbound); 2023-02-07 A36/oral (14; amendment identity discrepancy), SF3 recommendation (14; result unbound); 2023-02-14 SF1515 and SF1507 recommendations (13 and 13; results unbound); 2023-02-21 SF749 (13; result unbound); 2023-03-02 SF1434 oral amendment (14; result unbound); 2023-03-07 A2 (13; exact bill/question hold); 2023-03-14 SF1827 (12; result unbound). Total **9/119 held**. Separate Pass/Absent statuses remain nonvotes. Same vote totals/slates or legacy positional keys never certify distinct motions.
+**Candidate requiring protected production parity:** the single original
+February 7 SF3 A35 amendment, 14 expressly printed named YEA/NAY sides,
+failed 6–8. Source-only proof does **not** prove the event is missing in Neon.
+The guarded readback must establish whether it is already stored, contains
+only some choices, conflicts with legacy representation, or is absent.
+Until its protected receipt exists, the safe new production deltas for this
+2023 cohort are **0 verified events / 0 verified choices**. Historic production
+baselines elsewhere in this ledger are not refreshed by the source-only pass.
 
-A source-review-only question verifier now tolerates original Minutes numerical prose order while retaining independent PDF SHA, source numeric-tally/name parity, bounded literal outcome and full-name historical identity gates. **No production ingester or stored historical event was changed.**
+**Source/CI and dependency history:** the exact seven-original source check,
+full application checks and focused tests passed
+[Actions #39824307748](https://github.com/killjoy00/votepredict/actions/runs/39824307748);
+that earlier run and regular CI #39824307788 then failed their final
+critical npm audit because the branch predated the upstream Next.js fix.
+This dependency blocker **has since been resolved on main** with
+Next.js 16.4.2, matching SWC packages and
+[successful main CI #39824907445](https://github.com/killjoy00/votepredict/actions/runs/39824907445)
+(including the production dependency audit). Previous failed attempts made
+**zero production changes**. Production write/readback success must be stated
+only after a new independently passing protected main push and exact receipt.
 
-**Verified CI outcome:** [source-run #39824307748](https://github.com/killjoy00/votepredict/actions/runs/39824307748) passed original seven-PDF source validation, full npm run check, and focused source-recovery tests. Final dependency audit failed because the already pinned Next.js 16.4.0 has a **critical** [GHSA-2464-fhr4-w9xw](https://github.com/advisories/GHSA-2464-fhr4-w9xw) advisory (npm reports a fix in 16.4.2). [Standard CI #39824307788](https://github.com/killjoy00/votepredict/actions/runs/39824307788) failed at the same audit. **Protected Neon job skipped**; no production read or write, merge SHA, Vercel deployment, scheduler or model/forecast modification. Do not waive unrelated security/branch/environment checks.
-
-**Stopping rule:** One source-admissible question/14 of 133 named votes, with nine exact-question holds and the inherited critical CI gate, is poor safe recoverable yield. Do not expand this seven-document cohort or endlessly improve the parser. Its one-question live-parity check can resume only after the unrelated security issue is resolved through the normal reviewed path. **#864 stays open.**
+**Stopping rule:** no larger parser exploration or ambiguous source-motion
+reconstruction; compare only the one separately authenticated question
+through the guarded GitHub Actions → existing Neon primary, keep all others
+held. Preserve existing historical event IDs and choices, next-day eligibility,
+Senate floor, serving/weights/training/evaluation freezes, Vercel and schedulers.
+Issue #864 remains open; population-wide completeness is not certified.

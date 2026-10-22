@@ -49,7 +49,7 @@ jobs:
       # These seven previously SHA-audited 2023 PDFs have embedded text; fail closed if OCR is unexpectedly required.
       - run: npm ci --no-fund --no-audit
       - run: npm run db:migrate
-      - name: Refetch all seven SHA-pinned original 2023 Elections Minutes and verify eight selected motion-specific named rolls
+      - name: Refetch and authenticate all seven original 2023 Elections Minutes, account for all ten named source rolls
         run: node --import tsx scripts/deploy-senate-864-elections-2023-original-recovery.mjs --source-only
       - run: npm run check
       - run: node --import tsx --test tests/senate-864-elections-2023-original-recovery.test.mjs

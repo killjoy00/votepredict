@@ -9,10 +9,13 @@ import {readVoteTextGapAudit,verifyVoteTextGapAudit} from '../src/operations/sen
 import {readSameSourceQuestionRows,summarizeSameSourceFailures} from '../src/operations/senate-same-source-question-census.js';
 import {readRepeatedPaperQuestionAudit} from '../src/operations/senate-repeated-paper-question-audit.js';
 import {readRepeatedOriginalRollAudit} from '../src/operations/senate-repeated-paper-original-roll-audit.js';
+import {readRepeatedAcceptedOriginalAudit} from '../src/operations/senate-repeated-accepted-original-audit.js';
 import {readNoTallyOriginalCensus,type PreliminaryRawOriginalCandidate} from '../src/operations/senate-no-tally-original-census.js';
 import {summarizeRawOriginalStrongSource} from '../src/operations/senate-raw-original-strong-source-audit.js';
 import {repairNestedSenateExactLinks} from '../src/operations/senate-nested-question-exact-repair.js';
 import {repairRawSenateExactLinks} from '../src/operations/senate-raw-question-exact-repair.js';
+import {repairRepeatedOriginalSenateQuestions} from '../src/operations/senate-repeated-paper-exact-repair.js';
+import {repairRepeatedAcceptedSenateQuestions} from '../src/operations/senate-repeated-accepted-exact-repair.js';
 import {read2022PassageRosterShadow} from '../src/operations/senate-2022-passage-roster-shadow.js';
 import {repair2022UniquePassageLinks} from '../src/operations/senate-2022-passage-link-repair.js';
 import {readSenateSourceCaseAudit} from '../src/operations/senate-vote-paper-case-audit.js';
@@ -84,6 +87,12 @@ async function main(){
   phase='2022_exact_original_passage_roll_repair';const passageRepair=await repair2022UniquePassageLinks(pool);progress(phase,passageRepair);
   phase='nested_original_question_exact_repair';const nestedQuestionRepair=await repairNestedSenateExactLinks(pool);progress(phase,nestedQuestionRepair);
   phase='raw_original_question_exact_repair';const rawQuestionRepair=await repairRawSenateExactLinks(pool);progress(phase,rawQuestionRepair);
+  // Only 64 independently unique ORIGINAL question+complete-ballot identities
+  // in the 210 duplicate-paper cohort may be appended, one atomic batch.
+  phase='repeated_original_question_exact_repair';const repeatedOriginalQuestionRepair=await repairRepeatedOriginalSenateQuestions(pool);progress(phase,repeatedOriginalQuestionRepair);
+  // Separate reviewed cohort: original full question+ballot uniquely
+  // distinguishes accepted same-day events whose named choices repeat.
+  phase='accepted_repeated_original_question_exact_repair';const repeatedAcceptedQuestionRepair=await repairRepeatedAcceptedSenateQuestions(pool);progress(phase,repeatedAcceptedQuestionRepair);
   phase='explicit_base_bodies';const baseBodies=await recoverExplicitBaseBodies(pool,{max:push?60:30,retryFailedNow:push});progress(phase,baseBodies);
   phase='dated_assignment_facts';const datedAssignments=await collectDatedAssignmentFacts(pool,{retryUnavailableNow:push});progress(phase,datedAssignments);
   phase='stage_historical_sources';const historyJobs=await stageHistoryJobs(pool);progress(phase,{eligibleUrls:historyJobs});
@@ -114,6 +123,10 @@ async function main(){
    // Independently replay ALL physical named rolls in authenticated original
    // Journals, not the potentially lossy paper-v1 question alone. Read only.
    const repeatedPaperOriginalRollAudit=await readRepeatedOriginalRollAudit(db,
+    populationRows.votes,populationRows.actions,sameSourceCensus);
+   // The remaining accepted-side repeated full ballots require independent
+   // physical original question identity. READ ONLY; no inferred matching.
+   const repeatedAcceptedOriginalAudit=await readRepeatedAcceptedOriginalAudit(db,
     populationRows.votes,populationRows.actions,sameSourceCensus);
    // Every unmatched source-day bill with no printed paper tally is
    // independently partitioned against authenticated ORIGINAL Journal text.
@@ -167,9 +180,9 @@ async function main(){
     FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id GROUP BY s.slug,q.kind,q.status ORDER BY s.slug,q.kind,q.status`)).rows;
    const sourceAttempts=(await db.query('SELECT result,count(*)::int AS documents FROM senate_paper_source_attempts GROUP BY result ORDER BY result')).rows;
    if(!links.exact_raw_questions||!actions.some(a=>a.literal_papers>0)||!links.historical_roles)throw Error('Paper/history acceptance counts are empty');
-   return {events,actions,links,gapAudit,sameSourceCensus,repeatedPaperQuestionAudit,repeatedPaperOriginalRollAudit,noTallyOriginalCensus,rawStrongSourceAudit,passage2022RosterShadow,caseAudit,nestedCandidateAudit,prattShadowReadback,hf100TextChainReadiness,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
+   return {events,actions,links,gapAudit,sameSourceCensus,repeatedPaperQuestionAudit,repeatedPaperOriginalRollAudit,repeatedAcceptedOriginalAudit,noTallyOriginalCensus,rawStrongSourceAudit,passage2022RosterShadow,caseAudit,nestedCandidateAudit,prattShadowReadback,hf100TextChainReadiness,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
   });
-  const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,passageRepair,nestedQuestionRepair,rawQuestionRepair,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
+  const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,passageRepair,nestedQuestionRepair,rawQuestionRepair,repeatedOriginalQuestionRepair,repeatedAcceptedQuestionRepair,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
    officialVotesUnchanged:true,sourceBodiesUnchanged:true,servingModelsUnchanged:true,completeStateClaims:false};
   console.log('SENATE_PAPER_HISTORY_PRODUCTION='+JSON.stringify(report));
   if(process.env.GITHUB_STEP_SUMMARY)appendFileSync(process.env.GITHUB_STEP_SUMMARY,'Senate paper identity and historical evidence coverage\n'+JSON.stringify(report,null,2)+'\n');
