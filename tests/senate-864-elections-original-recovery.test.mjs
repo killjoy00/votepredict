@@ -66,14 +66,14 @@ test('contradictory stored side blocks mutation',()=>{
 test('an unlabeled legacy same-tally question is not silently duplicated',()=>{
  const {p,s}=fixture();
  s.events=[{...stored(p),id:'legacy',motion_text:'Unidentified committee action',
-  amendment_ref:null,external_key:'legacy'}];
+  amendment_ref:null,external_key:'legacy',metadata:{committeeVote:true,committeeName:'Elections'}}];
  const plan=recoveryPlan([p],s);
  assert.equal(plan.holds[0].reason,'ambiguous_preexisting_same_question_or_tally');
  assert.equal(plan.add.length,0);
 });
 test('a separately labeled A2 event with same slate cannot stand in for A1',()=>{
  const {p,s}=fixture();s.events=[{...stored(p),id:'different',motion_text:'SF529 A2 amendment',
-  amendment_ref:'A2',external_key:'different'}];
+  amendment_ref:'A2',external_key:'different',metadata:{committeeVote:true,committeeName:'Elections'}}];
  const plan=recoveryPlan([p],s);
  assert.equal(plan.add.length,1);assert.equal(plan.holds.length,0);
 });
