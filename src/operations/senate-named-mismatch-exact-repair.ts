@@ -18,8 +18,10 @@ import {readNamedMismatchOriginalAudit}
  from './senate-named-mismatch-original-audit.js';
 import {strictRepeatedOriginalQuestionLinks,insertOne}
  from './senate-repeated-paper-exact-repair.js';
-import type {UniqueOriginalRoll}
+import {readRepeatedOriginalRollAudit,type UniqueOriginalRoll}
  from './senate-repeated-paper-original-roll-audit.js';
+import {readRepeatedAcceptedOriginalAudit}
+ from './senate-repeated-accepted-original-audit.js';
 
 export const SENATE_NAMED_MISMATCH_EXACT_REPAIR=
  'senate-original-full-named-ballot-mismatch-exact-links-v1' as const;
@@ -129,6 +131,16 @@ export async function repairNamedMismatchOriginalSenateQuestions(
     db,next.votes,next.actions,post);
    if(postOriginal.sourceUniqueNamedBallotCandidates!==0)
     throw Error('Post-commit original named-ballot candidate remains unpromoted');
+   // A new source-only question action may repartition another unmatched
+   // vote into a repeated-paper or repeated-accepted first-failure class.
+   // Never strand a now source-unique question during a successful batch.
+   const remainingPapers=await readRepeatedOriginalRollAudit(
+    db,next.votes,next.actions,post);
+   const remainingAccepted=await readRepeatedAcceptedOriginalAudit(
+    db,next.votes,next.actions,post);
+   if(remainingPapers.sourceUniqueQuestionBallotCandidates!==0
+    ||remainingAccepted.sourceAndAcceptedUniqueCandidates!==0)
+    throw Error('Named-mismatch repair exposed new original question candidates outside the reviewed batch');
    await db.query('COMMIT');
    return{
     schemaVersion:SENATE_NAMED_MISMATCH_EXACT_REPAIR,
