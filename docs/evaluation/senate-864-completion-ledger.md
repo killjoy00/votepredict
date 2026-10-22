@@ -980,3 +980,61 @@ No indefinite parser/archive continuation is proposed.
 No forecasting/serving models or weights, production training pipeline, earlier immutable evaluation freezes, accepted Senate
 floor processing, Vercel deployment or scheduler reactivation changed. The isolated v2 research fit is explicitly reported above. No offices were contacted
 and no manual audio listening was requested.
+
+---
+
+## October 22, 2026: 2023 Elections seven-original named roll cohort — exact opportunity and holds
+
+This is a **bounded, separate source cohort** from the completed 2025 Elections
+recovery. All seven already acquired official 2023 Elections Minutes were
+independently re-fetched and SHA-verified, with exact original printed
+YEA/NAY partitions. [PR #1534](https://github.com/killjoy00/votepredict/pull/1534)
+contains the fixed original-source proof and guarded single-cohort readback.
+
+| Source-only denominator | Original proof | Admitted source question | Held original source |
+| --- | ---: | ---: | ---: |
+| Official 2023 Elections Minutes | **7/7** PDFs/texts | Seven source identities verified | Zero original acquisition failures |
+| Individually named rolls | **10** | **1** uniquely linked original motion | **9** unresolved question/outcome links |
+| Explicit YEA/NAY choice occurrences | **133** | **14** choices on SF3 A35 failed 6–8, Feb 7 | **119** choices not admitted |
+| Separate source Pass/Absent statuses | **7** | **0 inferred yea/nay** | Excluded as nonvoting statuses |
+
+**Historical source holds (9 questions /119 printed choice occurrences):**
+January 17 SF26 recommendation (13, result linkage unbound);
+February 7 A36/oral amendment (14, exact amendment identity ambiguous)
+and SF3 recommendation (14, result linkage unbound);
+February 14 SF1515 and SF1507 recommendations (13+13, outcomes unbound);
+February 21 SF749 recommendation (13, outcome unbound);
+March 2 SF1434 oral amendment (14, outcome unbound);
+March 7 A2 (13, bill/question identity hold);
+March 14 SF1827 recommendation (12, outcome unbound).
+These are authenticated **source roll passages**, not certified omitted
+database events. No ordinal key, matching voting slate, attendance, aggregate
+tally, or formal result alone is allowed to identify their parliamentary motion.
+
+**Candidate requiring protected production parity:** the single original
+February 7 SF3 A35 amendment, 14 expressly printed named YEA/NAY sides,
+failed 6–8. Source-only proof does **not** prove the event is missing in Neon.
+The guarded readback must establish whether it is already stored, contains
+only some choices, conflicts with legacy representation, or is absent.
+Until its protected receipt exists, the safe new production deltas for this
+2023 cohort are **0 verified events / 0 verified choices**. Historic production
+baselines elsewhere in this ledger are not refreshed by the source-only pass.
+
+**Source/CI and dependency history:** the exact seven-original source check,
+full application checks and focused tests passed
+[Actions #39824307748](https://github.com/killjoy00/votepredict/actions/runs/39824307748);
+that earlier run and regular CI #39824307788 then failed their final
+critical npm audit because the branch predated the upstream Next.js fix.
+This dependency blocker **has since been resolved on main** with
+Next.js 16.4.2, matching SWC packages and
+[successful main CI #39824907445](https://github.com/killjoy00/votepredict/actions/runs/39824907445)
+(including the production dependency audit). Previous failed attempts made
+**zero production changes**. Production write/readback success must be stated
+only after a new independently passing protected main push and exact receipt.
+
+**Stopping rule:** no larger parser exploration or ambiguous source-motion
+reconstruction; compare only the one separately authenticated question
+through the guarded GitHub Actions → existing Neon primary, keep all others
+held. Preserve existing historical event IDs and choices, next-day eligibility,
+Senate floor, serving/weights/training/evaluation freezes, Vercel and schedulers.
+Issue #864 remains open; population-wide completeness is not certified.
