@@ -25,7 +25,8 @@ const EVENTS=`SELECT v.id::text,v.source_document_id::text,v.session_id::text,v.
  WHERE v.occurred_on=ANY($3::date[]) AND
  (v.source_document_id IN (SELECT id FROM source_documents WHERE source_url=ANY($1::text[])
     OR content_sha256=ANY($2::text[]))
-  OR v.metadata->>'committeeName'='Elections')
+  OR v.metadata->>'committeeName' IN ('Elections','Committee on Elections')
+  OR (v.metadata->>'committeeVote'='true' AND b.identifier IN ('SF529','SF569','SF1812','SF2384')))
  ORDER BY v.id LIMIT 201`;
 const CHOICES=`SELECT mv.id::text,mv.vote_event_id::text,mv.membership_id::text,
  mv.source_member_name,mv.normalized_member_name,mv.choice,mv.source_ordinal,mv.metadata
@@ -188,8 +189,9 @@ export async function runProduction(pool,target,originals){
     replay.exact.length+replay.holds.length!==originals.proof.length)
   throw Error('Independent post-write original question/choice read-back failed');
  const yearCount=y=>after.year.find(x=>Number(x.year)===y)??null;
- return {sourceOriginalDocuments:originals.docs.length,sourcePrintedNamedRolls:13,
-  sourcePrintedNamedChoices:143,reviewedMotionQuestions:originals.proof.length,
+ return {sourceOriginalDocuments:originals.docs.length,selectedSupplementalPrintedRolls:13,
+  selectedSupplementalPrintedChoices:143,fullOriginalRollDenominatorCertified:false,
+  reviewedMotionQuestions:originals.proof.length,
   preExistingExact:plan.exact.length,preExistingQuestionCorrections:plan.updates.length,
   preExistingNamedChoiceGaps:plan.addChoices.length,unrepresentedVerifiedQuestions:plan.add.length,
   ...count,heldSourceQuestions:4,heldLiveQuestions:plan.holds.length,
