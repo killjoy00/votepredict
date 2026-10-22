@@ -19,6 +19,40 @@ import {readSameSourceQuestionRows,summarizeSameSourceFailures}
  from './senate-same-source-question-census.js';
 
 export const SENATE_ORPHAN_QUESTION_REPAIR='senate-1498-missing-paper-and-printed-bill-recovery-v1' as const;
+/** Static keys and numeric aggregates ONLY. No ballots, member names, URLs,
+ * source offsets, UUIDs, question text, SQL, or exception text in logs.
+ */
+function safeProgress(step:string,counts:Record<string,number>={}):void{
+ console.log('SENATE_ORPHAN_SAFE_PROGRESS='+JSON.stringify({step,counts}));
+}
+function safeProofFailures(proofs:readonly OrphanProof[]):void{
+ const failures=new Map<string,number>();
+ for(const p of proofs){
+  try{bindOrphanSourceProofs([p])}catch(error){
+   const message=error instanceof Error?error.message:'unknown';
+   const key=message==='Original repeated paper source question, printed bill/header or accepted identity proof failed'
+    ?'physical_source_identity'
+    :message==='Repeated original question/source roll or accepted event promoted twice'
+     ?'duplicate_proof'
+     :message==='Original known bill vote identity contradicted retained bill'
+      ?'existing_bill_mismatch'
+      :message==='Bill ID must occur distinctly INSIDE same printed question'
+       ?'bill_not_explicit'
+       :'other_binding_guard';
+   failures.set(key,(failures.get(key)??0)+1);
+  }
+ }
+ if(failures.size){
+  safeProgress('individual_proofs_held',{
+   physical_source_identity:failures.get('physical_source_identity')??0,
+   duplicate_proof:failures.get('duplicate_proof')??0,
+   existing_bill_mismatch:failures.get('existing_bill_mismatch')??0,
+   bill_not_explicit:failures.get('bill_not_explicit')??0,
+   other_binding_guard:failures.get('other_binding_guard')??0
+  });
+  throw Error('Original orphan source proof binder found held candidate(s)');
+ }
+}
 /** Independently protected original source run #39846423630 certified
  * 99 known-bill source questions and ZERO eligible bill-ID assignments.
  * Hold all other 423 events; a candidate count alone is not link proof.
@@ -193,6 +227,7 @@ export async function repairOrphanJournalOriginalQuestions(
    const previous=await readVoteTextGapAudit(db);
    verifyVoteTextGapAudit(previous,coverage);
    const exactBefore=await count(db);
+   safeProgress('official_exact_prestate',{exact:exactBefore,events:previous.auditedEvents});
    const originalBefore=await readSameSourceQuestionRows(db);
    const sameBefore=summarizeSameSourceFailures(
     originalBefore.votes,originalBefore.actions,previous);
@@ -200,12 +235,16 @@ export async function repairOrphanJournalOriginalQuestions(
     &&sameBefore.sameSourceUnlinked===332;
    const replay=exactBefore===1255+expectedNew
     &&previous.auditedEvents===2318;
+   safeProgress('original_population_guard',{known:previous.groups.filter(g=>g.evidence_stage==='no_parsed_paper_for_bill'&&g.source_family==='senate_journal').reduce((n,g)=>n+g.event_count,0),unresolved:previous.groups.filter(g=>g.evidence_stage==='no_resolved_bill'&&g.source_family==='senate_journal').reduce((n,g)=>n+g.event_count,0)});
    if(!first&&!replay)
     throw Error('Source-original orphan vote denominator drifted; no bill/paper mutations');
    const proofs:OrphanProof[]=[];
    const initial=await readOrphanJournalOriginalAudit(db,previous,
     p=>proofs.push(p));
+   safeProgress('original_full_source_audit',{targeted:initial.targeted,missingPaper:initial.missingPaper,unresolved:initial.unresolvedBill,candidates:proofs.length,documents:initial.retrievedOriginalDocuments,authenticated:initial.authenticatedOriginalDocuments,dayPeers:initial.acceptedSourceDayPeers});
+   safeProofFailures(proofs);
    const prepared=bindOrphanSourceProofs(proofs);
+   safeProgress('whole_batch_bound',{prepared:prepared.length});
    const papers=prepared.filter(p=>p.original.resolution==='existing_bill');
    const newBill=prepared.filter(p=>p.original.resolution==='printed_bill');
    if(initial.eligibleKnownBillQuestions!==papers.length||
@@ -223,11 +262,13 @@ export async function repairOrphanJournalOriginalQuestions(
    // The printed bill correction is a scoped mutation of bill_id ONLY; the
    // source question/ballot action and exact link are atomically inserted
    // in the same SERIALIZABLE transaction. One failure rolls all back.
+   safeProgress('certified_stage_distribution',{authorized:prepared.length});
    for(const p of prepared){
     if(p.original.resolution==='printed_bill')
      await attachStrictPrintedBill(db,p);
     await insertOne(db,p.link);
    }
+   safeProgress('source_link_actions_prepared',{actions:prepared.length});
    const exactAfter=await count(db);
    if(exactAfter!==exactBefore+prepared.length)
     throw Error('Source-original orphan exact question links did not reconcile atomically');
@@ -238,6 +279,7 @@ export async function repairOrphanJournalOriginalQuestions(
    verifyVoteTextGapAudit(postGap,postRows);
    if(postGap.auditedEvents!==previous.auditedEvents)
     throw Error('Original orphan bill correction changed accepted vote denominator');
+   safeProgress('official_exact_poststate',{exact:exactAfter,events:postGap.auditedEvents});
    const again=await readOrphanJournalOriginalAudit(db,postGap);
    if(again.eligibleKnownBillQuestions!==0||
     again.eligiblePrintedBillAssociations!==0)
@@ -248,6 +290,7 @@ export async function repairOrphanJournalOriginalQuestions(
     postSame.unlinkedWithExistingStoredLink!==0||
     postSame.sameSourceUnlinked>previous.auditedEvents)
     throw Error('Original orphan source actions exposed speculative exact question claims');
+   safeProgress('all_source_checks_passed',{exactBefore,exactAfter});
    await db.query('COMMIT');
    return{
     schemaVersion:SENATE_ORPHAN_QUESTION_REPAIR,
