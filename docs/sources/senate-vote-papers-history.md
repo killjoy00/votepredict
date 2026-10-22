@@ -677,6 +677,28 @@ Role recovery has three explicit bases:
 
 ## Coverage and remaining uncertainty
 
+### Full named-ballot mismatches against stored Senate papers (#1498)
+
+After production-verified +25 exact links in PR #1537, **62** accepted Minnesota
+Senate votes have a parsed paper at the same original Journal, bill and day,
+with matching yea/nay counts, **but a different complete member-level ballot**.
+A matching tally alone is not proof. `senate-named-mismatch-original-audit.ts`
+authenticates the original PDF extract SHA and government receipt, independently
+parses **every physical original roll** using the full opening attendance roster,
+and compares the entire printed question, exact yea/nay, complete named ballot,
+source bill and source-day accepted event universe (including cross-bill
+collisions). The audit divides all 62 into mutually exclusive named stages:
+missing original question, source/question/roll ambiguity, genuinely different
+original member choices, original unreadable roster, preexisting link claim, or
+uniquely proven original source/accepted question+ballot. A unique original
+candidate is separately classified as a stored-paper *ballot parsing* defect
+versus a stored-paper *question association* defect. It never relabels an old
+action, modifies a source, assumes a roll ordinal, imports amended bill text,
+or publishes member names, IDs, ballots, source URLs or original question text
+in the production report. The read-only census is not permission to link:
+only a second source-SHA- and event-fingerprint-pinned serializable writer may
+promote proven candidates after reviewing actual protected Neon counts.
+
 ### Repeated-accepted-ballot question collisions (#1498)
 **Protected original replay #39826840419**: 85 unlinked accepted votes
 with duplicated complete ballots were checked against 39 authenticated original
