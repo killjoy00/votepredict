@@ -304,7 +304,7 @@ async function main(){
    'Authenticated original official Senate PDF or text SHA drift',
    'Exactly seven independent 2023 original Minutes required',
    'Unaccounted source-only held motion']);
-  const label=e instanceof Error&&known.has(e.message)?e.message:'fail_closed_original_source_or_private_database_guard';
+  const label=e instanceof Error&&(known.has(e.message)||/^Original source tally\/disposition unbound on 2023-0[1-3]-\d\d offset \d{3,5}$/.test(e.message))?e.message:'fail_closed_original_source_or_private_database_guard';
   const sqlstate=e&&typeof e==='object'&&typeof e.code==='string'&&/^[0-9A-Z]{5}$/.test(e.code)
    ?e.code:'none';
   console.error('SENATE864_2023_ELECTIONS_SAFE_FAILURE='+JSON.stringify({label,sqlstate,stage}));
