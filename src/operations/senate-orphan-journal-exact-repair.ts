@@ -19,8 +19,9 @@ import {readSameSourceQuestionRows,summarizeSameSourceFailures}
  from './senate-same-source-question-census.js';
 
 export const SENATE_ORPHAN_QUESTION_REPAIR='senate-1498-missing-paper-and-printed-bill-recovery-v1' as const;
-/** BLOCKING until independently verified run from PR #1544 returns counts.
- * A zero or omitted held-stage record never authorizes production mutation.
+/** Independently protected original source run #39846423630 certified
+ * 99 known-bill source questions and ZERO eligible bill-ID assignments.
+ * Hold all other 423 events; a candidate count alone is not link proof.
  */
 const CERTIFIED_KNOWN_BILL_PAPERS=99;
 const CERTIFIED_PRINTED_BILL_ASSOCIATIONS=0;
@@ -212,6 +213,8 @@ export async function repairOrphanJournalOriginalQuestions(
     initial.eligibleKnownBillQuestions+initial.eligiblePrintedBillAssociations!==prepared.length||
     !(first&&initial.missingPaper===150&&initial.unresolvedBill===372
       &&initial.authenticatedOriginalDocuments===CERTIFIED_AUTHENTICATED_ORIGINALS
+      &&initial.retrievedOriginalDocuments===240
+      &&initial.acceptedSourceDayPeers===1619
       &&papers.length===CERTIFIED_KNOWN_BILL_PAPERS
       &&newBill.length===CERTIFIED_PRINTED_BILL_ASSOCIATIONS
       &&stageCountAudit(initial)
