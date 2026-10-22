@@ -78,8 +78,8 @@ export async function freshOriginals(fetcher=fetchSenateCommitteeMinutePdf){
   docs.push({date:p.hearingDate,url:p.officialSourcePdfUrl,
    rawSha:pdf.contentSha256,bytes:pdf.bytes,text:pdf.text});
  }
- const proof=verifyOriginals(docs);
- return {docs,proof};
+ const verified=verifyOriginals(docs);
+ return {docs,proof:verified.selected,sourceHolds:verified.sourceHolds};
 }
 async function bounded(db,sql,params,max){
  const rows=(await db.query(sql,params)).rows;
@@ -210,8 +210,10 @@ export async function runProduction(pool,target,originals){
  const addition=plan.add.reduce((n,x)=>n+x.votes.length,0)+plan.addChoices.length;
  const safe={originalMinutes:originals.docs.length,sourceNamedRolls:10,
   sourceNamedYeaNayChoices:133,selectedProvenQuestions:originals.proof.length,
-  selectedNamedChoices:106,fixedSourceQuestionHolds:HELD.length,
-  fixedSourceChoicesHeld:27,
+  selectedNamedChoices:originals.proof.reduce((n,q)=>n+q.choices.length,0),
+  sourceQuestionHolds:originals.sourceHolds.length,
+  sourceChoicesHeld:originals.sourceHolds.reduce((n,h)=>n+h.choices,0),
+  sourceHoldDetails:originals.sourceHolds,
   previouslyExactQuestions:plan.exact.length,toAddEvents:plan.add.length,
   toAddChoices:addition,toCorrectClassification:plan.updates.length,
   unresolvedLiveQuestions:plan.holds.length,
@@ -253,7 +255,9 @@ async function main(){
     officialOriginalMinutes:o.docs.length,sourceQuestionRolls:10,
     sourceNamedChoices:133,selectedSafeSourceQuestions:o.proof.length,
     selectedSafeChoiceOccurrences:o.proof.reduce((n,q)=>n+q.choices.length,0),
-    heldQuestions:HELD.length,heldNamedChoices:27,productionWrites:0}));
+    heldQuestions:o.sourceHolds.length,
+    heldNamedChoices:o.sourceHolds.reduce((n,h)=>n+h.choices,0),
+    sourceHoldDetails:o.sourceHolds,productionWrites:0}));
    return;
   }
   if(args.length)throw Error('Only keyless source verification or protected production');
