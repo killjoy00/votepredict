@@ -32,6 +32,8 @@ on:
       - tests/senate-repeated-paper-question-audit.test.ts
       - src/operations/senate-repeated-paper-original-roll-audit.ts
       - tests/senate-repeated-paper-original-roll-audit.test.ts
+      - src/operations/senate-repeated-paper-exact-repair.ts
+      - tests/senate-repeated-paper-exact-repair.test.ts
       - tests/senate-same-source-question-census.test.ts
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-hf100-original-shadow.ts
@@ -85,6 +87,8 @@ on:
       - tests/senate-repeated-paper-question-audit.test.ts
       - src/operations/senate-repeated-paper-original-roll-audit.ts
       - tests/senate-repeated-paper-original-roll-audit.test.ts
+      - src/operations/senate-repeated-paper-exact-repair.ts
+      - tests/senate-repeated-paper-exact-repair.test.ts
       - tests/senate-same-source-question-census.test.ts
       - src/operations/senate-vote-paper-backfill.ts
       - src/operations/senate-hf100-original-shadow.ts

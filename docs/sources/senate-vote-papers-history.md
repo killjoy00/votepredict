@@ -678,6 +678,28 @@ Role recovery has three explicit bases:
 ## Coverage and remaining uncertainty
 
 ### Repeated-paper complete-ballot cases (#1498)
+**Protected original-government release #39808559911** proved 64 physically
+source-unique full printed question+named-ballot accepted-event candidates across
+40 independently authenticated Senate Journals; 143 source question+ballot
+repetitions remain ambiguous and three original bill/question boundaries remain
+unproven. The stored-paper question audit had no candidates (82 missing exact
+paper question and 128 repeated paper question), so it is not the writer.
+
+The guarded follow-on \`senate-repeated-paper-exact-repair.ts\` does not infer
+identity from repeated ballots: within an independently authenticated
+SERIALIZABLE production transaction it replays the exact source Journal,
+rechecks physical question/header offsets, source bill, full question, every
+member choice, source byte-extract digest, printed-day identity and uniqueness
+across entire source and accepted events. It appends source-anchored question-only
+paper actions and \`unique_question_full_ballot\` edges for precisely verified
+candidates; no amendment outcomes, amended bill-state claims, bill text,
+accepted event/member edits or serving weights are allowed. The entire batch
+rolls back on a single source/identity drift. The post-commit exact-link and
+full population readback must independently conserve the count. Existing
+2022 passage, nested and raw repairs recognize only the reviewed new final
+poststate as a no-op. Unresolved 143+3 remain held.
+
+
 The second, distinct `senate-repeated-paper-original-roll-audit.ts` independently
 replays the complete physical original Senate Journal named-roll corpus with an
 opening printed attendance roster and SHA-authenticated stored PDF extract. It
