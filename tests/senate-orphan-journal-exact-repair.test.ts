@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import type {Pool,PoolClient} from 'pg';
 import {hash,ballotSignature} from '../src/operations/senate-vote-paper-parser.js';
 import {bindOrphanSourceProofs,attachStrictPrintedBill,
- repairOrphanJournalOriginalQuestions}
+ repairOrphanJournalOriginalQuestions,officialOrphanAcceptedPopulationCertified}
  from '../src/operations/senate-orphan-journal-exact-repair.js';
 import type {OrphanProof,OrphanVote} from '../src/operations/senate-orphan-journal-original-audit.js';
 import type {OriginalJournal} from '../src/operations/senate-no-tally-original-census.js';
@@ -104,4 +104,11 @@ test('correcting a uniquely proven null-bill event changes exactly bill_id, and 
  assert.match(calls[1]!.query,/NOT EXISTS/);
  assert.equal(calls[1]!.args[2],otherBillId);
  assert.equal(calls[1]!.args[3],'SF5');
+});
+
+test('read-only certified Journal cohorts remain pinned while separate 14 original committee votes raise total to 2332',()=>{
+ assert.equal(officialOrphanAcceptedPopulationCertified(2332),true);
+ assert.equal(officialOrphanAcceptedPopulationCertified(2318),false);
+ assert.equal(officialOrphanAcceptedPopulationCertified(2333),false);
+ assert.equal(officialOrphanAcceptedPopulationCertified(2500),false);
 });
