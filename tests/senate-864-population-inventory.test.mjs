@@ -37,6 +37,7 @@ test('same exact question from multiple originals uses the matching source, inde
   assert.deepEqual(r.sourceWitnessClasses.sort(),['different_source_identity','exact']);
   assert.ok(!JSON.stringify(r).includes('eventId'));
  }
+ assert.equal(coalesceQuestionSources([{q,d:a},{q:{...q,passed:!q.passed},d:b}],snapshot).status,'source_question_hold');
  snapshot.events.push({...event,id:'other-event',source_document_id:a.id});
  assert.equal(coalesceQuestionSources([{q,d:a},{q,d:b}],snapshot).status,'ambiguous_production_match');
 });

@@ -69,6 +69,8 @@ export function compareAcquiredPdfExtraction(previous,d){
  }
 }
 export function coalesceQuestionSources(occurrences,snapshot){
+ const evidence=new Set(occurrences.map(({q})=>JSON.stringify([q.questionKey,q.passed,q.choices.map(v=>v.choice+':'+norm(v.name)).sort()])));
+ if(evidence.size!==1)return {status:'source_question_hold',reason:'conflicting_original_question_outcome_or_named_sides',classification:false,missingChoices:0,alternateSourceParityVerified:false,sourceWitnessClasses:[]};
  const results=occurrences.map(({q,d})=>d.id?reconcileRowQuestion(q,d,snapshot):{status:'stored_source_identity_hold',reason:'original_not_uniquely_stored'});
  const ids=new Set(results.map(r=>r.eventId).filter(Boolean));
  if(ids.size>1)return {status:'ambiguous_production_match',reason:'different_originals_anchor_different_events',classification:false,missingChoices:0,alternateSourceParityVerified:false};
