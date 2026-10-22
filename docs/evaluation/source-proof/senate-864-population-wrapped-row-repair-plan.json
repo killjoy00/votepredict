@@ -1,0 +1,158 @@
+{
+  "version": "senate864-population-wrapped-row-repair-plan-v1",
+  "profile": "wrapped",
+  "sourceDocuments": [
+    {
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240220/Elections_20240220_Minutes.pdf",
+      "sha256": "54bc6142eec14b57ee3179efb545fd6be46d93b72376cd053c77107a971d8153",
+      "textSha256": "2d835294462808a3f8536bd3d46f7b24688a8d843f85b4371b56f88996d91004",
+      "format": "pdf",
+      "date": "2024-02-20",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240222/Elections_20240222_Minutes.pdf",
+      "sha256": "9be2d25ee4dbdbeb4774983676fba202d076b84ad1dafefc376da8ab166aeff3",
+      "textSha256": "127c1553c84b02262106f445f894aea2b6c8a9767314bfd3d01d5d092ad1c55d",
+      "format": "pdf",
+      "date": "2024-02-22",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240229/Elections_20240229_Minutes.pdf",
+      "sha256": "047bf8bd09b9a579057fbe4db1d2e1b248c0515f2870478b0b8ab573e69d585c",
+      "textSha256": "757b484a2792a5e8d5fc6fa094280c42ac5fd2049d27c4399a1c745aecbba919",
+      "format": "pdf",
+      "date": "2024-02-29",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240312/Elections_20240312_Minutes.pdf",
+      "sha256": "d3d12ee04d5609b4ea3f94be1a15b58b5f42f83bb9a7a67e2562ee96339a6aff",
+      "textSha256": "9b84da94a687b3122821f4e332e71be57a721881018fa7c0fa9184e60cc00468",
+      "format": "pdf",
+      "date": "2024-03-12",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    },
+    {
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240314/Elections_20240314_Minutes.pdf",
+      "sha256": "de8ba0093892af7b3dcb9c448a275a30df5003e8832970bddaaf9bb70c3972e3",
+      "textSha256": "1cdb3d61cac8a80e271151f3881a599d52d2597bd5c9d4954094e3cfa413cf1a",
+      "format": "pdf",
+      "date": "2024-03-14",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    }
+  ],
+  "questions": [
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240220/Elections_20240220_Minutes.pdf",
+      "questionKey": "7f87953de65d5aad9e04dd238b8a041ded49269482a47cd4ff00b517738af301",
+      "billIdentifier": "SF3942",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 6,
+      "motionText": "Senator Boldon moved that SF 3942 be recommended to pass and re-referred to the State & Local Government & Veterans Committee. Senator Anderson requested a roll call, and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240220/Elections_20240220_Minutes.pdf",
+      "questionKey": "d5411d9eff61bd555db011737ab5930de6356fd8f0eedec041acd6226d33064d",
+      "billIdentifier": "SF3616",
+      "amendmentRef": "A4",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 4,
+      "nay": 10,
+      "motionText": "Senator Mathews moved the A4 Amendment. Senator Mathews requested a roll call and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240220/Elections_20240220_Minutes.pdf",
+      "questionKey": "7344e36c5bc89437c953d47f8f41e84886a4a2d9bc9377d5db0328f23b00b2e5",
+      "billIdentifier": "SF3616",
+      "amendmentRef": "A5",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 7,
+      "nay": 7,
+      "motionText": "Senator Koran moved the A5 Amendment. Senator Koran requested a roll call and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240220/Elections_20240220_Minutes.pdf",
+      "questionKey": "0ba4aa148ba5de0a629d35f10fe1628827a3652cde128bfd723947390b957dba",
+      "billIdentifier": "SF3616",
+      "amendmentRef": "A6",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 7,
+      "motionText": "Senator Koran moved the A6 Amendment. Senator Koran requested a roll call and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240222/Elections_20240222_Minutes.pdf",
+      "questionKey": "58b570cdc2551b9c6e1aaa8e3d99c03a4db25c3d430e27d16e7973cb6b3007fa",
+      "billIdentifier": "SF3868",
+      "amendmentRef": "A4",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 8,
+      "motionText": "Senator Koran moved the A4 Amendment. Senator Koran requested a roll call, and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240222/Elections_20240222_Minutes.pdf",
+      "questionKey": "6cd98670a1968ed6124b66a749467580d4c4f44d79a6a68a6555ec5d6dc87d7a",
+      "billIdentifier": "SF3868",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 6,
+      "motionText": "Senator Boldon moved that SF 3868 be recommended to pass, as amended, and re-referred to the State & Local Government & Veterans Committee. Senator Koran requested a roll call, and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240229/Elections_20240229_Minutes.pdf",
+      "questionKey": "bd2b5c6949f9ddf29ffcea6ff8400b8caaa570539fb80dfdc973f31e9a7b6cb5",
+      "billIdentifier": "SF4039",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 7,
+      "nay": 6,
+      "motionText": "Senator Westlin moved that SF 4039 be recommended to pass, as amended, and re-referred to the State & Local Government & Veterans Committee. Senator Koran requested a roll call, and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240312/Elections_20240312_Minutes.pdf",
+      "questionKey": "a91ce8f5052cee6c93b84e1c1f9de53844a58c25314ed167448468c418132fd3",
+      "billIdentifier": "SF4785",
+      "amendmentRef": "A6",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 8,
+      "motionText": "Senator Koran moved the A6 Amendment. Senator Koran requested a roll call, and a roll call was granted."
+    },
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240314/Elections_20240314_Minutes.pdf",
+      "questionKey": "6812faf0448a64e3a876859974c633056674e8dbd5613998d83ce52c4474efe9",
+      "billIdentifier": "SF4700",
+      "amendmentRef": "A3",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 7,
+      "motionText": "Senator Mathews moved the A3 Amendment. Senator Mathews requested a roll call, and a roll call was granted."
+    }
+  ],
+  "expectedQuestions": 9,
+  "expectedChoices": 123,
+  "expectedNewEvents": 1,
+  "expectedClassificationCorrections": 5,
+  "expectedMissingChoices": 123,
+  "scope": "Nine source-proven row-form questions in five original 2024 Elections PDFs. Bind existing events only to their uniquely contained complete original question, every named row, and printed result. Preserve eight existing IDs and source contexts; correct five forward-context classifications, add missing printed choices, and add one genuinely absent question."
+}

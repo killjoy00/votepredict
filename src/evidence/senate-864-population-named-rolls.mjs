@@ -25,8 +25,8 @@ function tally(s){
 function fullRoster(text){
  const stop=text.search(/called\s+the\s+meeting\s+to\s+order/i);
  if(stop<0||stop>4000)return [];
- const header=text.slice(0,stop);
- return [...header.matchAll(/\bSenator\s+([^,\n]+)(?=,|\n|$)/gi)].map(m=>m[1]
+ const header=compact(text.slice(0,stop));
+ return [...header.matchAll(/\bSenator\s+(.+?)(?=,|\bAbsent\s*:|\bSenator\s+|$)/gi)].map(m=>m[1]
  .replace(/\s*-\s*.*$/,'').replace(/\s+(?:Vice\s+Chair|Chair|Ranking.*|Minority.*)$/i,'').trim())
  .filter(n=>norm(n).split(' ').length>=2);
 }
@@ -95,6 +95,13 @@ export function extractRowRollQuestions(text,doc){
   row.yea=choices.filter(v=>v.choice==='yea').length;row.nay=choices.filter(v=>v.choice==='nay').length;
   if(!totals||totals.yea!==row.yea||totals.nay!==row.nay)row.holds.push('missing_or_disagreeing_printed_tally');
   row.outcomeText=compact(bounded);
+  if(outcomes.length){
+   // Full, contiguous original question + every printed named row + first
+   // printed result. A stored context that merely mentions a motion is not
+   // enough; this complete passage can independently bind a legacy event.
+   row.fullQuestionPassage=text.slice(at,(starts[end]??text.length)+(outcomes[0].index??0)+outcomes[0][0].length);
+   row.fullQuestionPassageSha256=sha(row.fullQuestionPassage);
+  }
   row.questionCanonical=canonical(question);
   row.questionKey=sha(JSON.stringify([doc.session_slug,doc.committee,doc.date,row.billIdentifier,row.voteKind,row.amendmentRef,row.questionCanonical]));
   row.confidence=row.holds.length?'held_question':'source_proven_question';rows.push(row);
@@ -125,19 +132,37 @@ export function reconcileRowQuestion(q,doc,snapshot){
  let choices;try{choices=resolvePrintedHistoricalChoices(q,doc.text,snapshot.roster,doc);}catch(e){return {status:'historical_identity_hold',reason:e.message};}
  const same=snapshot.events.filter(e=>e.occurred_on===doc.date&&e.session_slug===doc.session_slug&&
   (e.source_document_id===doc.id||e.metadata?.committeeName===doc.committee||e.bill_identifier===q.billIdentifier));
- const anchored=same.filter(e=>e.bill_identifier===q.billIdentifier&&canonical(e.motion_text).includes(q.questionCanonical));
+ const originalQuestions=extractRowRollQuestions(doc.text,doc).filter(r=>r.confidence==='source_proven_question'&&r.fullQuestionPassage);
+ const passageBound=e=>{
+  if(e.source_document_id!==doc.id||!q.fullQuestionPassage)return false;
+  const stored=canonical(e.motion_text),source=canonical(doc.text);
+  if(stored.length<120||source.indexOf(stored)<0||source.indexOf(stored)!==source.lastIndexOf(stored))return false;
+  const complete=originalQuestions.filter(r=>stored.includes(canonical(r.fullQuestionPassage)));
+  return complete.length===1&&complete[0].questionKey===q.questionKey;
+ };
+ const anchored=same.filter(e=>passageBound(e)||e.bill_identifier===q.billIdentifier&&q.questionCanonical&&
+  canonical(e.motion_text).includes(q.questionCanonical)&&
+  (canonical(e.motion_text)===q.questionCanonical||[...e.motion_text.matchAll(MOTION)].length===1));
  if(anchored.length>1)return {status:'ambiguous_production_match',reason:'multiple_exact_question_anchors'};
  if(anchored.length===1){
   const e=anchored[0],actual=snapshot.choices.filter(v=>v.vote_event_id===e.id);
-  if(e.yea_count!==q.yea||e.nay_count!==q.nay||actual.some(v=>!choices.some(x=>x.membershipId===v.membership_id&&x.choice===v.choice)))return {status:'conflicting_choices_or_tally',eventId:e.id};
+  if(e.metadata?.sourceQuestionKey&&e.metadata.sourceQuestionKey!==q.questionKey)return {status:'ambiguous_production_match',reason:'conflicting_previously_authenticated_question_key'};
+  if(e.session_id!==doc.session_id||e.chamber_id!==doc.chamber_id||e.yea_count!==q.yea||e.nay_count!==q.nay||actual.some(v=>!choices.some(x=>x.membershipId===v.membership_id&&x.choice===v.choice)))return {status:'conflicting_choices_or_tally',eventId:e.id};
   const missing=choices.filter(x=>!actual.some(v=>v.membership_id===x.membershipId&&v.choice===x.choice));
-  const classification=e.vote_kind!==q.voteKind||ref(e.amendment_ref)!==ref(q.amendmentRef)||e.passed!==q.passed||e.is_passage!==false;
+  const classification=e.bill_identifier!==q.billIdentifier||e.vote_kind!==q.voteKind||ref(e.amendment_ref)!==ref(q.amendmentRef)||e.passed!==q.passed||e.is_passage!==false;
   if(e.source_document_id!==doc.id)return {status:'different_source_identity',eventId:e.id,missingChoices:missing.length,classification};
   return {status:classification?'classification_defect':missing.length?'missing_choices':'exact',eventId:e.id,choices,missingChoices:missing,classification};
  }
  // An event with a different question can be excluded only by explicit differing
  // amendment refs. All uncertain alternate source or final-motion joins remain held.
- const potential=same.filter(e=>e.bill_identifier===q.billIdentifier&&!(q.amendmentRef&&e.amendment_ref&&ref(q.amendmentRef)!==ref(e.amendment_ref)));
+ const potential=same.filter(e=>{
+  if(canonical(e.motion_text).includes(q.questionCanonical))return true;
+  if(e.bill_identifier!==q.billIdentifier)return false;
+  // A different *metadata* ref is not independent proof of a different
+  // question: the legacy forward-context defect can produce exactly that.
+  return !(q.amendmentRef&&e.amendment_ref&&ref(q.amendmentRef)!==ref(e.amendment_ref)&&
+   [...e.motion_text.matchAll(MOTION)].length===1);
+ });
  if(potential.length)return {status:'ambiguous_production_match',reason:'unresolved_existing_question_or_source_identity'};
  return {status:'missing_event',choices};
 }

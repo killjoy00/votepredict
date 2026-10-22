@@ -1,0 +1,230 @@
+{
+  "version": "senate864-population-row-production-independent-receipt-v1",
+  "pr": 1546,
+  "mainCommit": "7e4489eab64d282ff996c7dc43c985a051309bd4",
+  "protectedRun": 39849422268,
+  "independentGateJob": 120071292742,
+  "productionJob": 120072809843,
+  "artifact": 12456782133,
+  "artifactZipSha256": "8d3a54b8c1ec3a272e49e419ba9b3978f4118e294b8c8740e19d8cc722741ea0",
+  "insertedEvents": 14,
+  "insertedChoices": 181,
+  "sourceDocuments": 10,
+  "verifiedExactQuestions": 14,
+  "verifiedExactChoices": 181,
+  "zeroWriteReplay": true,
+  "all183EarlierEventsAnd1326EarlierChoicesIndependentlyReadAndUnchanged": true,
+  "independentConnectorClock": {
+    "read_at": "2026-10-22T20:34:40.840Z",
+    "read_only": "on",
+    "isolation": "repeatable read"
+  },
+  "independentConnectorEvents": [
+    {
+      "id": "15ed1112-788e-49ba-aee4-8e587485d921",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-02-14",
+      "vote_kind": "motion",
+      "amendment_ref": null,
+      "passed": true,
+      "question_key": "417a51f681afd8b373a8f382726f297150b2f127eeddd987230f253deb6e8cf4",
+      "available_on": "2023-02-14",
+      "same_day_eligible": "false",
+      "choices": 13,
+      "unresolved": 0
+    },
+    {
+      "id": "2449e7af-6e8c-404e-99d4-5fe90bf54bee",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-04-03",
+      "vote_kind": "amendment",
+      "amendment_ref": "A28",
+      "passed": false,
+      "question_key": "d0c8947aca849104bc8ed2f5ce8fa0a37ce77e24782fd8a0e814a786206889aa",
+      "available_on": "2023-04-03",
+      "same_day_eligible": "false",
+      "choices": 14,
+      "unresolved": 0
+    },
+    {
+      "id": "2e3eb3b4-91ba-4759-8edd-cc940c4eb6c8",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-02-16",
+      "vote_kind": "amendment",
+      "amendment_ref": "A16",
+      "passed": false,
+      "question_key": "310c1a4332c19b619b147f5f48da8d6735504b15c89b055eadd2599c04ba3b7f",
+      "available_on": "2023-02-16",
+      "same_day_eligible": "false",
+      "choices": 12,
+      "unresolved": 0
+    },
+    {
+      "id": "322a8d4b-ffd1-4b7a-9bbe-35f7a5b2048b",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-01-17",
+      "vote_kind": "motion",
+      "amendment_ref": null,
+      "passed": true,
+      "question_key": "e6f47803c373538422e1009a94d4706fecae5a04cf79ab21bc58243be079e4b5",
+      "available_on": "2023-01-17",
+      "same_day_eligible": "false",
+      "choices": 13,
+      "unresolved": 0
+    },
+    {
+      "id": "3461fb6f-4aad-4161-b232-98105fdd308e",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2024-03-14",
+      "vote_kind": "amendment",
+      "amendment_ref": "A110",
+      "passed": false,
+      "question_key": "14cfe27031c8c491c6b7394022fee80b7fd2ecead255e30ff4a5badd76826139",
+      "available_on": "2024-03-14",
+      "same_day_eligible": "false",
+      "choices": 10,
+      "unresolved": 0
+    },
+    {
+      "id": "3d33d9f8-03a3-4b87-8791-148c45f354a2",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-02-14",
+      "vote_kind": "motion",
+      "amendment_ref": null,
+      "passed": true,
+      "question_key": "3db07afa8fa2bc437bba420ec90972790a08b91e215acb50333c14bffe088015",
+      "available_on": "2023-02-14",
+      "same_day_eligible": "false",
+      "choices": 13,
+      "unresolved": 0
+    },
+    {
+      "id": "4f3f152c-1a0c-4b3f-9dc9-81735f0e2283",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-03-16",
+      "vote_kind": "amendment",
+      "amendment_ref": "A13",
+      "passed": false,
+      "question_key": "0ef6eae3c2e20900ca1b529dcc5eaf6e54db7abf855039b4b521a92c6d4635b5",
+      "available_on": "2023-03-16",
+      "same_day_eligible": "false",
+      "choices": 13,
+      "unresolved": 0
+    },
+    {
+      "id": "84ef5205-ae53-46ea-951d-23a39eb4c7c7",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-03-09",
+      "vote_kind": "motion",
+      "amendment_ref": null,
+      "passed": true,
+      "question_key": "be27478e8724fe29bfb9aec6106c513a4c56c072776f113c99a60bf09c50205c",
+      "available_on": "2023-03-09",
+      "same_day_eligible": "false",
+      "choices": 13,
+      "unresolved": 0
+    },
+    {
+      "id": "90539d93-090d-4908-a7ef-0008fd5bc909",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-03-16",
+      "vote_kind": "amendment",
+      "amendment_ref": "A12",
+      "passed": false,
+      "question_key": "754f819bb76c724d019466aa15df70b08639fc1264474d18ed3242c78c20e348",
+      "available_on": "2023-03-16",
+      "same_day_eligible": "false",
+      "choices": 13,
+      "unresolved": 0
+    },
+    {
+      "id": "addc9b72-5b74-4337-9342-eae28d3719dd",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-01-31",
+      "vote_kind": "motion",
+      "amendment_ref": null,
+      "passed": true,
+      "question_key": "9dd16a7d2bb16ef312a17ab5eef8f90cb7c38906fe60d53fe340cfd373e94a16",
+      "available_on": "2023-01-31",
+      "same_day_eligible": "false",
+      "choices": 14,
+      "unresolved": 0
+    },
+    {
+      "id": "e0e73c9b-39b7-43d4-ae35-f063b29ad057",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-03-14",
+      "vote_kind": "motion",
+      "amendment_ref": null,
+      "passed": true,
+      "question_key": "11de96b46563778139add6d0492d04d77160ea620b17301955655b88cd147946",
+      "available_on": "2023-03-14",
+      "same_day_eligible": "false",
+      "choices": 12,
+      "unresolved": 0
+    },
+    {
+      "id": "edeb0966-d902-4306-954d-81bd017da79b",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-04-03",
+      "vote_kind": "motion",
+      "amendment_ref": null,
+      "passed": true,
+      "question_key": "0463d1396118dde64d7d4dcd5ed1982cd7d4267808e8bde3064480b83883336c",
+      "available_on": "2023-04-03",
+      "same_day_eligible": "false",
+      "choices": 14,
+      "unresolved": 0
+    },
+    {
+      "id": "f6f9cc1d-f30a-4ecc-bce4-ad6ee2500337",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-04-03",
+      "vote_kind": "amendment",
+      "amendment_ref": "A25",
+      "passed": false,
+      "question_key": "449bd58264fd538b71ce520b549d2569e666eef3236accd4412546659ce6068a",
+      "available_on": "2023-04-03",
+      "same_day_eligible": "false",
+      "choices": 14,
+      "unresolved": 0
+    },
+    {
+      "id": "fa98ea90-15e7-4202-adde-ad6ec31b5189",
+      "created_at": "2026-10-22 20:33:59.523585+00",
+      "occurred_on": "2023-02-21",
+      "vote_kind": "motion",
+      "amendment_ref": null,
+      "passed": true,
+      "question_key": "14d4c76e9b7c8a697cc33549e4c865e2cc8338f3fca00bfa11be798ac01d77da",
+      "available_on": "2023-02-21",
+      "same_day_eligible": "false",
+      "choices": 13,
+      "unresolved": 0
+    }
+  ],
+  "yearCounts": [
+    {
+      "y": 2022,
+      "events": 38,
+      "choices": 259
+    },
+    {
+      "y": 2023,
+      "events": 49,
+      "choices": 402
+    },
+    {
+      "y": 2024,
+      "events": 57,
+      "choices": 307
+    },
+    {
+      "y": 2025,
+      "events": 53,
+      "choices": 539
+    }
+  ],
+  "separateFreshOriginalQuestionMembershipSideVerification": true,
+  "issueRemainsOpen": true
+}

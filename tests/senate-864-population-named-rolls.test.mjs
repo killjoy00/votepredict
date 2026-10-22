@@ -48,7 +48,7 @@ test('attendance, voice votes, aggregate counts and result restatements never ma
 test('exact question identity precedes side/tally validation; alternate sources, identical slates and classification defects stay distinct',()=>{
  const q=qs()[0],s=snap();assert.equal(reconcileRowQuestion(q,doc,s).status,'missing_event');
  const votes=resolvePrintedHistoricalChoices(q,f.text,roster,doc);
- const event={id:'event',occurred_on:doc.date,session_slug:doc.session_slug,source_document_id:doc.id,bill_identifier:q.billIdentifier,motion_text:q.motionText,vote_kind:'motion',amendment_ref:null,yea_count:8,nay_count:5,passed:true,is_passage:false,metadata:{committeeName:'Elections'}};
+ const event={id:'event',session_id:doc.session_id,chamber_id:doc.chamber_id,occurred_on:doc.date,session_slug:doc.session_slug,source_document_id:doc.id,bill_identifier:q.billIdentifier,motion_text:q.motionText,vote_kind:'motion',amendment_ref:null,yea_count:8,nay_count:5,passed:true,is_passage:false,metadata:{committeeName:'Elections'}};
  s.events=[event];s.choices=votes.map(v=>({vote_event_id:'event',membership_id:v.membershipId,choice:v.choice}));
  assert.equal(reconcileRowQuestion(q,doc,s).status,'exact');s.choices.pop();assert.equal(reconcileRowQuestion(q,doc,s).status,'missing_choices');s.choices.push({vote_event_id:'event',membership_id:'wrong',choice:'yea'});assert.equal(reconcileRowQuestion(q,doc,s).status,'conflicting_choices_or_tally');
  s.choices=votes.map(v=>({vote_event_id:'event',membership_id:v.membershipId,choice:v.choice}));event.vote_kind='amendment';assert.equal(reconcileRowQuestion(q,doc,s).status,'classification_defect');event.vote_kind='motion';
@@ -68,4 +68,73 @@ test('consistent result restatements corroborate one question; contradictory out
  assert.equal(extractRowRollQuestions(consistent,doc)[0].confidence,'source_proven_question');
  const contradictory=f.text.replace('With a roll call vote of 8 Yeas, 5 Nays, and 1 Absence, the motion prevailed.','With a roll call vote of 8 Yeas, 5 Nays, and 1 Absence, the motion prevailed and the motion failed.');
  assert.ok(extractRowRollQuestions(contradictory,doc)[0].holds.includes('ambiguous_or_missing_printed_outcome'));
+});
+
+test('actual 2024 PDF: wrapped full names resolve without a surname-only fallback',()=>{
+ const w=JSON.parse(readFileSync('tests/fixtures/senate-864-population-wrapped-original.json'));
+ const d={...w.source};const rows=extractRowRollQuestions(w.text,d);
+ assert.ok(/Bruce\nD\. Anderson/.test(w.text));
+ assert.equal(rows.length,4);
+ for(const q of rows)assert.equal(resolvePrintedHistoricalChoices(q,w.text,roster,d).length,q.choices.length);
+});
+test('a later distinct motion inside a legacy context blocks exact-question matching despite identical tallies',()=>{
+ const q=qs()[0],s=snap();s.events=[{id:'wrong',session_id:doc.session_id,chamber_id:doc.chamber_id,occurred_on:doc.date,session_slug:doc.session_slug,source_document_id:doc.id,bill_identifier:q.billIdentifier,motion_text:q.motionText+' Senator Koran moved the A2 amendment.',yea_count:8,nay_count:5,metadata:{committeeName:'Elections'}}];
+ assert.equal(reconcileRowQuestion(q,doc,s).status,'ambiguous_production_match');
+});
+test('wrapped source cohort has five independent originals, nine questions and 123 choices; SHA drift fails before DB',async()=>{
+ const p=planSource('wrapped');assert.equal(p.sourceDocuments.length,5);assert.equal(p.questions.length,9);assert.equal(p.questions.reduce((n,q)=>n+q.yea+q.nay,0),123);assert.equal(p.questions.filter(q=>q.voteKind==='amendment').length,6);
+ await assert.rejects(freshOriginals(undefined,'wrapped',async()=>({text:'incorrect original',contentSha256:'0'.repeat(64)})));
+});
+
+test('a complete, unique original question/rows/result passage binds the legacy event despite its later wrong bill or amendment label',()=>{
+ const w=JSON.parse(readFileSync('tests/fixtures/senate-864-population-wrapped-original.json'));
+ const d={...w.source,text:w.text,id:'pdf-doc',session_id:'session',chamber_id:'senate'};
+ const q=extractRowRollQuestions(w.text,d).find(q=>q.amendmentRef==='A4');
+ const s=snap();const body=q.fullQuestionPassage+' Senator Koran moved the A5 Amendment.';
+ s.events=[{id:'retained',session_id:d.session_id,chamber_id:d.chamber_id,occurred_on:d.date,session_slug:d.session_slug,source_document_id:d.id,bill_identifier:'SF9999',motion_text:body,vote_kind:'amendment',amendment_ref:'A5',yea_count:q.yea,nay_count:q.nay,passed:q.passed,is_passage:false,metadata:{committeeName:'Elections'}}];
+ const result=reconcileRowQuestion(q,d,s);assert.equal(result.status,'classification_defect');assert.equal(result.eventId,'retained');assert.equal(result.missingChoices.length,14);
+ s.events[0].motion_text=q.motionText+' Senator Koran moved the A5 Amendment.';
+ assert.equal(reconcileRowQuestion(q,d,s).status,'ambiguous_production_match');
+});
+
+test('disposable PostgreSQL: preserve eight event IDs, correct five classifications, add one event and 123 choices, then write zero on replay',async t=>{
+ const url=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;if(!url)return t.skip('CI supplies disposable database');
+ const parsed=new URL(url);assert.ok(['localhost','127.0.0.1'].includes(parsed.hostname),'This test may only write to disposable localhost');
+ const {Pool}=await import('pg'),{randomUUID}=await import('node:crypto');
+ const admin=new Pool({connectionString:url,max:1}),schema='row_repair_'+randomUUID().replaceAll('-','');let pool;
+ try{
+  await admin.query('CREATE SCHEMA '+schema);
+  for(const table of ['jurisdictions','chambers','legislative_sessions','legislators','memberships','bills','source_documents','vote_events','member_votes','votepredict_schema_migrations'])await admin.query(`CREATE TABLE ${schema}.${table} (LIKE public.${table} INCLUDING ALL)`);
+  await admin.query(`INSERT INTO ${schema}.votepredict_schema_migrations SELECT * FROM public.votepredict_schema_migrations`);
+  pool=new Pool({connectionString:url,max:1,options:'-c search_path='+schema+',public'});
+  const one=async(sql,args=[])=>{const r=await pool.query(sql,args);return r.rows[0];};
+  const j=(await one("INSERT INTO jurisdictions(slug,name,country_code) VALUES('us-mn','Minnesota','US') RETURNING id")).id;
+  const c=(await one("INSERT INTO chambers(jurisdiction_id,slug,name,kind) VALUES($1,'senate','Senate','upper') RETURNING id",[j])).id;
+  const s=(await one("INSERT INTO legislative_sessions(jurisdiction_id,slug,name) VALUES($1,'2023-2024','Fixture') RETURNING id",[j])).id;
+  for(const [i,[,name]] of OFFICIAL_FULL.entries()){
+   const l=(await one('INSERT INTO legislators(jurisdiction_id,external_key,name,normalized_name) VALUES($1,$2,$3,lower($3)) RETURNING id',[j,'row-fixture-'+i,name])).id;
+   await one("INSERT INTO memberships(session_id,chamber_id,legislator_id,district,party,title,starts_on,ends_on) VALUES($1,$2,$3,$4,'DFL','Senator','2023-01-03','2025-01-06') RETURNING id",[s,c,l,String(i+1)]);
+  }
+  const fixture=JSON.parse(readFileSync('tests/fixtures/senate-864-population-wrapped-five-originals.json'));
+  const o=await freshOriginals(undefined,'wrapped',async({url})=>fixture.find(f=>f.url===url));
+  const billIds=new Map();for(const identifier of new Set([...o.pins.questions.map(q=>q.billIdentifier),'SF4951']))billIds.set(identifier,(await one('INSERT INTO bills(session_id,originating_chamber_id,identifier,title) VALUES($1,$2,$3,$3) RETURNING id',[s,c,identifier])).id);
+  const docIds=new Map();for(const d of o.docs)docIds.set(d.url,(await one("INSERT INTO source_documents(jurisdiction_id,session_id,chamber_id,source_kind,source_url,content_sha256,http_status,metadata) VALUES($1,$2,$3,'senate_committee_minutes',$4,$5,200,$6::jsonb) RETURNING id",[j,s,c,d.url,d.sha256,JSON.stringify({meetingDate:d.date,committeeName:d.committee})])).id);
+  const oldIds=[];
+  for(const spec of o.pins.questions){
+   if(spec.billIdentifier==='SF4785')continue;
+   const d=o.docs.find(d=>d.url===spec.sourceUrl),q=extractRowRollQuestions(d.text,d).find(q=>q.questionKey===spec.questionKey);
+   let bill=spec.billIdentifier,amendment=spec.amendmentRef,kind=spec.voteKind;
+   if(bill==='SF3616'&&amendment==='A4')amendment='A5';
+   else if(bill==='SF3616'&&amendment==='A5'){bill=null;amendment='A6';}
+   else if(['SF3868','SF4039'].includes(bill)&&amendment===null){kind='amendment';amendment='A4';}
+   else if(bill==='SF4700')bill='SF4951';
+   const e=await one("INSERT INTO vote_events(session_id,chamber_id,bill_id,source_document_id,external_key,vote_kind,motion_text,amendment_ref,occurred_on,yea_count,nay_count,passed,is_passage,metadata) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,false,$13::jsonb) RETURNING id",[s,c,bill?billIds.get(bill):null,docIds.get(d.url),'legacy-fixture-'+q.questionKey,kind,q.fullQuestionPassage,amendment,d.date,q.yea,q.nay,q.passed,JSON.stringify({committeeVote:true,committeeName:'Elections',individualVotesAvailable:false})]);oldIds.push(e.id);
+  }
+  const {runProduction}=await import('../scripts/deploy-senate-864-population-row-rolls.mjs');
+  const target={database:parsed.pathname.slice(1),role:decodeURIComponent(parsed.username)};
+  const first=await runProduction(pool,target,o);
+  assert.equal(first.insertedEvents,1);assert.equal(first.insertedChoices,123);assert.equal(first.correctedClassifications,5);assert.equal(first.preservedExistingTargetEventIds,8);assert.equal(first.verifiedExact,9);
+  const replay=await runProduction(pool,target,o);assert.equal(replay.insertedEvents,0);assert.equal(replay.insertedChoices,0);assert.equal(replay.correctedClassifications,0);
+  assert.ok(oldIds.every(id=>first.recoveredEvents.some(e=>e.eventId===id)));
+ }finally{if(pool)await pool.end();await admin.query('DROP SCHEMA '+schema+' CASCADE');await admin.end();}
 });
