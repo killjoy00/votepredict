@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {DOC_SQL,supplemental,summarize,coalesceQuestionSources,compareAcquiredPdfExtraction} from '../scripts/inventory-senate-864-population.mjs';
+import {DOC_SQL,supplemental,summarize,coalesceQuestionSources,compareAcquiredPdfExtraction,authenticateUnstoredClerkExtraction} from '../scripts/inventory-senate-864-population.mjs';
 test('supplementary registry has 28 exact official original identities scoped to 2022–25',()=>{
  const docs=supplemental();assert.equal(docs.length,28);assert.equal(new Set(docs.map(d=>d.source_url+'|'+d.content_sha256)).size,28);
  assert.ok(docs.every(d=>/^202[2-5]-\d\d-\d\d$/.test(d.date)&&/^https:\/\/www\.lrl\.mn\.gov\/archive\/minutes\/senate\//.test(d.source_url)&&/^[a-f0-9]{64}$/.test(d.content_sha256)));
@@ -61,4 +61,17 @@ test('OCR differences preserve byte proof and prior text hashes as holds; embedd
  assert.throws(()=>compareAcquiredPdfExtraction(digest,{...stable,authenticated:false}));
  const ocr={authenticated:true,textSha256:other,extractionMethod:'ocr_tesseract'};
  compareAcquiredPdfExtraction(digest,ocr);assert.equal(ocr.extractionTextChangedFromAcquiredCache,true);assert.equal(ocr.previousExtractedTextSha256,digest);assert.equal(ocr.authenticated,true);
+});
+
+test('unstored Clerk byte and text proof use the immutable current extraction; historical extraction remains recorded',async()=>{
+ const {sha}=await import('../src/evidence/senate-864-population-named-rolls.mjs');
+ const raw='<p>public original</p>',text='public original',spec={originalClerkSha256:sha(raw),originalClerkTextSha256:sha('legacy whitespace')};
+ const acquired={originalSha256:sha(raw),extractedTextSha256:sha(text),format:'html_raw',authenticated:true,readable:true};
+ assert.deepEqual(authenticateUnstoredClerkExtraction(raw,text,spec,acquired),{historicalCrosswalkTextSha256:spec.originalClerkTextSha256,extractionShaReference:'immutable_acquired_cache_same_extractor'});
+ assert.throws(()=>authenticateUnstoredClerkExtraction(raw+'changed',text,spec,acquired));
+ assert.throws(()=>authenticateUnstoredClerkExtraction(raw,text+'changed',spec,acquired));
+ assert.throws(()=>authenticateUnstoredClerkExtraction(raw,text,spec,{...acquired,originalSha256:sha('other')}));
+ assert.throws(()=>authenticateUnstoredClerkExtraction(raw,text,spec,{...acquired,authenticated:false}));
+ assert.throws(()=>authenticateUnstoredClerkExtraction(raw,text,spec));
+ assert.equal(authenticateUnstoredClerkExtraction(raw,text,{...spec,originalClerkTextSha256:sha(text)}).extractionShaReference,'historical_crosswalk');
 });
