@@ -1,0 +1,146 @@
+{
+  "version": "senate864-population-named-rolls-v1",
+  "cohort": "wrapped",
+  "reviewedCommit": "05d215ae318d83d5af00a29b5091bbeb83384aa1",
+  "verifiedAt": "2026-10-22T20:58:33.961Z",
+  "sourceOriginals": 5,
+  "sourceProvenQuestions": 9,
+  "sourceProvenChoices": 123,
+  "previousExact": 0,
+  "insertedEvents": 1,
+  "insertedChoices": 123,
+  "correctedClassifications": 5,
+  "preservedExistingTargetEventIds": 8,
+  "verifiedExact": 9,
+  "verifiedChoices": 123,
+  "zeroWriteReplay": true,
+  "yearCountsBefore": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 49,
+      "declared_named_events": 38,
+      "explicit_stored_choices": 402,
+      "hearing_date_timing_events": 16
+    },
+    {
+      "year": 2024,
+      "stored_events": 57,
+      "declared_named_events": 33,
+      "explicit_stored_choices": 307,
+      "hearing_date_timing_events": 11
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "yearCountsAfter": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 49,
+      "declared_named_events": 38,
+      "explicit_stored_choices": 402,
+      "hearing_date_timing_events": 16
+    },
+    {
+      "year": 2024,
+      "stored_events": 58,
+      "declared_named_events": 42,
+      "explicit_stored_choices": 430,
+      "hearing_date_timing_events": 20
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "existingEventIdsAndChoicesPreserved": true,
+  "verifiedRepeatableReadReadOnlyAndRollback": true,
+  "serializableWrites": true,
+  "recoveredEvents": [
+    {
+      "questionKey": "7f87953de65d5aad9e04dd238b8a041ded49269482a47cd4ff00b517738af301",
+      "eventId": "3cd4a2fb-1e11-421e-b08f-8285a784071f",
+      "createdAt": "2026-10-02 04:19:30.611205+00",
+      "choices": 14
+    },
+    {
+      "questionKey": "d5411d9eff61bd555db011737ab5930de6356fd8f0eedec041acd6226d33064d",
+      "eventId": "4e95f7c7-09f5-4c38-b278-bd3d5a28e385",
+      "createdAt": "2026-10-02 04:19:30.684043+00",
+      "choices": 14
+    },
+    {
+      "questionKey": "7344e36c5bc89437c953d47f8f41e84886a4a2d9bc9377d5db0328f23b00b2e5",
+      "eventId": "2b45d973-1285-483d-a97f-a0209b07094b",
+      "createdAt": "2026-10-02 04:19:30.747368+00",
+      "choices": 14
+    },
+    {
+      "questionKey": "0ba4aa148ba5de0a629d35f10fe1628827a3652cde128bfd723947390b957dba",
+      "eventId": "51f0d735-e1cc-4821-b200-3258a7d5b29a",
+      "createdAt": "2026-10-02 04:19:30.827824+00",
+      "choices": 13
+    },
+    {
+      "questionKey": "58b570cdc2551b9c6e1aaa8e3d99c03a4db25c3d430e27d16e7973cb6b3007fa",
+      "eventId": "de1d8f01-6558-4b5a-9943-86794375b902",
+      "createdAt": "2026-10-02 04:25:55.77306+00",
+      "choices": 14
+    },
+    {
+      "questionKey": "6cd98670a1968ed6124b66a749467580d4c4f44d79a6a68a6555ec5d6dc87d7a",
+      "eventId": "6f45ebdb-cc02-426a-987c-106da72d1e1f",
+      "createdAt": "2026-10-02 04:25:55.834755+00",
+      "choices": 14
+    },
+    {
+      "questionKey": "bd2b5c6949f9ddf29ffcea6ff8400b8caaa570539fb80dfdc973f31e9a7b6cb5",
+      "eventId": "11b21014-7a8e-4873-8a58-ae642ee355fa",
+      "createdAt": "2026-10-02 04:27:12.798392+00",
+      "choices": 13
+    },
+    {
+      "questionKey": "a91ce8f5052cee6c93b84e1c1f9de53844a58c25314ed167448468c418132fd3",
+      "eventId": "ac64330f-b8ff-468e-a2eb-af0fa26b0e33",
+      "createdAt": "2026-10-22 20:58:30.156451+00",
+      "choices": 14
+    },
+    {
+      "questionKey": "6812faf0448a64e3a876859974c633056674e8dbd5613998d83ce52c4474efe9",
+      "eventId": "85d81166-144c-4903-b36f-3fd112e04166",
+      "createdAt": "2026-10-02 04:42:26.704298+00",
+      "choices": 13
+    }
+  ],
+  "pr": 1548,
+  "protectedRun": 39853048276,
+  "productionJob": 120084947774,
+  "sourceGateJob": 120083988069,
+  "artifact": 12459450098,
+  "artifactZipSha256": "32ff63f743ac884af7bd75f56c3205968e033a36df182492e71af41bf8ca8451",
+  "independentConnectorRead": {
+    "read_at": "2026-10-22T21:00:47.100Z",
+    "ro": "on"
+  }
+}
