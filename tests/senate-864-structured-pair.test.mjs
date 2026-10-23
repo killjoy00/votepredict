@@ -53,6 +53,7 @@ test('disposable PostgreSQL: add only two questions/eleven choices, preserve an 
   for(const[i,m]of f.roster.entries()){
    const l=(await one('INSERT INTO legislators(jurisdiction_id,external_key,name,normalized_name) VALUES($1,$2,$3,lower($3)) RETURNING id',[j,'structured-fixture-'+i,m.name])).id;
    const mid=(await one("INSERT INTO memberships(session_id,chamber_id,legislator_id,district,party,title,starts_on,ends_on) VALUES($1,$2,$3,$4,'DFL','Senator',$5,$6) RETURNING id",[s,c,l,String(i+1),m.starts_on,m.ends_on])).id;members.push(mid);
+   for(const alias of new Set(m.aliases||[]))await one("INSERT INTO membership_source_aliases(membership_id,source_system,source_name,normalized_name) VALUES($1,'explicit-historical-fixture',$2,lower($2))",[mid,alias]);
   }
   const ids=[];
   for(const d of f.sourceDocuments){
