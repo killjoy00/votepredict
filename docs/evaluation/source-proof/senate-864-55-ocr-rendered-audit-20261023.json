@@ -27,7 +27,7 @@
     "originals": 55,
     "pages": 85,
     "prior192Audit": "docs/evaluation/source-proof/senate-864-192-ocr-rendered-audit-20261023.json",
-    "prior192AuditSha256": "ebd5a8d1e46320f38ae134a7efed85181031fb57809834334f59260020042f66"
+    "prior192AuditSha256": "2890fb4e1a8fb7fc9d52938d4071f937b4c5086c7b325f3a55666defe3de7824"
   },
   "method": {
     "dpi": 300,
