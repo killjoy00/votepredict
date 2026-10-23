@@ -98,8 +98,9 @@ test('source-only parent audit requires entire original full named ballot and on
   'original_question_ballot_repeated');
  assert.equal(classifyOriginalParentReview({...one,stage:'original_unverified_or_duplicated',original:null}).stage,
   'original_document_unverified_or_duplicated');
- const x=classifyOriginalParentReview({...one,vote:{...v,votes:ballot.slice(0,1)}});
- assert.notEqual(x.stage,'bounded_parent_motion_candidate_not_certified');
+ assert.throws(()=>classifyOriginalParentReview({
+  ...one,vote:{...v,votes:[]}
+ }),/full accepted named-ballot disappeared/);
  for(const term of ['Abeler','Boldon',url,'bbbbbbbc'])
   assert.equal(JSON.stringify(classifyOriginalParentReview(one)).includes(term),false);
 });
