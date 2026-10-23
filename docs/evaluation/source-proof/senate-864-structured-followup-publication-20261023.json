@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "senate864-structured-followup-publication-v1",
+  "implementationPr": 1576,
+  "reviewedMain": "94585be08386b87d69a2ec37c227c2671a1685f8",
+  "protectedRunId": 40033870365,
+  "independentGateJobId": 120688469606,
+  "protectedProductionJobId": 120689685852,
+  "productionArtifact": {
+    "id": 12536432022,
+    "name": "senate864-population-structured-pair-production-verified",
+    "size_in_bytes": 954,
+    "url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12536432022",
+    "archive_download_url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12536432022/zip",
+    "expired": false,
+    "created_at": "2026-10-23T22:34:18Z",
+    "expires_at": "2026-11-06T22:34:17Z",
+    "updated_at": "2026-10-23T22:34:18Z",
+    "digest": "sha256:f37cdd6ff87281df24d23276e914dd580a807ade2e420b3008ae85055a518c23",
+    "workflow_run": {
+      "id": 40033870365,
+      "repository_id": 1201743780,
+      "head_repository_id": 1201743780,
+      "head_branch": "main",
+      "head_sha": "94585be08386b87d69a2ec37c227c2671a1685f8"
+    }
+  },
+  "independentReadbackAt": "2026-10-23T22:34:44.723Z",
+  "standardChecks": 2468,
+  "focusedTests": 69,
+  "failures": 0,
+  "skips": 0,
+  "productionDependencyAuditVulnerabilities": 0,
+  "sourceOnlyAcquisition": {
+    "implementationPr": 1573,
+    "reviewedMain": "7c3f258b24709bc71bcbaca57d1456eda3973ab4",
+    "runId": 40030160821,
+    "publicOriginalJobId": 120676234718,
+    "publisherJobId": 120677522906,
+    "reviewCommit": "54934f257226db4132899e1ca300aef02c5f9a91",
+    "originals": 58,
+    "pages": 90,
+    "manifestSha256": "bfde48fbd725cba652051a2ddec34c0f23e2add3ef1be53ce119ead0a3323569",
+    "productionWrites": 0
+  },
+  "cellProof": {
+    "implementationPr": 1575,
+    "reviewedMain": "626d82b28a697bf18cf16fc8275a6fd668219459",
+    "runId": 40032275845,
+    "reviewCommit": "e6edbc08aa168026365c819ac07988a99eeb8456",
+    "originals": 2,
+    "pages": 4,
+    "pixelSelfTests": 4,
+    "productionWrites": 0
+  },
+  "priorFrozenPopulationReceipt": "senate-864-renewal-ocr-publication-20261023.json",
+  "prior192AuditSha256": "2890fb4e1a8fb7fc9d52938d4071f937b4c5086c7b325f3a55666defe3de7824",
+  "reviewedOriginals": 247,
+  "reviewedPages": 416,
+  "remainingOcrOriginalsUnreviewed": 0,
+  "sourceOnlyVisualWrites": 0,
+  "files": [
+    {
+      "path": "docs/evaluation/source-proof/senate-864-55-ocr-rendered-audit-20261023.json",
+      "bytes": 163171,
+      "sha256": "b1ea83314d426590802b8b27be823742a29c121dca53fa1ae6795dc635d2fc9d"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-sf2818-question-hold-20261023.json",
+      "bytes": 2683,
+      "sha256": "f9de60a83fadf6d043b809844b7a183ce59061fe8a2bf6cdc29199fd48e7b482"
+    },
+    {
+      "path": "scripts/verify-senate-864-55-review.mjs",
+      "bytes": 4336,
+      "sha256": "a68c232f7766a4ed4b85e1779a2b35c365a1b71a33fa4f339389cedda167f9e4"
+    },
+    {
+      "path": ".github/workflows/senate-864-55-review-integrity.yml",
+      "bytes": 1530,
+      "sha256": "f2272c18139ddbb66925bdc68521c5fc12bb0fa9cdb5a8690a67e73ca26aa8ce"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-55-review-comparison-20261023.json",
+      "bytes": 56880,
+      "sha256": "90c3782d0b0a769a27f2088ca2df98e008f12b40a6cf36a5cccb6ed8bf9a208b"
+    },
+    {
+      "path": "docs/evaluation/senate-864-55-ocr-review-20261023.md",
+      "bytes": 4373,
+      "sha256": "18edb67fc8551ce0af0844dacca5a7fe83663cf6ac4ae55b108656a8229d8e12"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-structured-pair-production-20261023.json",
+      "bytes": 3669,
+      "sha256": "47a30fd716382e994a92a982663e559a10354db3691852d7cad5e8000ef2e129"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-structured-pair-independent-readback-20261023.json",
+      "bytes": 6411,
+      "sha256": "9d741af973ae8257370fd0a745b1f0e2e3a40f1e99f44149626339f8442c9227"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-structured-followup-summary-20261023.json",
+      "bytes": 4511,
+      "sha256": "f5a47e1f467ec93e3ae8468a729a73912a068872ecc9da85ecabcaf9b6562285"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-population-committee-20261023-structured-followup.csv",
+      "bytes": 22096,
+      "sha256": "ec6c25d10d4b2c1edc766a05bdb698936cac145e73e7f50c7441885895b7d11d"
+    },
+    {
+      "path": "docs/evaluation/senate-864-completion-ledger.md",
+      "bytes": 177563,
+      "sha256": "a9d8a0613924b81eeadaa97981986e7b00578a54f1539d88fe72487a8f1eb388"
+    }
+  ]
+}

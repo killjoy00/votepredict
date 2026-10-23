@@ -1,0 +1,181 @@
+{
+  "schemaVersion": "senate864-structured-pair-independent-readback-v1",
+  "source": "Independent Neon connector bounded REPEATABLE READ READ ONLY transaction with explicit ROLLBACK",
+  "beforeReadAt": "2026-10-23T21:46:34.228Z",
+  "readAt": "2026-10-23T22:34:44.723Z",
+  "verifiedRepeatableReadReadOnlyAndExplicitRollback": true,
+  "productionWrites": 0,
+  "all204PriorEventsUnchanged": true,
+  "all1793PriorChoicesUnchanged": true,
+  "sourceDocumentsHistoricalRosterBillsAndSchemaLedgerUnchanged": true,
+  "priorEventsSha256": "88f5b8c1c3bc0c4a4d2655b557a89131824f2aaa3ef51326c1866c20bd479c50",
+  "priorChoicesSha256": "dc337f76831d82ca8a0a4aaa29c37cf7efb538a5a7b084185779b3744c30aa30",
+  "newEvents": 2,
+  "newChoices": 11,
+  "classificationCorrections": 0,
+  "totalEvents": 206,
+  "totalChoices": 1804,
+  "yearBefore": [
+    {
+      "year": 2022,
+      "events": 38,
+      "choices": 259
+    },
+    {
+      "year": 2023,
+      "events": 55,
+      "choices": 483
+    },
+    {
+      "year": 2024,
+      "events": 58,
+      "choices": 512
+    },
+    {
+      "year": 2025,
+      "events": 53,
+      "choices": 539
+    }
+  ],
+  "yearAfter": [
+    {
+      "year": 2022,
+      "events": 40,
+      "choices": 270
+    },
+    {
+      "year": 2023,
+      "events": 55,
+      "choices": 483
+    },
+    {
+      "year": 2024,
+      "events": 58,
+      "choices": 512
+    },
+    {
+      "year": 2025,
+      "events": 53,
+      "choices": 539
+    }
+  ],
+  "recoveredEvents": [
+    {
+      "questionKey": "b05a37e47e063a833d876ddaa6a9ad09ee45f3286dbaa53e9c5abe113b95502c",
+      "eventId": "1384690d-9f40-4f89-9548-ec626784919a",
+      "createdAt": "2026-10-23 22:34:13.412648+00",
+      "billIdentifier": "SF3882",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Subproperty/20220330/subproperty_20220330_Minutes.pdf",
+      "sourceRawPdfSha256": "cf2386e584dbb82c2be97983e75704c1bdcad22237fd8551382277a61d4359cb",
+      "sourceClerkUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=16933&ls=92&type=minutes",
+      "sourceClerkRawSha256": "8c23adc48fe2cad66da1101b04939e888d1db07ed177a2baded58f1b35d424f7",
+      "sourceTextSha256": "68d9a24ef05d0af17ac39405036b9d73d3ea69d80bb3181648fb8cdf24baeb27",
+      "fullQuestionPassageSha256": "6167383903761fe71db2fa4b99389fabd48ab2e7a2b47c0b398a12098a6c01be",
+      "motionText": "Senator Klein requested Roll call to refer S.F. 3882 to Local Government",
+      "voteKind": "motion",
+      "amendmentRef": null,
+      "isPassage": false,
+      "passed": false,
+      "yea": 2,
+      "nay": 2,
+      "fullHistoricalIdentityAndServiceBoundsVerified": true,
+      "choices": [
+        {
+          "literalName": "Weber",
+          "fullHistoricalName": "Bill Weber",
+          "membershipId": "8cb13c05-f87d-489e-8cd7-503893688e38",
+          "choice": "nay"
+        },
+        {
+          "literalName": "Murphy",
+          "fullHistoricalName": "Erin P. Murphy",
+          "membershipId": "422b5482-1ba5-49fe-98bc-5f763e1dde35",
+          "choice": "yea"
+        },
+        {
+          "literalName": "Klein",
+          "fullHistoricalName": "Matt D. Klein",
+          "membershipId": "a5ef3ddd-a5e5-4b19-868e-d8a207aeea21",
+          "choice": "yea"
+        },
+        {
+          "literalName": "Chamberlain",
+          "fullHistoricalName": "Roger C. Chamberlain",
+          "membershipId": "e3ee2885-4255-4fec-a160-f369151fb2af",
+          "choice": "nay"
+        }
+      ],
+      "modelWeight": 0,
+      "mechanicallyActionable": false,
+      "sameDayEligible": false
+    },
+    {
+      "questionKey": "27f449cd5c3a41d2471f57f5102e8e570b9b2fbf9e8906c568a5c921099e7451",
+      "eventId": "807d5c3b-4475-40ad-a9c8-e47cedca018d",
+      "createdAt": "2026-10-23 22:34:13.412648+00",
+      "billIdentifier": "SF3661",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Energy/20220310/energy_20220310_Minutes.pdf",
+      "sourceRawPdfSha256": "c4403e23f210f6ccee2e5e9a165013fa9f11c9c001c0e1b1e01fac6bb8fbb7b7",
+      "sourceClerkUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=16818&ls=92&type=minutes",
+      "sourceClerkRawSha256": "6bd97b3408bd99f7866b275fc70ec8094249f4ac8042bcc481f843774527eef2",
+      "sourceTextSha256": "12697216fc688346a9c1413fe95d44f66b3a1d80444efe255e34c1fbc320937c",
+      "fullQuestionPassageSha256": "84b990d14e6bff9d63946543561c614e81e395edf8731b23ee62d54dd3f9af9a",
+      "motionText": "Senator Rarick requested a Roll Call Vote on: Passage of S. F. No. 3661. Senator Rarick moved that S.F. 3661, be recommended to pass.",
+      "voteKind": "motion",
+      "amendmentRef": null,
+      "isPassage": false,
+      "passed": true,
+      "yea": 4,
+      "nay": 3,
+      "fullHistoricalIdentityAndServiceBoundsVerified": true,
+      "choices": [
+        {
+          "literalName": "Dave Senjem",
+          "fullHistoricalName": "David H. Senjem",
+          "membershipId": "ebc0b43d-1779-488e-a17e-58653542e759",
+          "choice": "yea"
+        },
+        {
+          "literalName": "Nick Frentz",
+          "fullHistoricalName": "Nick A. Frentz",
+          "membershipId": "1c213faf-9573-49f5-98f3-4e28b777159c",
+          "choice": "nay"
+        },
+        {
+          "literalName": "Roger Chamberlain",
+          "fullHistoricalName": "Roger C. Chamberlain",
+          "membershipId": "e3ee2885-4255-4fec-a160-f369151fb2af",
+          "choice": "yea"
+        },
+        {
+          "literalName": "Jerry Newton",
+          "fullHistoricalName": "Jerry Newton",
+          "membershipId": "0ae0162b-93e5-4840-bf58-7a5d1dca81b0",
+          "choice": "nay"
+        },
+        {
+          "literalName": "Jason Rarick",
+          "fullHistoricalName": "Jason Rarick",
+          "membershipId": "ea5ed747-2987-48af-84f1-5bbafbe4328e",
+          "choice": "yea"
+        },
+        {
+          "literalName": "Patricia Torres Ray",
+          "fullHistoricalName": "Patricia Torres Ray",
+          "membershipId": "c7a36c5e-d91c-400a-bcc4-a35a6709288b",
+          "choice": "nay"
+        },
+        {
+          "literalName": "Paul Utke",
+          "fullHistoricalName": "Paul J. Utke",
+          "membershipId": "b666cd81-aeb0-452c-a287-dcbb8f58014e",
+          "choice": "yea"
+        }
+      ],
+      "modelWeight": 0,
+      "mechanicallyActionable": false,
+      "sameDayEligible": false
+    }
+  ],
+  "sf2818Events": 0
+}

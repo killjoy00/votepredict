@@ -13,9 +13,107 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 23: printed checkbox/voted rows recovered; all 247 OCR originals reviewed
+
+**Current 2022–2025 committee production: 206 events / 1,804 explicitly named choices.**
+This pass adds **two events / eleven choices**, with zero classification corrections.
+The independent readback confirms all **204 previous events / 1,793 choices unchanged**.
+Cumulatively from 183 / 1,326: **+23 events / +478 choices / ten classification corrections**.
+**#864 remains OPEN.**
+
+| Year | Current events | Current named choices |
+| --- | ---: | ---: |
+| 2022 | 40 | 270 |
+| 2023 | 55 | 483 |
+| 2024 | 58 | 512 |
+| 2025 | 53 | 539 |
+| **Total** | **206** | **1,804** |
+
+[PR #1574](https://github.com/killjoy00/votepredict/pull/1574) recovers complete
+explicit referral requests followed by individually printed voted-yes/no lines.
+[PR #1576](https://github.com/killjoy00/votepredict/pull/1576), main
+94585be08386b87d69a2ec37c227c2671a1685f8, preserves original HTML checkbox
+cell boundaries and the selected complete bill question, direct recommendation,
+known cell marks, agreeing printed tally and unambiguous outcome. Its actual
+SF3661 cells match every independent 300dpi PDF grid cell; Mathews's blank
+row supplies neither a vote nor an inferred absence.
+
+The recovered records are **March 10, 2022 Energy, SF3661 committee
+recommendation, passed 4–3 (seven choices)** and **March 30, 2022 Property
+Taxes, SF3882 referral to Local Government, failed 2–2 (four choices)**.
+The latter is distinct from the later lay-over motion. Both remain committee
+motions, is_passage=false, modelWeight=0, actionable=false and sameDay=false.
+
+Protected run [40033870365](https://github.com/killjoy00/votepredict/actions/runs/40033870365),
+gate 120688469606, production job 120689685852, passed **2,468 standard /
+69 focused tests**, including actual source fixtures and disposable PostgreSQL,
+with zero failures/skips and zero production dependency audit vulnerabilities.
+Fresh PDF bytes and original Clerk bodies are independently SHA-bound.
+The existing schema/service/name guards, READ ONLY/ROLLBACK preflight,
+SERIALIZABLE bounded writes, unchanged-record checks, exact readback and
+zero-write replay all passed. The [production receipt](source-proof/senate-864-structured-pair-production-20261023.json)
+preserves artifact 12536432022 and its ZIP digest.
+
+The separate [Neon connector readback](source-proof/senate-864-structured-pair-independent-readback-20261023.json)
+at **2026-10-23T22:34:44.723Z**, compared with 21:46:34.228Z, independently
+checks every earlier event/choice, source documents, roster, bills and complete
+36-entry schema ledger. It verifies each new literal question, historical
+membership/service identity, choice, source hash, timing and model guard.
+Both events were created at **22:34:13.412648 UTC**.
+
+The [current overlay summary](source-proof/senate-864-structured-followup-summary-20261023.json)
+and [111-row committee matrix](source-proof/senate-864-population-committee-20261023-structured-followup.csv)
+preserve every dated baseline metric and show the two proven additions separately.
+The reviewed question pool is now **37 questions / 479 choices**: prior strict
+35/468 unchanged, plus these two/eleven in 2022. This is a preserved-and-extended
+reviewed subset, not a fresh all-original acquisition or universal denominator.
+The frozen census remains 2,860 originals / 2,859 readable / 233 parser candidates /
+2,626 text-negative / one unparseable, with 40 held row occurrences.
+
+**Remaining visual review complete:** [the 55-original appendix](senate-864-55-ocr-review-20261023.md)
+and [per-page audit](source-proof/senate-864-55-ocr-rendered-audit-20261023.json)
+record all **85 pages** from 24 originals in 2023 and 31 in 2024. Three originals
+contain printed individual choices; 52 have none observed. The source-only
+integrity job verifies 239 public files plus the manifest, all page hashes,
+110 fresh OCR parser comparisons and the exact union with the previous audit.
+**All 247 OCR originals / 416 pages are now reviewed**: 17 visual named originals,
+220 fully legible scoped negatives, ten earlier quality holds, eight blank
+raster pages, zero originals left unreviewed. No word-perfect OCR or visual
+quality certification flag is promoted.
+
+Two handwritten Taxes packets (April 27 / May 12, 2023) are additional parser
+misses; the April 9, 2024 Labor original was already a candidate. Their changed
+marks, blank/misused question fields, nested amendments, conflicting
+Absent/abstention label and page continuations remain an explicit source-only
+question/production reconciliation queue. These visual observations add no
+certified votes.
+
+**SF2818 investigation complete; association remains held.**
+The original prints eight sides after a generic roll-call request and before
+the final recommendation, with no printed numerical tally. Canonical Clerk
+returns 404; the authenticated daily API confirms hearing 16667 but marks
+minutes non-public with no minutes link. The [investigation receipt](source-proof/senate-864-sf2818-question-hold-20261023.json)
+states exactly what authenticated question/list-completeness proof would reopen
+the hold. No choice is assigned to a guessed question.
+
+Public source executions [PR #1573](https://github.com/killjoy00/votepredict/pull/1573)
+and [PR #1575](https://github.com/killjoy00/votepredict/pull/1575) preserve 58
+authenticated originals / 90 pages and the fixed two-original ruled-cell proof.
+PR #1573 also supplies the minimal Zod 4.6.6 override required to clear the
+newly published dependency advisory; standard checks and audit pass.
+[The publication receipt](source-proof/senate-864-structured-followup-publication-20261023.json)
+binds the durable artifacts and source review commits.
+
+The prior ten quality holds, date/header conflicts, cross-original aliases,
+one unparseable Finance PDF, six missing-Minutes dates (1,586/1,592), 2021 print
+history and 2022 print/electronic equivalence remain unresolved. No floor,
+serving model, forecast, weights, training, frozen evaluation, Vercel or
+scheduler change occurred. No offices were contacted and no manual audio
+review was used. **#864 remains OPEN.**
+
 ## October 23: renewed recommendation recovered; all 192 requested OCR originals reviewed
 
-**Current 2022–2025 committee production: 204 events / 1,793 explicitly named choices.**
+**Before this follow-up, 2022–2025 committee production was 204 events / 1,793 explicitly named choices.**
 The renewal adds **one event / fourteen choices**, with **zero classification
 corrections**. All **203 earlier events / 1,779 choices are unchanged**.
 Cumulatively from 183 / 1,326: **+21 events / +467 choices / ten classification
