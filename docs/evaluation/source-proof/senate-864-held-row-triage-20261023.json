@@ -1,0 +1,955 @@
+{
+  "schemaVersion": "senate864-held-row-triage-v1",
+  "issue": 864,
+  "input": {
+    "path": "docs/evaluation/source-proof/senate-864-population-original-inventory-20261023.json",
+    "sha256": "9101684f03085f6d299cd74dfbed60de0ca0852ce539106afece547941383c4d",
+    "reviewedCommit": "16a2d52de4df0588f4fd81a0671b68ae94603a4d",
+    "readAt": "2026-10-23T03:05:03.338Z"
+  },
+  "extractorSha256": "91f5ddfda9c20c5db8930aef141448e493814eeb2afd38e1f327e4df24608704",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "examinedCandidateOriginals": 233,
+  "heldOccurrencesBefore": 56,
+  "heldOccurrencesAfter": 43,
+  "primaryCausesBefore": {
+    "nonbill_question": 7,
+    "printed_outcome": 8,
+    "printed_tally_or_incomplete_rows": 25,
+    "question_identity": 16
+  },
+  "primaryCausesAfter": {
+    "nonbill_question": 7,
+    "printed_outcome": 8,
+    "printed_tally_or_incomplete_rows": 13,
+    "question_identity": 15
+  },
+  "overlappingReasonsBefore": {
+    "ambiguous_or_missing_printed_outcome": 13,
+    "compound_or_repeated_question": 13,
+    "contradictory_bill_association": 1,
+    "intervening_or_withdrawn_question": 7,
+    "missing_or_disagreeing_printed_tally": 39,
+    "unresolved_amendment_identity": 4,
+    "unresolved_bill_or_nonbill_question": 7
+  },
+  "overlappingReasonsAfter": {
+    "ambiguous_or_missing_printed_outcome": 13,
+    "compound_or_repeated_question": 12,
+    "contradictory_bill_association": 1,
+    "intervening_or_withdrawn_question": 7,
+    "missing_or_disagreeing_printed_tally": 25,
+    "unresolved_amendment_identity": 4,
+    "unresolved_bill_or_nonbill_question": 7
+  },
+  "newlyProvenSourceWitnesses": [
+    {
+      "sourceId": "1dc7a627dd66ced98ea078b9f93482fb26f0f3c88195a0db330b71c3e7f3c594",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230117/Elections_20230117_Minutes.pdf",
+      "originalSha256": "35782d185a244fe98a77a2e9c6bd3ec2e37a7591d28d18de5dbe8380b396355a",
+      "textSha256": "20d11fe16247a8f992088d75c969c89dc8ec681d311d05c51c1073238aa8775c",
+      "date": "2023-01-17",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "e6f47803c373538422e1009a94d4706fecae5a04cf79ab21bc58243be079e4b5",
+      "motionText": "Senator Westlin moved that SF 26 be recommended to pass as amended and re-referred to the Judiciary and Public Safety Committee. Senator Koran requested a roll call vote, and a roll call was granted.",
+      "holds": [],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "choices": 13,
+      "yea": 7,
+      "nay": 6,
+      "passed": true,
+      "alreadyProvenFromAnotherOriginal": true
+    },
+    {
+      "sourceId": "e751e8e66722d2f04edf8d0af56475152bf563c08762775ac3f1c485857de96b",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17687&ls=93&type=minutes",
+      "originalSha256": "187af02d788e0787d57ee96e00b0ed6ae4d8acbdd94f9aeaee3bb78c09a7ff66",
+      "textSha256": "187af02d788e0787d57ee96e00b0ed6ae4d8acbdd94f9aeaee3bb78c09a7ff66",
+      "date": "2023-03-07",
+      "committee": "Elections",
+      "format": "html",
+      "questionKey": "1b8b9df1298f93ab49e2e1bdb40bfa23e1dfc7e0c29164f692bc43cb63826c6d",
+      "motionText": "Senator Koran moved the A2 Amendment and requested a roll call and a roll call was granted.",
+      "holds": [],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "choices": 13,
+      "yea": 5,
+      "nay": 8,
+      "passed": false,
+      "alreadyProvenFromAnotherOriginal": false
+    },
+    {
+      "sourceId": "2c0b0e471fd7b9c8b0f1dacddc8e0ce33b1a95950a5f052dd0b240be48da1c58",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230403/Elections_20230403_Minutes.pdf",
+      "originalSha256": "fb4076f1ffdd09494eb86d2eebf646043cc4173ccfad6ec87fc57bdbbf4f35cb",
+      "textSha256": "159fd1de51000e6679f51596557d01be94764397651df2bf61441aa9c4e3bb34",
+      "date": "2023-04-03",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "449bd58264fd538b71ce520b549d2569e666eef3236accd4412546659ce6068a",
+      "motionText": "Senator Koran moved the A25 Amendment and requested a roll call, and a roll call was granted.",
+      "holds": [],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "choices": 14,
+      "yea": 6,
+      "nay": 8,
+      "passed": false,
+      "alreadyProvenFromAnotherOriginal": true
+    },
+    {
+      "sourceId": "2c0b0e471fd7b9c8b0f1dacddc8e0ce33b1a95950a5f052dd0b240be48da1c58",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230403/Elections_20230403_Minutes.pdf",
+      "originalSha256": "fb4076f1ffdd09494eb86d2eebf646043cc4173ccfad6ec87fc57bdbbf4f35cb",
+      "textSha256": "159fd1de51000e6679f51596557d01be94764397651df2bf61441aa9c4e3bb34",
+      "date": "2023-04-03",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "d0c8947aca849104bc8ed2f5ce8fa0a37ce77e24782fd8a0e814a786206889aa",
+      "motionText": "Senator Koran moved the A28 Amendment and requested a roll call, and a roll call was granted.",
+      "holds": [],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "choices": 14,
+      "yea": 6,
+      "nay": 8,
+      "passed": false,
+      "alreadyProvenFromAnotherOriginal": true
+    },
+    {
+      "sourceId": "2c0b0e471fd7b9c8b0f1dacddc8e0ce33b1a95950a5f052dd0b240be48da1c58",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230403/Elections_20230403_Minutes.pdf",
+      "originalSha256": "fb4076f1ffdd09494eb86d2eebf646043cc4173ccfad6ec87fc57bdbbf4f35cb",
+      "textSha256": "159fd1de51000e6679f51596557d01be94764397651df2bf61441aa9c4e3bb34",
+      "date": "2023-04-03",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "0463d1396118dde64d7d4dcd5ed1982cd7d4267808e8bde3064480b83883336c",
+      "motionText": "Senator Westlin moved that SF 1636, as amended, be recommended to pass and re-referred to the Committee on Finance. Senator Koran requested a roll call and a roll call was granted.",
+      "holds": [],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "choices": 14,
+      "yea": 8,
+      "nay": 6,
+      "passed": true,
+      "alreadyProvenFromAnotherOriginal": true
+    }
+  ],
+  "newDistinctQuestionKeys": [
+    {
+      "questionKey": "1b8b9df1298f93ab49e2e1bdb40bfa23e1dfc7e0c29164f692bc43cb63826c6d",
+      "billIdentifier": "SF2051",
+      "amendmentRef": "A2",
+      "choices": 13
+    }
+  ],
+  "coverageByYear": [
+    {
+      "year": 2022,
+      "originals": 608,
+      "readable": 607,
+      "ocrVisualQualityUncertified": 136,
+      "textNoNamedRollDetected": 579,
+      "priorCertifiedQuestions": 0,
+      "heldOccurrencesBefore": 0,
+      "heldOccurrencesAfter": 0
+    },
+    {
+      "year": 2023,
+      "originals": 933,
+      "readable": 933,
+      "ocrVisualQualityUncertified": 24,
+      "textNoNamedRollDetected": 860,
+      "priorCertifiedQuestions": 17,
+      "heldOccurrencesBefore": 44,
+      "heldOccurrencesAfter": 31
+    },
+    {
+      "year": 2024,
+      "originals": 518,
+      "readable": 518,
+      "ocrVisualQualityUncertified": 31,
+      "textNoNamedRollDetected": 440,
+      "priorCertifiedQuestions": 16,
+      "heldOccurrencesBefore": 12,
+      "heldOccurrencesAfter": 12
+    },
+    {
+      "year": 2025,
+      "originals": 801,
+      "readable": 801,
+      "ocrVisualQualityUncertified": 56,
+      "textNoNamedRollDetected": 747,
+      "priorCertifiedQuestions": 0,
+      "heldOccurrencesBefore": 0,
+      "heldOccurrencesAfter": 0
+    }
+  ],
+  "heldOccurrences": [
+    {
+      "sourceId": "f48742952a35391cf0fa48e2ce8f4c1aded138f3ff919ea01a5ffd41ec6653f6",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230130/Jobs_20230130_Minutes.pdf",
+      "originalSha256": "e9191ad7096b844f1ae8c1072ae4a5a9b55db2b85672d518e6a94b8730be417e",
+      "textSha256": "25a58e596ee5500bc66171fadbf681f813d37ba40268bbb7e72469fbd8d36f97",
+      "date": "2023-01-30",
+      "committee": "Jobs and Economic Development",
+      "format": "pdf",
+      "questionKey": "63f138d106bd7bd19126ab9b73fc723fe29f95a08635a93ba554d8bf5f5c8220",
+      "motionText": "Senator Pratt offers the A-25 Amendment (SCS0073A-25) at 2:08 PM during questions. Questions and discussion on the A-25 amendment begin at 2:09 PM. Senator Pratt and Senator Draheim move for a roll call vote on the A-25 Amendment, with an additional request that the vote is included in the Journal at 2:16 PM -- 3 of 5 -- 12/27/23, 10:23 AM Minnesota State Senate Page 4 of 5 https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17456&ls=93",
+      "holds": [
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_outcome",
+      "sourceOffset": 6375,
+      "printedChoiceOccurrences": 8
+    },
+    {
+      "sourceId": "f48742952a35391cf0fa48e2ce8f4c1aded138f3ff919ea01a5ffd41ec6653f6",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230130/Jobs_20230130_Minutes.pdf",
+      "originalSha256": "e9191ad7096b844f1ae8c1072ae4a5a9b55db2b85672d518e6a94b8730be417e",
+      "textSha256": "25a58e596ee5500bc66171fadbf681f813d37ba40268bbb7e72469fbd8d36f97",
+      "date": "2023-01-30",
+      "committee": "Jobs and Economic Development",
+      "format": "pdf",
+      "questionKey": "ed748f0ec0c023d22e14a22a19708c5b5a72663a14aa0fb7ad0989951ffa99fb",
+      "motionText": "Senator Pratt offers the A-25 Amendment (SCS0073A-25) at 2:08 PM during questions. Questions and discussion on the A-25 amendment begin at 2:09 PM. Senator Pratt and Senator Draheim move for a roll call vote on the A-25 Amendment, with an additional request that the vote is included in the Journal at 2:16 PM -- 3 of 5 -- 12/27/23, 10:23 AM Minnesota State Senate Page 4 of 5 https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17456&ls=93 Chair, Senator Champion: Nay Vice Chair, Senator Mohamed: Nay Ranking, Senator Draheim: Aye Senator Gustafson: Nay Senator Hawj: Nay Senator Housley: Absent Senator Pratt: Aye Senator Putnam: Nay Senator Nelson: Aye The amendment does not prevail at 2:24 PM. Senator Mohamed and Senator Nelson move for a roll call vote on the motion to pass and re-refer S.F. 73 to State and Local Government at 2:28 PM.",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 6780,
+      "printedChoiceOccurrences": 8
+    },
+    {
+      "sourceId": "221ea41b62067d4490ca3976f280f92f96f00ec7e78bb7fb3694ddcc037142b7",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17456&ls=93&type=minutes",
+      "originalSha256": "cfeb61153bb340b50d7179d4330a55411087ebeb0b9468623beb194494f81b5c",
+      "textSha256": "cfeb61153bb340b50d7179d4330a55411087ebeb0b9468623beb194494f81b5c",
+      "date": "2023-01-30",
+      "committee": "Jobs and Economic Development",
+      "format": "html",
+      "questionKey": "4279eebff81d1cfacf6c94011a1055c77e813fd49d1540e36e9f560d5119231e",
+      "motionText": "Senator Pratt offers the A-25 Amendment (SCS0073A-25) at 2:08 PM during questions. Questions and discussion on the A-25 amendment begin at 2:09 PM. Senator Pratt and Senator Draheim move for a roll call vote on the A-25 Amendment, with an additional request that the vote is included in the Journal at 2:16 PM",
+      "holds": [
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_outcome",
+      "sourceOffset": 5739,
+      "printedChoiceOccurrences": 8
+    },
+    {
+      "sourceId": "221ea41b62067d4490ca3976f280f92f96f00ec7e78bb7fb3694ddcc037142b7",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17456&ls=93&type=minutes",
+      "originalSha256": "cfeb61153bb340b50d7179d4330a55411087ebeb0b9468623beb194494f81b5c",
+      "textSha256": "cfeb61153bb340b50d7179d4330a55411087ebeb0b9468623beb194494f81b5c",
+      "date": "2023-01-30",
+      "committee": "Jobs and Economic Development",
+      "format": "html",
+      "questionKey": "dfc4972d10e5dd9124fcfefa3020f88b61c3e390672aab7597a74c6d50558db8",
+      "motionText": "Senator Pratt offers the A-25 Amendment (SCS0073A-25) at 2:08 PM during questions. Questions and discussion on the A-25 amendment begin at 2:09 PM. Senator Pratt and Senator Draheim move for a roll call vote on the A-25 Amendment, with an additional request that the vote is included in the Journal at 2:16 PM Chair, Senator Champion: Nay Vice Chair, Senator Mohamed: Nay Ranking, Senator Draheim: Aye Senator Gustafson: Nay Senator Hawj: Nay Senator Housley: Absent Senator Pratt: Aye Senator Putnam: Nay Senator Nelson: Aye The amendment does not prevail at 2:24 PM. Senator Mohamed and Senator Nelson move for a roll call vote on the motion to pass and re-refer S.F. 73 to State and Local Government at 2:28 PM.",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 6155,
+      "printedChoiceOccurrences": 8
+    },
+    {
+      "sourceId": "521a7ddaf552c942cd8752628c320cd673ed6ac66d6acc1ef19d9b56db3431df",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230207/Elections_20230207_Minutes.pdf",
+      "originalSha256": "cffcc4c84bb1c44d4cb8a5238ff02a7ef75dbfe942b46bbdd367f0a5c9664e11",
+      "textSha256": "5a6547381bc59da4070e7b0db4d179a085e78f1d20ab5892fd4cbacb114c1a93",
+      "date": "2023-02-07",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "2ff68cffa46179ec2a946305cd59c2b8dfddc0d1354e44f267305c57b06730a3",
+      "motionText": "Senator Koran moved an Oral Amendment to his A36 Amendment. On page 8, line 11, delete “12” and insert “15”. Senator Koran requested a roll call vote and a roll call was granted.",
+      "holds": [
+        "compound_or_repeated_question",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 1586,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "521a7ddaf552c942cd8752628c320cd673ed6ac66d6acc1ef19d9b56db3431df",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230207/Elections_20230207_Minutes.pdf",
+      "originalSha256": "cffcc4c84bb1c44d4cb8a5238ff02a7ef75dbfe942b46bbdd367f0a5c9664e11",
+      "textSha256": "5a6547381bc59da4070e7b0db4d179a085e78f1d20ab5892fd4cbacb114c1a93",
+      "date": "2023-02-07",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "288381efbb72bdbc529c18cab7328bccd80131cfe6b11778a16753471912974f",
+      "motionText": "Senator Koran moved the A35 Amendment and requested a roll call vote and a roll was granted.",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 2107,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "2a7764ae134e3251dac000e3a0eb2cc007a4c583bf0bede4893311cc436f59a3",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17523&ls=93&type=minutes",
+      "originalSha256": "066eb384d2d808eef339d65d9b2af775ea3bcbf358bad3608feb31329fb5e738",
+      "textSha256": "066eb384d2d808eef339d65d9b2af775ea3bcbf358bad3608feb31329fb5e738",
+      "date": "2023-02-07",
+      "committee": "Elections",
+      "format": "html",
+      "questionKey": "2ff68cffa46179ec2a946305cd59c2b8dfddc0d1354e44f267305c57b06730a3",
+      "motionText": "Senator Koran moved an Oral Amendment to his A36 Amendment. On page 8, line 11, delete \"12\" and insert \"15\". Senator Koran requested a roll call vote and a roll call was granted.",
+      "holds": [
+        "compound_or_repeated_question"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 1525,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "4815edd15d4f7c18cf06517ccfbe83fa9c680d7b35c07f32df294fcdbda2a090",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230216/Elections_20230216_Minutes.pdf",
+      "originalSha256": "ddeef1276bef87f121b2168d5fa8bbdcc5f8bfd04b45ab50613b9df4bb363387",
+      "textSha256": "ab0d19ad6566b339a97ab4e4771dad9e98323b5a9ea35ed2f810d1a62d3a87e3",
+      "date": "2023-02-16",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "9528174f691525d50759169aa44fab47e96d9a3593c7bc5b0eac5ec50afec8a0",
+      "motionText": "Senator Koran moved the A19 Amendment and requested a roll call. Counsel advised Senator Koran to withdraw A19 Amendment due to a technical error. Senator Koran withdrew the A19 Amendment and moved an Oral Amendment. On page 31, delete section 43. Senator Koran requested a roll call, and a roll call was granted.",
+      "holds": [
+        "intervening_or_withdrawn_question",
+        "compound_or_repeated_question"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 2659,
+      "printedChoiceOccurrences": 12
+    },
+    {
+      "sourceId": "4815edd15d4f7c18cf06517ccfbe83fa9c680d7b35c07f32df294fcdbda2a090",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230216/Elections_20230216_Minutes.pdf",
+      "originalSha256": "ddeef1276bef87f121b2168d5fa8bbdcc5f8bfd04b45ab50613b9df4bb363387",
+      "textSha256": "ab0d19ad6566b339a97ab4e4771dad9e98323b5a9ea35ed2f810d1a62d3a87e3",
+      "date": "2023-02-16",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "b485537abb999848397a97ca197b586052924138cf1298b68774c1033e97567b",
+      "motionText": "Senator Mathews moved an Oral Amendment to the A15 Amendment. On page 16, delete section 23. Senator Mathews requested a roll call, and a roll call was granted.",
+      "holds": [
+        "compound_or_repeated_question"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 3238,
+      "printedChoiceOccurrences": 12
+    },
+    {
+      "sourceId": "7b821f9cd1743cda6ed984c18318dc2e8b39537a91170fe1cd832a00d230c330",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17601&ls=93&type=minutes",
+      "originalSha256": "c83313262554616ad32e21b70772ea5fde5a2ebeb5df7f5dfff8fb88e2d1b7c1",
+      "textSha256": "c83313262554616ad32e21b70772ea5fde5a2ebeb5df7f5dfff8fb88e2d1b7c1",
+      "date": "2023-02-16",
+      "committee": "Elections",
+      "format": "html",
+      "questionKey": "9528174f691525d50759169aa44fab47e96d9a3593c7bc5b0eac5ec50afec8a0",
+      "motionText": "Senator Koran moved the A19 Amendment and requested a roll call. Counsel advised Senator Koran to withdraw A19 Amendment due to a technical error. Senator Koran withdrew the A19 Amendment and moved an Oral Amendment. On page 31, delete section 43. Senator Koran requested a roll call, and a roll call was granted.",
+      "holds": [
+        "intervening_or_withdrawn_question",
+        "compound_or_repeated_question"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 2624,
+      "printedChoiceOccurrences": 12
+    },
+    {
+      "sourceId": "7b821f9cd1743cda6ed984c18318dc2e8b39537a91170fe1cd832a00d230c330",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17601&ls=93&type=minutes",
+      "originalSha256": "c83313262554616ad32e21b70772ea5fde5a2ebeb5df7f5dfff8fb88e2d1b7c1",
+      "textSha256": "c83313262554616ad32e21b70772ea5fde5a2ebeb5df7f5dfff8fb88e2d1b7c1",
+      "date": "2023-02-16",
+      "committee": "Elections",
+      "format": "html",
+      "questionKey": "b485537abb999848397a97ca197b586052924138cf1298b68774c1033e97567b",
+      "motionText": "Senator Mathews moved an Oral Amendment to the A15 Amendment. On page 16, delete section 23. Senator Mathews requested a roll call, and a roll call was granted.",
+      "holds": [
+        "compound_or_repeated_question"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 3219,
+      "printedChoiceOccurrences": 12
+    },
+    {
+      "sourceId": "3f7ff19ad349bc7438813cf9fdfbcc9e6903662cbd06663b62347a351824aea1",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230302/Elections_20230302_Minutes.pdf",
+      "originalSha256": "15fccd136330e8a949ca9d16bd7f2e8e263466135316c7cc3d0ce5d56c5b7188",
+      "textSha256": "09216cd1673f7713b2991c0f6e3933c20a6e3ef5d3eb8621c1e1f48a7377f2d2",
+      "date": "2023-03-02",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "d92c04a66f595fa1d50f0735238a2c573da8228cf65f875b0543978318c6e6c0",
+      "motionText": "Senator Koran moved an Oral Amendment. On page 7, delete lines 11-14. Senator Koran requested a roll call, and a roll call was granted.",
+      "holds": [
+        "compound_or_repeated_question",
+        "unresolved_amendment_identity"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 1339,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "374138295b04e641588cf2b016a381bdf73947275428f596428ecab41db67755",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17662&ls=93&type=minutes",
+      "originalSha256": "a1d36be6fe8961e4be45c7a6641cba8495e9688aa37cb620f6de6b3ec25fb031",
+      "textSha256": "a1d36be6fe8961e4be45c7a6641cba8495e9688aa37cb620f6de6b3ec25fb031",
+      "date": "2023-03-02",
+      "committee": "Elections",
+      "format": "html",
+      "questionKey": "d92c04a66f595fa1d50f0735238a2c573da8228cf65f875b0543978318c6e6c0",
+      "motionText": "Senator Koran moved an Oral Amendment. On page 7, delete lines 11-14. Senator Koran requested a roll call, and a roll call was granted.",
+      "holds": [
+        "compound_or_repeated_question",
+        "unresolved_amendment_identity"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 1268,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "a8a53ce8c0007fc53cb02d3ea09a6e55862439bd3015be3f3b54dd5a371fefb1",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230307/Elections_20230307_Minutes.pdf",
+      "originalSha256": "9db4f615f45322c8a419b40daa66b536517937e85ea800e5c867c779ebacad4d",
+      "textSha256": "54cf63f480a14c658212edc4fa950153df7de6dfd1862800c29b2ad63d932286",
+      "date": "2023-03-07",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "5a41756613f6c72ea1af9c59dc73fc90efcf3bd9fbb9a6513369eba2677f0e9e",
+      "motionText": "Senator Koran moved the A2 Amendment and requested a roll call and a roll call was granted. Senator Carlson – Nay",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 1972,
+      "printedChoiceOccurrences": 12
+    },
+    {
+      "sourceId": "45eb2f12a51f83c84da6051ef10e350b858c7a017b8c1c8b99d050bbb096d3b8",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230316/Elections_20230316_Minutes.pdf",
+      "originalSha256": "2f2a09263adaeee9ed468ff468e6cc64b14b89e5feed50453190d4e719a9a7e5",
+      "textSha256": "a9fd820c67502a0750224782622cbd2a6f3a39ce01487fbc2ae5b0dd87923b1c",
+      "date": "2023-03-16",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "47732e24f11e71fc439757a3c464d7a1bb428115072c5d721329f7115034dea4",
+      "motionText": "Senator Limmer moved to amend the motion and re-refer SF 1362, as amended, to the Committee on Judiciary and Public Safety. Senator Limmer withdrew the motion to re-refer. Senator Koran requested a roll call, and a roll call was granted.",
+      "holds": [
+        "intervening_or_withdrawn_question",
+        "unresolved_amendment_identity"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 3314,
+      "printedChoiceOccurrences": 12
+    },
+    {
+      "sourceId": "92533db059da9ae413f2a02fd3c13d34ae8425d237bb1aa779e2016ec0087b39",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17825&ls=93&type=minutes",
+      "originalSha256": "18af4f426add860df5f03d2d764ecfe0cb9a42072d99e32efe9f6b5b0f934c7b",
+      "textSha256": "18af4f426add860df5f03d2d764ecfe0cb9a42072d99e32efe9f6b5b0f934c7b",
+      "date": "2023-03-16",
+      "committee": "Elections",
+      "format": "html",
+      "questionKey": "6bcb6d170c395894949e29c5aff5b0d97ee213db8bf699c5ff77bb2d8f63fc01",
+      "motionText": "Senator Limmer moved to amend the motion and re-refer SF 1362, as amended, to the Committee on Judiciary and Public Safety. Senator Limmer withdrew motion to re-refer. Senator Koran requested a roll call, and a roll call was granted.",
+      "holds": [
+        "intervening_or_withdrawn_question",
+        "unresolved_amendment_identity"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 3199,
+      "printedChoiceOccurrences": 12
+    },
+    {
+      "sourceId": "c78451a57beb19fb21f9d90018e64f4ec266e22a576899e5accea29060c5c2d7",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230323/Jobs_20230323_Minutes.pdf",
+      "originalSha256": "567e50c37e53bf80462d90903e2eedb924e0e64e76bd33ec797ff773e7008ce9",
+      "textSha256": "78ef56daec8738caeca75fa1e43c8d33113107153e601ecc8e9870ec3d4ee36c",
+      "date": "2023-03-23",
+      "committee": "Jobs and Economic Development",
+      "format": "pdf",
+      "questionKey": "acd1c6b22bcac484940b28a829d69fb92fb1e81c4ffe59202cf1fe2f79075319",
+      "motionText": "Senator Draheim moves the A87 amendment and walks through the amendment at 6:55 PM. Questions on the A87 amendment begin at 6:57 PM and ends at 7:00 PM. The motion fails and the amendment is not adopted. Senator Pratt motions for a roll call vote to lay SF 2 on the table until there is an updated `scal note. A roll call vote is granted at 7:06 PM Chair, Senator Champion: No -- 2 of 4 -- 12/27/23, 3:28 PM Minnesota State Senate Page 3 of 4 https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17898&ls=93",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 4371,
+      "printedChoiceOccurrences": 8
+    },
+    {
+      "sourceId": "c78451a57beb19fb21f9d90018e64f4ec266e22a576899e5accea29060c5c2d7",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230323/Jobs_20230323_Minutes.pdf",
+      "originalSha256": "567e50c37e53bf80462d90903e2eedb924e0e64e76bd33ec797ff773e7008ce9",
+      "textSha256": "78ef56daec8738caeca75fa1e43c8d33113107153e601ecc8e9870ec3d4ee36c",
+      "date": "2023-03-23",
+      "committee": "Jobs and Economic Development",
+      "format": "pdf",
+      "questionKey": "636dfdaec6f2f01e9fd5ae0a65d06154989574b5ef2070c9a2a6afc7d163063e",
+      "motionText": "Senator Draheim moves the A87 amendment and walks through the amendment at 6:55 PM. Questions on the A87 amendment begin at 6:57 PM and ends at 7:00 PM. The motion fails and the amendment is not adopted. Senator Pratt motions for a roll call vote to lay SF 2 on the table until there is an updated `scal note. A roll call vote is granted at 7:06 PM Chair, Senator Champion: No -- 2 of 4 -- 12/27/23, 3:28 PM Minnesota State Senate Page 3 of 4 https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17898&ls=93 Vice Chair, Senator Mohamed: No Ranking, Senator Draheim: Yes Senator Gustafson: No Senator Hawj: No Senator Housley: Yes Senator Pratt: Yes Senator Putnam: No Senator Nelson: Yes The motions does not prevail. Senator Pratt Motions for SF2 to be passed without recommendation to Higher Education at 7:08 PM. Questions on the motion begin at 7:10 PM and end at 7:11 PM Senator Draheim motions for a roll call vote on Senator Pratts motion to pass without recommendation to higher education at 7:12 PM. A roll call vote is granted at 7:13 PM",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 4911,
+      "printedChoiceOccurrences": 9
+    },
+    {
+      "sourceId": "c78451a57beb19fb21f9d90018e64f4ec266e22a576899e5accea29060c5c2d7",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230323/Jobs_20230323_Minutes.pdf",
+      "originalSha256": "567e50c37e53bf80462d90903e2eedb924e0e64e76bd33ec797ff773e7008ce9",
+      "textSha256": "78ef56daec8738caeca75fa1e43c8d33113107153e601ecc8e9870ec3d4ee36c",
+      "date": "2023-03-23",
+      "committee": "Jobs and Economic Development",
+      "format": "pdf",
+      "questionKey": "d67df2a8d34aa70821b7e8133381dc9e642d1b37737a855152f1d69ae5564f00",
+      "motionText": "Senator Draheim moves the A87 amendment and walks through the amendment at 6:55 PM. Questions on the A87 amendment begin at 6:57 PM and ends at 7:00 PM. The motion fails and the amendment is not adopted. Senator Pratt motions for a roll call vote to lay SF 2 on the table until there is an updated `scal note. A roll call vote is granted at 7:06 PM Chair, Senator Champion: No -- 2 of 4 -- 12/27/23, 3:28 PM Minnesota State Senate Page 3 of 4 https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17898&ls=93 Vice Chair, Senator Mohamed: No Ranking, Senator Draheim: Yes Senator Gustafson: No Senator Hawj: No Senator Housley: Yes Senator Pratt: Yes Senator Putnam: No Senator Nelson: Yes The motions does not prevail. Senator Pratt Motions for SF2 to be passed without recommendation to Higher Education at 7:08 PM. Questions on the motion begin at 7:10 PM and end at 7:11 PM Senator Draheim motions for a roll call vote on Senator Pratts motion to pass without recommendation to higher education at 7:12 PM. A roll call vote is granted at 7:13 PM Chair, Senator Champion: No Vice Chair, Senator Mohamed: No Ranking, Senator Draheim: Yes Senator Gustafson: No Senator Hawj: No Senator Housley: Yes Senator Pratt: Yes Senator Putnam: No Senator Nelson: Yes The motion does not prevail at 7:13 PM. Senator Nelson motions for SF 2 to be laid on the table. A roll call vote was requested. A roll call vote was granted at 7:14 PM.",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 5289,
+      "printedChoiceOccurrences": 4
+    },
+    {
+      "sourceId": "c78451a57beb19fb21f9d90018e64f4ec266e22a576899e5accea29060c5c2d7",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230323/Jobs_20230323_Minutes.pdf",
+      "originalSha256": "567e50c37e53bf80462d90903e2eedb924e0e64e76bd33ec797ff773e7008ce9",
+      "textSha256": "78ef56daec8738caeca75fa1e43c8d33113107153e601ecc8e9870ec3d4ee36c",
+      "date": "2023-03-23",
+      "committee": "Jobs and Economic Development",
+      "format": "pdf",
+      "questionKey": "5fa74f16ff8746fc1d3808e44fcbe9983cdeef785b31c205b821ee7795de7a49",
+      "motionText": "Senator Draheim moves the A87 amendment and walks through the amendment at 6:55 PM. Questions on the A87 amendment begin at 6:57 PM and ends at 7:00 PM. The motion fails and the amendment is not adopted. Senator Pratt motions for a roll call vote to lay SF 2 on the table until there is an updated `scal note. A roll call vote is granted at 7:06 PM Chair, Senator Champion: No -- 2 of 4 -- 12/27/23, 3:28 PM Minnesota State Senate Page 3 of 4 https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17898&ls=93 Vice Chair, Senator Mohamed: No Ranking, Senator Draheim: Yes Senator Gustafson: No Senator Hawj: No Senator Housley: Yes Senator Pratt: Yes Senator Putnam: No Senator Nelson: Yes The motions does not prevail. Senator Pratt Motions for SF2 to be passed without recommendation to Higher Education at 7:08 PM. Questions on the motion begin at 7:10 PM and end at 7:11 PM Senator Draheim motions for a roll call vote on Senator Pratts motion to pass without recommendation to higher education at 7:12 PM. A roll call vote is granted at 7:13 PM Chair, Senator Champion: No Vice Chair, Senator Mohamed: No Ranking, Senator Draheim: Yes Senator Gustafson: No Senator Hawj: No Senator Housley: Yes Senator Pratt: Yes Senator Putnam: No Senator Nelson: Yes The motion does not prevail at 7:13 PM. Senator Nelson motions for SF 2 to be laid on the table. A roll call vote was requested. A roll call vote was granted at 7:14 PM. Chair, Senator Champion: No Vice Chair, Senator Mohamed: No Ranking, Senator Draheim: N/A Senator Gustafson: No Senator Hawj: No -- 3 of 4 -- 12/27/23, 3:28 PM Minnesota State Senate Page 4 of 4 https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17898&ls=93",
+      "holds": [
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_outcome",
+      "sourceOffset": 5561,
+      "printedChoiceOccurrences": 4
+    },
+    {
+      "sourceId": "12ab82b9d5e8db52e916559760abc3b4b81439e4444552973834657473fd909e",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17898&ls=93&type=minutes",
+      "originalSha256": "275cfd16195279f68b213939b764ab02a4a4443a3523f9e848bd325553731fbb",
+      "textSha256": "275cfd16195279f68b213939b764ab02a4a4443a3523f9e848bd325553731fbb",
+      "date": "2023-03-23",
+      "committee": "Jobs and Economic Development",
+      "format": "html",
+      "questionKey": "3f3bd587ef87e34c3294ee9865fa80ba265c9fba4d61d471fea679f77263418e",
+      "motionText": "Senator Draheim moves the A87 amendment and walks through the amendment at 6:55 PM. Questions on the A87 amendment begin at 6:57 PM and ends at 7:00 PM. The motion fails and the amendment is not adopted. Senator Pratt motions for a roll call vote to lay SF 2 on the table until there is an updated fiscal note. A roll call vote is granted at 7:06 PM",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 3845,
+      "printedChoiceOccurrences": 9
+    },
+    {
+      "sourceId": "12ab82b9d5e8db52e916559760abc3b4b81439e4444552973834657473fd909e",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17898&ls=93&type=minutes",
+      "originalSha256": "275cfd16195279f68b213939b764ab02a4a4443a3523f9e848bd325553731fbb",
+      "textSha256": "275cfd16195279f68b213939b764ab02a4a4443a3523f9e848bd325553731fbb",
+      "date": "2023-03-23",
+      "committee": "Jobs and Economic Development",
+      "format": "html",
+      "questionKey": "afd22cc924fb60e75d7975fcece7cdc52a57dcbead2cb2800c5d40f93351e1b7",
+      "motionText": "Senator Draheim moves the A87 amendment and walks through the amendment at 6:55 PM. Questions on the A87 amendment begin at 6:57 PM and ends at 7:00 PM. The motion fails and the amendment is not adopted. Senator Pratt motions for a roll call vote to lay SF 2 on the table until there is an updated fiscal note. A roll call vote is granted at 7:06 PM Chair, Senator Champion: No Vice Chair, Senator Mohamed: No Ranking, Senator Draheim: Yes Senator Gustafson: No Senator Hawj: No Senator Housley: Yes Senator Pratt: Yes Senator Putnam: No Senator Nelson: Yes The motions does not prevail. Senator Pratt Motions for SF2 to be passed without recommendation to Higher Education at 7:08 PM. Questions on the motion begin at 7:10 PM and end at 7:11 PM Senator Draheim motions for a roll call vote on Senator Pratts motion to pass without recommendation to higher education at 7:12 PM. A roll call vote is granted at 7:13 PM",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 4426,
+      "printedChoiceOccurrences": 9
+    },
+    {
+      "sourceId": "12ab82b9d5e8db52e916559760abc3b4b81439e4444552973834657473fd909e",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17898&ls=93&type=minutes",
+      "originalSha256": "275cfd16195279f68b213939b764ab02a4a4443a3523f9e848bd325553731fbb",
+      "textSha256": "275cfd16195279f68b213939b764ab02a4a4443a3523f9e848bd325553731fbb",
+      "date": "2023-03-23",
+      "committee": "Jobs and Economic Development",
+      "format": "html",
+      "questionKey": "a8d1e479b50b150e7e2737417303ec5acd4bd539987c914f633cdfd155d4c5cf",
+      "motionText": "Senator Draheim moves the A87 amendment and walks through the amendment at 6:55 PM. Questions on the A87 amendment begin at 6:57 PM and ends at 7:00 PM. The motion fails and the amendment is not adopted. Senator Pratt motions for a roll call vote to lay SF 2 on the table until there is an updated fiscal note. A roll call vote is granted at 7:06 PM Chair, Senator Champion: No Vice Chair, Senator Mohamed: No Ranking, Senator Draheim: Yes Senator Gustafson: No Senator Hawj: No Senator Housley: Yes Senator Pratt: Yes Senator Putnam: No Senator Nelson: Yes The motions does not prevail. Senator Pratt Motions for SF2 to be passed without recommendation to Higher Education at 7:08 PM. Questions on the motion begin at 7:10 PM and end at 7:11 PM Senator Draheim motions for a roll call vote on Senator Pratts motion to pass without recommendation to higher education at 7:12 PM. A roll call vote is granted at 7:13 PM Chair, Senator Champion: No Vice Chair, Senator Mohamed: No Ranking, Senator Draheim: Yes Senator Gustafson: No Senator Hawj: No Senator Housley: Yes Senator Pratt: Yes Senator Putnam: No Senator Nelson: Yes The motion does not prevail at 7:13 PM. Senator Nelson motions for SF 2 to be laid on the table. A roll call vote was requested. A roll call vote was granted at 7:14 PM.",
+      "holds": [
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_outcome",
+      "sourceOffset": 4815,
+      "printedChoiceOccurrences": 8
+    },
+    {
+      "sourceId": "fbbac630ea7033076d35f2103e8961164c59990e5381d303a49296ef076b6498",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17893&ls=93&type=minutes",
+      "originalSha256": "15f53b3a2389a3feb5961a3dda7e27351b2927de26138e9e42e135ef612c0639",
+      "textSha256": "15f53b3a2389a3feb5961a3dda7e27351b2927de26138e9e42e135ef612c0639",
+      "date": "2023-03-23",
+      "committee": "State and Local Government and Veterans",
+      "format": "html",
+      "questionKey": "9d66df12abef033324beed3e866f42ad678c7b0ee0a50d82a0e2338716741cf3",
+      "motionText": "Senator Murphy moved SF1424, as amended be recommended to pass.",
+      "holds": [
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_outcome",
+      "sourceOffset": 1489,
+      "printedChoiceOccurrences": 2
+    },
+    {
+      "sourceId": "ba2c0053bc05ec00b2bb605c45ea9cc9ac9474d38c5e865e71321ec639da77be",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/finstlocalgov/20230403/finstlocalgov_20230403_Minutes.pdf",
+      "originalSha256": "9c1629bef81ad03fc96929df3c1682fac7f640b8a9ef6891cf0bff04c4f45a84",
+      "textSha256": "f277ad39baf640e40ab903a5423e0ff5fab960e2686e4b2d53e57280f9112347",
+      "date": "2023-04-03",
+      "committee": "State and Local Government and Veterans",
+      "format": "pdf",
+      "questionKey": "762785e20ecf1dc7bc44a51b32f9fbab8b6783066389cc462ca7756da61decab",
+      "motionText": "Senator Murphy moved SF1426A28. Roll call requested.",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 1570,
+      "printedChoiceOccurrences": 2
+    },
+    {
+      "sourceId": "ba2c0053bc05ec00b2bb605c45ea9cc9ac9474d38c5e865e71321ec639da77be",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/finstlocalgov/20230403/finstlocalgov_20230403_Minutes.pdf",
+      "originalSha256": "9c1629bef81ad03fc96929df3c1682fac7f640b8a9ef6891cf0bff04c4f45a84",
+      "textSha256": "f277ad39baf640e40ab903a5423e0ff5fab960e2686e4b2d53e57280f9112347",
+      "date": "2023-04-03",
+      "committee": "State and Local Government and Veterans",
+      "format": "pdf",
+      "questionKey": "f4944ccd3f9f03cda9e7125db0c15f03a5e535f210bb28b657a138e36dbd4e29",
+      "motionText": "Senator Murphy moved SF1426A28. Roll call requested. Chair Mitchell - YES Lead Anderson - NO Print -- 1 of 3 -- 9/28/23, 2:34 PM Minnesota State Senate https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17940&ls=93 2/3",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 1752,
+      "printedChoiceOccurrences": 11
+    },
+    {
+      "sourceId": "ba2c0053bc05ec00b2bb605c45ea9cc9ac9474d38c5e865e71321ec639da77be",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/finstlocalgov/20230403/finstlocalgov_20230403_Minutes.pdf",
+      "originalSha256": "9c1629bef81ad03fc96929df3c1682fac7f640b8a9ef6891cf0bff04c4f45a84",
+      "textSha256": "f277ad39baf640e40ab903a5423e0ff5fab960e2686e4b2d53e57280f9112347",
+      "date": "2023-04-03",
+      "committee": "State and Local Government and Veterans",
+      "format": "pdf",
+      "questionKey": "32f5c435e3533a250c507569a393127f1c0f326ffffc98d45c87c8db894a6b03",
+      "motionText": "Senator Koran moved SF1426A21. Roll call requested",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 2099,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "ba2c0053bc05ec00b2bb605c45ea9cc9ac9474d38c5e865e71321ec639da77be",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/finstlocalgov/20230403/finstlocalgov_20230403_Minutes.pdf",
+      "originalSha256": "9c1629bef81ad03fc96929df3c1682fac7f640b8a9ef6891cf0bff04c4f45a84",
+      "textSha256": "f277ad39baf640e40ab903a5423e0ff5fab960e2686e4b2d53e57280f9112347",
+      "date": "2023-04-03",
+      "committee": "State and Local Government and Veterans",
+      "format": "pdf",
+      "questionKey": "4b089324907d2a48c00d31b1346e5e88f7542c000179f73bc0cac4a910c7e9d8",
+      "motionText": "Senator Koran moved SF1426A21. Roll call requested Chair Mitchell - NO Lead Anderson - YES Senator Bahr - YES Senator Carlson - NO Senator Cwodzinski - NO Senator Drazkowski - YES Senator Fateh - NO Senator Gustafson - NO Senator Jasinski - YES Senator Koran - YES Senator Lang - YES Senator Maye Quade - NO Senator Morrison - NO Senator Murphy - NO With 8 voting NO and 6 voting YES, motion failed. Stacie Christensen, Deputy Commissioner and General Counsel at Minnesota Department of Administration, joined Senator Murphy at the testier table to answer member questions. Senator Murphy renewed her motion that SF1426, as amended, be recommended to pass and re-referred to Finance Committee. Roll call requested.",
+      "holds": [
+        "intervening_or_withdrawn_question",
+        "compound_or_repeated_question"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 2763,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "76adcae912d152f1c1907a088b6b15e14175d109722203fc5cee291984d9d411",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+      "originalSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "textSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "date": "2023-04-03",
+      "committee": "State and Local Government and Veterans",
+      "format": "html",
+      "questionKey": "5bc11d883bc3769e99f6af8f8268f35bd6892db0606c0e15d066166c6f247c47",
+      "motionText": "Senator Koran moved SF1426A21. Roll call requested Chair Mitchell - NO Lead Anderson - YES Senator Bahr - YES Senator Carlson - NO Senator Cwodzinski - NO Senator Drazkowski - YES Senator Fateh - NO Senator Gustafson - NO Senator Jasinski - YES Senator Koran - YES Senator Lang - YES Senator Maye Quade - NO Senator Morrison - NO Senator Murphy - NO With 8 voting NO and 6 voting YES, motion failed. Stacie Christensen, Deputy Commissioner and General Counsel at Minnesota Department of Administration, joined Senator Murphy at the testifier table to answer member questions. Senator Murphy renewed her motion that SF1426, as amended, be recommended to pass and re-referred to Finance Committee. Roll call requested.",
+      "holds": [
+        "intervening_or_withdrawn_question",
+        "compound_or_repeated_question"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 2433,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "44467e2c707f408b0572e8250924f570e28a0556e88004d6433d59e780c3dd38",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18222&ls=93&type=minutes",
+      "originalSha256": "7e233d4f21a98fb044a85570d114ee320ad4cd93eed9e348b0c090e4fc342a90",
+      "textSha256": "7e233d4f21a98fb044a85570d114ee320ad4cd93eed9e348b0c090e4fc342a90",
+      "date": "2023-05-17",
+      "committee": "Conference Committee on S.F. 2934",
+      "format": "html",
+      "questionKey": "a12e32f8ff3a448418298be6f295e4c173188c23013089c7236f594605885157",
+      "motionText": "Chair Hoffman moves the adoption of CCRSF2934. The CLA will take the role, starting with the Senate.",
+      "holds": [
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_outcome",
+      "sourceOffset": 2718,
+      "printedChoiceOccurrences": 4
+    },
+    {
+      "sourceId": "546d23281ac6bd99c7a85b4a38569a19f287bd3451a5e85aaf7235adf496fced",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/human/20230517/Human_20230517_Minutes.pdf",
+      "originalSha256": "9f03c5201cfa49cd2369851543e42393c7b05a6ec8acb0b04ccdbd79d02297b0",
+      "textSha256": "6d3df5c68e5dcb7bdbc7e0e4c82f9296a4c883476d0b134a38e57ef1c2bab144",
+      "date": "2023-05-17",
+      "committee": "Human Services",
+      "format": "pdf",
+      "questionKey": "dd062a24721ce02cabe92d361ea87448313cb461dbd6e1a3c23413959644c05b",
+      "motionText": "Chair Hoffman moves the adoption of CCRSF2934. The CLA will take the role, starting with the Senate.",
+      "holds": [
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_outcome",
+      "sourceOffset": 3134,
+      "printedChoiceOccurrences": 4
+    },
+    {
+      "sourceId": "10b73de8d4bec6d5abf067f8e899ecc70c3a119fe9a71c5128af512133617749",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240229/Elections_20240229_Minutes.pdf",
+      "originalSha256": "047bf8bd09b9a579057fbe4db1d2e1b248c0515f2870478b0b8ab573e69d585c",
+      "textSha256": "757b484a2792a5e8d5fc6fa094280c42ac5fd2049d27c4399a1c745aecbba919",
+      "date": "2024-02-29",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "ca47d8e58a818f1a86aad16d5264100eeadc7353a81a4f8c5e3bdfba46b80fde",
+      "motionText": "Senator Mathews moved an oral amendment, on page 8, delete Section 33 from the A6 Author’s Amendment. Senator Mathews requested a roll call, and a roll call was granted.",
+      "holds": [
+        "compound_or_repeated_question"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 1077,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "10b73de8d4bec6d5abf067f8e899ecc70c3a119fe9a71c5128af512133617749",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240229/Elections_20240229_Minutes.pdf",
+      "originalSha256": "047bf8bd09b9a579057fbe4db1d2e1b248c0515f2870478b0b8ab573e69d585c",
+      "textSha256": "757b484a2792a5e8d5fc6fa094280c42ac5fd2049d27c4399a1c745aecbba919",
+      "date": "2024-02-29",
+      "committee": "Elections",
+      "format": "pdf",
+      "questionKey": "1cf57c774f25531f5b97e19dec6a0e2e60467127ed3a4f39540553e7459f8f9a",
+      "motionText": "Senator Koran moved an Oral Amendment to the A6 Author’s Amendment. On page 8, line 22, delete the new language. On page 8, line 23, delete the new language. On page 8, line 24, delete the word, -- 1 of 3 -- “location.” Senator Koran requested a roll call, and a roll call was granted.",
+      "holds": [
+        "compound_or_repeated_question"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 1981,
+      "printedChoiceOccurrences": 14
+    },
+    {
+      "sourceId": "6f4b17042bcf304e3e31509d116c2541ebc2d822642a3cd5b11f22693fec9935",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/jobs/20240320/Jobs_20240320_Minutes.pdf",
+      "originalSha256": "ac2755f28f41874fb024cd97c42980257c9739129b8df279648a7a25ebbe2560",
+      "textSha256": "11bbf31853af87341341c4289c9e4fc2e792fe7cc2dca43090ed6023b53cb124",
+      "date": "2024-03-20",
+      "committee": "Jobs and Economic Development",
+      "format": "pdf",
+      "questionKey": "9b6fd05ad19f7ae3c33e06f5057802a5ff3a77ed97fd340eb42ceb095b8d88c1",
+      "motionText": "Senator Draheim offers the A6 amendment during questioning at 12:47pm A roll call vote is called on the adoption of the A6 amendment at 12:52pm",
+      "holds": [
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_outcome",
+      "sourceOffset": 1876,
+      "printedChoiceOccurrences": 2
+    },
+    {
+      "sourceId": "6f4b17042bcf304e3e31509d116c2541ebc2d822642a3cd5b11f22693fec9935",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/jobs/20240320/Jobs_20240320_Minutes.pdf",
+      "originalSha256": "ac2755f28f41874fb024cd97c42980257c9739129b8df279648a7a25ebbe2560",
+      "textSha256": "11bbf31853af87341341c4289c9e4fc2e792fe7cc2dca43090ed6023b53cb124",
+      "date": "2024-03-20",
+      "committee": "Jobs and Economic Development",
+      "format": "pdf",
+      "questionKey": "3255b2387e14768e24ab1bfee792d2c9cf6b2087fe19fec51ee8a634a6aceedd",
+      "motionText": "Senator Champion moved that S.F. 4027, as amended, recommended to pass and placed on the Consent Calendar. - MOTION PREVAILED. S.F. 3502: Senator Maye Quade: Grant appropriation to nonproCts to support LGBTQ people relocating to Minnesota TestiCers: Aaron Zimmerman (he/him) – Executive Director of PFund Foundation Dr. Angela Kade Goepferd (they/them) - Chief Education O_cer and Medical Director of Gender Health at Children’s Minnesota.",
+      "holds": [
+        "intervening_or_withdrawn_question",
+        "contradictory_bill_association",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "question_identity",
+      "sourceOffset": 2520,
+      "printedChoiceOccurrences": 7
+    },
+    {
+      "sourceId": "a2a97e995291bba8ec34e2672723934d3a3f6039505fb0338b8b7a01c790e5cd",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18444&ls=93&type=minutes",
+      "originalSha256": "d050487ed4ead1cb4008973b5988baaad4adfdfb8e5849a630a2a730e29c665e",
+      "textSha256": "d050487ed4ead1cb4008973b5988baaad4adfdfb8e5849a630a2a730e29c665e",
+      "date": "2024-03-20",
+      "committee": "Jobs and Economic Development",
+      "format": "html",
+      "questionKey": "9b6fd05ad19f7ae3c33e06f5057802a5ff3a77ed97fd340eb42ceb095b8d88c1",
+      "motionText": "Senator Draheim offers the A6 amendment during questioning at 12:47pm A roll call vote is called on the adoption of the A6 amendment at 12:52pm",
+      "holds": [
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "printed_tally_or_incomplete_rows",
+      "sourceOffset": 1659,
+      "printedChoiceOccurrences": 9
+    },
+    {
+      "sourceId": "f6a69a816d6e1dbb6b20241817ea4745f94a84bab508a2628d6a6e051d87aef6",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/rulesethical/20240507/rulesethical_20240507_Minutes.pdf",
+      "originalSha256": "bf4d6924cd038a0de628e2b4f3287a6b217560b5ce01bc5b90002010bb1e54b2",
+      "textSha256": "2b2c7ea92e5854a27cd9bca5bc15569f9e1c47612d56cd094efd03c51c287496",
+      "date": "2024-05-07",
+      "committee": "Rules and Administration - Subcommittee on Ethical Conduct",
+      "format": "pdf",
+      "questionKey": "91d68906f5594858aafd56d3d1275f26ace847a6d99d42e12d95e16f3bf4c630",
+      "motionText": "Senator Mathews moves that the subcommittee on ethics Xnds no probable cause that the violations outline in the Senator Mitchell complaint occurred at 8:54pm. Senator Mathews request a roll call vote, a roll call is granted",
+      "holds": [
+        "unresolved_bill_or_nonbill_question"
+      ],
+      "primaryCause": "nonbill_question",
+      "sourceOffset": 6278,
+      "printedChoiceOccurrences": 4
+    },
+    {
+      "sourceId": "4f9cbb26996fddecb5099e0485422d8ebeeef3b52dfb0630cd48ae3c5e317d87",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18732&ls=93&type=minutes",
+      "originalSha256": "0ce602314bcffb6c77597894165f70525b48e29e6fb50d2a9f0ceb45fb7c2a80",
+      "textSha256": "0ce602314bcffb6c77597894165f70525b48e29e6fb50d2a9f0ceb45fb7c2a80",
+      "date": "2024-05-07",
+      "committee": "Rules and Administration - Subcommittee on Ethical Conduct",
+      "format": "html",
+      "questionKey": "9ec92c39438bed20ce7f2230ebe818a5cdbf722e65f18fad71045cdf8e206c73",
+      "motionText": "Senator Mathews moves that the subcommittee on ethics finds no probable cause that the violations outline in the Senator Mitchell complaint occurred at 8:54pm. Senator Mathews request a roll call vote, a roll call is granted",
+      "holds": [
+        "unresolved_bill_or_nonbill_question"
+      ],
+      "primaryCause": "nonbill_question",
+      "sourceOffset": 5692,
+      "printedChoiceOccurrences": 4
+    },
+    {
+      "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+      "originalSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "textSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "date": "2024-06-05",
+      "committee": "Rules and Administration",
+      "format": "html",
+      "questionKey": "c56a9ae82b5154ccb48f562649a60e27a27a974185319c6a5258138f388a8891",
+      "motionText": "Senator Marty moved to approve the Interim travel expenses and per diem letter. Senator Frentz requested a roll call vote. Vote on Approval on Senate travel policy update",
+      "holds": [
+        "unresolved_bill_or_nonbill_question",
+        "ambiguous_or_missing_printed_outcome"
+      ],
+      "primaryCause": "nonbill_question",
+      "sourceOffset": 863,
+      "printedChoiceOccurrences": 9
+    },
+    {
+      "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+      "originalSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "textSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "date": "2024-06-05",
+      "committee": "Rules and Administration",
+      "format": "html",
+      "questionKey": "eec1148a0498f2a23db44a0b6c644e58d0e8b9e56ec0f895f1b436bc2d9dba8a",
+      "motionText": "Senator Rest moved to approve the Senate travel policy update. Senator Frentz requested a roll call vote. Vote on Approval on Senate travel policy update",
+      "holds": [
+        "unresolved_bill_or_nonbill_question",
+        "ambiguous_or_missing_printed_outcome"
+      ],
+      "primaryCause": "nonbill_question",
+      "sourceOffset": 1553,
+      "printedChoiceOccurrences": 9
+    },
+    {
+      "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+      "originalSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "textSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "date": "2024-06-05",
+      "committee": "Rules and Administration",
+      "format": "html",
+      "questionKey": "e758870f7d2a0131fb155578bf2103efe2ac09aca3615b537d5e3c82529b4d92",
+      "motionText": "Senator Rest moved to approve the Senate employee roster. Senator Frentz requested a roll call vote. Vote on Approval on Senate employee roster:",
+      "holds": [
+        "unresolved_bill_or_nonbill_question",
+        "ambiguous_or_missing_printed_outcome"
+      ],
+      "primaryCause": "nonbill_question",
+      "sourceOffset": 2208,
+      "printedChoiceOccurrences": 8
+    },
+    {
+      "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+      "originalSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "textSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "date": "2024-06-05",
+      "committee": "Rules and Administration",
+      "format": "html",
+      "questionKey": "5c38eb82d25e366f6272167c4de257a956169c638c23c4efdc6f11b7b7d1740f",
+      "motionText": "Senator Rest moved to adopt Committee Resolution 12-1. Senator Frentz requested a roll call vote. Vote on Committee Resolution 12-1:",
+      "holds": [
+        "unresolved_bill_or_nonbill_question",
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "nonbill_question",
+      "sourceOffset": 3027,
+      "printedChoiceOccurrences": 2
+    },
+    {
+      "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+      "originalSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "textSha256": "3989fd4528b86da480695c8211742ee679aaf229575a6f8914eae9dc4f033321",
+      "date": "2024-06-05",
+      "committee": "Rules and Administration",
+      "format": "html",
+      "questionKey": "22894942e6ce838c8aefc1be1b8f350025a9af20a87fea90972b80b6075e8ede",
+      "motionText": "Senator Rest moved to adopt Committee Resolution 12-1. Senator Frentz requested a roll call vote. Vote on Committee Resolution 12-1: Chair Murphy: Aye Vice Chair Rest: Aye Senator Lead Johnson:",
+      "holds": [
+        "unresolved_bill_or_nonbill_question",
+        "ambiguous_or_missing_printed_outcome",
+        "missing_or_disagreeing_printed_tally"
+      ],
+      "primaryCause": "nonbill_question",
+      "sourceOffset": 3092,
+      "printedChoiceOccurrences": 6
+    }
+  ],
+  "limitations": [
+    "Held occurrences include duplicate originals and fragments; their decrease is not a count of recovered votes.",
+    "Five newly proven source witnesses cover four already proven keys and one new key. Production additions require separate guarded reconciliation.",
+    "All prior source-proven questions, choice counts and complete-passage hashes are preserved.",
+    "The 247 OCR originals remain visually uncertified; text-negative findings do not prove no named roll.",
+    "Six missing-Minutes dates, the acquired unparseable Finance PDF, date/attendance conflicts, cross-original aliases and 2021/2022 print equivalence remain held.",
+    "Remaining questions require exact independent evidence or a separately validated complete-question extractor; no tally/slate inference or speculative reconstruction is admitted."
+  ]
+}

@@ -14,11 +14,11 @@ const compact=s=>s.replace(/\s+/g,' ').trim();
 const canonical=s=>norm(s.replace(/\b([HS])\s*\.?\s*F\s*\.?\s*0*(\d+)\b/gi,(_,a,b)=>a+'F'+Number(b)).replace(/\bA-(\d+)/gi,'A$1'));
 const bills=s=>[...new Set([...s.matchAll(/\b([HS])\s*\.?\s*F\s*\.?\s*(?:No\.?\s*)?0*(\d+)(?=A-?\d+\b|\b)/gi)].map(m=>m[1].toUpperCase()+'F'+Number(m[2])))];
 const ref=s=>String(s||'').toUpperCase().replace(/[-\s]/g,'');
-const ROW=/^\s*(?:(?:Senator|Sen\.)\s+|(?:Vice\s+Chair|Chair|Lead|Ranking)\s*,?\s+(?:(?:Senator|Sen\.)\s+)?)(.+?)\s*[-–—:]\s*(Yea|Yeas|Aye|Ayes|Yes|Nay|Nays|No|Noes|Absent|Excused|Pass|Abstain(?:ed)?|Not Voting|N\/A)\s*\.?\s*$/i;
+const ROW=/^\s*(?:(?:Senator|Sen\.)\s+|(?:Vice\s+Chair|Chair|Lead|Ranking)\s*,?\s+(?:(?:Senator|Sen\.)\s+)?)(.+?)\s*[-–—:]\s*(Yea|Yeas|Aye|Ayes|Yes|Yay|Yays|Nay|Nays|No|Noes|Absent|Absence|Excused|Pass|Abstain(?:ed)?|Not Voting|N\/A)\s*\.?\s*$/i;
 const MOTION=/\b(?:Senator|Vice\s+Chair|Chair|Lead)\s+([\p{L}.'-]+(?:\s+(?!Senator\b)[\p{L}.'-]+){0,3}?)\s+(?:moved|moves|offered|offers)\b/giu;
 const OUTCOME=/\b(?:the\s+)?(?:m\s?otions?|amendment)\s+(?:was\s+|is\s+)?(did not prevail|does not prevail|did not carry|not adopted|failed|fails|lost|prevailed|prevails|passed|carried|adopted)\b/gi;
 function tally(s){
- const p=[/\b(\d{1,2})\s+(?:voting\s+)?(?:yeas?|ayes?|yes)(?:\s+votes?)?\s*(?:,\s*(?:and\s+)?|and\s+|to\s+)(\d{1,2})\s+(?:voting\s+)?(?:nays?|nay|noes?|no)\b/i,
+ const p=[/\b(\d{1,2})\s+(?:voting\s+)?(?:yeas?|ayes?|yes|yays?)(?:\s+votes?)?\s*(?:,\s*(?:and\s+)?|and\s+|to\s+)(\d{1,2})\s+(?:voting\s+)?(?:nays?|nay|noes?|no)\b/i,
  /\b(?:vote\s+(?:of\s+)?|roll\s+call\s*(?:vote\s*)?)(\d{1,2})\s*[/–-]\s*(\d{1,2})\b/i];
  for(const re of p){const m=s.match(re);if(m)return {yea:Number(m[1]),nay:Number(m[2])};}
  const reverse=s.match(/\b(\d{1,2})\s+voting\s+(?:NO|NAY)\s+and\s+(\d{1,2})\s+voting\s+(?:YES|YEA)\b/i);
@@ -58,7 +58,7 @@ export function extractRowRollQuestions(text,doc){
   const start=i,entries=[];
   while(i<lines.length){
    const m=lines[i].match(ROW);
-   if(m){entries.push({name:m[1].trim(),label:m[2],choice:/^(?:yea|yeas|aye|ayes|yes)$/i.test(m[2])?'yea':/^(?:nay|nays|no|noes)$/i.test(m[2])?'nay':'other'});i++;}
+   if(m){entries.push({name:m[1].trim(),label:m[2],choice:/^(?:yea|yeas|aye|ayes|yes|yay|yays)$/i.test(m[2])?'yea':/^(?:nay|nays|no|noes)$/i.test(m[2])?'nay':'other'});i++;}
    else if(!lines[i].trim()||/^\s*--\s*\d+\s+of\s+\d+\s*--\s*$/.test(lines[i]))i++;
    else if(/^\s*\d+\s*$/.test(lines[i])){
     // Skip a page number only when the immediately preceding nonblank line

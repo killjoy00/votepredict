@@ -1,0 +1,40 @@
+{
+  "version": "senate864-population-explicit-label-repair-plan-v1",
+  "profile": "labels",
+  "expectedQuestions": 1,
+  "expectedChoices": 13,
+  "sourceDocuments": [
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17687&ls=93&type=minutes",
+      "sha256": "187af02d788e0787d57ee96e00b0ed6ae4d8acbdd94f9aeaee3bb78c09a7ff66",
+      "textSha256": "187af02d788e0787d57ee96e00b0ed6ae4d8acbdd94f9aeaee3bb78c09a7ff66",
+      "format": "html",
+      "date": "2023-03-07",
+      "committee": "Elections",
+      "session_slug": "2023-2024"
+    }
+  ],
+  "questions": [
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17687&ls=93&type=minutes",
+      "questionKey": "1b8b9df1298f93ab49e2e1bdb40bfa23e1dfc7e0c29164f692bc43cb63826c6d",
+      "billIdentifier": "SF2051",
+      "amendmentRef": "A2",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 5,
+      "nay": 8,
+      "motionText": "Senator Koran moved the A2 Amendment and requested a roll call and a roll call was granted."
+    }
+  ],
+  "productionExpected": {
+    "insertedEvents": 1,
+    "insertedChoices": 13,
+    "classificationCorrections": 0,
+    "preservedExistingTargetEventIds": 0
+  },
+  "sourceInventoryInput": {
+    "path": "docs/evaluation/source-proof/senate-864-population-original-inventory-20261023.json",
+    "sha256": "9101684f03085f6d299cd74dfbed60de0ca0852ce539106afece547941383c4d"
+  }
+}
