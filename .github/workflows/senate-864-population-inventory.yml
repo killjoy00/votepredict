@@ -54,7 +54,7 @@ jobs:
       - run: node --check scripts/inventory-senate-864-population.mjs
       - run: node --check scripts/publish-senate-864-population-reports.mjs
       - run: npm run check
-      - run: node --import tsx --test tests/senate-864-population-inventory.test.mjs tests/senate-864-population-named-rolls.test.mjs tests/senate-864-population-complete-rows.test.mjs
+      - run: node --import tsx --test tests/senate-864-population-inventory.test.mjs tests/senate-864-population-named-rolls.test.mjs tests/senate-864-population-complete-rows.test.mjs tests/senate-864-population-explicit-labels.test.mjs
       - run: npm audit --omit=dev --audit-level=high
   protected-readonly-population-inventory:
     needs: independent-tests
