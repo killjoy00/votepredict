@@ -1,0 +1,3790 @@
+{
+  "page": 1,
+  "raw300dpiPageSha256": "f65ec6989e4fb9a0726a34f4238283677bf7cbfd9d4c6fe0003e98dd639b16c3",
+  "width": 2550,
+  "height": 3300,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 15.11\nScript: Latin\nScript confidence: 1.19\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 15.11
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "f992d4a61c6ac1a1f1e68286f20a795874a61a2e64f36a9d5ffd032f3bca5ee2",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "4/15/24, 9:21 AM Minnesota Senate\n\nMinnesota State Senate\n\nLabor Committee\nTuesday, March 26, 2024\n12:30 PM, 1100 Minnesota Senate Bldg.\n\nMinutes\n\nPresent: Senator Jennifer A. McEwen - Chair, Senator Grant Hauschild - Vice Chair, Senator Gene Dornink, Senator Glenn\nH. Gruenhagen, Senator Robert J. Kupec, Senator Bill Lieske, Senator John Marty, Senator Clare Oumou Verbeten, Senator Sandra\nL. Pappas, Senator Nathan Wesenberg\n\nAbsent: No Members Absent\n\nSenator Robert J. Kupec called the meeting to order at 12:36pm.\n\nConfirmation of Minnesota Workers' Compensation Court of Appeals Chief Judge\nPatricia J Milun\n\nChief Judge Patricia Mullen gave testimony on her resume, and role at the court.\n\nMember discussion.\n\nSenator Marty moved that Confirmation of Minnesota Workers' Compensation Court of Appeals Chief Judge\nPatricia J Milun, be recommended for confirmation. - MOTION ADOPTED.\n\nConfirmation of Minnesota Workers' Compensation Court of Appeals Judge\nDeborah K Sundquist\n\nJudge Deborah K. Sundquist gave testimony on her resume, and role at the court.\n\nMember discussion.\n\nSenator Marty moved that Confirmation of Minnesota Workers' Compensation Court of Appeals Judge\nDeborah K Sundquist, be recommended for confirmation. - MOTION ADOPTED.\n\nConfirmation of Minnesota Workers' Compensation Court of Appeals Judge Sean M\nQuinn\n\nJudge Sean M. Quinn gave testimony on his resume, and role at the court.\n\nMember discussion.\n\nSenator Marty moved that Confirmation of Minnesota Workers' Compensation Court of Appeals Judge Sean M\nQuinn, be recommended for confirmation. - MOTION ADOPTED.\n\nhttps:/Avww,senate.mn/schedule/hearing_minutes, himi7hearing_id=18588als=93 412\n",
+      "textSha256": "2ce57d3063a90dfc703743bfa6b034c14a9b77d0f91e0b92cd342822be9cbb22",
+      "wordBoxes": [
+        {
+          "x": 195,
+          "y": 86,
+          "w": 75,
+          "h": 21,
+          "confidence": 82.080673,
+          "text": "4/15/24,"
+        },
+        {
+          "x": 278,
+          "y": 87,
+          "w": 37,
+          "h": 17,
+          "confidence": 87.32872,
+          "text": "9:21"
+        },
+        {
+          "x": 323,
+          "y": 87,
+          "w": 32,
+          "h": 17,
+          "confidence": 95.7425,
+          "text": "AM"
+        },
+        {
+          "x": 1290,
+          "y": 85,
+          "w": 97,
+          "h": 18,
+          "confidence": 96.249962,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1395,
+          "y": 86,
+          "w": 66,
+          "h": 16,
+          "confidence": 96.707497,
+          "text": "Senate"
+        },
+        {
+          "x": 293,
+          "y": 517,
+          "w": 336,
+          "h": 50,
+          "confidence": 95.791718,
+          "text": "Minnesota"
+        },
+        {
+          "x": 658,
+          "y": 520,
+          "w": 159,
+          "h": 47,
+          "confidence": 96.273102,
+          "text": "State"
+        },
+        {
+          "x": 846,
+          "y": 520,
+          "w": 210,
+          "h": 47,
+          "confidence": 96.408813,
+          "text": "Senate"
+        },
+        {
+          "x": 292,
+          "y": 747,
+          "w": 80,
+          "h": 26,
+          "confidence": 95.893196,
+          "text": "Labor"
+        },
+        {
+          "x": 382,
+          "y": 747,
+          "w": 158,
+          "h": 26,
+          "confidence": 95.893196,
+          "text": "Committee"
+        },
+        {
+          "x": 291,
+          "y": 795,
+          "w": 125,
+          "h": 33,
+          "confidence": 95.57737,
+          "text": "Tuesday,"
+        },
+        {
+          "x": 428,
+          "y": 795,
+          "w": 88,
+          "h": 26,
+          "confidence": 96.626099,
+          "text": "March"
+        },
+        {
+          "x": 527,
+          "y": 796,
+          "w": 42,
+          "h": 30,
+          "confidence": 96.045326,
+          "text": "26,"
+        },
+        {
+          "x": 580,
+          "y": 796,
+          "w": 71,
+          "h": 25,
+          "confidence": 96.045326,
+          "text": "2024"
+        },
+        {
+          "x": 293,
+          "y": 846,
+          "w": 80,
+          "h": 24,
+          "confidence": 95.983742,
+          "text": "12:30"
+        },
+        {
+          "x": 384,
+          "y": 845,
+          "w": 55,
+          "h": 31,
+          "confidence": 96.203552,
+          "text": "PM,"
+        },
+        {
+          "x": 451,
+          "y": 845,
+          "w": 71,
+          "h": 24,
+          "confidence": 96.678642,
+          "text": "1100"
+        },
+        {
+          "x": 533,
+          "y": 844,
+          "w": 150,
+          "h": 25,
+          "confidence": 96.402405,
+          "text": "Minnesota"
+        },
+        {
+          "x": 692,
+          "y": 845,
+          "w": 100,
+          "h": 25,
+          "confidence": 95.824295,
+          "text": "Senate"
+        },
+        {
+          "x": 802,
+          "y": 843,
+          "w": 72,
+          "h": 32,
+          "confidence": 95.824295,
+          "text": "Bldg."
+        },
+        {
+          "x": 1169,
+          "y": 941,
+          "w": 116,
+          "h": 25,
+          "confidence": 95.774002,
+          "text": "Minutes"
+        },
+        {
+          "x": 292,
+          "y": 1058,
+          "w": 118,
+          "h": 24,
+          "confidence": 96.501701,
+          "text": "Present:"
+        },
+        {
+          "x": 421,
+          "y": 1058,
+          "w": 112,
+          "h": 23,
+          "confidence": 96.445831,
+          "text": "Senator"
+        },
+        {
+          "x": 542,
+          "y": 1056,
+          "w": 119,
+          "h": 25,
+          "confidence": 96.430847,
+          "text": "Jennifer"
+        },
+        {
+          "x": 670,
+          "y": 1057,
+          "w": 27,
+          "h": 24,
+          "confidence": 96.430847,
+          "text": "A."
+        },
+        {
+          "x": 709,
+          "y": 1057,
+          "w": 119,
+          "h": 24,
+          "confidence": 93.101379,
+          "text": "McEwen"
+        },
+        {
+          "x": 838,
+          "y": 1068,
+          "w": 10,
+          "h": 5,
+          "confidence": 77.232651,
+          "text": "-"
+        },
+        {
+          "x": 859,
+          "y": 1055,
+          "w": 78,
+          "h": 31,
+          "confidence": 96.741493,
+          "text": "Chair,"
+        },
+        {
+          "x": 948,
+          "y": 1057,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.527573,
+          "text": "Senator"
+        },
+        {
+          "x": 1070,
+          "y": 1057,
+          "w": 78,
+          "h": 23,
+          "confidence": 93.274506,
+          "text": "Grant"
+        },
+        {
+          "x": 1158,
+          "y": 1055,
+          "w": 141,
+          "h": 25,
+          "confidence": 92.148582,
+          "text": "Hauschild"
+        },
+        {
+          "x": 1309,
+          "y": 1067,
+          "w": 10,
+          "h": 5,
+          "confidence": 92.148582,
+          "text": "-"
+        },
+        {
+          "x": 1328,
+          "y": 1055,
+          "w": 64,
+          "h": 25,
+          "confidence": 96.903618,
+          "text": "Vice"
+        },
+        {
+          "x": 1401,
+          "y": 1055,
+          "w": 80,
+          "h": 30,
+          "confidence": 96.547966,
+          "text": "Chair,"
+        },
+        {
+          "x": 1492,
+          "y": 1056,
+          "w": 110,
+          "h": 24,
+          "confidence": 96.039619,
+          "text": "Senator"
+        },
+        {
+          "x": 1612,
+          "y": 1057,
+          "w": 73,
+          "h": 23,
+          "confidence": 93.238518,
+          "text": "Gene"
+        },
+        {
+          "x": 1695,
+          "y": 1054,
+          "w": 117,
+          "h": 31,
+          "confidence": 91.199654,
+          "text": "Dornink,"
+        },
+        {
+          "x": 1823,
+          "y": 1056,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.647881,
+          "text": "Senator"
+        },
+        {
+          "x": 1944,
+          "y": 1054,
+          "w": 80,
+          "h": 26,
+          "confidence": 96.684601,
+          "text": "Glenn"
+        },
+        {
+          "x": 293,
+          "y": 1106,
+          "w": 27,
+          "h": 24,
+          "confidence": 89.785858,
+          "text": "H."
+        },
+        {
+          "x": 332,
+          "y": 1105,
+          "w": 182,
+          "h": 31,
+          "confidence": 91.472733,
+          "text": "Gruenhagen,"
+        },
+        {
+          "x": 524,
+          "y": 1106,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.473618,
+          "text": "Senator"
+        },
+        {
+          "x": 646,
+          "y": 1104,
+          "w": 94,
+          "h": 26,
+          "confidence": 95.960938,
+          "text": "Robert"
+        },
+        {
+          "x": 749,
+          "y": 1105,
+          "w": 25,
+          "h": 25,
+          "confidence": 93.243835,
+          "text": "J."
+        },
+        {
+          "x": 786,
+          "y": 1105,
+          "w": 94,
+          "h": 31,
+          "confidence": 92.999268,
+          "text": "Kupec,"
+        },
+        {
+          "x": 891,
+          "y": 1106,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.957077,
+          "text": "Senator"
+        },
+        {
+          "x": 1013,
+          "y": 1104,
+          "w": 42,
+          "h": 25,
+          "confidence": 93.30201,
+          "text": "Bill"
+        },
+        {
+          "x": 1067,
+          "y": 1103,
+          "w": 100,
+          "h": 31,
+          "confidence": 92.888115,
+          "text": "Lieske,"
+        },
+        {
+          "x": 1176,
+          "y": 1105,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.435486,
+          "text": "Senator"
+        },
+        {
+          "x": 1296,
+          "y": 1103,
+          "w": 70,
+          "h": 25,
+          "confidence": 96.722862,
+          "text": "John"
+        },
+        {
+          "x": 1377,
+          "y": 1104,
+          "w": 88,
+          "h": 31,
+          "confidence": 96.722862,
+          "text": "Marty,"
+        },
+        {
+          "x": 1476,
+          "y": 1105,
+          "w": 110,
+          "h": 23,
+          "confidence": 96.083931,
+          "text": "Senator"
+        },
+        {
+          "x": 1596,
+          "y": 1103,
+          "w": 74,
+          "h": 25,
+          "confidence": 93.184052,
+          "text": "Clare"
+        },
+        {
+          "x": 1680,
+          "y": 1105,
+          "w": 102,
+          "h": 23,
+          "confidence": 90.277863,
+          "text": "Oumou"
+        },
+        {
+          "x": 1791,
+          "y": 1103,
+          "w": 138,
+          "h": 31,
+          "confidence": 91.570549,
+          "text": "Verbeten,"
+        },
+        {
+          "x": 1939,
+          "y": 1105,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.648857,
+          "text": "Senator"
+        },
+        {
+          "x": 2059,
+          "y": 1102,
+          "w": 99,
+          "h": 26,
+          "confidence": 96.799347,
+          "text": "Sandra"
+        },
+        {
+          "x": 293,
+          "y": 1154,
+          "w": 22,
+          "h": 25,
+          "confidence": 87.723351,
+          "text": "L."
+        },
+        {
+          "x": 327,
+          "y": 1155,
+          "w": 114,
+          "h": 30,
+          "confidence": 95.924423,
+          "text": "Pappas,"
+        },
+        {
+          "x": 451,
+          "y": 1155,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.158592,
+          "text": "Senator"
+        },
+        {
+          "x": 572,
+          "y": 1153,
+          "w": 101,
+          "h": 25,
+          "confidence": 93.302704,
+          "text": "Nathan"
+        },
+        {
+          "x": 683,
+          "y": 1153,
+          "w": 159,
+          "h": 31,
+          "confidence": 91.488823,
+          "text": "Wesenberg"
+        },
+        {
+          "x": 292,
+          "y": 1250,
+          "w": 109,
+          "h": 25,
+          "confidence": 96.516342,
+          "text": "Absent:"
+        },
+        {
+          "x": 413,
+          "y": 1250,
+          "w": 38,
+          "h": 25,
+          "confidence": 95.835014,
+          "text": "No"
+        },
+        {
+          "x": 461,
+          "y": 1249,
+          "w": 135,
+          "h": 26,
+          "confidence": 95.712036,
+          "text": "Members"
+        },
+        {
+          "x": 606,
+          "y": 1249,
+          "w": 100,
+          "h": 26,
+          "confidence": 96.500847,
+          "text": "Absent"
+        },
+        {
+          "x": 293,
+          "y": 1367,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.001114,
+          "text": "Senator"
+        },
+        {
+          "x": 415,
+          "y": 1364,
+          "w": 95,
+          "h": 26,
+          "confidence": 96.001114,
+          "text": "Robert"
+        },
+        {
+          "x": 519,
+          "y": 1365,
+          "w": 25,
+          "h": 24,
+          "confidence": 93.221519,
+          "text": "J."
+        },
+        {
+          "x": 556,
+          "y": 1365,
+          "w": 87,
+          "h": 31,
+          "confidence": 92.693207,
+          "text": "Kupec"
+        },
+        {
+          "x": 653,
+          "y": 1364,
+          "w": 82,
+          "h": 25,
+          "confidence": 96.402954,
+          "text": "called"
+        },
+        {
+          "x": 745,
+          "y": 1364,
+          "w": 46,
+          "h": 26,
+          "confidence": 96.937073,
+          "text": "the"
+        },
+        {
+          "x": 801,
+          "y": 1364,
+          "w": 115,
+          "h": 31,
+          "confidence": 96.38237,
+          "text": "meeting"
+        },
+        {
+          "x": 926,
+          "y": 1367,
+          "w": 28,
+          "h": 22,
+          "confidence": 96.395569,
+          "text": "to"
+        },
+        {
+          "x": 964,
+          "y": 1364,
+          "w": 75,
+          "h": 25,
+          "confidence": 96.395569,
+          "text": "order"
+        },
+        {
+          "x": 1049,
+          "y": 1367,
+          "w": 27,
+          "h": 22,
+          "confidence": 96.763,
+          "text": "at"
+        },
+        {
+          "x": 1086,
+          "y": 1365,
+          "w": 135,
+          "h": 30,
+          "confidence": 95.53051,
+          "text": "12:36pm."
+        },
+        {
+          "x": 293,
+          "y": 1461,
+          "w": 188,
+          "h": 25,
+          "confidence": 96.546555,
+          "text": "Confirmation"
+        },
+        {
+          "x": 492,
+          "y": 1461,
+          "w": 28,
+          "h": 25,
+          "confidence": 96.434052,
+          "text": "of"
+        },
+        {
+          "x": 530,
+          "y": 1461,
+          "w": 151,
+          "h": 25,
+          "confidence": 93.287659,
+          "text": "Minnesota"
+        },
+        {
+          "x": 689,
+          "y": 1460,
+          "w": 126,
+          "h": 26,
+          "confidence": 89.261063,
+          "text": "Workers'"
+        },
+        {
+          "x": 824,
+          "y": 1461,
+          "w": 208,
+          "h": 31,
+          "confidence": 95.829697,
+          "text": "Compensation"
+        },
+        {
+          "x": 1043,
+          "y": 1462,
+          "w": 81,
+          "h": 23,
+          "confidence": 95.829697,
+          "text": "Court"
+        },
+        {
+          "x": 1133,
+          "y": 1460,
+          "w": 29,
+          "h": 25,
+          "confidence": 96.005135,
+          "text": "of"
+        },
+        {
+          "x": 1169,
+          "y": 1460,
+          "w": 117,
+          "h": 31,
+          "confidence": 96.478027,
+          "text": "Appeals"
+        },
+        {
+          "x": 1295,
+          "y": 1460,
+          "w": 76,
+          "h": 25,
+          "confidence": 95.786064,
+          "text": "Chief"
+        },
+        {
+          "x": 1379,
+          "y": 1460,
+          "w": 90,
+          "h": 31,
+          "confidence": 96.73761,
+          "text": "Judge"
+        },
+        {
+          "x": 333,
+          "y": 1510,
+          "w": 111,
+          "h": 25,
+          "confidence": 96.226059,
+          "text": "Patricia"
+        },
+        {
+          "x": 453,
+          "y": 1511,
+          "w": 16,
+          "h": 23,
+          "confidence": 92.859398,
+          "text": "J"
+        },
+        {
+          "x": 480,
+          "y": 1509,
+          "w": 80,
+          "h": 26,
+          "confidence": 92.699364,
+          "text": "Milun"
+        },
+        {
+          "x": 294,
+          "y": 1607,
+          "w": 73,
+          "h": 22,
+          "confidence": 96.819389,
+          "text": "Chief"
+        },
+        {
+          "x": 375,
+          "y": 1607,
+          "w": 85,
+          "h": 28,
+          "confidence": 96.754784,
+          "text": "Judge"
+        },
+        {
+          "x": 471,
+          "y": 1606,
+          "w": 103,
+          "h": 23,
+          "confidence": 96.27536,
+          "text": "Patricia"
+        },
+        {
+          "x": 586,
+          "y": 1606,
+          "w": 89,
+          "h": 23,
+          "confidence": 96.552086,
+          "text": "Mullen"
+        },
+        {
+          "x": 686,
+          "y": 1612,
+          "w": 64,
+          "h": 23,
+          "confidence": 96.785362,
+          "text": "gave"
+        },
+        {
+          "x": 759,
+          "y": 1606,
+          "w": 139,
+          "h": 29,
+          "confidence": 96.206924,
+          "text": "testimony"
+        },
+        {
+          "x": 908,
+          "y": 1611,
+          "w": 33,
+          "h": 17,
+          "confidence": 94.986084,
+          "text": "on"
+        },
+        {
+          "x": 953,
+          "y": 1606,
+          "w": 44,
+          "h": 22,
+          "confidence": 94.986084,
+          "text": "her"
+        },
+        {
+          "x": 1007,
+          "y": 1611,
+          "w": 110,
+          "h": 22,
+          "confidence": 96.415207,
+          "text": "resume,"
+        },
+        {
+          "x": 1128,
+          "y": 1605,
+          "w": 51,
+          "h": 23,
+          "confidence": 96.708031,
+          "text": "and"
+        },
+        {
+          "x": 1189,
+          "y": 1605,
+          "w": 52,
+          "h": 23,
+          "confidence": 96.237572,
+          "text": "role"
+        },
+        {
+          "x": 1251,
+          "y": 1606,
+          "w": 25,
+          "h": 22,
+          "confidence": 95.965614,
+          "text": "at"
+        },
+        {
+          "x": 1284,
+          "y": 1605,
+          "w": 43,
+          "h": 23,
+          "confidence": 96.294014,
+          "text": "the"
+        },
+        {
+          "x": 1337,
+          "y": 1606,
+          "w": 80,
+          "h": 22,
+          "confidence": 96.176598,
+          "text": "court."
+        },
+        {
+          "x": 295,
+          "y": 1732,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.29361,
+          "text": "Member"
+        },
+        {
+          "x": 415,
+          "y": 1732,
+          "w": 160,
+          "h": 22,
+          "confidence": 96.332603,
+          "text": "discussion."
+        },
+        {
+          "x": 294,
+          "y": 1826,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.614464,
+          "text": "Senator"
+        },
+        {
+          "x": 415,
+          "y": 1825,
+          "w": 83,
+          "h": 31,
+          "confidence": 96.894173,
+          "text": "Marty"
+        },
+        {
+          "x": 508,
+          "y": 1823,
+          "w": 94,
+          "h": 26,
+          "confidence": 96.547829,
+          "text": "moved"
+        },
+        {
+          "x": 612,
+          "y": 1823,
+          "w": 56,
+          "h": 26,
+          "confidence": 96.658958,
+          "text": "that"
+        },
+        {
+          "x": 678,
+          "y": 1823,
+          "w": 185,
+          "h": 25,
+          "confidence": 96.678246,
+          "text": "Confirmation"
+        },
+        {
+          "x": 874,
+          "y": 1823,
+          "w": 28,
+          "h": 25,
+          "confidence": 96.835213,
+          "text": "of"
+        },
+        {
+          "x": 913,
+          "y": 1823,
+          "w": 150,
+          "h": 25,
+          "confidence": 93.289696,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1072,
+          "y": 1823,
+          "w": 126,
+          "h": 25,
+          "confidence": 92.281761,
+          "text": "Workers'"
+        },
+        {
+          "x": 1207,
+          "y": 1823,
+          "w": 207,
+          "h": 31,
+          "confidence": 96.212349,
+          "text": "Compensation"
+        },
+        {
+          "x": 1425,
+          "y": 1824,
+          "w": 79,
+          "h": 24,
+          "confidence": 96.892464,
+          "text": "Court"
+        },
+        {
+          "x": 1513,
+          "y": 1822,
+          "w": 29,
+          "h": 25,
+          "confidence": 96.697296,
+          "text": "of"
+        },
+        {
+          "x": 1550,
+          "y": 1822,
+          "w": 115,
+          "h": 32,
+          "confidence": 96.697296,
+          "text": "Appeals"
+        },
+        {
+          "x": 1676,
+          "y": 1822,
+          "w": 75,
+          "h": 25,
+          "confidence": 96.844849,
+          "text": "Chief"
+        },
+        {
+          "x": 1759,
+          "y": 1822,
+          "w": 89,
+          "h": 31,
+          "confidence": 96.50766,
+          "text": "Judge"
+        },
+        {
+          "x": 334,
+          "y": 1872,
+          "w": 109,
+          "h": 26,
+          "confidence": 96.701561,
+          "text": "Patricia"
+        },
+        {
+          "x": 453,
+          "y": 1873,
+          "w": 15,
+          "h": 24,
+          "confidence": 93.246666,
+          "text": "J"
+        },
+        {
+          "x": 480,
+          "y": 1872,
+          "w": 86,
+          "h": 30,
+          "confidence": 90.721054,
+          "text": "Milun,"
+        },
+        {
+          "x": 577,
+          "y": 1872,
+          "w": 34,
+          "h": 25,
+          "confidence": 96.308548,
+          "text": "be"
+        },
+        {
+          "x": 621,
+          "y": 1871,
+          "w": 204,
+          "h": 26,
+          "confidence": 95.923897,
+          "text": "recommended"
+        },
+        {
+          "x": 835,
+          "y": 1871,
+          "w": 40,
+          "h": 25,
+          "confidence": 96.061096,
+          "text": "for"
+        },
+        {
+          "x": 884,
+          "y": 1871,
+          "w": 192,
+          "h": 25,
+          "confidence": 93.231079,
+          "text": "confirmation."
+        },
+        {
+          "x": 1093,
+          "y": 1883,
+          "w": 5,
+          "h": 5,
+          "confidence": 93.080956,
+          "text": "-"
+        },
+        {
+          "x": 1109,
+          "y": 1872,
+          "w": 121,
+          "h": 24,
+          "confidence": 95.71656,
+          "text": "MOTION"
+        },
+        {
+          "x": 1240,
+          "y": 1872,
+          "w": 151,
+          "h": 24,
+          "confidence": 96.54039,
+          "text": "ADOPTED."
+        },
+        {
+          "x": 294,
+          "y": 1969,
+          "w": 188,
+          "h": 25,
+          "confidence": 95.806114,
+          "text": "Confirmation"
+        },
+        {
+          "x": 493,
+          "y": 1968,
+          "w": 29,
+          "h": 26,
+          "confidence": 96.731415,
+          "text": "of"
+        },
+        {
+          "x": 531,
+          "y": 1969,
+          "w": 151,
+          "h": 25,
+          "confidence": 93.287354,
+          "text": "Minnesota"
+        },
+        {
+          "x": 690,
+          "y": 1968,
+          "w": 126,
+          "h": 25,
+          "confidence": 91.987778,
+          "text": "Workers'"
+        },
+        {
+          "x": 825,
+          "y": 1968,
+          "w": 208,
+          "h": 32,
+          "confidence": 96.725273,
+          "text": "Compensation"
+        },
+        {
+          "x": 1044,
+          "y": 1970,
+          "w": 80,
+          "h": 23,
+          "confidence": 96.858101,
+          "text": "Court"
+        },
+        {
+          "x": 1134,
+          "y": 1968,
+          "w": 29,
+          "h": 25,
+          "confidence": 96.475693,
+          "text": "of"
+        },
+        {
+          "x": 1171,
+          "y": 1967,
+          "w": 115,
+          "h": 32,
+          "confidence": 96.527992,
+          "text": "Appeals"
+        },
+        {
+          "x": 1295,
+          "y": 1968,
+          "w": 90,
+          "h": 31,
+          "confidence": 96.751892,
+          "text": "Judge"
+        },
+        {
+          "x": 334,
+          "y": 2017,
+          "w": 119,
+          "h": 26,
+          "confidence": 93.293808,
+          "text": "Deborah"
+        },
+        {
+          "x": 464,
+          "y": 2018,
+          "w": 19,
+          "h": 24,
+          "confidence": 90.999802,
+          "text": "K"
+        },
+        {
+          "x": 492,
+          "y": 2017,
+          "w": 147,
+          "h": 32,
+          "confidence": 90.999802,
+          "text": "Sundquist"
+        },
+        {
+          "x": 294,
+          "y": 2115,
+          "w": 85,
+          "h": 29,
+          "confidence": 96.453041,
+          "text": "Judge"
+        },
+        {
+          "x": 390,
+          "y": 2115,
+          "w": 116,
+          "h": 22,
+          "confidence": 93.2836,
+          "text": "Deborah"
+        },
+        {
+          "x": 518,
+          "y": 2115,
+          "w": 26,
+          "h": 22,
+          "confidence": 90.581551,
+          "text": "K."
+        },
+        {
+          "x": 555,
+          "y": 2114,
+          "w": 141,
+          "h": 29,
+          "confidence": 90.581551,
+          "text": "Sundquist"
+        },
+        {
+          "x": 706,
+          "y": 2120,
+          "w": 65,
+          "h": 23,
+          "confidence": 96.305954,
+          "text": "gave"
+        },
+        {
+          "x": 780,
+          "y": 2114,
+          "w": 138,
+          "h": 29,
+          "confidence": 96.305954,
+          "text": "testimony"
+        },
+        {
+          "x": 928,
+          "y": 2119,
+          "w": 34,
+          "h": 17,
+          "confidence": 96.317451,
+          "text": "on"
+        },
+        {
+          "x": 974,
+          "y": 2114,
+          "w": 45,
+          "h": 22,
+          "confidence": 96.317451,
+          "text": "her"
+        },
+        {
+          "x": 1028,
+          "y": 2119,
+          "w": 109,
+          "h": 22,
+          "confidence": 96.337418,
+          "text": "resume,"
+        },
+        {
+          "x": 1149,
+          "y": 2114,
+          "w": 50,
+          "h": 22,
+          "confidence": 96.36322,
+          "text": "and"
+        },
+        {
+          "x": 1210,
+          "y": 2113,
+          "w": 51,
+          "h": 23,
+          "confidence": 96.896141,
+          "text": "role"
+        },
+        {
+          "x": 1271,
+          "y": 2115,
+          "w": 26,
+          "h": 21,
+          "confidence": 96.390488,
+          "text": "at"
+        },
+        {
+          "x": 1304,
+          "y": 2114,
+          "w": 44,
+          "h": 22,
+          "confidence": 95.938141,
+          "text": "the"
+        },
+        {
+          "x": 1357,
+          "y": 2114,
+          "w": 80,
+          "h": 22,
+          "confidence": 96.336288,
+          "text": "court."
+        },
+        {
+          "x": 295,
+          "y": 2240,
+          "w": 112,
+          "h": 23,
+          "confidence": 96.50325,
+          "text": "Member"
+        },
+        {
+          "x": 415,
+          "y": 2240,
+          "w": 160,
+          "h": 23,
+          "confidence": 95.95575,
+          "text": "discussion."
+        },
+        {
+          "x": 295,
+          "y": 2383,
+          "w": 111,
+          "h": 24,
+          "confidence": 96.276154,
+          "text": "Senator"
+        },
+        {
+          "x": 416,
+          "y": 2382,
+          "w": 83,
+          "h": 32,
+          "confidence": 96.655342,
+          "text": "Marty"
+        },
+        {
+          "x": 509,
+          "y": 2380,
+          "w": 94,
+          "h": 26,
+          "confidence": 96.697411,
+          "text": "moved"
+        },
+        {
+          "x": 614,
+          "y": 2380,
+          "w": 55,
+          "h": 26,
+          "confidence": 96.596748,
+          "text": "that"
+        },
+        {
+          "x": 679,
+          "y": 2380,
+          "w": 185,
+          "h": 26,
+          "confidence": 96.645805,
+          "text": "Confirmation"
+        },
+        {
+          "x": 875,
+          "y": 2380,
+          "w": 28,
+          "h": 26,
+          "confidence": 96.875916,
+          "text": "of"
+        },
+        {
+          "x": 914,
+          "y": 2380,
+          "w": 149,
+          "h": 25,
+          "confidence": 93.287109,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1073,
+          "y": 2379,
+          "w": 126,
+          "h": 26,
+          "confidence": 92.768242,
+          "text": "Workers'"
+        },
+        {
+          "x": 1208,
+          "y": 2380,
+          "w": 207,
+          "h": 32,
+          "confidence": 96.373131,
+          "text": "Compensation"
+        },
+        {
+          "x": 1426,
+          "y": 2381,
+          "w": 78,
+          "h": 24,
+          "confidence": 96.967827,
+          "text": "Court"
+        },
+        {
+          "x": 1514,
+          "y": 2379,
+          "w": 28,
+          "h": 26,
+          "confidence": 97.005112,
+          "text": "of"
+        },
+        {
+          "x": 1551,
+          "y": 2378,
+          "w": 114,
+          "h": 33,
+          "confidence": 96.4702,
+          "text": "Appeals"
+        },
+        {
+          "x": 1676,
+          "y": 2378,
+          "w": 88,
+          "h": 32,
+          "confidence": 96.755409,
+          "text": "Judge"
+        },
+        {
+          "x": 335,
+          "y": 2429,
+          "w": 118,
+          "h": 26,
+          "confidence": 92.882309,
+          "text": "Deborah"
+        },
+        {
+          "x": 465,
+          "y": 2430,
+          "w": 18,
+          "h": 25,
+          "confidence": 92.882309,
+          "text": "K"
+        },
+        {
+          "x": 493,
+          "y": 2429,
+          "w": 150,
+          "h": 32,
+          "confidence": 91.292557,
+          "text": "Sundquist,"
+        },
+        {
+          "x": 655,
+          "y": 2429,
+          "w": 32,
+          "h": 26,
+          "confidence": 96.776405,
+          "text": "be"
+        },
+        {
+          "x": 697,
+          "y": 2428,
+          "w": 205,
+          "h": 26,
+          "confidence": 96.627502,
+          "text": "recommended"
+        },
+        {
+          "x": 912,
+          "y": 2428,
+          "w": 41,
+          "h": 26,
+          "confidence": 96.813217,
+          "text": "for"
+        },
+        {
+          "x": 963,
+          "y": 2428,
+          "w": 192,
+          "h": 26,
+          "confidence": 93.026352,
+          "text": "confirmation."
+        },
+        {
+          "x": 1174,
+          "y": 2440,
+          "w": 2,
+          "h": 6,
+          "confidence": 90.947449,
+          "text": "-"
+        },
+        {
+          "x": 1187,
+          "y": 2429,
+          "w": 120,
+          "h": 25,
+          "confidence": 96.635414,
+          "text": "MOTION"
+        },
+        {
+          "x": 1316,
+          "y": 2429,
+          "w": 152,
+          "h": 25,
+          "confidence": 95.827522,
+          "text": "ADOPTED."
+        },
+        {
+          "x": 295,
+          "y": 2526,
+          "w": 188,
+          "h": 26,
+          "confidence": 95.656876,
+          "text": "Confirmation"
+        },
+        {
+          "x": 494,
+          "y": 2526,
+          "w": 28,
+          "h": 26,
+          "confidence": 96.798813,
+          "text": "of"
+        },
+        {
+          "x": 532,
+          "y": 2526,
+          "w": 150,
+          "h": 25,
+          "confidence": 91.837753,
+          "text": "Minnesota"
+        },
+        {
+          "x": 691,
+          "y": 2525,
+          "w": 125,
+          "h": 26,
+          "confidence": 91.837753,
+          "text": "Workers'"
+        },
+        {
+          "x": 826,
+          "y": 2525,
+          "w": 208,
+          "h": 32,
+          "confidence": 96.089523,
+          "text": "Compensation"
+        },
+        {
+          "x": 1044,
+          "y": 2527,
+          "w": 81,
+          "h": 24,
+          "confidence": 96.691673,
+          "text": "Court"
+        },
+        {
+          "x": 1134,
+          "y": 2525,
+          "w": 30,
+          "h": 25,
+          "confidence": 96.675476,
+          "text": "of"
+        },
+        {
+          "x": 1171,
+          "y": 2525,
+          "w": 116,
+          "h": 32,
+          "confidence": 95.510963,
+          "text": "Appeals"
+        },
+        {
+          "x": 1296,
+          "y": 2525,
+          "w": 89,
+          "h": 31,
+          "confidence": 96.375443,
+          "text": "Judge"
+        },
+        {
+          "x": 1395,
+          "y": 2526,
+          "w": 70,
+          "h": 24,
+          "confidence": 93.245247,
+          "text": "Sean"
+        },
+        {
+          "x": 1476,
+          "y": 2525,
+          "w": 25,
+          "h": 25,
+          "confidence": 92.357147,
+          "text": "M"
+        },
+        {
+          "x": 334,
+          "y": 2576,
+          "w": 84,
+          "h": 29,
+          "confidence": 96.613731,
+          "text": "Quinn"
+        },
+        {
+          "x": 294,
+          "y": 2673,
+          "w": 86,
+          "h": 28,
+          "confidence": 96.15519,
+          "text": "Judge"
+        },
+        {
+          "x": 390,
+          "y": 2673,
+          "w": 67,
+          "h": 22,
+          "confidence": 93.229729,
+          "text": "Sean"
+        },
+        {
+          "x": 469,
+          "y": 2673,
+          "w": 30,
+          "h": 22,
+          "confidence": 92.75515,
+          "text": "M."
+        },
+        {
+          "x": 510,
+          "y": 2672,
+          "w": 82,
+          "h": 25,
+          "confidence": 95.647011,
+          "text": "Quinn"
+        },
+        {
+          "x": 603,
+          "y": 2678,
+          "w": 64,
+          "h": 22,
+          "confidence": 95.647011,
+          "text": "gave"
+        },
+        {
+          "x": 677,
+          "y": 2672,
+          "w": 137,
+          "h": 28,
+          "confidence": 95.687508,
+          "text": "testimony"
+        },
+        {
+          "x": 824,
+          "y": 2677,
+          "w": 33,
+          "h": 17,
+          "confidence": 95.502991,
+          "text": "on"
+        },
+        {
+          "x": 869,
+          "y": 2671,
+          "w": 39,
+          "h": 23,
+          "confidence": 95.502991,
+          "text": "his"
+        },
+        {
+          "x": 920,
+          "y": 2677,
+          "w": 110,
+          "h": 21,
+          "confidence": 96.526016,
+          "text": "resume,"
+        },
+        {
+          "x": 1041,
+          "y": 2671,
+          "w": 49,
+          "h": 22,
+          "confidence": 95.691963,
+          "text": "and"
+        },
+        {
+          "x": 1103,
+          "y": 2671,
+          "w": 52,
+          "h": 23,
+          "confidence": 95.691963,
+          "text": "role"
+        },
+        {
+          "x": 1164,
+          "y": 2672,
+          "w": 26,
+          "h": 21,
+          "confidence": 96.825272,
+          "text": "at"
+        },
+        {
+          "x": 1198,
+          "y": 2671,
+          "w": 43,
+          "h": 22,
+          "confidence": 96.961044,
+          "text": "the"
+        },
+        {
+          "x": 1251,
+          "y": 2672,
+          "w": 79,
+          "h": 22,
+          "confidence": 95.958023,
+          "text": "court."
+        },
+        {
+          "x": 296,
+          "y": 2797,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.382744,
+          "text": "Member"
+        },
+        {
+          "x": 416,
+          "y": 2797,
+          "w": 160,
+          "h": 23,
+          "confidence": 96.00386,
+          "text": "discussion."
+        },
+        {
+          "x": 295,
+          "y": 2940,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.345139,
+          "text": "Senator"
+        },
+        {
+          "x": 416,
+          "y": 2938,
+          "w": 83,
+          "h": 31,
+          "confidence": 96.212097,
+          "text": "Marty"
+        },
+        {
+          "x": 509,
+          "y": 2937,
+          "w": 94,
+          "h": 25,
+          "confidence": 96.710571,
+          "text": "moved"
+        },
+        {
+          "x": 614,
+          "y": 2937,
+          "w": 55,
+          "h": 25,
+          "confidence": 96.424049,
+          "text": "that"
+        },
+        {
+          "x": 679,
+          "y": 2937,
+          "w": 185,
+          "h": 25,
+          "confidence": 96.273552,
+          "text": "Confirmation"
+        },
+        {
+          "x": 875,
+          "y": 2936,
+          "w": 28,
+          "h": 25,
+          "confidence": 96.957275,
+          "text": "of"
+        },
+        {
+          "x": 914,
+          "y": 2936,
+          "w": 149,
+          "h": 25,
+          "confidence": 93.289513,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1073,
+          "y": 2935,
+          "w": 126,
+          "h": 26,
+          "confidence": 86.97596,
+          "text": "Workers'"
+        },
+        {
+          "x": 1208,
+          "y": 2936,
+          "w": 207,
+          "h": 31,
+          "confidence": 95.559853,
+          "text": "Compensation"
+        },
+        {
+          "x": 1426,
+          "y": 2937,
+          "w": 78,
+          "h": 24,
+          "confidence": 96.015869,
+          "text": "Court"
+        },
+        {
+          "x": 1514,
+          "y": 2936,
+          "w": 28,
+          "h": 25,
+          "confidence": 96.289825,
+          "text": "of"
+        },
+        {
+          "x": 1551,
+          "y": 2935,
+          "w": 115,
+          "h": 32,
+          "confidence": 96.414864,
+          "text": "Appeals"
+        },
+        {
+          "x": 1676,
+          "y": 2935,
+          "w": 88,
+          "h": 31,
+          "confidence": 96.421616,
+          "text": "Judge"
+        },
+        {
+          "x": 1774,
+          "y": 2937,
+          "w": 69,
+          "h": 23,
+          "confidence": 93.251923,
+          "text": "Sean"
+        },
+        {
+          "x": 1856,
+          "y": 2936,
+          "w": 24,
+          "h": 24,
+          "confidence": 92.886795,
+          "text": "M"
+        },
+        {
+          "x": 335,
+          "y": 2986,
+          "w": 90,
+          "h": 30,
+          "confidence": 96.074829,
+          "text": "Quinn,"
+        },
+        {
+          "x": 436,
+          "y": 2986,
+          "w": 33,
+          "h": 25,
+          "confidence": 96.074829,
+          "text": "be"
+        },
+        {
+          "x": 479,
+          "y": 2985,
+          "w": 205,
+          "h": 26,
+          "confidence": 96.351624,
+          "text": "recommended"
+        },
+        {
+          "x": 694,
+          "y": 2985,
+          "w": 40,
+          "h": 25,
+          "confidence": 96.307465,
+          "text": "for"
+        },
+        {
+          "x": 743,
+          "y": 2985,
+          "w": 191,
+          "h": 25,
+          "confidence": 92.82196,
+          "text": "confirmation."
+        },
+        {
+          "x": 955,
+          "y": 2996,
+          "w": 1,
+          "h": 6,
+          "confidence": 89.596031,
+          "text": "-"
+        },
+        {
+          "x": 967,
+          "y": 2985,
+          "w": 121,
+          "h": 25,
+          "confidence": 96.223663,
+          "text": "MOTION"
+        },
+        {
+          "x": 1098,
+          "y": 2985,
+          "w": 153,
+          "h": 24,
+          "confidence": 96.418297,
+          "text": "ADOPTED."
+        },
+        {
+          "x": 202,
+          "y": 3181,
+          "w": 474,
+          "h": 33,
+          "confidence": 45.220341,
+          "text": "https:/Avww,senate.mn/schedule/hearing_minutes,"
+        },
+        {
+          "x": 684,
+          "y": 3185,
+          "w": 283,
+          "h": 23,
+          "confidence": 22.520844,
+          "text": "himi7hearing_id=18588als=93"
+        },
+        {
+          "x": 2290,
+          "y": 3185,
+          "w": 27,
+          "h": 17,
+          "confidence": 84.26683,
+          "text": "412"
+        }
+      ]
+    },
+    "11": {
+      "text": "4115124, 9:21 AM\n\nMinnesota Senate\n\nMinnesota State Senate\n\nLabor Committee\n\nTuesday, March 26, 2024\n\n12:30 PM, 1100 Minnesota Senate Bldg.\n\nMinutes\n\nPresent: Senator Jennifer A. McEwen - Chair, Senator Grant Hauschild - Vice Chair, Senator Gene Dornink, Senator Glenn\n\nH. Gruenhagen, Senator Robert J. Kupec, Senator Bill Lieske, Senator John Marty, Senator Clare Oumou Verbeten, Senator Sandra\n\nL. Pappas, Senator Nathan Wesenberg\n\nAbsent: No Members Absent\n\nSenator Robert J. Kupec called the meeting to order at 12:36pm.\n\nConfirmation of Minnesota Workers' Compensation Court of Appeals Chief Judge\n\nPatricia J Milun\n\nChief Judge Patricia Mullen gave testimony on her resume, and role at the court.\n\nMember discussion.\n\nSenator Marty moved that Confirmation of Minnesota Workers' Compensation Court of Appeals Chief Judge\n\nPatricia J Milun, be recommended for confirmation. - MOTION ADOPTED.\n\nConfirmation of Minnesota Workers' Compensation Court of Appeals Judge\n\nDeborah K Sundquist\n\nJudge Deborah K. Sundquist gave testimony on her resume, and role at the court.\n\nMember discussion.\n\nSenator Marty moved that Confirmation of Minnesota Workers' Compensation Court of Appeals Judge\n\nDeborah K Sundquist, be recommended for confirmation. - MOTION ADOPTED.\n\nConfirmation of Minnesota Workers' Compensation Court of Appeals Judge Sean M\n\nQuinn\n\nJudge Sean M. Quinn gave testimony on his resume, and role at the court.\n\nMember discussion.\n\nSenator Marty moved that Confirmation of Minnesota Workers' Compensation Court of Appeals Judge Sean M\n\nQuinn, be recommended for confirmation. - MOTION ADOPTED.\n\nhttps:/Avww,senate.mn/schedule/hearing_minutes, himi7hearing_id=18588als=93\n\n4/2\n",
+      "textSha256": "731c5b7767a45c7c404332cce0f409daafc1389f02a1bc30bc854c72ac7ce6d4",
+      "wordBoxes": [
+        {
+          "x": 195,
+          "y": 86,
+          "w": 75,
+          "h": 21,
+          "confidence": 32.911461,
+          "text": "4115124,"
+        },
+        {
+          "x": 278,
+          "y": 87,
+          "w": 37,
+          "h": 17,
+          "confidence": 94.184067,
+          "text": "9:21"
+        },
+        {
+          "x": 323,
+          "y": 87,
+          "w": 32,
+          "h": 17,
+          "confidence": 96.426636,
+          "text": "AM"
+        },
+        {
+          "x": 1290,
+          "y": 85,
+          "w": 97,
+          "h": 18,
+          "confidence": 96.35479,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1395,
+          "y": 86,
+          "w": 66,
+          "h": 16,
+          "confidence": 96.502518,
+          "text": "Senate"
+        },
+        {
+          "x": 293,
+          "y": 517,
+          "w": 336,
+          "h": 50,
+          "confidence": 96.219116,
+          "text": "Minnesota"
+        },
+        {
+          "x": 658,
+          "y": 520,
+          "w": 159,
+          "h": 47,
+          "confidence": 96.07457,
+          "text": "State"
+        },
+        {
+          "x": 846,
+          "y": 520,
+          "w": 210,
+          "h": 47,
+          "confidence": 96.069687,
+          "text": "Senate"
+        },
+        {
+          "x": 292,
+          "y": 747,
+          "w": 80,
+          "h": 26,
+          "confidence": 96.635849,
+          "text": "Labor"
+        },
+        {
+          "x": 382,
+          "y": 747,
+          "w": 158,
+          "h": 26,
+          "confidence": 96.572327,
+          "text": "Committee"
+        },
+        {
+          "x": 291,
+          "y": 795,
+          "w": 125,
+          "h": 33,
+          "confidence": 95.57737,
+          "text": "Tuesday,"
+        },
+        {
+          "x": 428,
+          "y": 795,
+          "w": 88,
+          "h": 26,
+          "confidence": 96.626099,
+          "text": "March"
+        },
+        {
+          "x": 527,
+          "y": 796,
+          "w": 42,
+          "h": 30,
+          "confidence": 96.045326,
+          "text": "26,"
+        },
+        {
+          "x": 580,
+          "y": 796,
+          "w": 71,
+          "h": 25,
+          "confidence": 96.045326,
+          "text": "2024"
+        },
+        {
+          "x": 293,
+          "y": 846,
+          "w": 80,
+          "h": 24,
+          "confidence": 95.983742,
+          "text": "12:30"
+        },
+        {
+          "x": 384,
+          "y": 845,
+          "w": 55,
+          "h": 31,
+          "confidence": 96.203552,
+          "text": "PM,"
+        },
+        {
+          "x": 451,
+          "y": 845,
+          "w": 71,
+          "h": 24,
+          "confidence": 96.678642,
+          "text": "1100"
+        },
+        {
+          "x": 533,
+          "y": 844,
+          "w": 150,
+          "h": 25,
+          "confidence": 96.402405,
+          "text": "Minnesota"
+        },
+        {
+          "x": 692,
+          "y": 845,
+          "w": 100,
+          "h": 25,
+          "confidence": 95.824295,
+          "text": "Senate"
+        },
+        {
+          "x": 802,
+          "y": 843,
+          "w": 72,
+          "h": 32,
+          "confidence": 95.824295,
+          "text": "Bldg."
+        },
+        {
+          "x": 1169,
+          "y": 941,
+          "w": 116,
+          "h": 25,
+          "confidence": 95.774002,
+          "text": "Minutes"
+        },
+        {
+          "x": 292,
+          "y": 1058,
+          "w": 118,
+          "h": 24,
+          "confidence": 96.501701,
+          "text": "Present:"
+        },
+        {
+          "x": 421,
+          "y": 1058,
+          "w": 112,
+          "h": 23,
+          "confidence": 96.445831,
+          "text": "Senator"
+        },
+        {
+          "x": 542,
+          "y": 1056,
+          "w": 119,
+          "h": 25,
+          "confidence": 96.430847,
+          "text": "Jennifer"
+        },
+        {
+          "x": 670,
+          "y": 1057,
+          "w": 27,
+          "h": 24,
+          "confidence": 96.430847,
+          "text": "A."
+        },
+        {
+          "x": 709,
+          "y": 1057,
+          "w": 119,
+          "h": 24,
+          "confidence": 93.101379,
+          "text": "McEwen"
+        },
+        {
+          "x": 838,
+          "y": 1068,
+          "w": 10,
+          "h": 5,
+          "confidence": 77.232651,
+          "text": "-"
+        },
+        {
+          "x": 859,
+          "y": 1055,
+          "w": 78,
+          "h": 31,
+          "confidence": 96.741493,
+          "text": "Chair,"
+        },
+        {
+          "x": 948,
+          "y": 1057,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.527573,
+          "text": "Senator"
+        },
+        {
+          "x": 1070,
+          "y": 1057,
+          "w": 78,
+          "h": 23,
+          "confidence": 93.274506,
+          "text": "Grant"
+        },
+        {
+          "x": 1158,
+          "y": 1055,
+          "w": 141,
+          "h": 25,
+          "confidence": 92.148582,
+          "text": "Hauschild"
+        },
+        {
+          "x": 1309,
+          "y": 1067,
+          "w": 10,
+          "h": 5,
+          "confidence": 92.148582,
+          "text": "-"
+        },
+        {
+          "x": 1328,
+          "y": 1055,
+          "w": 64,
+          "h": 25,
+          "confidence": 96.903618,
+          "text": "Vice"
+        },
+        {
+          "x": 1401,
+          "y": 1055,
+          "w": 80,
+          "h": 30,
+          "confidence": 96.547966,
+          "text": "Chair,"
+        },
+        {
+          "x": 1492,
+          "y": 1056,
+          "w": 110,
+          "h": 24,
+          "confidence": 96.039619,
+          "text": "Senator"
+        },
+        {
+          "x": 1612,
+          "y": 1057,
+          "w": 73,
+          "h": 23,
+          "confidence": 93.238518,
+          "text": "Gene"
+        },
+        {
+          "x": 1695,
+          "y": 1054,
+          "w": 117,
+          "h": 31,
+          "confidence": 91.199654,
+          "text": "Dornink,"
+        },
+        {
+          "x": 1823,
+          "y": 1056,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.647881,
+          "text": "Senator"
+        },
+        {
+          "x": 1944,
+          "y": 1054,
+          "w": 80,
+          "h": 26,
+          "confidence": 96.684601,
+          "text": "Glenn"
+        },
+        {
+          "x": 293,
+          "y": 1106,
+          "w": 27,
+          "h": 24,
+          "confidence": 89.785858,
+          "text": "H."
+        },
+        {
+          "x": 332,
+          "y": 1105,
+          "w": 182,
+          "h": 31,
+          "confidence": 91.472733,
+          "text": "Gruenhagen,"
+        },
+        {
+          "x": 524,
+          "y": 1106,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.473618,
+          "text": "Senator"
+        },
+        {
+          "x": 646,
+          "y": 1104,
+          "w": 94,
+          "h": 26,
+          "confidence": 95.960938,
+          "text": "Robert"
+        },
+        {
+          "x": 749,
+          "y": 1105,
+          "w": 25,
+          "h": 25,
+          "confidence": 93.243835,
+          "text": "J."
+        },
+        {
+          "x": 786,
+          "y": 1105,
+          "w": 94,
+          "h": 31,
+          "confidence": 92.999268,
+          "text": "Kupec,"
+        },
+        {
+          "x": 891,
+          "y": 1106,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.957077,
+          "text": "Senator"
+        },
+        {
+          "x": 1013,
+          "y": 1104,
+          "w": 42,
+          "h": 25,
+          "confidence": 93.30201,
+          "text": "Bill"
+        },
+        {
+          "x": 1067,
+          "y": 1103,
+          "w": 100,
+          "h": 31,
+          "confidence": 92.888115,
+          "text": "Lieske,"
+        },
+        {
+          "x": 1176,
+          "y": 1105,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.435486,
+          "text": "Senator"
+        },
+        {
+          "x": 1296,
+          "y": 1103,
+          "w": 70,
+          "h": 25,
+          "confidence": 96.722862,
+          "text": "John"
+        },
+        {
+          "x": 1377,
+          "y": 1104,
+          "w": 88,
+          "h": 31,
+          "confidence": 96.722862,
+          "text": "Marty,"
+        },
+        {
+          "x": 1476,
+          "y": 1105,
+          "w": 110,
+          "h": 23,
+          "confidence": 96.083931,
+          "text": "Senator"
+        },
+        {
+          "x": 1596,
+          "y": 1103,
+          "w": 74,
+          "h": 25,
+          "confidence": 93.184052,
+          "text": "Clare"
+        },
+        {
+          "x": 1680,
+          "y": 1105,
+          "w": 102,
+          "h": 23,
+          "confidence": 90.277863,
+          "text": "Oumou"
+        },
+        {
+          "x": 1791,
+          "y": 1103,
+          "w": 138,
+          "h": 31,
+          "confidence": 91.570549,
+          "text": "Verbeten,"
+        },
+        {
+          "x": 1939,
+          "y": 1105,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.648857,
+          "text": "Senator"
+        },
+        {
+          "x": 2059,
+          "y": 1102,
+          "w": 99,
+          "h": 26,
+          "confidence": 96.799347,
+          "text": "Sandra"
+        },
+        {
+          "x": 293,
+          "y": 1154,
+          "w": 22,
+          "h": 25,
+          "confidence": 48.725311,
+          "text": "L."
+        },
+        {
+          "x": 327,
+          "y": 1155,
+          "w": 114,
+          "h": 30,
+          "confidence": 96.469261,
+          "text": "Pappas,"
+        },
+        {
+          "x": 451,
+          "y": 1155,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.731094,
+          "text": "Senator"
+        },
+        {
+          "x": 572,
+          "y": 1153,
+          "w": 101,
+          "h": 25,
+          "confidence": 91.70266,
+          "text": "Nathan"
+        },
+        {
+          "x": 683,
+          "y": 1153,
+          "w": 159,
+          "h": 31,
+          "confidence": 91.70266,
+          "text": "Wesenberg"
+        },
+        {
+          "x": 292,
+          "y": 1250,
+          "w": 109,
+          "h": 25,
+          "confidence": 96.516342,
+          "text": "Absent:"
+        },
+        {
+          "x": 413,
+          "y": 1250,
+          "w": 38,
+          "h": 25,
+          "confidence": 95.835014,
+          "text": "No"
+        },
+        {
+          "x": 461,
+          "y": 1249,
+          "w": 135,
+          "h": 26,
+          "confidence": 95.712036,
+          "text": "Members"
+        },
+        {
+          "x": 606,
+          "y": 1249,
+          "w": 100,
+          "h": 26,
+          "confidence": 96.500847,
+          "text": "Absent"
+        },
+        {
+          "x": 293,
+          "y": 1367,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.001114,
+          "text": "Senator"
+        },
+        {
+          "x": 415,
+          "y": 1364,
+          "w": 95,
+          "h": 26,
+          "confidence": 96.001114,
+          "text": "Robert"
+        },
+        {
+          "x": 519,
+          "y": 1365,
+          "w": 25,
+          "h": 24,
+          "confidence": 93.221519,
+          "text": "J."
+        },
+        {
+          "x": 556,
+          "y": 1365,
+          "w": 87,
+          "h": 31,
+          "confidence": 92.693207,
+          "text": "Kupec"
+        },
+        {
+          "x": 653,
+          "y": 1364,
+          "w": 82,
+          "h": 25,
+          "confidence": 96.402954,
+          "text": "called"
+        },
+        {
+          "x": 745,
+          "y": 1364,
+          "w": 46,
+          "h": 26,
+          "confidence": 96.937073,
+          "text": "the"
+        },
+        {
+          "x": 801,
+          "y": 1364,
+          "w": 115,
+          "h": 31,
+          "confidence": 96.38237,
+          "text": "meeting"
+        },
+        {
+          "x": 926,
+          "y": 1367,
+          "w": 28,
+          "h": 22,
+          "confidence": 96.395569,
+          "text": "to"
+        },
+        {
+          "x": 964,
+          "y": 1364,
+          "w": 75,
+          "h": 25,
+          "confidence": 96.395569,
+          "text": "order"
+        },
+        {
+          "x": 1049,
+          "y": 1367,
+          "w": 27,
+          "h": 22,
+          "confidence": 96.763,
+          "text": "at"
+        },
+        {
+          "x": 1086,
+          "y": 1365,
+          "w": 135,
+          "h": 30,
+          "confidence": 95.53051,
+          "text": "12:36pm."
+        },
+        {
+          "x": 293,
+          "y": 1461,
+          "w": 188,
+          "h": 25,
+          "confidence": 96.546555,
+          "text": "Confirmation"
+        },
+        {
+          "x": 492,
+          "y": 1461,
+          "w": 28,
+          "h": 25,
+          "confidence": 96.434052,
+          "text": "of"
+        },
+        {
+          "x": 530,
+          "y": 1461,
+          "w": 151,
+          "h": 25,
+          "confidence": 93.287659,
+          "text": "Minnesota"
+        },
+        {
+          "x": 689,
+          "y": 1460,
+          "w": 126,
+          "h": 26,
+          "confidence": 89.261063,
+          "text": "Workers'"
+        },
+        {
+          "x": 824,
+          "y": 1461,
+          "w": 208,
+          "h": 31,
+          "confidence": 95.829697,
+          "text": "Compensation"
+        },
+        {
+          "x": 1043,
+          "y": 1462,
+          "w": 81,
+          "h": 23,
+          "confidence": 95.829697,
+          "text": "Court"
+        },
+        {
+          "x": 1133,
+          "y": 1460,
+          "w": 29,
+          "h": 25,
+          "confidence": 96.005135,
+          "text": "of"
+        },
+        {
+          "x": 1169,
+          "y": 1460,
+          "w": 117,
+          "h": 31,
+          "confidence": 96.478027,
+          "text": "Appeals"
+        },
+        {
+          "x": 1295,
+          "y": 1460,
+          "w": 76,
+          "h": 25,
+          "confidence": 95.786064,
+          "text": "Chief"
+        },
+        {
+          "x": 1379,
+          "y": 1460,
+          "w": 90,
+          "h": 31,
+          "confidence": 96.73761,
+          "text": "Judge"
+        },
+        {
+          "x": 333,
+          "y": 1510,
+          "w": 111,
+          "h": 25,
+          "confidence": 96.867538,
+          "text": "Patricia"
+        },
+        {
+          "x": 453,
+          "y": 1511,
+          "w": 16,
+          "h": 23,
+          "confidence": 93.049667,
+          "text": "J"
+        },
+        {
+          "x": 480,
+          "y": 1509,
+          "w": 80,
+          "h": 26,
+          "confidence": 92.342262,
+          "text": "Milun"
+        },
+        {
+          "x": 294,
+          "y": 1607,
+          "w": 73,
+          "h": 22,
+          "confidence": 96.819389,
+          "text": "Chief"
+        },
+        {
+          "x": 375,
+          "y": 1607,
+          "w": 85,
+          "h": 28,
+          "confidence": 96.754784,
+          "text": "Judge"
+        },
+        {
+          "x": 471,
+          "y": 1606,
+          "w": 103,
+          "h": 23,
+          "confidence": 96.27536,
+          "text": "Patricia"
+        },
+        {
+          "x": 586,
+          "y": 1606,
+          "w": 89,
+          "h": 23,
+          "confidence": 96.552086,
+          "text": "Mullen"
+        },
+        {
+          "x": 686,
+          "y": 1612,
+          "w": 64,
+          "h": 23,
+          "confidence": 96.785362,
+          "text": "gave"
+        },
+        {
+          "x": 759,
+          "y": 1606,
+          "w": 139,
+          "h": 29,
+          "confidence": 96.206924,
+          "text": "testimony"
+        },
+        {
+          "x": 908,
+          "y": 1611,
+          "w": 33,
+          "h": 17,
+          "confidence": 94.986084,
+          "text": "on"
+        },
+        {
+          "x": 953,
+          "y": 1606,
+          "w": 44,
+          "h": 22,
+          "confidence": 94.986084,
+          "text": "her"
+        },
+        {
+          "x": 1007,
+          "y": 1611,
+          "w": 110,
+          "h": 22,
+          "confidence": 96.415207,
+          "text": "resume,"
+        },
+        {
+          "x": 1128,
+          "y": 1605,
+          "w": 51,
+          "h": 23,
+          "confidence": 96.708031,
+          "text": "and"
+        },
+        {
+          "x": 1189,
+          "y": 1605,
+          "w": 52,
+          "h": 23,
+          "confidence": 96.237572,
+          "text": "role"
+        },
+        {
+          "x": 1251,
+          "y": 1606,
+          "w": 25,
+          "h": 22,
+          "confidence": 95.965614,
+          "text": "at"
+        },
+        {
+          "x": 1284,
+          "y": 1605,
+          "w": 43,
+          "h": 23,
+          "confidence": 96.294014,
+          "text": "the"
+        },
+        {
+          "x": 1337,
+          "y": 1606,
+          "w": 80,
+          "h": 22,
+          "confidence": 96.176598,
+          "text": "court."
+        },
+        {
+          "x": 295,
+          "y": 1732,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.29361,
+          "text": "Member"
+        },
+        {
+          "x": 415,
+          "y": 1732,
+          "w": 160,
+          "h": 22,
+          "confidence": 96.332603,
+          "text": "discussion."
+        },
+        {
+          "x": 294,
+          "y": 1826,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.614464,
+          "text": "Senator"
+        },
+        {
+          "x": 415,
+          "y": 1825,
+          "w": 83,
+          "h": 31,
+          "confidence": 96.894173,
+          "text": "Marty"
+        },
+        {
+          "x": 508,
+          "y": 1823,
+          "w": 94,
+          "h": 26,
+          "confidence": 96.547829,
+          "text": "moved"
+        },
+        {
+          "x": 612,
+          "y": 1823,
+          "w": 56,
+          "h": 26,
+          "confidence": 96.658958,
+          "text": "that"
+        },
+        {
+          "x": 678,
+          "y": 1823,
+          "w": 185,
+          "h": 25,
+          "confidence": 96.678246,
+          "text": "Confirmation"
+        },
+        {
+          "x": 874,
+          "y": 1823,
+          "w": 28,
+          "h": 25,
+          "confidence": 96.835213,
+          "text": "of"
+        },
+        {
+          "x": 913,
+          "y": 1823,
+          "w": 150,
+          "h": 25,
+          "confidence": 93.289696,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1072,
+          "y": 1823,
+          "w": 126,
+          "h": 25,
+          "confidence": 92.281761,
+          "text": "Workers'"
+        },
+        {
+          "x": 1207,
+          "y": 1823,
+          "w": 207,
+          "h": 31,
+          "confidence": 96.212349,
+          "text": "Compensation"
+        },
+        {
+          "x": 1425,
+          "y": 1824,
+          "w": 79,
+          "h": 24,
+          "confidence": 96.892464,
+          "text": "Court"
+        },
+        {
+          "x": 1513,
+          "y": 1822,
+          "w": 29,
+          "h": 25,
+          "confidence": 96.697296,
+          "text": "of"
+        },
+        {
+          "x": 1550,
+          "y": 1822,
+          "w": 115,
+          "h": 32,
+          "confidence": 96.697296,
+          "text": "Appeals"
+        },
+        {
+          "x": 1676,
+          "y": 1822,
+          "w": 75,
+          "h": 25,
+          "confidence": 96.844849,
+          "text": "Chief"
+        },
+        {
+          "x": 1759,
+          "y": 1822,
+          "w": 89,
+          "h": 31,
+          "confidence": 96.50766,
+          "text": "Judge"
+        },
+        {
+          "x": 334,
+          "y": 1872,
+          "w": 109,
+          "h": 26,
+          "confidence": 96.701561,
+          "text": "Patricia"
+        },
+        {
+          "x": 453,
+          "y": 1873,
+          "w": 15,
+          "h": 24,
+          "confidence": 93.246666,
+          "text": "J"
+        },
+        {
+          "x": 480,
+          "y": 1872,
+          "w": 86,
+          "h": 30,
+          "confidence": 90.721054,
+          "text": "Milun,"
+        },
+        {
+          "x": 577,
+          "y": 1872,
+          "w": 34,
+          "h": 25,
+          "confidence": 96.308548,
+          "text": "be"
+        },
+        {
+          "x": 621,
+          "y": 1871,
+          "w": 204,
+          "h": 26,
+          "confidence": 95.923897,
+          "text": "recommended"
+        },
+        {
+          "x": 835,
+          "y": 1871,
+          "w": 40,
+          "h": 25,
+          "confidence": 96.061096,
+          "text": "for"
+        },
+        {
+          "x": 884,
+          "y": 1871,
+          "w": 192,
+          "h": 25,
+          "confidence": 93.231079,
+          "text": "confirmation."
+        },
+        {
+          "x": 1093,
+          "y": 1883,
+          "w": 5,
+          "h": 5,
+          "confidence": 93.080956,
+          "text": "-"
+        },
+        {
+          "x": 1109,
+          "y": 1872,
+          "w": 121,
+          "h": 24,
+          "confidence": 95.71656,
+          "text": "MOTION"
+        },
+        {
+          "x": 1240,
+          "y": 1872,
+          "w": 151,
+          "h": 24,
+          "confidence": 96.54039,
+          "text": "ADOPTED."
+        },
+        {
+          "x": 294,
+          "y": 1969,
+          "w": 188,
+          "h": 25,
+          "confidence": 95.806114,
+          "text": "Confirmation"
+        },
+        {
+          "x": 493,
+          "y": 1968,
+          "w": 29,
+          "h": 26,
+          "confidence": 96.731415,
+          "text": "of"
+        },
+        {
+          "x": 531,
+          "y": 1969,
+          "w": 151,
+          "h": 25,
+          "confidence": 93.287354,
+          "text": "Minnesota"
+        },
+        {
+          "x": 690,
+          "y": 1968,
+          "w": 126,
+          "h": 25,
+          "confidence": 91.987778,
+          "text": "Workers'"
+        },
+        {
+          "x": 825,
+          "y": 1968,
+          "w": 208,
+          "h": 32,
+          "confidence": 96.725273,
+          "text": "Compensation"
+        },
+        {
+          "x": 1044,
+          "y": 1970,
+          "w": 80,
+          "h": 23,
+          "confidence": 96.858101,
+          "text": "Court"
+        },
+        {
+          "x": 1134,
+          "y": 1968,
+          "w": 29,
+          "h": 25,
+          "confidence": 96.475693,
+          "text": "of"
+        },
+        {
+          "x": 1171,
+          "y": 1967,
+          "w": 115,
+          "h": 32,
+          "confidence": 96.527992,
+          "text": "Appeals"
+        },
+        {
+          "x": 1295,
+          "y": 1968,
+          "w": 90,
+          "h": 31,
+          "confidence": 96.751892,
+          "text": "Judge"
+        },
+        {
+          "x": 334,
+          "y": 2017,
+          "w": 119,
+          "h": 26,
+          "confidence": 93.293808,
+          "text": "Deborah"
+        },
+        {
+          "x": 464,
+          "y": 2018,
+          "w": 19,
+          "h": 24,
+          "confidence": 90.999802,
+          "text": "K"
+        },
+        {
+          "x": 492,
+          "y": 2017,
+          "w": 147,
+          "h": 32,
+          "confidence": 90.999802,
+          "text": "Sundquist"
+        },
+        {
+          "x": 294,
+          "y": 2115,
+          "w": 85,
+          "h": 29,
+          "confidence": 96.453041,
+          "text": "Judge"
+        },
+        {
+          "x": 390,
+          "y": 2115,
+          "w": 116,
+          "h": 22,
+          "confidence": 93.2836,
+          "text": "Deborah"
+        },
+        {
+          "x": 518,
+          "y": 2115,
+          "w": 26,
+          "h": 22,
+          "confidence": 90.581551,
+          "text": "K."
+        },
+        {
+          "x": 555,
+          "y": 2114,
+          "w": 141,
+          "h": 29,
+          "confidence": 90.581551,
+          "text": "Sundquist"
+        },
+        {
+          "x": 706,
+          "y": 2120,
+          "w": 65,
+          "h": 23,
+          "confidence": 96.305954,
+          "text": "gave"
+        },
+        {
+          "x": 780,
+          "y": 2114,
+          "w": 138,
+          "h": 29,
+          "confidence": 96.305954,
+          "text": "testimony"
+        },
+        {
+          "x": 928,
+          "y": 2119,
+          "w": 34,
+          "h": 17,
+          "confidence": 96.317451,
+          "text": "on"
+        },
+        {
+          "x": 974,
+          "y": 2114,
+          "w": 45,
+          "h": 22,
+          "confidence": 96.317451,
+          "text": "her"
+        },
+        {
+          "x": 1028,
+          "y": 2119,
+          "w": 109,
+          "h": 22,
+          "confidence": 96.337418,
+          "text": "resume,"
+        },
+        {
+          "x": 1149,
+          "y": 2114,
+          "w": 50,
+          "h": 22,
+          "confidence": 96.36322,
+          "text": "and"
+        },
+        {
+          "x": 1210,
+          "y": 2113,
+          "w": 51,
+          "h": 23,
+          "confidence": 96.896141,
+          "text": "role"
+        },
+        {
+          "x": 1271,
+          "y": 2115,
+          "w": 26,
+          "h": 21,
+          "confidence": 96.390488,
+          "text": "at"
+        },
+        {
+          "x": 1304,
+          "y": 2114,
+          "w": 44,
+          "h": 22,
+          "confidence": 95.938141,
+          "text": "the"
+        },
+        {
+          "x": 1357,
+          "y": 2114,
+          "w": 80,
+          "h": 22,
+          "confidence": 96.336288,
+          "text": "court."
+        },
+        {
+          "x": 295,
+          "y": 2240,
+          "w": 112,
+          "h": 23,
+          "confidence": 96.50325,
+          "text": "Member"
+        },
+        {
+          "x": 415,
+          "y": 2240,
+          "w": 160,
+          "h": 23,
+          "confidence": 95.95575,
+          "text": "discussion."
+        },
+        {
+          "x": 295,
+          "y": 2383,
+          "w": 111,
+          "h": 24,
+          "confidence": 96.276154,
+          "text": "Senator"
+        },
+        {
+          "x": 416,
+          "y": 2382,
+          "w": 83,
+          "h": 32,
+          "confidence": 96.655342,
+          "text": "Marty"
+        },
+        {
+          "x": 509,
+          "y": 2380,
+          "w": 94,
+          "h": 26,
+          "confidence": 96.697411,
+          "text": "moved"
+        },
+        {
+          "x": 614,
+          "y": 2380,
+          "w": 55,
+          "h": 26,
+          "confidence": 96.596748,
+          "text": "that"
+        },
+        {
+          "x": 679,
+          "y": 2380,
+          "w": 185,
+          "h": 26,
+          "confidence": 96.645805,
+          "text": "Confirmation"
+        },
+        {
+          "x": 875,
+          "y": 2380,
+          "w": 28,
+          "h": 26,
+          "confidence": 96.875916,
+          "text": "of"
+        },
+        {
+          "x": 914,
+          "y": 2380,
+          "w": 149,
+          "h": 25,
+          "confidence": 93.287109,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1073,
+          "y": 2379,
+          "w": 126,
+          "h": 26,
+          "confidence": 92.768242,
+          "text": "Workers'"
+        },
+        {
+          "x": 1208,
+          "y": 2380,
+          "w": 207,
+          "h": 32,
+          "confidence": 96.373131,
+          "text": "Compensation"
+        },
+        {
+          "x": 1426,
+          "y": 2381,
+          "w": 78,
+          "h": 24,
+          "confidence": 96.967827,
+          "text": "Court"
+        },
+        {
+          "x": 1514,
+          "y": 2379,
+          "w": 28,
+          "h": 26,
+          "confidence": 97.005112,
+          "text": "of"
+        },
+        {
+          "x": 1551,
+          "y": 2378,
+          "w": 114,
+          "h": 33,
+          "confidence": 96.4702,
+          "text": "Appeals"
+        },
+        {
+          "x": 1676,
+          "y": 2378,
+          "w": 88,
+          "h": 32,
+          "confidence": 96.755409,
+          "text": "Judge"
+        },
+        {
+          "x": 335,
+          "y": 2429,
+          "w": 118,
+          "h": 26,
+          "confidence": 92.882309,
+          "text": "Deborah"
+        },
+        {
+          "x": 465,
+          "y": 2430,
+          "w": 18,
+          "h": 25,
+          "confidence": 92.882309,
+          "text": "K"
+        },
+        {
+          "x": 493,
+          "y": 2429,
+          "w": 150,
+          "h": 32,
+          "confidence": 91.292557,
+          "text": "Sundquist,"
+        },
+        {
+          "x": 655,
+          "y": 2429,
+          "w": 32,
+          "h": 26,
+          "confidence": 96.776405,
+          "text": "be"
+        },
+        {
+          "x": 697,
+          "y": 2428,
+          "w": 205,
+          "h": 26,
+          "confidence": 96.627502,
+          "text": "recommended"
+        },
+        {
+          "x": 912,
+          "y": 2428,
+          "w": 41,
+          "h": 26,
+          "confidence": 96.813217,
+          "text": "for"
+        },
+        {
+          "x": 963,
+          "y": 2428,
+          "w": 192,
+          "h": 26,
+          "confidence": 93.026352,
+          "text": "confirmation."
+        },
+        {
+          "x": 1174,
+          "y": 2440,
+          "w": 2,
+          "h": 6,
+          "confidence": 90.947449,
+          "text": "-"
+        },
+        {
+          "x": 1187,
+          "y": 2429,
+          "w": 120,
+          "h": 25,
+          "confidence": 96.635414,
+          "text": "MOTION"
+        },
+        {
+          "x": 1316,
+          "y": 2429,
+          "w": 152,
+          "h": 25,
+          "confidence": 95.827522,
+          "text": "ADOPTED."
+        },
+        {
+          "x": 295,
+          "y": 2526,
+          "w": 188,
+          "h": 26,
+          "confidence": 95.656876,
+          "text": "Confirmation"
+        },
+        {
+          "x": 494,
+          "y": 2526,
+          "w": 28,
+          "h": 26,
+          "confidence": 96.798813,
+          "text": "of"
+        },
+        {
+          "x": 532,
+          "y": 2526,
+          "w": 150,
+          "h": 25,
+          "confidence": 91.837753,
+          "text": "Minnesota"
+        },
+        {
+          "x": 691,
+          "y": 2525,
+          "w": 125,
+          "h": 26,
+          "confidence": 91.837753,
+          "text": "Workers'"
+        },
+        {
+          "x": 826,
+          "y": 2525,
+          "w": 208,
+          "h": 32,
+          "confidence": 96.089523,
+          "text": "Compensation"
+        },
+        {
+          "x": 1044,
+          "y": 2527,
+          "w": 81,
+          "h": 24,
+          "confidence": 96.691673,
+          "text": "Court"
+        },
+        {
+          "x": 1134,
+          "y": 2525,
+          "w": 30,
+          "h": 25,
+          "confidence": 96.675476,
+          "text": "of"
+        },
+        {
+          "x": 1171,
+          "y": 2525,
+          "w": 116,
+          "h": 32,
+          "confidence": 95.510963,
+          "text": "Appeals"
+        },
+        {
+          "x": 1296,
+          "y": 2525,
+          "w": 89,
+          "h": 31,
+          "confidence": 96.375443,
+          "text": "Judge"
+        },
+        {
+          "x": 1395,
+          "y": 2526,
+          "w": 70,
+          "h": 24,
+          "confidence": 93.245247,
+          "text": "Sean"
+        },
+        {
+          "x": 1476,
+          "y": 2525,
+          "w": 25,
+          "h": 25,
+          "confidence": 92.357147,
+          "text": "M"
+        },
+        {
+          "x": 334,
+          "y": 2576,
+          "w": 84,
+          "h": 29,
+          "confidence": 96.613731,
+          "text": "Quinn"
+        },
+        {
+          "x": 294,
+          "y": 2673,
+          "w": 86,
+          "h": 28,
+          "confidence": 96.15519,
+          "text": "Judge"
+        },
+        {
+          "x": 390,
+          "y": 2673,
+          "w": 67,
+          "h": 22,
+          "confidence": 93.229729,
+          "text": "Sean"
+        },
+        {
+          "x": 469,
+          "y": 2673,
+          "w": 30,
+          "h": 22,
+          "confidence": 92.75515,
+          "text": "M."
+        },
+        {
+          "x": 510,
+          "y": 2672,
+          "w": 82,
+          "h": 25,
+          "confidence": 95.647011,
+          "text": "Quinn"
+        },
+        {
+          "x": 603,
+          "y": 2678,
+          "w": 64,
+          "h": 22,
+          "confidence": 95.647011,
+          "text": "gave"
+        },
+        {
+          "x": 677,
+          "y": 2672,
+          "w": 137,
+          "h": 28,
+          "confidence": 95.687508,
+          "text": "testimony"
+        },
+        {
+          "x": 824,
+          "y": 2677,
+          "w": 33,
+          "h": 17,
+          "confidence": 95.502991,
+          "text": "on"
+        },
+        {
+          "x": 869,
+          "y": 2671,
+          "w": 39,
+          "h": 23,
+          "confidence": 95.502991,
+          "text": "his"
+        },
+        {
+          "x": 920,
+          "y": 2677,
+          "w": 110,
+          "h": 21,
+          "confidence": 96.526016,
+          "text": "resume,"
+        },
+        {
+          "x": 1041,
+          "y": 2671,
+          "w": 49,
+          "h": 22,
+          "confidence": 95.691963,
+          "text": "and"
+        },
+        {
+          "x": 1103,
+          "y": 2671,
+          "w": 52,
+          "h": 23,
+          "confidence": 95.691963,
+          "text": "role"
+        },
+        {
+          "x": 1164,
+          "y": 2672,
+          "w": 26,
+          "h": 21,
+          "confidence": 96.825272,
+          "text": "at"
+        },
+        {
+          "x": 1198,
+          "y": 2671,
+          "w": 43,
+          "h": 22,
+          "confidence": 96.961044,
+          "text": "the"
+        },
+        {
+          "x": 1251,
+          "y": 2672,
+          "w": 79,
+          "h": 22,
+          "confidence": 95.958023,
+          "text": "court."
+        },
+        {
+          "x": 296,
+          "y": 2797,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.382744,
+          "text": "Member"
+        },
+        {
+          "x": 416,
+          "y": 2797,
+          "w": 160,
+          "h": 23,
+          "confidence": 96.00386,
+          "text": "discussion."
+        },
+        {
+          "x": 295,
+          "y": 2940,
+          "w": 111,
+          "h": 23,
+          "confidence": 96.345139,
+          "text": "Senator"
+        },
+        {
+          "x": 416,
+          "y": 2938,
+          "w": 83,
+          "h": 31,
+          "confidence": 96.212097,
+          "text": "Marty"
+        },
+        {
+          "x": 509,
+          "y": 2937,
+          "w": 94,
+          "h": 25,
+          "confidence": 96.710571,
+          "text": "moved"
+        },
+        {
+          "x": 614,
+          "y": 2937,
+          "w": 55,
+          "h": 25,
+          "confidence": 96.424049,
+          "text": "that"
+        },
+        {
+          "x": 679,
+          "y": 2937,
+          "w": 185,
+          "h": 25,
+          "confidence": 96.273552,
+          "text": "Confirmation"
+        },
+        {
+          "x": 875,
+          "y": 2936,
+          "w": 28,
+          "h": 25,
+          "confidence": 96.957275,
+          "text": "of"
+        },
+        {
+          "x": 914,
+          "y": 2936,
+          "w": 149,
+          "h": 25,
+          "confidence": 93.289513,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1073,
+          "y": 2935,
+          "w": 126,
+          "h": 26,
+          "confidence": 86.97596,
+          "text": "Workers'"
+        },
+        {
+          "x": 1208,
+          "y": 2936,
+          "w": 207,
+          "h": 31,
+          "confidence": 95.559853,
+          "text": "Compensation"
+        },
+        {
+          "x": 1426,
+          "y": 2937,
+          "w": 78,
+          "h": 24,
+          "confidence": 96.015869,
+          "text": "Court"
+        },
+        {
+          "x": 1514,
+          "y": 2936,
+          "w": 28,
+          "h": 25,
+          "confidence": 96.289825,
+          "text": "of"
+        },
+        {
+          "x": 1551,
+          "y": 2935,
+          "w": 115,
+          "h": 32,
+          "confidence": 96.414864,
+          "text": "Appeals"
+        },
+        {
+          "x": 1676,
+          "y": 2935,
+          "w": 88,
+          "h": 31,
+          "confidence": 96.421616,
+          "text": "Judge"
+        },
+        {
+          "x": 1774,
+          "y": 2937,
+          "w": 69,
+          "h": 23,
+          "confidence": 93.251923,
+          "text": "Sean"
+        },
+        {
+          "x": 1856,
+          "y": 2936,
+          "w": 24,
+          "h": 24,
+          "confidence": 92.886795,
+          "text": "M"
+        },
+        {
+          "x": 335,
+          "y": 2986,
+          "w": 90,
+          "h": 30,
+          "confidence": 96.074829,
+          "text": "Quinn,"
+        },
+        {
+          "x": 436,
+          "y": 2986,
+          "w": 33,
+          "h": 25,
+          "confidence": 96.074829,
+          "text": "be"
+        },
+        {
+          "x": 479,
+          "y": 2985,
+          "w": 205,
+          "h": 26,
+          "confidence": 96.351624,
+          "text": "recommended"
+        },
+        {
+          "x": 694,
+          "y": 2985,
+          "w": 40,
+          "h": 25,
+          "confidence": 96.307465,
+          "text": "for"
+        },
+        {
+          "x": 743,
+          "y": 2985,
+          "w": 191,
+          "h": 25,
+          "confidence": 92.82196,
+          "text": "confirmation."
+        },
+        {
+          "x": 955,
+          "y": 2996,
+          "w": 1,
+          "h": 6,
+          "confidence": 89.596031,
+          "text": "-"
+        },
+        {
+          "x": 967,
+          "y": 2985,
+          "w": 121,
+          "h": 25,
+          "confidence": 96.223663,
+          "text": "MOTION"
+        },
+        {
+          "x": 1098,
+          "y": 2985,
+          "w": 153,
+          "h": 24,
+          "confidence": 96.418297,
+          "text": "ADOPTED."
+        },
+        {
+          "x": 202,
+          "y": 3181,
+          "w": 474,
+          "h": 33,
+          "confidence": 45.220341,
+          "text": "https:/Avww,senate.mn/schedule/hearing_minutes,"
+        },
+        {
+          "x": 684,
+          "y": 3185,
+          "w": 283,
+          "h": 23,
+          "confidence": 22.520844,
+          "text": "himi7hearing_id=18588als=93"
+        },
+        {
+          "x": 2290,
+          "y": 3185,
+          "w": 27,
+          "h": 17,
+          "confidence": 48.772575,
+          "text": "4/2"
+        }
+      ]
+    }
+  }
+}

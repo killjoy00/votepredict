@@ -1,0 +1,198 @@
+{
+  "page": 2,
+  "raw300dpiPageSha256": "f6c01b359de53e363aa6ca1d32e3b46f013374f1471bcc97b6c284611877a2ec",
+  "width": 2550,
+  "height": 3300,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 2.22\nScript: Latin\nScript confidence: 4.67\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 2.22
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "0dca9c6d5e1d6845145cf10260c5f41b84fea326572b4e41cb9342c548be1b4f",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "a Chute\n\nSenator Omar Fateh, Chair Chris Meyer, LegiSlative Assistant\n",
+      "textSha256": "1a0f55e640d37107f1446fe3beb66a54b1f6a934774d6be6efddd914db80ce2f",
+      "wordBoxes": [
+        {
+          "x": 531,
+          "y": 192,
+          "w": 167,
+          "h": 53,
+          "confidence": 23.895218,
+          "text": "a"
+        },
+        {
+          "x": 1261,
+          "y": 201,
+          "w": 118,
+          "h": 46,
+          "confidence": 45.757889,
+          "text": "Chute"
+        },
+        {
+          "x": 513,
+          "y": 273,
+          "w": 88,
+          "h": 21,
+          "confidence": 96.855133,
+          "text": "Senator"
+        },
+        {
+          "x": 609,
+          "y": 273,
+          "w": 61,
+          "h": 21,
+          "confidence": 96.497864,
+          "text": "Omar"
+        },
+        {
+          "x": 678,
+          "y": 272,
+          "w": 67,
+          "h": 26,
+          "confidence": 96.790047,
+          "text": "Fateh,"
+        },
+        {
+          "x": 754,
+          "y": 272,
+          "w": 59,
+          "h": 22,
+          "confidence": 96.965271,
+          "text": "Chair"
+        },
+        {
+          "x": 1253,
+          "y": 272,
+          "w": 59,
+          "h": 22,
+          "confidence": 96.915161,
+          "text": "Chris"
+        },
+        {
+          "x": 1321,
+          "y": 273,
+          "w": 72,
+          "h": 26,
+          "confidence": 93.294785,
+          "text": "Meyer,"
+        },
+        {
+          "x": 1402,
+          "y": 272,
+          "w": 122,
+          "h": 22,
+          "confidence": 89.734291,
+          "text": "LegiSlative"
+        },
+        {
+          "x": 1531,
+          "y": 273,
+          "w": 108,
+          "h": 21,
+          "confidence": 96.984253,
+          "text": "Assistant"
+        }
+      ]
+    },
+    "11": {
+      "text": "aa \u2014\u2014\n\nhea\n\nSenator Omar Fateh, Chair\n\nChris Meyer, LegiSlative Assistant\n",
+      "textSha256": "abdece0a9ebb1459754e627c72d294518f6ba2d2fb320c8258175a0839d18500",
+      "wordBoxes": [
+        {
+          "x": 527,
+          "y": 188,
+          "w": 173,
+          "h": 61,
+          "confidence": 42.58271,
+          "text": "aa"
+        },
+        {
+          "x": 760,
+          "y": 188,
+          "w": 93,
+          "h": 61,
+          "confidence": 65.579895,
+          "text": "\u2014\u2014"
+        },
+        {
+          "x": 1261,
+          "y": 201,
+          "w": 118,
+          "h": 46,
+          "confidence": 57.333939,
+          "text": "hea"
+        },
+        {
+          "x": 513,
+          "y": 273,
+          "w": 88,
+          "h": 21,
+          "confidence": 96.422913,
+          "text": "Senator"
+        },
+        {
+          "x": 609,
+          "y": 273,
+          "w": 61,
+          "h": 21,
+          "confidence": 96.375343,
+          "text": "Omar"
+        },
+        {
+          "x": 678,
+          "y": 272,
+          "w": 67,
+          "h": 26,
+          "confidence": 96.375343,
+          "text": "Fateh,"
+        },
+        {
+          "x": 754,
+          "y": 272,
+          "w": 59,
+          "h": 22,
+          "confidence": 96.572243,
+          "text": "Chair"
+        },
+        {
+          "x": 1253,
+          "y": 272,
+          "w": 59,
+          "h": 22,
+          "confidence": 96.746506,
+          "text": "Chris"
+        },
+        {
+          "x": 1321,
+          "y": 273,
+          "w": 72,
+          "h": 26,
+          "confidence": 93.28878,
+          "text": "Meyer,"
+        },
+        {
+          "x": 1402,
+          "y": 272,
+          "w": 122,
+          "h": 22,
+          "confidence": 91.874084,
+          "text": "LegiSlative"
+        },
+        {
+          "x": 1531,
+          "y": 273,
+          "w": 108,
+          "h": 21,
+          "confidence": 96.981056,
+          "text": "Assistant"
+        }
+      ]
+    }
+  }
+}

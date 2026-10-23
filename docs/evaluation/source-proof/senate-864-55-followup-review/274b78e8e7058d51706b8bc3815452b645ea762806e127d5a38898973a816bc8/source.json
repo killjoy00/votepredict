@@ -1,0 +1,33 @@
+{
+  "sourceId": "274b78e8e7058d51706b8bc3815452b645ea762806e127d5a38898973a816bc8",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240409/taxes_20240409_Final-Meeting-Minutes.pdf",
+  "originalSha256": "261774644231265a19d7c42fd816b05ae4cdc308c58f2eb34a61c7239c97dba0",
+  "extractedTextSha256": "16691efdee374fb21cf736c502bbd76102a33bde7adc3e92953f02eeeb98b5e6",
+  "date": "2024-04-09",
+  "committee": "Taxes",
+  "session": "2023-2024",
+  "format": "pdf",
+  "authenticated": true,
+  "readable": true,
+  "extractionMethod": "ocr_tesseract",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "pages": [
+    {
+      "page": 1,
+      "raw300dpiPageSha256": "677781835de5a667f4f5b433ce5d272261547c7a665827c7d22067b1874d59ef",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "d34fa3831010f59870a1bc0dca32b4c128a181663acb67cb31cafaff6bcd397c"
+    },
+    {
+      "page": 2,
+      "raw300dpiPageSha256": "1a3910617b66c9c4350eeafbabf7a701f6972aefb77220ce6523a7cc624b1aea",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "d20e8e44c53ac40870758f6c5fb0588d500e1627e82da78f33f9deed7003f9d2"
+    }
+  ],
+  "pageCount": 2,
+  "originalBytesAuthenticated": true
+}

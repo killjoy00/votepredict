@@ -1,0 +1,26 @@
+{
+  "sourceId": "7cd749171bd2067dd9ccc8b2fac4720a16783dc95e2a4bc4b67c3e25d54f10d1",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230221/highered_20230221_minutes.pdf",
+  "originalSha256": "38c7ea3eb7744e8355cd371230ac08ba0529c180aea22a75c5dc32e61505da98",
+  "extractedTextSha256": "c6cd80893d8215641b6363022797dd338b7fd679f2bd038dda70274339576131",
+  "date": "2023-02-21",
+  "committee": "Higher Education",
+  "session": "2023-2024",
+  "format": "pdf",
+  "authenticated": true,
+  "readable": true,
+  "extractionMethod": "ocr_tesseract",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "pages": [
+    {
+      "page": 1,
+      "raw300dpiPageSha256": "93192a013c616a458aa76ae72062660ecd2d3f6359c9afc1202d1642bf773bc6",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "1a3b81fd795e7bfceb208d56163bc46b1865fe119cb639319cc54859c20caea3"
+    }
+  ],
+  "pageCount": 1,
+  "originalBytesAuthenticated": true
+}

@@ -1,0 +1,1038 @@
+{
+  "page": 2,
+  "raw300dpiPageSha256": "784f08ac53ccee03f559fed29fe6bd25798c86c8401f32451a5049a96781138b",
+  "width": 2550,
+  "height": 4200,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 18.21\nScript: Latin\nScript confidence: 8.50\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 18.21
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "f9f1427aa5efc31ea9ceb357b6973618b57c2a4ace00462cd0324a709c38649f",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "Senator Rest moved that S.F. 4261, be laid over.\n\nS.F. 4241: Senator Drazkowski: Certain acres certified under the Minnesota agricultural water\nquality certification program credit establishment and appropriation.\n\nTestifier:\nStu Lourey, Government Relations Director, MN Farmers Union\n\nSenator Rest moved that S.F. 4241, be laid over.\n\nThe meeting was adjourned at 10:32am.\n\nay\n\nSenator Ann H. Rest, Chair Maddie Hormann, Legislative Assistant\n",
+      "textSha256": "2c7b4f19080fb6f5a69d466f07aa2a085573af946f0f826c1fac49436ad99b01",
+      "wordBoxes": [
+        {
+          "x": 326,
+          "y": 362,
+          "w": 153,
+          "h": 32,
+          "confidence": 96.348862,
+          "text": "Senator"
+        },
+        {
+          "x": 493,
+          "y": 363,
+          "w": 86,
+          "h": 32,
+          "confidence": 96.348862,
+          "text": "Rest"
+        },
+        {
+          "x": 592,
+          "y": 363,
+          "w": 129,
+          "h": 33,
+          "confidence": 96.899796,
+          "text": "moved"
+        },
+        {
+          "x": 734,
+          "y": 363,
+          "w": 77,
+          "h": 33,
+          "confidence": 93.277527,
+          "text": "that"
+        },
+        {
+          "x": 823,
+          "y": 365,
+          "w": 73,
+          "h": 32,
+          "confidence": 91.570175,
+          "text": "S.F."
+        },
+        {
+          "x": 911,
+          "y": 365,
+          "w": 108,
+          "h": 40,
+          "confidence": 96.889938,
+          "text": "4261,"
+        },
+        {
+          "x": 1034,
+          "y": 365,
+          "w": 45,
+          "h": 33,
+          "confidence": 96.874924,
+          "text": "be"
+        },
+        {
+          "x": 1093,
+          "y": 365,
+          "w": 68,
+          "h": 33,
+          "confidence": 96.795395,
+          "text": "laid"
+        },
+        {
+          "x": 1174,
+          "y": 375,
+          "w": 96,
+          "h": 24,
+          "confidence": 96.792381,
+          "text": "over."
+        },
+        {
+          "x": 325,
+          "y": 465,
+          "w": 73,
+          "h": 32,
+          "confidence": 64.786789,
+          "text": "S.F."
+        },
+        {
+          "x": 413,
+          "y": 466,
+          "w": 109,
+          "h": 32,
+          "confidence": 96.452591,
+          "text": "4241:"
+        },
+        {
+          "x": 536,
+          "y": 467,
+          "w": 154,
+          "h": 33,
+          "confidence": 93.244362,
+          "text": "Senator"
+        },
+        {
+          "x": 703,
+          "y": 467,
+          "w": 235,
+          "h": 34,
+          "confidence": 92.323402,
+          "text": "Drazkowski:"
+        },
+        {
+          "x": 953,
+          "y": 469,
+          "w": 139,
+          "h": 33,
+          "confidence": 96.905594,
+          "text": "Certain"
+        },
+        {
+          "x": 1106,
+          "y": 478,
+          "w": 107,
+          "h": 25,
+          "confidence": 96.905594,
+          "text": "acres"
+        },
+        {
+          "x": 1225,
+          "y": 470,
+          "w": 161,
+          "h": 34,
+          "confidence": 96.755058,
+          "text": "certified"
+        },
+        {
+          "x": 1401,
+          "y": 471,
+          "w": 111,
+          "h": 33,
+          "confidence": 96.400719,
+          "text": "under"
+        },
+        {
+          "x": 1523,
+          "y": 471,
+          "w": 61,
+          "h": 34,
+          "confidence": 96.976776,
+          "text": "the"
+        },
+        {
+          "x": 1599,
+          "y": 472,
+          "w": 204,
+          "h": 34,
+          "confidence": 96.805565,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1817,
+          "y": 473,
+          "w": 222,
+          "h": 42,
+          "confidence": 96.649979,
+          "text": "agricultural"
+        },
+        {
+          "x": 2052,
+          "y": 478,
+          "w": 110,
+          "h": 30,
+          "confidence": 96.989609,
+          "text": "water"
+        },
+        {
+          "x": 325,
+          "y": 517,
+          "w": 132,
+          "h": 42,
+          "confidence": 96.965462,
+          "text": "quality"
+        },
+        {
+          "x": 469,
+          "y": 518,
+          "w": 235,
+          "h": 34,
+          "confidence": 96.531364,
+          "text": "certification"
+        },
+        {
+          "x": 718,
+          "y": 528,
+          "w": 164,
+          "h": 33,
+          "confidence": 96.562881,
+          "text": "program"
+        },
+        {
+          "x": 896,
+          "y": 520,
+          "w": 112,
+          "h": 34,
+          "confidence": 96.77964,
+          "text": "credit"
+        },
+        {
+          "x": 1020,
+          "y": 521,
+          "w": 279,
+          "h": 35,
+          "confidence": 96.657532,
+          "text": "establishment"
+        },
+        {
+          "x": 1310,
+          "y": 523,
+          "w": 70,
+          "h": 34,
+          "confidence": 96.945694,
+          "text": "and"
+        },
+        {
+          "x": 1394,
+          "y": 524,
+          "w": 273,
+          "h": 42,
+          "confidence": 96.536484,
+          "text": "appropriation."
+        },
+        {
+          "x": 323,
+          "y": 621,
+          "w": 177,
+          "h": 34,
+          "confidence": 90.918396,
+          "text": "Testifier:"
+        },
+        {
+          "x": 324,
+          "y": 674,
+          "w": 61,
+          "h": 32,
+          "confidence": 93.257095,
+          "text": "Stu"
+        },
+        {
+          "x": 402,
+          "y": 674,
+          "w": 135,
+          "h": 42,
+          "confidence": 91.809258,
+          "text": "Lourey,"
+        },
+        {
+          "x": 552,
+          "y": 675,
+          "w": 235,
+          "h": 34,
+          "confidence": 96.687363,
+          "text": "Government"
+        },
+        {
+          "x": 801,
+          "y": 676,
+          "w": 177,
+          "h": 34,
+          "confidence": 96.67794,
+          "text": "Relations"
+        },
+        {
+          "x": 993,
+          "y": 678,
+          "w": 158,
+          "h": 39,
+          "confidence": 96.254921,
+          "text": "Director,"
+        },
+        {
+          "x": 1167,
+          "y": 679,
+          "w": 64,
+          "h": 32,
+          "confidence": 96.437401,
+          "text": "MN"
+        },
+        {
+          "x": 1247,
+          "y": 680,
+          "w": 157,
+          "h": 33,
+          "confidence": 96.0867,
+          "text": "Farmers"
+        },
+        {
+          "x": 1419,
+          "y": 681,
+          "w": 107,
+          "h": 32,
+          "confidence": 96.757042,
+          "text": "Union"
+        },
+        {
+          "x": 323,
+          "y": 778,
+          "w": 153,
+          "h": 33,
+          "confidence": 96.197243,
+          "text": "Senator"
+        },
+        {
+          "x": 490,
+          "y": 780,
+          "w": 86,
+          "h": 32,
+          "confidence": 96.339165,
+          "text": "Rest"
+        },
+        {
+          "x": 589,
+          "y": 780,
+          "w": 129,
+          "h": 33,
+          "confidence": 96.484016,
+          "text": "moved"
+        },
+        {
+          "x": 731,
+          "y": 780,
+          "w": 77,
+          "h": 34,
+          "confidence": 92.657745,
+          "text": "that"
+        },
+        {
+          "x": 820,
+          "y": 782,
+          "w": 73,
+          "h": 32,
+          "confidence": 92.580826,
+          "text": "S.F."
+        },
+        {
+          "x": 907,
+          "y": 783,
+          "w": 92,
+          "h": 31,
+          "confidence": 96.200752,
+          "text": "4241,"
+        },
+        {
+          "x": 1030,
+          "y": 782,
+          "w": 45,
+          "h": 33,
+          "confidence": 96.3675,
+          "text": "be"
+        },
+        {
+          "x": 1090,
+          "y": 782,
+          "w": 66,
+          "h": 33,
+          "confidence": 96.245041,
+          "text": "laid"
+        },
+        {
+          "x": 1171,
+          "y": 792,
+          "w": 95,
+          "h": 24,
+          "confidence": 96.245041,
+          "text": "over."
+        },
+        {
+          "x": 322,
+          "y": 881,
+          "w": 73,
+          "h": 34,
+          "confidence": 96.942032,
+          "text": "The"
+        },
+        {
+          "x": 410,
+          "y": 883,
+          "w": 156,
+          "h": 42,
+          "confidence": 96.604179,
+          "text": "meeting"
+        },
+        {
+          "x": 579,
+          "y": 892,
+          "w": 78,
+          "h": 25,
+          "confidence": 96.84436,
+          "text": "was"
+        },
+        {
+          "x": 670,
+          "y": 884,
+          "w": 194,
+          "h": 42,
+          "confidence": 96.841339,
+          "text": "adjourned"
+        },
+        {
+          "x": 878,
+          "y": 889,
+          "w": 37,
+          "h": 30,
+          "confidence": 96.275146,
+          "text": "at"
+        },
+        {
+          "x": 929,
+          "y": 887,
+          "w": 180,
+          "h": 33,
+          "confidence": 96.275146,
+          "text": "10:32am."
+        },
+        {
+          "x": 336,
+          "y": 948,
+          "w": 78,
+          "h": 56,
+          "confidence": 21.142288,
+          "text": "ay"
+        },
+        {
+          "x": 320,
+          "y": 1144,
+          "w": 151,
+          "h": 33,
+          "confidence": 96.380806,
+          "text": "Senator"
+        },
+        {
+          "x": 482,
+          "y": 1145,
+          "w": 74,
+          "h": 33,
+          "confidence": 91.062073,
+          "text": "Ann"
+        },
+        {
+          "x": 572,
+          "y": 1146,
+          "w": 37,
+          "h": 32,
+          "confidence": 92.172386,
+          "text": "H."
+        },
+        {
+          "x": 626,
+          "y": 1146,
+          "w": 91,
+          "h": 39,
+          "confidence": 96.242912,
+          "text": "Rest,"
+        },
+        {
+          "x": 732,
+          "y": 1145,
+          "w": 100,
+          "h": 34,
+          "confidence": 96.775993,
+          "text": "Chair"
+        },
+        {
+          "x": 1296,
+          "y": 1149,
+          "w": 141,
+          "h": 34,
+          "confidence": 93.299255,
+          "text": "Maddie"
+        },
+        {
+          "x": 1453,
+          "y": 1151,
+          "w": 186,
+          "h": 39,
+          "confidence": 92.76828,
+          "text": "Hormann,"
+        },
+        {
+          "x": 1654,
+          "y": 1151,
+          "w": 204,
+          "h": 42,
+          "confidence": 96.688255,
+          "text": "Legislative"
+        },
+        {
+          "x": 1871,
+          "y": 1153,
+          "w": 183,
+          "h": 33,
+          "confidence": 96.884033,
+          "text": "Assistant"
+        }
+      ]
+    },
+    "11": {
+      "text": "Senator Rest moved that S.F. 4261, be laid over.\n\nS.F. 4241: Senator Drazkowski: Certain acres certified under the Minnesota agricultural water\n\nquality certification program credit establishment and appropriation.\n\nTestifier:\n\nStu Lourey, Government Relations Director, MN Farmers Union\n\nSenator Rest moved that S.F. 4241, be laid over.\n\nThe meeting was adjourned at 10:32am.\n\nf\n\nId\n\na\n\nSenator Ann H. Rest, Chair\n\nMaddie Hormann, Legislative Assistant\n",
+      "textSha256": "f9f2b915e64826f014205a4bec7571ceb6e250172931f5159f82e9be98edfcbb",
+      "wordBoxes": [
+        {
+          "x": 326,
+          "y": 362,
+          "w": 153,
+          "h": 32,
+          "confidence": 96.348862,
+          "text": "Senator"
+        },
+        {
+          "x": 493,
+          "y": 363,
+          "w": 86,
+          "h": 32,
+          "confidence": 96.348862,
+          "text": "Rest"
+        },
+        {
+          "x": 592,
+          "y": 363,
+          "w": 129,
+          "h": 33,
+          "confidence": 96.899796,
+          "text": "moved"
+        },
+        {
+          "x": 734,
+          "y": 363,
+          "w": 77,
+          "h": 33,
+          "confidence": 93.277527,
+          "text": "that"
+        },
+        {
+          "x": 823,
+          "y": 365,
+          "w": 73,
+          "h": 32,
+          "confidence": 91.570175,
+          "text": "S.F."
+        },
+        {
+          "x": 911,
+          "y": 365,
+          "w": 108,
+          "h": 40,
+          "confidence": 96.889938,
+          "text": "4261,"
+        },
+        {
+          "x": 1034,
+          "y": 365,
+          "w": 45,
+          "h": 33,
+          "confidence": 96.874924,
+          "text": "be"
+        },
+        {
+          "x": 1093,
+          "y": 365,
+          "w": 68,
+          "h": 33,
+          "confidence": 96.795395,
+          "text": "laid"
+        },
+        {
+          "x": 1174,
+          "y": 375,
+          "w": 96,
+          "h": 24,
+          "confidence": 96.792381,
+          "text": "over."
+        },
+        {
+          "x": 325,
+          "y": 465,
+          "w": 73,
+          "h": 32,
+          "confidence": 64.786789,
+          "text": "S.F."
+        },
+        {
+          "x": 413,
+          "y": 466,
+          "w": 109,
+          "h": 32,
+          "confidence": 96.452591,
+          "text": "4241:"
+        },
+        {
+          "x": 536,
+          "y": 467,
+          "w": 154,
+          "h": 33,
+          "confidence": 93.244362,
+          "text": "Senator"
+        },
+        {
+          "x": 703,
+          "y": 467,
+          "w": 235,
+          "h": 34,
+          "confidence": 92.323402,
+          "text": "Drazkowski:"
+        },
+        {
+          "x": 953,
+          "y": 469,
+          "w": 139,
+          "h": 33,
+          "confidence": 96.905594,
+          "text": "Certain"
+        },
+        {
+          "x": 1106,
+          "y": 478,
+          "w": 107,
+          "h": 25,
+          "confidence": 96.905594,
+          "text": "acres"
+        },
+        {
+          "x": 1225,
+          "y": 470,
+          "w": 161,
+          "h": 34,
+          "confidence": 96.755058,
+          "text": "certified"
+        },
+        {
+          "x": 1401,
+          "y": 471,
+          "w": 111,
+          "h": 33,
+          "confidence": 96.400719,
+          "text": "under"
+        },
+        {
+          "x": 1523,
+          "y": 471,
+          "w": 61,
+          "h": 34,
+          "confidence": 96.976776,
+          "text": "the"
+        },
+        {
+          "x": 1599,
+          "y": 472,
+          "w": 204,
+          "h": 34,
+          "confidence": 96.805565,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1817,
+          "y": 473,
+          "w": 222,
+          "h": 42,
+          "confidence": 96.649979,
+          "text": "agricultural"
+        },
+        {
+          "x": 2052,
+          "y": 478,
+          "w": 110,
+          "h": 30,
+          "confidence": 96.989609,
+          "text": "water"
+        },
+        {
+          "x": 325,
+          "y": 517,
+          "w": 132,
+          "h": 42,
+          "confidence": 96.965462,
+          "text": "quality"
+        },
+        {
+          "x": 469,
+          "y": 518,
+          "w": 235,
+          "h": 34,
+          "confidence": 96.531364,
+          "text": "certification"
+        },
+        {
+          "x": 718,
+          "y": 528,
+          "w": 164,
+          "h": 33,
+          "confidence": 96.562881,
+          "text": "program"
+        },
+        {
+          "x": 896,
+          "y": 520,
+          "w": 112,
+          "h": 34,
+          "confidence": 96.77964,
+          "text": "credit"
+        },
+        {
+          "x": 1020,
+          "y": 521,
+          "w": 279,
+          "h": 35,
+          "confidence": 96.657532,
+          "text": "establishment"
+        },
+        {
+          "x": 1310,
+          "y": 523,
+          "w": 70,
+          "h": 34,
+          "confidence": 96.945694,
+          "text": "and"
+        },
+        {
+          "x": 1394,
+          "y": 524,
+          "w": 273,
+          "h": 42,
+          "confidence": 96.536484,
+          "text": "appropriation."
+        },
+        {
+          "x": 323,
+          "y": 621,
+          "w": 177,
+          "h": 34,
+          "confidence": 91.527359,
+          "text": "Testifier:"
+        },
+        {
+          "x": 324,
+          "y": 674,
+          "w": 61,
+          "h": 32,
+          "confidence": 93.257095,
+          "text": "Stu"
+        },
+        {
+          "x": 402,
+          "y": 674,
+          "w": 135,
+          "h": 42,
+          "confidence": 91.809258,
+          "text": "Lourey,"
+        },
+        {
+          "x": 552,
+          "y": 675,
+          "w": 235,
+          "h": 34,
+          "confidence": 96.687363,
+          "text": "Government"
+        },
+        {
+          "x": 801,
+          "y": 676,
+          "w": 177,
+          "h": 34,
+          "confidence": 96.67794,
+          "text": "Relations"
+        },
+        {
+          "x": 993,
+          "y": 678,
+          "w": 158,
+          "h": 39,
+          "confidence": 96.254921,
+          "text": "Director,"
+        },
+        {
+          "x": 1167,
+          "y": 679,
+          "w": 64,
+          "h": 32,
+          "confidence": 96.437401,
+          "text": "MN"
+        },
+        {
+          "x": 1247,
+          "y": 680,
+          "w": 157,
+          "h": 33,
+          "confidence": 96.0867,
+          "text": "Farmers"
+        },
+        {
+          "x": 1419,
+          "y": 681,
+          "w": 107,
+          "h": 32,
+          "confidence": 96.757042,
+          "text": "Union"
+        },
+        {
+          "x": 323,
+          "y": 778,
+          "w": 153,
+          "h": 33,
+          "confidence": 96.197243,
+          "text": "Senator"
+        },
+        {
+          "x": 490,
+          "y": 780,
+          "w": 86,
+          "h": 32,
+          "confidence": 96.339165,
+          "text": "Rest"
+        },
+        {
+          "x": 589,
+          "y": 780,
+          "w": 129,
+          "h": 33,
+          "confidence": 96.484016,
+          "text": "moved"
+        },
+        {
+          "x": 731,
+          "y": 780,
+          "w": 77,
+          "h": 34,
+          "confidence": 92.657745,
+          "text": "that"
+        },
+        {
+          "x": 820,
+          "y": 782,
+          "w": 73,
+          "h": 32,
+          "confidence": 92.580826,
+          "text": "S.F."
+        },
+        {
+          "x": 907,
+          "y": 783,
+          "w": 92,
+          "h": 31,
+          "confidence": 96.200752,
+          "text": "4241,"
+        },
+        {
+          "x": 1030,
+          "y": 782,
+          "w": 45,
+          "h": 33,
+          "confidence": 96.3675,
+          "text": "be"
+        },
+        {
+          "x": 1090,
+          "y": 782,
+          "w": 66,
+          "h": 33,
+          "confidence": 96.245041,
+          "text": "laid"
+        },
+        {
+          "x": 1171,
+          "y": 792,
+          "w": 95,
+          "h": 24,
+          "confidence": 96.245041,
+          "text": "over."
+        },
+        {
+          "x": 322,
+          "y": 881,
+          "w": 73,
+          "h": 34,
+          "confidence": 96.942032,
+          "text": "The"
+        },
+        {
+          "x": 410,
+          "y": 883,
+          "w": 156,
+          "h": 42,
+          "confidence": 96.604179,
+          "text": "meeting"
+        },
+        {
+          "x": 579,
+          "y": 892,
+          "w": 78,
+          "h": 25,
+          "confidence": 96.84436,
+          "text": "was"
+        },
+        {
+          "x": 670,
+          "y": 884,
+          "w": 194,
+          "h": 42,
+          "confidence": 96.841339,
+          "text": "adjourned"
+        },
+        {
+          "x": 878,
+          "y": 889,
+          "w": 37,
+          "h": 30,
+          "confidence": 96.275146,
+          "text": "at"
+        },
+        {
+          "x": 929,
+          "y": 887,
+          "w": 180,
+          "h": 33,
+          "confidence": 96.275146,
+          "text": "10:32am."
+        },
+        {
+          "x": 336,
+          "y": 957,
+          "w": 29,
+          "h": 47,
+          "confidence": 20.515793,
+          "text": "f"
+        },
+        {
+          "x": 612,
+          "y": 972,
+          "w": 58,
+          "h": 98,
+          "confidence": 66.243195,
+          "text": "Id"
+        },
+        {
+          "x": 843,
+          "y": 970,
+          "w": 78,
+          "h": 102,
+          "confidence": 33.130714,
+          "text": "a"
+        },
+        {
+          "x": 320,
+          "y": 1144,
+          "w": 151,
+          "h": 33,
+          "confidence": 96.380806,
+          "text": "Senator"
+        },
+        {
+          "x": 482,
+          "y": 1145,
+          "w": 74,
+          "h": 33,
+          "confidence": 91.062073,
+          "text": "Ann"
+        },
+        {
+          "x": 572,
+          "y": 1146,
+          "w": 37,
+          "h": 32,
+          "confidence": 92.172386,
+          "text": "H."
+        },
+        {
+          "x": 626,
+          "y": 1146,
+          "w": 91,
+          "h": 39,
+          "confidence": 96.242912,
+          "text": "Rest,"
+        },
+        {
+          "x": 732,
+          "y": 1145,
+          "w": 100,
+          "h": 34,
+          "confidence": 96.775993,
+          "text": "Chair"
+        },
+        {
+          "x": 1296,
+          "y": 1149,
+          "w": 141,
+          "h": 34,
+          "confidence": 93.299255,
+          "text": "Maddie"
+        },
+        {
+          "x": 1453,
+          "y": 1151,
+          "w": 186,
+          "h": 39,
+          "confidence": 92.76828,
+          "text": "Hormann,"
+        },
+        {
+          "x": 1654,
+          "y": 1151,
+          "w": 204,
+          "h": 42,
+          "confidence": 96.688255,
+          "text": "Legislative"
+        },
+        {
+          "x": 1871,
+          "y": 1153,
+          "w": 183,
+          "h": 33,
+          "confidence": 96.884033,
+          "text": "Assistant"
+        }
+      ]
+    }
+  }
+}

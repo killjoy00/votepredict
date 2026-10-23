@@ -1,0 +1,33 @@
+{
+  "sourceId": "d1843c53e1e75bfe173f6fc73927f81ae57242a0f1574baae2465decc7507dd3",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240326/labor_20240326_minutes.pdf",
+  "originalSha256": "bac6ebae92d6f357f8066db1a473daaab41ab187ec7ef31eb50ed10267a80b33",
+  "extractedTextSha256": "7f42d7e44420599230e91713eff6ab5e501273316f64e6f6915bb7e40926f55a",
+  "date": "2024-03-26",
+  "committee": "Labor",
+  "session": "2023-2024",
+  "format": "pdf",
+  "authenticated": true,
+  "readable": true,
+  "extractionMethod": "ocr_tesseract",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "pages": [
+    {
+      "page": 1,
+      "raw300dpiPageSha256": "f65ec6989e4fb9a0726a34f4238283677bf7cbfd9d4c6fe0003e98dd639b16c3",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "f992d4a61c6ac1a1f1e68286f20a795874a61a2e64f36a9d5ffd032f3bca5ee2"
+    },
+    {
+      "page": 2,
+      "raw300dpiPageSha256": "ae54b6124f96763215e67e7808dcc30dba0d9fbcbd212adffd43c54c8886002b",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "1ce42bee115970df38e70d3177bb6ed0d1d2dfa09a8d0cf339bee68a5ff2c3fc"
+    }
+  ],
+  "pageCount": 2,
+  "originalBytesAuthenticated": true
+}

@@ -1,0 +1,26 @@
+{
+  "sourceId": "26bd713e33f085984e2607e8e60ab86251e7e3fe68da3e6b3d10d89663c7257b",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finstgov/20220209/finstgov_20220209_Minutes.pdf",
+  "originalSha256": "baf0ab7abc176b706f34dcd04f015504471f6339c8ac6cd6d904b3a460aed911",
+  "extractedTextSha256": "a84d8447462d1aef3097b2a135e0601117a2c2b76d070851c688824e7430a460",
+  "date": "2022-02-09",
+  "committee": "State Government Finance and Policy and Elections",
+  "session": "2021-2022",
+  "format": "pdf",
+  "authenticated": true,
+  "readable": true,
+  "extractionMethod": "ocr_tesseract",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "pages": [
+    {
+      "page": 1,
+      "raw300dpiPageSha256": "0b3cc87e26e7a3fa42ab83cfa1e969beb4ada0e6bfe7cdf2d0d2bb2cb4737b4b",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "42e87e94fa15af0b96650117d1f939ed1af654cf0cc8aeecbbdb6d1647731dde"
+    }
+  ],
+  "pageCount": 1,
+  "originalBytesAuthenticated": true
+}

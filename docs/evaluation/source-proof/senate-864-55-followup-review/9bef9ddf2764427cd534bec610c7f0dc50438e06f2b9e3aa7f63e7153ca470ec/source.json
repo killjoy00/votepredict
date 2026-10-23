@@ -1,0 +1,33 @@
+{
+  "sourceId": "9bef9ddf2764427cd534bec610c7f0dc50438e06f2b9e3aa7f63e7153ca470ec",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/energy/20240417/energy_20240417_Minutes.pdf",
+  "originalSha256": "0cad768c4c41c2cb4a4c58eafa966a7437353bda289c60ba3e98252dd058ad07",
+  "extractedTextSha256": "12e77dc4ace776ff09b44b13650830fc7d6ef1074b1a47327ff2326f9a6d909e",
+  "date": "2024-04-17",
+  "committee": "Energy, Utilities, Environment and Climate",
+  "session": "2023-2024",
+  "format": "pdf",
+  "authenticated": true,
+  "readable": true,
+  "extractionMethod": "ocr_tesseract",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "pages": [
+    {
+      "page": 1,
+      "raw300dpiPageSha256": "2a3b4cc97b90ae04f1832e6d05f790259c6e6f94a3bf419d0957476e61fede21",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "e7ffad4bf159bde4af4c408bdea597bea964acee48ba3642e8c497fa0073d840"
+    },
+    {
+      "page": 2,
+      "raw300dpiPageSha256": "18edec24660dc39cc72291eaeac3c9d57c0f25e383efd59043e224a840efa989",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "6efd83e3909555456eb8cf93abfa163505d74ea00c2c2c7a9dbb10514456d5dd"
+    }
+  ],
+  "pageCount": 2,
+  "originalBytesAuthenticated": true
+}

@@ -1,0 +1,33 @@
+{
+  "sourceId": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Subproperty/20220330/subproperty_20220330_Minutes.pdf",
+  "originalSha256": "cf2386e584dbb82c2be97983e75704c1bdcad22237fd8551382277a61d4359cb",
+  "extractedTextSha256": "5c7da5621646fb15ddb13b0179e8342bd190840cce7c2740988ad372c73a31f8",
+  "date": "2022-03-30",
+  "committee": "Taxes - Subcommittee on Property Taxes",
+  "session": "2021-2022",
+  "format": "pdf",
+  "authenticated": true,
+  "readable": true,
+  "extractionMethod": "ocr_tesseract",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "pages": [
+    {
+      "page": 1,
+      "raw300dpiPageSha256": "78770c0be405bf7336392d4663fc0447977e402f2f6d1231f8ecfadc1cd7a7d5",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "b4433b14bbd00f0eccda5d752dc797c92c955f053a64aef1bfcadef600556a26"
+    },
+    {
+      "page": 2,
+      "raw300dpiPageSha256": "d7047b67efa1d83abf61a139f97e6059cb2945fa0595f739652893da9716bbf0",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "1e98ced45630c52519c0f2edda1b6a32993ec62a4c11a87a612b140657147dc2"
+    }
+  ],
+  "pageCount": 2,
+  "originalBytesAuthenticated": true
+}

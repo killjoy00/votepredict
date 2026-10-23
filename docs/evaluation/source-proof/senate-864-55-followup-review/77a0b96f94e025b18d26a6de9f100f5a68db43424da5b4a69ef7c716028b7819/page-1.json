@@ -1,0 +1,2646 @@
+{
+  "page": 1,
+  "raw300dpiPageSha256": "9fec9cd7593b443241e81306d94395b8b713a8e667e819d3dcd7ef8a1ae969ce",
+  "width": 2550,
+  "height": 3300,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 13.61\nScript: Latin\nScript confidence: 2.33\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 13.61
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "ba789a69a779f433cc37d1fbf7db0f901c310b2d57017c50cdaac7b93d44b36c",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "Higher Education Committee\nThursday, March 16, 2023\n3:00 PM, Room G-15, Capitol\n\nMinutes\n\nPresent: Senator Omar Fateh - Chair, Senator Aric Putnam Vice Chair, Senator Zach Duckworth, Senator Robert D. Farnsworth,\nSenator Robert J. Kupec, Senator Erin P. Murphy, Senator Clare Oumou Verbeten, Senator Jason Rarick\n\nAbsent: No Members Absent\n\nSenator Omar Fateh called the meeting to order at 3:00pm\n\nCall to order\n\nS.F. 2075: Senator Fateh: Funding and policy related changes provision for the Office of Higher Education, Minnesota State\nColleges and Universities, the University of Minnesota and the Mayo Clinic.\n\nGavel was transferred to Vice Chair Putnam at 3:01pm and returned to Chair Fateh at 3:17pm\n\nSenator Fateh moved that S.F. 2075, be laid over.\n\nS.F. 1177: Senator Putnam: Workforce development provisions modifications; Board of Trustees of the Minnesota State Colleges\nand Universities appropriation for workforce for development.\n\nSenator Putnam moved that S.F. 1177, be laid over.\n\nThe meeting was adjourned at 4:32pm\n\nUilegs Assistant\n\nSenator Omar Fateh, Chair Chris Meyer,\n\n",
+      "textSha256": "381757b33f6a84513838a3925307028ae30327f9ecf99ed68603b64d03e0ae77",
+      "wordBoxes": [
+        {
+          "x": 515,
+          "y": 590,
+          "w": 74,
+          "h": 24,
+          "confidence": 96.572701,
+          "text": "Higher"
+        },
+        {
+          "x": 597,
+          "y": 590,
+          "w": 110,
+          "h": 19,
+          "confidence": 95.993507,
+          "text": "Education"
+        },
+        {
+          "x": 716,
+          "y": 590,
+          "w": 124,
+          "h": 19,
+          "confidence": 92.046135,
+          "text": "Committee"
+        },
+        {
+          "x": 514,
+          "y": 628,
+          "w": 109,
+          "h": 24,
+          "confidence": 96.095871,
+          "text": "Thursday,"
+        },
+        {
+          "x": 632,
+          "y": 628,
+          "w": 69,
+          "h": 19,
+          "confidence": 96.63813,
+          "text": "March"
+        },
+        {
+          "x": 711,
+          "y": 628,
+          "w": 32,
+          "h": 23,
+          "confidence": 96.537933,
+          "text": "16,"
+        },
+        {
+          "x": 751,
+          "y": 628,
+          "w": 56,
+          "h": 19,
+          "confidence": 95.741272,
+          "text": "2023"
+        },
+        {
+          "x": 514,
+          "y": 666,
+          "w": 50,
+          "h": 19,
+          "confidence": 96.870781,
+          "text": "3:00"
+        },
+        {
+          "x": 572,
+          "y": 667,
+          "w": 43,
+          "h": 23,
+          "confidence": 96.086349,
+          "text": "PM,"
+        },
+        {
+          "x": 624,
+          "y": 667,
+          "w": 64,
+          "h": 18,
+          "confidence": 93.263557,
+          "text": "Room"
+        },
+        {
+          "x": 697,
+          "y": 666,
+          "w": 62,
+          "h": 24,
+          "confidence": 92.942642,
+          "text": "G-15,"
+        },
+        {
+          "x": 768,
+          "y": 666,
+          "w": 79,
+          "h": 24,
+          "confidence": 96.757401,
+          "text": "Capitol"
+        },
+        {
+          "x": 1207,
+          "y": 742,
+          "w": 91,
+          "h": 19,
+          "confidence": 96.535835,
+          "text": "Minutes"
+        },
+        {
+          "x": 515,
+          "y": 834,
+          "w": 92,
+          "h": 18,
+          "confidence": 96.148407,
+          "text": "Present:"
+        },
+        {
+          "x": 616,
+          "y": 833,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.807121,
+          "text": "Senator"
+        },
+        {
+          "x": 711,
+          "y": 833,
+          "w": 61,
+          "h": 19,
+          "confidence": 96.574646,
+          "text": "Omar"
+        },
+        {
+          "x": 780,
+          "y": 833,
+          "w": 61,
+          "h": 19,
+          "confidence": 93.274223,
+          "text": "Fateh"
+        },
+        {
+          "x": 850,
+          "y": 842,
+          "w": 7,
+          "h": 3,
+          "confidence": 91.828812,
+          "text": "-"
+        },
+        {
+          "x": 866,
+          "y": 833,
+          "w": 62,
+          "h": 23,
+          "confidence": 96.128235,
+          "text": "Chair,"
+        },
+        {
+          "x": 937,
+          "y": 833,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.246498,
+          "text": "Senator"
+        },
+        {
+          "x": 1031,
+          "y": 833,
+          "w": 46,
+          "h": 19,
+          "confidence": 96.246498,
+          "text": "Aric"
+        },
+        {
+          "x": 1085,
+          "y": 834,
+          "w": 86,
+          "h": 18,
+          "confidence": 95.52951,
+          "text": "Putnam"
+        },
+        {
+          "x": 1179,
+          "y": 833,
+          "w": 50,
+          "h": 19,
+          "confidence": 95.52951,
+          "text": "Vice"
+        },
+        {
+          "x": 1237,
+          "y": 833,
+          "w": 62,
+          "h": 23,
+          "confidence": 96.415726,
+          "text": "Chair,"
+        },
+        {
+          "x": 1307,
+          "y": 833,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.407921,
+          "text": "Senator"
+        },
+        {
+          "x": 1403,
+          "y": 833,
+          "w": 54,
+          "h": 19,
+          "confidence": 96.799011,
+          "text": "Zach"
+        },
+        {
+          "x": 1466,
+          "y": 833,
+          "w": 126,
+          "h": 23,
+          "confidence": 96.25222,
+          "text": "Duckworth,"
+        },
+        {
+          "x": 1601,
+          "y": 833,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.17038,
+          "text": "Senator"
+        },
+        {
+          "x": 1697,
+          "y": 833,
+          "w": 75,
+          "h": 19,
+          "confidence": 93.270821,
+          "text": "Robert"
+        },
+        {
+          "x": 1780,
+          "y": 834,
+          "w": 19,
+          "h": 18,
+          "confidence": 92.140335,
+          "text": "D."
+        },
+        {
+          "x": 1809,
+          "y": 833,
+          "w": 132,
+          "h": 23,
+          "confidence": 96.533745,
+          "text": "Farnsworth,"
+        },
+        {
+          "x": 514,
+          "y": 871,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.52787,
+          "text": "Senator"
+        },
+        {
+          "x": 610,
+          "y": 871,
+          "w": 75,
+          "h": 19,
+          "confidence": 96.893753,
+          "text": "Robert"
+        },
+        {
+          "x": 692,
+          "y": 872,
+          "w": 19,
+          "h": 18,
+          "confidence": 93.255203,
+          "text": "J."
+        },
+        {
+          "x": 721,
+          "y": 872,
+          "w": 74,
+          "h": 23,
+          "confidence": 92.916931,
+          "text": "Kupec,"
+        },
+        {
+          "x": 804,
+          "y": 871,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.951851,
+          "text": "Senator"
+        },
+        {
+          "x": 900,
+          "y": 871,
+          "w": 42,
+          "h": 19,
+          "confidence": 93.277969,
+          "text": "Erin"
+        },
+        {
+          "x": 951,
+          "y": 872,
+          "w": 15,
+          "h": 18,
+          "confidence": 92.465988,
+          "text": "P."
+        },
+        {
+          "x": 976,
+          "y": 871,
+          "w": 88,
+          "h": 24,
+          "confidence": 96.390236,
+          "text": "Murphy,"
+        },
+        {
+          "x": 1073,
+          "y": 871,
+          "w": 87,
+          "h": 19,
+          "confidence": 96.77916,
+          "text": "Senator"
+        },
+        {
+          "x": 1168,
+          "y": 870,
+          "w": 58,
+          "h": 20,
+          "confidence": 93.140953,
+          "text": "Clare"
+        },
+        {
+          "x": 1234,
+          "y": 871,
+          "w": 80,
+          "h": 19,
+          "confidence": 92.221474,
+          "text": "Oumou"
+        },
+        {
+          "x": 1322,
+          "y": 871,
+          "w": 108,
+          "h": 23,
+          "confidence": 92.947433,
+          "text": "Verbeten,"
+        },
+        {
+          "x": 1438,
+          "y": 871,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.516838,
+          "text": "Senator"
+        },
+        {
+          "x": 1533,
+          "y": 872,
+          "w": 68,
+          "h": 18,
+          "confidence": 93.266052,
+          "text": "Jason"
+        },
+        {
+          "x": 1610,
+          "y": 871,
+          "w": 71,
+          "h": 19,
+          "confidence": 92.815216,
+          "text": "Rarick"
+        },
+        {
+          "x": 513,
+          "y": 947,
+          "w": 87,
+          "h": 19,
+          "confidence": 96.636139,
+          "text": "Absent:"
+        },
+        {
+          "x": 609,
+          "y": 948,
+          "w": 30,
+          "h": 18,
+          "confidence": 96.593864,
+          "text": "No"
+        },
+        {
+          "x": 648,
+          "y": 947,
+          "w": 105,
+          "h": 19,
+          "confidence": 96.715782,
+          "text": "Members"
+        },
+        {
+          "x": 760,
+          "y": 947,
+          "w": 80,
+          "h": 19,
+          "confidence": 96.650352,
+          "text": "Absent"
+        },
+        {
+          "x": 514,
+          "y": 1038,
+          "w": 88,
+          "h": 18,
+          "confidence": 96.479652,
+          "text": "Senator"
+        },
+        {
+          "x": 609,
+          "y": 1038,
+          "w": 61,
+          "h": 18,
+          "confidence": 96.479652,
+          "text": "Omar"
+        },
+        {
+          "x": 678,
+          "y": 1037,
+          "w": 61,
+          "h": 19,
+          "confidence": 96.525475,
+          "text": "Fateh"
+        },
+        {
+          "x": 747,
+          "y": 1037,
+          "w": 66,
+          "h": 20,
+          "confidence": 96.84597,
+          "text": "called"
+        },
+        {
+          "x": 821,
+          "y": 1037,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.508209,
+          "text": "the"
+        },
+        {
+          "x": 865,
+          "y": 1038,
+          "w": 91,
+          "h": 23,
+          "confidence": 96.508209,
+          "text": "meeting"
+        },
+        {
+          "x": 964,
+          "y": 1039,
+          "w": 22,
+          "h": 17,
+          "confidence": 97.010742,
+          "text": "to"
+        },
+        {
+          "x": 994,
+          "y": 1037,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.898979,
+          "text": "order"
+        },
+        {
+          "x": 1061,
+          "y": 1039,
+          "w": 20,
+          "h": 17,
+          "confidence": 96.207428,
+          "text": "at"
+        },
+        {
+          "x": 1089,
+          "y": 1038,
+          "w": 85,
+          "h": 23,
+          "confidence": 95.90921,
+          "text": "3:00pm"
+        },
+        {
+          "x": 514,
+          "y": 1113,
+          "w": 42,
+          "h": 20,
+          "confidence": 95.948349,
+          "text": "Call"
+        },
+        {
+          "x": 564,
+          "y": 1116,
+          "w": 21,
+          "h": 17,
+          "confidence": 96.91758,
+          "text": "to"
+        },
+        {
+          "x": 593,
+          "y": 1113,
+          "w": 60,
+          "h": 20,
+          "confidence": 96.992386,
+          "text": "order"
+        },
+        {
+          "x": 514,
+          "y": 1228,
+          "w": 39,
+          "h": 19,
+          "confidence": 75.297226,
+          "text": "S.F."
+        },
+        {
+          "x": 562,
+          "y": 1228,
+          "w": 64,
+          "h": 19,
+          "confidence": 96.86425,
+          "text": "2075:"
+        },
+        {
+          "x": 635,
+          "y": 1228,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.731911,
+          "text": "Senator"
+        },
+        {
+          "x": 731,
+          "y": 1228,
+          "w": 68,
+          "h": 19,
+          "confidence": 96.460312,
+          "text": "Fateh:"
+        },
+        {
+          "x": 809,
+          "y": 1228,
+          "w": 90,
+          "h": 24,
+          "confidence": 96.106544,
+          "text": "Funding"
+        },
+        {
+          "x": 907,
+          "y": 1228,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.421562,
+          "text": "and"
+        },
+        {
+          "x": 956,
+          "y": 1228,
+          "w": 67,
+          "h": 24,
+          "confidence": 96.444824,
+          "text": "policy"
+        },
+        {
+          "x": 1031,
+          "y": 1228,
+          "w": 78,
+          "h": 19,
+          "confidence": 96.674156,
+          "text": "related"
+        },
+        {
+          "x": 1117,
+          "y": 1228,
+          "w": 95,
+          "h": 24,
+          "confidence": 96.632423,
+          "text": "changes"
+        },
+        {
+          "x": 1220,
+          "y": 1228,
+          "w": 105,
+          "h": 24,
+          "confidence": 96.659622,
+          "text": "provision"
+        },
+        {
+          "x": 1332,
+          "y": 1227,
+          "w": 33,
+          "h": 20,
+          "confidence": 96.371979,
+          "text": "for"
+        },
+        {
+          "x": 1371,
+          "y": 1228,
+          "w": 37,
+          "h": 19,
+          "confidence": 96.187935,
+          "text": "the"
+        },
+        {
+          "x": 1415,
+          "y": 1227,
+          "w": 68,
+          "h": 20,
+          "confidence": 96.644402,
+          "text": "Office"
+        },
+        {
+          "x": 1490,
+          "y": 1227,
+          "w": 23,
+          "h": 20,
+          "confidence": 96.687538,
+          "text": "of"
+        },
+        {
+          "x": 1521,
+          "y": 1228,
+          "w": 75,
+          "h": 24,
+          "confidence": 96.595932,
+          "text": "Higher"
+        },
+        {
+          "x": 1604,
+          "y": 1228,
+          "w": 118,
+          "h": 23,
+          "confidence": 96.405823,
+          "text": "Education,"
+        },
+        {
+          "x": 1731,
+          "y": 1228,
+          "w": 119,
+          "h": 19,
+          "confidence": 96.295624,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1858,
+          "y": 1228,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.388283,
+          "text": "State"
+        },
+        {
+          "x": 514,
+          "y": 1266,
+          "w": 98,
+          "h": 24,
+          "confidence": 96.797127,
+          "text": "Colleges"
+        },
+        {
+          "x": 620,
+          "y": 1266,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.668129,
+          "text": "and"
+        },
+        {
+          "x": 669,
+          "y": 1266,
+          "w": 141,
+          "h": 23,
+          "confidence": 96.579178,
+          "text": "Universities,"
+        },
+        {
+          "x": 818,
+          "y": 1266,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.570496,
+          "text": "the"
+        },
+        {
+          "x": 862,
+          "y": 1266,
+          "w": 115,
+          "h": 24,
+          "confidence": 96.713623,
+          "text": "University"
+        },
+        {
+          "x": 984,
+          "y": 1265,
+          "w": 23,
+          "h": 20,
+          "confidence": 96.897064,
+          "text": "of"
+        },
+        {
+          "x": 1015,
+          "y": 1266,
+          "w": 119,
+          "h": 19,
+          "confidence": 96.807098,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1141,
+          "y": 1266,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.52346,
+          "text": "and"
+        },
+        {
+          "x": 1189,
+          "y": 1266,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.424675,
+          "text": "the"
+        },
+        {
+          "x": 1234,
+          "y": 1267,
+          "w": 61,
+          "h": 23,
+          "confidence": 96.734718,
+          "text": "Mayo"
+        },
+        {
+          "x": 1303,
+          "y": 1266,
+          "w": 70,
+          "h": 19,
+          "confidence": 96.701836,
+          "text": "Clinic."
+        },
+        {
+          "x": 514,
+          "y": 1342,
+          "w": 61,
+          "h": 19,
+          "confidence": 96.8144,
+          "text": "Gavel"
+        },
+        {
+          "x": 583,
+          "y": 1347,
+          "w": 44,
+          "h": 14,
+          "confidence": 96.937271,
+          "text": "was"
+        },
+        {
+          "x": 635,
+          "y": 1341,
+          "w": 125,
+          "h": 20,
+          "confidence": 96.784485,
+          "text": "transferred"
+        },
+        {
+          "x": 768,
+          "y": 1344,
+          "w": 22,
+          "h": 17,
+          "confidence": 96.306503,
+          "text": "to"
+        },
+        {
+          "x": 797,
+          "y": 1342,
+          "w": 49,
+          "h": 19,
+          "confidence": 96.848854,
+          "text": "Vice"
+        },
+        {
+          "x": 854,
+          "y": 1342,
+          "w": 60,
+          "h": 19,
+          "confidence": 96.911598,
+          "text": "Chair"
+        },
+        {
+          "x": 922,
+          "y": 1343,
+          "w": 86,
+          "h": 18,
+          "confidence": 96.703659,
+          "text": "Putnam"
+        },
+        {
+          "x": 1016,
+          "y": 1344,
+          "w": 21,
+          "h": 17,
+          "confidence": 96.959671,
+          "text": "at"
+        },
+        {
+          "x": 1045,
+          "y": 1342,
+          "w": 84,
+          "h": 24,
+          "confidence": 96.612144,
+          "text": "3:01pm"
+        },
+        {
+          "x": 1138,
+          "y": 1342,
+          "w": 40,
+          "h": 19,
+          "confidence": 95.330765,
+          "text": "and"
+        },
+        {
+          "x": 1187,
+          "y": 1342,
+          "w": 95,
+          "h": 19,
+          "confidence": 96.840157,
+          "text": "returned"
+        },
+        {
+          "x": 1290,
+          "y": 1344,
+          "w": 21,
+          "h": 17,
+          "confidence": 96.604828,
+          "text": "to"
+        },
+        {
+          "x": 1319,
+          "y": 1342,
+          "w": 59,
+          "h": 19,
+          "confidence": 97.009613,
+          "text": "Chair"
+        },
+        {
+          "x": 1387,
+          "y": 1342,
+          "w": 60,
+          "h": 19,
+          "confidence": 96.811829,
+          "text": "Fateh"
+        },
+        {
+          "x": 1456,
+          "y": 1344,
+          "w": 20,
+          "h": 17,
+          "confidence": 96.538803,
+          "text": "at"
+        },
+        {
+          "x": 1484,
+          "y": 1342,
+          "w": 85,
+          "h": 24,
+          "confidence": 96.326035,
+          "text": "3:17pm"
+        },
+        {
+          "x": 514,
+          "y": 1444,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.058075,
+          "text": "Senator"
+        },
+        {
+          "x": 610,
+          "y": 1443,
+          "w": 60,
+          "h": 20,
+          "confidence": 96.646172,
+          "text": "Fateh"
+        },
+        {
+          "x": 679,
+          "y": 1443,
+          "w": 74,
+          "h": 20,
+          "confidence": 96.699417,
+          "text": "moved"
+        },
+        {
+          "x": 761,
+          "y": 1443,
+          "w": 44,
+          "h": 20,
+          "confidence": 92.672417,
+          "text": "that"
+        },
+        {
+          "x": 813,
+          "y": 1444,
+          "w": 38,
+          "h": 19,
+          "confidence": 92.046509,
+          "text": "S.F."
+        },
+        {
+          "x": 861,
+          "y": 1444,
+          "w": 62,
+          "h": 23,
+          "confidence": 96.121338,
+          "text": "2075,"
+        },
+        {
+          "x": 932,
+          "y": 1443,
+          "w": 26,
+          "h": 20,
+          "confidence": 96.608971,
+          "text": "be"
+        },
+        {
+          "x": 966,
+          "y": 1443,
+          "w": 39,
+          "h": 20,
+          "confidence": 96.976494,
+          "text": "laid"
+        },
+        {
+          "x": 1013,
+          "y": 1449,
+          "w": 53,
+          "h": 14,
+          "confidence": 96.869919,
+          "text": "over."
+        },
+        {
+          "x": 514,
+          "y": 1520,
+          "w": 39,
+          "h": 19,
+          "confidence": 83.621315,
+          "text": "S.F."
+        },
+        {
+          "x": 578,
+          "y": 1520,
+          "w": 48,
+          "h": 19,
+          "confidence": 96.552643,
+          "text": "1177:"
+        },
+        {
+          "x": 635,
+          "y": 1520,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.589439,
+          "text": "Senator"
+        },
+        {
+          "x": 731,
+          "y": 1521,
+          "w": 94,
+          "h": 18,
+          "confidence": 96.850677,
+          "text": "Putnam:"
+        },
+        {
+          "x": 833,
+          "y": 1519,
+          "w": 119,
+          "h": 20,
+          "confidence": 96.68708,
+          "text": "Workforce"
+        },
+        {
+          "x": 959,
+          "y": 1520,
+          "w": 148,
+          "h": 24,
+          "confidence": 96.676964,
+          "text": "development"
+        },
+        {
+          "x": 1115,
+          "y": 1520,
+          "w": 117,
+          "h": 24,
+          "confidence": 96.666794,
+          "text": "provisions"
+        },
+        {
+          "x": 1240,
+          "y": 1519,
+          "w": 162,
+          "h": 24,
+          "confidence": 95.913704,
+          "text": "modifications;"
+        },
+        {
+          "x": 1411,
+          "y": 1520,
+          "w": 66,
+          "h": 19,
+          "confidence": 96.510719,
+          "text": "Board"
+        },
+        {
+          "x": 1485,
+          "y": 1519,
+          "w": 23,
+          "h": 20,
+          "confidence": 96.729156,
+          "text": "of"
+        },
+        {
+          "x": 1514,
+          "y": 1521,
+          "w": 100,
+          "h": 18,
+          "confidence": 96.926186,
+          "text": "Trustees"
+        },
+        {
+          "x": 1622,
+          "y": 1519,
+          "w": 23,
+          "h": 20,
+          "confidence": 97.007935,
+          "text": "of"
+        },
+        {
+          "x": 1651,
+          "y": 1520,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.770073,
+          "text": "the"
+        },
+        {
+          "x": 1695,
+          "y": 1520,
+          "w": 119,
+          "h": 19,
+          "confidence": 96.566391,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1822,
+          "y": 1520,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.747704,
+          "text": "State"
+        },
+        {
+          "x": 1889,
+          "y": 1520,
+          "w": 98,
+          "h": 24,
+          "confidence": 95.727066,
+          "text": "Colleges"
+        },
+        {
+          "x": 514,
+          "y": 1558,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.44722,
+          "text": "and"
+        },
+        {
+          "x": 563,
+          "y": 1558,
+          "w": 134,
+          "h": 19,
+          "confidence": 96.311653,
+          "text": "Universities"
+        },
+        {
+          "x": 705,
+          "y": 1558,
+          "w": 152,
+          "h": 24,
+          "confidence": 96.311653,
+          "text": "appropriation"
+        },
+        {
+          "x": 865,
+          "y": 1557,
+          "w": 33,
+          "h": 20,
+          "confidence": 96.956451,
+          "text": "for"
+        },
+        {
+          "x": 905,
+          "y": 1557,
+          "w": 115,
+          "h": 20,
+          "confidence": 96.233795,
+          "text": "workforce"
+        },
+        {
+          "x": 1027,
+          "y": 1557,
+          "w": 33,
+          "h": 20,
+          "confidence": 96.799416,
+          "text": "for"
+        },
+        {
+          "x": 1067,
+          "y": 1558,
+          "w": 154,
+          "h": 24,
+          "confidence": 96.525658,
+          "text": "development."
+        },
+        {
+          "x": 514,
+          "y": 1711,
+          "w": 88,
+          "h": 18,
+          "confidence": 96.639854,
+          "text": "Senator"
+        },
+        {
+          "x": 610,
+          "y": 1711,
+          "w": 86,
+          "h": 18,
+          "confidence": 95.888107,
+          "text": "Putnam"
+        },
+        {
+          "x": 705,
+          "y": 1710,
+          "w": 74,
+          "h": 19,
+          "confidence": 95.888107,
+          "text": "moved"
+        },
+        {
+          "x": 787,
+          "y": 1710,
+          "w": 44,
+          "h": 19,
+          "confidence": 93.267288,
+          "text": "that"
+        },
+        {
+          "x": 839,
+          "y": 1711,
+          "w": 38,
+          "h": 18,
+          "confidence": 92.361359,
+          "text": "S.F."
+        },
+        {
+          "x": 887,
+          "y": 1711,
+          "w": 61,
+          "h": 23,
+          "confidence": 96.954994,
+          "text": "1177,"
+        },
+        {
+          "x": 957,
+          "y": 1710,
+          "w": 26,
+          "h": 19,
+          "confidence": 96.584335,
+          "text": "be"
+        },
+        {
+          "x": 991,
+          "y": 1710,
+          "w": 39,
+          "h": 19,
+          "confidence": 96.584335,
+          "text": "laid"
+        },
+        {
+          "x": 1039,
+          "y": 1716,
+          "w": 52,
+          "h": 13,
+          "confidence": 96.934364,
+          "text": "over."
+        },
+        {
+          "x": 514,
+          "y": 1800,
+          "w": 42,
+          "h": 20,
+          "confidence": 95.772827,
+          "text": "The"
+        },
+        {
+          "x": 564,
+          "y": 1801,
+          "w": 91,
+          "h": 24,
+          "confidence": 95.772827,
+          "text": "meeting"
+        },
+        {
+          "x": 663,
+          "y": 1806,
+          "w": 44,
+          "h": 14,
+          "confidence": 96.303604,
+          "text": "was"
+        },
+        {
+          "x": 715,
+          "y": 1800,
+          "w": 112,
+          "h": 25,
+          "confidence": 96.303604,
+          "text": "adjourned"
+        },
+        {
+          "x": 835,
+          "y": 1803,
+          "w": 21,
+          "h": 17,
+          "confidence": 96.783287,
+          "text": "at"
+        },
+        {
+          "x": 864,
+          "y": 1801,
+          "w": 85,
+          "h": 24,
+          "confidence": 96.445267,
+          "text": "4:32pm"
+        },
+        {
+          "x": 1402,
+          "y": 1928,
+          "w": 121,
+          "h": 87,
+          "confidence": 0.0,
+          "text": "Uilegs"
+        },
+        {
+          "x": 1530,
+          "y": 1987,
+          "w": 108,
+          "h": 32,
+          "confidence": 96.423241,
+          "text": "Assistant"
+        },
+        {
+          "x": 514,
+          "y": 1992,
+          "w": 88,
+          "h": 18,
+          "confidence": 96.479546,
+          "text": "Senator"
+        },
+        {
+          "x": 609,
+          "y": 1992,
+          "w": 61,
+          "h": 18,
+          "confidence": 96.051285,
+          "text": "Omar"
+        },
+        {
+          "x": 678,
+          "y": 1991,
+          "w": 67,
+          "h": 24,
+          "confidence": 96.573425,
+          "text": "Fateh,"
+        },
+        {
+          "x": 754,
+          "y": 1991,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.978806,
+          "text": "Chair"
+        },
+        {
+          "x": 1253,
+          "y": 1991,
+          "w": 58,
+          "h": 19,
+          "confidence": 96.04528,
+          "text": "Chris"
+        },
+        {
+          "x": 1320,
+          "y": 1992,
+          "w": 72,
+          "h": 23,
+          "confidence": 96.244019,
+          "text": "Meyer,"
+        }
+      ]
+    },
+    "11": {
+      "text": "Higher Education Committee\n\nThursday, March 16, 2023\n\n3:00 PM, Room G-15, Capitol\n\nMinutes\n\nPresent: Senator Omar Fateh - Chair, Senator Aric Putnam Vice Chair, Senator Zach Duckworth, Senator Robert D. Farnsworth,\n\nSenator Robert J. Kupec, Senator Erin P. Murphy, Senator Clare Oumou Verbeten, Senator Jason Rarick\n\nAbsent: No Members Absent\n\nSenator Omar Fateh called the meeting to order at 3:00pm\n\nCall to order\n\nS.F. 2075: Senator Fateh: Funding and policy related changes provision for the Office of Higher Education, Minnesota State\n\nColleges and Universities, the University of Minnesota and the Mayo Clinic.\n\nGavel was transferred to Vice Chair Putnam at 3:01pm and returned to Chair Fateh at 3:17pm\n\nSenator Fateh moved that S.F. 2075, be laid over.\n\nS.F. 1177: Senator Putnam: Workforce development provisions modifications; Board of Trustees of the Minnesota State Colleges\n\nand Universities appropriation for workforce for development.\n\nSenator Putnam moved that S.F. 1177, be laid over.\n\nThe meeting was adjourned at 4:32pm\n\naa _\u2014\n\nChee\n\nSenator Omar Fateh, Chair\n\nChris Meyer,\n",
+      "textSha256": "b4c722da11fa63dfda5e44e7ed04203d45a4bb6a30eee800050ae54958e71225",
+      "wordBoxes": [
+        {
+          "x": 515,
+          "y": 590,
+          "w": 74,
+          "h": 24,
+          "confidence": 96.572701,
+          "text": "Higher"
+        },
+        {
+          "x": 597,
+          "y": 590,
+          "w": 110,
+          "h": 19,
+          "confidence": 95.993507,
+          "text": "Education"
+        },
+        {
+          "x": 716,
+          "y": 590,
+          "w": 124,
+          "h": 19,
+          "confidence": 92.046135,
+          "text": "Committee"
+        },
+        {
+          "x": 514,
+          "y": 628,
+          "w": 109,
+          "h": 24,
+          "confidence": 96.095871,
+          "text": "Thursday,"
+        },
+        {
+          "x": 632,
+          "y": 628,
+          "w": 69,
+          "h": 19,
+          "confidence": 96.63813,
+          "text": "March"
+        },
+        {
+          "x": 711,
+          "y": 628,
+          "w": 32,
+          "h": 23,
+          "confidence": 96.537933,
+          "text": "16,"
+        },
+        {
+          "x": 751,
+          "y": 628,
+          "w": 56,
+          "h": 19,
+          "confidence": 95.741272,
+          "text": "2023"
+        },
+        {
+          "x": 514,
+          "y": 666,
+          "w": 50,
+          "h": 19,
+          "confidence": 96.870781,
+          "text": "3:00"
+        },
+        {
+          "x": 572,
+          "y": 667,
+          "w": 43,
+          "h": 23,
+          "confidence": 96.086349,
+          "text": "PM,"
+        },
+        {
+          "x": 624,
+          "y": 667,
+          "w": 64,
+          "h": 18,
+          "confidence": 93.263557,
+          "text": "Room"
+        },
+        {
+          "x": 697,
+          "y": 666,
+          "w": 62,
+          "h": 24,
+          "confidence": 92.942642,
+          "text": "G-15,"
+        },
+        {
+          "x": 768,
+          "y": 666,
+          "w": 79,
+          "h": 24,
+          "confidence": 96.757401,
+          "text": "Capitol"
+        },
+        {
+          "x": 1207,
+          "y": 742,
+          "w": 91,
+          "h": 19,
+          "confidence": 96.535835,
+          "text": "Minutes"
+        },
+        {
+          "x": 515,
+          "y": 834,
+          "w": 92,
+          "h": 18,
+          "confidence": 96.148407,
+          "text": "Present:"
+        },
+        {
+          "x": 616,
+          "y": 833,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.807121,
+          "text": "Senator"
+        },
+        {
+          "x": 711,
+          "y": 833,
+          "w": 61,
+          "h": 19,
+          "confidence": 96.574646,
+          "text": "Omar"
+        },
+        {
+          "x": 780,
+          "y": 833,
+          "w": 61,
+          "h": 19,
+          "confidence": 93.274223,
+          "text": "Fateh"
+        },
+        {
+          "x": 850,
+          "y": 842,
+          "w": 7,
+          "h": 3,
+          "confidence": 91.828812,
+          "text": "-"
+        },
+        {
+          "x": 866,
+          "y": 833,
+          "w": 62,
+          "h": 23,
+          "confidence": 96.128235,
+          "text": "Chair,"
+        },
+        {
+          "x": 937,
+          "y": 833,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.246498,
+          "text": "Senator"
+        },
+        {
+          "x": 1031,
+          "y": 833,
+          "w": 46,
+          "h": 19,
+          "confidence": 96.246498,
+          "text": "Aric"
+        },
+        {
+          "x": 1085,
+          "y": 834,
+          "w": 86,
+          "h": 18,
+          "confidence": 95.52951,
+          "text": "Putnam"
+        },
+        {
+          "x": 1179,
+          "y": 833,
+          "w": 50,
+          "h": 19,
+          "confidence": 95.52951,
+          "text": "Vice"
+        },
+        {
+          "x": 1237,
+          "y": 833,
+          "w": 62,
+          "h": 23,
+          "confidence": 96.415726,
+          "text": "Chair,"
+        },
+        {
+          "x": 1307,
+          "y": 833,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.407921,
+          "text": "Senator"
+        },
+        {
+          "x": 1403,
+          "y": 833,
+          "w": 54,
+          "h": 19,
+          "confidence": 96.799011,
+          "text": "Zach"
+        },
+        {
+          "x": 1466,
+          "y": 833,
+          "w": 126,
+          "h": 23,
+          "confidence": 96.25222,
+          "text": "Duckworth,"
+        },
+        {
+          "x": 1601,
+          "y": 833,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.17038,
+          "text": "Senator"
+        },
+        {
+          "x": 1697,
+          "y": 833,
+          "w": 75,
+          "h": 19,
+          "confidence": 93.270821,
+          "text": "Robert"
+        },
+        {
+          "x": 1780,
+          "y": 834,
+          "w": 19,
+          "h": 18,
+          "confidence": 92.140335,
+          "text": "D."
+        },
+        {
+          "x": 1809,
+          "y": 833,
+          "w": 132,
+          "h": 23,
+          "confidence": 96.533745,
+          "text": "Farnsworth,"
+        },
+        {
+          "x": 514,
+          "y": 871,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.52787,
+          "text": "Senator"
+        },
+        {
+          "x": 610,
+          "y": 871,
+          "w": 75,
+          "h": 19,
+          "confidence": 96.893753,
+          "text": "Robert"
+        },
+        {
+          "x": 692,
+          "y": 872,
+          "w": 19,
+          "h": 18,
+          "confidence": 93.255203,
+          "text": "J."
+        },
+        {
+          "x": 721,
+          "y": 872,
+          "w": 74,
+          "h": 23,
+          "confidence": 92.916931,
+          "text": "Kupec,"
+        },
+        {
+          "x": 804,
+          "y": 871,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.951851,
+          "text": "Senator"
+        },
+        {
+          "x": 900,
+          "y": 871,
+          "w": 42,
+          "h": 19,
+          "confidence": 93.277969,
+          "text": "Erin"
+        },
+        {
+          "x": 951,
+          "y": 872,
+          "w": 15,
+          "h": 18,
+          "confidence": 92.465988,
+          "text": "P."
+        },
+        {
+          "x": 976,
+          "y": 871,
+          "w": 88,
+          "h": 24,
+          "confidence": 96.390236,
+          "text": "Murphy,"
+        },
+        {
+          "x": 1073,
+          "y": 871,
+          "w": 87,
+          "h": 19,
+          "confidence": 96.77916,
+          "text": "Senator"
+        },
+        {
+          "x": 1168,
+          "y": 870,
+          "w": 58,
+          "h": 20,
+          "confidence": 93.140953,
+          "text": "Clare"
+        },
+        {
+          "x": 1234,
+          "y": 871,
+          "w": 80,
+          "h": 19,
+          "confidence": 92.221474,
+          "text": "Oumou"
+        },
+        {
+          "x": 1322,
+          "y": 871,
+          "w": 108,
+          "h": 23,
+          "confidence": 92.947433,
+          "text": "Verbeten,"
+        },
+        {
+          "x": 1438,
+          "y": 871,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.516838,
+          "text": "Senator"
+        },
+        {
+          "x": 1533,
+          "y": 872,
+          "w": 68,
+          "h": 18,
+          "confidence": 93.266052,
+          "text": "Jason"
+        },
+        {
+          "x": 1610,
+          "y": 871,
+          "w": 71,
+          "h": 19,
+          "confidence": 92.815216,
+          "text": "Rarick"
+        },
+        {
+          "x": 513,
+          "y": 947,
+          "w": 87,
+          "h": 19,
+          "confidence": 96.636139,
+          "text": "Absent:"
+        },
+        {
+          "x": 609,
+          "y": 948,
+          "w": 30,
+          "h": 18,
+          "confidence": 96.593864,
+          "text": "No"
+        },
+        {
+          "x": 648,
+          "y": 947,
+          "w": 105,
+          "h": 19,
+          "confidence": 96.715782,
+          "text": "Members"
+        },
+        {
+          "x": 760,
+          "y": 947,
+          "w": 80,
+          "h": 19,
+          "confidence": 96.650352,
+          "text": "Absent"
+        },
+        {
+          "x": 514,
+          "y": 1038,
+          "w": 88,
+          "h": 18,
+          "confidence": 96.479652,
+          "text": "Senator"
+        },
+        {
+          "x": 609,
+          "y": 1038,
+          "w": 61,
+          "h": 18,
+          "confidence": 96.479652,
+          "text": "Omar"
+        },
+        {
+          "x": 678,
+          "y": 1037,
+          "w": 61,
+          "h": 19,
+          "confidence": 96.525475,
+          "text": "Fateh"
+        },
+        {
+          "x": 747,
+          "y": 1037,
+          "w": 66,
+          "h": 20,
+          "confidence": 96.84597,
+          "text": "called"
+        },
+        {
+          "x": 821,
+          "y": 1037,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.508209,
+          "text": "the"
+        },
+        {
+          "x": 865,
+          "y": 1038,
+          "w": 91,
+          "h": 23,
+          "confidence": 96.508209,
+          "text": "meeting"
+        },
+        {
+          "x": 964,
+          "y": 1039,
+          "w": 22,
+          "h": 17,
+          "confidence": 97.010742,
+          "text": "to"
+        },
+        {
+          "x": 994,
+          "y": 1037,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.898979,
+          "text": "order"
+        },
+        {
+          "x": 1061,
+          "y": 1039,
+          "w": 20,
+          "h": 17,
+          "confidence": 96.207428,
+          "text": "at"
+        },
+        {
+          "x": 1089,
+          "y": 1038,
+          "w": 85,
+          "h": 23,
+          "confidence": 95.90921,
+          "text": "3:00pm"
+        },
+        {
+          "x": 514,
+          "y": 1113,
+          "w": 42,
+          "h": 20,
+          "confidence": 95.948349,
+          "text": "Call"
+        },
+        {
+          "x": 564,
+          "y": 1116,
+          "w": 21,
+          "h": 17,
+          "confidence": 96.91758,
+          "text": "to"
+        },
+        {
+          "x": 593,
+          "y": 1113,
+          "w": 60,
+          "h": 20,
+          "confidence": 96.992386,
+          "text": "order"
+        },
+        {
+          "x": 514,
+          "y": 1228,
+          "w": 39,
+          "h": 19,
+          "confidence": 75.297226,
+          "text": "S.F."
+        },
+        {
+          "x": 562,
+          "y": 1228,
+          "w": 64,
+          "h": 19,
+          "confidence": 96.86425,
+          "text": "2075:"
+        },
+        {
+          "x": 635,
+          "y": 1228,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.731911,
+          "text": "Senator"
+        },
+        {
+          "x": 731,
+          "y": 1228,
+          "w": 68,
+          "h": 19,
+          "confidence": 96.460312,
+          "text": "Fateh:"
+        },
+        {
+          "x": 809,
+          "y": 1228,
+          "w": 90,
+          "h": 24,
+          "confidence": 96.106544,
+          "text": "Funding"
+        },
+        {
+          "x": 907,
+          "y": 1228,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.421562,
+          "text": "and"
+        },
+        {
+          "x": 956,
+          "y": 1228,
+          "w": 67,
+          "h": 24,
+          "confidence": 96.444824,
+          "text": "policy"
+        },
+        {
+          "x": 1031,
+          "y": 1228,
+          "w": 78,
+          "h": 19,
+          "confidence": 96.674156,
+          "text": "related"
+        },
+        {
+          "x": 1117,
+          "y": 1228,
+          "w": 95,
+          "h": 24,
+          "confidence": 96.632423,
+          "text": "changes"
+        },
+        {
+          "x": 1220,
+          "y": 1228,
+          "w": 105,
+          "h": 24,
+          "confidence": 96.659622,
+          "text": "provision"
+        },
+        {
+          "x": 1332,
+          "y": 1227,
+          "w": 33,
+          "h": 20,
+          "confidence": 96.371979,
+          "text": "for"
+        },
+        {
+          "x": 1371,
+          "y": 1228,
+          "w": 37,
+          "h": 19,
+          "confidence": 96.187935,
+          "text": "the"
+        },
+        {
+          "x": 1415,
+          "y": 1227,
+          "w": 68,
+          "h": 20,
+          "confidence": 96.644402,
+          "text": "Office"
+        },
+        {
+          "x": 1490,
+          "y": 1227,
+          "w": 23,
+          "h": 20,
+          "confidence": 96.687538,
+          "text": "of"
+        },
+        {
+          "x": 1521,
+          "y": 1228,
+          "w": 75,
+          "h": 24,
+          "confidence": 96.595932,
+          "text": "Higher"
+        },
+        {
+          "x": 1604,
+          "y": 1228,
+          "w": 118,
+          "h": 23,
+          "confidence": 96.405823,
+          "text": "Education,"
+        },
+        {
+          "x": 1731,
+          "y": 1228,
+          "w": 119,
+          "h": 19,
+          "confidence": 96.295624,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1858,
+          "y": 1228,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.388283,
+          "text": "State"
+        },
+        {
+          "x": 514,
+          "y": 1266,
+          "w": 98,
+          "h": 24,
+          "confidence": 96.797127,
+          "text": "Colleges"
+        },
+        {
+          "x": 620,
+          "y": 1266,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.668129,
+          "text": "and"
+        },
+        {
+          "x": 669,
+          "y": 1266,
+          "w": 141,
+          "h": 23,
+          "confidence": 96.579178,
+          "text": "Universities,"
+        },
+        {
+          "x": 818,
+          "y": 1266,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.570496,
+          "text": "the"
+        },
+        {
+          "x": 862,
+          "y": 1266,
+          "w": 115,
+          "h": 24,
+          "confidence": 96.713623,
+          "text": "University"
+        },
+        {
+          "x": 984,
+          "y": 1265,
+          "w": 23,
+          "h": 20,
+          "confidence": 96.897064,
+          "text": "of"
+        },
+        {
+          "x": 1015,
+          "y": 1266,
+          "w": 119,
+          "h": 19,
+          "confidence": 96.807098,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1141,
+          "y": 1266,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.52346,
+          "text": "and"
+        },
+        {
+          "x": 1189,
+          "y": 1266,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.424675,
+          "text": "the"
+        },
+        {
+          "x": 1234,
+          "y": 1267,
+          "w": 61,
+          "h": 23,
+          "confidence": 96.734718,
+          "text": "Mayo"
+        },
+        {
+          "x": 1303,
+          "y": 1266,
+          "w": 70,
+          "h": 19,
+          "confidence": 96.701836,
+          "text": "Clinic."
+        },
+        {
+          "x": 514,
+          "y": 1342,
+          "w": 61,
+          "h": 19,
+          "confidence": 96.8144,
+          "text": "Gavel"
+        },
+        {
+          "x": 583,
+          "y": 1347,
+          "w": 44,
+          "h": 14,
+          "confidence": 96.937271,
+          "text": "was"
+        },
+        {
+          "x": 635,
+          "y": 1341,
+          "w": 125,
+          "h": 20,
+          "confidence": 96.784485,
+          "text": "transferred"
+        },
+        {
+          "x": 768,
+          "y": 1344,
+          "w": 22,
+          "h": 17,
+          "confidence": 96.306503,
+          "text": "to"
+        },
+        {
+          "x": 797,
+          "y": 1342,
+          "w": 49,
+          "h": 19,
+          "confidence": 96.848854,
+          "text": "Vice"
+        },
+        {
+          "x": 854,
+          "y": 1342,
+          "w": 60,
+          "h": 19,
+          "confidence": 96.911598,
+          "text": "Chair"
+        },
+        {
+          "x": 922,
+          "y": 1343,
+          "w": 86,
+          "h": 18,
+          "confidence": 96.703659,
+          "text": "Putnam"
+        },
+        {
+          "x": 1016,
+          "y": 1344,
+          "w": 21,
+          "h": 17,
+          "confidence": 96.959671,
+          "text": "at"
+        },
+        {
+          "x": 1045,
+          "y": 1342,
+          "w": 84,
+          "h": 24,
+          "confidence": 96.612144,
+          "text": "3:01pm"
+        },
+        {
+          "x": 1138,
+          "y": 1342,
+          "w": 40,
+          "h": 19,
+          "confidence": 95.330765,
+          "text": "and"
+        },
+        {
+          "x": 1187,
+          "y": 1342,
+          "w": 95,
+          "h": 19,
+          "confidence": 96.840157,
+          "text": "returned"
+        },
+        {
+          "x": 1290,
+          "y": 1344,
+          "w": 21,
+          "h": 17,
+          "confidence": 96.604828,
+          "text": "to"
+        },
+        {
+          "x": 1319,
+          "y": 1342,
+          "w": 59,
+          "h": 19,
+          "confidence": 97.009613,
+          "text": "Chair"
+        },
+        {
+          "x": 1387,
+          "y": 1342,
+          "w": 60,
+          "h": 19,
+          "confidence": 96.811829,
+          "text": "Fateh"
+        },
+        {
+          "x": 1456,
+          "y": 1344,
+          "w": 20,
+          "h": 17,
+          "confidence": 96.538803,
+          "text": "at"
+        },
+        {
+          "x": 1484,
+          "y": 1342,
+          "w": 85,
+          "h": 24,
+          "confidence": 96.326035,
+          "text": "3:17pm"
+        },
+        {
+          "x": 514,
+          "y": 1444,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.058075,
+          "text": "Senator"
+        },
+        {
+          "x": 610,
+          "y": 1443,
+          "w": 60,
+          "h": 20,
+          "confidence": 96.646172,
+          "text": "Fateh"
+        },
+        {
+          "x": 679,
+          "y": 1443,
+          "w": 74,
+          "h": 20,
+          "confidence": 96.699417,
+          "text": "moved"
+        },
+        {
+          "x": 761,
+          "y": 1443,
+          "w": 44,
+          "h": 20,
+          "confidence": 92.672417,
+          "text": "that"
+        },
+        {
+          "x": 813,
+          "y": 1444,
+          "w": 38,
+          "h": 19,
+          "confidence": 92.046509,
+          "text": "S.F."
+        },
+        {
+          "x": 861,
+          "y": 1444,
+          "w": 62,
+          "h": 23,
+          "confidence": 96.121338,
+          "text": "2075,"
+        },
+        {
+          "x": 932,
+          "y": 1443,
+          "w": 26,
+          "h": 20,
+          "confidence": 96.608971,
+          "text": "be"
+        },
+        {
+          "x": 966,
+          "y": 1443,
+          "w": 39,
+          "h": 20,
+          "confidence": 96.976494,
+          "text": "laid"
+        },
+        {
+          "x": 1013,
+          "y": 1449,
+          "w": 53,
+          "h": 14,
+          "confidence": 96.869919,
+          "text": "over."
+        },
+        {
+          "x": 514,
+          "y": 1520,
+          "w": 39,
+          "h": 19,
+          "confidence": 83.621315,
+          "text": "S.F."
+        },
+        {
+          "x": 578,
+          "y": 1520,
+          "w": 48,
+          "h": 19,
+          "confidence": 96.552643,
+          "text": "1177:"
+        },
+        {
+          "x": 635,
+          "y": 1520,
+          "w": 88,
+          "h": 19,
+          "confidence": 96.589439,
+          "text": "Senator"
+        },
+        {
+          "x": 731,
+          "y": 1521,
+          "w": 94,
+          "h": 18,
+          "confidence": 96.850677,
+          "text": "Putnam:"
+        },
+        {
+          "x": 833,
+          "y": 1519,
+          "w": 119,
+          "h": 20,
+          "confidence": 96.68708,
+          "text": "Workforce"
+        },
+        {
+          "x": 959,
+          "y": 1520,
+          "w": 148,
+          "h": 24,
+          "confidence": 96.676964,
+          "text": "development"
+        },
+        {
+          "x": 1115,
+          "y": 1520,
+          "w": 117,
+          "h": 24,
+          "confidence": 96.666794,
+          "text": "provisions"
+        },
+        {
+          "x": 1240,
+          "y": 1519,
+          "w": 162,
+          "h": 24,
+          "confidence": 95.913704,
+          "text": "modifications;"
+        },
+        {
+          "x": 1411,
+          "y": 1520,
+          "w": 66,
+          "h": 19,
+          "confidence": 96.510719,
+          "text": "Board"
+        },
+        {
+          "x": 1485,
+          "y": 1519,
+          "w": 23,
+          "h": 20,
+          "confidence": 96.729156,
+          "text": "of"
+        },
+        {
+          "x": 1514,
+          "y": 1521,
+          "w": 100,
+          "h": 18,
+          "confidence": 96.926186,
+          "text": "Trustees"
+        },
+        {
+          "x": 1622,
+          "y": 1519,
+          "w": 23,
+          "h": 20,
+          "confidence": 97.007935,
+          "text": "of"
+        },
+        {
+          "x": 1651,
+          "y": 1520,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.770073,
+          "text": "the"
+        },
+        {
+          "x": 1695,
+          "y": 1520,
+          "w": 119,
+          "h": 19,
+          "confidence": 96.566391,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1822,
+          "y": 1520,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.747704,
+          "text": "State"
+        },
+        {
+          "x": 1889,
+          "y": 1520,
+          "w": 98,
+          "h": 24,
+          "confidence": 95.727066,
+          "text": "Colleges"
+        },
+        {
+          "x": 514,
+          "y": 1558,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.44722,
+          "text": "and"
+        },
+        {
+          "x": 563,
+          "y": 1558,
+          "w": 134,
+          "h": 19,
+          "confidence": 96.311653,
+          "text": "Universities"
+        },
+        {
+          "x": 705,
+          "y": 1558,
+          "w": 152,
+          "h": 24,
+          "confidence": 96.311653,
+          "text": "appropriation"
+        },
+        {
+          "x": 865,
+          "y": 1557,
+          "w": 33,
+          "h": 20,
+          "confidence": 96.956451,
+          "text": "for"
+        },
+        {
+          "x": 905,
+          "y": 1557,
+          "w": 115,
+          "h": 20,
+          "confidence": 96.233795,
+          "text": "workforce"
+        },
+        {
+          "x": 1027,
+          "y": 1557,
+          "w": 33,
+          "h": 20,
+          "confidence": 96.799416,
+          "text": "for"
+        },
+        {
+          "x": 1067,
+          "y": 1558,
+          "w": 154,
+          "h": 24,
+          "confidence": 96.525658,
+          "text": "development."
+        },
+        {
+          "x": 514,
+          "y": 1711,
+          "w": 88,
+          "h": 18,
+          "confidence": 96.639854,
+          "text": "Senator"
+        },
+        {
+          "x": 610,
+          "y": 1711,
+          "w": 86,
+          "h": 18,
+          "confidence": 95.888107,
+          "text": "Putnam"
+        },
+        {
+          "x": 705,
+          "y": 1710,
+          "w": 74,
+          "h": 19,
+          "confidence": 95.888107,
+          "text": "moved"
+        },
+        {
+          "x": 787,
+          "y": 1710,
+          "w": 44,
+          "h": 19,
+          "confidence": 93.267288,
+          "text": "that"
+        },
+        {
+          "x": 839,
+          "y": 1711,
+          "w": 38,
+          "h": 18,
+          "confidence": 92.361359,
+          "text": "S.F."
+        },
+        {
+          "x": 887,
+          "y": 1711,
+          "w": 61,
+          "h": 23,
+          "confidence": 96.954994,
+          "text": "1177,"
+        },
+        {
+          "x": 957,
+          "y": 1710,
+          "w": 26,
+          "h": 19,
+          "confidence": 96.584335,
+          "text": "be"
+        },
+        {
+          "x": 991,
+          "y": 1710,
+          "w": 39,
+          "h": 19,
+          "confidence": 96.584335,
+          "text": "laid"
+        },
+        {
+          "x": 1039,
+          "y": 1716,
+          "w": 52,
+          "h": 13,
+          "confidence": 96.934364,
+          "text": "over."
+        },
+        {
+          "x": 514,
+          "y": 1800,
+          "w": 42,
+          "h": 20,
+          "confidence": 95.772827,
+          "text": "The"
+        },
+        {
+          "x": 564,
+          "y": 1801,
+          "w": 91,
+          "h": 24,
+          "confidence": 95.772827,
+          "text": "meeting"
+        },
+        {
+          "x": 663,
+          "y": 1806,
+          "w": 44,
+          "h": 14,
+          "confidence": 96.303604,
+          "text": "was"
+        },
+        {
+          "x": 715,
+          "y": 1800,
+          "w": 112,
+          "h": 25,
+          "confidence": 96.303604,
+          "text": "adjourned"
+        },
+        {
+          "x": 835,
+          "y": 1803,
+          "w": 21,
+          "h": 17,
+          "confidence": 96.783287,
+          "text": "at"
+        },
+        {
+          "x": 864,
+          "y": 1801,
+          "w": 85,
+          "h": 24,
+          "confidence": 96.445267,
+          "text": "4:32pm"
+        },
+        {
+          "x": 509,
+          "y": 1916,
+          "w": 187,
+          "h": 68,
+          "confidence": 49.127026,
+          "text": "aa"
+        },
+        {
+          "x": 758,
+          "y": 1916,
+          "w": 108,
+          "h": 68,
+          "confidence": 30.715324,
+          "text": "_\u2014"
+        },
+        {
+          "x": 1256,
+          "y": 1920,
+          "w": 130,
+          "h": 50,
+          "confidence": 31.959366,
+          "text": "Chee"
+        },
+        {
+          "x": 514,
+          "y": 1992,
+          "w": 88,
+          "h": 18,
+          "confidence": 96.479546,
+          "text": "Senator"
+        },
+        {
+          "x": 609,
+          "y": 1992,
+          "w": 61,
+          "h": 18,
+          "confidence": 96.051285,
+          "text": "Omar"
+        },
+        {
+          "x": 678,
+          "y": 1991,
+          "w": 67,
+          "h": 24,
+          "confidence": 96.573425,
+          "text": "Fateh,"
+        },
+        {
+          "x": 754,
+          "y": 1991,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.978806,
+          "text": "Chair"
+        },
+        {
+          "x": 1253,
+          "y": 1991,
+          "w": 58,
+          "h": 19,
+          "confidence": 96.04528,
+          "text": "Chris"
+        },
+        {
+          "x": 1320,
+          "y": 1992,
+          "w": 72,
+          "h": 23,
+          "confidence": 96.244019,
+          "text": "Meyer,"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "page": 2,
+  "raw300dpiPageSha256": "4478b616bd8928b9287e3b7406a0750f0af9f7b8a8a8e5e4d4c227261b45c51f",
+  "width": 2550,
+  "height": 3300,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "",
+    "stderr": "Too few characters. Skipping this page\nError during processing.\n",
+    "rotation": null,
+    "confidence": null
+  },
+  "blankRaster": true,
+  "reviewImageSha256": "230b837dd5a51eb1490d9ced069ff4e9bb1826384699af8ab610aafb8a44fd82",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "",
+      "textSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordBoxes": []
+    },
+    "11": {
+      "text": "",
+      "textSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordBoxes": []
+    }
+  }
+}

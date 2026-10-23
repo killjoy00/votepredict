@@ -1,0 +1,1894 @@
+{
+  "page": 10,
+  "raw300dpiPageSha256": "9564d861a272f5aed88b215a3226bc5dd472b5d3c2184bfd3ff9f6c7744749fb",
+  "width": 2550,
+  "height": 3300,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 16.26\nScript: Latin\nScript confidence: 5.00\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 16.26
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "693d190df3b8937a9e5dd2eb77f83a50fab8f180cfd4579c8091bdf59adeda33",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "Senate Tax Committee\nChair, Senator Ann H. Rest\nTuesday, Wednesday, Thursday\n8:30 am \u2014 10:30 am\nCapitol G-15\n\noe ees are AOS XS\nak \"\nie\n\nROLL CALL VOTE\nDate: yy AV 23\nSenator 0 rarkow Sb requested a Roll Call Vote on:\n1. Adoption of A #3 amendment\n2. Passage of F. No.\n3. Adoption of motion\nSenator Yes No Pass Absent\nRest\nuv | |\nKlein\na\nWeber [\na\nDibble\nVA\nDziedzic\na\nDrazkowski\n\u201ca L\nHauschild\na\nMiller | |\n9 S$ Oo\nNelson\n\u201ca\nPutnam\nim |\nTotals /@ 2) |\n\nThere being /O YES and ? NO votes the Motion:\nPrevailed: a\n\nDid Not Prevail:\n",
+      "textSha256": "570d1e4bd350a85d1df3d1ca4cb3e36b88d59aa8e6f24a622fc06f1823924306",
+      "wordBoxes": [
+        {
+          "x": 1036,
+          "y": 182,
+          "w": 119,
+          "h": 32,
+          "confidence": 96.845116,
+          "text": "Senate"
+        },
+        {
+          "x": 1168,
+          "y": 181,
+          "w": 70,
+          "h": 31,
+          "confidence": 96.270729,
+          "text": "Tax"
+        },
+        {
+          "x": 1251,
+          "y": 177,
+          "w": 201,
+          "h": 34,
+          "confidence": 96.151825,
+          "text": "Committee"
+        },
+        {
+          "x": 994,
+          "y": 233,
+          "w": 110,
+          "h": 40,
+          "confidence": 95.960365,
+          "text": "Chair,"
+        },
+        {
+          "x": 1120,
+          "y": 234,
+          "w": 137,
+          "h": 31,
+          "confidence": 96.473747,
+          "text": "Senator"
+        },
+        {
+          "x": 1268,
+          "y": 232,
+          "w": 79,
+          "h": 31,
+          "confidence": 93.106468,
+          "text": "Ann"
+        },
+        {
+          "x": 1359,
+          "y": 230,
+          "w": 41,
+          "h": 32,
+          "confidence": 93.075638,
+          "text": "H."
+        },
+        {
+          "x": 1415,
+          "y": 230,
+          "w": 81,
+          "h": 32,
+          "confidence": 96.945694,
+          "text": "Rest"
+        },
+        {
+          "x": 952,
+          "y": 286,
+          "w": 164,
+          "h": 43,
+          "confidence": 96.675659,
+          "text": "Tuesday,"
+        },
+        {
+          "x": 1129,
+          "y": 284,
+          "w": 223,
+          "h": 42,
+          "confidence": 96.192055,
+          "text": "Wednesday,"
+        },
+        {
+          "x": 1366,
+          "y": 281,
+          "w": 172,
+          "h": 42,
+          "confidence": 96.446365,
+          "text": "Thursday"
+        },
+        {
+          "x": 1065,
+          "y": 339,
+          "w": 77,
+          "h": 33,
+          "confidence": 96.444809,
+          "text": "8:30"
+        },
+        {
+          "x": 1157,
+          "y": 348,
+          "w": 52,
+          "h": 23,
+          "confidence": 90.929359,
+          "text": "am"
+        },
+        {
+          "x": 1222,
+          "y": 357,
+          "w": 25,
+          "h": 3,
+          "confidence": 90.929359,
+          "text": "\u2014"
+        },
+        {
+          "x": 1262,
+          "y": 337,
+          "w": 96,
+          "h": 32,
+          "confidence": 96.396309,
+          "text": "10:30"
+        },
+        {
+          "x": 1373,
+          "y": 346,
+          "w": 54,
+          "h": 22,
+          "confidence": 96.396309,
+          "text": "am"
+        },
+        {
+          "x": 1127,
+          "y": 390,
+          "w": 132,
+          "h": 43,
+          "confidence": 93.215096,
+          "text": "Capitol"
+        },
+        {
+          "x": 1273,
+          "y": 390,
+          "w": 89,
+          "h": 32,
+          "confidence": 91.574013,
+          "text": "G-15"
+        },
+        {
+          "x": 320,
+          "y": 472,
+          "w": 75,
+          "h": 72,
+          "confidence": 24.192169,
+          "text": "oe"
+        },
+        {
+          "x": 401,
+          "y": 497,
+          "w": 89,
+          "h": 23,
+          "confidence": 34.517578,
+          "text": "ees"
+        },
+        {
+          "x": 491,
+          "y": 477,
+          "w": 35,
+          "h": 44,
+          "confidence": 29.04847,
+          "text": "are"
+        },
+        {
+          "x": 542,
+          "y": 457,
+          "w": 77,
+          "h": 67,
+          "confidence": 61.61829,
+          "text": "AOS"
+        },
+        {
+          "x": 571,
+          "y": 475,
+          "w": 59,
+          "h": 30,
+          "confidence": 61.804588,
+          "text": "XS"
+        },
+        {
+          "x": 486,
+          "y": 481,
+          "w": 66,
+          "h": 60,
+          "confidence": 46.82806,
+          "text": "ak"
+        },
+        {
+          "x": 570,
+          "y": 503,
+          "w": 44,
+          "h": 35,
+          "confidence": 4.98378,
+          "text": "\""
+        },
+        {
+          "x": 446,
+          "y": 478,
+          "w": 124,
+          "h": 92,
+          "confidence": 37.894447,
+          "text": "ie"
+        },
+        {
+          "x": 916,
+          "y": 665,
+          "w": 210,
+          "h": 54,
+          "confidence": 95.975357,
+          "text": "ROLL"
+        },
+        {
+          "x": 1149,
+          "y": 663,
+          "w": 202,
+          "h": 52,
+          "confidence": 95.820206,
+          "text": "CALL"
+        },
+        {
+          "x": 1372,
+          "y": 660,
+          "w": 210,
+          "h": 53,
+          "confidence": 95.820206,
+          "text": "VOTE"
+        },
+        {
+          "x": 280,
+          "y": 873,
+          "w": 96,
+          "h": 57,
+          "confidence": 96.980759,
+          "text": "Date:"
+        },
+        {
+          "x": 534,
+          "y": 855,
+          "w": 49,
+          "h": 68,
+          "confidence": 25.40284,
+          "text": "yy"
+        },
+        {
+          "x": 594,
+          "y": 868,
+          "w": 31,
+          "h": 43,
+          "confidence": 25.617531,
+          "text": "AV"
+        },
+        {
+          "x": 633,
+          "y": 871,
+          "w": 108,
+          "h": 50,
+          "confidence": 25.617531,
+          "text": "23"
+        },
+        {
+          "x": 285,
+          "y": 1032,
+          "w": 137,
+          "h": 32,
+          "confidence": 96.878944,
+          "text": "Senator"
+        },
+        {
+          "x": 489,
+          "y": 990,
+          "w": 34,
+          "h": 65,
+          "confidence": 58.815594,
+          "text": "0"
+        },
+        {
+          "x": 525,
+          "y": 1001,
+          "w": 155,
+          "h": 74,
+          "confidence": 10.804657,
+          "text": "rarkow"
+        },
+        {
+          "x": 697,
+          "y": 1008,
+          "w": 58,
+          "h": 46,
+          "confidence": 10.804657,
+          "text": "Sb"
+        },
+        {
+          "x": 1041,
+          "y": 1020,
+          "w": 173,
+          "h": 44,
+          "confidence": 96.102501,
+          "text": "requested"
+        },
+        {
+          "x": 1227,
+          "y": 1031,
+          "w": 19,
+          "h": 22,
+          "confidence": 95.812126,
+          "text": "a"
+        },
+        {
+          "x": 1258,
+          "y": 1020,
+          "w": 79,
+          "h": 32,
+          "confidence": 95.520409,
+          "text": "Roll"
+        },
+        {
+          "x": 1352,
+          "y": 1019,
+          "w": 78,
+          "h": 32,
+          "confidence": 96.901367,
+          "text": "Call"
+        },
+        {
+          "x": 1443,
+          "y": 1018,
+          "w": 91,
+          "h": 32,
+          "confidence": 96.300003,
+          "text": "Vote"
+        },
+        {
+          "x": 1548,
+          "y": 1026,
+          "w": 53,
+          "h": 23,
+          "confidence": 96.912918,
+          "text": "on:"
+        },
+        {
+          "x": 363,
+          "y": 1122,
+          "w": 26,
+          "h": 32,
+          "confidence": 94.516159,
+          "text": "1."
+        },
+        {
+          "x": 434,
+          "y": 1119,
+          "w": 180,
+          "h": 43,
+          "confidence": 94.772545,
+          "text": "Adoption"
+        },
+        {
+          "x": 629,
+          "y": 1117,
+          "w": 40,
+          "h": 33,
+          "confidence": 96.526451,
+          "text": "of"
+        },
+        {
+          "x": 700,
+          "y": 1092,
+          "w": 45,
+          "h": 63,
+          "confidence": 94.961533,
+          "text": "A"
+        },
+        {
+          "x": 751,
+          "y": 1098,
+          "w": 63,
+          "h": 52,
+          "confidence": 70.584366,
+          "text": "#3"
+        },
+        {
+          "x": 895,
+          "y": 1113,
+          "w": 211,
+          "h": 35,
+          "confidence": 64.131622,
+          "text": "amendment"
+        },
+        {
+          "x": 360,
+          "y": 1180,
+          "w": 30,
+          "h": 31,
+          "confidence": 96.664299,
+          "text": "2."
+        },
+        {
+          "x": 434,
+          "y": 1179,
+          "w": 151,
+          "h": 40,
+          "confidence": 95.871925,
+          "text": "Passage"
+        },
+        {
+          "x": 599,
+          "y": 1175,
+          "w": 41,
+          "h": 33,
+          "confidence": 95.871925,
+          "text": "of"
+        },
+        {
+          "x": 886,
+          "y": 1173,
+          "w": 34,
+          "h": 32,
+          "confidence": 68.635201,
+          "text": "F."
+        },
+        {
+          "x": 933,
+          "y": 1172,
+          "w": 66,
+          "h": 32,
+          "confidence": 95.631935,
+          "text": "No."
+        },
+        {
+          "x": 361,
+          "y": 1236,
+          "w": 30,
+          "h": 32,
+          "confidence": 96.278236,
+          "text": "3."
+        },
+        {
+          "x": 435,
+          "y": 1233,
+          "w": 180,
+          "h": 43,
+          "confidence": 95.823631,
+          "text": "Adoption"
+        },
+        {
+          "x": 630,
+          "y": 1231,
+          "w": 40,
+          "h": 33,
+          "confidence": 96.634666,
+          "text": "of"
+        },
+        {
+          "x": 963,
+          "y": 1226,
+          "w": 129,
+          "h": 34,
+          "confidence": 95.166214,
+          "text": "motion"
+        },
+        {
+          "x": 374,
+          "y": 1391,
+          "w": 216,
+          "h": 47,
+          "confidence": 96.49044,
+          "text": "Senator"
+        },
+        {
+          "x": 819,
+          "y": 1380,
+          "w": 99,
+          "h": 70,
+          "confidence": 96.805191,
+          "text": "Yes"
+        },
+        {
+          "x": 1219,
+          "y": 1381,
+          "w": 78,
+          "h": 46,
+          "confidence": 96.948631,
+          "text": "No"
+        },
+        {
+          "x": 1586,
+          "y": 1370,
+          "w": 121,
+          "h": 70,
+          "confidence": 96.387177,
+          "text": "Pass"
+        },
+        {
+          "x": 1937,
+          "y": 1370,
+          "w": 197,
+          "h": 48,
+          "confidence": 96.616966,
+          "text": "Absent"
+        },
+        {
+          "x": 438,
+          "y": 1465,
+          "w": 88,
+          "h": 35,
+          "confidence": 96.503983,
+          "text": "Rest"
+        },
+        {
+          "x": 835,
+          "y": 1493,
+          "w": 90,
+          "h": 70,
+          "confidence": 30.441246,
+          "text": "uv"
+        },
+        {
+          "x": 1838,
+          "y": 1541,
+          "w": 7,
+          "h": 24,
+          "confidence": 88.419533,
+          "text": "|"
+        },
+        {
+          "x": 2221,
+          "y": 1530,
+          "w": 14,
+          "h": 25,
+          "confidence": 96.342438,
+          "text": "|"
+        },
+        {
+          "x": 429,
+          "y": 1580,
+          "w": 109,
+          "h": 37,
+          "confidence": 96.952065,
+          "text": "Klein"
+        },
+        {
+          "x": 834,
+          "y": 1613,
+          "w": 88,
+          "h": 49,
+          "confidence": 49.624825,
+          "text": "a"
+        },
+        {
+          "x": 420,
+          "y": 1695,
+          "w": 130,
+          "h": 54,
+          "confidence": 96.106384,
+          "text": "Weber"
+        },
+        {
+          "x": 1454,
+          "y": 1672,
+          "w": 16,
+          "h": 30,
+          "confidence": 82.373627,
+          "text": "["
+        },
+        {
+          "x": 841,
+          "y": 1741,
+          "w": 100,
+          "h": 32,
+          "confidence": 50.352787,
+          "text": "a"
+        },
+        {
+          "x": 420,
+          "y": 1815,
+          "w": 133,
+          "h": 37,
+          "confidence": 96.875137,
+          "text": "Dibble"
+        },
+        {
+          "x": 831,
+          "y": 1846,
+          "w": 76,
+          "h": 65,
+          "confidence": 41.680523,
+          "text": "VA"
+        },
+        {
+          "x": 401,
+          "y": 1931,
+          "w": 173,
+          "h": 38,
+          "confidence": 91.500183,
+          "text": "Dziedzic"
+        },
+        {
+          "x": 832,
+          "y": 1964,
+          "w": 89,
+          "h": 47,
+          "confidence": 49.182999,
+          "text": "a"
+        },
+        {
+          "x": 370,
+          "y": 2048,
+          "w": 238,
+          "h": 39,
+          "confidence": 91.980598,
+          "text": "Drazkowski"
+        },
+        {
+          "x": 841,
+          "y": 2074,
+          "w": 94,
+          "h": 69,
+          "confidence": 0.0,
+          "text": "\u201ca"
+        },
+        {
+          "x": 1849,
+          "y": 2106,
+          "w": 19,
+          "h": 33,
+          "confidence": 0.0,
+          "text": "L"
+        },
+        {
+          "x": 391,
+          "y": 2165,
+          "w": 200,
+          "h": 38,
+          "confidence": 92.758942,
+          "text": "Hauschild"
+        },
+        {
+          "x": 846,
+          "y": 2198,
+          "w": 71,
+          "h": 45,
+          "confidence": 65.565338,
+          "text": "a"
+        },
+        {
+          "x": 431,
+          "y": 2283,
+          "w": 123,
+          "h": 36,
+          "confidence": 45.934174,
+          "text": "Miller"
+        },
+        {
+          "x": 682,
+          "y": 2254,
+          "w": 7,
+          "h": 50,
+          "confidence": 13.958633,
+          "text": "|"
+        },
+        {
+          "x": 1838,
+          "y": 2252,
+          "w": 16,
+          "h": 42,
+          "confidence": 86.070015,
+          "text": "|"
+        },
+        {
+          "x": 293,
+          "y": 2307,
+          "w": 288,
+          "h": 150,
+          "confidence": 36.066402,
+          "text": "9"
+        },
+        {
+          "x": 655,
+          "y": 2307,
+          "w": 63,
+          "h": 150,
+          "confidence": 37.426533,
+          "text": "S$"
+        },
+        {
+          "x": 805,
+          "y": 2307,
+          "w": 1051,
+          "h": 150,
+          "confidence": 37.22438,
+          "text": "Oo"
+        },
+        {
+          "x": 423,
+          "y": 2400,
+          "w": 141,
+          "h": 37,
+          "confidence": 96.83345,
+          "text": "Nelson"
+        },
+        {
+          "x": 852,
+          "y": 2422,
+          "w": 91,
+          "h": 60,
+          "confidence": 38.475449,
+          "text": "\u201ca"
+        },
+        {
+          "x": 421,
+          "y": 2519,
+          "w": 150,
+          "h": 35,
+          "confidence": 96.773994,
+          "text": "Putnam"
+        },
+        {
+          "x": 841,
+          "y": 2547,
+          "w": 95,
+          "h": 68,
+          "confidence": 8.37915,
+          "text": "im"
+        },
+        {
+          "x": 2235,
+          "y": 2597,
+          "w": 13,
+          "h": 6,
+          "confidence": 96.286911,
+          "text": "|"
+        },
+        {
+          "x": 422,
+          "y": 2634,
+          "w": 151,
+          "h": 63,
+          "confidence": 95.504677,
+          "text": "Totals"
+        },
+        {
+          "x": 854,
+          "y": 2638,
+          "w": 51,
+          "h": 49,
+          "confidence": 0.0,
+          "text": "/@"
+        },
+        {
+          "x": 1262,
+          "y": 2622,
+          "w": 33,
+          "h": 63,
+          "confidence": 36.620754,
+          "text": "2)"
+        },
+        {
+          "x": 1459,
+          "y": 2594,
+          "w": 11,
+          "h": 63,
+          "confidence": 76.562813,
+          "text": "|"
+        },
+        {
+          "x": 305,
+          "y": 2794,
+          "w": 105,
+          "h": 33,
+          "confidence": 96.332314,
+          "text": "There"
+        },
+        {
+          "x": 422,
+          "y": 2792,
+          "w": 101,
+          "h": 42,
+          "confidence": 96.571922,
+          "text": "being"
+        },
+        {
+          "x": 582,
+          "y": 2772,
+          "w": 48,
+          "h": 49,
+          "confidence": 76.129723,
+          "text": "/O"
+        },
+        {
+          "x": 666,
+          "y": 2790,
+          "w": 79,
+          "h": 33,
+          "confidence": 92.132439,
+          "text": "YES"
+        },
+        {
+          "x": 758,
+          "y": 2788,
+          "w": 62,
+          "h": 34,
+          "confidence": 92.132439,
+          "text": "and"
+        },
+        {
+          "x": 878,
+          "y": 2770,
+          "w": 31,
+          "h": 38,
+          "confidence": 47.796913,
+          "text": "?"
+        },
+        {
+          "x": 957,
+          "y": 2787,
+          "w": 67,
+          "h": 32,
+          "confidence": 74.143059,
+          "text": "NO"
+        },
+        {
+          "x": 1037,
+          "y": 2789,
+          "w": 94,
+          "h": 29,
+          "confidence": 77.670029,
+          "text": "votes"
+        },
+        {
+          "x": 1144,
+          "y": 2783,
+          "w": 55,
+          "h": 33,
+          "confidence": 96.977592,
+          "text": "the"
+        },
+        {
+          "x": 1212,
+          "y": 2781,
+          "w": 143,
+          "h": 34,
+          "confidence": 96.94146,
+          "text": "Motion:"
+        },
+        {
+          "x": 306,
+          "y": 2884,
+          "w": 196,
+          "h": 34,
+          "confidence": 90.054626,
+          "text": "Prevailed:"
+        },
+        {
+          "x": 535,
+          "y": 2860,
+          "w": 86,
+          "h": 54,
+          "confidence": 23.408936,
+          "text": "a"
+        },
+        {
+          "x": 307,
+          "y": 2975,
+          "w": 69,
+          "h": 33,
+          "confidence": 96.143005,
+          "text": "Did"
+        },
+        {
+          "x": 390,
+          "y": 2975,
+          "w": 71,
+          "h": 32,
+          "confidence": 96.771095,
+          "text": "Not"
+        },
+        {
+          "x": 472,
+          "y": 2972,
+          "w": 150,
+          "h": 33,
+          "confidence": 96.188065,
+          "text": "Prevail:"
+        }
+      ]
+    },
+    "11": {
+      "text": "Rryarastbartee\n\nSenate Tax Committee\n\nOE\n\naa\n\nUNHES7\n\nBry, y,\n\n\u00a7\n\nS\n\n*ColLE DU\n\nVo,\n\nChair, Senator Ann H. Rest\n\ngy\n\nYA,\n\nTuesday, Wednesday, Thursday\n\nB\n\n8:30 am \u2014 10:30 am\n\n(ee\n\n%\n\nte\n\nal\n\nCapitol G-15\n\nA\n\nNES\n\npoteeeees\n\nVe\n\nAN\n\nNp\n\nVing\n\nSige\n\nTH\n\nwe\n\nROLL CALL VOTE\n\nDate WI 23\n\nOrarkowse:\n\nSenator\n\nrequested a Roll Call Vote on\n\n1. Adoption of A 23\n\namendment\n\n2. Passage of\n\nF. No\n\nmotion\n\n3. Adoption of\n\nAbsent\n\nSenator\n\nYes\n\nNo\n\nPass\n\nRest\n\na\n\nKlein\n\ni\n\nWeber\n\n\u2014\n\nDibble\n\nVA\n\nDziedzic\n\na\n\nDrazkowski\n\n\u201cA\n\nHauschild\n\na\n\n{\n\n|\n\nMiller\n\nSe ae en ee\n\nPutnam\n\na\n\nTotals\n\n1\u00e9\n\nZi\n\nThere being\n\n/ 0 YES and Y NO votes the Motion\n\nPrevailed a\n\nDid Not Prevail\n",
+      "textSha256": "e537f3df77a09b8322c99d800a1407c9d8f9d3c34b056f2a3b6c117e9b3e001e",
+      "wordBoxes": [
+        {
+          "x": 385,
+          "y": 179,
+          "w": 114,
+          "h": 39,
+          "confidence": 0.0,
+          "text": "Rryarastbartee"
+        },
+        {
+          "x": 1036,
+          "y": 182,
+          "w": 119,
+          "h": 32,
+          "confidence": 96.273125,
+          "text": "Senate"
+        },
+        {
+          "x": 1168,
+          "y": 181,
+          "w": 70,
+          "h": 31,
+          "confidence": 96.959572,
+          "text": "Tax"
+        },
+        {
+          "x": 1251,
+          "y": 179,
+          "w": 201,
+          "h": 32,
+          "confidence": 96.584091,
+          "text": "Committee"
+        },
+        {
+          "x": 333,
+          "y": 211,
+          "w": 73,
+          "h": 47,
+          "confidence": 60.475101,
+          "text": "OE"
+        },
+        {
+          "x": 362,
+          "y": 195,
+          "w": 36,
+          "h": 34,
+          "confidence": 44.234848,
+          "text": "aa"
+        },
+        {
+          "x": 381,
+          "y": 182,
+          "w": 165,
+          "h": 71,
+          "confidence": 0.0,
+          "text": "UNHES7"
+        },
+        {
+          "x": 511,
+          "y": 189,
+          "w": 62,
+          "h": 36,
+          "confidence": 43.171196,
+          "text": "Bry,"
+        },
+        {
+          "x": 563,
+          "y": 211,
+          "w": 46,
+          "h": 45,
+          "confidence": 21.439865,
+          "text": "y,"
+        },
+        {
+          "x": 297,
+          "y": 277,
+          "w": 17,
+          "h": 20,
+          "confidence": 68.394073,
+          "text": "\u00a7"
+        },
+        {
+          "x": 316,
+          "y": 252,
+          "w": 17,
+          "h": 18,
+          "confidence": 61.574387,
+          "text": "S"
+        },
+        {
+          "x": 396,
+          "y": 247,
+          "w": 68,
+          "h": 35,
+          "confidence": 0.0,
+          "text": "*ColLE"
+        },
+        {
+          "x": 472,
+          "y": 249,
+          "w": 45,
+          "h": 21,
+          "confidence": 18.191544,
+          "text": "DU"
+        },
+        {
+          "x": 510,
+          "y": 252,
+          "w": 38,
+          "h": 37,
+          "confidence": 51.536095,
+          "text": "Vo,"
+        },
+        {
+          "x": 994,
+          "y": 234,
+          "w": 95,
+          "h": 33,
+          "confidence": 96.194206,
+          "text": "Chair,"
+        },
+        {
+          "x": 1120,
+          "y": 234,
+          "w": 132,
+          "h": 31,
+          "confidence": 96.893356,
+          "text": "Senator"
+        },
+        {
+          "x": 1268,
+          "y": 232,
+          "w": 79,
+          "h": 31,
+          "confidence": 93.254631,
+          "text": "Ann"
+        },
+        {
+          "x": 1359,
+          "y": 230,
+          "w": 33,
+          "h": 32,
+          "confidence": 93.110764,
+          "text": "H."
+        },
+        {
+          "x": 1415,
+          "y": 230,
+          "w": 81,
+          "h": 32,
+          "confidence": 96.732277,
+          "text": "Rest"
+        },
+        {
+          "x": 290,
+          "y": 296,
+          "w": 17,
+          "h": 16,
+          "confidence": 35.699577,
+          "text": "gy"
+        },
+        {
+          "x": 603,
+          "y": 299,
+          "w": 57,
+          "h": 36,
+          "confidence": 29.609512,
+          "text": "YA,"
+        },
+        {
+          "x": 952,
+          "y": 286,
+          "w": 164,
+          "h": 43,
+          "confidence": 96.675659,
+          "text": "Tuesday,"
+        },
+        {
+          "x": 1129,
+          "y": 284,
+          "w": 223,
+          "h": 42,
+          "confidence": 96.192055,
+          "text": "Wednesday,"
+        },
+        {
+          "x": 1366,
+          "y": 281,
+          "w": 172,
+          "h": 42,
+          "confidence": 96.446365,
+          "text": "Thursday"
+        },
+        {
+          "x": 279,
+          "y": 336,
+          "w": 17,
+          "h": 16,
+          "confidence": 4.937851,
+          "text": "B"
+        },
+        {
+          "x": 1065,
+          "y": 333,
+          "w": 77,
+          "h": 46,
+          "confidence": 95.217255,
+          "text": "8:30"
+        },
+        {
+          "x": 1164,
+          "y": 348,
+          "w": 43,
+          "h": 23,
+          "confidence": 93.156097,
+          "text": "am"
+        },
+        {
+          "x": 1225,
+          "y": 357,
+          "w": 17,
+          "h": 3,
+          "confidence": 92.301598,
+          "text": "\u2014"
+        },
+        {
+          "x": 1262,
+          "y": 337,
+          "w": 165,
+          "h": 35,
+          "confidence": 96.564369,
+          "text": "10:30"
+        },
+        {
+          "x": 1379,
+          "y": 333,
+          "w": 50,
+          "h": 46,
+          "confidence": 96.6269,
+          "text": "am"
+        },
+        {
+          "x": 388,
+          "y": 358,
+          "w": 85,
+          "h": 57,
+          "confidence": 0.0,
+          "text": "(ee"
+        },
+        {
+          "x": 286,
+          "y": 434,
+          "w": 17,
+          "h": 15,
+          "confidence": 6.339684,
+          "text": "%"
+        },
+        {
+          "x": 451,
+          "y": 356,
+          "w": 134,
+          "h": 107,
+          "confidence": 15.22493,
+          "text": "te"
+        },
+        {
+          "x": 607,
+          "y": 422,
+          "w": 54,
+          "h": 87,
+          "confidence": 43.535698,
+          "text": "al"
+        },
+        {
+          "x": 1127,
+          "y": 390,
+          "w": 132,
+          "h": 43,
+          "confidence": 93.215096,
+          "text": "Capitol"
+        },
+        {
+          "x": 1273,
+          "y": 390,
+          "w": 89,
+          "h": 32,
+          "confidence": 91.574013,
+          "text": "G-15"
+        },
+        {
+          "x": 364,
+          "y": 423,
+          "w": 46,
+          "h": 50,
+          "confidence": 42.3344,
+          "text": "A"
+        },
+        {
+          "x": 516,
+          "y": 460,
+          "w": 51,
+          "h": 30,
+          "confidence": 39.200115,
+          "text": "NES"
+        },
+        {
+          "x": 401,
+          "y": 497,
+          "w": 102,
+          "h": 23,
+          "confidence": 0.0,
+          "text": "poteeeees"
+        },
+        {
+          "x": 510,
+          "y": 503,
+          "w": 16,
+          "h": 11,
+          "confidence": 0.89209,
+          "text": "Ve"
+        },
+        {
+          "x": 516,
+          "y": 467,
+          "w": 83,
+          "h": 64,
+          "confidence": 25.41185,
+          "text": "AN"
+        },
+        {
+          "x": 325,
+          "y": 482,
+          "w": 121,
+          "h": 71,
+          "confidence": 35.322868,
+          "text": "Np"
+        },
+        {
+          "x": 388,
+          "y": 538,
+          "w": 59,
+          "h": 30,
+          "confidence": 42.744278,
+          "text": "Ving"
+        },
+        {
+          "x": 418,
+          "y": 478,
+          "w": 114,
+          "h": 74,
+          "confidence": 17.208183,
+          "text": "Sige"
+        },
+        {
+          "x": 446,
+          "y": 546,
+          "w": 88,
+          "h": 24,
+          "confidence": 48.135918,
+          "text": "TH"
+        },
+        {
+          "x": 534,
+          "y": 533,
+          "w": 31,
+          "h": 25,
+          "confidence": 27.449509,
+          "text": "we"
+        },
+        {
+          "x": 916,
+          "y": 665,
+          "w": 210,
+          "h": 54,
+          "confidence": 96.292709,
+          "text": "ROLL"
+        },
+        {
+          "x": 1149,
+          "y": 663,
+          "w": 202,
+          "h": 52,
+          "confidence": 96.445862,
+          "text": "CALL"
+        },
+        {
+          "x": 1372,
+          "y": 660,
+          "w": 210,
+          "h": 53,
+          "confidence": 96.300484,
+          "text": "VOTE"
+        },
+        {
+          "x": 280,
+          "y": 854,
+          "w": 86,
+          "h": 81,
+          "confidence": 97.010834,
+          "text": "Date"
+        },
+        {
+          "x": 534,
+          "y": 855,
+          "w": 91,
+          "h": 68,
+          "confidence": 0.0,
+          "text": "WI"
+        },
+        {
+          "x": 633,
+          "y": 856,
+          "w": 108,
+          "h": 65,
+          "confidence": 33.548996,
+          "text": "23"
+        },
+        {
+          "x": 489,
+          "y": 990,
+          "w": 263,
+          "h": 68,
+          "confidence": 22.306747,
+          "text": "Orarkowse:"
+        },
+        {
+          "x": 285,
+          "y": 1032,
+          "w": 132,
+          "h": 32,
+          "confidence": 90.701752,
+          "text": "Senator"
+        },
+        {
+          "x": 1041,
+          "y": 1020,
+          "w": 173,
+          "h": 44,
+          "confidence": 94.94651,
+          "text": "requested"
+        },
+        {
+          "x": 1227,
+          "y": 1031,
+          "w": 19,
+          "h": 22,
+          "confidence": 94.94651,
+          "text": "a"
+        },
+        {
+          "x": 1258,
+          "y": 1020,
+          "w": 79,
+          "h": 32,
+          "confidence": 96.237434,
+          "text": "Roll"
+        },
+        {
+          "x": 1352,
+          "y": 1019,
+          "w": 78,
+          "h": 32,
+          "confidence": 95.740936,
+          "text": "Call"
+        },
+        {
+          "x": 1443,
+          "y": 1018,
+          "w": 91,
+          "h": 32,
+          "confidence": 95.740936,
+          "text": "Vote"
+        },
+        {
+          "x": 1548,
+          "y": 1027,
+          "w": 43,
+          "h": 22,
+          "confidence": 96.736977,
+          "text": "on"
+        },
+        {
+          "x": 363,
+          "y": 1122,
+          "w": 12,
+          "h": 32,
+          "confidence": 94.516159,
+          "text": "1."
+        },
+        {
+          "x": 434,
+          "y": 1121,
+          "w": 180,
+          "h": 41,
+          "confidence": 94.772545,
+          "text": "Adoption"
+        },
+        {
+          "x": 629,
+          "y": 1117,
+          "w": 40,
+          "h": 33,
+          "confidence": 96.526451,
+          "text": "of"
+        },
+        {
+          "x": 700,
+          "y": 1092,
+          "w": 34,
+          "h": 63,
+          "confidence": 64.300583,
+          "text": "A"
+        },
+        {
+          "x": 752,
+          "y": 1098,
+          "w": 62,
+          "h": 52,
+          "confidence": 58.060493,
+          "text": "23"
+        },
+        {
+          "x": 895,
+          "y": 1113,
+          "w": 211,
+          "h": 35,
+          "confidence": 96.035782,
+          "text": "amendment"
+        },
+        {
+          "x": 360,
+          "y": 1180,
+          "w": 20,
+          "h": 31,
+          "confidence": 96.664299,
+          "text": "2."
+        },
+        {
+          "x": 434,
+          "y": 1179,
+          "w": 151,
+          "h": 40,
+          "confidence": 95.871925,
+          "text": "Passage"
+        },
+        {
+          "x": 599,
+          "y": 1175,
+          "w": 41,
+          "h": 33,
+          "confidence": 95.871925,
+          "text": "of"
+        },
+        {
+          "x": 886,
+          "y": 1168,
+          "w": 43,
+          "h": 47,
+          "confidence": 92.453094,
+          "text": "F."
+        },
+        {
+          "x": 944,
+          "y": 1172,
+          "w": 44,
+          "h": 32,
+          "confidence": 96.691475,
+          "text": "No"
+        },
+        {
+          "x": 963,
+          "y": 1231,
+          "w": 129,
+          "h": 29,
+          "confidence": 96.26767,
+          "text": "motion"
+        },
+        {
+          "x": 361,
+          "y": 1236,
+          "w": 17,
+          "h": 32,
+          "confidence": 96.278236,
+          "text": "3."
+        },
+        {
+          "x": 435,
+          "y": 1235,
+          "w": 180,
+          "h": 41,
+          "confidence": 95.823631,
+          "text": "Adoption"
+        },
+        {
+          "x": 630,
+          "y": 1231,
+          "w": 40,
+          "h": 33,
+          "confidence": 96.634666,
+          "text": "of"
+        },
+        {
+          "x": 1937,
+          "y": 1370,
+          "w": 197,
+          "h": 48,
+          "confidence": 96.633781,
+          "text": "Absent"
+        },
+        {
+          "x": 374,
+          "y": 1391,
+          "w": 216,
+          "h": 47,
+          "confidence": 96.71965,
+          "text": "Senator"
+        },
+        {
+          "x": 819,
+          "y": 1386,
+          "w": 99,
+          "h": 46,
+          "confidence": 96.125443,
+          "text": "Yes"
+        },
+        {
+          "x": 1219,
+          "y": 1381,
+          "w": 78,
+          "h": 46,
+          "confidence": 96.932556,
+          "text": "No"
+        },
+        {
+          "x": 1586,
+          "y": 1377,
+          "w": 121,
+          "h": 45,
+          "confidence": 96.353561,
+          "text": "Pass"
+        },
+        {
+          "x": 438,
+          "y": 1465,
+          "w": 88,
+          "h": 35,
+          "confidence": 96.55127,
+          "text": "Rest"
+        },
+        {
+          "x": 839,
+          "y": 1497,
+          "w": 86,
+          "h": 49,
+          "confidence": 57.554123,
+          "text": "a"
+        },
+        {
+          "x": 429,
+          "y": 1581,
+          "w": 109,
+          "h": 36,
+          "confidence": 95.783134,
+          "text": "Klein"
+        },
+        {
+          "x": 834,
+          "y": 1613,
+          "w": 88,
+          "h": 49,
+          "confidence": 73.946564,
+          "text": "i"
+        },
+        {
+          "x": 420,
+          "y": 1699,
+          "w": 127,
+          "h": 36,
+          "confidence": 95.750618,
+          "text": "Weber"
+        },
+        {
+          "x": 841,
+          "y": 1741,
+          "w": 100,
+          "h": 32,
+          "confidence": 29.172302,
+          "text": "\u2014"
+        },
+        {
+          "x": 420,
+          "y": 1815,
+          "w": 133,
+          "h": 37,
+          "confidence": 96.374947,
+          "text": "Dibble"
+        },
+        {
+          "x": 835,
+          "y": 1850,
+          "w": 72,
+          "h": 57,
+          "confidence": 53.336159,
+          "text": "VA"
+        },
+        {
+          "x": 401,
+          "y": 1932,
+          "w": 173,
+          "h": 37,
+          "confidence": 91.013451,
+          "text": "Dziedzic"
+        },
+        {
+          "x": 832,
+          "y": 1964,
+          "w": 89,
+          "h": 47,
+          "confidence": 50.960773,
+          "text": "a"
+        },
+        {
+          "x": 370,
+          "y": 2049,
+          "w": 238,
+          "h": 38,
+          "confidence": 92.222878,
+          "text": "Drazkowski"
+        },
+        {
+          "x": 841,
+          "y": 2074,
+          "w": 94,
+          "h": 56,
+          "confidence": 51.74799,
+          "text": "\u201cA"
+        },
+        {
+          "x": 391,
+          "y": 2165,
+          "w": 200,
+          "h": 38,
+          "confidence": 91.228798,
+          "text": "Hauschild"
+        },
+        {
+          "x": 846,
+          "y": 2198,
+          "w": 71,
+          "h": 45,
+          "confidence": 65.565338,
+          "text": "a"
+        },
+        {
+          "x": 1459,
+          "y": 2223,
+          "w": 12,
+          "h": 38,
+          "confidence": 60.856403,
+          "text": "{"
+        },
+        {
+          "x": 1838,
+          "y": 2252,
+          "w": 16,
+          "h": 42,
+          "confidence": 95.766205,
+          "text": "|"
+        },
+        {
+          "x": 431,
+          "y": 2283,
+          "w": 119,
+          "h": 36,
+          "confidence": 95.572884,
+          "text": "Miller"
+        },
+        {
+          "x": 293,
+          "y": 2307,
+          "w": 248,
+          "h": 175,
+          "confidence": 6.677292,
+          "text": "Se"
+        },
+        {
+          "x": 832,
+          "y": 2307,
+          "w": 220,
+          "h": 175,
+          "confidence": 26.398346,
+          "text": "ae"
+        },
+        {
+          "x": 1240,
+          "y": 2307,
+          "w": 206,
+          "h": 175,
+          "confidence": 13.396515,
+          "text": "en"
+        },
+        {
+          "x": 1620,
+          "y": 2307,
+          "w": 205,
+          "h": 175,
+          "confidence": 22.116501,
+          "text": "ee"
+        },
+        {
+          "x": 421,
+          "y": 2519,
+          "w": 150,
+          "h": 35,
+          "confidence": 96.469963,
+          "text": "Putnam"
+        },
+        {
+          "x": 845,
+          "y": 2551,
+          "w": 91,
+          "h": 47,
+          "confidence": 58.352703,
+          "text": "a"
+        },
+        {
+          "x": 422,
+          "y": 2634,
+          "w": 151,
+          "h": 63,
+          "confidence": 95.504677,
+          "text": "Totals"
+        },
+        {
+          "x": 854,
+          "y": 2644,
+          "w": 51,
+          "h": 43,
+          "confidence": 36.462574,
+          "text": "1\u00e9"
+        },
+        {
+          "x": 1262,
+          "y": 2629,
+          "w": 31,
+          "h": 37,
+          "confidence": 32.905083,
+          "text": "Zi"
+        },
+        {
+          "x": 305,
+          "y": 2794,
+          "w": 105,
+          "h": 33,
+          "confidence": 96.236191,
+          "text": "There"
+        },
+        {
+          "x": 422,
+          "y": 2793,
+          "w": 101,
+          "h": 41,
+          "confidence": 96.388168,
+          "text": "being"
+        },
+        {
+          "x": 582,
+          "y": 2772,
+          "w": 22,
+          "h": 49,
+          "confidence": 87.25312,
+          "text": "/"
+        },
+        {
+          "x": 603,
+          "y": 2774,
+          "w": 27,
+          "h": 40,
+          "confidence": 62.145405,
+          "text": "0"
+        },
+        {
+          "x": 666,
+          "y": 2790,
+          "w": 79,
+          "h": 33,
+          "confidence": 95.00563,
+          "text": "YES"
+        },
+        {
+          "x": 758,
+          "y": 2788,
+          "w": 62,
+          "h": 34,
+          "confidence": 95.00563,
+          "text": "and"
+        },
+        {
+          "x": 878,
+          "y": 2770,
+          "w": 31,
+          "h": 38,
+          "confidence": 45.118824,
+          "text": "Y"
+        },
+        {
+          "x": 957,
+          "y": 2787,
+          "w": 67,
+          "h": 32,
+          "confidence": 90.089432,
+          "text": "NO"
+        },
+        {
+          "x": 1037,
+          "y": 2789,
+          "w": 94,
+          "h": 29,
+          "confidence": 96.270187,
+          "text": "votes"
+        },
+        {
+          "x": 1144,
+          "y": 2783,
+          "w": 55,
+          "h": 33,
+          "confidence": 95.733307,
+          "text": "the"
+        },
+        {
+          "x": 1212,
+          "y": 2783,
+          "w": 132,
+          "h": 32,
+          "confidence": 96.442444,
+          "text": "Motion"
+        },
+        {
+          "x": 306,
+          "y": 2884,
+          "w": 184,
+          "h": 34,
+          "confidence": 91.502121,
+          "text": "Prevailed"
+        },
+        {
+          "x": 535,
+          "y": 2860,
+          "w": 86,
+          "h": 54,
+          "confidence": 63.233292,
+          "text": "a"
+        },
+        {
+          "x": 307,
+          "y": 2976,
+          "w": 69,
+          "h": 32,
+          "confidence": 95.81086,
+          "text": "Did"
+        },
+        {
+          "x": 390,
+          "y": 2975,
+          "w": 71,
+          "h": 32,
+          "confidence": 95.81086,
+          "text": "Not"
+        },
+        {
+          "x": 472,
+          "y": 2973,
+          "w": 138,
+          "h": 32,
+          "confidence": 96.227509,
+          "text": "Prevail"
+        }
+      ]
+    }
+  }
+}

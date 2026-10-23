@@ -1,0 +1,3454 @@
+{
+  "page": 2,
+  "raw300dpiPageSha256": "07077aa3eee6ffd4734a13c8bd5272c90735f1c9041d13070626825ab5220c98",
+  "width": 2550,
+  "height": 3300,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 10.76\nScript: Latin\nScript confidence: 3.11\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 10.76
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "4a1694a15700a98377b3d44c56e4052f75f429e32f2f38ab792a4d4082c024df",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "5/16/22, 12:02 PM Minnesota State Senate\n\n+ SCS Presentation Materials Minnesota _20220120CBH (PDF)\n\n+ MREA support for SF 3661 March 9 2022 (PDF)\n\n+ KCC -MNsentateEnergyCommittee 10Mar22_ FINAL (PDF)\n\n+ Carbon capture biil 03.40.22 (PDF)\n\n+ Testimony for SF 3661 - Carbon Capture (PDF)\n\n* SF3661 LEC Testimony 3-10-22 (PDF)\n\n+ Kevin Connors, Assistant Director for Regulatory Compliance and Energy Policy, Energy and Environment Research Center ~ University of North Dakota\n* Harvey Thorleifson, Director, Minnesota Geological Survey, Department of Earth and Environmental Sciences, University of Minnesota\n* Chris Hill, Director of Environmental and Permitting, Summit Carbon Solutions\n\n\u00ab Jake Ketzner, VP of Govt & Public Affairs, Summit Carbon Solutions\n\n\u00ab Sarah Mooradian, Government Relations and Polley Director, Clean Up the River Environment\n\nDATE: March 10, 2022\n\nSENATOR Rarick requested a Roll Call Vote on:\n\n41. adoption of amendment\n\n2. X___ Passage of S. F. No. 3661\n\n3. adoption of motion\nENATOR VES 3\nave Senjem, Chair kK\n\nndrew Mathews, Vice Chair\n\nick Frentz, Ranking Member\n\noger Chamberlain k\n\nlerry Newton\n\nlason Rarick K\n\natricia Torres Ray\n\nThere being 4 Yes votes and 3 No votes\n\nPrevailed yes.\n\nDid Not Prevail\n\nSenator Rarick moved that S.F. 3661, be recommended to pass.\n\nThe meeting was adjourned at 4:45 PM\n\nSenator David H. Senjem, Chair Beffi Kleinboehl, Legislative Assistant\n\nhttps://galdpages.senate.mn/schedule/hearing_minutes.php?ls=92&hearing_id=16818&type=minutes&always_show_minutes=Y#header 2/2\n\n",
+      "textSha256": "34b30c44446be352d9a2fa429d129cb4f6f24fba5ebdd24e9d2628705e1c4a9d",
+      "wordBoxes": [
+        {
+          "x": 115,
+          "y": 56,
+          "w": 118,
+          "h": 29,
+          "confidence": 0.0,
+          "text": "5/16/22,"
+        },
+        {
+          "x": 248,
+          "y": 56,
+          "w": 78,
+          "h": 25,
+          "confidence": 96.177055,
+          "text": "12:02"
+        },
+        {
+          "x": 338,
+          "y": 57,
+          "w": 48,
+          "h": 24,
+          "confidence": 96.206924,
+          "text": "PM"
+        },
+        {
+          "x": 1304,
+          "y": 56,
+          "w": 151,
+          "h": 25,
+          "confidence": 96.896645,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1467,
+          "y": 56,
+          "w": 75,
+          "h": 25,
+          "confidence": 96.997887,
+          "text": "State"
+        },
+        {
+          "x": 1554,
+          "y": 56,
+          "w": 103,
+          "h": 25,
+          "confidence": 96.456955,
+          "text": "Senate"
+        },
+        {
+          "x": 480,
+          "y": 161,
+          "w": 6,
+          "h": 7,
+          "confidence": 66.893669,
+          "text": "+"
+        },
+        {
+          "x": 506,
+          "y": 154,
+          "w": 47,
+          "h": 18,
+          "confidence": 89.68129,
+          "text": "SCS"
+        },
+        {
+          "x": 562,
+          "y": 154,
+          "w": 139,
+          "h": 18,
+          "confidence": 96.13681,
+          "text": "Presentation"
+        },
+        {
+          "x": 711,
+          "y": 154,
+          "w": 100,
+          "h": 18,
+          "confidence": 57.815208,
+          "text": "Materials"
+        },
+        {
+          "x": 827,
+          "y": 154,
+          "w": 114,
+          "h": 18,
+          "confidence": 0.0,
+          "text": "Minnesota"
+        },
+        {
+          "x": 956,
+          "y": 154,
+          "w": 153,
+          "h": 18,
+          "confidence": 0.0,
+          "text": "_20220120CBH"
+        },
+        {
+          "x": 1118,
+          "y": 154,
+          "w": 62,
+          "h": 23,
+          "confidence": 96.144249,
+          "text": "(PDF)"
+        },
+        {
+          "x": 480,
+          "y": 200,
+          "w": 7,
+          "h": 8,
+          "confidence": 44.651382,
+          "text": "+"
+        },
+        {
+          "x": 507,
+          "y": 194,
+          "w": 67,
+          "h": 18,
+          "confidence": 91.190994,
+          "text": "MREA"
+        },
+        {
+          "x": 582,
+          "y": 196,
+          "w": 86,
+          "h": 20,
+          "confidence": 96.054329,
+          "text": "support"
+        },
+        {
+          "x": 676,
+          "y": 194,
+          "w": 31,
+          "h": 18,
+          "confidence": 96.660873,
+          "text": "for"
+        },
+        {
+          "x": 714,
+          "y": 194,
+          "w": 28,
+          "h": 18,
+          "confidence": 94.430672,
+          "text": "SF"
+        },
+        {
+          "x": 751,
+          "y": 194,
+          "w": 49,
+          "h": 18,
+          "confidence": 94.430672,
+          "text": "3661"
+        },
+        {
+          "x": 811,
+          "y": 194,
+          "w": 67,
+          "h": 18,
+          "confidence": 96.430832,
+          "text": "March"
+        },
+        {
+          "x": 887,
+          "y": 194,
+          "w": 11,
+          "h": 18,
+          "confidence": 93.002243,
+          "text": "9"
+        },
+        {
+          "x": 907,
+          "y": 194,
+          "w": 50,
+          "h": 18,
+          "confidence": 96.366982,
+          "text": "2022"
+        },
+        {
+          "x": 966,
+          "y": 194,
+          "w": 59,
+          "h": 23,
+          "confidence": 96.389404,
+          "text": "(PDF)"
+        },
+        {
+          "x": 480,
+          "y": 239,
+          "w": 6,
+          "h": 8,
+          "confidence": 54.641872,
+          "text": "+"
+        },
+        {
+          "x": 507,
+          "y": 233,
+          "w": 49,
+          "h": 18,
+          "confidence": 77.215385,
+          "text": "KCC"
+        },
+        {
+          "x": 565,
+          "y": 233,
+          "w": 333,
+          "h": 23,
+          "confidence": 82.429794,
+          "text": "-MNsentateEnergyCommittee"
+        },
+        {
+          "x": 907,
+          "y": 233,
+          "w": 91,
+          "h": 18,
+          "confidence": 87.600983,
+          "text": "10Mar22_"
+        },
+        {
+          "x": 1014,
+          "y": 233,
+          "w": 67,
+          "h": 18,
+          "confidence": 94.003304,
+          "text": "FINAL"
+        },
+        {
+          "x": 1090,
+          "y": 232,
+          "w": 60,
+          "h": 24,
+          "confidence": 86.913887,
+          "text": "(PDF)"
+        },
+        {
+          "x": 480,
+          "y": 277,
+          "w": 7,
+          "h": 8,
+          "confidence": 75.751175,
+          "text": "+"
+        },
+        {
+          "x": 507,
+          "y": 271,
+          "w": 79,
+          "h": 18,
+          "confidence": 95.60582,
+          "text": "Carbon"
+        },
+        {
+          "x": 595,
+          "y": 273,
+          "w": 84,
+          "h": 21,
+          "confidence": 92.733093,
+          "text": "capture"
+        },
+        {
+          "x": 687,
+          "y": 271,
+          "w": 32,
+          "h": 18,
+          "confidence": 77.112259,
+          "text": "biil"
+        },
+        {
+          "x": 728,
+          "y": 271,
+          "w": 90,
+          "h": 19,
+          "confidence": 74.608444,
+          "text": "03.40.22"
+        },
+        {
+          "x": 827,
+          "y": 271,
+          "w": 61,
+          "h": 23,
+          "confidence": 93.009819,
+          "text": "(PDF)"
+        },
+        {
+          "x": 480,
+          "y": 317,
+          "w": 7,
+          "h": 7,
+          "confidence": 79.188873,
+          "text": "+"
+        },
+        {
+          "x": 506,
+          "y": 310,
+          "w": 115,
+          "h": 23,
+          "confidence": 96.50724,
+          "text": "Testimony"
+        },
+        {
+          "x": 628,
+          "y": 310,
+          "w": 32,
+          "h": 18,
+          "confidence": 96.085678,
+          "text": "for"
+        },
+        {
+          "x": 667,
+          "y": 310,
+          "w": 28,
+          "h": 18,
+          "confidence": 93.885399,
+          "text": "SF"
+        },
+        {
+          "x": 703,
+          "y": 310,
+          "w": 49,
+          "h": 18,
+          "confidence": 91.768723,
+          "text": "3661"
+        },
+        {
+          "x": 763,
+          "y": 320,
+          "w": 7,
+          "h": 4,
+          "confidence": 91.768723,
+          "text": "-"
+        },
+        {
+          "x": 778,
+          "y": 310,
+          "w": 80,
+          "h": 18,
+          "confidence": 96.031784,
+          "text": "Carbon"
+        },
+        {
+          "x": 867,
+          "y": 310,
+          "w": 87,
+          "h": 23,
+          "confidence": 96.039787,
+          "text": "Capture"
+        },
+        {
+          "x": 963,
+          "y": 310,
+          "w": 59,
+          "h": 23,
+          "confidence": 95.787979,
+          "text": "(PDF)"
+        },
+        {
+          "x": 480,
+          "y": 356,
+          "w": 7,
+          "h": 7,
+          "confidence": 31.174797,
+          "text": "*"
+        },
+        {
+          "x": 507,
+          "y": 349,
+          "w": 77,
+          "h": 18,
+          "confidence": 90.092827,
+          "text": "SF3661"
+        },
+        {
+          "x": 596,
+          "y": 349,
+          "w": 44,
+          "h": 18,
+          "confidence": 95.495125,
+          "text": "LEC"
+        },
+        {
+          "x": 648,
+          "y": 349,
+          "w": 116,
+          "h": 23,
+          "confidence": 95.495125,
+          "text": "Testimony"
+        },
+        {
+          "x": 772,
+          "y": 349,
+          "w": 81,
+          "h": 18,
+          "confidence": 96.184799,
+          "text": "3-10-22"
+        },
+        {
+          "x": 861,
+          "y": 349,
+          "w": 60,
+          "h": 23,
+          "confidence": 96.519432,
+          "text": "(PDF)"
+        },
+        {
+          "x": 479,
+          "y": 394,
+          "w": 8,
+          "h": 9,
+          "confidence": 54.749065,
+          "text": "+"
+        },
+        {
+          "x": 507,
+          "y": 388,
+          "w": 61,
+          "h": 19,
+          "confidence": 96.532372,
+          "text": "Kevin"
+        },
+        {
+          "x": 578,
+          "y": 388,
+          "w": 100,
+          "h": 22,
+          "confidence": 96.142159,
+          "text": "Connors,"
+        },
+        {
+          "x": 687,
+          "y": 388,
+          "w": 105,
+          "h": 19,
+          "confidence": 96.649643,
+          "text": "Assistant"
+        },
+        {
+          "x": 801,
+          "y": 388,
+          "w": 90,
+          "h": 19,
+          "confidence": 96.382538,
+          "text": "Director"
+        },
+        {
+          "x": 897,
+          "y": 388,
+          "w": 31,
+          "h": 19,
+          "confidence": 95.99453,
+          "text": "for"
+        },
+        {
+          "x": 936,
+          "y": 388,
+          "w": 120,
+          "h": 23,
+          "confidence": 95.517509,
+          "text": "Regulatory"
+        },
+        {
+          "x": 1065,
+          "y": 388,
+          "w": 132,
+          "h": 24,
+          "confidence": 96.275459,
+          "text": "Compliance"
+        },
+        {
+          "x": 1205,
+          "y": 389,
+          "w": 40,
+          "h": 18,
+          "confidence": 95.981689,
+          "text": "and"
+        },
+        {
+          "x": 1253,
+          "y": 389,
+          "w": 79,
+          "h": 23,
+          "confidence": 96.579529,
+          "text": "Energy"
+        },
+        {
+          "x": 1340,
+          "y": 389,
+          "w": 72,
+          "h": 23,
+          "confidence": 96.789444,
+          "text": "Policy,"
+        },
+        {
+          "x": 1421,
+          "y": 389,
+          "w": 78,
+          "h": 22,
+          "confidence": 96.20266,
+          "text": "Energy"
+        },
+        {
+          "x": 1507,
+          "y": 388,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.876587,
+          "text": "and"
+        },
+        {
+          "x": 1555,
+          "y": 388,
+          "w": 143,
+          "h": 19,
+          "confidence": 96.045815,
+          "text": "Environment"
+        },
+        {
+          "x": 1706,
+          "y": 388,
+          "w": 104,
+          "h": 19,
+          "confidence": 95.933014,
+          "text": "Research"
+        },
+        {
+          "x": 1819,
+          "y": 388,
+          "w": 73,
+          "h": 19,
+          "confidence": 92.631195,
+          "text": "Center"
+        },
+        {
+          "x": 1898,
+          "y": 399,
+          "w": 13,
+          "h": 3,
+          "confidence": 51.814804,
+          "text": "~"
+        },
+        {
+          "x": 1919,
+          "y": 388,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.719025,
+          "text": "University"
+        },
+        {
+          "x": 2039,
+          "y": 388,
+          "w": 22,
+          "h": 19,
+          "confidence": 96.610397,
+          "text": "of"
+        },
+        {
+          "x": 2068,
+          "y": 389,
+          "w": 61,
+          "h": 18,
+          "confidence": 95.820862,
+          "text": "North"
+        },
+        {
+          "x": 2138,
+          "y": 389,
+          "w": 76,
+          "h": 18,
+          "confidence": 96.819054,
+          "text": "Dakota"
+        },
+        {
+          "x": 480,
+          "y": 430,
+          "w": 7,
+          "h": 8,
+          "confidence": 53.693703,
+          "text": "*"
+        },
+        {
+          "x": 507,
+          "y": 424,
+          "w": 77,
+          "h": 23,
+          "confidence": 93.242432,
+          "text": "Harvey"
+        },
+        {
+          "x": 591,
+          "y": 424,
+          "w": 133,
+          "h": 22,
+          "confidence": 91.433052,
+          "text": "Thorleifson,"
+        },
+        {
+          "x": 734,
+          "y": 424,
+          "w": 93,
+          "h": 22,
+          "confidence": 96.721947,
+          "text": "Director,"
+        },
+        {
+          "x": 837,
+          "y": 424,
+          "w": 114,
+          "h": 19,
+          "confidence": 96.300278,
+          "text": "Minnesota"
+        },
+        {
+          "x": 960,
+          "y": 424,
+          "w": 117,
+          "h": 23,
+          "confidence": 96.600166,
+          "text": "Geological"
+        },
+        {
+          "x": 1086,
+          "y": 425,
+          "w": 82,
+          "h": 22,
+          "confidence": 96.75367,
+          "text": "Survey,"
+        },
+        {
+          "x": 1176,
+          "y": 425,
+          "w": 129,
+          "h": 23,
+          "confidence": 96.775429,
+          "text": "Department"
+        },
+        {
+          "x": 1313,
+          "y": 425,
+          "w": 23,
+          "h": 18,
+          "confidence": 96.403168,
+          "text": "of"
+        },
+        {
+          "x": 1342,
+          "y": 425,
+          "w": 58,
+          "h": 18,
+          "confidence": 96.898659,
+          "text": "Earth"
+        },
+        {
+          "x": 1409,
+          "y": 425,
+          "w": 40,
+          "h": 18,
+          "confidence": 96.937111,
+          "text": "and"
+        },
+        {
+          "x": 1458,
+          "y": 424,
+          "w": 161,
+          "h": 19,
+          "confidence": 95.384033,
+          "text": "Environmental"
+        },
+        {
+          "x": 1628,
+          "y": 425,
+          "w": 106,
+          "h": 21,
+          "confidence": 95.196228,
+          "text": "Sciences,"
+        },
+        {
+          "x": 1743,
+          "y": 425,
+          "w": 112,
+          "h": 23,
+          "confidence": 96.20977,
+          "text": "University"
+        },
+        {
+          "x": 1863,
+          "y": 425,
+          "w": 22,
+          "h": 17,
+          "confidence": 96.921547,
+          "text": "of"
+        },
+        {
+          "x": 1892,
+          "y": 425,
+          "w": 114,
+          "h": 18,
+          "confidence": 96.626358,
+          "text": "Minnesota"
+        },
+        {
+          "x": 480,
+          "y": 466,
+          "w": 7,
+          "h": 7,
+          "confidence": 20.071785,
+          "text": "*"
+        },
+        {
+          "x": 507,
+          "y": 459,
+          "w": 58,
+          "h": 18,
+          "confidence": 96.391678,
+          "text": "Chris"
+        },
+        {
+          "x": 574,
+          "y": 459,
+          "w": 40,
+          "h": 21,
+          "confidence": 75.714233,
+          "text": "Hill,"
+        },
+        {
+          "x": 623,
+          "y": 459,
+          "w": 90,
+          "h": 18,
+          "confidence": 96.396568,
+          "text": "Director"
+        },
+        {
+          "x": 720,
+          "y": 460,
+          "w": 22,
+          "h": 18,
+          "confidence": 96.650391,
+          "text": "of"
+        },
+        {
+          "x": 749,
+          "y": 459,
+          "w": 163,
+          "h": 19,
+          "confidence": 95.724876,
+          "text": "Environmental"
+        },
+        {
+          "x": 920,
+          "y": 460,
+          "w": 40,
+          "h": 18,
+          "confidence": 96.546875,
+          "text": "and"
+        },
+        {
+          "x": 969,
+          "y": 460,
+          "w": 119,
+          "h": 22,
+          "confidence": 95.960953,
+          "text": "Permitting,"
+        },
+        {
+          "x": 1097,
+          "y": 460,
+          "w": 87,
+          "h": 18,
+          "confidence": 96.191666,
+          "text": "Summit"
+        },
+        {
+          "x": 1191,
+          "y": 460,
+          "w": 80,
+          "h": 18,
+          "confidence": 96.451393,
+          "text": "Carbon"
+        },
+        {
+          "x": 1279,
+          "y": 460,
+          "w": 106,
+          "h": 18,
+          "confidence": 96.465767,
+          "text": "Solutions"
+        },
+        {
+          "x": 479,
+          "y": 501,
+          "w": 8,
+          "h": 8,
+          "confidence": 86.891693,
+          "text": "\u00ab"
+        },
+        {
+          "x": 506,
+          "y": 494,
+          "w": 52,
+          "h": 19,
+          "confidence": 93.265472,
+          "text": "Jake"
+        },
+        {
+          "x": 566,
+          "y": 494,
+          "w": 89,
+          "h": 22,
+          "confidence": 91.3283,
+          "text": "Ketzner,"
+        },
+        {
+          "x": 663,
+          "y": 495,
+          "w": 30,
+          "h": 18,
+          "confidence": 96.550209,
+          "text": "VP"
+        },
+        {
+          "x": 702,
+          "y": 494,
+          "w": 22,
+          "h": 19,
+          "confidence": 96.550209,
+          "text": "of"
+        },
+        {
+          "x": 731,
+          "y": 494,
+          "w": 53,
+          "h": 19,
+          "confidence": 93.188416,
+          "text": "Govt"
+        },
+        {
+          "x": 791,
+          "y": 494,
+          "w": 16,
+          "h": 19,
+          "confidence": 93.076042,
+          "text": "&"
+        },
+        {
+          "x": 815,
+          "y": 495,
+          "w": 70,
+          "h": 18,
+          "confidence": 96.390305,
+          "text": "Public"
+        },
+        {
+          "x": 892,
+          "y": 494,
+          "w": 79,
+          "h": 23,
+          "confidence": 96.390305,
+          "text": "Affairs,"
+        },
+        {
+          "x": 980,
+          "y": 495,
+          "w": 84,
+          "h": 18,
+          "confidence": 96.4226,
+          "text": "Summit"
+        },
+        {
+          "x": 1073,
+          "y": 495,
+          "w": 81,
+          "h": 18,
+          "confidence": 96.423355,
+          "text": "Carbon"
+        },
+        {
+          "x": 1162,
+          "y": 495,
+          "w": 105,
+          "h": 19,
+          "confidence": 95.689148,
+          "text": "Solutions"
+        },
+        {
+          "x": 480,
+          "y": 536,
+          "w": 7,
+          "h": 8,
+          "confidence": 78.039505,
+          "text": "\u00ab"
+        },
+        {
+          "x": 507,
+          "y": 530,
+          "w": 63,
+          "h": 18,
+          "confidence": 93.278633,
+          "text": "Sarah"
+        },
+        {
+          "x": 579,
+          "y": 530,
+          "w": 123,
+          "h": 22,
+          "confidence": 91.36721,
+          "text": "Mooradian,"
+        },
+        {
+          "x": 711,
+          "y": 530,
+          "w": 139,
+          "h": 18,
+          "confidence": 96.183144,
+          "text": "Government"
+        },
+        {
+          "x": 858,
+          "y": 530,
+          "w": 103,
+          "h": 18,
+          "confidence": 96.31218,
+          "text": "Relations"
+        },
+        {
+          "x": 970,
+          "y": 531,
+          "w": 39,
+          "h": 17,
+          "confidence": 96.662628,
+          "text": "and"
+        },
+        {
+          "x": 1018,
+          "y": 531,
+          "w": 68,
+          "h": 22,
+          "confidence": 11.254486,
+          "text": "Polley"
+        },
+        {
+          "x": 1094,
+          "y": 531,
+          "w": 94,
+          "h": 21,
+          "confidence": 96.443703,
+          "text": "Director,"
+        },
+        {
+          "x": 1196,
+          "y": 531,
+          "w": 62,
+          "h": 18,
+          "confidence": 96.794914,
+          "text": "Clean"
+        },
+        {
+          "x": 1267,
+          "y": 531,
+          "w": 30,
+          "h": 22,
+          "confidence": 96.020493,
+          "text": "Up"
+        },
+        {
+          "x": 1304,
+          "y": 531,
+          "w": 34,
+          "h": 18,
+          "confidence": 96.713669,
+          "text": "the"
+        },
+        {
+          "x": 1347,
+          "y": 531,
+          "w": 58,
+          "h": 18,
+          "confidence": 95.600082,
+          "text": "River"
+        },
+        {
+          "x": 1412,
+          "y": 531,
+          "w": 143,
+          "h": 18,
+          "confidence": 95.600082,
+          "text": "Environment"
+        },
+        {
+          "x": 436,
+          "y": 593,
+          "w": 68,
+          "h": 18,
+          "confidence": 96.166298,
+          "text": "DATE:"
+        },
+        {
+          "x": 514,
+          "y": 593,
+          "w": 66,
+          "h": 18,
+          "confidence": 95.619804,
+          "text": "March"
+        },
+        {
+          "x": 589,
+          "y": 593,
+          "w": 30,
+          "h": 21,
+          "confidence": 95.619804,
+          "text": "10,"
+        },
+        {
+          "x": 628,
+          "y": 594,
+          "w": 50,
+          "h": 17,
+          "confidence": 96.797256,
+          "text": "2022"
+        },
+        {
+          "x": 435,
+          "y": 656,
+          "w": 113,
+          "h": 19,
+          "confidence": 92.840012,
+          "text": "SENATOR"
+        },
+        {
+          "x": 556,
+          "y": 657,
+          "w": 70,
+          "h": 18,
+          "confidence": 92.37738,
+          "text": "Rarick"
+        },
+        {
+          "x": 634,
+          "y": 657,
+          "w": 111,
+          "h": 22,
+          "confidence": 96.743942,
+          "text": "requested"
+        },
+        {
+          "x": 754,
+          "y": 662,
+          "w": 11,
+          "h": 13,
+          "confidence": 96.384514,
+          "text": "a"
+        },
+        {
+          "x": 774,
+          "y": 657,
+          "w": 43,
+          "h": 18,
+          "confidence": 92.849335,
+          "text": "Roll"
+        },
+        {
+          "x": 825,
+          "y": 657,
+          "w": 42,
+          "h": 18,
+          "confidence": 88.469955,
+          "text": "Call"
+        },
+        {
+          "x": 874,
+          "y": 657,
+          "w": 48,
+          "h": 18,
+          "confidence": 96.926964,
+          "text": "Vote"
+        },
+        {
+          "x": 931,
+          "y": 662,
+          "w": 33,
+          "h": 13,
+          "confidence": 96.513275,
+          "text": "on:"
+        },
+        {
+          "x": 477,
+          "y": 716,
+          "w": 22,
+          "h": 32,
+          "confidence": 72.758492,
+          "text": "41."
+        },
+        {
+          "x": 631,
+          "y": 720,
+          "w": 97,
+          "h": 23,
+          "confidence": 96.075638,
+          "text": "adoption"
+        },
+        {
+          "x": 737,
+          "y": 720,
+          "w": 23,
+          "h": 19,
+          "confidence": 96.075638,
+          "text": "of"
+        },
+        {
+          "x": 1101,
+          "y": 721,
+          "w": 131,
+          "h": 18,
+          "confidence": 96.538559,
+          "text": "amendment"
+        },
+        {
+          "x": 481,
+          "y": 846,
+          "w": 17,
+          "h": 20,
+          "confidence": 84.740631,
+          "text": "2."
+        },
+        {
+          "x": 560,
+          "y": 846,
+          "w": 80,
+          "h": 24,
+          "confidence": 82.409637,
+          "text": "X___"
+        },
+        {
+          "x": 647,
+          "y": 847,
+          "w": 94,
+          "h": 23,
+          "confidence": 96.279449,
+          "text": "Passage"
+        },
+        {
+          "x": 749,
+          "y": 846,
+          "w": 23,
+          "h": 19,
+          "confidence": 93.301491,
+          "text": "of"
+        },
+        {
+          "x": 778,
+          "y": 847,
+          "w": 21,
+          "h": 19,
+          "confidence": 92.776512,
+          "text": "S."
+        },
+        {
+          "x": 808,
+          "y": 847,
+          "w": 16,
+          "h": 19,
+          "confidence": 88.252068,
+          "text": "F."
+        },
+        {
+          "x": 833,
+          "y": 847,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.436714,
+          "text": "No."
+        },
+        {
+          "x": 877,
+          "y": 846,
+          "w": 48,
+          "h": 20,
+          "confidence": 91.06208,
+          "text": "3661"
+        },
+        {
+          "x": 480,
+          "y": 974,
+          "w": 19,
+          "h": 19,
+          "confidence": 64.944,
+          "text": "3."
+        },
+        {
+          "x": 631,
+          "y": 974,
+          "w": 97,
+          "h": 23,
+          "confidence": 94.010506,
+          "text": "adoption"
+        },
+        {
+          "x": 737,
+          "y": 974,
+          "w": 22,
+          "h": 19,
+          "confidence": 96.168404,
+          "text": "of"
+        },
+        {
+          "x": 1074,
+          "y": 975,
+          "w": 77,
+          "h": 18,
+          "confidence": 96.070786,
+          "text": "motion"
+        },
+        {
+          "x": 454,
+          "y": 1232,
+          "w": 107,
+          "h": 18,
+          "confidence": 91.9263,
+          "text": "ENATOR"
+        },
+        {
+          "x": 1049,
+          "y": 1222,
+          "w": 53,
+          "h": 29,
+          "confidence": 87.061409,
+          "text": "VES"
+        },
+        {
+          "x": 1197,
+          "y": 1233,
+          "w": 18,
+          "h": 18,
+          "confidence": 32.060608,
+          "text": "3"
+        },
+        {
+          "x": 454,
+          "y": 1302,
+          "w": 38,
+          "h": 13,
+          "confidence": 84.443886,
+          "text": "ave"
+        },
+        {
+          "x": 500,
+          "y": 1297,
+          "w": 88,
+          "h": 23,
+          "confidence": 92.433975,
+          "text": "Senjem,"
+        },
+        {
+          "x": 597,
+          "y": 1297,
+          "w": 59,
+          "h": 18,
+          "confidence": 96.79377,
+          "text": "Chair"
+        },
+        {
+          "x": 1048,
+          "y": 1288,
+          "w": 17,
+          "h": 28,
+          "confidence": 41.790714,
+          "text": "kK"
+        },
+        {
+          "x": 454,
+          "y": 1362,
+          "w": 69,
+          "h": 18,
+          "confidence": 91.869537,
+          "text": "ndrew"
+        },
+        {
+          "x": 531,
+          "y": 1362,
+          "w": 103,
+          "h": 22,
+          "confidence": 2.373825,
+          "text": "Mathews,"
+        },
+        {
+          "x": 641,
+          "y": 1362,
+          "w": 48,
+          "h": 19,
+          "confidence": 96.592537,
+          "text": "Vice"
+        },
+        {
+          "x": 698,
+          "y": 1362,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.693687,
+          "text": "Chair"
+        },
+        {
+          "x": 454,
+          "y": 1427,
+          "w": 31,
+          "h": 18,
+          "confidence": 90.166634,
+          "text": "ick"
+        },
+        {
+          "x": 494,
+          "y": 1427,
+          "w": 75,
+          "h": 22,
+          "confidence": 88.980431,
+          "text": "Frentz,"
+        },
+        {
+          "x": 577,
+          "y": 1427,
+          "w": 91,
+          "h": 23,
+          "confidence": 95.924973,
+          "text": "Ranking"
+        },
+        {
+          "x": 677,
+          "y": 1427,
+          "w": 90,
+          "h": 19,
+          "confidence": 69.621078,
+          "text": "Member"
+        },
+        {
+          "x": 454,
+          "y": 1497,
+          "w": 51,
+          "h": 18,
+          "confidence": 69.15477,
+          "text": "oger"
+        },
+        {
+          "x": 512,
+          "y": 1493,
+          "w": 140,
+          "h": 18,
+          "confidence": 95.607185,
+          "text": "Chamberlain"
+        },
+        {
+          "x": 1048,
+          "y": 1483,
+          "w": 17,
+          "h": 47,
+          "confidence": 25.296654,
+          "text": "k"
+        },
+        {
+          "x": 450,
+          "y": 1563,
+          "w": 43,
+          "h": 18,
+          "confidence": 84.266006,
+          "text": "lerry"
+        },
+        {
+          "x": 502,
+          "y": 1558,
+          "w": 82,
+          "h": 19,
+          "confidence": 96.773827,
+          "text": "Newton"
+        },
+        {
+          "x": 450,
+          "y": 1628,
+          "w": 54,
+          "h": 14,
+          "confidence": 76.2164,
+          "text": "lason"
+        },
+        {
+          "x": 512,
+          "y": 1623,
+          "w": 71,
+          "h": 19,
+          "confidence": 91.868088,
+          "text": "Rarick"
+        },
+        {
+          "x": 1047,
+          "y": 1615,
+          "w": 18,
+          "h": 28,
+          "confidence": 80.093948,
+          "text": "K"
+        },
+        {
+          "x": 452,
+          "y": 1688,
+          "w": 68,
+          "h": 19,
+          "confidence": 85.297455,
+          "text": "atricia"
+        },
+        {
+          "x": 528,
+          "y": 1689,
+          "w": 70,
+          "h": 18,
+          "confidence": 96.316406,
+          "text": "Torres"
+        },
+        {
+          "x": 607,
+          "y": 1689,
+          "w": 42,
+          "h": 23,
+          "confidence": 96.597565,
+          "text": "Ray"
+        },
+        {
+          "x": 434,
+          "y": 1949,
+          "w": 63,
+          "h": 18,
+          "confidence": 96.737335,
+          "text": "There"
+        },
+        {
+          "x": 506,
+          "y": 1949,
+          "w": 61,
+          "h": 23,
+          "confidence": 96.372765,
+          "text": "being"
+        },
+        {
+          "x": 581,
+          "y": 1949,
+          "w": 12,
+          "h": 18,
+          "confidence": 64.490341,
+          "text": "4"
+        },
+        {
+          "x": 600,
+          "y": 1949,
+          "w": 40,
+          "h": 18,
+          "confidence": 64.490341,
+          "text": "Yes"
+        },
+        {
+          "x": 647,
+          "y": 1951,
+          "w": 61,
+          "h": 16,
+          "confidence": 76.311371,
+          "text": "votes"
+        },
+        {
+          "x": 743,
+          "y": 1950,
+          "w": 40,
+          "h": 18,
+          "confidence": 91.603455,
+          "text": "and"
+        },
+        {
+          "x": 798,
+          "y": 1950,
+          "w": 12,
+          "h": 17,
+          "confidence": 55.449928,
+          "text": "3"
+        },
+        {
+          "x": 819,
+          "y": 1950,
+          "w": 30,
+          "h": 18,
+          "confidence": 55.449928,
+          "text": "No"
+        },
+        {
+          "x": 856,
+          "y": 1951,
+          "w": 60,
+          "h": 17,
+          "confidence": 92.242027,
+          "text": "votes"
+        },
+        {
+          "x": 434,
+          "y": 2008,
+          "w": 104,
+          "h": 32,
+          "confidence": 91.603584,
+          "text": "Prevailed"
+        },
+        {
+          "x": 664,
+          "y": 2017,
+          "w": 38,
+          "h": 18,
+          "confidence": 85.390312,
+          "text": "yes."
+        },
+        {
+          "x": 435,
+          "y": 2075,
+          "w": 35,
+          "h": 19,
+          "confidence": 96.340324,
+          "text": "Did"
+        },
+        {
+          "x": 479,
+          "y": 2076,
+          "w": 39,
+          "h": 18,
+          "confidence": 96.84948,
+          "text": "Not"
+        },
+        {
+          "x": 526,
+          "y": 2075,
+          "w": 75,
+          "h": 19,
+          "confidence": 96.778046,
+          "text": "Prevail"
+        },
+        {
+          "x": 431,
+          "y": 2257,
+          "w": 98,
+          "h": 23,
+          "confidence": 93.285194,
+          "text": "Senator"
+        },
+        {
+          "x": 538,
+          "y": 2256,
+          "w": 79,
+          "h": 23,
+          "confidence": 92.848129,
+          "text": "Rarick"
+        },
+        {
+          "x": 625,
+          "y": 2257,
+          "w": 83,
+          "h": 23,
+          "confidence": 96.589355,
+          "text": "moved"
+        },
+        {
+          "x": 716,
+          "y": 2257,
+          "w": 50,
+          "h": 23,
+          "confidence": 93.219421,
+          "text": "that"
+        },
+        {
+          "x": 776,
+          "y": 2258,
+          "w": 42,
+          "h": 22,
+          "confidence": 46.003212,
+          "text": "S.F."
+        },
+        {
+          "x": 828,
+          "y": 2259,
+          "w": 70,
+          "h": 26,
+          "confidence": 96.465057,
+          "text": "3661,"
+        },
+        {
+          "x": 907,
+          "y": 2257,
+          "w": 30,
+          "h": 23,
+          "confidence": 96.206299,
+          "text": "be"
+        },
+        {
+          "x": 945,
+          "y": 2258,
+          "w": 181,
+          "h": 23,
+          "confidence": 96.373169,
+          "text": "recommended"
+        },
+        {
+          "x": 1134,
+          "y": 2260,
+          "w": 25,
+          "h": 21,
+          "confidence": 97.002319,
+          "text": "to"
+        },
+        {
+          "x": 1168,
+          "y": 2264,
+          "w": 65,
+          "h": 22,
+          "confidence": 96.929871,
+          "text": "pass."
+        },
+        {
+          "x": 430,
+          "y": 2357,
+          "w": 47,
+          "h": 24,
+          "confidence": 96.224594,
+          "text": "The"
+        },
+        {
+          "x": 486,
+          "y": 2358,
+          "w": 102,
+          "h": 29,
+          "confidence": 95.757744,
+          "text": "meeting"
+        },
+        {
+          "x": 597,
+          "y": 2364,
+          "w": 49,
+          "h": 17,
+          "confidence": 96.757401,
+          "text": "was"
+        },
+        {
+          "x": 655,
+          "y": 2358,
+          "w": 126,
+          "h": 29,
+          "confidence": 96.809464,
+          "text": "adjourned"
+        },
+        {
+          "x": 790,
+          "y": 2361,
+          "w": 23,
+          "h": 21,
+          "confidence": 96.946075,
+          "text": "at"
+        },
+        {
+          "x": 822,
+          "y": 2360,
+          "w": 55,
+          "h": 22,
+          "confidence": 96.416733,
+          "text": "4:45"
+        },
+        {
+          "x": 886,
+          "y": 2360,
+          "w": 40,
+          "h": 22,
+          "confidence": 96.511215,
+          "text": "PM"
+        },
+        {
+          "x": 430,
+          "y": 2569,
+          "w": 98,
+          "h": 23,
+          "confidence": 96.762978,
+          "text": "Senator"
+        },
+        {
+          "x": 537,
+          "y": 2568,
+          "w": 68,
+          "h": 24,
+          "confidence": 92.990753,
+          "text": "David"
+        },
+        {
+          "x": 615,
+          "y": 2569,
+          "w": 25,
+          "h": 23,
+          "confidence": 91.450989,
+          "text": "H."
+        },
+        {
+          "x": 650,
+          "y": 2569,
+          "w": 100,
+          "h": 29,
+          "confidence": 93.168655,
+          "text": "Senjem,"
+        },
+        {
+          "x": 760,
+          "y": 2569,
+          "w": 66,
+          "h": 23,
+          "confidence": 96.507523,
+          "text": "Chair"
+        },
+        {
+          "x": 1255,
+          "y": 2571,
+          "w": 31,
+          "h": 22,
+          "confidence": 88.006058,
+          "text": "Beffi"
+        },
+        {
+          "x": 1320,
+          "y": 2570,
+          "w": 139,
+          "h": 28,
+          "confidence": 81.061478,
+          "text": "Kleinboehl,"
+        },
+        {
+          "x": 1469,
+          "y": 2570,
+          "w": 135,
+          "h": 29,
+          "confidence": 96.528816,
+          "text": "Legislative"
+        },
+        {
+          "x": 1613,
+          "y": 2571,
+          "w": 119,
+          "h": 23,
+          "confidence": 96.928009,
+          "text": "Assistant"
+        },
+        {
+          "x": 113,
+          "y": 3183,
+          "w": 2011,
+          "h": 39,
+          "confidence": 28.083382,
+          "text": "https://galdpages.senate.mn/schedule/hearing_minutes.php?ls=92&hearing_id=16818&type=minutes&always_show_minutes=Y#header"
+        },
+        {
+          "x": 2395,
+          "y": 3192,
+          "w": 43,
+          "h": 26,
+          "confidence": 80.140121,
+          "text": "2/2"
+        }
+      ]
+    },
+    "11": {
+      "text": "5/16/22, 12:02 PM\n\nMinnesota State Senate\n\nSCS Presentation Materials Minnesota _20220120CBH (PDF)\n\nMREA support for SF 3661 March 9 2022 (PDF)\n\nKCC - MNsentateEnergyCommittee 10Mar22_ FINAL (PDF)\n\nCarbon capture biil 03.40.22 (PDF)\n\nTestimony for SF 3661 - Carbon Capture (PDF)\n\nSF3661 LEC Testimony 3-10-22 (PDF)\n\nKevin Connors, Assistant Director for Regulatory Compliance and Energy Policy, Energy and Environment Research Center \u2014 University of North Dakota\n\nHarvey Thorleifson, Director, Minnesota Geological Survey, Department of Earth and Environmental Sciences, University of Minnesota\n\nChris Hill, Director of Environmental and Permitting, Summit Carbon Solutions\n\nJake Ketzner, VP of Govt & Public Affairs, Summit Carbon Solutions\n\nSarah Mooradian, Government Relations and Policy Director, Clean Up the River Environment\n\nDATE: March 10, 2022\n\nSENATOR Rarick requested a Roll Call Vote on:\n\n1\n\nadoption of\n\namendment\n\n2\n\nxX Passage of S. F. No. 3661\n\ni\n\nadoption of\n\nmotion\n\nENATOR\n\nVES\n\n3\u00b0\n\nave Senjem, Chair\n\nndrew Mathews, Vice Chair\n\nick Frentz, Ranking Member\n\noger Chamberlain\n\nlerry Newton\n\nlason Rarick\n\natricia Torres Ray\n\n\u2018aul Utke\n\nOTALS\n\nThere being 4 Yes votes\n\nand 3 No votes\n\nPrevailed yes.\n\nDid Not Prevail\n\nSenator Rarick moved that S.F. 3661, be recommended to pass.\n\nThe meeting was adjourned at 4:45 PM\n\nSenator David H. Senjem, Chair\n\nBeffi Kleinboehl, Legislative Assistant\n\nhttps://galdpages.senate.mn/schedule/hearing_minutes.php?ls=92&hearing_id=16818&type=minutes&always_show_minutes=Y#header\n\n2/2\n",
+      "textSha256": "4da5470855a847036a8357e2b8966fbf74de52c565a3699f5eb7ebdc449ca454",
+      "wordBoxes": [
+        {
+          "x": 115,
+          "y": 56,
+          "w": 118,
+          "h": 29,
+          "confidence": 69.558685,
+          "text": "5/16/22,"
+        },
+        {
+          "x": 248,
+          "y": 56,
+          "w": 78,
+          "h": 25,
+          "confidence": 96.118111,
+          "text": "12:02"
+        },
+        {
+          "x": 338,
+          "y": 57,
+          "w": 48,
+          "h": 24,
+          "confidence": 96.125267,
+          "text": "PM"
+        },
+        {
+          "x": 1304,
+          "y": 56,
+          "w": 151,
+          "h": 25,
+          "confidence": 96.896645,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1467,
+          "y": 56,
+          "w": 75,
+          "h": 25,
+          "confidence": 96.997887,
+          "text": "State"
+        },
+        {
+          "x": 1554,
+          "y": 56,
+          "w": 103,
+          "h": 25,
+          "confidence": 96.456955,
+          "text": "Senate"
+        },
+        {
+          "x": 506,
+          "y": 154,
+          "w": 47,
+          "h": 18,
+          "confidence": 92.015213,
+          "text": "SCS"
+        },
+        {
+          "x": 562,
+          "y": 154,
+          "w": 139,
+          "h": 18,
+          "confidence": 95.809143,
+          "text": "Presentation"
+        },
+        {
+          "x": 711,
+          "y": 154,
+          "w": 100,
+          "h": 18,
+          "confidence": 49.742744,
+          "text": "Materials"
+        },
+        {
+          "x": 827,
+          "y": 154,
+          "w": 114,
+          "h": 18,
+          "confidence": 0.0,
+          "text": "Minnesota"
+        },
+        {
+          "x": 956,
+          "y": 154,
+          "w": 153,
+          "h": 18,
+          "confidence": 0.0,
+          "text": "_20220120CBH"
+        },
+        {
+          "x": 1118,
+          "y": 154,
+          "w": 62,
+          "h": 23,
+          "confidence": 95.216156,
+          "text": "(PDF)"
+        },
+        {
+          "x": 507,
+          "y": 194,
+          "w": 67,
+          "h": 18,
+          "confidence": 91.161812,
+          "text": "MREA"
+        },
+        {
+          "x": 582,
+          "y": 196,
+          "w": 86,
+          "h": 20,
+          "confidence": 96.129898,
+          "text": "support"
+        },
+        {
+          "x": 676,
+          "y": 194,
+          "w": 31,
+          "h": 18,
+          "confidence": 96.83213,
+          "text": "for"
+        },
+        {
+          "x": 714,
+          "y": 194,
+          "w": 28,
+          "h": 18,
+          "confidence": 94.37812,
+          "text": "SF"
+        },
+        {
+          "x": 751,
+          "y": 194,
+          "w": 49,
+          "h": 18,
+          "confidence": 94.37812,
+          "text": "3661"
+        },
+        {
+          "x": 811,
+          "y": 194,
+          "w": 67,
+          "h": 18,
+          "confidence": 95.961113,
+          "text": "March"
+        },
+        {
+          "x": 887,
+          "y": 194,
+          "w": 11,
+          "h": 18,
+          "confidence": 89.411957,
+          "text": "9"
+        },
+        {
+          "x": 907,
+          "y": 194,
+          "w": 50,
+          "h": 18,
+          "confidence": 95.751678,
+          "text": "2022"
+        },
+        {
+          "x": 966,
+          "y": 194,
+          "w": 59,
+          "h": 23,
+          "confidence": 96.777138,
+          "text": "(PDF)"
+        },
+        {
+          "x": 507,
+          "y": 233,
+          "w": 49,
+          "h": 18,
+          "confidence": 78.783752,
+          "text": "KCC"
+        },
+        {
+          "x": 565,
+          "y": 242,
+          "w": 6,
+          "h": 4,
+          "confidence": 89.06356,
+          "text": "-"
+        },
+        {
+          "x": 579,
+          "y": 233,
+          "w": 319,
+          "h": 23,
+          "confidence": 89.06356,
+          "text": "MNsentateEnergyCommittee"
+        },
+        {
+          "x": 907,
+          "y": 233,
+          "w": 91,
+          "h": 18,
+          "confidence": 83.441757,
+          "text": "10Mar22_"
+        },
+        {
+          "x": 1014,
+          "y": 233,
+          "w": 67,
+          "h": 18,
+          "confidence": 78.572525,
+          "text": "FINAL"
+        },
+        {
+          "x": 1090,
+          "y": 232,
+          "w": 60,
+          "h": 24,
+          "confidence": 58.631233,
+          "text": "(PDF)"
+        },
+        {
+          "x": 507,
+          "y": 271,
+          "w": 79,
+          "h": 18,
+          "confidence": 96.736366,
+          "text": "Carbon"
+        },
+        {
+          "x": 595,
+          "y": 273,
+          "w": 84,
+          "h": 21,
+          "confidence": 91.878036,
+          "text": "capture"
+        },
+        {
+          "x": 687,
+          "y": 271,
+          "w": 32,
+          "h": 18,
+          "confidence": 81.411751,
+          "text": "biil"
+        },
+        {
+          "x": 728,
+          "y": 271,
+          "w": 90,
+          "h": 19,
+          "confidence": 52.860085,
+          "text": "03.40.22"
+        },
+        {
+          "x": 827,
+          "y": 271,
+          "w": 61,
+          "h": 23,
+          "confidence": 92.436089,
+          "text": "(PDF)"
+        },
+        {
+          "x": 506,
+          "y": 310,
+          "w": 115,
+          "h": 23,
+          "confidence": 96.158218,
+          "text": "Testimony"
+        },
+        {
+          "x": 628,
+          "y": 310,
+          "w": 32,
+          "h": 18,
+          "confidence": 96.158218,
+          "text": "for"
+        },
+        {
+          "x": 667,
+          "y": 310,
+          "w": 28,
+          "h": 18,
+          "confidence": 93.079468,
+          "text": "SF"
+        },
+        {
+          "x": 703,
+          "y": 310,
+          "w": 49,
+          "h": 18,
+          "confidence": 92.37632,
+          "text": "3661"
+        },
+        {
+          "x": 763,
+          "y": 320,
+          "w": 7,
+          "h": 4,
+          "confidence": 92.37632,
+          "text": "-"
+        },
+        {
+          "x": 778,
+          "y": 310,
+          "w": 80,
+          "h": 18,
+          "confidence": 96.336929,
+          "text": "Carbon"
+        },
+        {
+          "x": 867,
+          "y": 310,
+          "w": 87,
+          "h": 23,
+          "confidence": 96.607399,
+          "text": "Capture"
+        },
+        {
+          "x": 963,
+          "y": 310,
+          "w": 59,
+          "h": 23,
+          "confidence": 95.135696,
+          "text": "(PDF)"
+        },
+        {
+          "x": 507,
+          "y": 349,
+          "w": 77,
+          "h": 18,
+          "confidence": 85.377411,
+          "text": "SF3661"
+        },
+        {
+          "x": 596,
+          "y": 349,
+          "w": 44,
+          "h": 18,
+          "confidence": 95.796074,
+          "text": "LEC"
+        },
+        {
+          "x": 648,
+          "y": 349,
+          "w": 116,
+          "h": 23,
+          "confidence": 95.796074,
+          "text": "Testimony"
+        },
+        {
+          "x": 772,
+          "y": 349,
+          "w": 81,
+          "h": 18,
+          "confidence": 93.880714,
+          "text": "3-10-22"
+        },
+        {
+          "x": 861,
+          "y": 349,
+          "w": 60,
+          "h": 23,
+          "confidence": 96.362114,
+          "text": "(PDF)"
+        },
+        {
+          "x": 507,
+          "y": 388,
+          "w": 61,
+          "h": 19,
+          "confidence": 96.724808,
+          "text": "Kevin"
+        },
+        {
+          "x": 578,
+          "y": 388,
+          "w": 100,
+          "h": 22,
+          "confidence": 96.040718,
+          "text": "Connors,"
+        },
+        {
+          "x": 687,
+          "y": 388,
+          "w": 105,
+          "h": 19,
+          "confidence": 96.664246,
+          "text": "Assistant"
+        },
+        {
+          "x": 801,
+          "y": 388,
+          "w": 90,
+          "h": 19,
+          "confidence": 96.664246,
+          "text": "Director"
+        },
+        {
+          "x": 897,
+          "y": 388,
+          "w": 31,
+          "h": 19,
+          "confidence": 96.109703,
+          "text": "for"
+        },
+        {
+          "x": 936,
+          "y": 388,
+          "w": 120,
+          "h": 23,
+          "confidence": 96.109703,
+          "text": "Regulatory"
+        },
+        {
+          "x": 1065,
+          "y": 388,
+          "w": 132,
+          "h": 24,
+          "confidence": 96.14444,
+          "text": "Compliance"
+        },
+        {
+          "x": 1205,
+          "y": 389,
+          "w": 40,
+          "h": 18,
+          "confidence": 95.877045,
+          "text": "and"
+        },
+        {
+          "x": 1253,
+          "y": 389,
+          "w": 79,
+          "h": 23,
+          "confidence": 96.463631,
+          "text": "Energy"
+        },
+        {
+          "x": 1340,
+          "y": 389,
+          "w": 72,
+          "h": 23,
+          "confidence": 96.712265,
+          "text": "Policy,"
+        },
+        {
+          "x": 1421,
+          "y": 389,
+          "w": 78,
+          "h": 22,
+          "confidence": 96.695763,
+          "text": "Energy"
+        },
+        {
+          "x": 1507,
+          "y": 388,
+          "w": 40,
+          "h": 19,
+          "confidence": 96.179924,
+          "text": "and"
+        },
+        {
+          "x": 1555,
+          "y": 388,
+          "w": 143,
+          "h": 19,
+          "confidence": 96.125282,
+          "text": "Environment"
+        },
+        {
+          "x": 1706,
+          "y": 388,
+          "w": 104,
+          "h": 19,
+          "confidence": 96.715355,
+          "text": "Research"
+        },
+        {
+          "x": 1819,
+          "y": 388,
+          "w": 73,
+          "h": 19,
+          "confidence": 86.824806,
+          "text": "Center"
+        },
+        {
+          "x": 1898,
+          "y": 399,
+          "w": 13,
+          "h": 3,
+          "confidence": 72.930878,
+          "text": "\u2014"
+        },
+        {
+          "x": 1919,
+          "y": 388,
+          "w": 112,
+          "h": 24,
+          "confidence": 96.100906,
+          "text": "University"
+        },
+        {
+          "x": 2039,
+          "y": 388,
+          "w": 22,
+          "h": 19,
+          "confidence": 97.00824,
+          "text": "of"
+        },
+        {
+          "x": 2068,
+          "y": 389,
+          "w": 61,
+          "h": 18,
+          "confidence": 96.542839,
+          "text": "North"
+        },
+        {
+          "x": 2138,
+          "y": 389,
+          "w": 76,
+          "h": 18,
+          "confidence": 96.502251,
+          "text": "Dakota"
+        },
+        {
+          "x": 507,
+          "y": 424,
+          "w": 77,
+          "h": 23,
+          "confidence": 93.299652,
+          "text": "Harvey"
+        },
+        {
+          "x": 591,
+          "y": 424,
+          "w": 133,
+          "h": 22,
+          "confidence": 92.843407,
+          "text": "Thorleifson,"
+        },
+        {
+          "x": 734,
+          "y": 424,
+          "w": 93,
+          "h": 22,
+          "confidence": 96.674583,
+          "text": "Director,"
+        },
+        {
+          "x": 837,
+          "y": 424,
+          "w": 114,
+          "h": 19,
+          "confidence": 95.612419,
+          "text": "Minnesota"
+        },
+        {
+          "x": 960,
+          "y": 424,
+          "w": 117,
+          "h": 23,
+          "confidence": 96.357651,
+          "text": "Geological"
+        },
+        {
+          "x": 1086,
+          "y": 425,
+          "w": 82,
+          "h": 22,
+          "confidence": 96.434013,
+          "text": "Survey,"
+        },
+        {
+          "x": 1176,
+          "y": 425,
+          "w": 129,
+          "h": 23,
+          "confidence": 96.501007,
+          "text": "Department"
+        },
+        {
+          "x": 1313,
+          "y": 425,
+          "w": 23,
+          "h": 18,
+          "confidence": 96.49575,
+          "text": "of"
+        },
+        {
+          "x": 1342,
+          "y": 425,
+          "w": 58,
+          "h": 18,
+          "confidence": 96.403328,
+          "text": "Earth"
+        },
+        {
+          "x": 1409,
+          "y": 425,
+          "w": 40,
+          "h": 18,
+          "confidence": 96.934448,
+          "text": "and"
+        },
+        {
+          "x": 1458,
+          "y": 424,
+          "w": 161,
+          "h": 19,
+          "confidence": 96.161522,
+          "text": "Environmental"
+        },
+        {
+          "x": 1628,
+          "y": 425,
+          "w": 106,
+          "h": 21,
+          "confidence": 20.506889,
+          "text": "Sciences,"
+        },
+        {
+          "x": 1743,
+          "y": 425,
+          "w": 112,
+          "h": 23,
+          "confidence": 96.475044,
+          "text": "University"
+        },
+        {
+          "x": 1863,
+          "y": 425,
+          "w": 22,
+          "h": 17,
+          "confidence": 96.588638,
+          "text": "of"
+        },
+        {
+          "x": 1892,
+          "y": 425,
+          "w": 114,
+          "h": 18,
+          "confidence": 96.329521,
+          "text": "Minnesota"
+        },
+        {
+          "x": 507,
+          "y": 459,
+          "w": 58,
+          "h": 18,
+          "confidence": 96.889992,
+          "text": "Chris"
+        },
+        {
+          "x": 574,
+          "y": 459,
+          "w": 40,
+          "h": 21,
+          "confidence": 89.400635,
+          "text": "Hill,"
+        },
+        {
+          "x": 623,
+          "y": 459,
+          "w": 90,
+          "h": 18,
+          "confidence": 96.026802,
+          "text": "Director"
+        },
+        {
+          "x": 720,
+          "y": 460,
+          "w": 22,
+          "h": 18,
+          "confidence": 96.025185,
+          "text": "of"
+        },
+        {
+          "x": 749,
+          "y": 459,
+          "w": 163,
+          "h": 19,
+          "confidence": 95.737305,
+          "text": "Environmental"
+        },
+        {
+          "x": 920,
+          "y": 460,
+          "w": 40,
+          "h": 18,
+          "confidence": 96.232689,
+          "text": "and"
+        },
+        {
+          "x": 969,
+          "y": 460,
+          "w": 119,
+          "h": 22,
+          "confidence": 95.883873,
+          "text": "Permitting,"
+        },
+        {
+          "x": 1097,
+          "y": 460,
+          "w": 87,
+          "h": 18,
+          "confidence": 95.231995,
+          "text": "Summit"
+        },
+        {
+          "x": 1191,
+          "y": 460,
+          "w": 80,
+          "h": 18,
+          "confidence": 96.23288,
+          "text": "Carbon"
+        },
+        {
+          "x": 1279,
+          "y": 460,
+          "w": 106,
+          "h": 18,
+          "confidence": 96.772591,
+          "text": "Solutions"
+        },
+        {
+          "x": 506,
+          "y": 494,
+          "w": 52,
+          "h": 19,
+          "confidence": 92.853943,
+          "text": "Jake"
+        },
+        {
+          "x": 566,
+          "y": 494,
+          "w": 89,
+          "h": 22,
+          "confidence": 91.370445,
+          "text": "Ketzner,"
+        },
+        {
+          "x": 663,
+          "y": 495,
+          "w": 30,
+          "h": 18,
+          "confidence": 96.588074,
+          "text": "VP"
+        },
+        {
+          "x": 702,
+          "y": 494,
+          "w": 22,
+          "h": 19,
+          "confidence": 96.234978,
+          "text": "of"
+        },
+        {
+          "x": 731,
+          "y": 494,
+          "w": 53,
+          "h": 19,
+          "confidence": 93.25354,
+          "text": "Govt"
+        },
+        {
+          "x": 791,
+          "y": 494,
+          "w": 16,
+          "h": 19,
+          "confidence": 93.25354,
+          "text": "&"
+        },
+        {
+          "x": 815,
+          "y": 495,
+          "w": 70,
+          "h": 18,
+          "confidence": 96.407562,
+          "text": "Public"
+        },
+        {
+          "x": 892,
+          "y": 494,
+          "w": 79,
+          "h": 23,
+          "confidence": 96.407562,
+          "text": "Affairs,"
+        },
+        {
+          "x": 980,
+          "y": 495,
+          "w": 84,
+          "h": 18,
+          "confidence": 96.567604,
+          "text": "Summit"
+        },
+        {
+          "x": 1073,
+          "y": 495,
+          "w": 81,
+          "h": 18,
+          "confidence": 96.46125,
+          "text": "Carbon"
+        },
+        {
+          "x": 1162,
+          "y": 495,
+          "w": 105,
+          "h": 19,
+          "confidence": 96.565498,
+          "text": "Solutions"
+        },
+        {
+          "x": 507,
+          "y": 530,
+          "w": 63,
+          "h": 18,
+          "confidence": 93.298973,
+          "text": "Sarah"
+        },
+        {
+          "x": 579,
+          "y": 530,
+          "w": 123,
+          "h": 22,
+          "confidence": 92.0504,
+          "text": "Mooradian,"
+        },
+        {
+          "x": 711,
+          "y": 530,
+          "w": 139,
+          "h": 18,
+          "confidence": 96.097313,
+          "text": "Government"
+        },
+        {
+          "x": 858,
+          "y": 530,
+          "w": 103,
+          "h": 18,
+          "confidence": 96.656891,
+          "text": "Relations"
+        },
+        {
+          "x": 970,
+          "y": 531,
+          "w": 39,
+          "h": 17,
+          "confidence": 96.543083,
+          "text": "and"
+        },
+        {
+          "x": 1018,
+          "y": 531,
+          "w": 68,
+          "h": 22,
+          "confidence": 52.239647,
+          "text": "Policy"
+        },
+        {
+          "x": 1094,
+          "y": 531,
+          "w": 94,
+          "h": 21,
+          "confidence": 96.41169,
+          "text": "Director,"
+        },
+        {
+          "x": 1196,
+          "y": 531,
+          "w": 62,
+          "h": 18,
+          "confidence": 96.895981,
+          "text": "Clean"
+        },
+        {
+          "x": 1267,
+          "y": 531,
+          "w": 30,
+          "h": 22,
+          "confidence": 95.414719,
+          "text": "Up"
+        },
+        {
+          "x": 1304,
+          "y": 531,
+          "w": 34,
+          "h": 18,
+          "confidence": 95.414719,
+          "text": "the"
+        },
+        {
+          "x": 1347,
+          "y": 531,
+          "w": 58,
+          "h": 18,
+          "confidence": 96.604393,
+          "text": "River"
+        },
+        {
+          "x": 1412,
+          "y": 531,
+          "w": 143,
+          "h": 18,
+          "confidence": 96.425034,
+          "text": "Environment"
+        },
+        {
+          "x": 436,
+          "y": 593,
+          "w": 68,
+          "h": 18,
+          "confidence": 96.166298,
+          "text": "DATE:"
+        },
+        {
+          "x": 514,
+          "y": 593,
+          "w": 66,
+          "h": 18,
+          "confidence": 95.619804,
+          "text": "March"
+        },
+        {
+          "x": 589,
+          "y": 593,
+          "w": 30,
+          "h": 21,
+          "confidence": 95.619804,
+          "text": "10,"
+        },
+        {
+          "x": 628,
+          "y": 594,
+          "w": 50,
+          "h": 17,
+          "confidence": 96.797256,
+          "text": "2022"
+        },
+        {
+          "x": 435,
+          "y": 656,
+          "w": 113,
+          "h": 19,
+          "confidence": 92.840012,
+          "text": "SENATOR"
+        },
+        {
+          "x": 556,
+          "y": 657,
+          "w": 70,
+          "h": 18,
+          "confidence": 92.37738,
+          "text": "Rarick"
+        },
+        {
+          "x": 634,
+          "y": 657,
+          "w": 111,
+          "h": 22,
+          "confidence": 96.743942,
+          "text": "requested"
+        },
+        {
+          "x": 754,
+          "y": 662,
+          "w": 11,
+          "h": 13,
+          "confidence": 96.384514,
+          "text": "a"
+        },
+        {
+          "x": 774,
+          "y": 657,
+          "w": 43,
+          "h": 18,
+          "confidence": 92.849335,
+          "text": "Roll"
+        },
+        {
+          "x": 825,
+          "y": 657,
+          "w": 42,
+          "h": 18,
+          "confidence": 88.469955,
+          "text": "Call"
+        },
+        {
+          "x": 874,
+          "y": 657,
+          "w": 48,
+          "h": 18,
+          "confidence": 96.926964,
+          "text": "Vote"
+        },
+        {
+          "x": 931,
+          "y": 662,
+          "w": 33,
+          "h": 13,
+          "confidence": 96.513275,
+          "text": "on:"
+        },
+        {
+          "x": 481,
+          "y": 720,
+          "w": 9,
+          "h": 18,
+          "confidence": 91.407227,
+          "text": "1"
+        },
+        {
+          "x": 631,
+          "y": 720,
+          "w": 97,
+          "h": 23,
+          "confidence": 95.744217,
+          "text": "adoption"
+        },
+        {
+          "x": 737,
+          "y": 720,
+          "w": 23,
+          "h": 19,
+          "confidence": 95.744217,
+          "text": "of"
+        },
+        {
+          "x": 1101,
+          "y": 721,
+          "w": 131,
+          "h": 18,
+          "confidence": 96.538559,
+          "text": "amendment"
+        },
+        {
+          "x": 481,
+          "y": 846,
+          "w": 11,
+          "h": 19,
+          "confidence": 96.99971,
+          "text": "2"
+        },
+        {
+          "x": 560,
+          "y": 841,
+          "w": 16,
+          "h": 33,
+          "confidence": 70.165451,
+          "text": "xX"
+        },
+        {
+          "x": 647,
+          "y": 847,
+          "w": 94,
+          "h": 23,
+          "confidence": 96.280006,
+          "text": "Passage"
+        },
+        {
+          "x": 749,
+          "y": 846,
+          "w": 23,
+          "h": 19,
+          "confidence": 92.09243,
+          "text": "of"
+        },
+        {
+          "x": 778,
+          "y": 847,
+          "w": 21,
+          "h": 19,
+          "confidence": 87.755569,
+          "text": "S."
+        },
+        {
+          "x": 808,
+          "y": 847,
+          "w": 16,
+          "h": 19,
+          "confidence": 85.055466,
+          "text": "F."
+        },
+        {
+          "x": 833,
+          "y": 847,
+          "w": 36,
+          "h": 19,
+          "confidence": 96.548264,
+          "text": "No."
+        },
+        {
+          "x": 877,
+          "y": 846,
+          "w": 48,
+          "h": 20,
+          "confidence": 72.014229,
+          "text": "3661"
+        },
+        {
+          "x": 2546,
+          "y": 882,
+          "w": 3,
+          "h": 11,
+          "confidence": 60.186569,
+          "text": "i"
+        },
+        {
+          "x": 631,
+          "y": 974,
+          "w": 97,
+          "h": 23,
+          "confidence": 94.010506,
+          "text": "adoption"
+        },
+        {
+          "x": 737,
+          "y": 974,
+          "w": 22,
+          "h": 19,
+          "confidence": 96.168404,
+          "text": "of"
+        },
+        {
+          "x": 1074,
+          "y": 975,
+          "w": 77,
+          "h": 18,
+          "confidence": 90.83564,
+          "text": "motion"
+        },
+        {
+          "x": 454,
+          "y": 1232,
+          "w": 107,
+          "h": 18,
+          "confidence": 90.698097,
+          "text": "ENATOR"
+        },
+        {
+          "x": 1049,
+          "y": 1222,
+          "w": 53,
+          "h": 29,
+          "confidence": 82.981094,
+          "text": "VES"
+        },
+        {
+          "x": 1197,
+          "y": 1233,
+          "w": 18,
+          "h": 18,
+          "confidence": 21.984337,
+          "text": "3\u00b0"
+        },
+        {
+          "x": 454,
+          "y": 1302,
+          "w": 38,
+          "h": 13,
+          "confidence": 90.649155,
+          "text": "ave"
+        },
+        {
+          "x": 500,
+          "y": 1297,
+          "w": 88,
+          "h": 23,
+          "confidence": 91.19931,
+          "text": "Senjem,"
+        },
+        {
+          "x": 597,
+          "y": 1297,
+          "w": 59,
+          "h": 18,
+          "confidence": 96.926422,
+          "text": "Chair"
+        },
+        {
+          "x": 454,
+          "y": 1362,
+          "w": 69,
+          "h": 18,
+          "confidence": 91.869537,
+          "text": "ndrew"
+        },
+        {
+          "x": 531,
+          "y": 1362,
+          "w": 103,
+          "h": 22,
+          "confidence": 2.373825,
+          "text": "Mathews,"
+        },
+        {
+          "x": 641,
+          "y": 1362,
+          "w": 48,
+          "h": 19,
+          "confidence": 96.592537,
+          "text": "Vice"
+        },
+        {
+          "x": 698,
+          "y": 1362,
+          "w": 59,
+          "h": 19,
+          "confidence": 96.693687,
+          "text": "Chair"
+        },
+        {
+          "x": 454,
+          "y": 1427,
+          "w": 31,
+          "h": 18,
+          "confidence": 90.166634,
+          "text": "ick"
+        },
+        {
+          "x": 494,
+          "y": 1427,
+          "w": 75,
+          "h": 22,
+          "confidence": 88.980431,
+          "text": "Frentz,"
+        },
+        {
+          "x": 577,
+          "y": 1427,
+          "w": 91,
+          "h": 23,
+          "confidence": 95.924973,
+          "text": "Ranking"
+        },
+        {
+          "x": 677,
+          "y": 1427,
+          "w": 90,
+          "h": 19,
+          "confidence": 69.621078,
+          "text": "Member"
+        },
+        {
+          "x": 454,
+          "y": 1497,
+          "w": 51,
+          "h": 18,
+          "confidence": 69.15477,
+          "text": "oger"
+        },
+        {
+          "x": 512,
+          "y": 1493,
+          "w": 140,
+          "h": 18,
+          "confidence": 95.607185,
+          "text": "Chamberlain"
+        },
+        {
+          "x": 450,
+          "y": 1563,
+          "w": 43,
+          "h": 18,
+          "confidence": 84.266006,
+          "text": "lerry"
+        },
+        {
+          "x": 502,
+          "y": 1558,
+          "w": 82,
+          "h": 19,
+          "confidence": 96.773827,
+          "text": "Newton"
+        },
+        {
+          "x": 450,
+          "y": 1628,
+          "w": 54,
+          "h": 14,
+          "confidence": 76.2164,
+          "text": "lason"
+        },
+        {
+          "x": 512,
+          "y": 1623,
+          "w": 71,
+          "h": 19,
+          "confidence": 91.868088,
+          "text": "Rarick"
+        },
+        {
+          "x": 452,
+          "y": 1688,
+          "w": 68,
+          "h": 19,
+          "confidence": 85.297455,
+          "text": "atricia"
+        },
+        {
+          "x": 528,
+          "y": 1689,
+          "w": 70,
+          "h": 18,
+          "confidence": 96.316406,
+          "text": "Torres"
+        },
+        {
+          "x": 607,
+          "y": 1689,
+          "w": 42,
+          "h": 23,
+          "confidence": 96.597565,
+          "text": "Ray"
+        },
+        {
+          "x": 452,
+          "y": 1754,
+          "w": 33,
+          "h": 18,
+          "confidence": 71.766289,
+          "text": "\u2018aul"
+        },
+        {
+          "x": 494,
+          "y": 1754,
+          "w": 49,
+          "h": 18,
+          "confidence": 91.841309,
+          "text": "Utke"
+        },
+        {
+          "x": 453,
+          "y": 1821,
+          "w": 84,
+          "h": 18,
+          "confidence": 69.701035,
+          "text": "OTALS"
+        },
+        {
+          "x": 434,
+          "y": 1949,
+          "w": 63,
+          "h": 18,
+          "confidence": 96.468651,
+          "text": "There"
+        },
+        {
+          "x": 506,
+          "y": 1949,
+          "w": 61,
+          "h": 23,
+          "confidence": 96.736649,
+          "text": "being"
+        },
+        {
+          "x": 581,
+          "y": 1949,
+          "w": 12,
+          "h": 18,
+          "confidence": 95.330223,
+          "text": "4"
+        },
+        {
+          "x": 600,
+          "y": 1949,
+          "w": 40,
+          "h": 18,
+          "confidence": 95.330223,
+          "text": "Yes"
+        },
+        {
+          "x": 647,
+          "y": 1951,
+          "w": 61,
+          "h": 16,
+          "confidence": 96.414215,
+          "text": "votes"
+        },
+        {
+          "x": 743,
+          "y": 1950,
+          "w": 40,
+          "h": 18,
+          "confidence": 96.883392,
+          "text": "and"
+        },
+        {
+          "x": 798,
+          "y": 1950,
+          "w": 12,
+          "h": 17,
+          "confidence": 89.935349,
+          "text": "3"
+        },
+        {
+          "x": 819,
+          "y": 1950,
+          "w": 30,
+          "h": 18,
+          "confidence": 87.279007,
+          "text": "No"
+        },
+        {
+          "x": 856,
+          "y": 1951,
+          "w": 60,
+          "h": 17,
+          "confidence": 87.279007,
+          "text": "votes"
+        },
+        {
+          "x": 434,
+          "y": 2008,
+          "w": 104,
+          "h": 32,
+          "confidence": 91.603584,
+          "text": "Prevailed"
+        },
+        {
+          "x": 664,
+          "y": 2017,
+          "w": 38,
+          "h": 18,
+          "confidence": 85.390312,
+          "text": "yes."
+        },
+        {
+          "x": 435,
+          "y": 2075,
+          "w": 35,
+          "h": 19,
+          "confidence": 96.340324,
+          "text": "Did"
+        },
+        {
+          "x": 479,
+          "y": 2076,
+          "w": 39,
+          "h": 18,
+          "confidence": 96.84948,
+          "text": "Not"
+        },
+        {
+          "x": 526,
+          "y": 2075,
+          "w": 75,
+          "h": 19,
+          "confidence": 96.778046,
+          "text": "Prevail"
+        },
+        {
+          "x": 431,
+          "y": 2257,
+          "w": 98,
+          "h": 23,
+          "confidence": 93.285194,
+          "text": "Senator"
+        },
+        {
+          "x": 538,
+          "y": 2256,
+          "w": 79,
+          "h": 23,
+          "confidence": 92.848129,
+          "text": "Rarick"
+        },
+        {
+          "x": 625,
+          "y": 2257,
+          "w": 83,
+          "h": 23,
+          "confidence": 96.589355,
+          "text": "moved"
+        },
+        {
+          "x": 716,
+          "y": 2257,
+          "w": 50,
+          "h": 23,
+          "confidence": 93.219421,
+          "text": "that"
+        },
+        {
+          "x": 776,
+          "y": 2258,
+          "w": 42,
+          "h": 22,
+          "confidence": 46.003212,
+          "text": "S.F."
+        },
+        {
+          "x": 828,
+          "y": 2259,
+          "w": 70,
+          "h": 26,
+          "confidence": 96.465057,
+          "text": "3661,"
+        },
+        {
+          "x": 907,
+          "y": 2257,
+          "w": 30,
+          "h": 23,
+          "confidence": 96.206299,
+          "text": "be"
+        },
+        {
+          "x": 945,
+          "y": 2258,
+          "w": 181,
+          "h": 23,
+          "confidence": 96.373169,
+          "text": "recommended"
+        },
+        {
+          "x": 1134,
+          "y": 2260,
+          "w": 25,
+          "h": 21,
+          "confidence": 97.002319,
+          "text": "to"
+        },
+        {
+          "x": 1168,
+          "y": 2264,
+          "w": 65,
+          "h": 22,
+          "confidence": 96.929871,
+          "text": "pass."
+        },
+        {
+          "x": 430,
+          "y": 2357,
+          "w": 47,
+          "h": 24,
+          "confidence": 96.224594,
+          "text": "The"
+        },
+        {
+          "x": 486,
+          "y": 2358,
+          "w": 102,
+          "h": 29,
+          "confidence": 95.757744,
+          "text": "meeting"
+        },
+        {
+          "x": 597,
+          "y": 2364,
+          "w": 49,
+          "h": 17,
+          "confidence": 96.757401,
+          "text": "was"
+        },
+        {
+          "x": 655,
+          "y": 2358,
+          "w": 126,
+          "h": 29,
+          "confidence": 96.809464,
+          "text": "adjourned"
+        },
+        {
+          "x": 790,
+          "y": 2361,
+          "w": 23,
+          "h": 21,
+          "confidence": 96.946075,
+          "text": "at"
+        },
+        {
+          "x": 822,
+          "y": 2360,
+          "w": 55,
+          "h": 22,
+          "confidence": 96.416733,
+          "text": "4:45"
+        },
+        {
+          "x": 886,
+          "y": 2360,
+          "w": 40,
+          "h": 22,
+          "confidence": 96.511215,
+          "text": "PM"
+        },
+        {
+          "x": 430,
+          "y": 2569,
+          "w": 98,
+          "h": 23,
+          "confidence": 96.762978,
+          "text": "Senator"
+        },
+        {
+          "x": 537,
+          "y": 2568,
+          "w": 68,
+          "h": 24,
+          "confidence": 92.990753,
+          "text": "David"
+        },
+        {
+          "x": 615,
+          "y": 2569,
+          "w": 25,
+          "h": 23,
+          "confidence": 91.450989,
+          "text": "H."
+        },
+        {
+          "x": 650,
+          "y": 2569,
+          "w": 100,
+          "h": 29,
+          "confidence": 93.168655,
+          "text": "Senjem,"
+        },
+        {
+          "x": 760,
+          "y": 2569,
+          "w": 66,
+          "h": 23,
+          "confidence": 96.507523,
+          "text": "Chair"
+        },
+        {
+          "x": 1255,
+          "y": 2571,
+          "w": 31,
+          "h": 22,
+          "confidence": 88.006058,
+          "text": "Beffi"
+        },
+        {
+          "x": 1320,
+          "y": 2570,
+          "w": 139,
+          "h": 28,
+          "confidence": 81.061478,
+          "text": "Kleinboehl,"
+        },
+        {
+          "x": 1469,
+          "y": 2570,
+          "w": 135,
+          "h": 29,
+          "confidence": 96.528816,
+          "text": "Legislative"
+        },
+        {
+          "x": 1613,
+          "y": 2571,
+          "w": 119,
+          "h": 23,
+          "confidence": 96.928009,
+          "text": "Assistant"
+        },
+        {
+          "x": 113,
+          "y": 3183,
+          "w": 2011,
+          "h": 39,
+          "confidence": 28.083382,
+          "text": "https://galdpages.senate.mn/schedule/hearing_minutes.php?ls=92&hearing_id=16818&type=minutes&always_show_minutes=Y#header"
+        },
+        {
+          "x": 2395,
+          "y": 3192,
+          "w": 43,
+          "h": 26,
+          "confidence": 78.937454,
+          "text": "2/2"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1438 @@
+{
+  "page": 2,
+  "raw300dpiPageSha256": "18edec24660dc39cc72291eaeac3c9d57c0f25e383efd59043e224a840efa989",
+  "width": 2550,
+  "height": 3300,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 13.95\nScript: Latin\nScript confidence: 6.67\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 13.95
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "6efd83e3909555456eb8cf93abfa163505d74ea00c2c2c7a9dbb10514456d5dd",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "S.F. 5271: Senator Port: Program establishment to award financial incentives to permitting authorities that install an automated\nsoftware system to review and issue permits for residential solar energy projects.\n\nSenator Port offers the A1 authora\u20ac\u2122s amendment\nAmendment is adopted unanimously via voice vote\na\u20ac\u00a2 Bobby King, Minnesota State Director, Solar United Neighbors\n\na\u20ac\u00a2 Ben Davis, Chief of Policy, Permit Power (Remote)\n\nSenator Frentz moved that S.F. 5271, be laid over. - MOTION ADOPTED.\n\nThe meeting was adjourned at 2:26pm\n\nSenator Nick A. Frentz, Chair Travis Urness, Legislative Assistant\n",
+      "textSha256": "11e9638ce5c244caddfae33e4eaeac7f09deeb5bc8995a291004f09e9b4e9e70",
+      "wordBoxes": [
+        {
+          "x": 278,
+          "y": 211,
+          "w": 50,
+          "h": 25,
+          "confidence": 89.303276,
+          "text": "S.F."
+        },
+        {
+          "x": 341,
+          "y": 211,
+          "w": 81,
+          "h": 25,
+          "confidence": 96.678299,
+          "text": "5271:"
+        },
+        {
+          "x": 434,
+          "y": 211,
+          "w": 115,
+          "h": 25,
+          "confidence": 96.107864,
+          "text": "Senator"
+        },
+        {
+          "x": 560,
+          "y": 212,
+          "w": 69,
+          "h": 24,
+          "confidence": 96.107864,
+          "text": "Port:"
+        },
+        {
+          "x": 642,
+          "y": 212,
+          "w": 125,
+          "h": 30,
+          "confidence": 96.499809,
+          "text": "Program"
+        },
+        {
+          "x": 778,
+          "y": 210,
+          "w": 211,
+          "h": 26,
+          "confidence": 95.435394,
+          "text": "establishment"
+        },
+        {
+          "x": 998,
+          "y": 213,
+          "w": 29,
+          "h": 23,
+          "confidence": 96.519188,
+          "text": "to"
+        },
+        {
+          "x": 1037,
+          "y": 210,
+          "w": 88,
+          "h": 26,
+          "confidence": 96.855095,
+          "text": "award"
+        },
+        {
+          "x": 1135,
+          "y": 210,
+          "w": 126,
+          "h": 26,
+          "confidence": 96.159843,
+          "text": "financial"
+        },
+        {
+          "x": 1273,
+          "y": 211,
+          "w": 150,
+          "h": 25,
+          "confidence": 96.159843,
+          "text": "incentives"
+        },
+        {
+          "x": 1433,
+          "y": 213,
+          "w": 28,
+          "h": 23,
+          "confidence": 96.503777,
+          "text": "to"
+        },
+        {
+          "x": 1472,
+          "y": 211,
+          "w": 152,
+          "h": 31,
+          "confidence": 96.386871,
+          "text": "permitting"
+        },
+        {
+          "x": 1635,
+          "y": 210,
+          "w": 159,
+          "h": 26,
+          "confidence": 96.24836,
+          "text": "authorities"
+        },
+        {
+          "x": 1804,
+          "y": 210,
+          "w": 58,
+          "h": 26,
+          "confidence": 96.915993,
+          "text": "that"
+        },
+        {
+          "x": 1873,
+          "y": 210,
+          "w": 87,
+          "h": 26,
+          "confidence": 96.614082,
+          "text": "install"
+        },
+        {
+          "x": 1971,
+          "y": 217,
+          "w": 34,
+          "h": 19,
+          "confidence": 96.545502,
+          "text": "an"
+        },
+        {
+          "x": 2016,
+          "y": 210,
+          "w": 158,
+          "h": 26,
+          "confidence": 90.835075,
+          "text": "automated"
+        },
+        {
+          "x": 278,
+          "y": 260,
+          "w": 129,
+          "h": 25,
+          "confidence": 96.393394,
+          "text": "software"
+        },
+        {
+          "x": 417,
+          "y": 263,
+          "w": 106,
+          "h": 29,
+          "confidence": 96.373947,
+          "text": "system"
+        },
+        {
+          "x": 533,
+          "y": 263,
+          "w": 29,
+          "h": 22,
+          "confidence": 96.713661,
+          "text": "to"
+        },
+        {
+          "x": 573,
+          "y": 261,
+          "w": 95,
+          "h": 24,
+          "confidence": 96.257301,
+          "text": "review"
+        },
+        {
+          "x": 678,
+          "y": 260,
+          "w": 52,
+          "h": 25,
+          "confidence": 95.569046,
+          "text": "and"
+        },
+        {
+          "x": 742,
+          "y": 261,
+          "w": 77,
+          "h": 24,
+          "confidence": 95.887672,
+          "text": "issue"
+        },
+        {
+          "x": 830,
+          "y": 261,
+          "w": 112,
+          "h": 31,
+          "confidence": 95.887672,
+          "text": "permits"
+        },
+        {
+          "x": 952,
+          "y": 260,
+          "w": 42,
+          "h": 25,
+          "confidence": 96.601204,
+          "text": "for"
+        },
+        {
+          "x": 1004,
+          "y": 260,
+          "w": 154,
+          "h": 25,
+          "confidence": 96.679047,
+          "text": "residential"
+        },
+        {
+          "x": 1170,
+          "y": 260,
+          "w": 73,
+          "h": 25,
+          "confidence": 96.697639,
+          "text": "solar"
+        },
+        {
+          "x": 1253,
+          "y": 267,
+          "w": 100,
+          "h": 25,
+          "confidence": 96.754105,
+          "text": "energy"
+        },
+        {
+          "x": 1364,
+          "y": 261,
+          "w": 127,
+          "h": 31,
+          "confidence": 96.697922,
+          "text": "projects."
+        },
+        {
+          "x": 278,
+          "y": 361,
+          "w": 113,
+          "h": 24,
+          "confidence": 96.748627,
+          "text": "Senator"
+        },
+        {
+          "x": 402,
+          "y": 361,
+          "w": 59,
+          "h": 24,
+          "confidence": 96.802414,
+          "text": "Port"
+        },
+        {
+          "x": 472,
+          "y": 360,
+          "w": 85,
+          "h": 25,
+          "confidence": 96.756172,
+          "text": "offers"
+        },
+        {
+          "x": 567,
+          "y": 360,
+          "w": 45,
+          "h": 25,
+          "confidence": 92.770042,
+          "text": "the"
+        },
+        {
+          "x": 622,
+          "y": 361,
+          "w": 33,
+          "h": 24,
+          "confidence": 91.50856,
+          "text": "A1"
+        },
+        {
+          "x": 672,
+          "y": 360,
+          "w": 167,
+          "h": 25,
+          "confidence": 76.823441,
+          "text": "authora\u20ac\u2122s"
+        },
+        {
+          "x": 850,
+          "y": 360,
+          "w": 176,
+          "h": 25,
+          "confidence": 96.89183,
+          "text": "amendment"
+        },
+        {
+          "x": 343,
+          "y": 410,
+          "w": 180,
+          "h": 25,
+          "confidence": 96.196548,
+          "text": "Amendment"
+        },
+        {
+          "x": 535,
+          "y": 411,
+          "w": 21,
+          "h": 24,
+          "confidence": 96.65242,
+          "text": "is"
+        },
+        {
+          "x": 568,
+          "y": 410,
+          "w": 118,
+          "h": 32,
+          "confidence": 96.147041,
+          "text": "adopted"
+        },
+        {
+          "x": 698,
+          "y": 410,
+          "w": 187,
+          "h": 32,
+          "confidence": 96.147041,
+          "text": "unanimously"
+        },
+        {
+          "x": 894,
+          "y": 411,
+          "w": 40,
+          "h": 24,
+          "confidence": 96.745148,
+          "text": "via"
+        },
+        {
+          "x": 944,
+          "y": 411,
+          "w": 76,
+          "h": 24,
+          "confidence": 96.562271,
+          "text": "voice"
+        },
+        {
+          "x": 1030,
+          "y": 413,
+          "w": 62,
+          "h": 22,
+          "confidence": 96.843727,
+          "text": "vote"
+        },
+        {
+          "x": 279,
+          "y": 460,
+          "w": 51,
+          "h": 29,
+          "confidence": 90.487915,
+          "text": "a\u20ac\u00a2"
+        },
+        {
+          "x": 345,
+          "y": 460,
+          "w": 90,
+          "h": 32,
+          "confidence": 96.820877,
+          "text": "Bobby"
+        },
+        {
+          "x": 446,
+          "y": 461,
+          "w": 69,
+          "h": 31,
+          "confidence": 96.537155,
+          "text": "King,"
+        },
+        {
+          "x": 527,
+          "y": 461,
+          "w": 152,
+          "h": 24,
+          "confidence": 96.362267,
+          "text": "Minnesota"
+        },
+        {
+          "x": 691,
+          "y": 461,
+          "w": 74,
+          "h": 24,
+          "confidence": 96.453484,
+          "text": "State"
+        },
+        {
+          "x": 777,
+          "y": 461,
+          "w": 117,
+          "h": 28,
+          "confidence": 96.274094,
+          "text": "Director,"
+        },
+        {
+          "x": 906,
+          "y": 460,
+          "w": 74,
+          "h": 25,
+          "confidence": 96.136902,
+          "text": "Solar"
+        },
+        {
+          "x": 991,
+          "y": 460,
+          "w": 91,
+          "h": 25,
+          "confidence": 96.514633,
+          "text": "United"
+        },
+        {
+          "x": 1095,
+          "y": 460,
+          "w": 148,
+          "h": 32,
+          "confidence": 95.935738,
+          "text": "Neighbors"
+        },
+        {
+          "x": 279,
+          "y": 510,
+          "w": 51,
+          "h": 29,
+          "confidence": 23.815033,
+          "text": "a\u20ac\u00a2"
+        },
+        {
+          "x": 345,
+          "y": 511,
+          "w": 52,
+          "h": 24,
+          "confidence": 96.888237,
+          "text": "Ben"
+        },
+        {
+          "x": 410,
+          "y": 511,
+          "w": 84,
+          "h": 28,
+          "confidence": 96.371384,
+          "text": "Davis,"
+        },
+        {
+          "x": 505,
+          "y": 509,
+          "w": 76,
+          "h": 26,
+          "confidence": 96.524612,
+          "text": "Chief"
+        },
+        {
+          "x": 591,
+          "y": 509,
+          "w": 29,
+          "h": 26,
+          "confidence": 96.892532,
+          "text": "of"
+        },
+        {
+          "x": 631,
+          "y": 510,
+          "w": 89,
+          "h": 32,
+          "confidence": 96.975533,
+          "text": "Policy,"
+        },
+        {
+          "x": 733,
+          "y": 511,
+          "w": 94,
+          "h": 24,
+          "confidence": 96.28038,
+          "text": "Permit"
+        },
+        {
+          "x": 839,
+          "y": 511,
+          "w": 90,
+          "h": 24,
+          "confidence": 95.643944,
+          "text": "Power"
+        },
+        {
+          "x": 940,
+          "y": 508,
+          "w": 133,
+          "h": 34,
+          "confidence": 95.643944,
+          "text": "(Remote)"
+        },
+        {
+          "x": 278,
+          "y": 610,
+          "w": 113,
+          "h": 25,
+          "confidence": 92.637848,
+          "text": "Senator"
+        },
+        {
+          "x": 402,
+          "y": 611,
+          "w": 89,
+          "h": 24,
+          "confidence": 92.12188,
+          "text": "Frentz"
+        },
+        {
+          "x": 502,
+          "y": 609,
+          "w": 96,
+          "h": 26,
+          "confidence": 96.589149,
+          "text": "moved"
+        },
+        {
+          "x": 609,
+          "y": 609,
+          "w": 57,
+          "h": 26,
+          "confidence": 93.261757,
+          "text": "that"
+        },
+        {
+          "x": 677,
+          "y": 610,
+          "w": 47,
+          "h": 25,
+          "confidence": 91.646423,
+          "text": "S.F."
+        },
+        {
+          "x": 738,
+          "y": 610,
+          "w": 77,
+          "h": 29,
+          "confidence": 95.92955,
+          "text": "5271,"
+        },
+        {
+          "x": 827,
+          "y": 609,
+          "w": 33,
+          "h": 26,
+          "confidence": 96.491608,
+          "text": "be"
+        },
+        {
+          "x": 872,
+          "y": 609,
+          "w": 48,
+          "h": 26,
+          "confidence": 96.901627,
+          "text": "laid"
+        },
+        {
+          "x": 932,
+          "y": 616,
+          "w": 66,
+          "h": 19,
+          "confidence": 85.962173,
+          "text": "over."
+        },
+        {
+          "x": 1018,
+          "y": 623,
+          "w": 1,
+          "h": 3,
+          "confidence": 85.962173,
+          "text": "-"
+        },
+        {
+          "x": 1029,
+          "y": 610,
+          "w": 123,
+          "h": 25,
+          "confidence": 96.276718,
+          "text": "MOTION"
+        },
+        {
+          "x": 1163,
+          "y": 610,
+          "w": 155,
+          "h": 25,
+          "confidence": 96.616501,
+          "text": "ADOPTED."
+        },
+        {
+          "x": 277,
+          "y": 728,
+          "w": 56,
+          "h": 25,
+          "confidence": 96.524223,
+          "text": "The"
+        },
+        {
+          "x": 344,
+          "y": 728,
+          "w": 119,
+          "h": 32,
+          "confidence": 96.536369,
+          "text": "meeting"
+        },
+        {
+          "x": 474,
+          "y": 735,
+          "w": 57,
+          "h": 18,
+          "confidence": 96.283691,
+          "text": "was"
+        },
+        {
+          "x": 542,
+          "y": 728,
+          "w": 147,
+          "h": 32,
+          "confidence": 96.283691,
+          "text": "adjourned"
+        },
+        {
+          "x": 700,
+          "y": 731,
+          "w": 27,
+          "h": 22,
+          "confidence": 96.660095,
+          "text": "at"
+        },
+        {
+          "x": 738,
+          "y": 729,
+          "w": 111,
+          "h": 31,
+          "confidence": 96.690804,
+          "text": "2:26pm"
+        },
+        {
+          "x": 278,
+          "y": 978,
+          "w": 115,
+          "h": 25,
+          "confidence": 96.72554,
+          "text": "Senator"
+        },
+        {
+          "x": 404,
+          "y": 977,
+          "w": 65,
+          "h": 26,
+          "confidence": 96.338417,
+          "text": "Nick"
+        },
+        {
+          "x": 478,
+          "y": 979,
+          "w": 29,
+          "h": 23,
+          "confidence": 93.231659,
+          "text": "A."
+        },
+        {
+          "x": 520,
+          "y": 979,
+          "w": 98,
+          "h": 29,
+          "confidence": 92.54554,
+          "text": "Frentz,"
+        },
+        {
+          "x": 630,
+          "y": 977,
+          "w": 77,
+          "h": 26,
+          "confidence": 96.797592,
+          "text": "Chair"
+        },
+        {
+          "x": 1246,
+          "y": 978,
+          "w": 90,
+          "h": 25,
+          "confidence": 93.30088,
+          "text": "Travis"
+        },
+        {
+          "x": 1347,
+          "y": 979,
+          "w": 109,
+          "h": 29,
+          "confidence": 91.721313,
+          "text": "Urness,"
+        },
+        {
+          "x": 1469,
+          "y": 977,
+          "w": 159,
+          "h": 32,
+          "confidence": 96.715515,
+          "text": "Legislative"
+        },
+        {
+          "x": 1637,
+          "y": 978,
+          "w": 141,
+          "h": 25,
+          "confidence": 96.885689,
+          "text": "Assistant"
+        }
+      ]
+    },
+    "11": {
+      "text": "S.F. 5271: Senator Port: Program establishment to award financial incentives to permitting authorities that install an automated\n\nsoftware system to review and issue permits for residential solar energy projects.\n\nSenator Port offers the A1 authora\u20ac\u2122s amendment\n\nAmendment is adopted unanimously via voice vote\n\na\u20ac\u00a2 Bobby King, Minnesota State Director, Solar United Neighbors\n\na\u20ac\u00a2 Ben Davis, Chief of Policy, Permit Power (Remote)\n\nSenator Frentz moved that S.F. 5271, be laid over. - MOTION ADOPTED.\n\nThe meeting was adjourned at 2:26pm\n\nSenator Nick A. Frentz, Chair\n\nTravis Urness, Legislative Assistant\n",
+      "textSha256": "84a7433f0c52e5d4a3ad52cc215df8f024778132a5ec1a48742d055f618eb45d",
+      "wordBoxes": [
+        {
+          "x": 278,
+          "y": 211,
+          "w": 50,
+          "h": 25,
+          "confidence": 89.303276,
+          "text": "S.F."
+        },
+        {
+          "x": 341,
+          "y": 211,
+          "w": 81,
+          "h": 25,
+          "confidence": 96.678299,
+          "text": "5271:"
+        },
+        {
+          "x": 434,
+          "y": 211,
+          "w": 115,
+          "h": 25,
+          "confidence": 96.107864,
+          "text": "Senator"
+        },
+        {
+          "x": 560,
+          "y": 212,
+          "w": 69,
+          "h": 24,
+          "confidence": 96.107864,
+          "text": "Port:"
+        },
+        {
+          "x": 642,
+          "y": 212,
+          "w": 125,
+          "h": 30,
+          "confidence": 96.499809,
+          "text": "Program"
+        },
+        {
+          "x": 778,
+          "y": 210,
+          "w": 211,
+          "h": 26,
+          "confidence": 95.435394,
+          "text": "establishment"
+        },
+        {
+          "x": 998,
+          "y": 213,
+          "w": 29,
+          "h": 23,
+          "confidence": 96.519188,
+          "text": "to"
+        },
+        {
+          "x": 1037,
+          "y": 210,
+          "w": 88,
+          "h": 26,
+          "confidence": 96.855095,
+          "text": "award"
+        },
+        {
+          "x": 1135,
+          "y": 210,
+          "w": 126,
+          "h": 26,
+          "confidence": 96.159843,
+          "text": "financial"
+        },
+        {
+          "x": 1273,
+          "y": 211,
+          "w": 150,
+          "h": 25,
+          "confidence": 96.159843,
+          "text": "incentives"
+        },
+        {
+          "x": 1433,
+          "y": 213,
+          "w": 28,
+          "h": 23,
+          "confidence": 96.503777,
+          "text": "to"
+        },
+        {
+          "x": 1472,
+          "y": 211,
+          "w": 152,
+          "h": 31,
+          "confidence": 96.386871,
+          "text": "permitting"
+        },
+        {
+          "x": 1635,
+          "y": 210,
+          "w": 159,
+          "h": 26,
+          "confidence": 96.24836,
+          "text": "authorities"
+        },
+        {
+          "x": 1804,
+          "y": 210,
+          "w": 58,
+          "h": 26,
+          "confidence": 96.915993,
+          "text": "that"
+        },
+        {
+          "x": 1873,
+          "y": 210,
+          "w": 87,
+          "h": 26,
+          "confidence": 96.614082,
+          "text": "install"
+        },
+        {
+          "x": 1971,
+          "y": 217,
+          "w": 34,
+          "h": 19,
+          "confidence": 96.545502,
+          "text": "an"
+        },
+        {
+          "x": 2016,
+          "y": 210,
+          "w": 158,
+          "h": 26,
+          "confidence": 90.835075,
+          "text": "automated"
+        },
+        {
+          "x": 278,
+          "y": 260,
+          "w": 129,
+          "h": 25,
+          "confidence": 96.393394,
+          "text": "software"
+        },
+        {
+          "x": 417,
+          "y": 263,
+          "w": 106,
+          "h": 29,
+          "confidence": 96.373947,
+          "text": "system"
+        },
+        {
+          "x": 533,
+          "y": 263,
+          "w": 29,
+          "h": 22,
+          "confidence": 96.713661,
+          "text": "to"
+        },
+        {
+          "x": 573,
+          "y": 261,
+          "w": 95,
+          "h": 24,
+          "confidence": 96.257301,
+          "text": "review"
+        },
+        {
+          "x": 678,
+          "y": 260,
+          "w": 52,
+          "h": 25,
+          "confidence": 95.569046,
+          "text": "and"
+        },
+        {
+          "x": 742,
+          "y": 261,
+          "w": 77,
+          "h": 24,
+          "confidence": 95.887672,
+          "text": "issue"
+        },
+        {
+          "x": 830,
+          "y": 261,
+          "w": 112,
+          "h": 31,
+          "confidence": 95.887672,
+          "text": "permits"
+        },
+        {
+          "x": 952,
+          "y": 260,
+          "w": 42,
+          "h": 25,
+          "confidence": 96.601204,
+          "text": "for"
+        },
+        {
+          "x": 1004,
+          "y": 260,
+          "w": 154,
+          "h": 25,
+          "confidence": 96.679047,
+          "text": "residential"
+        },
+        {
+          "x": 1170,
+          "y": 260,
+          "w": 73,
+          "h": 25,
+          "confidence": 96.697639,
+          "text": "solar"
+        },
+        {
+          "x": 1253,
+          "y": 267,
+          "w": 100,
+          "h": 25,
+          "confidence": 96.754105,
+          "text": "energy"
+        },
+        {
+          "x": 1364,
+          "y": 261,
+          "w": 127,
+          "h": 31,
+          "confidence": 96.697922,
+          "text": "projects."
+        },
+        {
+          "x": 278,
+          "y": 361,
+          "w": 113,
+          "h": 24,
+          "confidence": 96.526825,
+          "text": "Senator"
+        },
+        {
+          "x": 402,
+          "y": 361,
+          "w": 59,
+          "h": 24,
+          "confidence": 96.7145,
+          "text": "Port"
+        },
+        {
+          "x": 472,
+          "y": 360,
+          "w": 85,
+          "h": 25,
+          "confidence": 96.583488,
+          "text": "offers"
+        },
+        {
+          "x": 567,
+          "y": 360,
+          "w": 45,
+          "h": 25,
+          "confidence": 93.250908,
+          "text": "the"
+        },
+        {
+          "x": 622,
+          "y": 361,
+          "w": 33,
+          "h": 24,
+          "confidence": 88.716759,
+          "text": "A1"
+        },
+        {
+          "x": 672,
+          "y": 360,
+          "w": 167,
+          "h": 25,
+          "confidence": 87.730087,
+          "text": "authora\u20ac\u2122s"
+        },
+        {
+          "x": 850,
+          "y": 360,
+          "w": 176,
+          "h": 25,
+          "confidence": 96.494003,
+          "text": "amendment"
+        },
+        {
+          "x": 343,
+          "y": 410,
+          "w": 180,
+          "h": 25,
+          "confidence": 96.196548,
+          "text": "Amendment"
+        },
+        {
+          "x": 535,
+          "y": 411,
+          "w": 21,
+          "h": 24,
+          "confidence": 96.65242,
+          "text": "is"
+        },
+        {
+          "x": 568,
+          "y": 410,
+          "w": 118,
+          "h": 32,
+          "confidence": 96.147041,
+          "text": "adopted"
+        },
+        {
+          "x": 698,
+          "y": 410,
+          "w": 187,
+          "h": 32,
+          "confidence": 96.147041,
+          "text": "unanimously"
+        },
+        {
+          "x": 894,
+          "y": 411,
+          "w": 40,
+          "h": 24,
+          "confidence": 96.745148,
+          "text": "via"
+        },
+        {
+          "x": 944,
+          "y": 411,
+          "w": 76,
+          "h": 24,
+          "confidence": 96.562271,
+          "text": "voice"
+        },
+        {
+          "x": 1030,
+          "y": 413,
+          "w": 62,
+          "h": 22,
+          "confidence": 96.843727,
+          "text": "vote"
+        },
+        {
+          "x": 279,
+          "y": 460,
+          "w": 51,
+          "h": 29,
+          "confidence": 90.487915,
+          "text": "a\u20ac\u00a2"
+        },
+        {
+          "x": 345,
+          "y": 460,
+          "w": 90,
+          "h": 32,
+          "confidence": 96.820877,
+          "text": "Bobby"
+        },
+        {
+          "x": 446,
+          "y": 461,
+          "w": 69,
+          "h": 31,
+          "confidence": 96.537155,
+          "text": "King,"
+        },
+        {
+          "x": 527,
+          "y": 461,
+          "w": 152,
+          "h": 24,
+          "confidence": 96.362267,
+          "text": "Minnesota"
+        },
+        {
+          "x": 691,
+          "y": 461,
+          "w": 74,
+          "h": 24,
+          "confidence": 96.453484,
+          "text": "State"
+        },
+        {
+          "x": 777,
+          "y": 461,
+          "w": 117,
+          "h": 28,
+          "confidence": 96.274094,
+          "text": "Director,"
+        },
+        {
+          "x": 906,
+          "y": 460,
+          "w": 74,
+          "h": 25,
+          "confidence": 96.136902,
+          "text": "Solar"
+        },
+        {
+          "x": 991,
+          "y": 460,
+          "w": 91,
+          "h": 25,
+          "confidence": 96.514633,
+          "text": "United"
+        },
+        {
+          "x": 1095,
+          "y": 460,
+          "w": 148,
+          "h": 32,
+          "confidence": 95.935738,
+          "text": "Neighbors"
+        },
+        {
+          "x": 279,
+          "y": 510,
+          "w": 51,
+          "h": 29,
+          "confidence": 23.815033,
+          "text": "a\u20ac\u00a2"
+        },
+        {
+          "x": 345,
+          "y": 511,
+          "w": 52,
+          "h": 24,
+          "confidence": 96.888237,
+          "text": "Ben"
+        },
+        {
+          "x": 410,
+          "y": 511,
+          "w": 84,
+          "h": 28,
+          "confidence": 96.371384,
+          "text": "Davis,"
+        },
+        {
+          "x": 505,
+          "y": 509,
+          "w": 76,
+          "h": 26,
+          "confidence": 96.524612,
+          "text": "Chief"
+        },
+        {
+          "x": 591,
+          "y": 509,
+          "w": 29,
+          "h": 26,
+          "confidence": 96.892532,
+          "text": "of"
+        },
+        {
+          "x": 631,
+          "y": 510,
+          "w": 89,
+          "h": 32,
+          "confidence": 96.975533,
+          "text": "Policy,"
+        },
+        {
+          "x": 733,
+          "y": 511,
+          "w": 94,
+          "h": 24,
+          "confidence": 96.28038,
+          "text": "Permit"
+        },
+        {
+          "x": 839,
+          "y": 511,
+          "w": 90,
+          "h": 24,
+          "confidence": 95.643944,
+          "text": "Power"
+        },
+        {
+          "x": 940,
+          "y": 508,
+          "w": 133,
+          "h": 34,
+          "confidence": 95.643944,
+          "text": "(Remote)"
+        },
+        {
+          "x": 278,
+          "y": 610,
+          "w": 113,
+          "h": 25,
+          "confidence": 92.637848,
+          "text": "Senator"
+        },
+        {
+          "x": 402,
+          "y": 611,
+          "w": 89,
+          "h": 24,
+          "confidence": 92.12188,
+          "text": "Frentz"
+        },
+        {
+          "x": 502,
+          "y": 609,
+          "w": 96,
+          "h": 26,
+          "confidence": 96.589149,
+          "text": "moved"
+        },
+        {
+          "x": 609,
+          "y": 609,
+          "w": 57,
+          "h": 26,
+          "confidence": 93.261757,
+          "text": "that"
+        },
+        {
+          "x": 677,
+          "y": 610,
+          "w": 47,
+          "h": 25,
+          "confidence": 91.646423,
+          "text": "S.F."
+        },
+        {
+          "x": 738,
+          "y": 610,
+          "w": 77,
+          "h": 29,
+          "confidence": 95.92955,
+          "text": "5271,"
+        },
+        {
+          "x": 827,
+          "y": 609,
+          "w": 33,
+          "h": 26,
+          "confidence": 96.491608,
+          "text": "be"
+        },
+        {
+          "x": 872,
+          "y": 609,
+          "w": 48,
+          "h": 26,
+          "confidence": 96.901627,
+          "text": "laid"
+        },
+        {
+          "x": 932,
+          "y": 616,
+          "w": 66,
+          "h": 19,
+          "confidence": 85.962173,
+          "text": "over."
+        },
+        {
+          "x": 1018,
+          "y": 623,
+          "w": 1,
+          "h": 3,
+          "confidence": 85.962173,
+          "text": "-"
+        },
+        {
+          "x": 1029,
+          "y": 610,
+          "w": 123,
+          "h": 25,
+          "confidence": 96.276718,
+          "text": "MOTION"
+        },
+        {
+          "x": 1163,
+          "y": 610,
+          "w": 155,
+          "h": 25,
+          "confidence": 96.616501,
+          "text": "ADOPTED."
+        },
+        {
+          "x": 277,
+          "y": 728,
+          "w": 56,
+          "h": 25,
+          "confidence": 96.524223,
+          "text": "The"
+        },
+        {
+          "x": 344,
+          "y": 728,
+          "w": 119,
+          "h": 32,
+          "confidence": 96.536369,
+          "text": "meeting"
+        },
+        {
+          "x": 474,
+          "y": 735,
+          "w": 57,
+          "h": 18,
+          "confidence": 96.283691,
+          "text": "was"
+        },
+        {
+          "x": 542,
+          "y": 728,
+          "w": 147,
+          "h": 32,
+          "confidence": 96.283691,
+          "text": "adjourned"
+        },
+        {
+          "x": 700,
+          "y": 731,
+          "w": 27,
+          "h": 22,
+          "confidence": 96.660095,
+          "text": "at"
+        },
+        {
+          "x": 738,
+          "y": 729,
+          "w": 111,
+          "h": 31,
+          "confidence": 96.690804,
+          "text": "2:26pm"
+        },
+        {
+          "x": 278,
+          "y": 978,
+          "w": 115,
+          "h": 25,
+          "confidence": 96.72554,
+          "text": "Senator"
+        },
+        {
+          "x": 404,
+          "y": 977,
+          "w": 65,
+          "h": 26,
+          "confidence": 96.338417,
+          "text": "Nick"
+        },
+        {
+          "x": 478,
+          "y": 979,
+          "w": 29,
+          "h": 23,
+          "confidence": 93.231659,
+          "text": "A."
+        },
+        {
+          "x": 520,
+          "y": 979,
+          "w": 98,
+          "h": 29,
+          "confidence": 92.54554,
+          "text": "Frentz,"
+        },
+        {
+          "x": 630,
+          "y": 977,
+          "w": 77,
+          "h": 26,
+          "confidence": 96.797592,
+          "text": "Chair"
+        },
+        {
+          "x": 1246,
+          "y": 978,
+          "w": 90,
+          "h": 25,
+          "confidence": 93.30088,
+          "text": "Travis"
+        },
+        {
+          "x": 1347,
+          "y": 979,
+          "w": 109,
+          "h": 29,
+          "confidence": 91.721313,
+          "text": "Urness,"
+        },
+        {
+          "x": 1469,
+          "y": 977,
+          "w": 159,
+          "h": 32,
+          "confidence": 96.715515,
+          "text": "Legislative"
+        },
+        {
+          "x": 1637,
+          "y": 978,
+          "w": 141,
+          "h": 25,
+          "confidence": 96.885689,
+          "text": "Assistant"
+        }
+      ]
+    }
+  }
+}

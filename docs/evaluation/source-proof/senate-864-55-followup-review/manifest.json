@@ -1,0 +1,2950 @@
+{
+  "schemaVersion": "senate864-55-followup-review-v1",
+  "reviewedCommit": "7c3f258b24709bc71bcbaca57d1456eda3973ab4",
+  "runId": "40030160821",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "registrySha256": "7fe7842dfcbf56d9c55200fc01034321af6a067cb921daac52aee29506e95acc",
+  "remainingOcrOriginals": 55,
+  "demonstratedParserMissOriginals": 3,
+  "originalsAuthenticated": 58,
+  "pages": 90,
+  "sameEngineDifferentSegmentation": true,
+  "dpi": 300,
+  "psmModes": [
+    3,
+    11
+  ],
+  "sources": [
+    {
+      "sourceId": "26bd713e33f085984e2607e8e60ab86251e7e3fe68da3e6b3d10d89663c7257b",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finstgov/20220209/finstgov_20220209_Minutes.pdf",
+      "originalSha256": "baf0ab7abc176b706f34dcd04f015504471f6339c8ac6cd6d904b3a460aed911",
+      "extractedTextSha256": "a84d8447462d1aef3097b2a135e0601117a2c2b76d070851c688824e7430a460",
+      "date": "2022-02-09",
+      "committee": "State Government Finance and Policy and Elections",
+      "session": "2021-2022",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "0b3cc87e26e7a3fa42ab83cfa1e969beb4ada0e6bfe7cdf2d0d2bb2cb4737b4b",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "42e87e94fa15af0b96650117d1f939ed1af654cf0cc8aeecbbdb6d1647731dde"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Energy/20220310/energy_20220310_Minutes.pdf",
+      "originalSha256": "c4403e23f210f6ccee2e5e9a165013fa9f11c9c001c0e1b1e01fac6bb8fbb7b7",
+      "extractedTextSha256": "c676a84c82319b78a4e9847129e94559c12df434d96120d0e914be6267c812fd",
+      "date": "2022-03-10",
+      "committee": "Energy and Utilities Finance and Policy",
+      "session": "2021-2022",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "c4a1a7e520f5b934876153cf7550401afe38c839da7565024cf6244b48fc7635",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "529ad01eee69216901e55d81806e7c829d1fc032e25bf00bc90768ee43fcfd63"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "07077aa3eee6ffd4734a13c8bd5272c90735f1c9041d13070626825ab5220c98",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "4a1694a15700a98377b3d44c56e4052f75f429e32f2f38ab792a4d4082c024df"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Subproperty/20220330/subproperty_20220330_Minutes.pdf",
+      "originalSha256": "cf2386e584dbb82c2be97983e75704c1bdcad22237fd8551382277a61d4359cb",
+      "extractedTextSha256": "5c7da5621646fb15ddb13b0179e8342bd190840cce7c2740988ad372c73a31f8",
+      "date": "2022-03-30",
+      "committee": "Taxes - Subcommittee on Property Taxes",
+      "session": "2021-2022",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "78770c0be405bf7336392d4663fc0447977e402f2f6d1231f8ecfadc1cd7a7d5",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "b4433b14bbd00f0eccda5d752dc797c92c955f053a64aef1bfcadef600556a26"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "d7047b67efa1d83abf61a139f97e6059cb2945fa0595f739652893da9716bbf0",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "1e98ced45630c52519c0f2edda1b6a32993ec62a4c11a87a612b140657147dc2"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "3a132e5d88b915443c5090127f364171974efd963922ed9a6fb4aaee6c4ff9a4",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230110/highered_20230110_minutes.pdf",
+      "originalSha256": "64c8900b0a6dae821479bf6803552be134c86cc2dd2fe715969a8f7f1e7c3dea",
+      "extractedTextSha256": "dfe4dd76026148855e53c09e514e855ea2d706bd23f7b4dc70c7a31e081d96d4",
+      "date": "2023-01-10",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "e25fc8d23cf14b81739e4b6169218420079188de0638b0aec7e0f2819824d5c0",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "1aab40f8e79b0c2eb3048b5f9c63088c3ae229ab57b845f843e288089b2a8b07"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "e4824d5ae602dfaa0ab16ac641df807d276caf4226cced6a9efe393496e53e7f",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230112/highered_20230112_minutes.pdf",
+      "originalSha256": "570417d54a0ce34400bfdaf6b53cdca7bd407e2a75e30fb469487a925944f434",
+      "extractedTextSha256": "4120db7df6b72719a5c2ebcd030d167add30c9a900b1a765928a3f8f76675f6e",
+      "date": "2023-01-12",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "2cb1069a0719babe50ecd6513a6109644fd49f070ab9bf1585f410465918c5a7",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "25cc3bb230acfb10d61d7914ba44f3dcc966547a566eff756430c4187ade5411"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "71e41dcc970f7b41c90e7df26afec49730d0d37094588d30c9e493cb5d9f613e",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230117/highered_20230117_minutes.pdf",
+      "originalSha256": "638c9350f2e2842090d5a9b306e09b6f5bc95ba7a13526a04e702fe86e333c05",
+      "extractedTextSha256": "da3e83f5ce472326a06b90823bcfb7ff6096f4eb73a73c20c12e6331cee27e7f",
+      "date": "2023-01-17",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "c331b8df12ea5d227c6a96e0a5e58e008687e58fdecf35e7d590cbe48d24ab40",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "d7f9006e7454b4d4a58fa2ef2df859bb65e20db01e8956d88bfdd61e3fea9f9d"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "d466ef714e8286e9dc4223a42ac4cecb4809dcb4c705a195454115dd7d804fbb",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230119/highered_20230119_minutes.pdf",
+      "originalSha256": "ad5edfa424caaec978ea915f8b3f522ebd727ce2f0bf04abd0e21ef0993df755",
+      "extractedTextSha256": "9306711ec13ddbc659fb7b360e247974916fb72844bab0dc0ac9bd31d7b8e732",
+      "date": "2023-01-19",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "9d4f2359c46d420d233a6ae790136e9464a2c81124e3bb8f7840905b6c89d432",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "e1b846505cc87351a933681c5533d3a18433211f4360870fe1f5e988a63763d8"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "f7e2e12a227d7265f679448764eb37452d6716149ecbaad04620cda5a91725ff",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230124/highered_20230124_minutes.pdf",
+      "originalSha256": "5ea61f90e21258909d7d98bf312739cc74d6b2bef8391d3fb056be242285b76a",
+      "extractedTextSha256": "3e80b8ff8a31599af9dd1b7481e9e7d3d56f9c509ec37c15c4541047f441fa28",
+      "date": "2023-01-24",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "e476196b650d03b88e9c03b2d111bac44cde0b52a95a1e7f0d5a853a2a43fcfe",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "171c1431af092654b564c7ab394c60835c68fead1876ba8b006fb84164f80198"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "000d8c07c23d09146649811ee8a73848a18733f58f76f8bda0e20b71939d29fe",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230126/highered_20230126_minutes.pdf",
+      "originalSha256": "eced650b156e84edb003fdc1350221564fc2102c94aba585eb274817969498bb",
+      "extractedTextSha256": "749dfd5a1bdcc81641236af91f3a64d91d69d5f4f81056bf34b9f347ac060856",
+      "date": "2023-01-26",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "2dbbeaea9141fab1d0b75d6eca82f4c75ea4cf2ff3c819cd21ae3e7a21aa7b9d",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "87dbb9aeddb6df2b8d29da2c0eb101e3ab7404e3b67bbaa79cf59b6d7af452aa"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "a249292f0f969908a93c7b78d0e4c0ce06c6dea0e78dc31b995e08e0f37b929d",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230202/highered_20230202_minutes.pdf",
+      "originalSha256": "9c1bb38fddc9dd21e94f63befa316a5343f2d4047c1bdc6a2d1ddbbeedd46246",
+      "extractedTextSha256": "ae7acd62b6a7b45d19d08b5cf6d0c24e185b85687f0677441b701b9ba16f18f9",
+      "date": "2023-02-02",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "6826a76547d3ad02064eed386c1293ff712a3a9b4491153ecace98beb714557c",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "f90a0c32612538c51e8c53a09b7164237fc69ac4807d1742b1363f2f5be02a92"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "1f1b758a13635fa15321e397418513f9f31403e2e347867f3ffdc712af4b73b1",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230207/highered_20230207_minutes.pdf",
+      "originalSha256": "d92da21b7dd5ac26f2ed72cc1cfa5decfce460be413cf28affd3590ecd02ac93",
+      "extractedTextSha256": "5d18fbf430b0ebaca745f80e97b4ef247ddb1e81ec0c157f522292f0ec502976",
+      "date": "2023-02-07",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "cd8720a70fad5d27b43755855c1e84cfa8f991cb72897be6ed42c696f5443b27",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "9d6d282b63ef3d26d81859a19904aaf066419019d9c00c15cdd99d78ac902c8b"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "0fa60130a1c23b6a3af3384912b5d4e05634c3979861b433c7025f860a8d661f",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230209/highered_20230209_minutes.pdf",
+      "originalSha256": "1ab122e0393439c7e3e8ce0f4bb25c5a3b1fa86d4e548ccfdb03dbcaa2f2a415",
+      "extractedTextSha256": "bc2d0caa951f7491dbbe258757abd9ae5d14fbe1e8587dd7ed1dbcb7b68bb1db",
+      "date": "2023-02-09",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "beea2462444621aa081af70bbc2e15fe7a0c0582a217a7cf80309a2879ba1da8",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "f7c45e2203c2e2f4f6b7d0d4a182a62e9005a9b0f872fa3be14f80b6c674354b"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "7616fd11cb14128126c2199ac001b5502c9d9f2320c38f05052932e5d8fe39ec",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230214/highered_20230214_minutes.pdf",
+      "originalSha256": "62b66522e4aa9cd172cd3efa75fd87537a124d4f7dfd006073bc55d1e0a4bbc3",
+      "extractedTextSha256": "f861e5e42da82beed1c8031c4b6849096115a30efa339b9ccd8ffc0194b548d4",
+      "date": "2023-02-14",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "8d68102402dc06626e57ef5d2295cdfa2ebdcc7e641901561e4ab35693a9bc97",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "d2d16b5480f7c733f3fdd7af1b9dbaa646bd31cfc21ad38421f29aad90200bb3"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "e4d402f6f3bdeeacc4810af799761f94007f64e7262715ac12f57ac983e5e98f",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230216/highered_20230216_minutes.pdf",
+      "originalSha256": "94e64bf2b149df7985142832a70a46cab319f078e0d2652f8c2fd221834bf1f1",
+      "extractedTextSha256": "0721442df4c0b130ff2492a34f00f5e8b37fd2b5d387507554731c160dea7f98",
+      "date": "2023-02-16",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "fe69cff940b140dec58493ef2c4c74423c9fe35110bdcc659e09528f7c698519",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "defa2892539c0bb2d934b644d1596e8c2d9f64580dcbe1ec3b1adb3b96120a4d"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "7cd749171bd2067dd9ccc8b2fac4720a16783dc95e2a4bc4b67c3e25d54f10d1",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230221/highered_20230221_minutes.pdf",
+      "originalSha256": "38c7ea3eb7744e8355cd371230ac08ba0529c180aea22a75c5dc32e61505da98",
+      "extractedTextSha256": "c6cd80893d8215641b6363022797dd338b7fd679f2bd038dda70274339576131",
+      "date": "2023-02-21",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "93192a013c616a458aa76ae72062660ecd2d3f6359c9afc1202d1642bf773bc6",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "1a3b81fd795e7bfceb208d56163bc46b1865fe119cb639319cc54859c20caea3"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "8ae8e8d495769f1349e8c2ade361f0526e245d3ba0f5e26fc8ed5a7ca4dabded",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230228/highered_20230228_minutes.pdf",
+      "originalSha256": "7d64161ddc5b4501239c88f837684729edc3065296ae417b193db642bb98b81b",
+      "extractedTextSha256": "7f0d584f62d5b6c41b1a23b48464c4ab41ff243be6e200b77ce0b63a2b816cb0",
+      "date": "2023-02-28",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "130173a341ab854467b781e5a6e6d343459ced4038100c0273223b144328e786",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "2ee0ceca1108b1f92a32b9a97c7579ddadcffa38c544bf3bbd57e6747ec3b8c3"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "b757faccea217743635ff90a9a38aa226a38f75f97f21a9bb5d46a53dc506119",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230302/highered_20230302_minutes.pdf",
+      "originalSha256": "eb1894b6cbad7ba3e53f4e7deb09893411a6b155af6ebaa24041f0d7f5bce06d",
+      "extractedTextSha256": "e6eeef00068b8c8363d9d8d3fafd36200e98000bb71374fbdbdd175bd3409cc0",
+      "date": "2023-03-02",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "6d8dd4dc69092812aaff2be566d79a32de081bed40259b0584c12eb4b72732ed",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "84babb5c650ed8b04f844f3448ec44081b7bc514a47a3570db0ebe3778e225f7"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "3f1f66298b9c4a38519f39fbe56cb3e7bf2c4f7ea48b0ca2c5b437e261ce7010",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230307/highered_20230307_minutes.pdf",
+      "originalSha256": "69e134157261438247f385b9c80b3da317afc76b5ccf79ee521ca460b600d3ff",
+      "extractedTextSha256": "5e6e2c5f5fee8a7e8499326dd69ffef079052ad871a8f2e3d688cc88096e92cc",
+      "date": "2023-03-07",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "1ad076945f92cf75e346c6eefbcd37287221d439dff9ea59ceb953016c32acef",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "0a1b3f0ebb9b4b20f44387f7ab4c5199abee012c69c1fb542ca72a4b5dec4ebd"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "3510b65378b8223b662ba8053d733036280359f4b24f1c7e18e362eee2d82290",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230309/highered_20230309_minutes.pdf",
+      "originalSha256": "40f4d1a11e1696fa6c91cdb4953e7f23dc42bad3a8386d22caac7791158496b3",
+      "extractedTextSha256": "19386c2c31d486f6f74a9fe81124f987491f471ed7fe79b980ac06022f255db6",
+      "date": "2023-03-09",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "bb15d7a201a9f6b059e29fa5e3a99b5e359561e56d8304dc3b7ef1c25b82cc33",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "c64f681bd406963c63d0d5a6cc6d035e2e48fae187ed8f3d62dc146b977b91bd"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "f3353c3c8f84c2a34de6b618eefaa758592ccc82c1f93bfe6202d9617799f02f",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230314/highered_20230314_minutes.pdf",
+      "originalSha256": "1867c1283ce9b037e4a78c4690d3249dd31099dc2b445b365586605cb7170688",
+      "extractedTextSha256": "5f368da967d6ee3b80fbe2d3a57ad810de9941c36d229a5f6a3f17167abe711a",
+      "date": "2023-03-14",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "bf81fdfd9354a8da8914a5339fd400db8fee1aaca54aaa2bec18a97fac2f8e1d",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "8cd6000cbfb2a58369765aa42cb0e6278d3a19a74c4d4e6cf99c67b0598a4cea"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "77a0b96f94e025b18d26a6de9f100f5a68db43424da5b4a69ef7c716028b7819",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230316/highered_20230316_minutes.pdf",
+      "originalSha256": "78c775f84e17a32dea86aa5b124162840c386fdd084991ca6490ba614c833364",
+      "extractedTextSha256": "c6352494d2d32b1aa62ac6c069d729cbaf1903567ea6687a8e25853497abf5d5",
+      "date": "2023-03-16",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "9fec9cd7593b443241e81306d94395b8b713a8e667e819d3dcd7ef8a1ae969ce",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "ba789a69a779f433cc37d1fbf7db0f901c310b2d57017c50cdaac7b93d44b36c"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "f58191ae366def28e8d7d11faeca5f88ecc7ec7636eb92dae91113460061cc04",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230321/highered_20230321_minutes.pdf",
+      "originalSha256": "05b9a6e021d9245fa43a53ae7dd4bb62139999d6bb978664348f346bae0f5011",
+      "extractedTextSha256": "114027a8f72272dd9a7e6ab83babf7f626f8160fc8c0a0d260dec937e45aae3a",
+      "date": "2023-03-21",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "7fcba16558dc5e3fbd62f934105cf87c1fb1ef6b1f794a737af2a0dc71264c3c",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "e97fe074870ece7b3f95aa6573bab332becfa1fafd59dabcc697c2b47bd39110"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "2bc494bbc421808271552cd03955a67b5cd19ed6a2a8da2d374fd444d2a0d6c1",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230323/highered_20230323_minutes.pdf",
+      "originalSha256": "2da6267cdbdb434e72d3fe4dd5aa8289ccd55844d77cb485f1a120b47b8c930d",
+      "extractedTextSha256": "5414e3bd7e97db06a3e0bbd340c4ea223fb85a22abf44d27c8659f4e1297f8fe",
+      "date": "2023-03-23",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "b8b5a2325e50dfe7be4bba53856d675179a00f4ab2a6062b13b8c15543a45e17",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "d1da5273189bd450da784b9dcf50ab93d6b920d58adf006f64c1396c52d1bc98"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "f6c01b359de53e363aa6ca1d32e3b46f013374f1471bcc97b6c284611877a2ec",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "0dca9c6d5e1d6845145cf10260c5f41b84fea326572b4e41cb9342c548be1b4f"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "47b55db8a98bc989e9bf711aaecb95e3d26628300bfdab9e382c683bff72fc49",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230328/highered_20230328_minutes.pdf",
+      "originalSha256": "736a17254fbff6b6d91ced8abf0c9cf35b9540f456903c633c7b3c9945df57f9",
+      "extractedTextSha256": "965df55624f5fc34131e574f1bb587a0b0a39cabd1a3df174693fc922f28fe4f",
+      "date": "2023-03-28",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "865281d95e7c94474f166d670a25bf47d626d07b727f802452867e6914aeee42",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "f29a32bbe13a899a28695e9a8d6ef0f9f5a4025e5cf2a426c36fba75dcbcf598"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "d86d4e239cf8ab7ab8a8d247404dc696fb7b0c2dbb5e1e5bbc9cfc4c08476675",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230330/highered_20230330_minutes.pdf",
+      "originalSha256": "409836f1077a66bc28c6974b5fe5a756d23589b4bdf755bf1ea04738629e4897",
+      "extractedTextSha256": "e3b97a6ec93404ec9eec8555146e869d2af733565bca6f5669e9a5210d1710c2",
+      "date": "2023-03-30",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "18786da3c9860702e7441672a9ace48a1711fb982b36c00385c432bc63aa8e35",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "7fe28ef75edd1298537cd09215b5a8cf52b8c4fee17684572c79a65ed0ac6149"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "originalSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "extractedTextSha256": "af7b7c52f641ea4c6b95fd198e1df134c317ed95b50640020e727d5e728f1f03",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "e6a7eead1df80de8160924ba3fe307dbcfb009ffbd9b6fdcf48abe6387f25a48",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "09c7cd64c63c72f04cdae25ab4260c35eca4b66cdc7f4a4b3eca2eb40c2e423c"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "49cfd648fd4d6dafba0f19d5cba733d5d88f30537c2673bb806079ad2d60cbd1",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "2a22bb7b6fd3ebb62a56ef79841e9f9ddc5609335840aa5a943480f048d97c01"
+        },
+        {
+          "page": 3,
+          "raw300dpiPageSha256": "2507b5a796f9bb715f473707205a41a14c85da0549bdcf2d5fff6bfc28c8c5a9",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "b138b25b115464683a963decd5a5355ae43fb73e65752d3a6c7b64041e6e0d82"
+        },
+        {
+          "page": 4,
+          "raw300dpiPageSha256": "011b68341405ab4ff4de4da5d79e1865d30aa6e1ed63eb65dc8bfc72bca711b4",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "fe271322c4101b4dbd3f6af7d6eb38534fa60af66d660d109b865a368a451257"
+        },
+        {
+          "page": 5,
+          "raw300dpiPageSha256": "3a6e1fc0c2cdb7352731fdd8d0f9cccf69b4a6b0d4f03183d0f2404b3a971c21",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "66148a32022a78311ce434c8588299af883e1d0ad3f013b64acfecef4dee77b2"
+        },
+        {
+          "page": 6,
+          "raw300dpiPageSha256": "7d09f43804b367f95c30ac57af60889173a1832eee04057e9038f511a4d70329",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "8733aaa6a1e2823213204b453e344845977ba02e1bc819430b093b2632cc451f"
+        },
+        {
+          "page": 7,
+          "raw300dpiPageSha256": "a5cc56cff57d89f42d0a122b656cede56bc46446a6b875b570cf63952c84d7db",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "3733b87d3ea65a6e4672af9aa35568570885dcf8cdb8191db8411bdf6b484cdf"
+        },
+        {
+          "page": 8,
+          "raw300dpiPageSha256": "eac8f89f17e56f9d8b1e1965be73135702afe0ace83734d52fe00c98543dc5dd",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "ef645b8d16002f1c51f0b00decdc9182e3cf8e0bf5646363a041411c065d52fe"
+        },
+        {
+          "page": 9,
+          "raw300dpiPageSha256": "215bee8d947ccf876b74294fb596fb82b62905c107b680295755c9337dfd7038",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "d7746610966fdf733f263d98102e241c3ba556c823f215e560a39f7898f6cb48"
+        },
+        {
+          "page": 10,
+          "raw300dpiPageSha256": "9564d861a272f5aed88b215a3226bc5dd472b5d3c2184bfd3ff9f6c7744749fb",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "693d190df3b8937a9e5dd2eb77f83a50fab8f180cfd4579c8091bdf59adeda33"
+        },
+        {
+          "page": 11,
+          "raw300dpiPageSha256": "8408f52f9873d92b171e3e822fdc003a2f34f18a8739e7fe6270df3d4689039d",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "82b53c7c637b58adbf5b1bfa415a69ca4a74eba66959904ea01a502d49fcfd68"
+        },
+        {
+          "page": 12,
+          "raw300dpiPageSha256": "88031797f02c92f9f162301d7a69fa1c02c7ae0d0d95c912305ab17fab823be4",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "7e23bc39bf91de40421be622f85cb07718b861928e825815cc1d7be78f06fcf3"
+        },
+        {
+          "page": 13,
+          "raw300dpiPageSha256": "0b7b82c72ecae5f502a6ac1f87b7e7cd03f3902e114f00acb51b590474c89562",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "6fdd82d797020aee61b9439c709bf4239eef8367abb3e3cd36a8d8efa7fa7a71"
+        }
+      ],
+      "pageCount": 13,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230512/Taxes_20230512_Signed-Minutes.pdf",
+      "originalSha256": "55b04f01403a8df728069c8e8d3e975dbeca6ffc8bef431699587254f9d0d4a2",
+      "extractedTextSha256": "2c67aac34dc9c6de9d846be103d6e84eec0df0ee18f88ffe1bdf9ef581e4ae8c",
+      "date": "2023-05-12",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "c377b55fadc64b9fde43fabf9f2b0d0c828b58cce4f395a7e4e0457d7739c1d8",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "b768428b107d4c1e96e2322763bd3ba64191eb32223b76079537f665037f5f0a"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "902d433af903bebdf47eddd8e1106ab4ea7bb2ba1611372dd81f90b63939a462",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "7e27172d819b64d8daf00996ceccb1ef077b6eb198f0503695f15663e1151a03"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "b0c17b9361f573080b923eb68d486149b5bb3fce43cd9a154436418713acb02b",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240220/labor_20240220_minutes.pdf",
+      "originalSha256": "b89756635788bf241049377a27215896e2633c1b2d9e8e7571a633d672234fd2",
+      "extractedTextSha256": "2d558ee2058fecb3e7470c635fb3acc1dc3c79b1fafc89cd1e86f57ea7395c48",
+      "date": "2024-02-20",
+      "committee": "Labor",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "51f0b14a2d995724a7134b6effc2f5b624b03804033efc348bf220a93b8b0cdd",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "855fd225c5acb120f20ef94009c0b914e6e7da4dc6e2d953259090955e7b6462"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "f0277a499b85236ef51f165d4fbba60e2ace6ba2dffe87ef988b2f795b45e5a8",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "b2e76af022a88b49b25c48f603d252fd92dcec394df5ef011ceb77c195b00eb9"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "b3d74988ae047ee79634a95ab442d8a847f736ea07710ba9bc9d63403c16c86f",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240222/highered_20240222_minutes.pdf",
+      "originalSha256": "6da022d2a50e30a8a21eefa5ecba8f08a157d50682123087c43c5c6a9f887105",
+      "extractedTextSha256": "b0d601014f9d507e88212622e85615ffb12a6c22e2fbd5d40dc18e88a15ea90b",
+      "date": "2024-02-22",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "44d4d596063bfb13b7322ce4466d3b133767f09756cbb6e350ea9b94ba592824",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "ccadf6b1581dd3f22703bbba3d366d5ba79318b3c7112e85d9019c906d09055e"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "427f6b73e2210b62581635f656837c0eac086015d4f1b2f4966175ae2da73fe3",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240229/highered_20240229_minutes.pdf",
+      "originalSha256": "f62d58751e6f7d815be3d3155cffde8d4e5c1191b7a7c6ddf235e72ec90f7368",
+      "extractedTextSha256": "20cfc1446e462cbf14dd32637893c977c300e98ed21434cf55840b760478473c",
+      "date": "2024-02-29",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "e7f288f021cffbf8b04883d2aebd4895a504bf155f48884c2c73947bcf625126",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "e42225ae50eeb3f6ee3004471da008c4c24ca625fd617863944e4a9c41ecb41c"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "4478b616bd8928b9287e3b7406a0750f0af9f7b8a8a8e5e4d4c227261b45c51f",
+          "rotationClockwise": 0,
+          "blankRaster": true,
+          "reviewImageSha256": "230b837dd5a51eb1490d9ced069ff4e9bb1826384699af8ab610aafb8a44fd82"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "8ef4ba912bec5fb1c9245892c44535b2848f4feb6eb73c353ee2a6baa8c757c9",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/energy/20240304/energy_20240304_Minutes.pdf",
+      "originalSha256": "3c18c79fa8dc28cd13f475fb31b0f531551b7822f90706fcca8f7f03db3778f4",
+      "extractedTextSha256": "d0c637715ca81b0f7afb651a98ff9415132fbd7aaf7459492eab735f494fd8cd",
+      "date": "2024-03-04",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "ffb09dd8598985c727fe5c986019912121ac6cf4dce61f206c32ae111f197972",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "7fac5f63e81f2ba7ac720bd23bcddd65d1ce2fce4d959c9bb5a2fe5e037980f2"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "c7d804a54e6eb7bd7ae21ccc2196b939c1d8dfa9d06fbf090d62424dc6a9d465",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240305/highered_20240305_minutes.pdf",
+      "originalSha256": "0ecf4b32cc058b1bf2bd08b610fe84bca0f7d48013e6eb432dd1ff49f2f6f774",
+      "extractedTextSha256": "5e3b1aeb0de4cb81c3a1ddbe8c57a4eec25f508077e5d67170b323e99ddaf84f",
+      "date": "2024-03-05",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "63600a61b8b9f55ca022c6c9cb378675a0da64bed62198f39f0fb000c6243198",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "c2f2a7ecc3fbd749fc9b032fac3477a59483753e68255f912d2980b78bb55cbd"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "f477a7ab8aa39b38f44f5e36718d9caf70f91e8b934d01064158820f546a6b00",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/energy/20240306/energy_20240306_Minutes.pdf",
+      "originalSha256": "e65e6c194fa106e6c5173a374771fa7e375b6fafe7687e354f6fcae70ee9f9bb",
+      "extractedTextSha256": "8de164c36aeba4eba8557135d06b31106bd05dfa95ecc52e0d7e6297e6ed8275",
+      "date": "2024-03-06",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "bfeee0df456f9402520dabe95cfd02d27c30774d9d5dfe8aff4a6f05c5a5211d",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "58d45c691180da011897f0d6fc5fe3a6db3bc05e2beb077b328b2d4c315f9115"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "3cfb9a5b5b517a48fe7d36d6752da376599b6a30b55fec8a117dda1c7aae75da",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240307/highered_20240307_minutes.pdf",
+      "originalSha256": "88153640a1856afd8977203b4e1e1fc8ec29e93af897dc42d6f1a3929ee6ea8b",
+      "extractedTextSha256": "efe998fb24db787a0ef95ab7e08ecf09a4aaddd254b6a871293e560b3024b941",
+      "date": "2024-03-07",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "cae6d5c45309177f2cc7af2cc773921eb705804eb3d3e4f3fabecf5d000061f6",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "5ab789a3c485148fa30608eaeee16b8540967cf651de19c14a87210346bf9117"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "496ceb9b9fcb4ee63f89fd895dab09a8db6eccf1b26b22a62d33cef01ec88ae2",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240307/taxes_20240307_Final-Meeting-Minutes.pdf",
+      "originalSha256": "a87126e52c33b12239d939621a5499c25fe2750d534dbd2c8485b80755aa67f3",
+      "extractedTextSha256": "95769d66b6199674cded2b84bf56e816ea668d5c39888f39b2fbc1bc623ddd7c",
+      "date": "2024-03-07",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "91317b4371948863ba63a4ebcc0e2c3c7068b2e3a0da91f34cba5d5c3ff30609",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "4a8c0b6fa2274494e985645309baf67795e8636bda0452a1811b54564c4b6a61"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "784f08ac53ccee03f559fed29fe6bd25798c86c8401f32451a5049a96781138b",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "f9f1427aa5efc31ea9ceb357b6973618b57c2a4ace00462cd0324a709c38649f"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "7aa35a29bb490f09a3873616c3bc7150eeab9880f52d8bda0cd2a03d9170819d",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240312/highered_20240312_minutes.pdf",
+      "originalSha256": "3326debb59f921c93d1773d28d46cbe27f8a89f6916ebe362d83b08ebf51d4a7",
+      "extractedTextSha256": "03ee3a8482b6106526e74d0eb196e4ac3c33244dfbd0e0c283038c4466e852a1",
+      "date": "2024-03-12",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "0dd7c15fade9cdb5d60400f9c8a61d15df1a028618db8b6ad9490e8a58f4a430",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "3476e2fa86cc5bc33f1760e7ab921edc75631ce36a59f6058ac98d55d72304af"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "f71f4c43841230f6800bf4dc897c7d027b997a110d492b6a3cd22915616d3a1b",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/energy/20240313/energy_20240313_Minutes.pdf",
+      "originalSha256": "341baa6d4d5b92781e0a46306994dd5673f5922e93d4929f6e3638109a2afc31",
+      "extractedTextSha256": "65ab5c83a7d720f3a2ae2ae2ca94d03453497e6da7ee80dbecd16774bb2eb67a",
+      "date": "2024-03-13",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "fa1cc5b23a2d228f4adeb29c190255aa6459e65ee06b93218904b82642d037ce",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "02fff19f44813c1fe3a07315bfe851177905ab8c0e926be92926a9d87b05377a"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "a3700aaef665050c1c221a319374dc87d17cdcc16b1ae6ffeea9fd47a259830e",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "d07b859c5d9f1916066b36e3cd7b4fd433fa09aee350f47690d0d1c4eb03b8ed"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "ea75ae140647d81ed36d00717f04104b6e2b84559022689dd7c164670cf846a4",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240314/highered_20240314_minutes.pdf",
+      "originalSha256": "3040d3574d3ac23eb0298a8225177f12f10d7f98e8514e5ba8a25fb67e309e39",
+      "extractedTextSha256": "a8c9ac0b5817c78067dbddd815a39fcc55a7e0e07ca7ee34cf66fa44204edc31",
+      "date": "2024-03-14",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "5b8b4989f0bafe863335743755bc60ec6f4d9914efba2543528be677baa2ba76",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "f0f30b21ca045e46602f7ec527c63f2b080c36918ebf9a0e66051b3261d8cdaf"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "ecc065759f8e7a9ff4a91c65b42077e2300716db88658cec54a3ea3387f0120a",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/energy/20240318/energy_20240318_Minutes.pdf",
+      "originalSha256": "dd830bc3e860bed1c07c8f5afe1a593d227a2f9e7a3b53082b54ae687e4cb22c",
+      "extractedTextSha256": "e25b85738c92e1a04628ae270bbae9d527b3411f62e31292135f2e7f9fae9644",
+      "date": "2024-03-18",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "ededa43e48b48b4181414e842e7e9b320de3fd75da709d6041d613912f02da27",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "2a7426b1053c5b5671e402bc147fbd9ae6d256f9e6b5eb6474328251366d854d"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "29b8341e9cccd18efa28c2f9cc3dd0784a660983d079d843ed088539086ca3dd",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240321/highered_20240321_minutes.pdf",
+      "originalSha256": "ac09adec75634252cfdc2e33ab7c50abc2d91bb30002ca39e558ab2b2074242f",
+      "extractedTextSha256": "ea53b129835f958078317de9bdceae86de3df18520fabb0a2c3d40facaddca70",
+      "date": "2024-03-21",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "19345d8efabcdf31d184c3a0d9f11508f85b804f0e06d5ce26fea028e4668adf",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "9e660fde12ede177e0bcc4bcefba1d227d96133fa67b8c2188595a3cec2bec2b"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "d1843c53e1e75bfe173f6fc73927f81ae57242a0f1574baae2465decc7507dd3",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240326/labor_20240326_minutes.pdf",
+      "originalSha256": "bac6ebae92d6f357f8066db1a473daaab41ab187ec7ef31eb50ed10267a80b33",
+      "extractedTextSha256": "7f42d7e44420599230e91713eff6ab5e501273316f64e6f6915bb7e40926f55a",
+      "date": "2024-03-26",
+      "committee": "Labor",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "f65ec6989e4fb9a0726a34f4238283677bf7cbfd9d4c6fe0003e98dd639b16c3",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "f992d4a61c6ac1a1f1e68286f20a795874a61a2e64f36a9d5ffd032f3bca5ee2"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "ae54b6124f96763215e67e7808dcc30dba0d9fbcbd212adffd43c54c8886002b",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "1ce42bee115970df38e70d3177bb6ed0d1d2dfa09a8d0cf339bee68a5ff2c3fc"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "ef0b6ce2b675dcd5ddff742986656d0da95ba183e63c6ed2f31d8bb91f613230",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/energy/20240327/energy_20240327_Minutes.pdf",
+      "originalSha256": "f176405a0c53674a4e76ad8ecd9470eb2c301aa51b01e9d7648475810d07ee88",
+      "extractedTextSha256": "78f5fb5627c0b3a7fdbaf2f13ea1e9eb9d18916765888b4926d5ab41c04a7a73",
+      "date": "2024-03-27",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "0d3c5b25bae16cd76ece27fcf6a768911b1f3ad8ea346154f7399daad5e9c6a3",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "1662975ca9d51579eba74db44e663b59be1968ac0f38320418e90766e1685a4c"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "35dc8943a0712677512da1d5944f9ab53f3d830ac22cb127086c5aa68f87ffe9",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "6b092e570682b55f0da9e3363e392e780bc47f6cc2f0335670305be6842b047e"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "88160b88df2bf2d6c0f57681bb0ddc8cad148e4b0fff0a91f0cf3005c70e413f",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/energy/20240403/energy_20240403_Minutes.pdf",
+      "originalSha256": "1dbb019edd4a713d8d4858a584cf78171eb0a5f1c68bc04a532fc4d70a012aa4",
+      "extractedTextSha256": "eed059f769d03d2847f5e1c0e9bf8502fdb0f6d490ac32a88ea4dc66c4f64451",
+      "date": "2024-04-03",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "b41dca9453943f8ac427bdecede139496c394df8b103049049e7e3eeeb323303",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "67887a3012a661ff011d2a604fe5c1d70909167573df26a626012037f2eb9581"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "0690b48d6a1211a760a137f454e8c86930bf899eb41debd67397f6e8a4606b94",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240403/taxes_20240403_Final-Meeting-Minutes.pdf",
+      "originalSha256": "2bea232dbd1e6085c6d7aeadde5f84678f8fa6e6cf2ea4d7b8e3f82524bc7c8d",
+      "extractedTextSha256": "6fd9560a2c714bb46f5db353d849a04ccd294c54eab372fa4c6f48669d732c45",
+      "date": "2024-04-03",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "f8c6d235c169389bd988d4edf3bfa6c022bc356476ab665182bf99c1bf4a7cdb",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "93f45e7624fb46425a436c34fd7872149e0de4f5e05f919f4a1ad0f7634f504a"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "289f0857413479c09858a6840df100728a8e1ba745b455759d2bb80700bd8549",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "37591dd322ac51ee9566db268eb3fe263ae6544cc2819f44b546ed78f0eb4557"
+        },
+        {
+          "page": 3,
+          "raw300dpiPageSha256": "b10c62f083d16eeb8fc4668f6dd98054f5811ea5d8a13eaf9bb13db3a9b827ff",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "6167d329b5f0350c81cc48ac631cda900336edd66cde8706c8baeea68b08c778"
+        }
+      ],
+      "pageCount": 3,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "658b3edecc378d2535940a30854cacbc21d4a9b573f529c04ec542b980a2748b",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240404/highered_20240404_minutes.pdf",
+      "originalSha256": "4e48d910543b6d328644b388c502c90216267f3b4a01c71de0728caea971004a",
+      "extractedTextSha256": "53d18f5411e1fbd12ca6a7460545bd087b5a25ea8802e9484e40300d06437307",
+      "date": "2024-04-04",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "cf56640bd3f9ab1a511f701cb7dd013b2b1da681c0aae58e1aaa964ba9684786",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "4db67b75ac2670e5a772a7ed976af4e80acfa039ea6ec954df71cb4bd5389867"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "9af2dff2c5715024ebc9e05d340dd5fe7339afc62ef238d4a63d46ae530ec6da",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240404/taxes_20240404_Final-Meeting-Minutes.pdf",
+      "originalSha256": "e7d8f4d81a037562956a7d00e163a0523328e44567055e5af76cbdee53df685b",
+      "extractedTextSha256": "f9b95a7a6527dc4835fbd3f18465dc518d50399f4b2dfef5a8c76ffd669ca5a6",
+      "date": "2024-04-04",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "432df66135007f2bf34c001d35170c5960bac283a810379dde5d00c650c1f668",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "95f878e7bcde859d065ba7d3fed78b7d3dc5ba98c2c92043322cf030d2d605f3"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "d27c463d69cffbab9d6cf96ed305ec9e794c65b4cb72a703f84c473beba0a058",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "6886e72cb6c90e96ca1a276528efb18fce7c3d818bb79a2478a11b41f915b2db"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "59136751e9b0b123033b772a66af960e8a1207f98d5e1be7b17fc77be7f7aae4",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/energy/20240408/energy_20240408_Minutes.pdf",
+      "originalSha256": "d8a46a35ae9578105ca6da1c2214b24b6eb3d33d7efc9e4008a7a203714e74e4",
+      "extractedTextSha256": "c77f9e8eabcd657947f8d3de6d9fb27fd12f57368e040e79f7929dcd4a834893",
+      "date": "2024-04-08",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "c575720ca6d34d2b1cbc653becce86f8383df61db2c3eba2dfed502215cd306c",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "bd474fff9c6cb38b922fa77bcf3f9a7e12acf52d7b3b7010f6bd1614014670dd"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240409/labor_20240409_minutes.pdf",
+      "originalSha256": "de6ad3d443d8846bb7cf9a6e669a0c6919fea44caba7b8973d01ff17ae19b4f1",
+      "extractedTextSha256": "b3362bce83bf1efda633a07dffce37ae2c8b40e60c6d3d6ae582a3fb13b45860",
+      "date": "2024-04-09",
+      "committee": "Labor",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "ab4fe50a140681882dcfd3d98663162fc824712c7d73a714a29889c4b046fe5f",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "08334ba1e32c175c71be0525f268462d2864d267284ea28c08f88138b8e46351"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "653d12111a6eddc637731da7f5014655183802897b9a3f766259334519a7c6fd",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "be5f609c10f0a42073f8573b71243bfb3ba63268fbed2c7d86c1497ac529fce1"
+        },
+        {
+          "page": 3,
+          "raw300dpiPageSha256": "79445da56c735a5137286a1dc7e051813f11085e3fb463ec0dbd0049947a5d49",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "6897d32dab8d054f2796817b41ec731fbf3626c123ad9716fd71b2df088a9a50"
+        },
+        {
+          "page": 4,
+          "raw300dpiPageSha256": "e8e90d056210cb1475a736f18b1bc6cd7a7da92f59c9f632ec577ae10d74d8cd",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "987cc0b587ec3368fa52ecdc6c722a06945269ae8e52bad4c8cb067a737ce7d9"
+        }
+      ],
+      "pageCount": 4,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "274b78e8e7058d51706b8bc3815452b645ea762806e127d5a38898973a816bc8",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240409/taxes_20240409_Final-Meeting-Minutes.pdf",
+      "originalSha256": "261774644231265a19d7c42fd816b05ae4cdc308c58f2eb34a61c7239c97dba0",
+      "extractedTextSha256": "16691efdee374fb21cf736c502bbd76102a33bde7adc3e92953f02eeeb98b5e6",
+      "date": "2024-04-09",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "677781835de5a667f4f5b433ce5d272261547c7a665827c7d22067b1874d59ef",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "d34fa3831010f59870a1bc0dca32b4c128a181663acb67cb31cafaff6bcd397c"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "1a3910617b66c9c4350eeafbabf7a701f6972aefb77220ce6523a7cc624b1aea",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "d20e8e44c53ac40870758f6c5fb0588d500e1627e82da78f33f9deed7003f9d2"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "b63e127a15cf8cdc3aed5130ef19ff4855872328044ca1a00af63999116b0589",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240411/highered_20240411_minutes.pdf",
+      "originalSha256": "19a01fe906b89b39cae815ded9de844dc62fffc86033df9939fee238e718489a",
+      "extractedTextSha256": "3560131f396877b15a22e6a753212e348d384c002e37aa3933e9180d1e3024c4",
+      "date": "2024-04-11",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "fc8b027a97470220ecca0395e7f0211da7f0cb1c8c3aa37f35b81b2f9196a529",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "fc8a3c240d354ff4360af719830829a4601091b5064e1083f9bac7bd60869b18"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "b1fea0297b8b4a1ffa253705725dcfc6c49e6e7ac639131b60b6f2d244a37b7f",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240416/highered_20240416_minutes.pdf",
+      "originalSha256": "5df17ffb1c822eceaa25718b7b12c2808dfa20434c3d11ede2496bc4f9ed1dde",
+      "extractedTextSha256": "7d1d3c71eec86556aa77d6c2d48e0dcd329db699380db42d0e8f92158b8a15fa",
+      "date": "2024-04-16",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "d65f48fac84086f323061bb73d468b0b8fdc9dee62c005c38c8d88199ea005d9",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "1eb9c85948a45012b9d013cb31d19b5183a73cd02276785c49c78251c9272b4d"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "9bef9ddf2764427cd534bec610c7f0dc50438e06f2b9e3aa7f63e7153ca470ec",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/energy/20240417/energy_20240417_Minutes.pdf",
+      "originalSha256": "0cad768c4c41c2cb4a4c58eafa966a7437353bda289c60ba3e98252dd058ad07",
+      "extractedTextSha256": "12e77dc4ace776ff09b44b13650830fc7d6ef1074b1a47327ff2326f9a6d909e",
+      "date": "2024-04-17",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "2a3b4cc97b90ae04f1832e6d05f790259c6e6f94a3bf419d0957476e61fede21",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "e7ffad4bf159bde4af4c408bdea597bea964acee48ba3642e8c497fa0073d840"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "18edec24660dc39cc72291eaeac3c9d57c0f25e383efd59043e224a840efa989",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "6efd83e3909555456eb8cf93abfa163505d74ea00c2c2c7a9dbb10514456d5dd"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "3ccc030c1b5bef90c73bd633ac679dc8fe6da89a08e1985a06fbfeee2afe1ef8",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240417/taxes_20240417_Final-Meeting-Minutes.pdf",
+      "originalSha256": "3e720ce8f972f135b57bed680d93f1cafe355a83a2b08afa0e64841e5ec057a4",
+      "extractedTextSha256": "6bb437e3fbe5d44f8d0ea9c1b1a15595a06e4a326be4aae9bb77d4a4d7f49f66",
+      "date": "2024-04-17",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "d994b7ffe469fda50f8a484a87377c72541be78579b80bb168391ad5aec76c99",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "59b8dad59cc472988626980e183f432b73fc02467f361403fb3f19fd98b0e779"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "35fb4f0674b66fa596c16e56c330896c925cf4b2d2120dc59540e088d315a9d1",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "d5ccf8263ccd4b7fe5fbcdad3caf222e29fb93f7fb4bb312548f7db581d9031b"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "57aac45ade79481f25103dc70d3d7a52a8d8679692ac5d8e60847436ce52f26c",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240418/highered_20240418_minutes.pdf",
+      "originalSha256": "c79c3ad8ba6ed05653df74860f44156a25c92e273c4aa3a55943676c6c07f99d",
+      "extractedTextSha256": "0c26374e7629161f02f4919108318b6fbc4cdc4bec504f8ba9c658a0d233ca0d",
+      "date": "2024-04-18",
+      "committee": "Higher Education",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "f34473a2d1ed990844a58cbbfcd0fc707b97afe2f40bc1aec5c0b9ac1c05af8a",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "25a7e4c52aabd3766b7bf73607b0f45c4b2c1535d41392666113c054fe408c65"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "7bcd8a85ad9f3662786d9027e6c2691cb0e0a36024e7751659ce1e95e83af439",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240418/taxes_20240418_Final-Meeting-Minutes.pdf",
+      "originalSha256": "7bcb546b6f45fef53dd760e4b6afb1adffbcfde1c8ae4f061b0d638c26b2c74e",
+      "extractedTextSha256": "9a9fac06db0f30900614334b88455744e76c7c36485fc27e886ec68ff4927f65",
+      "date": "2024-04-18",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "c0a8f5f7e0f001d4eda411b2cebb298c45074776bb2e874c2a298d75229775ab",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "8e5ee7effddd088262775cd03bd910b50e6e8204da38b3cc820ec2193af5ceb7"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "032006205333a1de5ae709b8873844070ff8bdd9e220781027772426f090d0e9",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "936f61f02a93cf811a40c2aa980c235e40a564bc8f07ef630c5bd96ec38d397f"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "9cb44f0ea122484b920ec4d1625fa1a39e02d6f33a6b002ade0dc410a3f9957e",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240501/taxes_20240501_Final-Meeting-Minutes.pdf",
+      "originalSha256": "724ebd89aba07aff54242f70bba0fe9cf9790c8cee46e45fbfd70f56f3695e28",
+      "extractedTextSha256": "657e7ec08fa744d4f39858328da4beb7badb15b46c630ed1aa9730cb8f037edc",
+      "date": "2024-05-01",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "c36bc1b9b02ae3f569d9bf82f8244ec95f7b7390f30a89f86024e97c5198ff31",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "5806def4be18207a2240dfa1cee8a984deef34bdb7733437af304b32901fa25a"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "2f7dd46f8857f47208f72e5ef04ae00aff1ffd9b48e931332187b8b02ca9c6e1",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240502/taxes_20240502_Final-Meeting-Minutes.pdf",
+      "originalSha256": "d626bbab2fac3802300a0e1c906eb9b1a40450ff7cfe1431b217def982038fa5",
+      "extractedTextSha256": "b4cff3bfd1575479a7de8c1e418cfb056bba051ea39f29b22178f325d1971b80",
+      "date": "2024-05-02",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "f30a39f6b27d7b0c386e5b6ac9094c7da9f5695990140f4e33aec4aac4dc842f",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "83554f23c4c54185fafe4f0aa6e733e1a8743e213f5cc0675b465e94032980cc"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "d444fe972d7d10e2d1b7c709058d53d90975480af5d2f0093cd752f49a4835c5",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/taxes/20240507/taxes_20240507_Final-Meeting-Minutes.pdf",
+      "originalSha256": "57ba6c5e63903327c927485b9e4a05708b587d1c14899ab888532690ed699444",
+      "extractedTextSha256": "3cfedb9f70911fe8a9cd85432e916d2c80f5a7da98a037362e02eea9589c9b72",
+      "date": "2024-05-07",
+      "committee": "Taxes",
+      "session": "2023-2024",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "5f86930753ae1d88b9af8f68aa4e7edd241375c39a1003d39b7ad1919e7394f8",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "7f1d2b8b843befd7950e12e2d1f016afbaa09a85d44c36428a0c294413d0f6f3"
+        }
+      ],
+      "pageCount": 1,
+      "originalBytesAuthenticated": true
+    }
+  ],
+  "renderedReview": "pending",
+  "files": [
+    {
+      "path": "000d8c07c23d09146649811ee8a73848a18733f58f76f8bda0e20b71939d29fe/page-1.jpg",
+      "bytes": 109531,
+      "sha256": "87dbb9aeddb6df2b8d29da2c0eb101e3ab7404e3b67bbaa79cf59b6d7af452aa"
+    },
+    {
+      "path": "000d8c07c23d09146649811ee8a73848a18733f58f76f8bda0e20b71939d29fe/page-1.json",
+      "bytes": 57476,
+      "sha256": "7d4c2d58c4855c48c15c8bed1c36161a9473a75fbbf29ad4d1819760fecb8426"
+    },
+    {
+      "path": "000d8c07c23d09146649811ee8a73848a18733f58f76f8bda0e20b71939d29fe/source.json",
+      "bytes": 970,
+      "sha256": "980c9f4ea2447741758468d8350c8a601e7cfc321a4febef8e972bf2162e378d"
+    },
+    {
+      "path": "0690b48d6a1211a760a137f454e8c86930bf899eb41debd67397f6e8a4606b94/page-1.jpg",
+      "bytes": 219827,
+      "sha256": "93f45e7624fb46425a436c34fd7872149e0de4f5e05f919f4a1ad0f7634f504a"
+    },
+    {
+      "path": "0690b48d6a1211a760a137f454e8c86930bf899eb41debd67397f6e8a4606b94/page-1.json",
+      "bytes": 98126,
+      "sha256": "b3ed33e20329a5182711344c17e97a861741e12f5724f17331e5bf5eaae73510"
+    },
+    {
+      "path": "0690b48d6a1211a760a137f454e8c86930bf899eb41debd67397f6e8a4606b94/page-2.jpg",
+      "bytes": 216152,
+      "sha256": "37591dd322ac51ee9566db268eb3fe263ae6544cc2819f44b546ed78f0eb4557"
+    },
+    {
+      "path": "0690b48d6a1211a760a137f454e8c86930bf899eb41debd67397f6e8a4606b94/page-2.json",
+      "bytes": 98309,
+      "sha256": "f647c21be218e61fe7ee4d2098811736d40e90935b7357c0186b3d8795f330a4"
+    },
+    {
+      "path": "0690b48d6a1211a760a137f454e8c86930bf899eb41debd67397f6e8a4606b94/page-3.jpg",
+      "bytes": 229927,
+      "sha256": "6167d329b5f0350c81cc48ac631cda900336edd66cde8706c8baeea68b08c778"
+    },
+    {
+      "path": "0690b48d6a1211a760a137f454e8c86930bf899eb41debd67397f6e8a4606b94/page-3.json",
+      "bytes": 105686,
+      "sha256": "3c341e583889de662270f97f328421b9be40b0d311aabc612675074cb0e896b6"
+    },
+    {
+      "path": "0690b48d6a1211a760a137f454e8c86930bf899eb41debd67397f6e8a4606b94/source.json",
+      "bytes": 1525,
+      "sha256": "c751cf955a43134feaf5a630e33c635e693975ee6992da64415ff6054155a740"
+    },
+    {
+      "path": "0fa60130a1c23b6a3af3384912b5d4e05634c3979861b433c7025f860a8d661f/page-1.jpg",
+      "bytes": 86126,
+      "sha256": "f7c45e2203c2e2f4f6b7d0d4a182a62e9005a9b0f872fa3be14f80b6c674354b"
+    },
+    {
+      "path": "0fa60130a1c23b6a3af3384912b5d4e05634c3979861b433c7025f860a8d661f/page-1.json",
+      "bytes": 43871,
+      "sha256": "c99ebb1490fe86aadffbe7c2b4ed0115d7fc5c2ca45249b2bb33b85f688be298"
+    },
+    {
+      "path": "0fa60130a1c23b6a3af3384912b5d4e05634c3979861b433c7025f860a8d661f/source.json",
+      "bytes": 970,
+      "sha256": "c009cde142095f01583b324da8e1ecc4e8d066fd3cc9cf16bd7c2785367682f6"
+    },
+    {
+      "path": "1f1b758a13635fa15321e397418513f9f31403e2e347867f3ffdc712af4b73b1/page-1.jpg",
+      "bytes": 83777,
+      "sha256": "9d6d282b63ef3d26d81859a19904aaf066419019d9c00c15cdd99d78ac902c8b"
+    },
+    {
+      "path": "1f1b758a13635fa15321e397418513f9f31403e2e347867f3ffdc712af4b73b1/page-1.json",
+      "bytes": 40159,
+      "sha256": "be1fc12816398d65cd71080c67b159d9011a794a34f74d78c44a97ed5e3fe849"
+    },
+    {
+      "path": "1f1b758a13635fa15321e397418513f9f31403e2e347867f3ffdc712af4b73b1/source.json",
+      "bytes": 970,
+      "sha256": "fb7a8c31fca3dedc4df181a4432fb729bfd95b4a9f644859d7d41c97819a9750"
+    },
+    {
+      "path": "26bd713e33f085984e2607e8e60ab86251e7e3fe68da3e6b3d10d89663c7257b/page-1.jpg",
+      "bytes": 147376,
+      "sha256": "42e87e94fa15af0b96650117d1f939ed1af654cf0cc8aeecbbdb6d1647731dde"
+    },
+    {
+      "path": "26bd713e33f085984e2607e8e60ab86251e7e3fe68da3e6b3d10d89663c7257b/page-1.json",
+      "bytes": 87821,
+      "sha256": "049788aae6c2835c11a08351117413faecbcf3c7e67aea3200c1003f04559384"
+    },
+    {
+      "path": "26bd713e33f085984e2607e8e60ab86251e7e3fe68da3e6b3d10d89663c7257b/source.json",
+      "bytes": 1003,
+      "sha256": "aeef6ba84158ffa66dffc69c64b0e9f8516560efc6441c5a2e5e4a4ef2e509e1"
+    },
+    {
+      "path": "274b78e8e7058d51706b8bc3815452b645ea762806e127d5a38898973a816bc8/page-1.jpg",
+      "bytes": 225496,
+      "sha256": "d34fa3831010f59870a1bc0dca32b4c128a181663acb67cb31cafaff6bcd397c"
+    },
+    {
+      "path": "274b78e8e7058d51706b8bc3815452b645ea762806e127d5a38898973a816bc8/page-1.json",
+      "bytes": 104514,
+      "sha256": "66222984d4c99b5c768da4729da1b4399c89352688d226aa6680d394739d61e0"
+    },
+    {
+      "path": "274b78e8e7058d51706b8bc3815452b645ea762806e127d5a38898973a816bc8/page-2.jpg",
+      "bytes": 95880,
+      "sha256": "d20e8e44c53ac40870758f6c5fb0588d500e1627e82da78f33f9deed7003f9d2"
+    },
+    {
+      "path": "274b78e8e7058d51706b8bc3815452b645ea762806e127d5a38898973a816bc8/page-2.json",
+      "bytes": 26704,
+      "sha256": "ddbfd8c308a8d4df3751556d53441a8c34513fd2742e75caf9b2055297a87538"
+    },
+    {
+      "path": "274b78e8e7058d51706b8bc3815452b645ea762806e127d5a38898973a816bc8/source.json",
+      "bytes": 1246,
+      "sha256": "e29e575e442f71f66890f6a6a00ebc2872ab607ad179656615cbc646d94c472a"
+    },
+    {
+      "path": "29b8341e9cccd18efa28c2f9cc3dd0784a660983d079d843ed088539086ca3dd/page-1.jpg",
+      "bytes": 154450,
+      "sha256": "9e660fde12ede177e0bcc4bcefba1d227d96133fa67b8c2188595a3cec2bec2b"
+    },
+    {
+      "path": "29b8341e9cccd18efa28c2f9cc3dd0784a660983d079d843ed088539086ca3dd/page-1.json",
+      "bytes": 80754,
+      "sha256": "ad1a8fbd2ae9f3e74fb1907017243a29b59bbdf69127beec797cbac42cbf97b1"
+    },
+    {
+      "path": "29b8341e9cccd18efa28c2f9cc3dd0784a660983d079d843ed088539086ca3dd/source.json",
+      "bytes": 970,
+      "sha256": "a1093ff2c3e42c98adeab781c613cf516e3386e7950c4af238ecdb7a725d497c"
+    },
+    {
+      "path": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60/page-1.jpg",
+      "bytes": 140654,
+      "sha256": "08334ba1e32c175c71be0525f268462d2864d267284ea28c08f88138b8e46351"
+    },
+    {
+      "path": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60/page-1.json",
+      "bytes": 71593,
+      "sha256": "2c03effb76dfabade150f329b1c6c1a4393d4be289dd49bf60868f5c613d56a0"
+    },
+    {
+      "path": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60/page-2.jpg",
+      "bytes": 161849,
+      "sha256": "be5f609c10f0a42073f8573b71243bfb3ba63268fbed2c7d86c1497ac529fce1"
+    },
+    {
+      "path": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60/page-2.json",
+      "bytes": 89772,
+      "sha256": "9eb1ff45a305fd0403bbe985893897bd2e48acdbbb5c67d1613c9e34e1f202c5"
+    },
+    {
+      "path": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60/page-3.jpg",
+      "bytes": 157618,
+      "sha256": "6897d32dab8d054f2796817b41ec731fbf3626c123ad9716fd71b2df088a9a50"
+    },
+    {
+      "path": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60/page-3.json",
+      "bytes": 94685,
+      "sha256": "232a7932b8ee5fe2e48d2d220573281aaa21475701867f9bb598dd920c431c2c"
+    },
+    {
+      "path": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60/page-4.jpg",
+      "bytes": 132985,
+      "sha256": "987cc0b587ec3368fa52ecdc6c722a06945269ae8e52bad4c8cb067a737ce7d9"
+    },
+    {
+      "path": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60/page-4.json",
+      "bytes": 64924,
+      "sha256": "00c42822181d5143cf3c5352acff8c4f0e1fa42bc0bca6e720dd5833127288a2"
+    },
+    {
+      "path": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60/source.json",
+      "bytes": 1790,
+      "sha256": "8aaad61c1c7ae99fc02e0619abe935ce50d5d33e4ac2b1d74b72f21d9fa9c981"
+    },
+    {
+      "path": "2bc494bbc421808271552cd03955a67b5cd19ed6a2a8da2d374fd444d2a0d6c1/page-1.jpg",
+      "bytes": 186421,
+      "sha256": "d1da5273189bd450da784b9dcf50ab93d6b920d58adf006f64c1396c52d1bc98"
+    },
+    {
+      "path": "2bc494bbc421808271552cd03955a67b5cd19ed6a2a8da2d374fd444d2a0d6c1/page-1.json",
+      "bytes": 107680,
+      "sha256": "2e396ef8c2313783799032086618913b88408f7f604d42df2b93d917682e18a3"
+    },
+    {
+      "path": "2bc494bbc421808271552cd03955a67b5cd19ed6a2a8da2d374fd444d2a0d6c1/page-2.jpg",
+      "bytes": 21880,
+      "sha256": "0dca9c6d5e1d6845145cf10260c5f41b84fea326572b4e41cb9342c548be1b4f"
+    },
+    {
+      "path": "2bc494bbc421808271552cd03955a67b5cd19ed6a2a8da2d374fd444d2a0d6c1/page-2.json",
+      "bytes": 4421,
+      "sha256": "448fa81f3352b22a10a54652609afd2d91b07e988ef2df21db0fb34d700c6453"
+    },
+    {
+      "path": "2bc494bbc421808271552cd03955a67b5cd19ed6a2a8da2d374fd444d2a0d6c1/source.json",
+      "bytes": 1249,
+      "sha256": "959bf8d42630bf8287978e477ca66fcf6f1164b7e228b05e255364e425fd8120"
+    },
+    {
+      "path": "2f7dd46f8857f47208f72e5ef04ae00aff1ffd9b48e931332187b8b02ca9c6e1/page-1.jpg",
+      "bytes": 183281,
+      "sha256": "83554f23c4c54185fafe4f0aa6e733e1a8743e213f5cc0675b465e94032980cc"
+    },
+    {
+      "path": "2f7dd46f8857f47208f72e5ef04ae00aff1ffd9b48e931332187b8b02ca9c6e1/page-1.json",
+      "bytes": 86111,
+      "sha256": "26cd31c8102e852cccabdb867e10ad85db7d14a813ef204e80c237a397a16e37"
+    },
+    {
+      "path": "2f7dd46f8857f47208f72e5ef04ae00aff1ffd9b48e931332187b8b02ca9c6e1/source.json",
+      "bytes": 967,
+      "sha256": "ee0bc6eb274c67f2f5f400b61cfdaf434af12bf69e678367c015df75db7e0c51"
+    },
+    {
+      "path": "3510b65378b8223b662ba8053d733036280359f4b24f1c7e18e362eee2d82290/page-1.jpg",
+      "bytes": 125386,
+      "sha256": "c64f681bd406963c63d0d5a6cc6d035e2e48fae187ed8f3d62dc146b977b91bd"
+    },
+    {
+      "path": "3510b65378b8223b662ba8053d733036280359f4b24f1c7e18e362eee2d82290/page-1.json",
+      "bytes": 68178,
+      "sha256": "7a6279603d684cec5f645b97a94bb50c94ba97f78bf99bce7822fba1d731a96a"
+    },
+    {
+      "path": "3510b65378b8223b662ba8053d733036280359f4b24f1c7e18e362eee2d82290/source.json",
+      "bytes": 970,
+      "sha256": "7636d37ba20c66f01065d61ad74b9fa27948370860b943d5edc6c24337eae89b"
+    },
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/page-1.jpg",
+      "bytes": 138426,
+      "sha256": "b4433b14bbd00f0eccda5d752dc797c92c955f053a64aef1bfcadef600556a26"
+    },
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/page-1.json",
+      "bytes": 68390,
+      "sha256": "5ada147d5a1ed428f58469de71825997536dc26a11245aa1e9f16ff71b7b8b6e"
+    },
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/page-2.jpg",
+      "bytes": 128610,
+      "sha256": "1e98ced45630c52519c0f2edda1b6a32993ec62a4c11a87a612b140657147dc2"
+    },
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/page-2.json",
+      "bytes": 59978,
+      "sha256": "59a6eec9b867a4bd12b6febc760853bbabf1418c3f7b882c64e170880ed70fad"
+    },
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/source.json",
+      "bytes": 1277,
+      "sha256": "a1cb055247bddb9ae6200de0027c4d8bda924755da968f57043b2b6ad7bbe1fd"
+    },
+    {
+      "path": "3a132e5d88b915443c5090127f364171974efd963922ed9a6fb4aaee6c4ff9a4/page-1.jpg",
+      "bytes": 110960,
+      "sha256": "1aab40f8e79b0c2eb3048b5f9c63088c3ae229ab57b845f843e288089b2a8b07"
+    },
+    {
+      "path": "3a132e5d88b915443c5090127f364171974efd963922ed9a6fb4aaee6c4ff9a4/page-1.json",
+      "bytes": 43970,
+      "sha256": "f9502427723c2db9a233fa861c005fe7e283e9a733536b38fa700401e7d81195"
+    },
+    {
+      "path": "3a132e5d88b915443c5090127f364171974efd963922ed9a6fb4aaee6c4ff9a4/source.json",
+      "bytes": 970,
+      "sha256": "8a41d733260f30c5219e1e7fa4c7b430713bc01732684d96323dfcb64d6533f3"
+    },
+    {
+      "path": "3ccc030c1b5bef90c73bd633ac679dc8fe6da89a08e1985a06fbfeee2afe1ef8/page-1.jpg",
+      "bytes": 204540,
+      "sha256": "59b8dad59cc472988626980e183f432b73fc02467f361403fb3f19fd98b0e779"
+    },
+    {
+      "path": "3ccc030c1b5bef90c73bd633ac679dc8fe6da89a08e1985a06fbfeee2afe1ef8/page-1.json",
+      "bytes": 88842,
+      "sha256": "2db1391d51b919182a2fd8fda1d200b925db889cfa5a161ab0dda4b348b2b430"
+    },
+    {
+      "path": "3ccc030c1b5bef90c73bd633ac679dc8fe6da89a08e1985a06fbfeee2afe1ef8/page-2.jpg",
+      "bytes": 228006,
+      "sha256": "d5ccf8263ccd4b7fe5fbcdad3caf222e29fb93f7fb4bb312548f7db581d9031b"
+    },
+    {
+      "path": "3ccc030c1b5bef90c73bd633ac679dc8fe6da89a08e1985a06fbfeee2afe1ef8/page-2.json",
+      "bytes": 88614,
+      "sha256": "6449a44644d151b7020fce390842c129e233e8b4077cf04b31e9dadf10aa01cf"
+    },
+    {
+      "path": "3ccc030c1b5bef90c73bd633ac679dc8fe6da89a08e1985a06fbfeee2afe1ef8/source.json",
+      "bytes": 1246,
+      "sha256": "3ba7824a2510f40ed9f3e414247332addb068d6a02d07863ab8b6d54d3795ac0"
+    },
+    {
+      "path": "3cfb9a5b5b517a48fe7d36d6752da376599b6a30b55fec8a117dda1c7aae75da/page-1.jpg",
+      "bytes": 142799,
+      "sha256": "5ab789a3c485148fa30608eaeee16b8540967cf651de19c14a87210346bf9117"
+    },
+    {
+      "path": "3cfb9a5b5b517a48fe7d36d6752da376599b6a30b55fec8a117dda1c7aae75da/page-1.json",
+      "bytes": 68656,
+      "sha256": "17fcd5a1e265f1905057eaf25379733955b58cd97caad82b7d8775f07683e57d"
+    },
+    {
+      "path": "3cfb9a5b5b517a48fe7d36d6752da376599b6a30b55fec8a117dda1c7aae75da/source.json",
+      "bytes": 970,
+      "sha256": "7fc4274d83dffff488714f1b3abb1176ce5598dbdc1c6b91abb4adcc6d83a2a9"
+    },
+    {
+      "path": "3f1f66298b9c4a38519f39fbe56cb3e7bf2c4f7ea48b0ca2c5b437e261ce7010/page-1.jpg",
+      "bytes": 101295,
+      "sha256": "0a1b3f0ebb9b4b20f44387f7ab4c5199abee012c69c1fb542ca72a4b5dec4ebd"
+    },
+    {
+      "path": "3f1f66298b9c4a38519f39fbe56cb3e7bf2c4f7ea48b0ca2c5b437e261ce7010/page-1.json",
+      "bytes": 51257,
+      "sha256": "9d8daf52d956b11bd83a10642a9b7cd9ec7f4d7c6049ad24039aaa074cc64f1b"
+    },
+    {
+      "path": "3f1f66298b9c4a38519f39fbe56cb3e7bf2c4f7ea48b0ca2c5b437e261ce7010/source.json",
+      "bytes": 970,
+      "sha256": "923bfbdbf2d50201fbfba9d48423345cc25b13b275076d56d5613c9a6db61363"
+    },
+    {
+      "path": "427f6b73e2210b62581635f656837c0eac086015d4f1b2f4966175ae2da73fe3/page-1.jpg",
+      "bytes": 177721,
+      "sha256": "e42225ae50eeb3f6ee3004471da008c4c24ca625fd617863944e4a9c41ecb41c"
+    },
+    {
+      "path": "427f6b73e2210b62581635f656837c0eac086015d4f1b2f4966175ae2da73fe3/page-1.json",
+      "bytes": 90619,
+      "sha256": "fdffcdda25bddc6c55d0abac8c9383f794c5748777157367e08a6a741050a6a8"
+    },
+    {
+      "path": "427f6b73e2210b62581635f656837c0eac086015d4f1b2f4966175ae2da73fe3/page-2.jpg",
+      "bytes": 25191,
+      "sha256": "230b837dd5a51eb1490d9ced069ff4e9bb1826384699af8ab610aafb8a44fd82"
+    },
+    {
+      "path": "427f6b73e2210b62581635f656837c0eac086015d4f1b2f4966175ae2da73fe3/page-2.json",
+      "bytes": 789,
+      "sha256": "a2fdab858ecffea1ce034b3206039c9a8f5b9d64f786cbbfa8853eb49fafa10d"
+    },
+    {
+      "path": "427f6b73e2210b62581635f656837c0eac086015d4f1b2f4966175ae2da73fe3/source.json",
+      "bytes": 1248,
+      "sha256": "a6dc5017eb789db038c398453a2bc49a1f04ad3b2e4baa8fd75b3fef6ab5795a"
+    },
+    {
+      "path": "47b55db8a98bc989e9bf711aaecb95e3d26628300bfdab9e382c683bff72fc49/page-1.jpg",
+      "bytes": 79145,
+      "sha256": "f29a32bbe13a899a28695e9a8d6ef0f9f5a4025e5cf2a426c36fba75dcbcf598"
+    },
+    {
+      "path": "47b55db8a98bc989e9bf711aaecb95e3d26628300bfdab9e382c683bff72fc49/page-1.json",
+      "bytes": 39981,
+      "sha256": "a731ed1730665e6e54a2cb7f1469bdb37a77db2f02a1e832e01924dee08624c1"
+    },
+    {
+      "path": "47b55db8a98bc989e9bf711aaecb95e3d26628300bfdab9e382c683bff72fc49/source.json",
+      "bytes": 970,
+      "sha256": "31ac9e4577789ed7324cfacf388d885c6ec990ea8b33a1299d0359deb03df553"
+    },
+    {
+      "path": "496ceb9b9fcb4ee63f89fd895dab09a8db6eccf1b26b22a62d33cef01ec88ae2/page-1.jpg",
+      "bytes": 203959,
+      "sha256": "4a8c0b6fa2274494e985645309baf67795e8636bda0452a1811b54564c4b6a61"
+    },
+    {
+      "path": "496ceb9b9fcb4ee63f89fd895dab09a8db6eccf1b26b22a62d33cef01ec88ae2/page-1.json",
+      "bytes": 110207,
+      "sha256": "21fe18abe9abd63d142e12f02b37bf4ddf811b580c32526ed7dfd4c000af7510"
+    },
+    {
+      "path": "496ceb9b9fcb4ee63f89fd895dab09a8db6eccf1b26b22a62d33cef01ec88ae2/page-2.jpg",
+      "bytes": 99573,
+      "sha256": "f9f1427aa5efc31ea9ceb357b6973618b57c2a4ace00462cd0324a709c38649f"
+    },
+    {
+      "path": "496ceb9b9fcb4ee63f89fd895dab09a8db6eccf1b26b22a62d33cef01ec88ae2/page-2.json",
+      "bytes": 22205,
+      "sha256": "18f07feb9e5c2fb506eab5fc9eabb0e8e9a0a143c6a2327c5123688b667a31ba"
+    },
+    {
+      "path": "496ceb9b9fcb4ee63f89fd895dab09a8db6eccf1b26b22a62d33cef01ec88ae2/source.json",
+      "bytes": 1246,
+      "sha256": "506e2ddcc249850765e58827478581c4546cb95ccafd53a417b0b3c7e6597fad"
+    },
+    {
+      "path": "57aac45ade79481f25103dc70d3d7a52a8d8679692ac5d8e60847436ce52f26c/page-1.jpg",
+      "bytes": 120914,
+      "sha256": "25a7e4c52aabd3766b7bf73607b0f45c4b2c1535d41392666113c054fe408c65"
+    },
+    {
+      "path": "57aac45ade79481f25103dc70d3d7a52a8d8679692ac5d8e60847436ce52f26c/page-1.json",
+      "bytes": 64005,
+      "sha256": "6e9b130959ed826989aadca0d4ed279ce8fad849d6232135c54873d75c66c907"
+    },
+    {
+      "path": "57aac45ade79481f25103dc70d3d7a52a8d8679692ac5d8e60847436ce52f26c/source.json",
+      "bytes": 970,
+      "sha256": "4a201bb0057e7252059e1bea1bfeb116da6c8e3e278bd0db9a70e52510360e4e"
+    },
+    {
+      "path": "59136751e9b0b123033b772a66af960e8a1207f98d5e1be7b17fc77be7f7aae4/page-1.jpg",
+      "bytes": 139900,
+      "sha256": "bd474fff9c6cb38b922fa77bcf3f9a7e12acf52d7b3b7010f6bd1614014670dd"
+    },
+    {
+      "path": "59136751e9b0b123033b772a66af960e8a1207f98d5e1be7b17fc77be7f7aae4/page-1.json",
+      "bytes": 56421,
+      "sha256": "739856930bf70b0d68b4e69750dba486d34785c1925244069befb5b2c5145635"
+    },
+    {
+      "path": "59136751e9b0b123033b772a66af960e8a1207f98d5e1be7b17fc77be7f7aae4/source.json",
+      "bytes": 992,
+      "sha256": "7ccfd7eabb126e52adb68089a86c5ded064b3d7b6fc4201b966e7dceadf44f9e"
+    },
+    {
+      "path": "658b3edecc378d2535940a30854cacbc21d4a9b573f529c04ec542b980a2748b/page-1.jpg",
+      "bytes": 183695,
+      "sha256": "4db67b75ac2670e5a772a7ed976af4e80acfa039ea6ec954df71cb4bd5389867"
+    },
+    {
+      "path": "658b3edecc378d2535940a30854cacbc21d4a9b573f529c04ec542b980a2748b/page-1.json",
+      "bytes": 97172,
+      "sha256": "44d960b27e4647fa65b976e91fd5b3ede5f5df85292cb89fae03df1e05fbdb70"
+    },
+    {
+      "path": "658b3edecc378d2535940a30854cacbc21d4a9b573f529c04ec542b980a2748b/source.json",
+      "bytes": 970,
+      "sha256": "85e07c8c305e468e44ee3c602dc03b0298b8691e24d62ff403a4a47b31ab5115"
+    },
+    {
+      "path": "71e41dcc970f7b41c90e7df26afec49730d0d37094588d30c9e493cb5d9f613e/page-1.jpg",
+      "bytes": 93308,
+      "sha256": "d7f9006e7454b4d4a58fa2ef2df859bb65e20db01e8956d88bfdd61e3fea9f9d"
+    },
+    {
+      "path": "71e41dcc970f7b41c90e7df26afec49730d0d37094588d30c9e493cb5d9f613e/page-1.json",
+      "bytes": 43380,
+      "sha256": "7526e682ace81bd31a5210f3bcd3ebb953ba696faaf97d41c37abc365d743944"
+    },
+    {
+      "path": "71e41dcc970f7b41c90e7df26afec49730d0d37094588d30c9e493cb5d9f613e/source.json",
+      "bytes": 970,
+      "sha256": "eb458382eeb9e51e9e6933cac43bf7dcc80aaed4b87a6756530af23724a8064e"
+    },
+    {
+      "path": "7616fd11cb14128126c2199ac001b5502c9d9f2320c38f05052932e5d8fe39ec/page-1.jpg",
+      "bytes": 109563,
+      "sha256": "d2d16b5480f7c733f3fdd7af1b9dbaa646bd31cfc21ad38421f29aad90200bb3"
+    },
+    {
+      "path": "7616fd11cb14128126c2199ac001b5502c9d9f2320c38f05052932e5d8fe39ec/page-1.json",
+      "bytes": 58436,
+      "sha256": "f18425e5665409be1735f5a8251ad68dca8f68640c6bac2d3bc246509281e43d"
+    },
+    {
+      "path": "7616fd11cb14128126c2199ac001b5502c9d9f2320c38f05052932e5d8fe39ec/source.json",
+      "bytes": 970,
+      "sha256": "13d4478fa2fb43c1305605299a6b72336bccc0830a5e78cb8ecaddd08df0f8b6"
+    },
+    {
+      "path": "77a0b96f94e025b18d26a6de9f100f5a68db43424da5b4a69ef7c716028b7819/page-1.jpg",
+      "bytes": 105038,
+      "sha256": "ba789a69a779f433cc37d1fbf7db0f901c310b2d57017c50cdaac7b93d44b36c"
+    },
+    {
+      "path": "77a0b96f94e025b18d26a6de9f100f5a68db43424da5b4a69ef7c716028b7819/page-1.json",
+      "bytes": 56000,
+      "sha256": "d22f6fe350a9a27f6ed2ab8e7ca6cb9904f5820f8755907b5c5954272577e449"
+    },
+    {
+      "path": "77a0b96f94e025b18d26a6de9f100f5a68db43424da5b4a69ef7c716028b7819/source.json",
+      "bytes": 970,
+      "sha256": "1f2faed7beeef8658a677b47ac5f6a4ed29ca4a0f8316358b0f1dd738762e6ca"
+    },
+    {
+      "path": "7aa35a29bb490f09a3873616c3bc7150eeab9880f52d8bda0cd2a03d9170819d/page-1.jpg",
+      "bytes": 124699,
+      "sha256": "3476e2fa86cc5bc33f1760e7ab921edc75631ce36a59f6058ac98d55d72304af"
+    },
+    {
+      "path": "7aa35a29bb490f09a3873616c3bc7150eeab9880f52d8bda0cd2a03d9170819d/page-1.json",
+      "bytes": 63339,
+      "sha256": "6087e6c768787d6b69b09eac5a5ccff3748525fe34d76c4e6407307a38d0af5b"
+    },
+    {
+      "path": "7aa35a29bb490f09a3873616c3bc7150eeab9880f52d8bda0cd2a03d9170819d/source.json",
+      "bytes": 970,
+      "sha256": "4b4b91a43aecf9a4a21562cd9127977e505bc4c7295864bbb9ea9ef00c3a83cf"
+    },
+    {
+      "path": "7bcd8a85ad9f3662786d9027e6c2691cb0e0a36024e7751659ce1e95e83af439/page-1.jpg",
+      "bytes": 210976,
+      "sha256": "8e5ee7effddd088262775cd03bd910b50e6e8204da38b3cc820ec2193af5ceb7"
+    },
+    {
+      "path": "7bcd8a85ad9f3662786d9027e6c2691cb0e0a36024e7751659ce1e95e83af439/page-1.json",
+      "bytes": 98721,
+      "sha256": "978fef44b4287f02bca0e23dd138991014030d26b96737b3215261ef6d0aae87"
+    },
+    {
+      "path": "7bcd8a85ad9f3662786d9027e6c2691cb0e0a36024e7751659ce1e95e83af439/page-2.jpg",
+      "bytes": 197994,
+      "sha256": "936f61f02a93cf811a40c2aa980c235e40a564bc8f07ef630c5bd96ec38d397f"
+    },
+    {
+      "path": "7bcd8a85ad9f3662786d9027e6c2691cb0e0a36024e7751659ce1e95e83af439/page-2.json",
+      "bytes": 51144,
+      "sha256": "624bd83a845ea7248faaa62c4f259971db722df69eb5c4f0af03e0e5411e7ec1"
+    },
+    {
+      "path": "7bcd8a85ad9f3662786d9027e6c2691cb0e0a36024e7751659ce1e95e83af439/source.json",
+      "bytes": 1246,
+      "sha256": "ae8e9a8ea40a579d1c3566962d8cc555673b4be9bd78a481839741a9f4bbdd69"
+    },
+    {
+      "path": "7cd749171bd2067dd9ccc8b2fac4720a16783dc95e2a4bc4b67c3e25d54f10d1/page-1.jpg",
+      "bytes": 81719,
+      "sha256": "1a3b81fd795e7bfceb208d56163bc46b1865fe119cb639319cc54859c20caea3"
+    },
+    {
+      "path": "7cd749171bd2067dd9ccc8b2fac4720a16783dc95e2a4bc4b67c3e25d54f10d1/page-1.json",
+      "bytes": 42866,
+      "sha256": "95195b18a9f680c342883f1cd2036ba9b6ad5f9a8488241ab4e647ac1e5f0045"
+    },
+    {
+      "path": "7cd749171bd2067dd9ccc8b2fac4720a16783dc95e2a4bc4b67c3e25d54f10d1/source.json",
+      "bytes": 970,
+      "sha256": "5f96544ce0367ba55d8da46579a2f0a3b71f75f87cf96e493c610a4b377e7d79"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-1.jpg",
+      "bytes": 298659,
+      "sha256": "09c7cd64c63c72f04cdae25ab4260c35eca4b66cdc7f4a4b3eca2eb40c2e423c"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-1.json",
+      "bytes": 172284,
+      "sha256": "f227589bee4490a9cbc4d4685e9eb2dee88bcd163c6155960674b2af2412dab1"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-10.jpg",
+      "bytes": 151094,
+      "sha256": "693d190df3b8937a9e5dd2eb77f83a50fab8f180cfd4579c8091bdf59adeda33"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-10.json",
+      "bytes": 39546,
+      "sha256": "13c959d0ce56b4b7b230cce3a11207b4fe774b5af6d3be666912945ebe9661f2"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-11.jpg",
+      "bytes": 158918,
+      "sha256": "82b53c7c637b58adbf5b1bfa415a69ca4a74eba66959904ea01a502d49fcfd68"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-11.json",
+      "bytes": 36787,
+      "sha256": "4dafffb3e7f0febe50252659234f98601fe57369fc84e2751cdca962f30edcbe"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-12.jpg",
+      "bytes": 162026,
+      "sha256": "7e23bc39bf91de40421be622f85cb07718b861928e825815cc1d7be78f06fcf3"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-12.json",
+      "bytes": 43305,
+      "sha256": "d41554f9980eef39647b07b32f46340979421e07621cee914c8427f5ecad3aeb"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-13.jpg",
+      "bytes": 147057,
+      "sha256": "6fdd82d797020aee61b9439c709bf4239eef8367abb3e3cd36a8d8efa7fa7a71"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-13.json",
+      "bytes": 36114,
+      "sha256": "13dcceeac43048aac87837c137c6f7a5320798135337ca134b00db4171f253f5"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-2.jpg",
+      "bytes": 188796,
+      "sha256": "2a22bb7b6fd3ebb62a56ef79841e9f9ddc5609335840aa5a943480f048d97c01"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-2.json",
+      "bytes": 114224,
+      "sha256": "e52ffbb30fc3da72c4d0253a84463a5fb90c46382724f4404fc77cf8bf379e80"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-3.jpg",
+      "bytes": 166600,
+      "sha256": "b138b25b115464683a963decd5a5355ae43fb73e65752d3a6c7b64041e6e0d82"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-3.json",
+      "bytes": 32251,
+      "sha256": "54e490bb0ca20e57d730c908c4520c528ade318dfc8db485fc47d1482f710078"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-4.jpg",
+      "bytes": 180383,
+      "sha256": "fe271322c4101b4dbd3f6af7d6eb38534fa60af66d660d109b865a368a451257"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-4.json",
+      "bytes": 42628,
+      "sha256": "33bd4b17279555bd8ab39742479a1a39539edafac2f1af708e1f2d31992d3238"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-5.jpg",
+      "bytes": 172469,
+      "sha256": "66148a32022a78311ce434c8588299af883e1d0ad3f013b64acfecef4dee77b2"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-5.json",
+      "bytes": 39796,
+      "sha256": "16dcc257a3e8bc17c84a03df5ed299a0f1e03fcec3400b6eb8a8e5822bdc7341"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-6.jpg",
+      "bytes": 170382,
+      "sha256": "8733aaa6a1e2823213204b453e344845977ba02e1bc819430b093b2632cc451f"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-6.json",
+      "bytes": 45590,
+      "sha256": "7f947040077010a7039aacd649c70cd4ab4037d77e2d0e676b6d016cb64f37a9"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-7.jpg",
+      "bytes": 162161,
+      "sha256": "3733b87d3ea65a6e4672af9aa35568570885dcf8cdb8191db8411bdf6b484cdf"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-7.json",
+      "bytes": 40191,
+      "sha256": "604b8cfb57bf109ab06a0502497f48624c34936264abbceaa38f89fe1929afaa"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-8.jpg",
+      "bytes": 160879,
+      "sha256": "ef645b8d16002f1c51f0b00decdc9182e3cf8e0bf5646363a041411c065d52fe"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-8.json",
+      "bytes": 41124,
+      "sha256": "e5e51736eb7043ea92c965294054efb871c90b3d5aad35dfb4bf3670ece2509b"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-9.jpg",
+      "bytes": 161612,
+      "sha256": "d7746610966fdf733f263d98102e241c3ba556c823f215e560a39f7898f6cb48"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/page-9.json",
+      "bytes": 40627,
+      "sha256": "1c5c192b3b3acefbd12bf884a0d5c187e8091de8082acb0a04a874f085fb3bf7"
+    },
+    {
+      "path": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351/source.json",
+      "bytes": 4313,
+      "sha256": "3550189797fb726aa4d3fd0d5cf7fb0297cafbb2670b4f56a355208cc477d60b"
+    },
+    {
+      "path": "88160b88df2bf2d6c0f57681bb0ddc8cad148e4b0fff0a91f0cf3005c70e413f/page-1.jpg",
+      "bytes": 92624,
+      "sha256": "67887a3012a661ff011d2a604fe5c1d70909167573df26a626012037f2eb9581"
+    },
+    {
+      "path": "88160b88df2bf2d6c0f57681bb0ddc8cad148e4b0fff0a91f0cf3005c70e413f/page-1.json",
+      "bytes": 36070,
+      "sha256": "8976f2dd2995cbc85e59b3c41706f31365142b35d181676e31687c9be363cd6b"
+    },
+    {
+      "path": "88160b88df2bf2d6c0f57681bb0ddc8cad148e4b0fff0a91f0cf3005c70e413f/source.json",
+      "bytes": 992,
+      "sha256": "d50d609966eea9378b82d77955cde4b3f849202630dea64fb05feeae3be384be"
+    },
+    {
+      "path": "8ae8e8d495769f1349e8c2ade361f0526e245d3ba0f5e26fc8ed5a7ca4dabded/page-1.jpg",
+      "bytes": 84328,
+      "sha256": "2ee0ceca1108b1f92a32b9a97c7579ddadcffa38c544bf3bbd57e6747ec3b8c3"
+    },
+    {
+      "path": "8ae8e8d495769f1349e8c2ade361f0526e245d3ba0f5e26fc8ed5a7ca4dabded/page-1.json",
+      "bytes": 41900,
+      "sha256": "51db6d92fb51a13297f17500ebfbc0f7b31e7e7515b43036ea713f922eb60714"
+    },
+    {
+      "path": "8ae8e8d495769f1349e8c2ade361f0526e245d3ba0f5e26fc8ed5a7ca4dabded/source.json",
+      "bytes": 970,
+      "sha256": "826f0d15cca99b7b658e8c182e7dbdf6e2ac816cf069537ed2d6412b345b41da"
+    },
+    {
+      "path": "8ef4ba912bec5fb1c9245892c44535b2848f4feb6eb73c353ee2a6baa8c757c9/page-1.jpg",
+      "bytes": 135051,
+      "sha256": "7fac5f63e81f2ba7ac720bd23bcddd65d1ce2fce4d959c9bb5a2fe5e037980f2"
+    },
+    {
+      "path": "8ef4ba912bec5fb1c9245892c44535b2848f4feb6eb73c353ee2a6baa8c757c9/page-1.json",
+      "bytes": 54416,
+      "sha256": "d3b4860107c0a9c63323f7d6de089ec7f36d8c8b251d20da025c3a0f2047d1c2"
+    },
+    {
+      "path": "8ef4ba912bec5fb1c9245892c44535b2848f4feb6eb73c353ee2a6baa8c757c9/source.json",
+      "bytes": 992,
+      "sha256": "41efab3551238072fb9e5cd3a234eccc4b013e7c8a173ef1824c50b3cc936ea2"
+    },
+    {
+      "path": "9af2dff2c5715024ebc9e05d340dd5fe7339afc62ef238d4a63d46ae530ec6da/page-1.jpg",
+      "bytes": 222686,
+      "sha256": "95f878e7bcde859d065ba7d3fed78b7d3dc5ba98c2c92043322cf030d2d605f3"
+    },
+    {
+      "path": "9af2dff2c5715024ebc9e05d340dd5fe7339afc62ef238d4a63d46ae530ec6da/page-1.json",
+      "bytes": 114457,
+      "sha256": "d850ce84fea4633e7f6b1e28a5bf72784f38302384699d7c1859d50f91c04e6d"
+    },
+    {
+      "path": "9af2dff2c5715024ebc9e05d340dd5fe7339afc62ef238d4a63d46ae530ec6da/page-2.jpg",
+      "bytes": 175344,
+      "sha256": "6886e72cb6c90e96ca1a276528efb18fce7c3d818bb79a2478a11b41f915b2db"
+    },
+    {
+      "path": "9af2dff2c5715024ebc9e05d340dd5fe7339afc62ef238d4a63d46ae530ec6da/page-2.json",
+      "bytes": 79578,
+      "sha256": "efa662de91fb08a16956b336db75571b91b46f6e412185e890a130a282268f0e"
+    },
+    {
+      "path": "9af2dff2c5715024ebc9e05d340dd5fe7339afc62ef238d4a63d46ae530ec6da/source.json",
+      "bytes": 1246,
+      "sha256": "dff55851f60afbb762e5d9cd74ea843b6c9476f060831f86bfbbd74f6b2e3d99"
+    },
+    {
+      "path": "9bef9ddf2764427cd534bec610c7f0dc50438e06f2b9e3aa7f63e7153ca470ec/page-1.jpg",
+      "bytes": 225612,
+      "sha256": "e7ffad4bf159bde4af4c408bdea597bea964acee48ba3642e8c497fa0073d840"
+    },
+    {
+      "path": "9bef9ddf2764427cd534bec610c7f0dc50438e06f2b9e3aa7f63e7153ca470ec/page-1.json",
+      "bytes": 97134,
+      "sha256": "ebcb53c08bbcc87856a3092c792ac3f6fdca22a7035f3ba01744a36d0742f0c9"
+    },
+    {
+      "path": "9bef9ddf2764427cd534bec610c7f0dc50438e06f2b9e3aa7f63e7153ca470ec/page-2.jpg",
+      "bytes": 71693,
+      "sha256": "6efd83e3909555456eb8cf93abfa163505d74ea00c2c2c7a9dbb10514456d5dd"
+    },
+    {
+      "path": "9bef9ddf2764427cd534bec610c7f0dc50438e06f2b9e3aa7f63e7153ca470ec/page-2.json",
+      "bytes": 30616,
+      "sha256": "261d716b49fee8a25c537bd6d86377a479902f7bf718eca1dc58e72966b97478"
+    },
+    {
+      "path": "9bef9ddf2764427cd534bec610c7f0dc50438e06f2b9e3aa7f63e7153ca470ec/source.json",
+      "bytes": 1271,
+      "sha256": "da2aadcc435281836c354c24fe5db510ba6e17242716635a8d6123a96ad94dfb"
+    },
+    {
+      "path": "9cb44f0ea122484b920ec4d1625fa1a39e02d6f33a6b002ade0dc410a3f9957e/page-1.jpg",
+      "bytes": 221640,
+      "sha256": "5806def4be18207a2240dfa1cee8a984deef34bdb7733437af304b32901fa25a"
+    },
+    {
+      "path": "9cb44f0ea122484b920ec4d1625fa1a39e02d6f33a6b002ade0dc410a3f9957e/page-1.json",
+      "bytes": 90573,
+      "sha256": "2b5a1b10b88efca9dbe30ba9d82d81a1466d6b62ca0658b1ce0a3c47a3cd2abd"
+    },
+    {
+      "path": "9cb44f0ea122484b920ec4d1625fa1a39e02d6f33a6b002ade0dc410a3f9957e/source.json",
+      "bytes": 967,
+      "sha256": "de1ff26b311b8e5fa1c19451aa3cd4d01d46590d4188ec3058b1a4cc92cd538e"
+    },
+    {
+      "path": "a249292f0f969908a93c7b78d0e4c0ce06c6dea0e78dc31b995e08e0f37b929d/page-1.jpg",
+      "bytes": 92943,
+      "sha256": "f90a0c32612538c51e8c53a09b7164237fc69ac4807d1742b1363f2f5be02a92"
+    },
+    {
+      "path": "a249292f0f969908a93c7b78d0e4c0ce06c6dea0e78dc31b995e08e0f37b929d/page-1.json",
+      "bytes": 44300,
+      "sha256": "81abc0a056d5b3c36ef2d70430d0cb8ebebd9f1562dc147f275d316709064d88"
+    },
+    {
+      "path": "a249292f0f969908a93c7b78d0e4c0ce06c6dea0e78dc31b995e08e0f37b929d/source.json",
+      "bytes": 970,
+      "sha256": "5d7d15ad28d452a2ee959a0da2e6a73aa4aeef8c71449720095fe2c790c0efeb"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/page-1.jpg",
+      "bytes": 91703,
+      "sha256": "529ad01eee69216901e55d81806e7c829d1fc032e25bf00bc90768ee43fcfd63"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/page-1.json",
+      "bytes": 39832,
+      "sha256": "5a07de55a8015f78e7ab7239b44d77dbed6afd09153094a7601084b6f3b386b6"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/page-2.jpg",
+      "bytes": 147771,
+      "sha256": "4a1694a15700a98377b3d44c56e4052f75f429e32f2f38ab792a4d4082c024df"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/page-2.json",
+      "bytes": 73260,
+      "sha256": "3f3db5e46138b276a1d62949370e772dbc43f946a2f8c8d82c663d89068b20ad"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/source.json",
+      "bytes": 1268,
+      "sha256": "2c422facb348706c706fe90f96d1e964a5efdef422126d33b0f3ff2db5b30dbd"
+    },
+    {
+      "path": "b0c17b9361f573080b923eb68d486149b5bb3fce43cd9a154436418713acb02b/page-1.jpg",
+      "bytes": 163138,
+      "sha256": "855fd225c5acb120f20ef94009c0b914e6e7da4dc6e2d953259090955e7b6462"
+    },
+    {
+      "path": "b0c17b9361f573080b923eb68d486149b5bb3fce43cd9a154436418713acb02b/page-1.json",
+      "bytes": 88757,
+      "sha256": "ab96b7e38f3661e6639813d23ab4f198743a9336c289c1b854c9ba937d56a298"
+    },
+    {
+      "path": "b0c17b9361f573080b923eb68d486149b5bb3fce43cd9a154436418713acb02b/page-2.jpg",
+      "bytes": 159956,
+      "sha256": "b2e76af022a88b49b25c48f603d252fd92dcec394df5ef011ceb77c195b00eb9"
+    },
+    {
+      "path": "b0c17b9361f573080b923eb68d486149b5bb3fce43cd9a154436418713acb02b/page-2.json",
+      "bytes": 78492,
+      "sha256": "92bc101f94db55f7e6fc500414b15cde9f2078c4ad12f25b47d500978771a17e"
+    },
+    {
+      "path": "b0c17b9361f573080b923eb68d486149b5bb3fce43cd9a154436418713acb02b/source.json",
+      "bytes": 1232,
+      "sha256": "08b5afcd21a5301b2c293ddd964e5973b9cf2a53c08450c838a0f37228fef929"
+    },
+    {
+      "path": "b1fea0297b8b4a1ffa253705725dcfc6c49e6e7ac639131b60b6f2d244a37b7f/page-1.jpg",
+      "bytes": 162096,
+      "sha256": "1eb9c85948a45012b9d013cb31d19b5183a73cd02276785c49c78251c9272b4d"
+    },
+    {
+      "path": "b1fea0297b8b4a1ffa253705725dcfc6c49e6e7ac639131b60b6f2d244a37b7f/page-1.json",
+      "bytes": 85153,
+      "sha256": "52cd5a80695702e799c67882d43b6609903222f29fe55b6e89ef46ba75a62d91"
+    },
+    {
+      "path": "b1fea0297b8b4a1ffa253705725dcfc6c49e6e7ac639131b60b6f2d244a37b7f/source.json",
+      "bytes": 970,
+      "sha256": "59ac9581e0713839820de4ca768abed06d8d9bac66ee3f5b0894656bcda00dc5"
+    },
+    {
+      "path": "b3d74988ae047ee79634a95ab442d8a847f736ea07710ba9bc9d63403c16c86f/page-1.jpg",
+      "bytes": 136062,
+      "sha256": "ccadf6b1581dd3f22703bbba3d366d5ba79318b3c7112e85d9019c906d09055e"
+    },
+    {
+      "path": "b3d74988ae047ee79634a95ab442d8a847f736ea07710ba9bc9d63403c16c86f/page-1.json",
+      "bytes": 69191,
+      "sha256": "124a39c127b4ed261d4bc09689c30fb783ae6cc49264924fca330a3ab1a0f3ad"
+    },
+    {
+      "path": "b3d74988ae047ee79634a95ab442d8a847f736ea07710ba9bc9d63403c16c86f/source.json",
+      "bytes": 970,
+      "sha256": "e851b2571c53b7daa8676f77ae86bfa16fd1e3bf289961bd67a410003be32977"
+    },
+    {
+      "path": "b63e127a15cf8cdc3aed5130ef19ff4855872328044ca1a00af63999116b0589/page-1.jpg",
+      "bytes": 101787,
+      "sha256": "fc8a3c240d354ff4360af719830829a4601091b5064e1083f9bac7bd60869b18"
+    },
+    {
+      "path": "b63e127a15cf8cdc3aed5130ef19ff4855872328044ca1a00af63999116b0589/page-1.json",
+      "bytes": 51911,
+      "sha256": "cccdca7a076f8d898aab06cefb13a75b2a7d87e273f512018bc8836d39ace214"
+    },
+    {
+      "path": "b63e127a15cf8cdc3aed5130ef19ff4855872328044ca1a00af63999116b0589/source.json",
+      "bytes": 970,
+      "sha256": "d2b06603b416f993c38ddd27e3248904068a502e1f40d250699c1d8497925098"
+    },
+    {
+      "path": "b757faccea217743635ff90a9a38aa226a38f75f97f21a9bb5d46a53dc506119/page-1.jpg",
+      "bytes": 121108,
+      "sha256": "84babb5c650ed8b04f844f3448ec44081b7bc514a47a3570db0ebe3778e225f7"
+    },
+    {
+      "path": "b757faccea217743635ff90a9a38aa226a38f75f97f21a9bb5d46a53dc506119/page-1.json",
+      "bytes": 65012,
+      "sha256": "a00efbdf2ed90f6d9372475ba74bbebe719bf3e0816f90ba4b40f8bacfe6c0d2"
+    },
+    {
+      "path": "b757faccea217743635ff90a9a38aa226a38f75f97f21a9bb5d46a53dc506119/source.json",
+      "bytes": 970,
+      "sha256": "fd47a367d70ca7e3e69ed412e902c43fc77670644d5e99dbe129b1d6a88a848d"
+    },
+    {
+      "path": "c7d804a54e6eb7bd7ae21ccc2196b939c1d8dfa9d06fbf090d62424dc6a9d465/page-1.jpg",
+      "bytes": 120552,
+      "sha256": "c2f2a7ecc3fbd749fc9b032fac3477a59483753e68255f912d2980b78bb55cbd"
+    },
+    {
+      "path": "c7d804a54e6eb7bd7ae21ccc2196b939c1d8dfa9d06fbf090d62424dc6a9d465/page-1.json",
+      "bytes": 58248,
+      "sha256": "b41b1f2ad792b0a8e5f1d9b4f508c733ffb91479bbf6c816141379eb911d5389"
+    },
+    {
+      "path": "c7d804a54e6eb7bd7ae21ccc2196b939c1d8dfa9d06fbf090d62424dc6a9d465/source.json",
+      "bytes": 970,
+      "sha256": "eb164ec99a0432cb7e90242a0cbfa61ea8a55f93a3d42d665b7637cd6d85703d"
+    },
+    {
+      "path": "clerk-probes.json",
+      "bytes": 168060,
+      "sha256": "b53c9a4c37fdda724aa9f883256af8e44adc99deaafa1cfa4616b03369406b29"
+    },
+    {
+      "path": "d1843c53e1e75bfe173f6fc73927f81ae57242a0f1574baae2465decc7507dd3/page-1.jpg",
+      "bytes": 156896,
+      "sha256": "f992d4a61c6ac1a1f1e68286f20a795874a61a2e64f36a9d5ffd032f3bca5ee2"
+    },
+    {
+      "path": "d1843c53e1e75bfe173f6fc73927f81ae57242a0f1574baae2465decc7507dd3/page-1.json",
+      "bytes": 80743,
+      "sha256": "0ff0b8859c4e1a118b9cf0acd4b17eef15b748567260a40920293816a30ebb99"
+    },
+    {
+      "path": "d1843c53e1e75bfe173f6fc73927f81ae57242a0f1574baae2465decc7507dd3/page-2.jpg",
+      "bytes": 132180,
+      "sha256": "1ce42bee115970df38e70d3177bb6ed0d1d2dfa09a8d0cf339bee68a5ff2c3fc"
+    },
+    {
+      "path": "d1843c53e1e75bfe173f6fc73927f81ae57242a0f1574baae2465decc7507dd3/page-2.json",
+      "bytes": 61774,
+      "sha256": "53ac640c55ed5395c896274b11336fef50c27661b97d3ed1dcd6650d3bf549b1"
+    },
+    {
+      "path": "d1843c53e1e75bfe173f6fc73927f81ae57242a0f1574baae2465decc7507dd3/source.json",
+      "bytes": 1232,
+      "sha256": "65a99ce900f8b4899d761aaf250103560755884475500cde10f64b45f1b6f18d"
+    },
+    {
+      "path": "d444fe972d7d10e2d1b7c709058d53d90975480af5d2f0093cd752f49a4835c5/page-1.jpg",
+      "bytes": 167035,
+      "sha256": "7f1d2b8b843befd7950e12e2d1f016afbaa09a85d44c36428a0c294413d0f6f3"
+    },
+    {
+      "path": "d444fe972d7d10e2d1b7c709058d53d90975480af5d2f0093cd752f49a4835c5/page-1.json",
+      "bytes": 68063,
+      "sha256": "2ab7a9e25e11b5c97604441c8e0ccc2d5e5f33ff50cf755dbc68437c74c38f28"
+    },
+    {
+      "path": "d444fe972d7d10e2d1b7c709058d53d90975480af5d2f0093cd752f49a4835c5/source.json",
+      "bytes": 967,
+      "sha256": "e5cf503c36b2d0142c5f157d903debb8491d2bced0c16349a4d38815ed394c6e"
+    },
+    {
+      "path": "d466ef714e8286e9dc4223a42ac4cecb4809dcb4c705a195454115dd7d804fbb/page-1.jpg",
+      "bytes": 88737,
+      "sha256": "e1b846505cc87351a933681c5533d3a18433211f4360870fe1f5e988a63763d8"
+    },
+    {
+      "path": "d466ef714e8286e9dc4223a42ac4cecb4809dcb4c705a195454115dd7d804fbb/page-1.json",
+      "bytes": 40156,
+      "sha256": "b8e14572b2ab34e5656de48f73f8e7037c89bdbc84c8672a4b114ce40c105e0c"
+    },
+    {
+      "path": "d466ef714e8286e9dc4223a42ac4cecb4809dcb4c705a195454115dd7d804fbb/source.json",
+      "bytes": 970,
+      "sha256": "3f10fac1469b87fee6b1bdddd2e22339017a68ca42ad3f8adacd12eb622da4ec"
+    },
+    {
+      "path": "d86d4e239cf8ab7ab8a8d247404dc696fb7b0c2dbb5e1e5bbc9cfc4c08476675/page-1.jpg",
+      "bytes": 128045,
+      "sha256": "7fe28ef75edd1298537cd09215b5a8cf52b8c4fee17684572c79a65ed0ac6149"
+    },
+    {
+      "path": "d86d4e239cf8ab7ab8a8d247404dc696fb7b0c2dbb5e1e5bbc9cfc4c08476675/page-1.json",
+      "bytes": 77035,
+      "sha256": "2086eda2194fabaf49c9872eea9de4175f272940445cb9f96a39fc1c9f2f8e85"
+    },
+    {
+      "path": "d86d4e239cf8ab7ab8a8d247404dc696fb7b0c2dbb5e1e5bbc9cfc4c08476675/source.json",
+      "bytes": 970,
+      "sha256": "7954fc98977de6824bfcbc2fc27dba33c7c71fe52f11632a3107eb2df9a0969f"
+    },
+    {
+      "path": "e4824d5ae602dfaa0ab16ac641df807d276caf4226cced6a9efe393496e53e7f/page-1.jpg",
+      "bytes": 113387,
+      "sha256": "25cc3bb230acfb10d61d7914ba44f3dcc966547a566eff756430c4187ade5411"
+    },
+    {
+      "path": "e4824d5ae602dfaa0ab16ac641df807d276caf4226cced6a9efe393496e53e7f/page-1.json",
+      "bytes": 40306,
+      "sha256": "38761ffb4764382cccca25b20679167deb31608be02896c2c2e25cf17016c745"
+    },
+    {
+      "path": "e4824d5ae602dfaa0ab16ac641df807d276caf4226cced6a9efe393496e53e7f/source.json",
+      "bytes": 970,
+      "sha256": "7017d6bd86b364dc720cb72d1c41c634f70fa0e277667242ae21018ac20b641b"
+    },
+    {
+      "path": "e4d402f6f3bdeeacc4810af799761f94007f64e7262715ac12f57ac983e5e98f/page-1.jpg",
+      "bytes": 95606,
+      "sha256": "defa2892539c0bb2d934b644d1596e8c2d9f64580dcbe1ec3b1adb3b96120a4d"
+    },
+    {
+      "path": "e4d402f6f3bdeeacc4810af799761f94007f64e7262715ac12f57ac983e5e98f/page-1.json",
+      "bytes": 49165,
+      "sha256": "1ee2a1fff5b11c9d4750e61aa1029a92fc454b8c802686ea44b8653e7203e846"
+    },
+    {
+      "path": "e4d402f6f3bdeeacc4810af799761f94007f64e7262715ac12f57ac983e5e98f/source.json",
+      "bytes": 970,
+      "sha256": "39f9458e7b48fc80f627c8f63f0b1a31e26b974360c68cae8aff3c847a35c04b"
+    },
+    {
+      "path": "ea75ae140647d81ed36d00717f04104b6e2b84559022689dd7c164670cf846a4/page-1.jpg",
+      "bytes": 179426,
+      "sha256": "f0f30b21ca045e46602f7ec527c63f2b080c36918ebf9a0e66051b3261d8cdaf"
+    },
+    {
+      "path": "ea75ae140647d81ed36d00717f04104b6e2b84559022689dd7c164670cf846a4/page-1.json",
+      "bytes": 93969,
+      "sha256": "d2804d64a76a1e8cd424c0f420235421b0af60910f4ffec99f3bd87a60c79f8f"
+    },
+    {
+      "path": "ea75ae140647d81ed36d00717f04104b6e2b84559022689dd7c164670cf846a4/source.json",
+      "bytes": 970,
+      "sha256": "15d66040cc20bd865ea57c6ee78fab1eb930e1726c2b0c5cb433b42f488f766b"
+    },
+    {
+      "path": "ecc065759f8e7a9ff4a91c65b42077e2300716db88658cec54a3ea3387f0120a/page-1.jpg",
+      "bytes": 162402,
+      "sha256": "2a7426b1053c5b5671e402bc147fbd9ae6d256f9e6b5eb6474328251366d854d"
+    },
+    {
+      "path": "ecc065759f8e7a9ff4a91c65b42077e2300716db88658cec54a3ea3387f0120a/page-1.json",
+      "bytes": 65602,
+      "sha256": "754358163282586ce5dc4dee840831d02c5e174e9fa0d770192a8c25250ffd72"
+    },
+    {
+      "path": "ecc065759f8e7a9ff4a91c65b42077e2300716db88658cec54a3ea3387f0120a/source.json",
+      "bytes": 992,
+      "sha256": "c182ba5bc0dd545b23a35a61a51059b4cedccbd3a37a46abdffb7f2c2f542474"
+    },
+    {
+      "path": "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668/page-1.jpg",
+      "bytes": 199641,
+      "sha256": "b768428b107d4c1e96e2322763bd3ba64191eb32223b76079537f665037f5f0a"
+    },
+    {
+      "path": "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668/page-1.json",
+      "bytes": 82479,
+      "sha256": "59b2f58ab8ebfa6e686c5b38a60ef5f123f922e114e9f48bc9766fe52496187e"
+    },
+    {
+      "path": "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668/page-2.jpg",
+      "bytes": 161125,
+      "sha256": "7e27172d819b64d8daf00996ceccb1ef077b6eb198f0503695f15663e1151a03"
+    },
+    {
+      "path": "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668/page-2.json",
+      "bytes": 31536,
+      "sha256": "21637e93b57b2e1709b0298fe56411a467a7d96efa90c7c101e4a92575368ce9"
+    },
+    {
+      "path": "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668/source.json",
+      "bytes": 1239,
+      "sha256": "1c981e7e89fbbddc1da5da6d8e76943441b9644ae652984ff90333d207eee5f2"
+    },
+    {
+      "path": "ef0b6ce2b675dcd5ddff742986656d0da95ba183e63c6ed2f31d8bb91f613230/page-1.jpg",
+      "bytes": 196838,
+      "sha256": "1662975ca9d51579eba74db44e663b59be1968ac0f38320418e90766e1685a4c"
+    },
+    {
+      "path": "ef0b6ce2b675dcd5ddff742986656d0da95ba183e63c6ed2f31d8bb91f613230/page-1.json",
+      "bytes": 78269,
+      "sha256": "a9d3a5f03a2010c95a2bc00921f49b48abd7d5a0fff41048080eef41076ab907"
+    },
+    {
+      "path": "ef0b6ce2b675dcd5ddff742986656d0da95ba183e63c6ed2f31d8bb91f613230/page-2.jpg",
+      "bytes": 20943,
+      "sha256": "6b092e570682b55f0da9e3363e392e780bc47f6cc2f0335670305be6842b047e"
+    },
+    {
+      "path": "ef0b6ce2b675dcd5ddff742986656d0da95ba183e63c6ed2f31d8bb91f613230/page-2.json",
+      "bytes": 5918,
+      "sha256": "ab60f87b85d157ad3c88ca36d95ee521e72bd2dd276fc2e02ce38653ff3efbf2"
+    },
+    {
+      "path": "ef0b6ce2b675dcd5ddff742986656d0da95ba183e63c6ed2f31d8bb91f613230/source.json",
+      "bytes": 1271,
+      "sha256": "07a063d6ea931b6d61cc3d1fea88f06389b5d83ed0008ad2b348d1b90507d694"
+    },
+    {
+      "path": "f3353c3c8f84c2a34de6b618eefaa758592ccc82c1f93bfe6202d9617799f02f/page-1.jpg",
+      "bytes": 107541,
+      "sha256": "8cd6000cbfb2a58369765aa42cb0e6278d3a19a74c4d4e6cf99c67b0598a4cea"
+    },
+    {
+      "path": "f3353c3c8f84c2a34de6b618eefaa758592ccc82c1f93bfe6202d9617799f02f/page-1.json",
+      "bytes": 57187,
+      "sha256": "fc7faa5ff7298fd14d84d57c9d84b589f3a5e474e049a03b39be6f87bf080ef4"
+    },
+    {
+      "path": "f3353c3c8f84c2a34de6b618eefaa758592ccc82c1f93bfe6202d9617799f02f/source.json",
+      "bytes": 970,
+      "sha256": "1187ffa0aade18abf643b6876538c8ffa066cb5f22317e8e962c3a3f73567623"
+    },
+    {
+      "path": "f477a7ab8aa39b38f44f5e36718d9caf70f91e8b934d01064158820f546a6b00/page-1.jpg",
+      "bytes": 164831,
+      "sha256": "58d45c691180da011897f0d6fc5fe3a6db3bc05e2beb077b328b2d4c315f9115"
+    },
+    {
+      "path": "f477a7ab8aa39b38f44f5e36718d9caf70f91e8b934d01064158820f546a6b00/page-1.json",
+      "bytes": 65962,
+      "sha256": "6c462cbd355b0643fcf440ab6419d6d3252ca63c389a1cd4252449a6ba048c97"
+    },
+    {
+      "path": "f477a7ab8aa39b38f44f5e36718d9caf70f91e8b934d01064158820f546a6b00/source.json",
+      "bytes": 992,
+      "sha256": "922c03ecd35ad6d7712838acc9c8fc66df5b36497bd179ba90e1c6cbbc33b861"
+    },
+    {
+      "path": "f58191ae366def28e8d7d11faeca5f88ecc7ec7636eb92dae91113460061cc04/page-1.jpg",
+      "bytes": 87493,
+      "sha256": "e97fe074870ece7b3f95aa6573bab332becfa1fafd59dabcc697c2b47bd39110"
+    },
+    {
+      "path": "f58191ae366def28e8d7d11faeca5f88ecc7ec7636eb92dae91113460061cc04/page-1.json",
+      "bytes": 44047,
+      "sha256": "a10621ef64f12624b0db25955fed88f72a8d4138ba2cb245292c8d06df105240"
+    },
+    {
+      "path": "f58191ae366def28e8d7d11faeca5f88ecc7ec7636eb92dae91113460061cc04/source.json",
+      "bytes": 970,
+      "sha256": "992d8c461f580e4c51a19ab47c41d80bc5f643d41b4185fe7954fadac25838ac"
+    },
+    {
+      "path": "f71f4c43841230f6800bf4dc897c7d027b997a110d492b6a3cd22915616d3a1b/page-1.jpg",
+      "bytes": 200783,
+      "sha256": "02fff19f44813c1fe3a07315bfe851177905ab8c0e926be92926a9d87b05377a"
+    },
+    {
+      "path": "f71f4c43841230f6800bf4dc897c7d027b997a110d492b6a3cd22915616d3a1b/page-1.json",
+      "bytes": 88609,
+      "sha256": "5891211e77b6a292b62863d5b063767f50c12aba300c875caeef456f7539abd5"
+    },
+    {
+      "path": "f71f4c43841230f6800bf4dc897c7d027b997a110d492b6a3cd22915616d3a1b/page-2.jpg",
+      "bytes": 65311,
+      "sha256": "d07b859c5d9f1916066b36e3cd7b4fd433fa09aee350f47690d0d1c4eb03b8ed"
+    },
+    {
+      "path": "f71f4c43841230f6800bf4dc897c7d027b997a110d492b6a3cd22915616d3a1b/page-2.json",
+      "bytes": 27696,
+      "sha256": "c99a6f04e765af37e4a4dd95b8b64d13511e476ee22f6cde3fb80bd284482df0"
+    },
+    {
+      "path": "f71f4c43841230f6800bf4dc897c7d027b997a110d492b6a3cd22915616d3a1b/source.json",
+      "bytes": 1271,
+      "sha256": "d50f3a62e1f8594d7896881428715722ce1fceff32da924133b5f57621acef6d"
+    },
+    {
+      "path": "f7e2e12a227d7265f679448764eb37452d6716149ecbaad04620cda5a91725ff/page-1.jpg",
+      "bytes": 77738,
+      "sha256": "171c1431af092654b564c7ab394c60835c68fead1876ba8b006fb84164f80198"
+    },
+    {
+      "path": "f7e2e12a227d7265f679448764eb37452d6716149ecbaad04620cda5a91725ff/page-1.json",
+      "bytes": 40411,
+      "sha256": "bd54012388548a2b849d1c214b35e76bfa0b32df478a4a30ba98c700c5bb4bdf"
+    },
+    {
+      "path": "f7e2e12a227d7265f679448764eb37452d6716149ecbaad04620cda5a91725ff/source.json",
+      "bytes": 970,
+      "sha256": "ac92967512c40f9d929d8e0b05a94822ca8988f2ce65b5973d698e89da6e98c7"
+    }
+  ]
+}

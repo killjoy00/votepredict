@@ -1,0 +1,1254 @@
+{
+  "page": 2,
+  "raw300dpiPageSha256": "1a3910617b66c9c4350eeafbabf7a701f6972aefb77220ce6523a7cc624b1aea",
+  "width": 2550,
+  "height": 4200,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 27.78\nScript: Latin\nScript confidence: 3.41\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 27.78
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "d20e8e44c53ac40870758f6c5fb0588d500e1627e82da78f33f9deed7003f9d2",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "S.F. 5235: Senator Rest: Local government debt financing modifications.\n\nSenator Rest moved the A-1 amendment. The motion prevailed and the amendment was adopted.\nTestifiers: \u2014\n\nJoe Bagnoli, Winthrop and Weinstine, the Minnesota Institute of Public Finance\n\nRhonda Skoby, Dorsey Law Firm, the Minnesota Institute of Public Finance\n\nSenator Klein moved that S.F. 5235, as amended, be laid over.\n\nThe meeting was adjourned at 10:28 a.m.\n\nlone A. Kut\n\nSenator Ann H. Rest, Chair Mitch Berggren, Comnfitte\u00e9 Administrator\n",
+      "textSha256": "50a6b06e66efa24e565d45fce1c0614ae0212f2f184203f5195ea6444b920791",
+      "wordBoxes": [
+        {
+          "x": 277,
+          "y": 335,
+          "w": 80,
+          "h": 36,
+          "confidence": 91.498367,
+          "text": "S.F."
+        },
+        {
+          "x": 373,
+          "y": 336,
+          "w": 111,
+          "h": 34,
+          "confidence": 96.854355,
+          "text": "5235:"
+        },
+        {
+          "x": 502,
+          "y": 335,
+          "w": 165,
+          "h": 35,
+          "confidence": 96.257881,
+          "text": "Senator"
+        },
+        {
+          "x": 680,
+          "y": 335,
+          "w": 107,
+          "h": 35,
+          "confidence": 96.751755,
+          "text": "Rest:"
+        },
+        {
+          "x": 804,
+          "y": 335,
+          "w": 119,
+          "h": 35,
+          "confidence": 96.88839,
+          "text": "Local"
+        },
+        {
+          "x": 937,
+          "y": 311,
+          "w": 254,
+          "h": 74,
+          "confidence": 95.825531,
+          "text": "government"
+        },
+        {
+          "x": 1205,
+          "y": 335,
+          "w": 93,
+          "h": 35,
+          "confidence": 96.600853,
+          "text": "debt"
+        },
+        {
+          "x": 1311,
+          "y": 335,
+          "w": 199,
+          "h": 45,
+          "confidence": 96.401611,
+          "text": "financing"
+        },
+        {
+          "x": 1523,
+          "y": 335,
+          "w": 298,
+          "h": 36,
+          "confidence": 95.818832,
+          "text": "modifications."
+        },
+        {
+          "x": 278,
+          "y": 450,
+          "w": 151,
+          "h": 35,
+          "confidence": 96.028542,
+          "text": "Senator"
+        },
+        {
+          "x": 441,
+          "y": 450,
+          "w": 89,
+          "h": 35,
+          "confidence": 96.028542,
+          "text": "Rest"
+        },
+        {
+          "x": 542,
+          "y": 449,
+          "w": 136,
+          "h": 35,
+          "confidence": 96.361443,
+          "text": "moved"
+        },
+        {
+          "x": 690,
+          "y": 449,
+          "w": 61,
+          "h": 35,
+          "confidence": 93.069588,
+          "text": "the"
+        },
+        {
+          "x": 765,
+          "y": 449,
+          "w": 71,
+          "h": 35,
+          "confidence": 92.465408,
+          "text": "A-1"
+        },
+        {
+          "x": 856,
+          "y": 448,
+          "w": 241,
+          "h": 36,
+          "confidence": 96.533234,
+          "text": "amendment."
+        },
+        {
+          "x": 1114,
+          "y": 448,
+          "w": 76,
+          "h": 36,
+          "confidence": 96.517181,
+          "text": "The"
+        },
+        {
+          "x": 1203,
+          "y": 448,
+          "w": 142,
+          "h": 36,
+          "confidence": 95.672165,
+          "text": "motion"
+        },
+        {
+          "x": 1357,
+          "y": 448,
+          "w": 185,
+          "h": 46,
+          "confidence": 96.671852,
+          "text": "prevailed"
+        },
+        {
+          "x": 1556,
+          "y": 448,
+          "w": 71,
+          "h": 36,
+          "confidence": 96.307602,
+          "text": "and"
+        },
+        {
+          "x": 1639,
+          "y": 448,
+          "w": 61,
+          "h": 36,
+          "confidence": 96.463684,
+          "text": "the"
+        },
+        {
+          "x": 1715,
+          "y": 449,
+          "w": 231,
+          "h": 35,
+          "confidence": 96.541504,
+          "text": "amendment"
+        },
+        {
+          "x": 1958,
+          "y": 461,
+          "w": 77,
+          "h": 24,
+          "confidence": 96.651749,
+          "text": "was"
+        },
+        {
+          "x": 2050,
+          "y": 449,
+          "w": 167,
+          "h": 46,
+          "confidence": 96.669624,
+          "text": "adopted."
+        },
+        {
+          "x": 277,
+          "y": 564,
+          "w": 210,
+          "h": 35,
+          "confidence": 67.611519,
+          "text": "Testifiers:"
+        },
+        {
+          "x": 530,
+          "y": 553,
+          "w": 4,
+          "h": 3,
+          "confidence": 2.816429,
+          "text": "\u2014"
+        },
+        {
+          "x": 276,
+          "y": 622,
+          "w": 65,
+          "h": 34,
+          "confidence": 92.686821,
+          "text": "Joe"
+        },
+        {
+          "x": 355,
+          "y": 620,
+          "w": 168,
+          "h": 46,
+          "confidence": 92.03196,
+          "text": "Bagnoli,"
+        },
+        {
+          "x": 539,
+          "y": 620,
+          "w": 189,
+          "h": 46,
+          "confidence": 96.687233,
+          "text": "Winthrop"
+        },
+        {
+          "x": 744,
+          "y": 620,
+          "w": 70,
+          "h": 35,
+          "confidence": 93.294403,
+          "text": "and"
+        },
+        {
+          "x": 828,
+          "y": 620,
+          "w": 212,
+          "h": 43,
+          "confidence": 90.948151,
+          "text": "Weinstine,"
+        },
+        {
+          "x": 1054,
+          "y": 620,
+          "w": 61,
+          "h": 35,
+          "confidence": 96.538162,
+          "text": "the"
+        },
+        {
+          "x": 1128,
+          "y": 620,
+          "w": 213,
+          "h": 36,
+          "confidence": 96.429657,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1352,
+          "y": 620,
+          "w": 162,
+          "h": 36,
+          "confidence": 96.316582,
+          "text": "Institute"
+        },
+        {
+          "x": 1529,
+          "y": 619,
+          "w": 45,
+          "h": 36,
+          "confidence": 96.997185,
+          "text": "of"
+        },
+        {
+          "x": 1581,
+          "y": 620,
+          "w": 127,
+          "h": 36,
+          "confidence": 96.73909,
+          "text": "Public"
+        },
+        {
+          "x": 1722,
+          "y": 620,
+          "w": 158,
+          "h": 36,
+          "confidence": 96.659485,
+          "text": "Finance"
+        },
+        {
+          "x": 276,
+          "y": 678,
+          "w": 157,
+          "h": 35,
+          "confidence": 93.29689,
+          "text": "Rhonda"
+        },
+        {
+          "x": 446,
+          "y": 677,
+          "w": 137,
+          "h": 45,
+          "confidence": 92.516701,
+          "text": "Skoby,"
+        },
+        {
+          "x": 597,
+          "y": 678,
+          "w": 142,
+          "h": 43,
+          "confidence": 96.691574,
+          "text": "Dorsey"
+        },
+        {
+          "x": 754,
+          "y": 678,
+          "w": 89,
+          "h": 35,
+          "confidence": 96.718689,
+          "text": "Law"
+        },
+        {
+          "x": 855,
+          "y": 677,
+          "w": 107,
+          "h": 42,
+          "confidence": 96.955475,
+          "text": "Firm,"
+        },
+        {
+          "x": 976,
+          "y": 677,
+          "w": 61,
+          "h": 35,
+          "confidence": 96.748154,
+          "text": "the"
+        },
+        {
+          "x": 1050,
+          "y": 677,
+          "w": 212,
+          "h": 35,
+          "confidence": 96.561333,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1274,
+          "y": 677,
+          "w": 163,
+          "h": 35,
+          "confidence": 95.723389,
+          "text": "Institute"
+        },
+        {
+          "x": 1452,
+          "y": 676,
+          "w": 46,
+          "h": 36,
+          "confidence": 96.190781,
+          "text": "of"
+        },
+        {
+          "x": 1505,
+          "y": 677,
+          "w": 127,
+          "h": 35,
+          "confidence": 96.089882,
+          "text": "Public"
+        },
+        {
+          "x": 1645,
+          "y": 677,
+          "w": 157,
+          "h": 35,
+          "confidence": 96.881012,
+          "text": "Finance"
+        },
+        {
+          "x": 277,
+          "y": 792,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.599579,
+          "text": "Senator"
+        },
+        {
+          "x": 455,
+          "y": 792,
+          "w": 116,
+          "h": 35,
+          "confidence": 95.644669,
+          "text": "Klein"
+        },
+        {
+          "x": 586,
+          "y": 792,
+          "w": 138,
+          "h": 34,
+          "confidence": 96.074257,
+          "text": "moved"
+        },
+        {
+          "x": 739,
+          "y": 792,
+          "w": 85,
+          "h": 34,
+          "confidence": 93.280846,
+          "text": "that"
+        },
+        {
+          "x": 838,
+          "y": 791,
+          "w": 80,
+          "h": 35,
+          "confidence": 78.986572,
+          "text": "S.F."
+        },
+        {
+          "x": 934,
+          "y": 791,
+          "w": 109,
+          "h": 43,
+          "confidence": 94.401306,
+          "text": "5235,"
+        },
+        {
+          "x": 1059,
+          "y": 802,
+          "w": 41,
+          "h": 24,
+          "confidence": 96.277908,
+          "text": "as"
+        },
+        {
+          "x": 1116,
+          "y": 791,
+          "w": 204,
+          "h": 43,
+          "confidence": 96.364029,
+          "text": "amended,"
+        },
+        {
+          "x": 1335,
+          "y": 791,
+          "w": 48,
+          "h": 35,
+          "confidence": 96.793938,
+          "text": "be"
+        },
+        {
+          "x": 1397,
+          "y": 791,
+          "w": 79,
+          "h": 35,
+          "confidence": 96.418419,
+          "text": "laid"
+        },
+        {
+          "x": 1491,
+          "y": 802,
+          "w": 103,
+          "h": 24,
+          "confidence": 96.573372,
+          "text": "over."
+        },
+        {
+          "x": 277,
+          "y": 906,
+          "w": 75,
+          "h": 36,
+          "confidence": 96.390503,
+          "text": "The"
+        },
+        {
+          "x": 366,
+          "y": 905,
+          "w": 160,
+          "h": 47,
+          "confidence": 96.390503,
+          "text": "meeting"
+        },
+        {
+          "x": 540,
+          "y": 916,
+          "w": 76,
+          "h": 26,
+          "confidence": 96.804329,
+          "text": "was"
+        },
+        {
+          "x": 631,
+          "y": 905,
+          "w": 198,
+          "h": 46,
+          "confidence": 96.40921,
+          "text": "adjourned"
+        },
+        {
+          "x": 844,
+          "y": 910,
+          "w": 34,
+          "h": 31,
+          "confidence": 96.949219,
+          "text": "at"
+        },
+        {
+          "x": 896,
+          "y": 905,
+          "w": 105,
+          "h": 37,
+          "confidence": 96.430222,
+          "text": "10:28"
+        },
+        {
+          "x": 1018,
+          "y": 916,
+          "w": 82,
+          "h": 25,
+          "confidence": 95.657257,
+          "text": "a.m."
+        },
+        {
+          "x": 283,
+          "y": 1021,
+          "w": 506,
+          "h": 100,
+          "confidence": 49.356861,
+          "text": "lone"
+        },
+        {
+          "x": 514,
+          "y": 1017,
+          "w": 94,
+          "h": 141,
+          "confidence": 77.827232,
+          "text": "A."
+        },
+        {
+          "x": 643,
+          "y": 1021,
+          "w": 142,
+          "h": 100,
+          "confidence": 32.922813,
+          "text": "Kut"
+        },
+        {
+          "x": 278,
+          "y": 1166,
+          "w": 150,
+          "h": 35,
+          "confidence": 96.49231,
+          "text": "Senator"
+        },
+        {
+          "x": 441,
+          "y": 1166,
+          "w": 86,
+          "h": 34,
+          "confidence": 93.280174,
+          "text": "Ann"
+        },
+        {
+          "x": 540,
+          "y": 1165,
+          "w": 45,
+          "h": 35,
+          "confidence": 93.181389,
+          "text": "H."
+        },
+        {
+          "x": 601,
+          "y": 1166,
+          "w": 98,
+          "h": 42,
+          "confidence": 96.867531,
+          "text": "Rest,"
+        },
+        {
+          "x": 716,
+          "y": 1164,
+          "w": 109,
+          "h": 36,
+          "confidence": 96.912071,
+          "text": "Chair"
+        },
+        {
+          "x": 1294,
+          "y": 1164,
+          "w": 120,
+          "h": 36,
+          "confidence": 95.46386,
+          "text": "Mitch"
+        },
+        {
+          "x": 1426,
+          "y": 1165,
+          "w": 195,
+          "h": 45,
+          "confidence": 95.46386,
+          "text": "Berggren,"
+        },
+        {
+          "x": 1638,
+          "y": 1144,
+          "w": 220,
+          "h": 57,
+          "confidence": 50.996494,
+          "text": "Comnfitte\u00e9"
+        },
+        {
+          "x": 1871,
+          "y": 1152,
+          "w": 281,
+          "h": 49,
+          "confidence": 96.891647,
+          "text": "Administrator"
+        }
+      ]
+    },
+    "11": {
+      "text": "S.F. 5235: Senator Rest: Local government debt financing modifications.\n\nSenator Rest moved the A-1 amendment. The motion prevailed and the amendment was adopted\n\nTestifiers:\n\nJoe Bagnoli, Winthrop and Weinstine, the Minnesota Institute of Public Finance\n\nRhonda Skoby, Dorsey Law Firm, the Minnesota Institute of Public Finance\n\nSenator Klein moved that S.F. 5235, as amended, be laid over.\n\nThe meeting was adjourned at 10:28 a.m.\n\neee A. Kat\n\nSenator Ann H. Rest, Chair\n\nMitch Berggren, Comnfitte\u00e9 Administrator\n",
+      "textSha256": "83a92a7e1492a8004185667c77e07be7c6b57632f5e7db79b0dc5f3784087910",
+      "wordBoxes": [
+        {
+          "x": 277,
+          "y": 335,
+          "w": 80,
+          "h": 36,
+          "confidence": 91.498367,
+          "text": "S.F."
+        },
+        {
+          "x": 373,
+          "y": 336,
+          "w": 111,
+          "h": 34,
+          "confidence": 96.854355,
+          "text": "5235:"
+        },
+        {
+          "x": 502,
+          "y": 335,
+          "w": 165,
+          "h": 35,
+          "confidence": 96.257881,
+          "text": "Senator"
+        },
+        {
+          "x": 680,
+          "y": 335,
+          "w": 107,
+          "h": 35,
+          "confidence": 96.751755,
+          "text": "Rest:"
+        },
+        {
+          "x": 804,
+          "y": 335,
+          "w": 119,
+          "h": 35,
+          "confidence": 96.88839,
+          "text": "Local"
+        },
+        {
+          "x": 937,
+          "y": 311,
+          "w": 254,
+          "h": 74,
+          "confidence": 95.825531,
+          "text": "government"
+        },
+        {
+          "x": 1205,
+          "y": 335,
+          "w": 93,
+          "h": 35,
+          "confidence": 96.880798,
+          "text": "debt"
+        },
+        {
+          "x": 1311,
+          "y": 335,
+          "w": 199,
+          "h": 45,
+          "confidence": 96.221245,
+          "text": "financing"
+        },
+        {
+          "x": 1523,
+          "y": 292,
+          "w": 298,
+          "h": 93,
+          "confidence": 96.127182,
+          "text": "modifications."
+        },
+        {
+          "x": 278,
+          "y": 450,
+          "w": 151,
+          "h": 35,
+          "confidence": 95.772186,
+          "text": "Senator"
+        },
+        {
+          "x": 441,
+          "y": 450,
+          "w": 89,
+          "h": 35,
+          "confidence": 96.907829,
+          "text": "Rest"
+        },
+        {
+          "x": 542,
+          "y": 449,
+          "w": 136,
+          "h": 35,
+          "confidence": 96.487404,
+          "text": "moved"
+        },
+        {
+          "x": 690,
+          "y": 449,
+          "w": 61,
+          "h": 35,
+          "confidence": 93.083824,
+          "text": "the"
+        },
+        {
+          "x": 765,
+          "y": 449,
+          "w": 71,
+          "h": 35,
+          "confidence": 93.057869,
+          "text": "A-1"
+        },
+        {
+          "x": 856,
+          "y": 448,
+          "w": 241,
+          "h": 36,
+          "confidence": 96.579605,
+          "text": "amendment."
+        },
+        {
+          "x": 1114,
+          "y": 448,
+          "w": 76,
+          "h": 36,
+          "confidence": 96.60186,
+          "text": "The"
+        },
+        {
+          "x": 1203,
+          "y": 448,
+          "w": 142,
+          "h": 36,
+          "confidence": 96.758385,
+          "text": "motion"
+        },
+        {
+          "x": 1357,
+          "y": 448,
+          "w": 185,
+          "h": 46,
+          "confidence": 96.435013,
+          "text": "prevailed"
+        },
+        {
+          "x": 1556,
+          "y": 448,
+          "w": 71,
+          "h": 36,
+          "confidence": 96.714668,
+          "text": "and"
+        },
+        {
+          "x": 1639,
+          "y": 448,
+          "w": 61,
+          "h": 36,
+          "confidence": 96.863365,
+          "text": "the"
+        },
+        {
+          "x": 1715,
+          "y": 449,
+          "w": 231,
+          "h": 35,
+          "confidence": 96.574463,
+          "text": "amendment"
+        },
+        {
+          "x": 1958,
+          "y": 461,
+          "w": 77,
+          "h": 24,
+          "confidence": 96.321281,
+          "text": "was"
+        },
+        {
+          "x": 2050,
+          "y": 449,
+          "w": 157,
+          "h": 46,
+          "confidence": 96.321281,
+          "text": "adopted"
+        },
+        {
+          "x": 277,
+          "y": 564,
+          "w": 210,
+          "h": 35,
+          "confidence": 89.462952,
+          "text": "Testifiers:"
+        },
+        {
+          "x": 276,
+          "y": 622,
+          "w": 65,
+          "h": 34,
+          "confidence": 92.686821,
+          "text": "Joe"
+        },
+        {
+          "x": 355,
+          "y": 620,
+          "w": 168,
+          "h": 46,
+          "confidence": 92.03196,
+          "text": "Bagnoli,"
+        },
+        {
+          "x": 539,
+          "y": 620,
+          "w": 189,
+          "h": 46,
+          "confidence": 96.687233,
+          "text": "Winthrop"
+        },
+        {
+          "x": 744,
+          "y": 620,
+          "w": 70,
+          "h": 35,
+          "confidence": 93.294403,
+          "text": "and"
+        },
+        {
+          "x": 828,
+          "y": 620,
+          "w": 212,
+          "h": 43,
+          "confidence": 90.948151,
+          "text": "Weinstine,"
+        },
+        {
+          "x": 1054,
+          "y": 620,
+          "w": 61,
+          "h": 35,
+          "confidence": 96.538162,
+          "text": "the"
+        },
+        {
+          "x": 1128,
+          "y": 620,
+          "w": 213,
+          "h": 36,
+          "confidence": 96.429657,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1352,
+          "y": 620,
+          "w": 162,
+          "h": 36,
+          "confidence": 96.316582,
+          "text": "Institute"
+        },
+        {
+          "x": 1529,
+          "y": 619,
+          "w": 45,
+          "h": 36,
+          "confidence": 96.997185,
+          "text": "of"
+        },
+        {
+          "x": 1581,
+          "y": 620,
+          "w": 127,
+          "h": 36,
+          "confidence": 96.73909,
+          "text": "Public"
+        },
+        {
+          "x": 1722,
+          "y": 620,
+          "w": 158,
+          "h": 36,
+          "confidence": 96.659485,
+          "text": "Finance"
+        },
+        {
+          "x": 276,
+          "y": 678,
+          "w": 157,
+          "h": 35,
+          "confidence": 93.29689,
+          "text": "Rhonda"
+        },
+        {
+          "x": 446,
+          "y": 677,
+          "w": 137,
+          "h": 45,
+          "confidence": 92.516701,
+          "text": "Skoby,"
+        },
+        {
+          "x": 597,
+          "y": 678,
+          "w": 142,
+          "h": 43,
+          "confidence": 96.691574,
+          "text": "Dorsey"
+        },
+        {
+          "x": 754,
+          "y": 678,
+          "w": 89,
+          "h": 35,
+          "confidence": 96.718689,
+          "text": "Law"
+        },
+        {
+          "x": 855,
+          "y": 677,
+          "w": 107,
+          "h": 42,
+          "confidence": 96.955475,
+          "text": "Firm,"
+        },
+        {
+          "x": 976,
+          "y": 677,
+          "w": 61,
+          "h": 35,
+          "confidence": 96.748154,
+          "text": "the"
+        },
+        {
+          "x": 1050,
+          "y": 677,
+          "w": 212,
+          "h": 35,
+          "confidence": 96.561333,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1274,
+          "y": 677,
+          "w": 163,
+          "h": 35,
+          "confidence": 95.723389,
+          "text": "Institute"
+        },
+        {
+          "x": 1452,
+          "y": 676,
+          "w": 46,
+          "h": 36,
+          "confidence": 96.190781,
+          "text": "of"
+        },
+        {
+          "x": 1505,
+          "y": 677,
+          "w": 127,
+          "h": 35,
+          "confidence": 96.089882,
+          "text": "Public"
+        },
+        {
+          "x": 1645,
+          "y": 677,
+          "w": 157,
+          "h": 35,
+          "confidence": 96.881012,
+          "text": "Finance"
+        },
+        {
+          "x": 277,
+          "y": 792,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.599579,
+          "text": "Senator"
+        },
+        {
+          "x": 455,
+          "y": 792,
+          "w": 116,
+          "h": 35,
+          "confidence": 95.644669,
+          "text": "Klein"
+        },
+        {
+          "x": 586,
+          "y": 792,
+          "w": 138,
+          "h": 34,
+          "confidence": 96.074257,
+          "text": "moved"
+        },
+        {
+          "x": 739,
+          "y": 792,
+          "w": 85,
+          "h": 34,
+          "confidence": 93.280846,
+          "text": "that"
+        },
+        {
+          "x": 838,
+          "y": 791,
+          "w": 80,
+          "h": 35,
+          "confidence": 78.986572,
+          "text": "S.F."
+        },
+        {
+          "x": 934,
+          "y": 791,
+          "w": 109,
+          "h": 43,
+          "confidence": 94.401306,
+          "text": "5235,"
+        },
+        {
+          "x": 1059,
+          "y": 802,
+          "w": 41,
+          "h": 24,
+          "confidence": 96.277908,
+          "text": "as"
+        },
+        {
+          "x": 1116,
+          "y": 791,
+          "w": 204,
+          "h": 43,
+          "confidence": 96.364029,
+          "text": "amended,"
+        },
+        {
+          "x": 1335,
+          "y": 791,
+          "w": 48,
+          "h": 35,
+          "confidence": 96.793938,
+          "text": "be"
+        },
+        {
+          "x": 1397,
+          "y": 791,
+          "w": 79,
+          "h": 35,
+          "confidence": 96.418419,
+          "text": "laid"
+        },
+        {
+          "x": 1491,
+          "y": 802,
+          "w": 103,
+          "h": 24,
+          "confidence": 96.573372,
+          "text": "over."
+        },
+        {
+          "x": 277,
+          "y": 906,
+          "w": 75,
+          "h": 36,
+          "confidence": 96.390503,
+          "text": "The"
+        },
+        {
+          "x": 366,
+          "y": 905,
+          "w": 160,
+          "h": 47,
+          "confidence": 96.390503,
+          "text": "meeting"
+        },
+        {
+          "x": 540,
+          "y": 916,
+          "w": 76,
+          "h": 26,
+          "confidence": 96.804329,
+          "text": "was"
+        },
+        {
+          "x": 631,
+          "y": 905,
+          "w": 198,
+          "h": 46,
+          "confidence": 96.40921,
+          "text": "adjourned"
+        },
+        {
+          "x": 844,
+          "y": 910,
+          "w": 34,
+          "h": 31,
+          "confidence": 96.949219,
+          "text": "at"
+        },
+        {
+          "x": 896,
+          "y": 905,
+          "w": 105,
+          "h": 37,
+          "confidence": 96.430222,
+          "text": "10:28"
+        },
+        {
+          "x": 1018,
+          "y": 916,
+          "w": 82,
+          "h": 25,
+          "confidence": 95.657257,
+          "text": "a.m."
+        },
+        {
+          "x": 283,
+          "y": 1021,
+          "w": 506,
+          "h": 100,
+          "confidence": 32.524017,
+          "text": "eee"
+        },
+        {
+          "x": 510,
+          "y": 1017,
+          "w": 102,
+          "h": 121,
+          "confidence": 74.028969,
+          "text": "A."
+        },
+        {
+          "x": 642,
+          "y": 1021,
+          "w": 147,
+          "h": 100,
+          "confidence": 58.757435,
+          "text": "Kat"
+        },
+        {
+          "x": 278,
+          "y": 1166,
+          "w": 150,
+          "h": 35,
+          "confidence": 96.736053,
+          "text": "Senator"
+        },
+        {
+          "x": 441,
+          "y": 1166,
+          "w": 86,
+          "h": 34,
+          "confidence": 93.286873,
+          "text": "Ann"
+        },
+        {
+          "x": 540,
+          "y": 1165,
+          "w": 45,
+          "h": 35,
+          "confidence": 90.687653,
+          "text": "H."
+        },
+        {
+          "x": 601,
+          "y": 1166,
+          "w": 98,
+          "h": 42,
+          "confidence": 95.925529,
+          "text": "Rest,"
+        },
+        {
+          "x": 716,
+          "y": 1164,
+          "w": 109,
+          "h": 36,
+          "confidence": 96.479614,
+          "text": "Chair"
+        },
+        {
+          "x": 1294,
+          "y": 1164,
+          "w": 120,
+          "h": 36,
+          "confidence": 95.46386,
+          "text": "Mitch"
+        },
+        {
+          "x": 1426,
+          "y": 1165,
+          "w": 195,
+          "h": 45,
+          "confidence": 95.46386,
+          "text": "Berggren,"
+        },
+        {
+          "x": 1638,
+          "y": 1144,
+          "w": 220,
+          "h": 57,
+          "confidence": 50.996494,
+          "text": "Comnfitte\u00e9"
+        },
+        {
+          "x": 1871,
+          "y": 1152,
+          "w": 281,
+          "h": 49,
+          "confidence": 96.891647,
+          "text": "Administrator"
+        }
+      ]
+    }
+  }
+}

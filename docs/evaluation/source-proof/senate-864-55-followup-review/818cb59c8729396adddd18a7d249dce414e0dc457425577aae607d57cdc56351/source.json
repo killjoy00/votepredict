@@ -1,0 +1,110 @@
+{
+  "sourceId": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+  "originalSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+  "extractedTextSha256": "af7b7c52f641ea4c6b95fd198e1df134c317ed95b50640020e727d5e728f1f03",
+  "date": "2023-04-27",
+  "committee": "Taxes",
+  "session": "2023-2024",
+  "format": "pdf",
+  "authenticated": true,
+  "readable": true,
+  "extractionMethod": "ocr_tesseract",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "pages": [
+    {
+      "page": 1,
+      "raw300dpiPageSha256": "e6a7eead1df80de8160924ba3fe307dbcfb009ffbd9b6fdcf48abe6387f25a48",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "09c7cd64c63c72f04cdae25ab4260c35eca4b66cdc7f4a4b3eca2eb40c2e423c"
+    },
+    {
+      "page": 2,
+      "raw300dpiPageSha256": "49cfd648fd4d6dafba0f19d5cba733d5d88f30537c2673bb806079ad2d60cbd1",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "2a22bb7b6fd3ebb62a56ef79841e9f9ddc5609335840aa5a943480f048d97c01"
+    },
+    {
+      "page": 3,
+      "raw300dpiPageSha256": "2507b5a796f9bb715f473707205a41a14c85da0549bdcf2d5fff6bfc28c8c5a9",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "b138b25b115464683a963decd5a5355ae43fb73e65752d3a6c7b64041e6e0d82"
+    },
+    {
+      "page": 4,
+      "raw300dpiPageSha256": "011b68341405ab4ff4de4da5d79e1865d30aa6e1ed63eb65dc8bfc72bca711b4",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "fe271322c4101b4dbd3f6af7d6eb38534fa60af66d660d109b865a368a451257"
+    },
+    {
+      "page": 5,
+      "raw300dpiPageSha256": "3a6e1fc0c2cdb7352731fdd8d0f9cccf69b4a6b0d4f03183d0f2404b3a971c21",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "66148a32022a78311ce434c8588299af883e1d0ad3f013b64acfecef4dee77b2"
+    },
+    {
+      "page": 6,
+      "raw300dpiPageSha256": "7d09f43804b367f95c30ac57af60889173a1832eee04057e9038f511a4d70329",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "8733aaa6a1e2823213204b453e344845977ba02e1bc819430b093b2632cc451f"
+    },
+    {
+      "page": 7,
+      "raw300dpiPageSha256": "a5cc56cff57d89f42d0a122b656cede56bc46446a6b875b570cf63952c84d7db",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "3733b87d3ea65a6e4672af9aa35568570885dcf8cdb8191db8411bdf6b484cdf"
+    },
+    {
+      "page": 8,
+      "raw300dpiPageSha256": "eac8f89f17e56f9d8b1e1965be73135702afe0ace83734d52fe00c98543dc5dd",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "ef645b8d16002f1c51f0b00decdc9182e3cf8e0bf5646363a041411c065d52fe"
+    },
+    {
+      "page": 9,
+      "raw300dpiPageSha256": "215bee8d947ccf876b74294fb596fb82b62905c107b680295755c9337dfd7038",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "d7746610966fdf733f263d98102e241c3ba556c823f215e560a39f7898f6cb48"
+    },
+    {
+      "page": 10,
+      "raw300dpiPageSha256": "9564d861a272f5aed88b215a3226bc5dd472b5d3c2184bfd3ff9f6c7744749fb",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "693d190df3b8937a9e5dd2eb77f83a50fab8f180cfd4579c8091bdf59adeda33"
+    },
+    {
+      "page": 11,
+      "raw300dpiPageSha256": "8408f52f9873d92b171e3e822fdc003a2f34f18a8739e7fe6270df3d4689039d",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "82b53c7c637b58adbf5b1bfa415a69ca4a74eba66959904ea01a502d49fcfd68"
+    },
+    {
+      "page": 12,
+      "raw300dpiPageSha256": "88031797f02c92f9f162301d7a69fa1c02c7ae0d0d95c912305ab17fab823be4",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "7e23bc39bf91de40421be622f85cb07718b861928e825815cc1d7be78f06fcf3"
+    },
+    {
+      "page": 13,
+      "raw300dpiPageSha256": "0b7b82c72ecae5f502a6ac1f87b7e7cd03f3902e114f00acb51b590474c89562",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "6fdd82d797020aee61b9439c709bf4239eef8367abb3e3cd36a8d8efa7fa7a71"
+    }
+  ],
+  "pageCount": 13,
+  "originalBytesAuthenticated": true
+}

@@ -1,0 +1,33 @@
+{
+  "sourceId": "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230512/Taxes_20230512_Signed-Minutes.pdf",
+  "originalSha256": "55b04f01403a8df728069c8e8d3e975dbeca6ffc8bef431699587254f9d0d4a2",
+  "extractedTextSha256": "2c67aac34dc9c6de9d846be103d6e84eec0df0ee18f88ffe1bdf9ef581e4ae8c",
+  "date": "2023-05-12",
+  "committee": "Taxes",
+  "session": "2023-2024",
+  "format": "pdf",
+  "authenticated": true,
+  "readable": true,
+  "extractionMethod": "ocr_tesseract",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "pages": [
+    {
+      "page": 1,
+      "raw300dpiPageSha256": "c377b55fadc64b9fde43fabf9f2b0d0c828b58cce4f395a7e4e0457d7739c1d8",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "b768428b107d4c1e96e2322763bd3ba64191eb32223b76079537f665037f5f0a"
+    },
+    {
+      "page": 2,
+      "raw300dpiPageSha256": "902d433af903bebdf47eddd8e1106ab4ea7bb2ba1611372dd81f90b63939a462",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "7e27172d819b64d8daf00996ceccb1ef077b6eb198f0503695f15663e1151a03"
+    }
+  ],
+  "pageCount": 2,
+  "originalBytesAuthenticated": true
+}

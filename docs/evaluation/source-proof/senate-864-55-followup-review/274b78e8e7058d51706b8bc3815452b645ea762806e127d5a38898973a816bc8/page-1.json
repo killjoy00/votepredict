@@ -1,0 +1,4902 @@
+{
+  "page": 1,
+  "raw300dpiPageSha256": "677781835de5a667f4f5b433ce5d272261547c7a665827c7d22067b1874d59ef",
+  "width": 2550,
+  "height": 4200,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 33.25\nScript: Latin\nScript confidence: 4.38\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 33.25
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "d34fa3831010f59870a1bc0dca32b4c128a181663acb67cb31cafaff6bcd397c",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "Taxes Committee\nTuesday, April 9th, 2024\n08:30 AM, G-15 Capitol\n\nMinutes\ntant\n\nPresent: Senator Ann H. Rest - Chair, Senator Matt D. Klein - Vice Chair, Senator Bill\nWeber, Senator D. Scott Dibble, Senator Steve Drazkowski, Senator Grant Hauschild,\nSenator Jeremy R. Miller, Senator Carla J. Nelson, Senator Aric Putnam\n\nExcused: Senator Kari Dziedzic\n\nSenator Ann H. Rest called the meeting to order at 8:32 a.m.\nApproval of the minutes from 4/3/24 and 4/4/24.\nThe minutes were approved as presented.\n\nS.F. 5118: Senator Pha: Taxable cannabis gross receipts tax revenue appropriation for\ncertain purposes.\n\nSenator Klein moved the A-3 amendment. The motion prevailed and the amendment was\nadopted.\n\nTestifiers:\nDarian Lofton, member of the Cannabis Awareness and Education Council for Youth\nEmmett Dysart, member of the Cannabis Awareness and Education Council for Youth\n\nSenator Klein moved that S.F. 5118, as amended, recommended to pass and re-referred to\nthe Committee on Finance. MOTION PREVAILED.\n\nS.F. 4483: Senator Oumou Verbeten: Misclassification of employees prohibition.\n\nTestifier:\nJoanna Bayers, Legislative Director, Department of Revenue.\n\nSenator Klein moved that S.F. 4483 be recommended to pass and re-referred to the\nCommittee on Finance. MOTION PREVAILED.\n\nS.F. 5191: Senator Dibble: Emerald ash borer infested trees removal tax credit provision.\n\nTestifiers:\n\nTom Olsen, Commissioner, Minneapolis Park and Recreation Board\nJeremiah Ellison, City Councilmember, Minneapolis\n\nRoxxanne O\u2019Brien, Minneapolis citizen\n\nFelicia Perry, Economic Development Strategist\n\nSenator Rest moved that S.F. 5191 be laid over.\n\nS.F. 5110: Senator Rest: Hennepin County local sales and use tax authority modification.\nSenator Rest moved the A-2 amendment. The motion prevailed and the amendment was adopted.\nTestifiers:\n\nIrene Fernando, Board Chair, Hennepin County\n\nDavid Hough, Administrator, Hennepin County\n\nStella Whitney-West, CEO, Northpoint Health and Wellness Center\n\nAdam Dunnick, President and CEO, Minneapolis Downtown Council\n\nSenator Klein moved that S.F. 5110, as amended, be laid over.\n",
+      "textSha256": "5c07855aaae6988a659df51bd5c81e11269a5d0b850df1d42dd035a218e16fbb",
+      "wordBoxes": [
+        {
+          "x": 298,
+          "y": 310,
+          "w": 123,
+          "h": 35,
+          "confidence": 95.429977,
+          "text": "Taxes"
+        },
+        {
+          "x": 437,
+          "y": 309,
+          "w": 235,
+          "h": 35,
+          "confidence": 95.429977,
+          "text": "Committee"
+        },
+        {
+          "x": 298,
+          "y": 367,
+          "w": 192,
+          "h": 44,
+          "confidence": 96.617401,
+          "text": "Tuesday,"
+        },
+        {
+          "x": 504,
+          "y": 366,
+          "w": 115,
+          "h": 45,
+          "confidence": 96.28054,
+          "text": "April"
+        },
+        {
+          "x": 632,
+          "y": 365,
+          "w": 80,
+          "h": 42,
+          "confidence": 96.090065,
+          "text": "9th,"
+        },
+        {
+          "x": 726,
+          "y": 364,
+          "w": 98,
+          "h": 35,
+          "confidence": 96.912941,
+          "text": "2024"
+        },
+        {
+          "x": 299,
+          "y": 423,
+          "w": 114,
+          "h": 36,
+          "confidence": 95.523628,
+          "text": "08:30"
+        },
+        {
+          "x": 427,
+          "y": 423,
+          "w": 94,
+          "h": 42,
+          "confidence": 93.064278,
+          "text": "AM,"
+        },
+        {
+          "x": 537,
+          "y": 422,
+          "w": 102,
+          "h": 36,
+          "confidence": 92.886177,
+          "text": "G-15"
+        },
+        {
+          "x": 656,
+          "y": 421,
+          "w": 158,
+          "h": 45,
+          "confidence": 95.547752,
+          "text": "Capitol"
+        },
+        {
+          "x": 1188,
+          "y": 532,
+          "w": 173,
+          "h": 34,
+          "confidence": 96.45121,
+          "text": "Minutes"
+        },
+        {
+          "x": 298,
+          "y": 608,
+          "w": 1956,
+          "h": 19,
+          "confidence": 12.478119,
+          "text": "tant"
+        },
+        {
+          "x": 299,
+          "y": 650,
+          "w": 173,
+          "h": 35,
+          "confidence": 96.418427,
+          "text": "Present:"
+        },
+        {
+          "x": 490,
+          "y": 649,
+          "w": 167,
+          "h": 35,
+          "confidence": 96.561005,
+          "text": "Senator"
+        },
+        {
+          "x": 668,
+          "y": 648,
+          "w": 92,
+          "h": 35,
+          "confidence": 93.181946,
+          "text": "Ann"
+        },
+        {
+          "x": 774,
+          "y": 647,
+          "w": 49,
+          "h": 35,
+          "confidence": 93.147415,
+          "text": "H."
+        },
+        {
+          "x": 838,
+          "y": 647,
+          "w": 94,
+          "h": 35,
+          "confidence": 92.785393,
+          "text": "Rest"
+        },
+        {
+          "x": 945,
+          "y": 666,
+          "w": 15,
+          "h": 6,
+          "confidence": 92.785393,
+          "text": "-"
+        },
+        {
+          "x": 976,
+          "y": 646,
+          "w": 134,
+          "h": 42,
+          "confidence": 96.361519,
+          "text": "Chair,"
+        },
+        {
+          "x": 1125,
+          "y": 645,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.255676,
+          "text": "Senator"
+        },
+        {
+          "x": 1303,
+          "y": 644,
+          "w": 106,
+          "h": 35,
+          "confidence": 93.283852,
+          "text": "Matt"
+        },
+        {
+          "x": 1422,
+          "y": 644,
+          "w": 46,
+          "h": 34,
+          "confidence": 92.092468,
+          "text": "D."
+        },
+        {
+          "x": 1483,
+          "y": 643,
+          "w": 116,
+          "h": 35,
+          "confidence": 93.240402,
+          "text": "Klein"
+        },
+        {
+          "x": 1613,
+          "y": 662,
+          "w": 15,
+          "h": 6,
+          "confidence": 93.232925,
+          "text": "-"
+        },
+        {
+          "x": 1641,
+          "y": 642,
+          "w": 95,
+          "h": 35,
+          "confidence": 96.561722,
+          "text": "Vice"
+        },
+        {
+          "x": 1751,
+          "y": 641,
+          "w": 134,
+          "h": 42,
+          "confidence": 96.289352,
+          "text": "Chair,"
+        },
+        {
+          "x": 1901,
+          "y": 640,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.353355,
+          "text": "Senator"
+        },
+        {
+          "x": 2079,
+          "y": 639,
+          "w": 76,
+          "h": 34,
+          "confidence": 96.692398,
+          "text": "Bill"
+        },
+        {
+          "x": 298,
+          "y": 707,
+          "w": 156,
+          "h": 42,
+          "confidence": 94.41478,
+          "text": "Weber,"
+        },
+        {
+          "x": 470,
+          "y": 706,
+          "w": 166,
+          "h": 35,
+          "confidence": 92.169991,
+          "text": "Senator"
+        },
+        {
+          "x": 648,
+          "y": 705,
+          "w": 46,
+          "h": 34,
+          "confidence": 92.169991,
+          "text": "D."
+        },
+        {
+          "x": 711,
+          "y": 704,
+          "w": 108,
+          "h": 36,
+          "confidence": 96.804863,
+          "text": "Scott"
+        },
+        {
+          "x": 831,
+          "y": 704,
+          "w": 153,
+          "h": 42,
+          "confidence": 96.856575,
+          "text": "Dibble,"
+        },
+        {
+          "x": 1000,
+          "y": 703,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.621292,
+          "text": "Senator"
+        },
+        {
+          "x": 1179,
+          "y": 702,
+          "w": 112,
+          "h": 35,
+          "confidence": 93.298637,
+          "text": "Steve"
+        },
+        {
+          "x": 1304,
+          "y": 700,
+          "w": 267,
+          "h": 42,
+          "confidence": 91.004135,
+          "text": "Drazkowski,"
+        },
+        {
+          "x": 1587,
+          "y": 699,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.616585,
+          "text": "Senator"
+        },
+        {
+          "x": 1767,
+          "y": 697,
+          "w": 129,
+          "h": 36,
+          "confidence": 93.296089,
+          "text": "Grant"
+        },
+        {
+          "x": 1908,
+          "y": 696,
+          "w": 229,
+          "h": 42,
+          "confidence": 92.067856,
+          "text": "Hauschild,"
+        },
+        {
+          "x": 301,
+          "y": 764,
+          "w": 166,
+          "h": 35,
+          "confidence": 95.890381,
+          "text": "Senator"
+        },
+        {
+          "x": 479,
+          "y": 763,
+          "w": 158,
+          "h": 44,
+          "confidence": 93.300537,
+          "text": "Jeremy"
+        },
+        {
+          "x": 650,
+          "y": 762,
+          "w": 46,
+          "h": 35,
+          "confidence": 92.411163,
+          "text": "R."
+        },
+        {
+          "x": 711,
+          "y": 761,
+          "w": 145,
+          "h": 43,
+          "confidence": 96.570251,
+          "text": "Miller,"
+        },
+        {
+          "x": 871,
+          "y": 760,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.329636,
+          "text": "Senator"
+        },
+        {
+          "x": 1051,
+          "y": 759,
+          "w": 121,
+          "h": 36,
+          "confidence": 96.072784,
+          "text": "Carla"
+        },
+        {
+          "x": 1185,
+          "y": 759,
+          "w": 36,
+          "h": 35,
+          "confidence": 96.712357,
+          "text": "J."
+        },
+        {
+          "x": 1234,
+          "y": 759,
+          "w": 156,
+          "h": 42,
+          "confidence": 96.712357,
+          "text": "Nelson,"
+        },
+        {
+          "x": 1406,
+          "y": 757,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.489838,
+          "text": "Senator"
+        },
+        {
+          "x": 1584,
+          "y": 757,
+          "w": 94,
+          "h": 34,
+          "confidence": 96.720573,
+          "text": "Aric"
+        },
+        {
+          "x": 1691,
+          "y": 755,
+          "w": 168,
+          "h": 35,
+          "confidence": 94.474304,
+          "text": "Putnam"
+        },
+        {
+          "x": 300,
+          "y": 877,
+          "w": 190,
+          "h": 35,
+          "confidence": 94.609642,
+          "text": "Excused:"
+        },
+        {
+          "x": 509,
+          "y": 876,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.667961,
+          "text": "Senator"
+        },
+        {
+          "x": 687,
+          "y": 875,
+          "w": 100,
+          "h": 35,
+          "confidence": 93.20359,
+          "text": "Kari"
+        },
+        {
+          "x": 800,
+          "y": 874,
+          "w": 180,
+          "h": 35,
+          "confidence": 91.401237,
+          "text": "Dziedzic"
+        },
+        {
+          "x": 302,
+          "y": 990,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.141479,
+          "text": "Senator"
+        },
+        {
+          "x": 479,
+          "y": 990,
+          "w": 92,
+          "h": 34,
+          "confidence": 93.233246,
+          "text": "Ann"
+        },
+        {
+          "x": 585,
+          "y": 989,
+          "w": 49,
+          "h": 51,
+          "confidence": 93.227371,
+          "text": "H."
+        },
+        {
+          "x": 649,
+          "y": 989,
+          "w": 94,
+          "h": 34,
+          "confidence": 96.426155,
+          "text": "Rest"
+        },
+        {
+          "x": 757,
+          "y": 988,
+          "w": 124,
+          "h": 35,
+          "confidence": 96.580978,
+          "text": "called"
+        },
+        {
+          "x": 894,
+          "y": 988,
+          "w": 66,
+          "h": 34,
+          "confidence": 96.900368,
+          "text": "the"
+        },
+        {
+          "x": 974,
+          "y": 988,
+          "w": 169,
+          "h": 44,
+          "confidence": 96.440712,
+          "text": "meeting"
+        },
+        {
+          "x": 1156,
+          "y": 990,
+          "w": 39,
+          "h": 31,
+          "confidence": 96.934799,
+          "text": "to"
+        },
+        {
+          "x": 1212,
+          "y": 986,
+          "w": 117,
+          "h": 35,
+          "confidence": 96.961227,
+          "text": "order"
+        },
+        {
+          "x": 1342,
+          "y": 989,
+          "w": 41,
+          "h": 31,
+          "confidence": 96.688004,
+          "text": "at"
+        },
+        {
+          "x": 1397,
+          "y": 985,
+          "w": 87,
+          "h": 35,
+          "confidence": 96.688004,
+          "text": "8:32"
+        },
+        {
+          "x": 1501,
+          "y": 995,
+          "w": 88,
+          "h": 24,
+          "confidence": 96.766937,
+          "text": "a.m."
+        },
+        {
+          "x": 300,
+          "y": 1104,
+          "w": 204,
+          "h": 45,
+          "confidence": 96.279968,
+          "text": "Approval"
+        },
+        {
+          "x": 518,
+          "y": 1103,
+          "w": 45,
+          "h": 35,
+          "confidence": 96.279968,
+          "text": "of"
+        },
+        {
+          "x": 571,
+          "y": 1103,
+          "w": 66,
+          "h": 34,
+          "confidence": 96.859306,
+          "text": "the"
+        },
+        {
+          "x": 651,
+          "y": 1103,
+          "w": 167,
+          "h": 34,
+          "confidence": 96.159103,
+          "text": "minutes"
+        },
+        {
+          "x": 833,
+          "y": 1102,
+          "w": 104,
+          "h": 35,
+          "confidence": 96.159103,
+          "text": "from"
+        },
+        {
+          "x": 952,
+          "y": 1101,
+          "w": 125,
+          "h": 35,
+          "confidence": 96.743065,
+          "text": "4/3/24"
+        },
+        {
+          "x": 1093,
+          "y": 1101,
+          "w": 79,
+          "h": 34,
+          "confidence": 96.628136,
+          "text": "and"
+        },
+        {
+          "x": 1186,
+          "y": 1100,
+          "w": 136,
+          "h": 35,
+          "confidence": 95.57843,
+          "text": "4/4/24."
+        },
+        {
+          "x": 301,
+          "y": 1217,
+          "w": 77,
+          "h": 36,
+          "confidence": 96.238243,
+          "text": "The"
+        },
+        {
+          "x": 391,
+          "y": 1217,
+          "w": 158,
+          "h": 35,
+          "confidence": 96.661911,
+          "text": "minutes"
+        },
+        {
+          "x": 563,
+          "y": 1227,
+          "w": 96,
+          "h": 25,
+          "confidence": 96.661911,
+          "text": "were"
+        },
+        {
+          "x": 673,
+          "y": 1215,
+          "w": 186,
+          "h": 46,
+          "confidence": 96.259491,
+          "text": "approved"
+        },
+        {
+          "x": 873,
+          "y": 1226,
+          "w": 39,
+          "h": 25,
+          "confidence": 96.742882,
+          "text": "as"
+        },
+        {
+          "x": 925,
+          "y": 1214,
+          "w": 202,
+          "h": 47,
+          "confidence": 96.470284,
+          "text": "presented."
+        },
+        {
+          "x": 303,
+          "y": 1332,
+          "w": 80,
+          "h": 36,
+          "confidence": 89.10524,
+          "text": "S.F."
+        },
+        {
+          "x": 398,
+          "y": 1332,
+          "w": 112,
+          "h": 35,
+          "confidence": 96.625542,
+          "text": "5118:"
+        },
+        {
+          "x": 529,
+          "y": 1331,
+          "w": 165,
+          "h": 36,
+          "confidence": 96.396492,
+          "text": "Senator"
+        },
+        {
+          "x": 706,
+          "y": 1331,
+          "w": 96,
+          "h": 35,
+          "confidence": 96.845657,
+          "text": "Pha:"
+        },
+        {
+          "x": 820,
+          "y": 1330,
+          "w": 172,
+          "h": 35,
+          "confidence": 96.617661,
+          "text": "Taxable"
+        },
+        {
+          "x": 1007,
+          "y": 1329,
+          "w": 185,
+          "h": 35,
+          "confidence": 96.191933,
+          "text": "cannabis"
+        },
+        {
+          "x": 1208,
+          "y": 1339,
+          "w": 107,
+          "h": 35,
+          "confidence": 96.277283,
+          "text": "gross"
+        },
+        {
+          "x": 1331,
+          "y": 1328,
+          "w": 164,
+          "h": 45,
+          "confidence": 96.180969,
+          "text": "receipts"
+        },
+        {
+          "x": 1510,
+          "y": 1331,
+          "w": 66,
+          "h": 31,
+          "confidence": 96.866379,
+          "text": "tax"
+        },
+        {
+          "x": 1590,
+          "y": 1337,
+          "w": 168,
+          "h": 25,
+          "confidence": 96.602654,
+          "text": "revenue"
+        },
+        {
+          "x": 1773,
+          "y": 1325,
+          "w": 299,
+          "h": 46,
+          "confidence": 95.642967,
+          "text": "appropriation"
+        },
+        {
+          "x": 2085,
+          "y": 1324,
+          "w": 64,
+          "h": 36,
+          "confidence": 95.642967,
+          "text": "for"
+        },
+        {
+          "x": 303,
+          "y": 1390,
+          "w": 147,
+          "h": 34,
+          "confidence": 95.990311,
+          "text": "certain"
+        },
+        {
+          "x": 465,
+          "y": 1399,
+          "w": 202,
+          "h": 35,
+          "confidence": 95.990311,
+          "text": "purposes."
+        },
+        {
+          "x": 305,
+          "y": 1503,
+          "w": 151,
+          "h": 36,
+          "confidence": 96.762222,
+          "text": "Senator"
+        },
+        {
+          "x": 468,
+          "y": 1502,
+          "w": 111,
+          "h": 36,
+          "confidence": 96.436005,
+          "text": "Klein"
+        },
+        {
+          "x": 591,
+          "y": 1501,
+          "w": 137,
+          "h": 36,
+          "confidence": 96.609543,
+          "text": "moved"
+        },
+        {
+          "x": 739,
+          "y": 1501,
+          "w": 62,
+          "h": 35,
+          "confidence": 93.299744,
+          "text": "the"
+        },
+        {
+          "x": 815,
+          "y": 1502,
+          "w": 73,
+          "h": 34,
+          "confidence": 92.075638,
+          "text": "A-3"
+        },
+        {
+          "x": 906,
+          "y": 1501,
+          "w": 242,
+          "h": 35,
+          "confidence": 96.690506,
+          "text": "amendment."
+        },
+        {
+          "x": 1164,
+          "y": 1500,
+          "w": 77,
+          "h": 35,
+          "confidence": 96.699722,
+          "text": "The"
+        },
+        {
+          "x": 1254,
+          "y": 1499,
+          "w": 142,
+          "h": 36,
+          "confidence": 96.629044,
+          "text": "motion"
+        },
+        {
+          "x": 1408,
+          "y": 1498,
+          "w": 186,
+          "h": 47,
+          "confidence": 96.845833,
+          "text": "prevailed"
+        },
+        {
+          "x": 1608,
+          "y": 1498,
+          "w": 71,
+          "h": 35,
+          "confidence": 96.873032,
+          "text": "and"
+        },
+        {
+          "x": 1690,
+          "y": 1498,
+          "w": 62,
+          "h": 35,
+          "confidence": 96.758568,
+          "text": "the"
+        },
+        {
+          "x": 1767,
+          "y": 1497,
+          "w": 233,
+          "h": 35,
+          "confidence": 96.340767,
+          "text": "amendment"
+        },
+        {
+          "x": 2011,
+          "y": 1507,
+          "w": 77,
+          "h": 24,
+          "confidence": 96.955811,
+          "text": "was"
+        },
+        {
+          "x": 304,
+          "y": 1555,
+          "w": 167,
+          "h": 55,
+          "confidence": 96.816032,
+          "text": "adopted."
+        },
+        {
+          "x": 303,
+          "y": 1673,
+          "w": 212,
+          "h": 36,
+          "confidence": 92.82666,
+          "text": "Testifiers:"
+        },
+        {
+          "x": 303,
+          "y": 1729,
+          "w": 136,
+          "h": 36,
+          "confidence": 96.392509,
+          "text": "Darian"
+        },
+        {
+          "x": 451,
+          "y": 1729,
+          "w": 147,
+          "h": 43,
+          "confidence": 96.018974,
+          "text": "Lofton,"
+        },
+        {
+          "x": 613,
+          "y": 1728,
+          "w": 165,
+          "h": 36,
+          "confidence": 96.473206,
+          "text": "member"
+        },
+        {
+          "x": 791,
+          "y": 1728,
+          "w": 46,
+          "h": 36,
+          "confidence": 96.696228,
+          "text": "of"
+        },
+        {
+          "x": 844,
+          "y": 1728,
+          "w": 60,
+          "h": 36,
+          "confidence": 96.986984,
+          "text": "the"
+        },
+        {
+          "x": 920,
+          "y": 1727,
+          "w": 183,
+          "h": 37,
+          "confidence": 96.846481,
+          "text": "Cannabis"
+        },
+        {
+          "x": 1117,
+          "y": 1729,
+          "w": 218,
+          "h": 34,
+          "confidence": 96.514992,
+          "text": "Awareness"
+        },
+        {
+          "x": 1350,
+          "y": 1726,
+          "w": 71,
+          "h": 36,
+          "confidence": 96.791756,
+          "text": "and"
+        },
+        {
+          "x": 1434,
+          "y": 1726,
+          "w": 203,
+          "h": 36,
+          "confidence": 96.713554,
+          "text": "Education"
+        },
+        {
+          "x": 1651,
+          "y": 1725,
+          "w": 156,
+          "h": 36,
+          "confidence": 96.414383,
+          "text": "Council"
+        },
+        {
+          "x": 1822,
+          "y": 1724,
+          "w": 57,
+          "h": 36,
+          "confidence": 96.369934,
+          "text": "for"
+        },
+        {
+          "x": 1892,
+          "y": 1724,
+          "w": 126,
+          "h": 36,
+          "confidence": 96.551208,
+          "text": "Youth"
+        },
+        {
+          "x": 303,
+          "y": 1787,
+          "w": 159,
+          "h": 35,
+          "confidence": 96.530716,
+          "text": "Emmett"
+        },
+        {
+          "x": 474,
+          "y": 1787,
+          "w": 144,
+          "h": 44,
+          "confidence": 96.584137,
+          "text": "Dysart,"
+        },
+        {
+          "x": 633,
+          "y": 1785,
+          "w": 165,
+          "h": 36,
+          "confidence": 96.687759,
+          "text": "member"
+        },
+        {
+          "x": 811,
+          "y": 1785,
+          "w": 46,
+          "h": 36,
+          "confidence": 96.578758,
+          "text": "of"
+        },
+        {
+          "x": 864,
+          "y": 1785,
+          "w": 60,
+          "h": 36,
+          "confidence": 96.800163,
+          "text": "the"
+        },
+        {
+          "x": 940,
+          "y": 1784,
+          "w": 183,
+          "h": 37,
+          "confidence": 96.843178,
+          "text": "Cannabis"
+        },
+        {
+          "x": 1137,
+          "y": 1786,
+          "w": 218,
+          "h": 34,
+          "confidence": 96.160789,
+          "text": "Awareness"
+        },
+        {
+          "x": 1370,
+          "y": 1784,
+          "w": 71,
+          "h": 35,
+          "confidence": 96.668221,
+          "text": "and"
+        },
+        {
+          "x": 1454,
+          "y": 1783,
+          "w": 203,
+          "h": 36,
+          "confidence": 96.21312,
+          "text": "Education"
+        },
+        {
+          "x": 1671,
+          "y": 1782,
+          "w": 156,
+          "h": 36,
+          "confidence": 96.691483,
+          "text": "Council"
+        },
+        {
+          "x": 1841,
+          "y": 1781,
+          "w": 58,
+          "h": 36,
+          "confidence": 96.527382,
+          "text": "for"
+        },
+        {
+          "x": 1912,
+          "y": 1781,
+          "w": 125,
+          "h": 36,
+          "confidence": 96.540657,
+          "text": "Youth"
+        },
+        {
+          "x": 305,
+          "y": 1901,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.748322,
+          "text": "Senator"
+        },
+        {
+          "x": 483,
+          "y": 1901,
+          "w": 116,
+          "h": 35,
+          "confidence": 96.477913,
+          "text": "Klein"
+        },
+        {
+          "x": 614,
+          "y": 1900,
+          "w": 140,
+          "h": 36,
+          "confidence": 96.716515,
+          "text": "moved"
+        },
+        {
+          "x": 769,
+          "y": 1901,
+          "w": 85,
+          "h": 35,
+          "confidence": 93.287849,
+          "text": "that"
+        },
+        {
+          "x": 867,
+          "y": 1900,
+          "w": 81,
+          "h": 35,
+          "confidence": 92.272629,
+          "text": "S.F."
+        },
+        {
+          "x": 963,
+          "y": 1899,
+          "w": 110,
+          "h": 43,
+          "confidence": 96.248795,
+          "text": "5118,"
+        },
+        {
+          "x": 1089,
+          "y": 1910,
+          "w": 41,
+          "h": 25,
+          "confidence": 96.87159,
+          "text": "as"
+        },
+        {
+          "x": 1146,
+          "y": 1899,
+          "w": 204,
+          "h": 43,
+          "confidence": 96.454651,
+          "text": "amended,"
+        },
+        {
+          "x": 1365,
+          "y": 1898,
+          "w": 301,
+          "h": 36,
+          "confidence": 95.83474,
+          "text": "recommended"
+        },
+        {
+          "x": 1680,
+          "y": 1901,
+          "w": 39,
+          "h": 32,
+          "confidence": 96.657898,
+          "text": "to"
+        },
+        {
+          "x": 1735,
+          "y": 1908,
+          "w": 88,
+          "h": 35,
+          "confidence": 96.403862,
+          "text": "pass"
+        },
+        {
+          "x": 1840,
+          "y": 1897,
+          "w": 78,
+          "h": 35,
+          "confidence": 93.05674,
+          "text": "and"
+        },
+        {
+          "x": 1933,
+          "y": 1896,
+          "w": 237,
+          "h": 36,
+          "confidence": 92.634193,
+          "text": "re-referred"
+        },
+        {
+          "x": 2184,
+          "y": 1898,
+          "w": 39,
+          "h": 33,
+          "confidence": 96.743156,
+          "text": "to"
+        },
+        {
+          "x": 303,
+          "y": 1959,
+          "w": 67,
+          "h": 35,
+          "confidence": 96.684425,
+          "text": "the"
+        },
+        {
+          "x": 385,
+          "y": 1958,
+          "w": 234,
+          "h": 36,
+          "confidence": 95.265167,
+          "text": "Committee"
+        },
+        {
+          "x": 634,
+          "y": 1968,
+          "w": 50,
+          "h": 25,
+          "confidence": 96.369736,
+          "text": "on"
+        },
+        {
+          "x": 698,
+          "y": 1957,
+          "w": 179,
+          "h": 35,
+          "confidence": 95.611633,
+          "text": "Finance."
+        },
+        {
+          "x": 892,
+          "y": 1956,
+          "w": 214,
+          "h": 36,
+          "confidence": 95.421921,
+          "text": "MOTION"
+        },
+        {
+          "x": 1120,
+          "y": 1956,
+          "w": 304,
+          "h": 35,
+          "confidence": 95.462868,
+          "text": "PREVAILED."
+        },
+        {
+          "x": 306,
+          "y": 2072,
+          "w": 80,
+          "h": 35,
+          "confidence": 91.454269,
+          "text": "S.F."
+        },
+        {
+          "x": 401,
+          "y": 2072,
+          "w": 112,
+          "h": 35,
+          "confidence": 96.708885,
+          "text": "4483:"
+        },
+        {
+          "x": 531,
+          "y": 2072,
+          "w": 166,
+          "h": 35,
+          "confidence": 92.663979,
+          "text": "Senator"
+        },
+        {
+          "x": 711,
+          "y": 2071,
+          "w": 159,
+          "h": 35,
+          "confidence": 91.278465,
+          "text": "Oumou"
+        },
+        {
+          "x": 884,
+          "y": 2071,
+          "w": 209,
+          "h": 34,
+          "confidence": 91.278465,
+          "text": "Verbeten:"
+        },
+        {
+          "x": 1110,
+          "y": 2070,
+          "w": 355,
+          "h": 35,
+          "confidence": 91.832787,
+          "text": "Misclassification"
+        },
+        {
+          "x": 1480,
+          "y": 2070,
+          "w": 45,
+          "h": 34,
+          "confidence": 96.354713,
+          "text": "of"
+        },
+        {
+          "x": 1535,
+          "y": 2069,
+          "w": 215,
+          "h": 45,
+          "confidence": 96.862686,
+          "text": "employees"
+        },
+        {
+          "x": 1766,
+          "y": 2068,
+          "w": 252,
+          "h": 45,
+          "confidence": 96.832588,
+          "text": "prohibition."
+        },
+        {
+          "x": 305,
+          "y": 2185,
+          "w": 192,
+          "h": 36,
+          "confidence": 92.338409,
+          "text": "Testifier:"
+        },
+        {
+          "x": 305,
+          "y": 2243,
+          "w": 139,
+          "h": 36,
+          "confidence": 93.280968,
+          "text": "Joanna"
+        },
+        {
+          "x": 456,
+          "y": 2242,
+          "w": 149,
+          "h": 46,
+          "confidence": 92.339722,
+          "text": "Bayers,"
+        },
+        {
+          "x": 620,
+          "y": 2241,
+          "w": 222,
+          "h": 46,
+          "confidence": 96.383408,
+          "text": "Legislative"
+        },
+        {
+          "x": 856,
+          "y": 2241,
+          "w": 177,
+          "h": 43,
+          "confidence": 96.592178,
+          "text": "Director,"
+        },
+        {
+          "x": 1048,
+          "y": 2241,
+          "w": 235,
+          "h": 46,
+          "confidence": 96.43055,
+          "text": "Department"
+        },
+        {
+          "x": 1297,
+          "y": 2239,
+          "w": 46,
+          "h": 37,
+          "confidence": 96.44342,
+          "text": "of"
+        },
+        {
+          "x": 1350,
+          "y": 2240,
+          "w": 185,
+          "h": 36,
+          "confidence": 96.810974,
+          "text": "Revenue."
+        },
+        {
+          "x": 306,
+          "y": 2357,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.622635,
+          "text": "Senator"
+        },
+        {
+          "x": 484,
+          "y": 2357,
+          "w": 116,
+          "h": 35,
+          "confidence": 96.928726,
+          "text": "Klein"
+        },
+        {
+          "x": 615,
+          "y": 2357,
+          "w": 141,
+          "h": 35,
+          "confidence": 96.741112,
+          "text": "moved"
+        },
+        {
+          "x": 769,
+          "y": 2338,
+          "w": 86,
+          "h": 53,
+          "confidence": 93.252731,
+          "text": "that"
+        },
+        {
+          "x": 869,
+          "y": 2356,
+          "w": 80,
+          "h": 35,
+          "confidence": 88.744652,
+          "text": "S.F."
+        },
+        {
+          "x": 964,
+          "y": 2356,
+          "w": 97,
+          "h": 35,
+          "confidence": 96.063141,
+          "text": "4483"
+        },
+        {
+          "x": 1077,
+          "y": 2356,
+          "w": 49,
+          "h": 35,
+          "confidence": 96.488808,
+          "text": "be"
+        },
+        {
+          "x": 1140,
+          "y": 2355,
+          "w": 301,
+          "h": 36,
+          "confidence": 96.488808,
+          "text": "recommended"
+        },
+        {
+          "x": 1455,
+          "y": 2358,
+          "w": 39,
+          "h": 32,
+          "confidence": 97.017632,
+          "text": "to"
+        },
+        {
+          "x": 1509,
+          "y": 2365,
+          "w": 89,
+          "h": 34,
+          "confidence": 96.417442,
+          "text": "pass"
+        },
+        {
+          "x": 1615,
+          "y": 2355,
+          "w": 78,
+          "h": 34,
+          "confidence": 92.916595,
+          "text": "and"
+        },
+        {
+          "x": 1708,
+          "y": 2354,
+          "w": 236,
+          "h": 34,
+          "confidence": 92.333656,
+          "text": "re-referred"
+        },
+        {
+          "x": 1958,
+          "y": 2356,
+          "w": 39,
+          "h": 32,
+          "confidence": 96.426773,
+          "text": "to"
+        },
+        {
+          "x": 2012,
+          "y": 2353,
+          "w": 67,
+          "h": 35,
+          "confidence": 96.426773,
+          "text": "the"
+        },
+        {
+          "x": 307,
+          "y": 2414,
+          "w": 234,
+          "h": 35,
+          "confidence": 95.999977,
+          "text": "Committee"
+        },
+        {
+          "x": 556,
+          "y": 2425,
+          "w": 50,
+          "h": 23,
+          "confidence": 96.786102,
+          "text": "on"
+        },
+        {
+          "x": 620,
+          "y": 2414,
+          "w": 180,
+          "h": 34,
+          "confidence": 95.402939,
+          "text": "Finance."
+        },
+        {
+          "x": 816,
+          "y": 2412,
+          "w": 213,
+          "h": 36,
+          "confidence": 95.402939,
+          "text": "MOTION"
+        },
+        {
+          "x": 1042,
+          "y": 2412,
+          "w": 305,
+          "h": 35,
+          "confidence": 96.235207,
+          "text": "PREVAILED."
+        },
+        {
+          "x": 307,
+          "y": 2528,
+          "w": 80,
+          "h": 35,
+          "confidence": 90.587761,
+          "text": "S.F."
+        },
+        {
+          "x": 402,
+          "y": 2528,
+          "w": 112,
+          "h": 35,
+          "confidence": 96.220261,
+          "text": "5191:"
+        },
+        {
+          "x": 532,
+          "y": 2527,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.220261,
+          "text": "Senator"
+        },
+        {
+          "x": 711,
+          "y": 2527,
+          "w": 154,
+          "h": 35,
+          "confidence": 96.177734,
+          "text": "Dibble:"
+        },
+        {
+          "x": 882,
+          "y": 2527,
+          "w": 186,
+          "h": 34,
+          "confidence": 96.262444,
+          "text": "Emerald"
+        },
+        {
+          "x": 1083,
+          "y": 2526,
+          "w": 70,
+          "h": 35,
+          "confidence": 96.604301,
+          "text": "ash"
+        },
+        {
+          "x": 1168,
+          "y": 2526,
+          "w": 117,
+          "h": 35,
+          "confidence": 96.478439,
+          "text": "borer"
+        },
+        {
+          "x": 1298,
+          "y": 2526,
+          "w": 164,
+          "h": 35,
+          "confidence": 96.478439,
+          "text": "infested"
+        },
+        {
+          "x": 1477,
+          "y": 2528,
+          "w": 101,
+          "h": 32,
+          "confidence": 96.741531,
+          "text": "trees"
+        },
+        {
+          "x": 1593,
+          "y": 2525,
+          "w": 175,
+          "h": 35,
+          "confidence": 96.199371,
+          "text": "removal"
+        },
+        {
+          "x": 1781,
+          "y": 2527,
+          "w": 65,
+          "h": 32,
+          "confidence": 96.655777,
+          "text": "tax"
+        },
+        {
+          "x": 1862,
+          "y": 2524,
+          "w": 123,
+          "h": 35,
+          "confidence": 96.787964,
+          "text": "credit"
+        },
+        {
+          "x": 1998,
+          "y": 2524,
+          "w": 211,
+          "h": 44,
+          "confidence": 96.820892,
+          "text": "provision."
+        },
+        {
+          "x": 306,
+          "y": 2641,
+          "w": 212,
+          "h": 35,
+          "confidence": 92.403679,
+          "text": "Testifiers:"
+        },
+        {
+          "x": 306,
+          "y": 2698,
+          "w": 94,
+          "h": 35,
+          "confidence": 96.391769,
+          "text": "Tom"
+        },
+        {
+          "x": 414,
+          "y": 2697,
+          "w": 126,
+          "h": 43,
+          "confidence": 95.857109,
+          "text": "Olsen,"
+        },
+        {
+          "x": 556,
+          "y": 2697,
+          "w": 301,
+          "h": 42,
+          "confidence": 96.474678,
+          "text": "Commissioner,"
+        },
+        {
+          "x": 873,
+          "y": 2696,
+          "w": 248,
+          "h": 46,
+          "confidence": 96.503349,
+          "text": "Minneapolis"
+        },
+        {
+          "x": 1135,
+          "y": 2688,
+          "w": 93,
+          "h": 43,
+          "confidence": 96.747475,
+          "text": "Park"
+        },
+        {
+          "x": 1240,
+          "y": 2696,
+          "w": 71,
+          "h": 35,
+          "confidence": 96.747475,
+          "text": "and"
+        },
+        {
+          "x": 1324,
+          "y": 2695,
+          "w": 217,
+          "h": 36,
+          "confidence": 96.491776,
+          "text": "Recreation"
+        },
+        {
+          "x": 1553,
+          "y": 2695,
+          "w": 122,
+          "h": 35,
+          "confidence": 96.757072,
+          "text": "Board"
+        },
+        {
+          "x": 306,
+          "y": 2754,
+          "w": 181,
+          "h": 36,
+          "confidence": 96.2453,
+          "text": "Jeremiah"
+        },
+        {
+          "x": 499,
+          "y": 2754,
+          "w": 152,
+          "h": 43,
+          "confidence": 96.795456,
+          "text": "Ellison,"
+        },
+        {
+          "x": 668,
+          "y": 2754,
+          "w": 84,
+          "h": 45,
+          "confidence": 96.230934,
+          "text": "City"
+        },
+        {
+          "x": 767,
+          "y": 2753,
+          "w": 331,
+          "h": 43,
+          "confidence": 96.31916,
+          "text": "Councilmember,"
+        },
+        {
+          "x": 1113,
+          "y": 2753,
+          "w": 248,
+          "h": 46,
+          "confidence": 96.472214,
+          "text": "Minneapolis"
+        },
+        {
+          "x": 306,
+          "y": 2812,
+          "w": 202,
+          "h": 36,
+          "confidence": 91.658394,
+          "text": "Roxxanne"
+        },
+        {
+          "x": 523,
+          "y": 2811,
+          "w": 172,
+          "h": 43,
+          "confidence": 95.696449,
+          "text": "O\u2019Brien,"
+        },
+        {
+          "x": 710,
+          "y": 2811,
+          "w": 251,
+          "h": 45,
+          "confidence": 96.524811,
+          "text": "Minneapolis"
+        },
+        {
+          "x": 975,
+          "y": 2811,
+          "w": 133,
+          "h": 35,
+          "confidence": 96.455841,
+          "text": "citizen"
+        },
+        {
+          "x": 306,
+          "y": 2869,
+          "w": 137,
+          "h": 35,
+          "confidence": 96.219231,
+          "text": "Felicia"
+        },
+        {
+          "x": 454,
+          "y": 2870,
+          "w": 119,
+          "h": 44,
+          "confidence": 96.244141,
+          "text": "Perry,"
+        },
+        {
+          "x": 588,
+          "y": 2868,
+          "w": 202,
+          "h": 36,
+          "confidence": 96.81739,
+          "text": "Economic"
+        },
+        {
+          "x": 804,
+          "y": 2868,
+          "w": 270,
+          "h": 45,
+          "confidence": 96.759659,
+          "text": "Development"
+        },
+        {
+          "x": 1089,
+          "y": 2867,
+          "w": 186,
+          "h": 46,
+          "confidence": 96.665436,
+          "text": "Strategist"
+        },
+        {
+          "x": 308,
+          "y": 2983,
+          "w": 165,
+          "h": 36,
+          "confidence": 96.51619,
+          "text": "Senator"
+        },
+        {
+          "x": 486,
+          "y": 2983,
+          "w": 94,
+          "h": 35,
+          "confidence": 96.922432,
+          "text": "Rest"
+        },
+        {
+          "x": 593,
+          "y": 2983,
+          "w": 141,
+          "h": 35,
+          "confidence": 96.41713,
+          "text": "moved"
+        },
+        {
+          "x": 748,
+          "y": 2983,
+          "w": 86,
+          "h": 34,
+          "confidence": 93.203743,
+          "text": "that"
+        },
+        {
+          "x": 848,
+          "y": 2982,
+          "w": 80,
+          "h": 35,
+          "confidence": 91.853279,
+          "text": "S.F."
+        },
+        {
+          "x": 944,
+          "y": 2982,
+          "w": 95,
+          "h": 35,
+          "confidence": 96.791443,
+          "text": "5191"
+        },
+        {
+          "x": 1056,
+          "y": 2982,
+          "w": 49,
+          "h": 35,
+          "confidence": 95.559807,
+          "text": "be"
+        },
+        {
+          "x": 1119,
+          "y": 2982,
+          "w": 79,
+          "h": 34,
+          "confidence": 96.716827,
+          "text": "laid"
+        },
+        {
+          "x": 1213,
+          "y": 2992,
+          "w": 102,
+          "h": 24,
+          "confidence": 96.83992,
+          "text": "over."
+        },
+        {
+          "x": 308,
+          "y": 3097,
+          "w": 80,
+          "h": 35,
+          "confidence": 91.067093,
+          "text": "S.F."
+        },
+        {
+          "x": 403,
+          "y": 3097,
+          "w": 112,
+          "h": 35,
+          "confidence": 95.692894,
+          "text": "5110:"
+        },
+        {
+          "x": 534,
+          "y": 3097,
+          "w": 165,
+          "h": 35,
+          "confidence": 96.774544,
+          "text": "Senator"
+        },
+        {
+          "x": 711,
+          "y": 3097,
+          "w": 108,
+          "h": 34,
+          "confidence": 96.521774,
+          "text": "Rest:"
+        },
+        {
+          "x": 835,
+          "y": 3096,
+          "w": 209,
+          "h": 45,
+          "confidence": 96.521774,
+          "text": "Hennepin"
+        },
+        {
+          "x": 1059,
+          "y": 3096,
+          "w": 157,
+          "h": 44,
+          "confidence": 96.489021,
+          "text": "County"
+        },
+        {
+          "x": 1229,
+          "y": 3096,
+          "w": 98,
+          "h": 34,
+          "confidence": 96.716515,
+          "text": "local"
+        },
+        {
+          "x": 1341,
+          "y": 3096,
+          "w": 97,
+          "h": 34,
+          "confidence": 96.86824,
+          "text": "sales"
+        },
+        {
+          "x": 1455,
+          "y": 3095,
+          "w": 78,
+          "h": 35,
+          "confidence": 96.665024,
+          "text": "and"
+        },
+        {
+          "x": 1547,
+          "y": 3106,
+          "w": 69,
+          "h": 24,
+          "confidence": 95.81871,
+          "text": "use"
+        },
+        {
+          "x": 1629,
+          "y": 3098,
+          "w": 67,
+          "h": 31,
+          "confidence": 96.622444,
+          "text": "tax"
+        },
+        {
+          "x": 1710,
+          "y": 3095,
+          "w": 198,
+          "h": 43,
+          "confidence": 96.615807,
+          "text": "authority"
+        },
+        {
+          "x": 1921,
+          "y": 3094,
+          "w": 281,
+          "h": 34,
+          "confidence": 96.748444,
+          "text": "modification."
+        },
+        {
+          "x": 309,
+          "y": 3211,
+          "w": 151,
+          "h": 36,
+          "confidence": 95.969376,
+          "text": "Senator"
+        },
+        {
+          "x": 472,
+          "y": 3211,
+          "w": 89,
+          "h": 35,
+          "confidence": 95.969376,
+          "text": "Rest"
+        },
+        {
+          "x": 573,
+          "y": 3209,
+          "w": 137,
+          "h": 37,
+          "confidence": 96.737793,
+          "text": "moved"
+        },
+        {
+          "x": 722,
+          "y": 3209,
+          "w": 61,
+          "h": 36,
+          "confidence": 92.991402,
+          "text": "the"
+        },
+        {
+          "x": 797,
+          "y": 3210,
+          "w": 76,
+          "h": 35,
+          "confidence": 92.991402,
+          "text": "A-2"
+        },
+        {
+          "x": 888,
+          "y": 3209,
+          "w": 242,
+          "h": 36,
+          "confidence": 96.025589,
+          "text": "amendment."
+        },
+        {
+          "x": 1146,
+          "y": 3208,
+          "w": 77,
+          "h": 37,
+          "confidence": 96.539215,
+          "text": "The"
+        },
+        {
+          "x": 1236,
+          "y": 3209,
+          "w": 142,
+          "h": 36,
+          "confidence": 96.539215,
+          "text": "motion"
+        },
+        {
+          "x": 1390,
+          "y": 3208,
+          "w": 186,
+          "h": 47,
+          "confidence": 96.342003,
+          "text": "prevailed"
+        },
+        {
+          "x": 1590,
+          "y": 3207,
+          "w": 71,
+          "h": 37,
+          "confidence": 96.778557,
+          "text": "and"
+        },
+        {
+          "x": 1673,
+          "y": 3207,
+          "w": 61,
+          "h": 37,
+          "confidence": 96.417603,
+          "text": "the"
+        },
+        {
+          "x": 1749,
+          "y": 3207,
+          "w": 233,
+          "h": 37,
+          "confidence": 96.531494,
+          "text": "amendment"
+        },
+        {
+          "x": 1993,
+          "y": 3218,
+          "w": 77,
+          "h": 25,
+          "confidence": 96.669052,
+          "text": "was"
+        },
+        {
+          "x": 2085,
+          "y": 3206,
+          "w": 167,
+          "h": 47,
+          "confidence": 96.782478,
+          "text": "adopted."
+        },
+        {
+          "x": 307,
+          "y": 3325,
+          "w": 212,
+          "h": 36,
+          "confidence": 92.190872,
+          "text": "Testifiers:"
+        },
+        {
+          "x": 307,
+          "y": 3383,
+          "w": 101,
+          "h": 34,
+          "confidence": 94.546509,
+          "text": "Irene"
+        },
+        {
+          "x": 422,
+          "y": 3382,
+          "w": 199,
+          "h": 42,
+          "confidence": 96.456055,
+          "text": "Fernando,"
+        },
+        {
+          "x": 636,
+          "y": 3381,
+          "w": 123,
+          "h": 36,
+          "confidence": 96.677711,
+          "text": "Board"
+        },
+        {
+          "x": 773,
+          "y": 3381,
+          "w": 120,
+          "h": 43,
+          "confidence": 96.36293,
+          "text": "Chair,"
+        },
+        {
+          "x": 908,
+          "y": 3381,
+          "w": 194,
+          "h": 46,
+          "confidence": 96.396469,
+          "text": "Hennepin"
+        },
+        {
+          "x": 1116,
+          "y": 3381,
+          "w": 146,
+          "h": 45,
+          "confidence": 96.130859,
+          "text": "County"
+        },
+        {
+          "x": 307,
+          "y": 3439,
+          "w": 122,
+          "h": 35,
+          "confidence": 96.799965,
+          "text": "David"
+        },
+        {
+          "x": 442,
+          "y": 3439,
+          "w": 147,
+          "h": 45,
+          "confidence": 96.799652,
+          "text": "Hough,"
+        },
+        {
+          "x": 603,
+          "y": 3438,
+          "w": 291,
+          "h": 43,
+          "confidence": 96.676285,
+          "text": "Administrator,"
+        },
+        {
+          "x": 909,
+          "y": 3438,
+          "w": 195,
+          "h": 46,
+          "confidence": 96.606033,
+          "text": "Hennepin"
+        },
+        {
+          "x": 1118,
+          "y": 3438,
+          "w": 145,
+          "h": 45,
+          "confidence": 96.620506,
+          "text": "County"
+        },
+        {
+          "x": 309,
+          "y": 3496,
+          "w": 113,
+          "h": 36,
+          "confidence": 92.266396,
+          "text": "Stella"
+        },
+        {
+          "x": 434,
+          "y": 3496,
+          "w": 302,
+          "h": 45,
+          "confidence": 90.678703,
+          "text": "Whitney-West,"
+        },
+        {
+          "x": 752,
+          "y": 3496,
+          "w": 110,
+          "h": 42,
+          "confidence": 96.266884,
+          "text": "CEO,"
+        },
+        {
+          "x": 874,
+          "y": 3495,
+          "w": 222,
+          "h": 46,
+          "confidence": 96.318207,
+          "text": "Northpoint"
+        },
+        {
+          "x": 1109,
+          "y": 3495,
+          "w": 134,
+          "h": 36,
+          "confidence": 96.162521,
+          "text": "Health"
+        },
+        {
+          "x": 1256,
+          "y": 3495,
+          "w": 70,
+          "h": 35,
+          "confidence": 96.742271,
+          "text": "and"
+        },
+        {
+          "x": 1339,
+          "y": 3495,
+          "w": 182,
+          "h": 36,
+          "confidence": 96.330894,
+          "text": "Wellness"
+        },
+        {
+          "x": 1537,
+          "y": 3495,
+          "w": 132,
+          "h": 35,
+          "confidence": 96.861496,
+          "text": "Center"
+        },
+        {
+          "x": 306,
+          "y": 3553,
+          "w": 123,
+          "h": 36,
+          "confidence": 93.235207,
+          "text": "Adam"
+        },
+        {
+          "x": 442,
+          "y": 3553,
+          "w": 182,
+          "h": 43,
+          "confidence": 92.166458,
+          "text": "Dunnick,"
+        },
+        {
+          "x": 639,
+          "y": 3553,
+          "w": 187,
+          "h": 35,
+          "confidence": 96.753098,
+          "text": "President"
+        },
+        {
+          "x": 840,
+          "y": 3553,
+          "w": 71,
+          "h": 35,
+          "confidence": 96.793678,
+          "text": "and"
+        },
+        {
+          "x": 925,
+          "y": 3552,
+          "w": 109,
+          "h": 43,
+          "confidence": 96.36982,
+          "text": "CEO,"
+        },
+        {
+          "x": 1049,
+          "y": 3552,
+          "w": 248,
+          "h": 46,
+          "confidence": 96.303284,
+          "text": "Minneapolis"
+        },
+        {
+          "x": 1311,
+          "y": 3553,
+          "w": 223,
+          "h": 35,
+          "confidence": 96.746956,
+          "text": "Downtown"
+        },
+        {
+          "x": 1548,
+          "y": 3551,
+          "w": 156,
+          "h": 37,
+          "confidence": 96.581177,
+          "text": "Council"
+        },
+        {
+          "x": 308,
+          "y": 3667,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.478539,
+          "text": "Senator"
+        },
+        {
+          "x": 486,
+          "y": 3667,
+          "w": 117,
+          "h": 35,
+          "confidence": 96.018158,
+          "text": "Klein"
+        },
+        {
+          "x": 617,
+          "y": 3667,
+          "w": 141,
+          "h": 35,
+          "confidence": 96.018158,
+          "text": "moved"
+        },
+        {
+          "x": 771,
+          "y": 3667,
+          "w": 86,
+          "h": 34,
+          "confidence": 93.278694,
+          "text": "that"
+        },
+        {
+          "x": 871,
+          "y": 3667,
+          "w": 80,
+          "h": 35,
+          "confidence": 92.009628,
+          "text": "S.F."
+        },
+        {
+          "x": 966,
+          "y": 3667,
+          "w": 111,
+          "h": 42,
+          "confidence": 96.243874,
+          "text": "5110,"
+        },
+        {
+          "x": 1092,
+          "y": 3677,
+          "w": 41,
+          "h": 25,
+          "confidence": 96.27916,
+          "text": "as"
+        },
+        {
+          "x": 1150,
+          "y": 3667,
+          "w": 204,
+          "h": 42,
+          "confidence": 96.160194,
+          "text": "amended,"
+        },
+        {
+          "x": 1368,
+          "y": 3667,
+          "w": 49,
+          "h": 34,
+          "confidence": 96.934311,
+          "text": "be"
+        },
+        {
+          "x": 1431,
+          "y": 3667,
+          "w": 79,
+          "h": 34,
+          "confidence": 95.857529,
+          "text": "laid"
+        },
+        {
+          "x": 1526,
+          "y": 3677,
+          "w": 102,
+          "h": 24,
+          "confidence": 96.793701,
+          "text": "over."
+        }
+      ]
+    },
+    "11": {
+      "text": "Taxes Committee\n\nTuesday, April 9th, 2024\n\n08:30 AM, G-15 Capitol\n\nMinutes\n\nSn en TET Tn nTTIT TTT nnn an nnn aeeenmenmseneneteettuemeemmemememmstesnneetmeemmsnmnnemeaueasasiessammemmannmaceneneneunenmmmmmaanaiaitdl\n\nPresent: Senator Ann H. Rest - Chair, Senator Matt D. Klein - Vice Chair, Senator Bill\n\nWeber, Senator D. Scott Dibble, Senator Steve Drazkowski, Senator Grant Hauschild,\n\nSenator Jeremy R. Miller, Senator Carla J. Nelson, Senator Aric Putnam\n\nExcused: Senator Kari Dziedzic\n\nSenator Ann H. Rest called the meeting to order at 8:32 a.m.\n\nApproval of the minutes from 4/3/24 and 4/4/24.\n\nThe minutes were approved as presented.\n\nS.F. 5118: Senator Pha: Taxable cannabis gross receipts tax revenue appropriation for\n\ncertain purposes.\n\nSenator Klein moved the A-3 amendment. The motion prevailed and the amendment was\n\nadopted.\n\nTestifiers:\n\nDarian Lofton, member of the Cannabis Awareness and Education Council for Youth\n\nEmmett Dysart, member of the Cannabis Awareness and Education Council for Youth\n\nSenator Klein moved that S.F. 5118, as amended, recommended to pass and re-referred to\n\nthe Committee on Finance. MOTION PREVAILED.\n\nS.F. 4483: Senator Oumou Verbeten: Misclassification of employees prohibition.\n\nTestifier:\n\nJoanna Bayers, Legislative Director, Department of Revenue.\n\nSenator Klein moved that S.F. 4483 be recommended to pass and re-referred to the\n\nCommittee on Finance. MOTION PREVAILED.\n\nS.F. 5191: Senator Dibble: Emerald ash borer infested trees removal tax credit provision.\n\nTestifiers:\n\nTom Olsen, Commissioner, Minneapolis Park and Recreation Board\n\nJeremiah Ellison, City Councilmember, Minneapolis\n\nRoxxanne O\u2019Brien, Minneapolis citizen\n\nFelicia Perry, Economic Development Strategist\n\nSenator Rest moved that S.F. 5191 be laid over.\n\nS.F. 5110: Senator Rest: Hennepin County local sales and use tax authority modification.\n\nSenator Rest moved the A-2 amendment. The motion prevailed and the amendment was adopted.\n\nTestifiers:\n\nIrene Fernando, Board Chair, Hennepin County\n\nDavid Hough, Administrator, Hennepin County\n\nStella Whitney-West, CEO, Northpoint Health and Wellness Center\n\nAdam Dunnick, President and CEO, Minneapolis Downtown Council\n\nSenator Klein moved that S.F. 5110, as amended, be laid over.\n",
+      "textSha256": "3afc8fb00fb98db90c2c7cab29b94ea19caa26347794de56034b3edd74de515f",
+      "wordBoxes": [
+        {
+          "x": 298,
+          "y": 310,
+          "w": 123,
+          "h": 35,
+          "confidence": 96.070679,
+          "text": "Taxes"
+        },
+        {
+          "x": 437,
+          "y": 309,
+          "w": 235,
+          "h": 35,
+          "confidence": 96.249146,
+          "text": "Committee"
+        },
+        {
+          "x": 298,
+          "y": 367,
+          "w": 192,
+          "h": 44,
+          "confidence": 96.617401,
+          "text": "Tuesday,"
+        },
+        {
+          "x": 504,
+          "y": 366,
+          "w": 115,
+          "h": 45,
+          "confidence": 96.28054,
+          "text": "April"
+        },
+        {
+          "x": 632,
+          "y": 365,
+          "w": 80,
+          "h": 42,
+          "confidence": 96.090065,
+          "text": "9th,"
+        },
+        {
+          "x": 726,
+          "y": 364,
+          "w": 98,
+          "h": 35,
+          "confidence": 96.912941,
+          "text": "2024"
+        },
+        {
+          "x": 299,
+          "y": 423,
+          "w": 114,
+          "h": 36,
+          "confidence": 95.523628,
+          "text": "08:30"
+        },
+        {
+          "x": 427,
+          "y": 423,
+          "w": 94,
+          "h": 42,
+          "confidence": 93.064278,
+          "text": "AM,"
+        },
+        {
+          "x": 537,
+          "y": 422,
+          "w": 102,
+          "h": 36,
+          "confidence": 92.886177,
+          "text": "G-15"
+        },
+        {
+          "x": 656,
+          "y": 421,
+          "w": 158,
+          "h": 45,
+          "confidence": 95.547752,
+          "text": "Capitol"
+        },
+        {
+          "x": 1188,
+          "y": 532,
+          "w": 173,
+          "h": 34,
+          "confidence": 96.45121,
+          "text": "Minutes"
+        },
+        {
+          "x": 294,
+          "y": 602,
+          "w": 102,
+          "h": 29,
+          "confidence": 0.0,
+          "text": "Sn"
+        },
+        {
+          "x": 298,
+          "y": 608,
+          "w": 1956,
+          "h": 19,
+          "confidence": 0.0,
+          "text": "en"
+        },
+        {
+          "x": 1096,
+          "y": 602,
+          "w": 39,
+          "h": 29,
+          "confidence": 6.339874,
+          "text": "TET"
+        },
+        {
+          "x": 1139,
+          "y": 602,
+          "w": 59,
+          "h": 29,
+          "confidence": 0.0,
+          "text": "Tn"
+        },
+        {
+          "x": 1207,
+          "y": 602,
+          "w": 45,
+          "h": 29,
+          "confidence": 0.0,
+          "text": "nTTIT"
+        },
+        {
+          "x": 1260,
+          "y": 602,
+          "w": 23,
+          "h": 29,
+          "confidence": 10.034866,
+          "text": "TTT"
+        },
+        {
+          "x": 1393,
+          "y": 602,
+          "w": 129,
+          "h": 29,
+          "confidence": 19.061035,
+          "text": "nnn"
+        },
+        {
+          "x": 1531,
+          "y": 602,
+          "w": 13,
+          "h": 29,
+          "confidence": 28.499512,
+          "text": "an"
+        },
+        {
+          "x": 1550,
+          "y": 602,
+          "w": 33,
+          "h": 29,
+          "confidence": 2.351059,
+          "text": "nnn"
+        },
+        {
+          "x": 1591,
+          "y": 608,
+          "w": 663,
+          "h": 19,
+          "confidence": 0.0,
+          "text": "aeeenmenmseneneteettuemeemmemememmstesnneetmeemmsnmnnemeaueasasiessammemmannmaceneneneunenmmmmmaanaiaitdl"
+        },
+        {
+          "x": 299,
+          "y": 650,
+          "w": 173,
+          "h": 35,
+          "confidence": 96.418427,
+          "text": "Present:"
+        },
+        {
+          "x": 490,
+          "y": 649,
+          "w": 167,
+          "h": 35,
+          "confidence": 96.561005,
+          "text": "Senator"
+        },
+        {
+          "x": 668,
+          "y": 648,
+          "w": 92,
+          "h": 35,
+          "confidence": 93.181946,
+          "text": "Ann"
+        },
+        {
+          "x": 774,
+          "y": 647,
+          "w": 49,
+          "h": 35,
+          "confidence": 93.147415,
+          "text": "H."
+        },
+        {
+          "x": 838,
+          "y": 647,
+          "w": 94,
+          "h": 35,
+          "confidence": 92.785393,
+          "text": "Rest"
+        },
+        {
+          "x": 945,
+          "y": 666,
+          "w": 15,
+          "h": 6,
+          "confidence": 92.785393,
+          "text": "-"
+        },
+        {
+          "x": 976,
+          "y": 646,
+          "w": 134,
+          "h": 42,
+          "confidence": 96.361519,
+          "text": "Chair,"
+        },
+        {
+          "x": 1125,
+          "y": 645,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.255676,
+          "text": "Senator"
+        },
+        {
+          "x": 1303,
+          "y": 644,
+          "w": 106,
+          "h": 35,
+          "confidence": 93.283852,
+          "text": "Matt"
+        },
+        {
+          "x": 1422,
+          "y": 644,
+          "w": 46,
+          "h": 34,
+          "confidence": 92.092468,
+          "text": "D."
+        },
+        {
+          "x": 1483,
+          "y": 643,
+          "w": 116,
+          "h": 35,
+          "confidence": 93.240402,
+          "text": "Klein"
+        },
+        {
+          "x": 1613,
+          "y": 662,
+          "w": 15,
+          "h": 6,
+          "confidence": 93.232925,
+          "text": "-"
+        },
+        {
+          "x": 1641,
+          "y": 642,
+          "w": 95,
+          "h": 35,
+          "confidence": 96.561722,
+          "text": "Vice"
+        },
+        {
+          "x": 1751,
+          "y": 641,
+          "w": 134,
+          "h": 42,
+          "confidence": 96.289352,
+          "text": "Chair,"
+        },
+        {
+          "x": 1901,
+          "y": 640,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.353355,
+          "text": "Senator"
+        },
+        {
+          "x": 2079,
+          "y": 639,
+          "w": 76,
+          "h": 34,
+          "confidence": 96.692398,
+          "text": "Bill"
+        },
+        {
+          "x": 298,
+          "y": 707,
+          "w": 156,
+          "h": 42,
+          "confidence": 94.41478,
+          "text": "Weber,"
+        },
+        {
+          "x": 470,
+          "y": 706,
+          "w": 166,
+          "h": 35,
+          "confidence": 92.169991,
+          "text": "Senator"
+        },
+        {
+          "x": 648,
+          "y": 705,
+          "w": 46,
+          "h": 34,
+          "confidence": 92.169991,
+          "text": "D."
+        },
+        {
+          "x": 711,
+          "y": 704,
+          "w": 108,
+          "h": 36,
+          "confidence": 96.804863,
+          "text": "Scott"
+        },
+        {
+          "x": 831,
+          "y": 704,
+          "w": 153,
+          "h": 42,
+          "confidence": 96.856575,
+          "text": "Dibble,"
+        },
+        {
+          "x": 1000,
+          "y": 703,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.621292,
+          "text": "Senator"
+        },
+        {
+          "x": 1179,
+          "y": 702,
+          "w": 112,
+          "h": 35,
+          "confidence": 93.298637,
+          "text": "Steve"
+        },
+        {
+          "x": 1304,
+          "y": 700,
+          "w": 267,
+          "h": 42,
+          "confidence": 91.004135,
+          "text": "Drazkowski,"
+        },
+        {
+          "x": 1587,
+          "y": 699,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.616585,
+          "text": "Senator"
+        },
+        {
+          "x": 1767,
+          "y": 697,
+          "w": 129,
+          "h": 36,
+          "confidence": 93.296089,
+          "text": "Grant"
+        },
+        {
+          "x": 1908,
+          "y": 696,
+          "w": 229,
+          "h": 42,
+          "confidence": 92.067856,
+          "text": "Hauschild,"
+        },
+        {
+          "x": 301,
+          "y": 764,
+          "w": 166,
+          "h": 35,
+          "confidence": 95.890381,
+          "text": "Senator"
+        },
+        {
+          "x": 479,
+          "y": 763,
+          "w": 158,
+          "h": 44,
+          "confidence": 93.300537,
+          "text": "Jeremy"
+        },
+        {
+          "x": 650,
+          "y": 762,
+          "w": 46,
+          "h": 35,
+          "confidence": 92.411163,
+          "text": "R."
+        },
+        {
+          "x": 711,
+          "y": 761,
+          "w": 145,
+          "h": 43,
+          "confidence": 96.570251,
+          "text": "Miller,"
+        },
+        {
+          "x": 871,
+          "y": 760,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.329636,
+          "text": "Senator"
+        },
+        {
+          "x": 1051,
+          "y": 759,
+          "w": 121,
+          "h": 36,
+          "confidence": 96.072784,
+          "text": "Carla"
+        },
+        {
+          "x": 1185,
+          "y": 759,
+          "w": 36,
+          "h": 35,
+          "confidence": 96.712357,
+          "text": "J."
+        },
+        {
+          "x": 1234,
+          "y": 759,
+          "w": 156,
+          "h": 42,
+          "confidence": 96.712357,
+          "text": "Nelson,"
+        },
+        {
+          "x": 1406,
+          "y": 757,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.489838,
+          "text": "Senator"
+        },
+        {
+          "x": 1584,
+          "y": 757,
+          "w": 94,
+          "h": 34,
+          "confidence": 96.720573,
+          "text": "Aric"
+        },
+        {
+          "x": 1691,
+          "y": 755,
+          "w": 168,
+          "h": 35,
+          "confidence": 94.474304,
+          "text": "Putnam"
+        },
+        {
+          "x": 300,
+          "y": 877,
+          "w": 190,
+          "h": 35,
+          "confidence": 94.609642,
+          "text": "Excused:"
+        },
+        {
+          "x": 509,
+          "y": 876,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.667961,
+          "text": "Senator"
+        },
+        {
+          "x": 687,
+          "y": 875,
+          "w": 100,
+          "h": 35,
+          "confidence": 93.20359,
+          "text": "Kari"
+        },
+        {
+          "x": 800,
+          "y": 874,
+          "w": 180,
+          "h": 35,
+          "confidence": 91.401237,
+          "text": "Dziedzic"
+        },
+        {
+          "x": 302,
+          "y": 990,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.141479,
+          "text": "Senator"
+        },
+        {
+          "x": 479,
+          "y": 990,
+          "w": 92,
+          "h": 34,
+          "confidence": 93.233246,
+          "text": "Ann"
+        },
+        {
+          "x": 585,
+          "y": 989,
+          "w": 49,
+          "h": 51,
+          "confidence": 93.227371,
+          "text": "H."
+        },
+        {
+          "x": 649,
+          "y": 989,
+          "w": 94,
+          "h": 34,
+          "confidence": 96.426155,
+          "text": "Rest"
+        },
+        {
+          "x": 757,
+          "y": 988,
+          "w": 124,
+          "h": 35,
+          "confidence": 96.580978,
+          "text": "called"
+        },
+        {
+          "x": 894,
+          "y": 988,
+          "w": 66,
+          "h": 34,
+          "confidence": 96.900368,
+          "text": "the"
+        },
+        {
+          "x": 974,
+          "y": 988,
+          "w": 169,
+          "h": 44,
+          "confidence": 96.440712,
+          "text": "meeting"
+        },
+        {
+          "x": 1156,
+          "y": 990,
+          "w": 39,
+          "h": 31,
+          "confidence": 96.934799,
+          "text": "to"
+        },
+        {
+          "x": 1212,
+          "y": 986,
+          "w": 117,
+          "h": 35,
+          "confidence": 96.961227,
+          "text": "order"
+        },
+        {
+          "x": 1342,
+          "y": 989,
+          "w": 41,
+          "h": 31,
+          "confidence": 96.688004,
+          "text": "at"
+        },
+        {
+          "x": 1397,
+          "y": 985,
+          "w": 87,
+          "h": 35,
+          "confidence": 96.688004,
+          "text": "8:32"
+        },
+        {
+          "x": 1501,
+          "y": 995,
+          "w": 88,
+          "h": 24,
+          "confidence": 96.766937,
+          "text": "a.m."
+        },
+        {
+          "x": 300,
+          "y": 1104,
+          "w": 204,
+          "h": 45,
+          "confidence": 96.279968,
+          "text": "Approval"
+        },
+        {
+          "x": 518,
+          "y": 1103,
+          "w": 45,
+          "h": 35,
+          "confidence": 96.279968,
+          "text": "of"
+        },
+        {
+          "x": 571,
+          "y": 1103,
+          "w": 66,
+          "h": 34,
+          "confidence": 96.859306,
+          "text": "the"
+        },
+        {
+          "x": 651,
+          "y": 1103,
+          "w": 167,
+          "h": 34,
+          "confidence": 96.159103,
+          "text": "minutes"
+        },
+        {
+          "x": 833,
+          "y": 1102,
+          "w": 104,
+          "h": 35,
+          "confidence": 96.159103,
+          "text": "from"
+        },
+        {
+          "x": 952,
+          "y": 1101,
+          "w": 125,
+          "h": 35,
+          "confidence": 96.743065,
+          "text": "4/3/24"
+        },
+        {
+          "x": 1093,
+          "y": 1101,
+          "w": 79,
+          "h": 34,
+          "confidence": 96.628136,
+          "text": "and"
+        },
+        {
+          "x": 1186,
+          "y": 1100,
+          "w": 136,
+          "h": 35,
+          "confidence": 95.57843,
+          "text": "4/4/24."
+        },
+        {
+          "x": 301,
+          "y": 1217,
+          "w": 77,
+          "h": 36,
+          "confidence": 96.238243,
+          "text": "The"
+        },
+        {
+          "x": 391,
+          "y": 1217,
+          "w": 158,
+          "h": 35,
+          "confidence": 96.661911,
+          "text": "minutes"
+        },
+        {
+          "x": 563,
+          "y": 1227,
+          "w": 96,
+          "h": 25,
+          "confidence": 96.661911,
+          "text": "were"
+        },
+        {
+          "x": 673,
+          "y": 1215,
+          "w": 186,
+          "h": 46,
+          "confidence": 96.259491,
+          "text": "approved"
+        },
+        {
+          "x": 873,
+          "y": 1226,
+          "w": 39,
+          "h": 25,
+          "confidence": 96.742882,
+          "text": "as"
+        },
+        {
+          "x": 925,
+          "y": 1214,
+          "w": 202,
+          "h": 47,
+          "confidence": 96.470284,
+          "text": "presented."
+        },
+        {
+          "x": 303,
+          "y": 1332,
+          "w": 80,
+          "h": 36,
+          "confidence": 89.10524,
+          "text": "S.F."
+        },
+        {
+          "x": 398,
+          "y": 1332,
+          "w": 112,
+          "h": 35,
+          "confidence": 96.625542,
+          "text": "5118:"
+        },
+        {
+          "x": 529,
+          "y": 1331,
+          "w": 165,
+          "h": 36,
+          "confidence": 96.396492,
+          "text": "Senator"
+        },
+        {
+          "x": 706,
+          "y": 1331,
+          "w": 96,
+          "h": 35,
+          "confidence": 96.845657,
+          "text": "Pha:"
+        },
+        {
+          "x": 820,
+          "y": 1330,
+          "w": 172,
+          "h": 35,
+          "confidence": 96.617661,
+          "text": "Taxable"
+        },
+        {
+          "x": 1007,
+          "y": 1329,
+          "w": 185,
+          "h": 35,
+          "confidence": 96.191933,
+          "text": "cannabis"
+        },
+        {
+          "x": 1208,
+          "y": 1339,
+          "w": 107,
+          "h": 35,
+          "confidence": 96.277283,
+          "text": "gross"
+        },
+        {
+          "x": 1331,
+          "y": 1328,
+          "w": 164,
+          "h": 45,
+          "confidence": 96.180969,
+          "text": "receipts"
+        },
+        {
+          "x": 1510,
+          "y": 1331,
+          "w": 66,
+          "h": 31,
+          "confidence": 96.866379,
+          "text": "tax"
+        },
+        {
+          "x": 1590,
+          "y": 1337,
+          "w": 168,
+          "h": 25,
+          "confidence": 96.602654,
+          "text": "revenue"
+        },
+        {
+          "x": 1773,
+          "y": 1325,
+          "w": 299,
+          "h": 46,
+          "confidence": 95.642967,
+          "text": "appropriation"
+        },
+        {
+          "x": 2085,
+          "y": 1324,
+          "w": 64,
+          "h": 36,
+          "confidence": 95.642967,
+          "text": "for"
+        },
+        {
+          "x": 303,
+          "y": 1390,
+          "w": 147,
+          "h": 34,
+          "confidence": 95.990311,
+          "text": "certain"
+        },
+        {
+          "x": 465,
+          "y": 1399,
+          "w": 202,
+          "h": 35,
+          "confidence": 95.990311,
+          "text": "purposes."
+        },
+        {
+          "x": 305,
+          "y": 1503,
+          "w": 151,
+          "h": 36,
+          "confidence": 96.277702,
+          "text": "Senator"
+        },
+        {
+          "x": 468,
+          "y": 1502,
+          "w": 111,
+          "h": 36,
+          "confidence": 96.277702,
+          "text": "Klein"
+        },
+        {
+          "x": 591,
+          "y": 1501,
+          "w": 137,
+          "h": 36,
+          "confidence": 96.065735,
+          "text": "moved"
+        },
+        {
+          "x": 739,
+          "y": 1501,
+          "w": 62,
+          "h": 35,
+          "confidence": 96.86692,
+          "text": "the"
+        },
+        {
+          "x": 815,
+          "y": 1502,
+          "w": 73,
+          "h": 63,
+          "confidence": 93.022369,
+          "text": "A-3"
+        },
+        {
+          "x": 906,
+          "y": 1501,
+          "w": 242,
+          "h": 35,
+          "confidence": 96.664116,
+          "text": "amendment."
+        },
+        {
+          "x": 1164,
+          "y": 1500,
+          "w": 77,
+          "h": 35,
+          "confidence": 96.265198,
+          "text": "The"
+        },
+        {
+          "x": 1254,
+          "y": 1499,
+          "w": 142,
+          "h": 36,
+          "confidence": 96.787399,
+          "text": "motion"
+        },
+        {
+          "x": 1408,
+          "y": 1498,
+          "w": 186,
+          "h": 47,
+          "confidence": 96.46875,
+          "text": "prevailed"
+        },
+        {
+          "x": 1608,
+          "y": 1498,
+          "w": 71,
+          "h": 35,
+          "confidence": 96.133728,
+          "text": "and"
+        },
+        {
+          "x": 1690,
+          "y": 1498,
+          "w": 62,
+          "h": 35,
+          "confidence": 96.133728,
+          "text": "the"
+        },
+        {
+          "x": 1767,
+          "y": 1497,
+          "w": 233,
+          "h": 35,
+          "confidence": 96.506676,
+          "text": "amendment"
+        },
+        {
+          "x": 2011,
+          "y": 1507,
+          "w": 77,
+          "h": 24,
+          "confidence": 96.489716,
+          "text": "was"
+        },
+        {
+          "x": 304,
+          "y": 1559,
+          "w": 167,
+          "h": 46,
+          "confidence": 96.816032,
+          "text": "adopted."
+        },
+        {
+          "x": 303,
+          "y": 1673,
+          "w": 212,
+          "h": 36,
+          "confidence": 91.251366,
+          "text": "Testifiers:"
+        },
+        {
+          "x": 303,
+          "y": 1729,
+          "w": 136,
+          "h": 36,
+          "confidence": 96.392509,
+          "text": "Darian"
+        },
+        {
+          "x": 451,
+          "y": 1729,
+          "w": 147,
+          "h": 43,
+          "confidence": 96.018974,
+          "text": "Lofton,"
+        },
+        {
+          "x": 613,
+          "y": 1728,
+          "w": 165,
+          "h": 36,
+          "confidence": 96.473206,
+          "text": "member"
+        },
+        {
+          "x": 791,
+          "y": 1728,
+          "w": 46,
+          "h": 36,
+          "confidence": 96.696228,
+          "text": "of"
+        },
+        {
+          "x": 844,
+          "y": 1728,
+          "w": 60,
+          "h": 36,
+          "confidence": 96.986984,
+          "text": "the"
+        },
+        {
+          "x": 920,
+          "y": 1727,
+          "w": 183,
+          "h": 37,
+          "confidence": 96.846481,
+          "text": "Cannabis"
+        },
+        {
+          "x": 1117,
+          "y": 1729,
+          "w": 218,
+          "h": 34,
+          "confidence": 96.514992,
+          "text": "Awareness"
+        },
+        {
+          "x": 1350,
+          "y": 1726,
+          "w": 71,
+          "h": 36,
+          "confidence": 96.791756,
+          "text": "and"
+        },
+        {
+          "x": 1434,
+          "y": 1726,
+          "w": 203,
+          "h": 36,
+          "confidence": 96.713554,
+          "text": "Education"
+        },
+        {
+          "x": 1651,
+          "y": 1725,
+          "w": 156,
+          "h": 36,
+          "confidence": 96.414383,
+          "text": "Council"
+        },
+        {
+          "x": 1822,
+          "y": 1724,
+          "w": 57,
+          "h": 36,
+          "confidence": 96.369934,
+          "text": "for"
+        },
+        {
+          "x": 1892,
+          "y": 1724,
+          "w": 126,
+          "h": 36,
+          "confidence": 96.551208,
+          "text": "Youth"
+        },
+        {
+          "x": 303,
+          "y": 1787,
+          "w": 159,
+          "h": 35,
+          "confidence": 96.530716,
+          "text": "Emmett"
+        },
+        {
+          "x": 474,
+          "y": 1787,
+          "w": 144,
+          "h": 44,
+          "confidence": 96.584137,
+          "text": "Dysart,"
+        },
+        {
+          "x": 633,
+          "y": 1785,
+          "w": 165,
+          "h": 36,
+          "confidence": 96.687759,
+          "text": "member"
+        },
+        {
+          "x": 811,
+          "y": 1785,
+          "w": 46,
+          "h": 36,
+          "confidence": 96.578758,
+          "text": "of"
+        },
+        {
+          "x": 864,
+          "y": 1785,
+          "w": 60,
+          "h": 36,
+          "confidence": 96.800163,
+          "text": "the"
+        },
+        {
+          "x": 940,
+          "y": 1784,
+          "w": 183,
+          "h": 37,
+          "confidence": 96.843178,
+          "text": "Cannabis"
+        },
+        {
+          "x": 1137,
+          "y": 1786,
+          "w": 218,
+          "h": 34,
+          "confidence": 96.160789,
+          "text": "Awareness"
+        },
+        {
+          "x": 1370,
+          "y": 1784,
+          "w": 71,
+          "h": 35,
+          "confidence": 96.668221,
+          "text": "and"
+        },
+        {
+          "x": 1454,
+          "y": 1783,
+          "w": 203,
+          "h": 36,
+          "confidence": 96.21312,
+          "text": "Education"
+        },
+        {
+          "x": 1671,
+          "y": 1782,
+          "w": 156,
+          "h": 36,
+          "confidence": 96.691483,
+          "text": "Council"
+        },
+        {
+          "x": 1841,
+          "y": 1781,
+          "w": 58,
+          "h": 36,
+          "confidence": 96.527382,
+          "text": "for"
+        },
+        {
+          "x": 1912,
+          "y": 1781,
+          "w": 125,
+          "h": 36,
+          "confidence": 96.540657,
+          "text": "Youth"
+        },
+        {
+          "x": 305,
+          "y": 1901,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.748322,
+          "text": "Senator"
+        },
+        {
+          "x": 483,
+          "y": 1901,
+          "w": 116,
+          "h": 35,
+          "confidence": 96.477913,
+          "text": "Klein"
+        },
+        {
+          "x": 614,
+          "y": 1900,
+          "w": 140,
+          "h": 36,
+          "confidence": 96.716515,
+          "text": "moved"
+        },
+        {
+          "x": 769,
+          "y": 1901,
+          "w": 85,
+          "h": 35,
+          "confidence": 93.287849,
+          "text": "that"
+        },
+        {
+          "x": 867,
+          "y": 1900,
+          "w": 81,
+          "h": 35,
+          "confidence": 92.272629,
+          "text": "S.F."
+        },
+        {
+          "x": 963,
+          "y": 1899,
+          "w": 110,
+          "h": 43,
+          "confidence": 96.248795,
+          "text": "5118,"
+        },
+        {
+          "x": 1089,
+          "y": 1910,
+          "w": 41,
+          "h": 25,
+          "confidence": 96.87159,
+          "text": "as"
+        },
+        {
+          "x": 1146,
+          "y": 1899,
+          "w": 204,
+          "h": 43,
+          "confidence": 96.454651,
+          "text": "amended,"
+        },
+        {
+          "x": 1365,
+          "y": 1898,
+          "w": 301,
+          "h": 36,
+          "confidence": 95.83474,
+          "text": "recommended"
+        },
+        {
+          "x": 1680,
+          "y": 1901,
+          "w": 39,
+          "h": 32,
+          "confidence": 96.657898,
+          "text": "to"
+        },
+        {
+          "x": 1735,
+          "y": 1908,
+          "w": 88,
+          "h": 35,
+          "confidence": 96.403862,
+          "text": "pass"
+        },
+        {
+          "x": 1840,
+          "y": 1897,
+          "w": 78,
+          "h": 35,
+          "confidence": 93.05674,
+          "text": "and"
+        },
+        {
+          "x": 1933,
+          "y": 1896,
+          "w": 237,
+          "h": 36,
+          "confidence": 92.634193,
+          "text": "re-referred"
+        },
+        {
+          "x": 2184,
+          "y": 1898,
+          "w": 39,
+          "h": 33,
+          "confidence": 96.743156,
+          "text": "to"
+        },
+        {
+          "x": 303,
+          "y": 1959,
+          "w": 67,
+          "h": 35,
+          "confidence": 96.363968,
+          "text": "the"
+        },
+        {
+          "x": 385,
+          "y": 1958,
+          "w": 234,
+          "h": 36,
+          "confidence": 96.285431,
+          "text": "Committee"
+        },
+        {
+          "x": 634,
+          "y": 1968,
+          "w": 50,
+          "h": 25,
+          "confidence": 96.620171,
+          "text": "on"
+        },
+        {
+          "x": 698,
+          "y": 1957,
+          "w": 179,
+          "h": 35,
+          "confidence": 93.816772,
+          "text": "Finance."
+        },
+        {
+          "x": 892,
+          "y": 1956,
+          "w": 214,
+          "h": 36,
+          "confidence": 96.822884,
+          "text": "MOTION"
+        },
+        {
+          "x": 1120,
+          "y": 1952,
+          "w": 304,
+          "h": 75,
+          "confidence": 96.39476,
+          "text": "PREVAILED."
+        },
+        {
+          "x": 306,
+          "y": 2072,
+          "w": 80,
+          "h": 35,
+          "confidence": 89.673935,
+          "text": "S.F."
+        },
+        {
+          "x": 401,
+          "y": 2072,
+          "w": 112,
+          "h": 35,
+          "confidence": 96.589821,
+          "text": "4483:"
+        },
+        {
+          "x": 531,
+          "y": 2072,
+          "w": 166,
+          "h": 35,
+          "confidence": 92.921738,
+          "text": "Senator"
+        },
+        {
+          "x": 711,
+          "y": 2071,
+          "w": 159,
+          "h": 35,
+          "confidence": 91.874062,
+          "text": "Oumou"
+        },
+        {
+          "x": 884,
+          "y": 2071,
+          "w": 209,
+          "h": 34,
+          "confidence": 90.805481,
+          "text": "Verbeten:"
+        },
+        {
+          "x": 1110,
+          "y": 2070,
+          "w": 355,
+          "h": 35,
+          "confidence": 90.805481,
+          "text": "Misclassification"
+        },
+        {
+          "x": 1480,
+          "y": 2070,
+          "w": 45,
+          "h": 34,
+          "confidence": 96.1315,
+          "text": "of"
+        },
+        {
+          "x": 1535,
+          "y": 2065,
+          "w": 215,
+          "h": 72,
+          "confidence": 96.235107,
+          "text": "employees"
+        },
+        {
+          "x": 1766,
+          "y": 2068,
+          "w": 252,
+          "h": 45,
+          "confidence": 95.985497,
+          "text": "prohibition."
+        },
+        {
+          "x": 305,
+          "y": 2185,
+          "w": 192,
+          "h": 36,
+          "confidence": 91.214546,
+          "text": "Testifier:"
+        },
+        {
+          "x": 305,
+          "y": 2243,
+          "w": 139,
+          "h": 36,
+          "confidence": 93.280968,
+          "text": "Joanna"
+        },
+        {
+          "x": 456,
+          "y": 2242,
+          "w": 149,
+          "h": 46,
+          "confidence": 92.339722,
+          "text": "Bayers,"
+        },
+        {
+          "x": 620,
+          "y": 2241,
+          "w": 222,
+          "h": 46,
+          "confidence": 96.383408,
+          "text": "Legislative"
+        },
+        {
+          "x": 856,
+          "y": 2241,
+          "w": 177,
+          "h": 43,
+          "confidence": 96.592178,
+          "text": "Director,"
+        },
+        {
+          "x": 1048,
+          "y": 2241,
+          "w": 235,
+          "h": 46,
+          "confidence": 96.43055,
+          "text": "Department"
+        },
+        {
+          "x": 1297,
+          "y": 2239,
+          "w": 46,
+          "h": 37,
+          "confidence": 96.44342,
+          "text": "of"
+        },
+        {
+          "x": 1350,
+          "y": 2240,
+          "w": 185,
+          "h": 36,
+          "confidence": 96.810974,
+          "text": "Revenue."
+        },
+        {
+          "x": 306,
+          "y": 2357,
+          "w": 166,
+          "h": 36,
+          "confidence": 96.622635,
+          "text": "Senator"
+        },
+        {
+          "x": 484,
+          "y": 2357,
+          "w": 116,
+          "h": 35,
+          "confidence": 96.928726,
+          "text": "Klein"
+        },
+        {
+          "x": 615,
+          "y": 2357,
+          "w": 141,
+          "h": 35,
+          "confidence": 96.741112,
+          "text": "moved"
+        },
+        {
+          "x": 769,
+          "y": 2338,
+          "w": 86,
+          "h": 53,
+          "confidence": 93.252731,
+          "text": "that"
+        },
+        {
+          "x": 869,
+          "y": 2356,
+          "w": 80,
+          "h": 35,
+          "confidence": 88.744652,
+          "text": "S.F."
+        },
+        {
+          "x": 964,
+          "y": 2356,
+          "w": 97,
+          "h": 35,
+          "confidence": 96.063141,
+          "text": "4483"
+        },
+        {
+          "x": 1077,
+          "y": 2356,
+          "w": 49,
+          "h": 35,
+          "confidence": 96.488808,
+          "text": "be"
+        },
+        {
+          "x": 1140,
+          "y": 2355,
+          "w": 301,
+          "h": 36,
+          "confidence": 96.488808,
+          "text": "recommended"
+        },
+        {
+          "x": 1455,
+          "y": 2358,
+          "w": 39,
+          "h": 32,
+          "confidence": 97.017632,
+          "text": "to"
+        },
+        {
+          "x": 1509,
+          "y": 2365,
+          "w": 89,
+          "h": 34,
+          "confidence": 96.417442,
+          "text": "pass"
+        },
+        {
+          "x": 1615,
+          "y": 2355,
+          "w": 78,
+          "h": 34,
+          "confidence": 92.916595,
+          "text": "and"
+        },
+        {
+          "x": 1708,
+          "y": 2354,
+          "w": 236,
+          "h": 34,
+          "confidence": 92.333656,
+          "text": "re-referred"
+        },
+        {
+          "x": 1958,
+          "y": 2356,
+          "w": 39,
+          "h": 32,
+          "confidence": 96.426773,
+          "text": "to"
+        },
+        {
+          "x": 2012,
+          "y": 2353,
+          "w": 67,
+          "h": 35,
+          "confidence": 96.426773,
+          "text": "the"
+        },
+        {
+          "x": 307,
+          "y": 2414,
+          "w": 234,
+          "h": 35,
+          "confidence": 96.310303,
+          "text": "Committee"
+        },
+        {
+          "x": 556,
+          "y": 2425,
+          "w": 50,
+          "h": 23,
+          "confidence": 95.767311,
+          "text": "on"
+        },
+        {
+          "x": 620,
+          "y": 2414,
+          "w": 180,
+          "h": 34,
+          "confidence": 93.443825,
+          "text": "Finance."
+        },
+        {
+          "x": 816,
+          "y": 2412,
+          "w": 213,
+          "h": 36,
+          "confidence": 93.443825,
+          "text": "MOTION"
+        },
+        {
+          "x": 1042,
+          "y": 2412,
+          "w": 305,
+          "h": 35,
+          "confidence": 95.543678,
+          "text": "PREVAILED."
+        },
+        {
+          "x": 307,
+          "y": 2528,
+          "w": 80,
+          "h": 35,
+          "confidence": 90.587761,
+          "text": "S.F."
+        },
+        {
+          "x": 402,
+          "y": 2528,
+          "w": 112,
+          "h": 35,
+          "confidence": 96.220261,
+          "text": "5191:"
+        },
+        {
+          "x": 532,
+          "y": 2527,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.220261,
+          "text": "Senator"
+        },
+        {
+          "x": 711,
+          "y": 2527,
+          "w": 154,
+          "h": 35,
+          "confidence": 96.177734,
+          "text": "Dibble:"
+        },
+        {
+          "x": 882,
+          "y": 2527,
+          "w": 186,
+          "h": 34,
+          "confidence": 96.262444,
+          "text": "Emerald"
+        },
+        {
+          "x": 1083,
+          "y": 2526,
+          "w": 70,
+          "h": 35,
+          "confidence": 96.604301,
+          "text": "ash"
+        },
+        {
+          "x": 1168,
+          "y": 2526,
+          "w": 117,
+          "h": 35,
+          "confidence": 96.478439,
+          "text": "borer"
+        },
+        {
+          "x": 1298,
+          "y": 2526,
+          "w": 164,
+          "h": 35,
+          "confidence": 96.478439,
+          "text": "infested"
+        },
+        {
+          "x": 1477,
+          "y": 2528,
+          "w": 101,
+          "h": 32,
+          "confidence": 96.741531,
+          "text": "trees"
+        },
+        {
+          "x": 1593,
+          "y": 2525,
+          "w": 175,
+          "h": 35,
+          "confidence": 96.199371,
+          "text": "removal"
+        },
+        {
+          "x": 1781,
+          "y": 2527,
+          "w": 65,
+          "h": 32,
+          "confidence": 96.655777,
+          "text": "tax"
+        },
+        {
+          "x": 1862,
+          "y": 2524,
+          "w": 123,
+          "h": 35,
+          "confidence": 96.787964,
+          "text": "credit"
+        },
+        {
+          "x": 1998,
+          "y": 2524,
+          "w": 211,
+          "h": 44,
+          "confidence": 96.820892,
+          "text": "provision."
+        },
+        {
+          "x": 306,
+          "y": 2641,
+          "w": 212,
+          "h": 35,
+          "confidence": 90.998703,
+          "text": "Testifiers:"
+        },
+        {
+          "x": 306,
+          "y": 2698,
+          "w": 94,
+          "h": 35,
+          "confidence": 96.391769,
+          "text": "Tom"
+        },
+        {
+          "x": 414,
+          "y": 2697,
+          "w": 126,
+          "h": 43,
+          "confidence": 95.857109,
+          "text": "Olsen,"
+        },
+        {
+          "x": 556,
+          "y": 2697,
+          "w": 301,
+          "h": 42,
+          "confidence": 96.474678,
+          "text": "Commissioner,"
+        },
+        {
+          "x": 873,
+          "y": 2696,
+          "w": 248,
+          "h": 46,
+          "confidence": 96.503349,
+          "text": "Minneapolis"
+        },
+        {
+          "x": 1135,
+          "y": 2688,
+          "w": 93,
+          "h": 43,
+          "confidence": 96.747475,
+          "text": "Park"
+        },
+        {
+          "x": 1240,
+          "y": 2696,
+          "w": 71,
+          "h": 35,
+          "confidence": 96.747475,
+          "text": "and"
+        },
+        {
+          "x": 1324,
+          "y": 2695,
+          "w": 217,
+          "h": 36,
+          "confidence": 96.491776,
+          "text": "Recreation"
+        },
+        {
+          "x": 1553,
+          "y": 2695,
+          "w": 122,
+          "h": 35,
+          "confidence": 96.757072,
+          "text": "Board"
+        },
+        {
+          "x": 306,
+          "y": 2754,
+          "w": 181,
+          "h": 36,
+          "confidence": 96.2453,
+          "text": "Jeremiah"
+        },
+        {
+          "x": 499,
+          "y": 2754,
+          "w": 152,
+          "h": 43,
+          "confidence": 96.795456,
+          "text": "Ellison,"
+        },
+        {
+          "x": 668,
+          "y": 2754,
+          "w": 84,
+          "h": 45,
+          "confidence": 96.230934,
+          "text": "City"
+        },
+        {
+          "x": 767,
+          "y": 2753,
+          "w": 331,
+          "h": 43,
+          "confidence": 96.31916,
+          "text": "Councilmember,"
+        },
+        {
+          "x": 1113,
+          "y": 2753,
+          "w": 248,
+          "h": 46,
+          "confidence": 96.472214,
+          "text": "Minneapolis"
+        },
+        {
+          "x": 306,
+          "y": 2812,
+          "w": 202,
+          "h": 36,
+          "confidence": 91.658394,
+          "text": "Roxxanne"
+        },
+        {
+          "x": 523,
+          "y": 2811,
+          "w": 172,
+          "h": 43,
+          "confidence": 95.696449,
+          "text": "O\u2019Brien,"
+        },
+        {
+          "x": 710,
+          "y": 2811,
+          "w": 251,
+          "h": 45,
+          "confidence": 96.524811,
+          "text": "Minneapolis"
+        },
+        {
+          "x": 975,
+          "y": 2811,
+          "w": 133,
+          "h": 35,
+          "confidence": 96.455841,
+          "text": "citizen"
+        },
+        {
+          "x": 306,
+          "y": 2869,
+          "w": 137,
+          "h": 35,
+          "confidence": 96.219231,
+          "text": "Felicia"
+        },
+        {
+          "x": 454,
+          "y": 2870,
+          "w": 119,
+          "h": 44,
+          "confidence": 96.244141,
+          "text": "Perry,"
+        },
+        {
+          "x": 588,
+          "y": 2868,
+          "w": 202,
+          "h": 36,
+          "confidence": 96.81739,
+          "text": "Economic"
+        },
+        {
+          "x": 804,
+          "y": 2868,
+          "w": 270,
+          "h": 45,
+          "confidence": 96.759659,
+          "text": "Development"
+        },
+        {
+          "x": 1089,
+          "y": 2867,
+          "w": 186,
+          "h": 46,
+          "confidence": 96.665436,
+          "text": "Strategist"
+        },
+        {
+          "x": 308,
+          "y": 2983,
+          "w": 165,
+          "h": 36,
+          "confidence": 96.815895,
+          "text": "Senator"
+        },
+        {
+          "x": 486,
+          "y": 2983,
+          "w": 94,
+          "h": 35,
+          "confidence": 96.293327,
+          "text": "Rest"
+        },
+        {
+          "x": 593,
+          "y": 2983,
+          "w": 141,
+          "h": 35,
+          "confidence": 96.301094,
+          "text": "moved"
+        },
+        {
+          "x": 748,
+          "y": 2983,
+          "w": 86,
+          "h": 34,
+          "confidence": 93.242508,
+          "text": "that"
+        },
+        {
+          "x": 848,
+          "y": 2982,
+          "w": 80,
+          "h": 35,
+          "confidence": 92.023415,
+          "text": "S.F."
+        },
+        {
+          "x": 944,
+          "y": 2982,
+          "w": 95,
+          "h": 35,
+          "confidence": 96.030457,
+          "text": "5191"
+        },
+        {
+          "x": 1056,
+          "y": 2982,
+          "w": 49,
+          "h": 35,
+          "confidence": 95.444962,
+          "text": "be"
+        },
+        {
+          "x": 1119,
+          "y": 2982,
+          "w": 79,
+          "h": 34,
+          "confidence": 96.260712,
+          "text": "laid"
+        },
+        {
+          "x": 1213,
+          "y": 2992,
+          "w": 102,
+          "h": 24,
+          "confidence": 96.260712,
+          "text": "over."
+        },
+        {
+          "x": 308,
+          "y": 3097,
+          "w": 80,
+          "h": 35,
+          "confidence": 91.067093,
+          "text": "S.F."
+        },
+        {
+          "x": 403,
+          "y": 3097,
+          "w": 112,
+          "h": 35,
+          "confidence": 95.692894,
+          "text": "5110:"
+        },
+        {
+          "x": 534,
+          "y": 3097,
+          "w": 165,
+          "h": 35,
+          "confidence": 96.774544,
+          "text": "Senator"
+        },
+        {
+          "x": 711,
+          "y": 3097,
+          "w": 108,
+          "h": 34,
+          "confidence": 96.521774,
+          "text": "Rest:"
+        },
+        {
+          "x": 835,
+          "y": 3096,
+          "w": 209,
+          "h": 45,
+          "confidence": 96.521774,
+          "text": "Hennepin"
+        },
+        {
+          "x": 1059,
+          "y": 3096,
+          "w": 157,
+          "h": 44,
+          "confidence": 96.489021,
+          "text": "County"
+        },
+        {
+          "x": 1229,
+          "y": 3096,
+          "w": 98,
+          "h": 34,
+          "confidence": 96.716515,
+          "text": "local"
+        },
+        {
+          "x": 1341,
+          "y": 3096,
+          "w": 97,
+          "h": 34,
+          "confidence": 96.86824,
+          "text": "sales"
+        },
+        {
+          "x": 1455,
+          "y": 3095,
+          "w": 78,
+          "h": 35,
+          "confidence": 96.665024,
+          "text": "and"
+        },
+        {
+          "x": 1547,
+          "y": 3106,
+          "w": 69,
+          "h": 24,
+          "confidence": 95.81871,
+          "text": "use"
+        },
+        {
+          "x": 1629,
+          "y": 3098,
+          "w": 67,
+          "h": 31,
+          "confidence": 96.622444,
+          "text": "tax"
+        },
+        {
+          "x": 1710,
+          "y": 3095,
+          "w": 198,
+          "h": 43,
+          "confidence": 96.615807,
+          "text": "authority"
+        },
+        {
+          "x": 1921,
+          "y": 3094,
+          "w": 281,
+          "h": 34,
+          "confidence": 96.748444,
+          "text": "modification."
+        },
+        {
+          "x": 309,
+          "y": 3211,
+          "w": 151,
+          "h": 36,
+          "confidence": 96.459427,
+          "text": "Senator"
+        },
+        {
+          "x": 472,
+          "y": 3211,
+          "w": 89,
+          "h": 35,
+          "confidence": 96.051933,
+          "text": "Rest"
+        },
+        {
+          "x": 573,
+          "y": 3209,
+          "w": 137,
+          "h": 37,
+          "confidence": 96.731377,
+          "text": "moved"
+        },
+        {
+          "x": 722,
+          "y": 3209,
+          "w": 61,
+          "h": 36,
+          "confidence": 93.300995,
+          "text": "the"
+        },
+        {
+          "x": 797,
+          "y": 3210,
+          "w": 76,
+          "h": 35,
+          "confidence": 92.877678,
+          "text": "A-2"
+        },
+        {
+          "x": 888,
+          "y": 3209,
+          "w": 242,
+          "h": 36,
+          "confidence": 96.66909,
+          "text": "amendment."
+        },
+        {
+          "x": 1146,
+          "y": 3208,
+          "w": 77,
+          "h": 37,
+          "confidence": 96.493759,
+          "text": "The"
+        },
+        {
+          "x": 1236,
+          "y": 3209,
+          "w": 142,
+          "h": 36,
+          "confidence": 96.920258,
+          "text": "motion"
+        },
+        {
+          "x": 1390,
+          "y": 3203,
+          "w": 185,
+          "h": 84,
+          "confidence": 96.616379,
+          "text": "prevailed"
+        },
+        {
+          "x": 1590,
+          "y": 3207,
+          "w": 71,
+          "h": 37,
+          "confidence": 96.755325,
+          "text": "and"
+        },
+        {
+          "x": 1673,
+          "y": 3207,
+          "w": 61,
+          "h": 37,
+          "confidence": 96.87455,
+          "text": "the"
+        },
+        {
+          "x": 1749,
+          "y": 3207,
+          "w": 233,
+          "h": 37,
+          "confidence": 96.87455,
+          "text": "amendment"
+        },
+        {
+          "x": 1993,
+          "y": 3218,
+          "w": 77,
+          "h": 25,
+          "confidence": 96.74958,
+          "text": "was"
+        },
+        {
+          "x": 2085,
+          "y": 3206,
+          "w": 167,
+          "h": 47,
+          "confidence": 96.689819,
+          "text": "adopted."
+        },
+        {
+          "x": 307,
+          "y": 3325,
+          "w": 212,
+          "h": 36,
+          "confidence": 91.695999,
+          "text": "Testifiers:"
+        },
+        {
+          "x": 307,
+          "y": 3383,
+          "w": 101,
+          "h": 34,
+          "confidence": 95.50135,
+          "text": "Irene"
+        },
+        {
+          "x": 422,
+          "y": 3382,
+          "w": 199,
+          "h": 42,
+          "confidence": 95.50135,
+          "text": "Fernando,"
+        },
+        {
+          "x": 636,
+          "y": 3381,
+          "w": 123,
+          "h": 36,
+          "confidence": 96.865601,
+          "text": "Board"
+        },
+        {
+          "x": 773,
+          "y": 3381,
+          "w": 120,
+          "h": 43,
+          "confidence": 95.999619,
+          "text": "Chair,"
+        },
+        {
+          "x": 908,
+          "y": 3381,
+          "w": 194,
+          "h": 46,
+          "confidence": 95.999619,
+          "text": "Hennepin"
+        },
+        {
+          "x": 1116,
+          "y": 3381,
+          "w": 146,
+          "h": 45,
+          "confidence": 96.605476,
+          "text": "County"
+        },
+        {
+          "x": 307,
+          "y": 3439,
+          "w": 122,
+          "h": 35,
+          "confidence": 96.799965,
+          "text": "David"
+        },
+        {
+          "x": 442,
+          "y": 3439,
+          "w": 147,
+          "h": 45,
+          "confidence": 96.799652,
+          "text": "Hough,"
+        },
+        {
+          "x": 603,
+          "y": 3438,
+          "w": 291,
+          "h": 43,
+          "confidence": 96.676285,
+          "text": "Administrator,"
+        },
+        {
+          "x": 909,
+          "y": 3438,
+          "w": 195,
+          "h": 46,
+          "confidence": 96.606033,
+          "text": "Hennepin"
+        },
+        {
+          "x": 1118,
+          "y": 3438,
+          "w": 145,
+          "h": 45,
+          "confidence": 96.620506,
+          "text": "County"
+        },
+        {
+          "x": 309,
+          "y": 3496,
+          "w": 113,
+          "h": 36,
+          "confidence": 92.266396,
+          "text": "Stella"
+        },
+        {
+          "x": 434,
+          "y": 3496,
+          "w": 302,
+          "h": 45,
+          "confidence": 90.678703,
+          "text": "Whitney-West,"
+        },
+        {
+          "x": 752,
+          "y": 3496,
+          "w": 110,
+          "h": 42,
+          "confidence": 96.266884,
+          "text": "CEO,"
+        },
+        {
+          "x": 874,
+          "y": 3495,
+          "w": 222,
+          "h": 46,
+          "confidence": 96.318207,
+          "text": "Northpoint"
+        },
+        {
+          "x": 1109,
+          "y": 3495,
+          "w": 134,
+          "h": 36,
+          "confidence": 96.162521,
+          "text": "Health"
+        },
+        {
+          "x": 1256,
+          "y": 3495,
+          "w": 70,
+          "h": 35,
+          "confidence": 96.742271,
+          "text": "and"
+        },
+        {
+          "x": 1339,
+          "y": 3495,
+          "w": 182,
+          "h": 36,
+          "confidence": 96.330894,
+          "text": "Wellness"
+        },
+        {
+          "x": 1537,
+          "y": 3495,
+          "w": 132,
+          "h": 35,
+          "confidence": 96.861496,
+          "text": "Center"
+        },
+        {
+          "x": 306,
+          "y": 3553,
+          "w": 123,
+          "h": 36,
+          "confidence": 93.235207,
+          "text": "Adam"
+        },
+        {
+          "x": 442,
+          "y": 3553,
+          "w": 182,
+          "h": 43,
+          "confidence": 92.166458,
+          "text": "Dunnick,"
+        },
+        {
+          "x": 639,
+          "y": 3553,
+          "w": 187,
+          "h": 35,
+          "confidence": 96.753098,
+          "text": "President"
+        },
+        {
+          "x": 840,
+          "y": 3553,
+          "w": 71,
+          "h": 35,
+          "confidence": 96.793678,
+          "text": "and"
+        },
+        {
+          "x": 925,
+          "y": 3552,
+          "w": 109,
+          "h": 43,
+          "confidence": 96.36982,
+          "text": "CEO,"
+        },
+        {
+          "x": 1049,
+          "y": 3552,
+          "w": 248,
+          "h": 46,
+          "confidence": 96.303284,
+          "text": "Minneapolis"
+        },
+        {
+          "x": 1311,
+          "y": 3553,
+          "w": 223,
+          "h": 35,
+          "confidence": 96.746956,
+          "text": "Downtown"
+        },
+        {
+          "x": 1548,
+          "y": 3551,
+          "w": 156,
+          "h": 37,
+          "confidence": 96.581177,
+          "text": "Council"
+        },
+        {
+          "x": 308,
+          "y": 3667,
+          "w": 166,
+          "h": 35,
+          "confidence": 96.478539,
+          "text": "Senator"
+        },
+        {
+          "x": 486,
+          "y": 3667,
+          "w": 117,
+          "h": 35,
+          "confidence": 96.018158,
+          "text": "Klein"
+        },
+        {
+          "x": 617,
+          "y": 3667,
+          "w": 141,
+          "h": 35,
+          "confidence": 96.018158,
+          "text": "moved"
+        },
+        {
+          "x": 771,
+          "y": 3667,
+          "w": 86,
+          "h": 34,
+          "confidence": 93.278694,
+          "text": "that"
+        },
+        {
+          "x": 871,
+          "y": 3667,
+          "w": 80,
+          "h": 35,
+          "confidence": 92.009628,
+          "text": "S.F."
+        },
+        {
+          "x": 966,
+          "y": 3667,
+          "w": 111,
+          "h": 42,
+          "confidence": 96.243874,
+          "text": "5110,"
+        },
+        {
+          "x": 1092,
+          "y": 3677,
+          "w": 41,
+          "h": 25,
+          "confidence": 96.27916,
+          "text": "as"
+        },
+        {
+          "x": 1150,
+          "y": 3667,
+          "w": 204,
+          "h": 42,
+          "confidence": 96.160194,
+          "text": "amended,"
+        },
+        {
+          "x": 1368,
+          "y": 3667,
+          "w": 49,
+          "h": 34,
+          "confidence": 96.934311,
+          "text": "be"
+        },
+        {
+          "x": 1431,
+          "y": 3667,
+          "w": 79,
+          "h": 34,
+          "confidence": 95.857529,
+          "text": "laid"
+        },
+        {
+          "x": 1526,
+          "y": 3677,
+          "w": 102,
+          "h": 24,
+          "confidence": 96.793701,
+          "text": "over."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "page": 2,
+  "raw300dpiPageSha256": "35dc8943a0712677512da1d5944f9ab53f3d830ac22cb127086c5aa68f87ffe9",
+  "width": 2550,
+  "height": 3300,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 3.94\nScript: Latin\nScript confidence: 3.67\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 3.94
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "6b092e570682b55f0da9e3363e392e780bc47f6cc2f0335670305be6842b047e",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "The meeting was adjourned at 2:26pm\n\nSenator Nick A. Frentz, Chair Travis Urness, Legislative Assistant\n",
+      "textSha256": "795102b42f6d9b82368d48a2087a8f57784abe438c5cd772cb9ea4f1f4f587cc",
+      "wordBoxes": [
+        {
+          "x": 277,
+          "y": 160,
+          "w": 56,
+          "h": 26,
+          "confidence": 96.581757,
+          "text": "The"
+        },
+        {
+          "x": 344,
+          "y": 161,
+          "w": 119,
+          "h": 31,
+          "confidence": 96.533485,
+          "text": "meeting"
+        },
+        {
+          "x": 473,
+          "y": 167,
+          "w": 58,
+          "h": 19,
+          "confidence": 96.243195,
+          "text": "was"
+        },
+        {
+          "x": 542,
+          "y": 160,
+          "w": 147,
+          "h": 32,
+          "confidence": 95.779518,
+          "text": "adjourned"
+        },
+        {
+          "x": 700,
+          "y": 163,
+          "w": 27,
+          "h": 23,
+          "confidence": 96.280212,
+          "text": "at"
+        },
+        {
+          "x": 737,
+          "y": 161,
+          "w": 112,
+          "h": 31,
+          "confidence": 96.796494,
+          "text": "2:26pm"
+        },
+        {
+          "x": 278,
+          "y": 411,
+          "w": 115,
+          "h": 24,
+          "confidence": 96.807693,
+          "text": "Senator"
+        },
+        {
+          "x": 404,
+          "y": 410,
+          "w": 65,
+          "h": 25,
+          "confidence": 96.506203,
+          "text": "Nick"
+        },
+        {
+          "x": 477,
+          "y": 411,
+          "w": 30,
+          "h": 24,
+          "confidence": 92.970238,
+          "text": "A."
+        },
+        {
+          "x": 520,
+          "y": 411,
+          "w": 98,
+          "h": 29,
+          "confidence": 92.809952,
+          "text": "Frentz,"
+        },
+        {
+          "x": 630,
+          "y": 410,
+          "w": 77,
+          "h": 25,
+          "confidence": 96.028358,
+          "text": "Chair"
+        },
+        {
+          "x": 1246,
+          "y": 410,
+          "w": 90,
+          "h": 25,
+          "confidence": 93.296318,
+          "text": "Travis"
+        },
+        {
+          "x": 1347,
+          "y": 411,
+          "w": 109,
+          "h": 29,
+          "confidence": 92.33197,
+          "text": "Urness,"
+        },
+        {
+          "x": 1469,
+          "y": 410,
+          "w": 159,
+          "h": 32,
+          "confidence": 96.46917,
+          "text": "Legislative"
+        },
+        {
+          "x": 1637,
+          "y": 410,
+          "w": 141,
+          "h": 25,
+          "confidence": 96.737206,
+          "text": "Assistant"
+        }
+      ]
+    },
+    "11": {
+      "text": "The meeting was adjourned at 2:26pm\n\nSenator Nick A. Frentz, Chair\n\nTravis Urness, Legislative Assistant\n",
+      "textSha256": "42a7ea9fde2ba09f8afc0cc3979c2dac378832414d8e4401a3869a264e3b3d48",
+      "wordBoxes": [
+        {
+          "x": 277,
+          "y": 160,
+          "w": 56,
+          "h": 26,
+          "confidence": 96.581757,
+          "text": "The"
+        },
+        {
+          "x": 344,
+          "y": 161,
+          "w": 119,
+          "h": 31,
+          "confidence": 96.533485,
+          "text": "meeting"
+        },
+        {
+          "x": 473,
+          "y": 167,
+          "w": 58,
+          "h": 19,
+          "confidence": 96.243195,
+          "text": "was"
+        },
+        {
+          "x": 542,
+          "y": 160,
+          "w": 147,
+          "h": 32,
+          "confidence": 95.779518,
+          "text": "adjourned"
+        },
+        {
+          "x": 700,
+          "y": 163,
+          "w": 27,
+          "h": 23,
+          "confidence": 96.280212,
+          "text": "at"
+        },
+        {
+          "x": 737,
+          "y": 161,
+          "w": 112,
+          "h": 31,
+          "confidence": 96.796494,
+          "text": "2:26pm"
+        },
+        {
+          "x": 278,
+          "y": 411,
+          "w": 115,
+          "h": 24,
+          "confidence": 96.807693,
+          "text": "Senator"
+        },
+        {
+          "x": 404,
+          "y": 410,
+          "w": 65,
+          "h": 25,
+          "confidence": 96.506203,
+          "text": "Nick"
+        },
+        {
+          "x": 477,
+          "y": 411,
+          "w": 30,
+          "h": 24,
+          "confidence": 92.970238,
+          "text": "A."
+        },
+        {
+          "x": 520,
+          "y": 411,
+          "w": 98,
+          "h": 29,
+          "confidence": 92.809952,
+          "text": "Frentz,"
+        },
+        {
+          "x": 630,
+          "y": 410,
+          "w": 77,
+          "h": 25,
+          "confidence": 96.028358,
+          "text": "Chair"
+        },
+        {
+          "x": 1246,
+          "y": 410,
+          "w": 90,
+          "h": 25,
+          "confidence": 93.296318,
+          "text": "Travis"
+        },
+        {
+          "x": 1347,
+          "y": 411,
+          "w": 109,
+          "h": 29,
+          "confidence": 92.33197,
+          "text": "Urness,"
+        },
+        {
+          "x": 1469,
+          "y": 410,
+          "w": 159,
+          "h": 32,
+          "confidence": 96.46917,
+          "text": "Legislative"
+        },
+        {
+          "x": 1637,
+          "y": 410,
+          "w": 141,
+          "h": 25,
+          "confidence": 96.737206,
+          "text": "Assistant"
+        }
+      ]
+    }
+  }
+}
