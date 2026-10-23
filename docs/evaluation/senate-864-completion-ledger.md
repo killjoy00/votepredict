@@ -13,9 +13,66 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 22 continuation (October 23 UTC): complete row recovery — production verified
+
+**Current 2022–2025 Minnesota Senate committee production: 202 events / 1,766 explicitly named choices.** This continuation added **three events and 122 choices**, corrected **five classifications**, and preserved all **six existing target event IDs**. The cumulative improvement since the original 183-event / 1,326-choice baseline is **+19 events / +440 choices / ten classification corrections**. This is verified production, not an extraction estimate.
+
+| Year | Events before → after this continuation | Choices before → after | Added events | Added choices |
+| --- | ---: | ---: | ---: | ---: |
+| 2022 | 38 → 38 | 259 → 259 | 0 | 0 |
+| 2023 | 50 → 53 | 416 → 456 | 3 | 40 |
+| 2024 | 58 → 58 | 430 → 512 | 0 | 82 |
+| 2025 | 53 → 53 | 539 → 539 | 0 | 0 |
+| **Total** | **199 → 202** | **1,644 → 1,766** | **3** | **122** |
+
+**Implemented reusable mechanism:** [PR #1563](https://github.com/killjoy00/votepredict/pull/1563), reviewed main `06e3832f982deda80eaa2db99557f4e8ee27bc0e`, recognizes contiguous rows across a *matching* previous-page footer and next-page number, complete Chair/Lead/Ranking row labels, directly coded bill/amendment actions, the unpunctuated Omnibus bill heading, and explicit YES/NO tally/outcome variants. Unexplained numeric lines, discontinuous pages and intervening motions stop the roll. Absent/Pass/N/A labels never supply YEA/NAY choices. Printed full identities and active historical service bounds remain mandatory.
+
+| Exact original source cohort | Source-proven questions / choices | Independently verified correction |
+| --- | ---: | --- |
+| April 3, 2023 State and Local Government and Veterans Clerk original: SF1426 A10, A28, A21 | **3 / 40** | Three missing amendment events and all 40 printed choices added; A10 and A28 passed 8–5, A21 failed 6–8. No vote inferred for a header name absent from a particular printed roll. |
+| March 21, 2024 Elections LRL PDF: SF4729 A11, A16, A22, A13, A14, A15 | **6 / 82** | Six existing IDs retained; all 82 missing choices added. A11/A16/A22/A13/A14 had wrong bill/ref/outcome classifications; A15 already had the correct classification. A22 is explicitly passed 7–6; the separate printed Pass is excluded. |
+
+The original complete question, every printed named side and the printed result must occur uniquely inside a legacy event's authenticated source context before correcting it. A matching tally, amendment metadata, bill/date or voting slate is insufficient. Existing source documents, legacy contexts, external keys, creation timestamps, tallies and valid choices were preserved; canonical complete-question identity is added as source proof.
+
+**Execution and independent readback:** protected [39892047202](https://github.com/killjoy00/votepredict/actions/runs/39892047202), independent gate `120213833709`, production `120214523866`, all successful. The PR and reviewed-main gates passed **2,468 standard checks / 53 focused tests**, including actual-original negative tests and disposable-Postgres recovery/preservation/replay, plus a clean production-dependency audit. The workflow reauthenticated both originals before bounded `REPEATABLE READ READ ONLY`/explicit `ROLLBACK` preflight, schema-checked `SERIALIZABLE` writes and an independent exact readback. All nine questions / 122 choices are exact, all 199 prior event IDs and 1,644 prior choices remain, and replay writes **zero**.
+
+The [permanent production receipt](source-proof/senate-864-population-complete-production-20261023.json) preserves main/run/job IDs, the nine target IDs and timestamps, and artifact `12475287393` (`senate864-population-complete-production-verified`), ZIP SHA256 `d059516c2e215511b03896f92a43a589493031ebd7206dab7bca1f0c4a5d71ac`. A separate [Neon connector readback](source-proof/senate-864-population-complete-independent-readback-20261023.json), **2026-10-23T02:58:18.835Z**, independently compares every printed named side, all previous records and all **35** exact committee/year groups. A second verified READ ONLY scope query at **2026-10-23T02:59:52.056Z** confirms all 202 / 1,766 belong to **us-mn / senate**. Changes are confined to 2023 State and Local Government and Veterans (+3 / +40) and 2024 Elections (+0 / +82).
+
+**Expanded coverage measurement:** the [supplemental local source census](source-proof/senate-864-population-complete-source-census-20261023.json) checked all **2,859 readable acquired texts** against their recorded SHA256s and found no newly recognized row-candidate original outside the existing 233-candidate scope. It is explicitly a local authenticated-text check, not a claimed Actions or production run. Every previously admitted strict question remains recognized.
+
+[Reporting PR #1564](https://github.com/killjoy00/votepredict/pull/1564), main `16a2d52de4df0588f4fd81a0671b68ae94603a4d`, preserves the October 22 appendices and regenerates dated reports. Final protected bounded READ ONLY population parity is [39892647032](https://github.com/killjoy00/votepredict/actions/runs/39892647032), fresh readback **2026-10-23T03:05:03.338Z**, with **zero production writes**. It reauthenticates all 121 named/prior PDFs, all 1,379 stored Clerk hashes and the unchanged unstored Clerk body; the unchanged remaining acquisition findings retain their immutable source/text pins.
+
+The new [original registry](source-proof/senate-864-population-original-registry-20261023.json), [full per-original inventory and complete candidate texts](source-proof/senate-864-population-original-inventory-20261023.json), [summary](source-proof/senate-864-population-summary-20261023.json), and [before](source-proof/senate-864-population-committee-before-20261023.csv) / [after](source-proof/senate-864-population-committee-after-20261023.csv) committee matrices are appendices of this maintained ledger. The [publication/file-hash receipt](source-proof/senate-864-population-report-publication-20261023.json) permanently pins all five generated files, successful gates and acquisition provenance.
+
+**The source population remains 2,860 distinct URL/SHA originals; 2,859 are readable, 233 have named candidates, 2,626 have no named roll detected in bounded extracted text, and one acquired Finance PDF remains unparseable.** The strict subset expands from 24 questions / 319 choices to **33 questions / 441 choices**. 37 exact keys are found; the same four keys in two unresolved SF2270/SF1894 cross-original alias groups remain excluded.
+
+| Same expanded 33-question source cohort | Before this continuation | Independently verified after |
+| --- | ---: | ---: |
+| Correctly represented questions | **24/33** | **33/33** |
+| Choices on correctly represented questions | **319/441** | **441/441** |
+| Demonstrably missing events | **3** | **0** |
+| Existing questions missing choices, correct classification | **1** | **0** |
+| Existing questions with classification defects and missing choices | **5** | **0** |
+| Missing choices on the six existing questions | **82** | **0** |
+
+| Year | Acquired / readable originals | Named-candidate originals | Strict questions / choices now | Correct questions before → after continuation | Correct choices before → after continuation |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 2022 | 608 / 607 | 28 | 0 / 0 | 0 → 0 | 0 → 0 |
+| 2023 | 933 / 933 | 73 | 17 / 226 | 14 → 17 | 186 → 226 |
+| 2024 | 518 / 518 | 78 | 16 / 215 | 10 → 16 | 133 → 215 |
+| 2025 | 801 / 801 | 54 | 0 / 0 | 0 → 0 | 0 → 0 |
+
+The final state has **32 same-source exact questions plus the previously independently authenticated alternate-source A35 amendment**. The dated paired report's `before` column reconstructs the *original* 183 / 1,326 baseline across both passes; the table above instead isolates the immediately preceding 199 / 1,644 state. The original strict coverage was 1/33 questions and 14/441 choices. The cumulative strict coverage gain of 427 choices differs from 440 actual new choices because the strict cohort includes the old A35 choices and excludes the repaired thirteen-choice SF2270 question pending cross-original equivalence proof.
+
+**Remaining holds and stopping rule:** 56 held row-candidate occurrences remain, including unresolved motion/renewal/compound associations, tally-free or incomplete lists, and source/date/attendance identity conflicts. These are source occurrences, not certified missing votes. Reopening requires either a separately validated reusable complete-question extractor or newly authenticated official evidence proving the exact question, printed named sides and outcome; matching slates/tallies or nearby bill headings are insufficient. The SF2270/SF1894 alias groups, duplicated Education Finance Clerk body, problematic 2025 Elections printed dates/attendance, acquired unparseable May 19, 2022 Finance PDF and visually uncertified OCR/text negatives remain held.
+
+The six missing-Minutes dates and **1,586/1,592 meeting-date coverage**, unresolved 2021 print history and 2022 print/electronic equivalence are unchanged. The complete all-format historical named-roll denominator is **not certified**; zero strict-row denominators for 2022 or 2025 do not mean no committee votes. The admitted reusable category is completed through production and expanded population parity. Other cases remain evidence/extractor work, with no speculative bill-by-bill reconstruction.
+
+No accepted Senate floor, serving model, forecast, weights, training, frozen evaluation, Vercel or scheduler change is part of this work. **#864 remains OPEN.**
+
 ## October 22: population original inventory and reusable repairs — production verified
 
-**Current production improvement: +16 events, +318 explicit named choices, and
+**Previous population pass improvement: +16 events, +318 explicit named choices, and
 five source-proven classification/bill corrections.** All eight pre-existing
 target event IDs were preserved. The original **183 events / 1,326 choices**
 became **199 events / 1,644 choices**; this is an actual protected production

@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "senate864-population-publication-receipt-v1",
+  "issue": 864,
+  "reviewedMainCommit": "16a2d52de4df0588f4fd81a0671b68ae94603a4d",
+  "runId": "39892647032",
+  "productionReadAt": "2026-10-23T03:05:03.338Z",
+  "productionWrites": 0,
+  "readOnlyRepeatableReadAndExplicitRollback": true,
+  "sourceAcquisition": {
+    "runId": "0",
+    "reviewedCommit": "174e9b5931f970b1b8481bf006e5c64ffe36163a",
+    "reportGitBlobSha": "f330e19bee23c4688574d1caac585a96d3ad6e4c",
+    "reportContentSha256": "3206b8558cc7db5f8e809ce370ba4efe9e5022935dab7e85d2d037dfe582651e",
+    "origin": "Same-session full authenticated acquired-source cache, not an Actions acquisition run. PDF source completions 2026-10-22T20:06:56.724Z–2026-10-22T20:28:00.852Z; public source hashes and exact original text hashes were revalidated locally. Existing READ ONLY snapshots and protected production preservation/readback support the provisional comparison; protected reconciliation recomputes all production numerators.",
+    "cacheCommit": "d1b0bb4f1b289c7bcc6902994a33f1916710c6e2"
+  },
+  "implementation": {
+    "pr": 1563,
+    "main": "06e3832f982deda80eaa2db99557f4e8ee27bc0e",
+    "productionRun": 39892047202,
+    "reportingPr": 1564,
+    "reportingMain": "16a2d52de4df0588f4fd81a0671b68ae94603a4d"
+  },
+  "successfulJobs": [
+    {
+      "id": 120215748101,
+      "name": "independent-tests",
+      "conclusion": "success"
+    },
+    {
+      "id": 120216668203,
+      "name": "protected-readonly-population-inventory",
+      "conclusion": "success"
+    },
+    {
+      "id": 120217154485,
+      "name": "public-report-review-branch",
+      "conclusion": "success"
+    }
+  ],
+  "normalMainCi": {
+    "id": 39892647106,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "standardTests": 2468,
+  "focusedInventoryTests": 29,
+  "focusedProductionTests": 53,
+  "productionDependencyAuditVulnerabilities": 0,
+  "artifact": {
+    "id": 12475323480,
+    "name": "senate864-public-population-reports",
+    "zipSha256": "20275331c4c1cc0cc224a41dd0eea33347e72319ba9da4288f787214b5b36120",
+    "bytes": 1125928
+  },
+  "publicReportPublication": {
+    "branch": "work/864-population-results-39892647032",
+    "commit": "a6b4f7f1b41968f9ac3901e93128afc530edf835",
+    "parent": "16a2d52de4df0588f4fd81a0671b68ae94603a4d",
+    "run": "39892647032",
+    "files": [
+      "senate-864-population-original-registry-20261023.json",
+      "senate-864-population-original-inventory-20261023.json",
+      "senate-864-population-summary-20261023.json",
+      "senate-864-population-committee-before-20261023.csv",
+      "senate-864-population-committee-after-20261023.csv"
+    ],
+    "productionWrites": 0
+  },
+  "independentGitObjectVerification": {
+    "originals": 2860,
+    "completeCandidateOriginalTexts": 233,
+    "previousStrictQuestionsPreserved": 24,
+    "strictQuestions": 33,
+    "strictChoices": 441,
+    "heldRowOccurrences": 56,
+    "committeeMatrixRows": {
+      "before": 111,
+      "after": 111
+    },
+    "files": [
+      {
+        "name": "senate-864-population-original-registry-20261023.json",
+        "bytes": 1766862,
+        "sha256": "7fe7842dfcbf56d9c55200fc01034321af6a067cb921daac52aee29506e95acc",
+        "gitBlob": "9c984bb24d7e110d9239bbc5d1f16519fcbbdf07"
+      },
+      {
+        "name": "senate-864-population-original-inventory-20261023.json",
+        "bytes": 6858693,
+        "sha256": "9101684f03085f6d299cd74dfbed60de0ca0852ce539106afece547941383c4d",
+        "gitBlob": "242f5745d527b6cbe6c8fd46ca3f41c57ab43db7"
+      },
+      {
+        "name": "senate-864-population-summary-20261023.json",
+        "bytes": 280211,
+        "sha256": "35c4102ce90c923b361fd4e803ea3711269062431555097802cde65808fb2d28",
+        "gitBlob": "12568339d823750cc624da2c24cec627ed4f3961"
+      },
+      {
+        "name": "senate-864-population-committee-before-20261023.csv",
+        "bytes": 18896,
+        "sha256": "c40e13a45449fea0f790417b3f7167b05c06bd0954255f67b512924ad27b444f",
+        "gitBlob": "15a2db1409b25fa130f3e0e8ef1bfd5cd6bdc4db"
+      },
+      {
+        "name": "senate-864-population-committee-after-20261023.csv",
+        "bytes": 18905,
+        "sha256": "95d96f7fb5e9e4c8bcd25177275f934a512b32fa4f3ca7d28ee56a1a4cfbc645",
+        "gitBlob": "b8ad0c516cc2cd8f8770d03fbcb240fdb7a63f3f"
+      }
+    ]
+  },
+  "immediateBefore": {
+    "storedEvents": 199,
+    "storedChoices": 1644,
+    "correctQuestions": 24,
+    "expandedDenominatorQuestions": 33,
+    "correctChoices": 319,
+    "expandedDenominatorChoices": 441
+  },
+  "after": {
+    "storedEvents": 202,
+    "storedChoices": 1766,
+    "correctQuestions": 33,
+    "expandedDenominatorQuestions": 33,
+    "correctChoices": 441,
+    "expandedDenominatorChoices": 441
+  },
+  "pairedReportBaseline": {
+    "storedEvents": 183,
+    "storedChoices": 1326,
+    "correctQuestions": 1,
+    "expandedDenominatorQuestions": 33,
+    "correctChoices": 14,
+    "expandedDenominatorChoices": 441,
+    "explanation": "Report before columns reconstruct the original pre-population-engagement baseline; immediateBefore isolates this continuation."
+  },
+  "independentProductionReadback": "senate-864-population-complete-independent-readback-20261023.json",
+  "fullLocalSourceTextCensus": "senate-864-population-complete-source-census-20261023.json",
+  "limitations": [
+    "This acquired-original inventory is not a certified all-format named-question denominator.",
+    "Parser streams overlap; maxima and choice occurrences are not additive distinct votes.",
+    "No detected roll in extracted text is not a visually certified negative; OCR quality remains uncertified.",
+    "Cross-original aliases, header/weekday and absentee conflicts, and repeated bodies across dates remain holds.",
+    "Six indexed dates still lack authenticated Minutes; 1586/1592 meeting coverage is not a vote denominator.",
+    "2021 print research and 2022 print/electronic equivalence remain unresolved; neither is certified zero."
+  ]
+}
