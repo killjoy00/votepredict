@@ -42,6 +42,8 @@ on:
       - tests/senate-named-mismatch-original-audit.test.ts
       - src/operations/senate-orphan-journal-original-audit.ts
       - tests/senate-orphan-journal-original-audit.test.ts
+      - src/operations/senate-null-bill-parent-structure-audit.ts
+      - tests/senate-null-bill-parent-structure-audit.test.ts
       - src/operations/senate-orphan-journal-exact-repair.ts
       - tests/senate-orphan-journal-exact-repair.test.ts
       - src/operations/senate-named-mismatch-exact-repair.ts
@@ -111,6 +113,8 @@ on:
       - tests/senate-named-mismatch-original-audit.test.ts
       - src/operations/senate-orphan-journal-original-audit.ts
       - tests/senate-orphan-journal-original-audit.test.ts
+      - src/operations/senate-null-bill-parent-structure-audit.ts
+      - tests/senate-null-bill-parent-structure-audit.test.ts
       - src/operations/senate-orphan-journal-exact-repair.ts
       - tests/senate-orphan-journal-exact-repair.test.ts
       - src/operations/senate-named-mismatch-exact-repair.ts
