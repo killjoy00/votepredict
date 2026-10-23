@@ -1,0 +1,1855 @@
+{
+  "page": 1,
+  "raw300dpiPageSha256": "c4a1a7e520f5b934876153cf7550401afe38c839da7565024cf6244b48fc7635",
+  "width": 2550,
+  "height": 3300,
+  "rotationClockwise": 0,
+  "osd": {
+    "stdout": "Page number: 0\nOrientation in degrees: 0\nRotate: 0\nOrientation confidence: 13.72\nScript: Latin\nScript confidence: 7.36\n",
+    "stderr": "",
+    "rotation": 0,
+    "confidence": 13.72
+  },
+  "blankRaster": false,
+  "reviewImageSha256": "529ad01eee69216901e55d81806e7c829d1fc032e25bf00bc90768ee43fcfd63",
+  "renderedReview": "pending",
+  "passes": {
+    "3": {
+      "text": "5/16/22, 12:02 PM\n\nMinnesota State Senate\n\nMinnesota State Senate\n\nEnergy and Utilities Finance and Policy Committee\nThursday, March 10, 2022 a\n3:00 PMLivestream YouTube Pant\n\nMinutes\n\nPresent: Senator David H. Senjem - Chair, Senator Andrew Mathews - Vice Chair, Senator Roger C. Chamberlain, Senator Nick\nA. Frentz, Senator Jerry Newton, Senator Jason Rarick, Senator Patricia Torres Ray, Senator Paul J. Utke\n\nAbsent: No Members Absent\n\nSenator David H. Senjem called the meeting to order at 3:05 PM\n\nS.F. 3661: Senator Benson: State policy supporting the deployment of carbon capture and sequestration technologies\nestablishment.\n\nAgenda:\n\n1. S.F, 3664 Benson State policy supporting the deployment of carbon capture and sequestration technologies establishment.\n\nhttps://goldpages.senate.mn/schedule/hearing_minutes.php?is=92&hearing_id=16818&type=minutes&always_show_minutes=Y#header\n\n1/2\n\n",
+      "textSha256": "927b919498a179c790a0503099a3fee0990917bc91e2421277c8d804c21113a2",
+      "wordBoxes": [
+        {
+          "x": 115,
+          "y": 54,
+          "w": 118,
+          "h": 29,
+          "confidence": 93.566879,
+          "text": "5/16/22,"
+        },
+        {
+          "x": 248,
+          "y": 54,
+          "w": 78,
+          "h": 25,
+          "confidence": 96.560204,
+          "text": "12:02"
+        },
+        {
+          "x": 339,
+          "y": 55,
+          "w": 45,
+          "h": 25,
+          "confidence": 96.924164,
+          "text": "PM"
+        },
+        {
+          "x": 1305,
+          "y": 56,
+          "w": 149,
+          "h": 26,
+          "confidence": 96.58905,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1466,
+          "y": 56,
+          "w": 75,
+          "h": 25,
+          "confidence": 96.395546,
+          "text": "State"
+        },
+        {
+          "x": 1553,
+          "y": 56,
+          "w": 104,
+          "h": 25,
+          "confidence": 96.575272,
+          "text": "Senate"
+        },
+        {
+          "x": 430,
+          "y": 424,
+          "w": 298,
+          "h": 43,
+          "confidence": 95.919846,
+          "text": "Minnesota"
+        },
+        {
+          "x": 754,
+          "y": 427,
+          "w": 142,
+          "h": 40,
+          "confidence": 95.944084,
+          "text": "State"
+        },
+        {
+          "x": 922,
+          "y": 427,
+          "w": 184,
+          "h": 41,
+          "confidence": 96.072212,
+          "text": "Senate"
+        },
+        {
+          "x": 430,
+          "y": 626,
+          "w": 88,
+          "h": 27,
+          "confidence": 96.473236,
+          "text": "Energy"
+        },
+        {
+          "x": 525,
+          "y": 625,
+          "w": 45,
+          "h": 23,
+          "confidence": 96.625336,
+          "text": "and"
+        },
+        {
+          "x": 580,
+          "y": 625,
+          "w": 94,
+          "h": 24,
+          "confidence": 95.17836,
+          "text": "Utilities"
+        },
+        {
+          "x": 684,
+          "y": 625,
+          "w": 97,
+          "h": 23,
+          "confidence": 96.304993,
+          "text": "Finance"
+        },
+        {
+          "x": 790,
+          "y": 625,
+          "w": 46,
+          "h": 23,
+          "confidence": 96.687698,
+          "text": "and"
+        },
+        {
+          "x": 846,
+          "y": 626,
+          "w": 77,
+          "h": 28,
+          "confidence": 95.700485,
+          "text": "Policy"
+        },
+        {
+          "x": 931,
+          "y": 626,
+          "w": 137,
+          "h": 23,
+          "confidence": 96.135864,
+          "text": "Committee"
+        },
+        {
+          "x": 428,
+          "y": 668,
+          "w": 124,
+          "h": 28,
+          "confidence": 96.462486,
+          "text": "Thursday,"
+        },
+        {
+          "x": 562,
+          "y": 668,
+          "w": 77,
+          "h": 22,
+          "confidence": 96.799667,
+          "text": "March"
+        },
+        {
+          "x": 650,
+          "y": 669,
+          "w": 36,
+          "h": 26,
+          "confidence": 96.410767,
+          "text": "10,"
+        },
+        {
+          "x": 695,
+          "y": 669,
+          "w": 63,
+          "h": 21,
+          "confidence": 96.807068,
+          "text": "2022"
+        },
+        {
+          "x": 2325,
+          "y": 679,
+          "w": 20,
+          "h": 11,
+          "confidence": 58.667412,
+          "text": "a"
+        },
+        {
+          "x": 429,
+          "y": 711,
+          "w": 57,
+          "h": 22,
+          "confidence": 93.209175,
+          "text": "3:00"
+        },
+        {
+          "x": 495,
+          "y": 710,
+          "w": 183,
+          "h": 24,
+          "confidence": 90.616608,
+          "text": "PMLivestream"
+        },
+        {
+          "x": 687,
+          "y": 711,
+          "w": 112,
+          "h": 23,
+          "confidence": 96.024109,
+          "text": "YouTube"
+        },
+        {
+          "x": 2311,
+          "y": 706,
+          "w": 47,
+          "h": 18,
+          "confidence": 44.288261,
+          "text": "Pant"
+        },
+        {
+          "x": 1203,
+          "y": 797,
+          "w": 102,
+          "h": 22,
+          "confidence": 96.647064,
+          "text": "Minutes"
+        },
+        {
+          "x": 429,
+          "y": 896,
+          "w": 106,
+          "h": 22,
+          "confidence": 96.582977,
+          "text": "Present:"
+        },
+        {
+          "x": 545,
+          "y": 897,
+          "w": 97,
+          "h": 22,
+          "confidence": 96.582977,
+          "text": "Senator"
+        },
+        {
+          "x": 650,
+          "y": 895,
+          "w": 69,
+          "h": 24,
+          "confidence": 93.184372,
+          "text": "David"
+        },
+        {
+          "x": 728,
+          "y": 897,
+          "w": 25,
+          "h": 22,
+          "confidence": 92.961472,
+          "text": "H."
+        },
+        {
+          "x": 763,
+          "y": 896,
+          "w": 95,
+          "h": 29,
+          "confidence": 93.160095,
+          "text": "Senjem"
+        },
+        {
+          "x": 868,
+          "y": 907,
+          "w": 8,
+          "h": 5,
+          "confidence": 93.160095,
+          "text": "-"
+        },
+        {
+          "x": 886,
+          "y": 896,
+          "w": 68,
+          "h": 28,
+          "confidence": 96.87645,
+          "text": "Chair,"
+        },
+        {
+          "x": 964,
+          "y": 898,
+          "w": 97,
+          "h": 22,
+          "confidence": 95.867195,
+          "text": "Senator"
+        },
+        {
+          "x": 1069,
+          "y": 896,
+          "w": 97,
+          "h": 24,
+          "confidence": 96.434669,
+          "text": "Andrew"
+        },
+        {
+          "x": 1174,
+          "y": 897,
+          "w": 114,
+          "h": 23,
+          "confidence": 93.27494,
+          "text": "Mathews"
+        },
+        {
+          "x": 1297,
+          "y": 908,
+          "w": 8,
+          "h": 5,
+          "confidence": 93.117065,
+          "text": "-"
+        },
+        {
+          "x": 1314,
+          "y": 897,
+          "w": 54,
+          "h": 23,
+          "confidence": 96.954559,
+          "text": "Vice"
+        },
+        {
+          "x": 1377,
+          "y": 897,
+          "w": 69,
+          "h": 28,
+          "confidence": 96.095085,
+          "text": "Chair,"
+        },
+        {
+          "x": 1455,
+          "y": 899,
+          "w": 98,
+          "h": 22,
+          "confidence": 96.91626,
+          "text": "Senator"
+        },
+        {
+          "x": 1562,
+          "y": 899,
+          "w": 74,
+          "h": 28,
+          "confidence": 93.271866,
+          "text": "Roger"
+        },
+        {
+          "x": 1645,
+          "y": 899,
+          "w": 23,
+          "h": 22,
+          "confidence": 82.824944,
+          "text": "C."
+        },
+        {
+          "x": 1679,
+          "y": 898,
+          "w": 166,
+          "h": 28,
+          "confidence": 95.2248,
+          "text": "Chamberlain,"
+        },
+        {
+          "x": 1855,
+          "y": 900,
+          "w": 96,
+          "h": 21,
+          "confidence": 96.829529,
+          "text": "Senator"
+        },
+        {
+          "x": 1960,
+          "y": 898,
+          "w": 55,
+          "h": 24,
+          "confidence": 97.01651,
+          "text": "Nick"
+        },
+        {
+          "x": 428,
+          "y": 940,
+          "w": 25,
+          "h": 21,
+          "confidence": 92.821907,
+          "text": "A."
+        },
+        {
+          "x": 463,
+          "y": 940,
+          "w": 86,
+          "h": 26,
+          "confidence": 92.552094,
+          "text": "Frentz,"
+        },
+        {
+          "x": 559,
+          "y": 940,
+          "w": 97,
+          "h": 21,
+          "confidence": 96.725128,
+          "text": "Senator"
+        },
+        {
+          "x": 664,
+          "y": 940,
+          "w": 66,
+          "h": 27,
+          "confidence": 96.468849,
+          "text": "Jerry"
+        },
+        {
+          "x": 738,
+          "y": 940,
+          "w": 102,
+          "h": 26,
+          "confidence": 96.275658,
+          "text": "Newton,"
+        },
+        {
+          "x": 850,
+          "y": 940,
+          "w": 98,
+          "h": 22,
+          "confidence": 96.316307,
+          "text": "Senator"
+        },
+        {
+          "x": 956,
+          "y": 941,
+          "w": 74,
+          "h": 21,
+          "confidence": 93.278122,
+          "text": "Jason"
+        },
+        {
+          "x": 1040,
+          "y": 940,
+          "w": 86,
+          "h": 27,
+          "confidence": 92.865372,
+          "text": "Rarick,"
+        },
+        {
+          "x": 1135,
+          "y": 941,
+          "w": 99,
+          "h": 21,
+          "confidence": 96.512146,
+          "text": "Senator"
+        },
+        {
+          "x": 1242,
+          "y": 941,
+          "w": 96,
+          "h": 22,
+          "confidence": 96.563232,
+          "text": "Patricia"
+        },
+        {
+          "x": 1345,
+          "y": 942,
+          "w": 79,
+          "h": 21,
+          "confidence": 96.138512,
+          "text": "Torres"
+        },
+        {
+          "x": 1434,
+          "y": 942,
+          "w": 48,
+          "h": 27,
+          "confidence": 96.04776,
+          "text": "Ray,"
+        },
+        {
+          "x": 1492,
+          "y": 942,
+          "w": 98,
+          "h": 21,
+          "confidence": 96.04776,
+          "text": "Senator"
+        },
+        {
+          "x": 1599,
+          "y": 942,
+          "w": 55,
+          "h": 22,
+          "confidence": 96.925491,
+          "text": "Paul"
+        },
+        {
+          "x": 1662,
+          "y": 942,
+          "w": 22,
+          "h": 21,
+          "confidence": 93.158699,
+          "text": "J."
+        },
+        {
+          "x": 1694,
+          "y": 941,
+          "w": 57,
+          "h": 22,
+          "confidence": 92.703125,
+          "text": "Utke"
+        },
+        {
+          "x": 428,
+          "y": 1023,
+          "w": 97,
+          "h": 22,
+          "confidence": 95.982567,
+          "text": "Absent:"
+        },
+        {
+          "x": 536,
+          "y": 1024,
+          "w": 33,
+          "h": 21,
+          "confidence": 95.982567,
+          "text": "No"
+        },
+        {
+          "x": 579,
+          "y": 1023,
+          "w": 118,
+          "h": 22,
+          "confidence": 96.509735,
+          "text": "Members"
+        },
+        {
+          "x": 705,
+          "y": 1023,
+          "w": 89,
+          "h": 23,
+          "confidence": 96.154556,
+          "text": "Absent"
+        },
+        {
+          "x": 428,
+          "y": 1124,
+          "w": 100,
+          "h": 22,
+          "confidence": 96.797752,
+          "text": "Senator"
+        },
+        {
+          "x": 537,
+          "y": 1123,
+          "w": 68,
+          "h": 23,
+          "confidence": 93.270172,
+          "text": "David"
+        },
+        {
+          "x": 614,
+          "y": 1124,
+          "w": 25,
+          "h": 22,
+          "confidence": 92.857025,
+          "text": "H."
+        },
+        {
+          "x": 649,
+          "y": 1124,
+          "w": 93,
+          "h": 28,
+          "confidence": 92.198479,
+          "text": "Senjem"
+        },
+        {
+          "x": 752,
+          "y": 1124,
+          "w": 74,
+          "h": 23,
+          "confidence": 96.810272,
+          "text": "called"
+        },
+        {
+          "x": 835,
+          "y": 1124,
+          "w": 40,
+          "h": 23,
+          "confidence": 96.826126,
+          "text": "the"
+        },
+        {
+          "x": 884,
+          "y": 1125,
+          "w": 101,
+          "h": 27,
+          "confidence": 96.591141,
+          "text": "meeting"
+        },
+        {
+          "x": 994,
+          "y": 1127,
+          "w": 24,
+          "h": 20,
+          "confidence": 96.879906,
+          "text": "to"
+        },
+        {
+          "x": 1026,
+          "y": 1124,
+          "w": 67,
+          "h": 23,
+          "confidence": 97.004883,
+          "text": "order"
+        },
+        {
+          "x": 1101,
+          "y": 1127,
+          "w": 25,
+          "h": 20,
+          "confidence": 96.442215,
+          "text": "at"
+        },
+        {
+          "x": 1133,
+          "y": 1126,
+          "w": 56,
+          "h": 21,
+          "confidence": 96.360565,
+          "text": "3:05"
+        },
+        {
+          "x": 1197,
+          "y": 1126,
+          "w": 41,
+          "h": 21,
+          "confidence": 96.976898,
+          "text": "PM"
+        },
+        {
+          "x": 428,
+          "y": 1209,
+          "w": 44,
+          "h": 22,
+          "confidence": 86.437576,
+          "text": "S.F."
+        },
+        {
+          "x": 481,
+          "y": 1209,
+          "w": 74,
+          "h": 22,
+          "confidence": 95.962471,
+          "text": "3661:"
+        },
+        {
+          "x": 564,
+          "y": 1209,
+          "w": 99,
+          "h": 22,
+          "confidence": 96.599915,
+          "text": "Senator"
+        },
+        {
+          "x": 671,
+          "y": 1209,
+          "w": 101,
+          "h": 23,
+          "confidence": 95.7444,
+          "text": "Benson:"
+        },
+        {
+          "x": 782,
+          "y": 1210,
+          "w": 68,
+          "h": 22,
+          "confidence": 96.70285,
+          "text": "State"
+        },
+        {
+          "x": 858,
+          "y": 1209,
+          "w": 76,
+          "h": 29,
+          "confidence": 95.952728,
+          "text": "policy"
+        },
+        {
+          "x": 941,
+          "y": 1209,
+          "w": 137,
+          "h": 29,
+          "confidence": 96.640335,
+          "text": "supporting"
+        },
+        {
+          "x": 1086,
+          "y": 1209,
+          "w": 42,
+          "h": 23,
+          "confidence": 96.16806,
+          "text": "the"
+        },
+        {
+          "x": 1136,
+          "y": 1209,
+          "w": 150,
+          "h": 29,
+          "confidence": 96.054253,
+          "text": "deployment"
+        },
+        {
+          "x": 1294,
+          "y": 1209,
+          "w": 25,
+          "h": 24,
+          "confidence": 96.974503,
+          "text": "of"
+        },
+        {
+          "x": 1327,
+          "y": 1210,
+          "w": 86,
+          "h": 23,
+          "confidence": 96.568382,
+          "text": "carbon"
+        },
+        {
+          "x": 1421,
+          "y": 1213,
+          "w": 97,
+          "h": 26,
+          "confidence": 96.53727,
+          "text": "capture"
+        },
+        {
+          "x": 1526,
+          "y": 1211,
+          "w": 44,
+          "h": 22,
+          "confidence": 96.279976,
+          "text": "and"
+        },
+        {
+          "x": 1579,
+          "y": 1211,
+          "w": 175,
+          "h": 28,
+          "confidence": 96.279976,
+          "text": "sequestration"
+        },
+        {
+          "x": 1762,
+          "y": 1211,
+          "w": 164,
+          "h": 28,
+          "confidence": 95.113258,
+          "text": "technologies"
+        },
+        {
+          "x": 428,
+          "y": 1251,
+          "w": 189,
+          "h": 23,
+          "confidence": 95.543648,
+          "text": "establishment."
+        },
+        {
+          "x": 431,
+          "y": 1345,
+          "w": 105,
+          "h": 22,
+          "confidence": 96.27404,
+          "text": "Agenda:"
+        },
+        {
+          "x": 432,
+          "y": 1392,
+          "w": 17,
+          "h": 19,
+          "confidence": 82.467049,
+          "text": "1."
+        },
+        {
+          "x": 457,
+          "y": 1392,
+          "w": 41,
+          "h": 19,
+          "confidence": 82.467049,
+          "text": "S.F,"
+        },
+        {
+          "x": 506,
+          "y": 1392,
+          "w": 48,
+          "h": 19,
+          "confidence": 95.943832,
+          "text": "3664"
+        },
+        {
+          "x": 654,
+          "y": 1393,
+          "w": 83,
+          "h": 18,
+          "confidence": 96.615829,
+          "text": "Benson"
+        },
+        {
+          "x": 983,
+          "y": 1393,
+          "w": 55,
+          "h": 19,
+          "confidence": 96.179802,
+          "text": "State"
+        },
+        {
+          "x": 1046,
+          "y": 1394,
+          "w": 68,
+          "h": 23,
+          "confidence": 96.43074,
+          "text": "policy"
+        },
+        {
+          "x": 1122,
+          "y": 1394,
+          "w": 121,
+          "h": 23,
+          "confidence": 96.671928,
+          "text": "supporting"
+        },
+        {
+          "x": 1251,
+          "y": 1394,
+          "w": 35,
+          "h": 19,
+          "confidence": 96.998047,
+          "text": "the"
+        },
+        {
+          "x": 1294,
+          "y": 1394,
+          "w": 130,
+          "h": 24,
+          "confidence": 96.363327,
+          "text": "deployment"
+        },
+        {
+          "x": 1431,
+          "y": 1394,
+          "w": 23,
+          "h": 19,
+          "confidence": 96.921219,
+          "text": "of"
+        },
+        {
+          "x": 1460,
+          "y": 1395,
+          "w": 77,
+          "h": 18,
+          "confidence": 96.867004,
+          "text": "carbon"
+        },
+        {
+          "x": 1546,
+          "y": 1397,
+          "w": 83,
+          "h": 21,
+          "confidence": 96.441727,
+          "text": "capture"
+        },
+        {
+          "x": 1637,
+          "y": 1395,
+          "w": 40,
+          "h": 19,
+          "confidence": 94.94043,
+          "text": "and"
+        },
+        {
+          "x": 1686,
+          "y": 1396,
+          "w": 152,
+          "h": 22,
+          "confidence": 96.766823,
+          "text": "sequestration"
+        },
+        {
+          "x": 1847,
+          "y": 1396,
+          "w": 142,
+          "h": 23,
+          "confidence": 63.096294,
+          "text": "technologies"
+        },
+        {
+          "x": 1997,
+          "y": 1396,
+          "w": 163,
+          "h": 19,
+          "confidence": 95.786186,
+          "text": "establishment."
+        },
+        {
+          "x": 108,
+          "y": 3181,
+          "w": 2009,
+          "h": 40,
+          "confidence": 12.964394,
+          "text": "https://goldpages.senate.mn/schedule/hearing_minutes.php?is=92&hearing_id=16818&type=minutes&always_show_minutes=Y#header"
+        },
+        {
+          "x": 2392,
+          "y": 3191,
+          "w": 41,
+          "h": 27,
+          "confidence": 96.769386,
+          "text": "1/2"
+        }
+      ]
+    },
+    "11": {
+      "text": "5/16/22, 12:02 PM\n\nMinnesota State Senate\n\nMinnesota State Senate\n\nEnergy and Utilities Finance and Policy Committee\n\nThursday, March 10, 2022\n\na\n\n3:00 PMLivestream YouTube\n\nPant\n\ny\n\ng\n\nMinutes\n\ni\n\nPresent: Senato\n\nDavid H. Senjem - Chair, Senator Andrew Mathews - Vice Chair, Senator Roger C. Chamberlain, Senator Nick\n\ny\n\nA. Frentz, Senator Jerry Newton, Senator Jason Rarick, Senator Patricia Torres Ray, Senator Paul J. Utke\n\nAbsent: No Members Absent\n\nSenator David H. Senjem called the meeting to order at 3:05 PM\n\nS.F. 3661: Senator Benson: State policy supporting the deployment of carbon capture and sequestration technologies\n\nestablishment.\n\nAgenda:\n\n1. S.F, 3664\n\nBenson\n\nState policy supporting the deployment of carbon capture and sequestration technologies establishment.\n\n1/2\n\nhttps://goldpages.senate.mn/schedule/hearing_minutes.php?is=92&hearing_id=16818&type=minutes&always_show_minutes=Y#header\n",
+      "textSha256": "468f9acd42afac66d2692ac01ce11d4e08affb3f7e0b5a69e3c0ae0119711cd3",
+      "wordBoxes": [
+        {
+          "x": 115,
+          "y": 54,
+          "w": 118,
+          "h": 29,
+          "confidence": 93.566879,
+          "text": "5/16/22,"
+        },
+        {
+          "x": 248,
+          "y": 54,
+          "w": 78,
+          "h": 25,
+          "confidence": 96.560204,
+          "text": "12:02"
+        },
+        {
+          "x": 339,
+          "y": 55,
+          "w": 45,
+          "h": 25,
+          "confidence": 96.924164,
+          "text": "PM"
+        },
+        {
+          "x": 1305,
+          "y": 56,
+          "w": 149,
+          "h": 26,
+          "confidence": 96.58905,
+          "text": "Minnesota"
+        },
+        {
+          "x": 1466,
+          "y": 56,
+          "w": 75,
+          "h": 25,
+          "confidence": 96.395546,
+          "text": "State"
+        },
+        {
+          "x": 1553,
+          "y": 56,
+          "w": 104,
+          "h": 25,
+          "confidence": 96.575272,
+          "text": "Senate"
+        },
+        {
+          "x": 430,
+          "y": 424,
+          "w": 298,
+          "h": 43,
+          "confidence": 95.919846,
+          "text": "Minnesota"
+        },
+        {
+          "x": 754,
+          "y": 427,
+          "w": 142,
+          "h": 40,
+          "confidence": 95.944084,
+          "text": "State"
+        },
+        {
+          "x": 922,
+          "y": 427,
+          "w": 184,
+          "h": 41,
+          "confidence": 96.072212,
+          "text": "Senate"
+        },
+        {
+          "x": 430,
+          "y": 626,
+          "w": 88,
+          "h": 27,
+          "confidence": 96.473236,
+          "text": "Energy"
+        },
+        {
+          "x": 525,
+          "y": 625,
+          "w": 45,
+          "h": 23,
+          "confidence": 96.625336,
+          "text": "and"
+        },
+        {
+          "x": 580,
+          "y": 625,
+          "w": 94,
+          "h": 24,
+          "confidence": 95.17836,
+          "text": "Utilities"
+        },
+        {
+          "x": 684,
+          "y": 625,
+          "w": 97,
+          "h": 23,
+          "confidence": 96.304993,
+          "text": "Finance"
+        },
+        {
+          "x": 790,
+          "y": 625,
+          "w": 46,
+          "h": 23,
+          "confidence": 96.687698,
+          "text": "and"
+        },
+        {
+          "x": 846,
+          "y": 626,
+          "w": 77,
+          "h": 28,
+          "confidence": 95.700485,
+          "text": "Policy"
+        },
+        {
+          "x": 931,
+          "y": 626,
+          "w": 137,
+          "h": 23,
+          "confidence": 96.135864,
+          "text": "Committee"
+        },
+        {
+          "x": 428,
+          "y": 668,
+          "w": 124,
+          "h": 28,
+          "confidence": 96.462486,
+          "text": "Thursday,"
+        },
+        {
+          "x": 562,
+          "y": 668,
+          "w": 77,
+          "h": 22,
+          "confidence": 96.799667,
+          "text": "March"
+        },
+        {
+          "x": 650,
+          "y": 669,
+          "w": 36,
+          "h": 26,
+          "confidence": 96.410767,
+          "text": "10,"
+        },
+        {
+          "x": 695,
+          "y": 669,
+          "w": 63,
+          "h": 21,
+          "confidence": 96.807068,
+          "text": "2022"
+        },
+        {
+          "x": 2325,
+          "y": 679,
+          "w": 20,
+          "h": 11,
+          "confidence": 64.110649,
+          "text": "a"
+        },
+        {
+          "x": 429,
+          "y": 711,
+          "w": 57,
+          "h": 22,
+          "confidence": 93.289101,
+          "text": "3:00"
+        },
+        {
+          "x": 495,
+          "y": 710,
+          "w": 183,
+          "h": 24,
+          "confidence": 92.067604,
+          "text": "PMLivestream"
+        },
+        {
+          "x": 687,
+          "y": 711,
+          "w": 112,
+          "h": 23,
+          "confidence": 96.933556,
+          "text": "YouTube"
+        },
+        {
+          "x": 2311,
+          "y": 706,
+          "w": 47,
+          "h": 18,
+          "confidence": 64.28511,
+          "text": "Pant"
+        },
+        {
+          "x": 2540,
+          "y": 752,
+          "w": 7,
+          "h": 19,
+          "confidence": 0.0,
+          "text": "y"
+        },
+        {
+          "x": 2540,
+          "y": 801,
+          "w": 6,
+          "h": 9,
+          "confidence": 7.06842,
+          "text": "g"
+        },
+        {
+          "x": 1203,
+          "y": 797,
+          "w": 102,
+          "h": 22,
+          "confidence": 96.647064,
+          "text": "Minutes"
+        },
+        {
+          "x": 2540,
+          "y": 818,
+          "w": 6,
+          "h": 16,
+          "confidence": 4.777359,
+          "text": "i"
+        },
+        {
+          "x": 429,
+          "y": 896,
+          "w": 106,
+          "h": 22,
+          "confidence": 93.188156,
+          "text": "Present:"
+        },
+        {
+          "x": 545,
+          "y": 897,
+          "w": 85,
+          "h": 21,
+          "confidence": 92.97937,
+          "text": "Senato"
+        },
+        {
+          "x": 650,
+          "y": 895,
+          "w": 69,
+          "h": 24,
+          "confidence": 93.235161,
+          "text": "David"
+        },
+        {
+          "x": 728,
+          "y": 897,
+          "w": 25,
+          "h": 22,
+          "confidence": 91.001183,
+          "text": "H."
+        },
+        {
+          "x": 763,
+          "y": 896,
+          "w": 95,
+          "h": 29,
+          "confidence": 91.001183,
+          "text": "Senjem"
+        },
+        {
+          "x": 868,
+          "y": 907,
+          "w": 8,
+          "h": 5,
+          "confidence": 92.952896,
+          "text": "-"
+        },
+        {
+          "x": 886,
+          "y": 896,
+          "w": 68,
+          "h": 28,
+          "confidence": 96.392899,
+          "text": "Chair,"
+        },
+        {
+          "x": 964,
+          "y": 898,
+          "w": 97,
+          "h": 22,
+          "confidence": 96.967209,
+          "text": "Senator"
+        },
+        {
+          "x": 1069,
+          "y": 896,
+          "w": 97,
+          "h": 24,
+          "confidence": 96.93943,
+          "text": "Andrew"
+        },
+        {
+          "x": 1174,
+          "y": 897,
+          "w": 114,
+          "h": 23,
+          "confidence": 92.993088,
+          "text": "Mathews"
+        },
+        {
+          "x": 1297,
+          "y": 908,
+          "w": 8,
+          "h": 5,
+          "confidence": 92.514671,
+          "text": "-"
+        },
+        {
+          "x": 1314,
+          "y": 897,
+          "w": 54,
+          "h": 23,
+          "confidence": 96.932739,
+          "text": "Vice"
+        },
+        {
+          "x": 1377,
+          "y": 897,
+          "w": 69,
+          "h": 28,
+          "confidence": 96.900497,
+          "text": "Chair,"
+        },
+        {
+          "x": 1455,
+          "y": 899,
+          "w": 98,
+          "h": 22,
+          "confidence": 96.936371,
+          "text": "Senator"
+        },
+        {
+          "x": 1562,
+          "y": 899,
+          "w": 74,
+          "h": 28,
+          "confidence": 93.221451,
+          "text": "Roger"
+        },
+        {
+          "x": 1645,
+          "y": 899,
+          "w": 23,
+          "h": 22,
+          "confidence": 91.15731,
+          "text": "C."
+        },
+        {
+          "x": 1679,
+          "y": 898,
+          "w": 166,
+          "h": 28,
+          "confidence": 96.073769,
+          "text": "Chamberlain,"
+        },
+        {
+          "x": 1855,
+          "y": 900,
+          "w": 96,
+          "h": 21,
+          "confidence": 96.730415,
+          "text": "Senator"
+        },
+        {
+          "x": 1960,
+          "y": 898,
+          "w": 55,
+          "h": 24,
+          "confidence": 97.018616,
+          "text": "Nick"
+        },
+        {
+          "x": 2540,
+          "y": 913,
+          "w": 6,
+          "h": 12,
+          "confidence": 0.0,
+          "text": "y"
+        },
+        {
+          "x": 428,
+          "y": 940,
+          "w": 25,
+          "h": 21,
+          "confidence": 92.821907,
+          "text": "A."
+        },
+        {
+          "x": 463,
+          "y": 940,
+          "w": 86,
+          "h": 26,
+          "confidence": 92.552094,
+          "text": "Frentz,"
+        },
+        {
+          "x": 559,
+          "y": 940,
+          "w": 97,
+          "h": 21,
+          "confidence": 96.725128,
+          "text": "Senator"
+        },
+        {
+          "x": 664,
+          "y": 940,
+          "w": 66,
+          "h": 27,
+          "confidence": 96.468849,
+          "text": "Jerry"
+        },
+        {
+          "x": 738,
+          "y": 940,
+          "w": 102,
+          "h": 26,
+          "confidence": 96.275658,
+          "text": "Newton,"
+        },
+        {
+          "x": 850,
+          "y": 940,
+          "w": 98,
+          "h": 22,
+          "confidence": 96.316307,
+          "text": "Senator"
+        },
+        {
+          "x": 956,
+          "y": 941,
+          "w": 74,
+          "h": 21,
+          "confidence": 93.278122,
+          "text": "Jason"
+        },
+        {
+          "x": 1040,
+          "y": 940,
+          "w": 86,
+          "h": 27,
+          "confidence": 92.865372,
+          "text": "Rarick,"
+        },
+        {
+          "x": 1135,
+          "y": 941,
+          "w": 99,
+          "h": 21,
+          "confidence": 96.512146,
+          "text": "Senator"
+        },
+        {
+          "x": 1242,
+          "y": 941,
+          "w": 96,
+          "h": 22,
+          "confidence": 96.563232,
+          "text": "Patricia"
+        },
+        {
+          "x": 1345,
+          "y": 942,
+          "w": 79,
+          "h": 21,
+          "confidence": 96.138512,
+          "text": "Torres"
+        },
+        {
+          "x": 1434,
+          "y": 942,
+          "w": 48,
+          "h": 27,
+          "confidence": 96.04776,
+          "text": "Ray,"
+        },
+        {
+          "x": 1492,
+          "y": 942,
+          "w": 98,
+          "h": 21,
+          "confidence": 96.04776,
+          "text": "Senator"
+        },
+        {
+          "x": 1599,
+          "y": 942,
+          "w": 55,
+          "h": 22,
+          "confidence": 96.925491,
+          "text": "Paul"
+        },
+        {
+          "x": 1662,
+          "y": 942,
+          "w": 22,
+          "h": 21,
+          "confidence": 93.158699,
+          "text": "J."
+        },
+        {
+          "x": 1694,
+          "y": 941,
+          "w": 57,
+          "h": 22,
+          "confidence": 92.703125,
+          "text": "Utke"
+        },
+        {
+          "x": 428,
+          "y": 1023,
+          "w": 97,
+          "h": 22,
+          "confidence": 95.982567,
+          "text": "Absent:"
+        },
+        {
+          "x": 536,
+          "y": 1024,
+          "w": 33,
+          "h": 21,
+          "confidence": 95.982567,
+          "text": "No"
+        },
+        {
+          "x": 579,
+          "y": 1023,
+          "w": 118,
+          "h": 22,
+          "confidence": 96.509735,
+          "text": "Members"
+        },
+        {
+          "x": 705,
+          "y": 1023,
+          "w": 89,
+          "h": 23,
+          "confidence": 96.154556,
+          "text": "Absent"
+        },
+        {
+          "x": 428,
+          "y": 1124,
+          "w": 100,
+          "h": 22,
+          "confidence": 96.797752,
+          "text": "Senator"
+        },
+        {
+          "x": 537,
+          "y": 1123,
+          "w": 68,
+          "h": 23,
+          "confidence": 93.270172,
+          "text": "David"
+        },
+        {
+          "x": 614,
+          "y": 1124,
+          "w": 25,
+          "h": 22,
+          "confidence": 92.857025,
+          "text": "H."
+        },
+        {
+          "x": 649,
+          "y": 1124,
+          "w": 93,
+          "h": 28,
+          "confidence": 92.198479,
+          "text": "Senjem"
+        },
+        {
+          "x": 752,
+          "y": 1124,
+          "w": 74,
+          "h": 23,
+          "confidence": 96.810272,
+          "text": "called"
+        },
+        {
+          "x": 835,
+          "y": 1124,
+          "w": 40,
+          "h": 23,
+          "confidence": 96.826126,
+          "text": "the"
+        },
+        {
+          "x": 884,
+          "y": 1125,
+          "w": 101,
+          "h": 27,
+          "confidence": 96.591141,
+          "text": "meeting"
+        },
+        {
+          "x": 994,
+          "y": 1127,
+          "w": 24,
+          "h": 20,
+          "confidence": 96.879906,
+          "text": "to"
+        },
+        {
+          "x": 1026,
+          "y": 1124,
+          "w": 67,
+          "h": 23,
+          "confidence": 97.004883,
+          "text": "order"
+        },
+        {
+          "x": 1101,
+          "y": 1127,
+          "w": 25,
+          "h": 20,
+          "confidence": 96.442215,
+          "text": "at"
+        },
+        {
+          "x": 1133,
+          "y": 1126,
+          "w": 56,
+          "h": 21,
+          "confidence": 96.360565,
+          "text": "3:05"
+        },
+        {
+          "x": 1197,
+          "y": 1126,
+          "w": 41,
+          "h": 21,
+          "confidence": 96.976898,
+          "text": "PM"
+        },
+        {
+          "x": 428,
+          "y": 1209,
+          "w": 44,
+          "h": 22,
+          "confidence": 86.437576,
+          "text": "S.F."
+        },
+        {
+          "x": 481,
+          "y": 1209,
+          "w": 74,
+          "h": 22,
+          "confidence": 95.962471,
+          "text": "3661:"
+        },
+        {
+          "x": 564,
+          "y": 1209,
+          "w": 99,
+          "h": 22,
+          "confidence": 96.599915,
+          "text": "Senator"
+        },
+        {
+          "x": 671,
+          "y": 1209,
+          "w": 101,
+          "h": 23,
+          "confidence": 95.7444,
+          "text": "Benson:"
+        },
+        {
+          "x": 782,
+          "y": 1210,
+          "w": 68,
+          "h": 22,
+          "confidence": 96.70285,
+          "text": "State"
+        },
+        {
+          "x": 858,
+          "y": 1209,
+          "w": 76,
+          "h": 29,
+          "confidence": 95.952728,
+          "text": "policy"
+        },
+        {
+          "x": 941,
+          "y": 1209,
+          "w": 137,
+          "h": 29,
+          "confidence": 96.640335,
+          "text": "supporting"
+        },
+        {
+          "x": 1086,
+          "y": 1209,
+          "w": 42,
+          "h": 23,
+          "confidence": 96.16806,
+          "text": "the"
+        },
+        {
+          "x": 1136,
+          "y": 1209,
+          "w": 150,
+          "h": 29,
+          "confidence": 96.054253,
+          "text": "deployment"
+        },
+        {
+          "x": 1294,
+          "y": 1209,
+          "w": 25,
+          "h": 24,
+          "confidence": 96.974503,
+          "text": "of"
+        },
+        {
+          "x": 1327,
+          "y": 1210,
+          "w": 86,
+          "h": 23,
+          "confidence": 96.568382,
+          "text": "carbon"
+        },
+        {
+          "x": 1421,
+          "y": 1213,
+          "w": 97,
+          "h": 26,
+          "confidence": 96.53727,
+          "text": "capture"
+        },
+        {
+          "x": 1526,
+          "y": 1211,
+          "w": 44,
+          "h": 22,
+          "confidence": 96.279976,
+          "text": "and"
+        },
+        {
+          "x": 1579,
+          "y": 1211,
+          "w": 175,
+          "h": 28,
+          "confidence": 96.279976,
+          "text": "sequestration"
+        },
+        {
+          "x": 1762,
+          "y": 1211,
+          "w": 164,
+          "h": 28,
+          "confidence": 95.113258,
+          "text": "technologies"
+        },
+        {
+          "x": 428,
+          "y": 1251,
+          "w": 189,
+          "h": 23,
+          "confidence": 96.092178,
+          "text": "establishment."
+        },
+        {
+          "x": 431,
+          "y": 1345,
+          "w": 105,
+          "h": 22,
+          "confidence": 96.27404,
+          "text": "Agenda:"
+        },
+        {
+          "x": 432,
+          "y": 1392,
+          "w": 17,
+          "h": 19,
+          "confidence": 87.001785,
+          "text": "1."
+        },
+        {
+          "x": 457,
+          "y": 1392,
+          "w": 41,
+          "h": 19,
+          "confidence": 46.867119,
+          "text": "S.F,"
+        },
+        {
+          "x": 506,
+          "y": 1392,
+          "w": 48,
+          "h": 19,
+          "confidence": 93.177933,
+          "text": "3664"
+        },
+        {
+          "x": 654,
+          "y": 1393,
+          "w": 83,
+          "h": 18,
+          "confidence": 96.615829,
+          "text": "Benson"
+        },
+        {
+          "x": 983,
+          "y": 1393,
+          "w": 55,
+          "h": 19,
+          "confidence": 96.179802,
+          "text": "State"
+        },
+        {
+          "x": 1046,
+          "y": 1394,
+          "w": 68,
+          "h": 23,
+          "confidence": 96.43074,
+          "text": "policy"
+        },
+        {
+          "x": 1122,
+          "y": 1394,
+          "w": 121,
+          "h": 23,
+          "confidence": 96.671928,
+          "text": "supporting"
+        },
+        {
+          "x": 1251,
+          "y": 1394,
+          "w": 35,
+          "h": 19,
+          "confidence": 96.998047,
+          "text": "the"
+        },
+        {
+          "x": 1294,
+          "y": 1394,
+          "w": 130,
+          "h": 24,
+          "confidence": 96.363327,
+          "text": "deployment"
+        },
+        {
+          "x": 1431,
+          "y": 1394,
+          "w": 23,
+          "h": 19,
+          "confidence": 96.921219,
+          "text": "of"
+        },
+        {
+          "x": 1460,
+          "y": 1395,
+          "w": 77,
+          "h": 18,
+          "confidence": 96.867004,
+          "text": "carbon"
+        },
+        {
+          "x": 1546,
+          "y": 1397,
+          "w": 83,
+          "h": 21,
+          "confidence": 96.441727,
+          "text": "capture"
+        },
+        {
+          "x": 1637,
+          "y": 1395,
+          "w": 40,
+          "h": 19,
+          "confidence": 94.94043,
+          "text": "and"
+        },
+        {
+          "x": 1686,
+          "y": 1396,
+          "w": 152,
+          "h": 22,
+          "confidence": 96.766823,
+          "text": "sequestration"
+        },
+        {
+          "x": 1847,
+          "y": 1396,
+          "w": 142,
+          "h": 23,
+          "confidence": 63.096294,
+          "text": "technologies"
+        },
+        {
+          "x": 1997,
+          "y": 1396,
+          "w": 163,
+          "h": 19,
+          "confidence": 95.786186,
+          "text": "establishment."
+        },
+        {
+          "x": 2392,
+          "y": 3191,
+          "w": 41,
+          "h": 27,
+          "confidence": 96.769386,
+          "text": "1/2"
+        },
+        {
+          "x": 108,
+          "y": 3181,
+          "w": 2009,
+          "h": 40,
+          "confidence": 12.964394,
+          "text": "https://goldpages.senate.mn/schedule/hearing_minutes.php?is=92&hearing_id=16818&type=minutes&always_show_minutes=Y#header"
+        }
+      ]
+    }
+  },
+  "checkboxGrids": []
+}

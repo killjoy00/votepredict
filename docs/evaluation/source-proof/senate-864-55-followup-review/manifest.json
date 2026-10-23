@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "senate864-structured-pair-review-v1",
+  "reviewedCommit": "626d82b28a697bf18cf16fc8275a6fd668219459",
+  "runId": "40032275845",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "registrySha256": "7fe7842dfcbf56d9c55200fc01034321af6a067cb921daac52aee29506e95acc",
+  "remainingOcrOriginals": 0,
+  "demonstratedParserMissOriginals": 2,
+  "originalsAuthenticated": 2,
+  "pages": 4,
+  "sameEngineDifferentSegmentation": true,
+  "dpi": 300,
+  "psmModes": [
+    3,
+    11
+  ],
+  "sources": [
+    {
+      "sourceId": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Energy/20220310/energy_20220310_Minutes.pdf",
+      "originalSha256": "c4403e23f210f6ccee2e5e9a165013fa9f11c9c001c0e1b1e01fac6bb8fbb7b7",
+      "extractedTextSha256": "c676a84c82319b78a4e9847129e94559c12df434d96120d0e914be6267c812fd",
+      "date": "2022-03-10",
+      "committee": "Energy and Utilities Finance and Policy",
+      "session": "2021-2022",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "c4a1a7e520f5b934876153cf7550401afe38c839da7565024cf6244b48fc7635",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "529ad01eee69216901e55d81806e7c829d1fc032e25bf00bc90768ee43fcfd63"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "07077aa3eee6ffd4734a13c8bd5272c90735f1c9041d13070626825ab5220c98",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "4a1694a15700a98377b3d44c56e4052f75f429e32f2f38ab792a4d4082c024df"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    },
+    {
+      "sourceId": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Subproperty/20220330/subproperty_20220330_Minutes.pdf",
+      "originalSha256": "cf2386e584dbb82c2be97983e75704c1bdcad22237fd8551382277a61d4359cb",
+      "extractedTextSha256": "5c7da5621646fb15ddb13b0179e8342bd190840cce7c2740988ad372c73a31f8",
+      "date": "2022-03-30",
+      "committee": "Taxes - Subcommittee on Property Taxes",
+      "session": "2021-2022",
+      "format": "pdf",
+      "authenticated": true,
+      "readable": true,
+      "extractionMethod": "ocr_tesseract",
+      "sourceOnly": true,
+      "productionWrites": 0,
+      "pages": [
+        {
+          "page": 1,
+          "raw300dpiPageSha256": "78770c0be405bf7336392d4663fc0447977e402f2f6d1231f8ecfadc1cd7a7d5",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "b4433b14bbd00f0eccda5d752dc797c92c955f053a64aef1bfcadef600556a26"
+        },
+        {
+          "page": 2,
+          "raw300dpiPageSha256": "d7047b67efa1d83abf61a139f97e6059cb2945fa0595f739652893da9716bbf0",
+          "rotationClockwise": 0,
+          "blankRaster": false,
+          "reviewImageSha256": "1e98ced45630c52519c0f2edda1b6a32993ec62a4c11a87a612b140657147dc2"
+        }
+      ],
+      "pageCount": 2,
+      "originalBytesAuthenticated": true
+    }
+  ],
+  "renderedReview": "pending",
+  "files": [
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/page-1.jpg",
+      "bytes": 138426,
+      "sha256": "b4433b14bbd00f0eccda5d752dc797c92c955f053a64aef1bfcadef600556a26"
+    },
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/page-1.json",
+      "bytes": 68413,
+      "sha256": "09a7179220c84f14c71d67e1917c99a6b0bfda1d5c34abc25e6a2322773c7160"
+    },
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/page-2.jpg",
+      "bytes": 128610,
+      "sha256": "1e98ced45630c52519c0f2edda1b6a32993ec62a4c11a87a612b140657147dc2"
+    },
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/page-2.json",
+      "bytes": 60001,
+      "sha256": "17e46d1ac09d8979783a76328487929b44da5c32e721fff391358652be3b3a04"
+    },
+    {
+      "path": "38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5/source.json",
+      "bytes": 1277,
+      "sha256": "a1cb055247bddb9ae6200de0027c4d8bda924755da968f57043b2b6ad7bbe1fd"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/page-1.jpg",
+      "bytes": 91703,
+      "sha256": "529ad01eee69216901e55d81806e7c829d1fc032e25bf00bc90768ee43fcfd63"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/page-1.json",
+      "bytes": 39855,
+      "sha256": "0482c79c5f976ba3096d3aaf08cf2d2769ec657b40382fe8dce4fb5a5a651a6f"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/page-2.jpg",
+      "bytes": 147771,
+      "sha256": "4a1694a15700a98377b3d44c56e4052f75f429e32f2f38ab792a4d4082c024df"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/page-2.json",
+      "bytes": 90688,
+      "sha256": "bb173893b5fbb05b0f1dcf78de69ab7735b80dc0770dd91d153860ce29ca49d2"
+    },
+    {
+      "path": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5/source.json",
+      "bytes": 1268,
+      "sha256": "2c422facb348706c706fe90f96d1e964a5efdef422126d33b0f3ff2db5b30dbd"
+    },
+    {
+      "path": "clerk-probes.json",
+      "bytes": 62384,
+      "sha256": "0d6ae90a29af6a37703077e7f1370999296f4c21cbb4d617138d1d7916ebd5da"
+    }
+  ]
+}

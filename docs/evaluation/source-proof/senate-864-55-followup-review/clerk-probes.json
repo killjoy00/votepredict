@@ -1,0 +1,1187 @@
+[
+  {
+    "sourceUrl": "https://www.senate.mn/api/schedule/daily?date=2022-02-09",
+    "sourceOnly": true,
+    "rawSha256": "f7e93c291c2e51398f45f4f290c1f5975a180f7e4ded9e14cb5bf560af4bc7a5",
+    "data": {
+      "events": [
+        {
+          "hearing_id": 16646,
+          "hearing_start": "2022-02-09 13:00:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "G-15",
+          "hearing_building": "Capitol",
+          "hearing_other_location": "Livestream YouTube",
+          "hearing_notes": "This hybrid committee hearing will be held in-person with remote participation available for members and others. \r\n\r\nThe hearing may be viewed remotely at https://www.senate.mn/media/media_coming_up.html. \r\n\r\nPlease note there is greatly reduced room capacity for viewing the hearing in-person, pursuant to the Senate COVID-19 Preparedness Plan.\r\n\r\nThose who wish to testify specifically to the bills (verbally or in writing) or would like to submit handouts must email angela.cook@senate.mn no later than 5:00 pm, Tuesday, February 8, 2022.\r\n",
+          "hearing_revision_reason": "Documents added",
+          "hearing_revision_details": null,
+          "hearing_revision_number": 1,
+          "hearing_minutes_public": "Y",
+          "cmte_id": 3099,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-03 11:14:19",
+          "has_video": 1,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "13:00",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Judiciary and Public Safety Finance and Policy",
+            "chair": "Senator Warren Limmer",
+            "chair_link": "member_bio.php?mem_id=1032",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3099"
+          },
+          "joint_committee": [],
+          "minutes_link": "hearing_minutes.php?hearing_id=16646&ls=92",
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "show_public": 1,
+              "agenda_order": 1,
+              "bill_type": "S.F.",
+              "bill_number": "2847",
+              "description": "Pathway to policing reimbursement grant funding provision",
+              "author_name": "Jasinski",
+              "author_id": 1227,
+              "author_link": "member_bio.php?mem_id=1227",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2847&session=ls92&session_year=&session_number=0",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "SF 2847 Bill Summary",
+                  "file_path": "/committees/2021-2022/3099_Committee_on_Judiciary_and_Public_Safety_Finance_and_Policy/SF 2847 Bill Summary.pdf"
+                }
+              ],
+              "links": []
+            },
+            {
+              "show_public": 1,
+              "agenda_order": 2,
+              "bill_type": "S.F.",
+              "bill_number": "2796",
+              "description": "Metro Transit violent crime enforcement team appropriation",
+              "author_name": "Limmer",
+              "author_id": 1032,
+              "author_link": "member_bio.php?mem_id=1032",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2796&session=ls92&session_year=&session_number=0",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "SF 2796  Bill Summary",
+                  "file_path": "/committees/2021-2022/3099_Committee_on_Judiciary_and_Public_Safety_Finance_and_Policy/SF 2796  Bill Summary.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "VCET Letter Feb 2022",
+                  "file_path": "/committees/2021-2022/3099_Committee_on_Judiciary_and_Public_Safety_Finance_and_Policy/VCET Letter Feb 2022.pdf"
+                }
+              ],
+              "links": []
+            },
+            {
+              "show_public": 1,
+              "agenda_order": 3,
+              "bill_type": "S.F.",
+              "bill_number": "2890",
+              "description": "Ramsey County Sheriff's Office grant establishment for technology to detect \r\ngunshots appropriation",
+              "author_name": "Ingebrigtsen",
+              "author_id": 1120,
+              "author_link": "https://www.leg.mn.gov/legdb/fulldetail?id=15239",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2890&session=ls92&session_year=&session_number=0",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "SF 2890 Bill Summary",
+                  "file_path": "/committees/2021-2022/3099_Committee_on_Judiciary_and_Public_Safety_Finance_and_Policy/SF 2890 Bill Summary.pdf"
+                }
+              ],
+              "links": []
+            },
+            {
+              "show_public": 1,
+              "agenda_order": 4,
+              "bill_type": "S.F.",
+              "bill_number": "2891",
+              "description": "Reimbursement program establishment and appropriation for use of force \r\ntraining",
+              "author_name": "Johnson",
+              "author_id": 1217,
+              "author_link": "member_bio.php?mem_id=1217",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2891&session=ls92&session_year=&session_number=0",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "SF 2891 Bill Summary",
+                  "file_path": "/committees/2021-2022/3099_Committee_on_Judiciary_and_Public_Safety_Finance_and_Policy/SF 2891 Bill Summary.pdf"
+                }
+              ],
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Judiciary+and+Public+Safety+Finance+and+Policy&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Judiciary+and+Public+Safety+Finance+and+Policy&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16651,
+          "hearing_start": "2022-02-09 09:00:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "G-3",
+          "hearing_building": "Capitol",
+          "hearing_other_location": null,
+          "hearing_notes": "**Note time change to 9:00am**",
+          "hearing_revision_reason": "Meeting canceled",
+          "hearing_revision_details": null,
+          "hearing_revision_number": 1,
+          "hearing_minutes_public": "N",
+          "cmte_id": 3087,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-03 14:25:33",
+          "has_video": 0,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "09:00",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Aging and Long-Term Care Policy",
+            "chair": "Senator Karin Housley",
+            "chair_link": "member_bio.php?mem_id=1214",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3087"
+          },
+          "joint_committee": [],
+          "minutes_link": null,
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "show_public": 1,
+              "agenda_order": 1,
+              "bill_type": "S.F.",
+              "bill_number": "2786",
+              "description": "Nursing homes and assisted living facilities employee bonuses provisions and \r\nappropriation",
+              "author_name": "Housley",
+              "author_id": 1214,
+              "author_link": "member_bio.php?mem_id=1214",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2786&session=ls92&session_year=&session_number=0",
+              "files": [],
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Aging+and+Long-Term+Care+Policy&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Aging+and+Long-Term+Care+Policy&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16652,
+          "hearing_start": "2022-02-09 13:00:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "1150",
+          "hearing_building": "Minnesota Senate Bldg.",
+          "hearing_other_location": "Livestream YouTube",
+          "hearing_notes": "This hybrid committee hearing will be held in person with remote participation available. Please note there is greatly reduced room capacity for viewing the hearing in-person, pursuant to the Senate COVID-19 Preparedness Plan. The hearing may be viewed remotely at https://www.senate.mn/media/media_coming_up.html.",
+          "hearing_revision_reason": null,
+          "hearing_revision_details": null,
+          "hearing_revision_number": 0,
+          "hearing_minutes_public": "Y",
+          "cmte_id": 3094,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-03 14:26:28",
+          "has_video": 1,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "13:00",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Environment and Natural Resources Policy and Legacy Finance",
+            "chair": "Senator Carrie Ruud",
+            "chair_link": "https://www.leg.mn.gov/legdb/fulldetail?id=10804",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3094"
+          },
+          "joint_committee": [],
+          "minutes_link": "hearing_minutes.php?hearing_id=16652&ls=92",
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "description": "Presentation Minnesota Pollution Control Agency",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "MPCA update 2022.02.09",
+                  "file_path": "/committees/2021-2022/3094_Committee_on_Environment_and_Natural_Resources_Policy_and_Legacy_Finance/MPCA update 2022.02.09.pdf"
+                }
+              ],
+              "agenda_order": 1,
+              "show_public": 1,
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Environment+and+Natural+Resources+Policy+and+Legacy+Finance&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Environment+and+Natural+Resources+Policy+and+Legacy+Finance&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16654,
+          "hearing_start": "2022-02-09 13:00:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "1200",
+          "hearing_building": "Minnesota Senate Bldg.",
+          "hearing_other_location": "Livestream YouTube",
+          "hearing_notes": "*Documents added*\r\n\r\nThis committee hearing will be held in person, with remote participation available for members and others, pursuant to Temporary Senate Rule 12.1(b). The hearing may be viewed remotely at https://www.senate.mn/media/media_coming_up.html.\r\n\r\nTo request to testify, please email Bailey.Strand@senate.mn by 10:00 a.m. on Wednesday, February 9th.",
+          "hearing_revision_reason": "Documents added",
+          "hearing_revision_details": null,
+          "hearing_revision_number": 1,
+          "hearing_minutes_public": "Y",
+          "cmte_id": 3095,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-03 14:49:38",
+          "has_video": 1,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "13:00",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Health and Human Services Finance and Policy",
+            "chair": "Senator Paul J. Utke",
+            "chair_link": "member_bio.php?mem_id=1218",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3095"
+          },
+          "joint_committee": [],
+          "minutes_link": "hearing_minutes.php?hearing_id=16654&ls=92",
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "description": "MN Department of Health Waiver Language ",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "2022 MDH Waiver request narrative",
+                  "file_path": "/committees/2021-2022/3095_Committee_on_Health_and_Human_Services_Finance_and_Policy/2022 MDH Waiver request narrative.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "scs2853a-2 (MDH emergency waivers)",
+                  "file_path": "/committees/2021-2022/3095_Committee_on_Health_and_Human_Services_Finance_and_Policy/scs2853a-2 (MDH emergency waivers).pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "Public Agenda Feb 9th 2022",
+                  "file_path": "/committees/2021-2022/3095_Committee_on_Health_and_Human_Services_Finance_and_Policy/Public Agenda Feb 9th 2022.pdf"
+                }
+              ],
+              "agenda_order": 1,
+              "show_public": 1,
+              "links": []
+            },
+            {
+              "show_public": 1,
+              "agenda_order": 2,
+              "bill_type": "S.F.",
+              "bill_number": "2853",
+              "description": "Payment rates modification for ambulance services; Emergency Medical Services \r\nRegulatory Board authority temporary modification and appropriation",
+              "author_name": "Lang",
+              "author_id": 1223,
+              "author_link": "member_bio.php?mem_id=1223",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2853&session=ls92&session_year=&session_number=0",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "scs2853a-1",
+                  "file_path": "/committees/2021-2022/3095_Committee_on_Health_and_Human_Services_Finance_and_Policy/scs2853a-1.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "SCS2853A-1 EMSRB Temporary Authority Narrative (002)",
+                  "file_path": "/committees/2021-2022/3095_Committee_on_Health_and_Human_Services_Finance_and_Policy/SCS2853A-1 EMSRB Temporary Authority Narrative (002).pdf"
+                }
+              ],
+              "links": []
+            },
+            {
+              "description": "Update on 1,000 Certified Nursing Assistant Recruitment and Training Plan\r\n - Commissioner Dennis Olson, MN Office of Higher Education",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "Next Generation Nursing Assistant Program_Senate HHS_020922",
+                  "file_path": "/committees/2021-2022/3095_Committee_on_Health_and_Human_Services_Finance_and_Policy/Next Generation Nursing Assistant Program_Senate HHS_020922.pdf"
+                }
+              ],
+              "agenda_order": 3,
+              "show_public": 1,
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Health+and+Human+Services+Finance+and+Policy&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Health+and+Human+Services+Finance+and+Policy&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16655,
+          "hearing_start": "2022-02-09 08:30:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "1200",
+          "hearing_building": "Minnesota Senate Bldg.",
+          "hearing_other_location": "Livestream YouTube",
+          "hearing_notes": "This hybrid committee hearing will be held in-person with remote participation available for members and others. The hearing may be viewed remotely at https://www.senate.mn/media/media_coming_up.html. Please note there is greatly reduced room capacity for viewing the hearing in-person, pursuant to the Senate COVID-19 Preparedness Plan",
+          "hearing_revision_reason": "Agenda Addition(s)",
+          "hearing_revision_details": null,
+          "hearing_revision_number": 2,
+          "hearing_minutes_public": "Y",
+          "cmte_id": 1007,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-03 15:11:13",
+          "has_video": 0,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "08:30",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Finance",
+            "chair": "Senator Julie A. Rosen",
+            "chair_link": "https://www.leg.mn.gov/legdb/fulldetail?id=10803",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=1007"
+          },
+          "joint_committee": [],
+          "minutes_link": "hearing_minutes.php?hearing_id=16655&ls=92",
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "show_public": 1,
+              "agenda_order": 1,
+              "bill_type": "S.F.",
+              "bill_number": "2677",
+              "description": "Unemployment insurance trust fund loan repayment and replenishment; \r\nappropriating money",
+              "author_name": "Pratt",
+              "author_id": 1210,
+              "author_link": "member_bio.php?mem_id=1210",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2677&session=ls92&session_year=&session_number=0",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "scs2677a-3",
+                  "file_path": "/committees/2021-2022/1007_Committee_on_Finance/scs2677a-3.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "Bill summary SF2677",
+                  "file_path": "/committees/2021-2022/1007_Committee_on_Finance/Bill summary SF2677.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "scs2677a-4",
+                  "file_path": "/committees/2021-2022/1007_Committee_on_Finance/scs2677a-4.pdf"
+                }
+              ],
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Finance&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Finance&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16657,
+          "hearing_start": "2022-02-09 10:30:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "1150",
+          "hearing_building": "Minnesota Senate Bldg.",
+          "hearing_other_location": "Livestream YouTube",
+          "hearing_notes": "This hybrid committee hearing will be held in-person with remote participation available for members and others. The hearing may be viewed remotely at https://www.senate.mn/media/media_coming_up.html. Please note there is greatly reduced room capacity for viewing the hearing in-person, pursuant to the Senate COVID-19 Preparedness Plan",
+          "hearing_revision_reason": null,
+          "hearing_revision_details": null,
+          "hearing_revision_number": 0,
+          "hearing_minutes_public": "Y",
+          "cmte_id": 3093,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-03 17:28:41",
+          "has_video": 1,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "10:30",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Environment and Natural Resources Finance",
+            "chair": "Senator Bill Ingebrigtsen",
+            "chair_link": "https://www.leg.mn.gov/legdb/fulldetail?id=15239",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3093"
+          },
+          "joint_committee": [],
+          "minutes_link": "hearing_minutes.php?hearing_id=16657&ls=92",
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "description": "Overview of Minnesota Pollution Control Agency\u2019s supplemental budget request",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "MPCA Policy and Supplemental Budget Fact Sheets",
+                  "file_path": "/committees/2021-2022/3093_Committee_on_Environment_and_Natural_Resources_Finance/MPCA policy and supplemental budget fact sheets.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "",
+                  "file_path": "/committees/2021-2022/3093_Committee_on_Environment_and_Natural_Resources_Finance/MPCA Budget 2022.02.08.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "MPCA Supplemental Budget ",
+                  "file_path": "/committees/2021-2022/3093_Committee_on_Environment_and_Natural_Resources_Finance/MPCA Budget 2022.02.08.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "MPCA Supplemental Budget FTEs handout ",
+                  "file_path": "/committees/2021-2022/3093_Committee_on_Environment_and_Natural_Resources_Finance/2022-02-09 PCA Supplemental Budget FTEs.pdf"
+                }
+              ],
+              "agenda_order": 1,
+              "show_public": 1,
+              "links": []
+            },
+            {
+              "description": "Overview of the Board of Water and Soil Resources\u2019 supplemental budget \r\nrequest",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "",
+                  "file_path": "/committees/2021-2022/3093_Committee_on_Environment_and_Natural_Resources_Finance/Sen ENR Finance 2-9-22.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "Board of Water and Soil Resources Supplemental Budget",
+                  "file_path": "/committees/2021-2022/3093_Committee_on_Environment_and_Natural_Resources_Finance/Sen ENR Finance 2-9-22.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "10.25.21 BWSR letter regarding COVID-19 relief ",
+                  "file_path": "/committees/2021-2022/3093_Committee_on_Environment_and_Natural_Resources_Finance/10.25.21 Walz BWSR Letter.pdf"
+                }
+              ],
+              "agenda_order": 2,
+              "show_public": 1,
+              "links": []
+            },
+            {
+              "description": "Overview of the Metropolitan Council\u2019s supplemental budget request",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "",
+                  "file_path": "/committees/2021-2022/3093_Committee_on_Environment_and_Natural_Resources_Finance/Senate_EnvNRCommittee_Presentation-DM2 (002).pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "Metropolitan Council Supplemental Budget Presentation ",
+                  "file_path": "/committees/2021-2022/3093_Committee_on_Environment_and_Natural_Resources_Finance/Senate_EnvNRCommittee_Presentation-DM2 (002).pdf"
+                }
+              ],
+              "agenda_order": 3,
+              "show_public": 1,
+              "links": []
+            },
+            {
+              "description": "Adjournment",
+              "files": [],
+              "agenda_order": 4,
+              "show_public": 1,
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Environment+and+Natural+Resources+Finance&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Environment+and+Natural+Resources+Finance&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16659,
+          "hearing_start": "2022-02-09 09:30:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "123",
+          "hearing_building": "Capitol",
+          "hearing_other_location": null,
+          "hearing_notes": "This hybrid committee hearing will be held in person with remote participation available. Please note there is reduced room capacity for viewing the hearing in-person, pursuant to the Senate COVID-19 Preparedness Plan. The hearing may be viewed remotely at https://www.senate.mn/media/media_coming_up.html.\r\n\r\nIf you would like to testify, please e-mail tricia.elite@senate.mn by 12pm on 2/8 to sign up. Please note if you will be testifying in person or remotely.\r\n",
+          "hearing_revision_reason": "Documents added",
+          "hearing_revision_details": null,
+          "hearing_revision_number": 2,
+          "hearing_minutes_public": "Y",
+          "cmte_id": 3112,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-04 14:22:36",
+          "has_video": 1,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "09:30",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Labor and Industry Policy",
+            "chair": "Senator Jason Rarick",
+            "chair_link": "member_bio.php?mem_id=1240",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3112"
+          },
+          "joint_committee": [],
+          "minutes_link": "hearing_minutes.php?hearing_id=16659&ls=92",
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "show_public": 1,
+              "agenda_order": 1,
+              "bill_type": "S.F.",
+              "bill_number": "2955",
+              "description": "Workers' compensation COVID-19 presumption reimbursement establishment and \r\nappropriation",
+              "author_name": "Isaacson",
+              "author_id": 1231,
+              "author_link": "https://www.leg.mn.gov/legdb/fulldetail?id=15402",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2955&session=ls92&session_year=&session_number=0",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "2.9.22 Labor Agenda",
+                  "file_path": "/committees/2021-2022/3112_Committee_on_Labor_and_Industry_Policy/2.9.22 Labor Agenda.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "SF2955 As Introduced",
+                  "file_path": "/committees/2021-2022/3112_Committee_on_Labor_and_Industry_Policy/SF2955 As Introduced.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "SF 2955 Bill Summary",
+                  "file_path": "/committees/2021-2022/3112_Committee_on_Labor_and_Industry_Policy/SF 2955 Bill Summary.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "MPPOA letter of support SF 2955",
+                  "file_path": "/committees/2021-2022/3112_Committee_on_Labor_and_Industry_Policy/MPPOA letter of support SF 2955.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "MN Chamber SF 2955 2.8.22",
+                  "file_path": "/committees/2021-2022/3112_Committee_on_Labor_and_Industry_Policy/MN Chamber SF 2955 2.8.22.pdf"
+                }
+              ],
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Labor+and+Industry+Policy&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Labor+and+Industry+Policy&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16660,
+          "hearing_start": "2022-02-09 08:30:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "G-15",
+          "hearing_building": "Capitol",
+          "hearing_other_location": null,
+          "hearing_notes": "This hybrid committee hearing will be held in-person with remote participation available for members and others. The hearing may be viewed remotely at https://www.senate.mn/media/media_coming_up.html. Please note there is greatly reduced room capacity for viewing the hearing in-person, pursuant to the Senate COVID-19 Preparedness Plan",
+          "hearing_revision_reason": null,
+          "hearing_revision_details": null,
+          "hearing_revision_number": 0,
+          "hearing_minutes_public": "Y",
+          "cmte_id": 3116,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-04 15:10:04",
+          "has_video": 1,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "08:30",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Taxes - Subcommittee on Property Taxes",
+            "chair": "Senator Bill Weber",
+            "chair_link": "member_bio.php?mem_id=1199",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3116"
+          },
+          "joint_committee": [],
+          "minutes_link": "hearing_minutes.php?hearing_id=16660&ls=92",
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "show_public": 1,
+              "agenda_order": 1,
+              "bill_type": "S.F.",
+              "bill_number": "2681",
+              "description": "Disabled veterans' homestead market value exclusion for qualifying spouses \r\nextension",
+              "author_name": "Lang",
+              "author_id": 1223,
+              "author_link": "member_bio.php?mem_id=1223",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2681&session=ls92&session_year=&session_number=0",
+              "files": [],
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Taxes+-+Subcommittee+on+Property+Taxes&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Taxes+-+Subcommittee+on+Property+Taxes&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16665,
+          "hearing_start": "2022-02-09 15:00:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "1100",
+          "hearing_building": "Minnesota Senate Bldg.",
+          "hearing_other_location": "Livestream YouTube",
+          "hearing_notes": "",
+          "hearing_revision_reason": null,
+          "hearing_revision_details": null,
+          "hearing_revision_number": 0,
+          "hearing_minutes_public": "Y",
+          "cmte_id": 3106,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-04 16:36:31",
+          "has_video": 1,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "15:00",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Education Finance and Policy",
+            "chair": "Senator Roger C. Chamberlain",
+            "chair_link": "https://www.leg.mn.gov/legdb/fulldetail?id=15325",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3106"
+          },
+          "joint_committee": [],
+          "minutes_link": "hearing_minutes.php?hearing_id=16665&ls=92",
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "description": "An informational hearing on LETRS and literacy.  This hybrid committee \r\nhearing will be held in-person with remote participation available for \r\nmembers and others. The hearing may be viewed remotely at \r\nhttps://www.senate.mn/media/media_coming_up.html. Please note there is \r\ngreatly reduced room capacity for viewing the hearing in-person, pursuant \r\nto the Senate COVID-19 Preparedness Plan. ",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "MCA and NAEP Reading Score Data Powerpoint",
+                  "file_path": "/committees/2021-2022/3106_Committee_on_Education_Finance_and_Policy/MCA and NAEP Reading Score Data Powerpoint.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "COVID-19 School Closures and Impact on Student Learning",
+                  "file_path": "/committees/2021-2022/3106_Committee_on_Education_Finance_and_Policy/COVID-19 School Closures and Impact on Student Learning.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "2_19 Jessica Town-Gunderson Systems shift from Balanced Literacy to Science of Reading (LETRS)",
+                  "file_path": "/committees/2021-2022/3106_Committee_on_Education_Finance_and_Policy/2_19 Jessica Town-Gunderson Systems shift from Balanced Literacy to Science of Reading (LETRS).pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "ServeMinnesota-Bridge2Read_2.9.22",
+                  "file_path": "/committees/2021-2022/3106_Committee_on_Education_Finance_and_Policy/ServeMinnesota-Bridge2Read_2.9.22.pptx"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "ServeMinnesota-Bridge2Read_2.9.22-handout",
+                  "file_path": "/committees/2021-2022/3106_Committee_on_Education_Finance_and_Policy/ServeMinnesota-Bridge2Read_2.9.22-handout.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "2.09.22 MDE Update on LETRS for Senate Education Committee",
+                  "file_path": "/committees/2021-2022/3106_Committee_on_Education_Finance_and_Policy/2.09.22 MDE Update on LETRS for Senate Education Committee.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "Changes to MN school accountability plan TCities",
+                  "file_path": "/committees/2021-2022/3106_Committee_on_Education_Finance_and_Policy/Changes to MN school accountability plan TCities.pdf"
+                }
+              ],
+              "agenda_order": 1,
+              "show_public": 1,
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Education+Finance+and+Policy&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Education+Finance+and+Policy&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16667,
+          "hearing_start": "2022-02-09 10:30:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "1100",
+          "hearing_building": "Minnesota Senate Bldg.",
+          "hearing_other_location": "Livestream YouTube",
+          "hearing_notes": "This hybrid committee hearing will be held in-person with remote participation available for members and others. The hearing may be viewed remotely at https://www.senate.mn/media/media_coming_up.html. Please note there is greatly reduced room capacity for viewing the hearing in-person, pursuant to the Senate COVID-19 Preparedness Plan.\r\nIf you wish to testify please notify the Committee Administrator at alec.biorn@senate.mn by 5pm Tuesday 2/8.",
+          "hearing_revision_reason": null,
+          "hearing_revision_details": null,
+          "hearing_revision_number": 0,
+          "hearing_minutes_public": "N",
+          "cmte_id": 3101,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-04 21:12:18",
+          "has_video": 1,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "10:30",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "State Government Finance and Policy and Elections",
+            "chair": "Senator Mary Kiffmeyer",
+            "chair_link": "https://www.leg.mn.gov/legdb/fulldetail?id=15302",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3101"
+          },
+          "joint_committee": [],
+          "minutes_link": null,
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "show_public": 1,
+              "agenda_order": 1,
+              "bill_type": "S.F.",
+              "bill_number": "2957",
+              "description": "Retirement annuities payment during employment as a health care worker \r\nauthorization",
+              "author_name": "Kiffmeyer",
+              "author_id": 1202,
+              "author_link": "https://www.leg.mn.gov/legdb/fulldetail?id=15302",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2957&session=ls92&session_year=&session_number=0",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "2.9.22 Agenda",
+                  "file_path": "/committees/2021-2022/3101_Committee_on_State_Government_Finance_and_Policy_and_Elections/2.9.22 Agenda.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "scs2957a-2",
+                  "file_path": "/committees/2021-2022/3101_Committee_on_State_Government_Finance_and_Policy_and_Elections/scs2957a-2.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "S2957-H3136.Summary.Health_care_workers",
+                  "file_path": "/committees/2021-2022/3101_Committee_on_State_Government_Finance_and_Policy_and_Elections/S2957-H3136.Summary.Health_care_workers.pdf"
+                }
+              ],
+              "links": []
+            },
+            {
+              "show_public": 1,
+              "agenda_order": 2,
+              "bill_type": "S.F.",
+              "bill_number": "2818",
+              "description": "Office of the Attorney General performance of legal services \r\nspecification",
+              "author_name": "Kiffmeyer",
+              "author_id": 1202,
+              "author_link": "https://www.leg.mn.gov/legdb/fulldetail?id=15302",
+              "bill_link": "https://www.revisor.mn.gov/bills/text.php?version=latest&number=SF2818&session=ls92&session_year=&session_number=0",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "Summary for SF2818",
+                  "file_path": "/committees/2021-2022/3101_Committee_on_State_Government_Finance_and_Policy_and_Elections/Summary for SF2818.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "scs2818a-1",
+                  "file_path": "/committees/2021-2022/3101_Committee_on_State_Government_Finance_and_Policy_and_Elections/scs2818a-1.pdf"
+                }
+              ],
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+State+Government+Finance+and+Policy+and+Elections&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+State+Government+Finance+and+Policy+and+Elections&startdate=02/09/2022&enddate=02/09/2022"
+        },
+        {
+          "hearing_id": 16677,
+          "hearing_start": "2022-02-09 15:00:00",
+          "hearing_start_other_details": "",
+          "hearing_room": "1150",
+          "hearing_building": "Minnesota Senate Bldg.",
+          "hearing_other_location": "Livestream YouTube",
+          "hearing_notes": "This hybrid committee hearing will be held in person with remote participation available. Please note there is greatly reduced room capacity for viewing the hearing in-person, pursuant to the Senate COVID-19 Preparedness Plan. The hearing may be viewed remotely at https://www.senate.mn/media/media_coming_up.html. All agendas are subject to change. No official action will be taken at this hearing.",
+          "hearing_revision_reason": "Documents added",
+          "hearing_revision_details": null,
+          "hearing_revision_number": 1,
+          "hearing_minutes_public": "Y",
+          "cmte_id": 3107,
+          "cmte_type": "Standing",
+          "hearing_joint_cmte_id": null,
+          "ss_year": null,
+          "ss_number": 0,
+          "show_webcast": 1,
+          "webcast_description": null,
+          "hearing_start_other_details_custom": null,
+          "hearing_public_deadline": null,
+          "hearing_notes_bottom": 0,
+          "recess": null,
+          "recess_other_details": null,
+          "recess_other_details_custom": null,
+          "show_public": 1,
+          "show_public_date": null,
+          "hearing_added_date": "2022-02-08 18:06:27",
+          "has_video": 0,
+          "show_livestream": 0,
+          "url": "",
+          "url_first_part": "",
+          "url_second_part": "",
+          "vendor_id": "",
+          "live_video_link": "",
+          "instruction_webcast_description": "DO NOT USE webcast_description values on committee schedule/data restricted to media department webcast-schedule usage",
+          "lrl_use_livestream": "",
+          "streaming": [],
+          "hearing_time": "15:00",
+          "hearing_date": "2022-02-09",
+          "public_notice_date": null,
+          "is_today": false,
+          "committee": {
+            "committee_name": "Agriculture and Rural Development Finance and Policy",
+            "chair": "Senator Torrey N. Westrom",
+            "chair_link": "member_bio.php?mem_id=1197",
+            "co_chair": null,
+            "co_chair_link": null,
+            "link": "committee_bio.php?ls=92&cmte_id=3107"
+          },
+          "joint_committee": [],
+          "minutes_link": "hearing_minutes.php?hearing_id=16677&ls=92",
+          "note_links": [],
+          "revisions_record": [],
+          "agenda": [
+            {
+              "description": "Call to order",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "AgAgenda2.9.2022",
+                  "file_path": "/committees/2021-2022/3107_Committee_on_Agriculture_and_Rural_Development_Finance_and_Policy/AgAgenda2.9.2022.pdf"
+                }
+              ],
+              "agenda_order": 1,
+              "show_public": 1,
+              "links": []
+            },
+            {
+              "description": "Continuation from 2/7/22 hearing of the Department of Natural Resources and \r\nBoard of Animal Health presentation of the report on Concurrent Authority \r\nRegulating Farmed White-tailed Deer.",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "Cover Letter - CWD Concurrent Authority Legislative Report",
+                  "file_path": "/committees/2021-2022/3107_Committee_on_Agriculture_and_Rural_Development_Finance_and_Policy/CoverLtr_ConcurrentAuthorityReport-2022.02.01.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "CWD Concurrent Authority Legislative Report",
+                  "file_path": "/committees/2021-2022/3107_Committee_on_Agriculture_and_Rural_Development_Finance_and_Policy/Concurrent Authority Legislative Report.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "DNR Presentation on CWD Concurrent Authority",
+                  "file_path": "/committees/2021-2022/3107_Committee_on_Agriculture_and_Rural_Development_Finance_and_Policy/DNR Senate Ag 2.7 Legislative Deer Farm Overview Final.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "BAH Presentation on CWD Concurrent Authority",
+                  "file_path": "/committees/2021-2022/3107_Committee_on_Agriculture_and_Rural_Development_Finance_and_Policy/BAH Concurrent Authority - Feb 7, 2022.pptx"
+                }
+              ],
+              "agenda_order": 2,
+              "show_public": 1,
+              "links": []
+            },
+            {
+              "description": "Overview of Board of Animal Health",
+              "files": [
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "Senate Counsel Memo - BAH History",
+                  "file_path": "/committees/2021-2022/3107_Committee_on_Agriculture_and_Rural_Development_Finance_and_Policy/History of Board of Animal Health Membership.pdf"
+                },
+                {
+                  "show_public": 1,
+                  "display_order": null,
+                  "filename": "BAH History 2.9.22 senate",
+                  "file_path": "/committees/2021-2022/3107_Committee_on_Agriculture_and_Rural_Development_Finance_and_Policy/BAH History 2.9.22 senate.pptx"
+                }
+              ],
+              "agenda_order": 3,
+              "show_public": 1,
+              "links": []
+            }
+          ],
+          "video_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=1&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Agriculture+and+Rural+Development+Finance+and+Policy&startdate=02/09/2022&enddate=02/09/2022",
+          "audio_link": "https://mnsenate.granicus.com/ViewSearchResults.php?view_id=2&types%5BClip%5D=on&types%5BAgendaItem%5D=on&types%5BAttachmentItem%5D=on&types%5BNote%5D=on&types%5BVote%2CMotion%5D=on%22&phrase=&orwords%5B%5D=&orwords%5B%5D=&orwords%5B%5D=&excludewords=&allwords=Committee+on+Agriculture+and+Rural+Development+Finance+and+Policy&startdate=02/09/2022&enddate=02/09/2022"
+        }
+      ]
+    }
+  }
+]

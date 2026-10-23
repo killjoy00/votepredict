@@ -1,0 +1,33 @@
+{
+  "sourceId": "b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Energy/20220310/energy_20220310_Minutes.pdf",
+  "originalSha256": "c4403e23f210f6ccee2e5e9a165013fa9f11c9c001c0e1b1e01fac6bb8fbb7b7",
+  "extractedTextSha256": "c676a84c82319b78a4e9847129e94559c12df434d96120d0e914be6267c812fd",
+  "date": "2022-03-10",
+  "committee": "Energy and Utilities Finance and Policy",
+  "session": "2021-2022",
+  "format": "pdf",
+  "authenticated": true,
+  "readable": true,
+  "extractionMethod": "ocr_tesseract",
+  "sourceOnly": true,
+  "productionWrites": 0,
+  "pages": [
+    {
+      "page": 1,
+      "raw300dpiPageSha256": "c4a1a7e520f5b934876153cf7550401afe38c839da7565024cf6244b48fc7635",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "529ad01eee69216901e55d81806e7c829d1fc032e25bf00bc90768ee43fcfd63"
+    },
+    {
+      "page": 2,
+      "raw300dpiPageSha256": "07077aa3eee6ffd4734a13c8bd5272c90735f1c9041d13070626825ab5220c98",
+      "rotationClockwise": 0,
+      "blankRaster": false,
+      "reviewImageSha256": "4a1694a15700a98377b3d44c56e4052f75f429e32f2f38ab792a4d4082c024df"
+    }
+  ],
+  "pageCount": 2,
+  "originalBytesAuthenticated": true
+}
