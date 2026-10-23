@@ -1,0 +1,2160 @@
+{
+  "schemaVersion": "senate864-55-review-integrity-parser-comparison-v1",
+  "reviewedCommit": "27ceb7ece6cadac2748b0f4827b4007ada6081ec",
+  "sourceReviewCommit": "54934f257226db4132899e1ca300aef02c5f9a91",
+  "manifestSha256": "bfde48fbd725cba652051a2ddec34c0f23e2add3ef1be53ce119ead0a3323569",
+  "originals": 55,
+  "pages": 85,
+  "visualNamedOriginals": 3,
+  "scopedNegativeOriginals": 52,
+  "verifiedPublicFiles": 239,
+  "wordPerfectOcrCertified": false,
+  "productionWrites": 0,
+  "report": [
+    {
+      "sourceId": "3a132e5d88b915443c5090127f364171974efd963922ed9a6fb4aaee6c4ff9a4",
+      "date": "2023-01-10",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "e4824d5ae602dfaa0ab16ac641df807d276caf4226cced6a9efe393496e53e7f",
+      "date": "2023-01-12",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "71e41dcc970f7b41c90e7df26afec49730d0d37094588d30c9e493cb5d9f613e",
+      "date": "2023-01-17",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "d466ef714e8286e9dc4223a42ac4cecb4809dcb4c705a195454115dd7d804fbb",
+      "date": "2023-01-19",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "f7e2e12a227d7265f679448764eb37452d6716149ecbaad04620cda5a91725ff",
+      "date": "2023-01-24",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "000d8c07c23d09146649811ee8a73848a18733f58f76f8bda0e20b71939d29fe",
+      "date": "2023-01-26",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "a249292f0f969908a93c7b78d0e4c0ce06c6dea0e78dc31b995e08e0f37b929d",
+      "date": "2023-02-02",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "1f1b758a13635fa15321e397418513f9f31403e2e347867f3ffdc712af4b73b1",
+      "date": "2023-02-07",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "0fa60130a1c23b6a3af3384912b5d4e05634c3979861b433c7025f860a8d661f",
+      "date": "2023-02-09",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "7616fd11cb14128126c2199ac001b5502c9d9f2320c38f05052932e5d8fe39ec",
+      "date": "2023-02-14",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "e4d402f6f3bdeeacc4810af799761f94007f64e7262715ac12f57ac983e5e98f",
+      "date": "2023-02-16",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "7cd749171bd2067dd9ccc8b2fac4720a16783dc95e2a4bc4b67c3e25d54f10d1",
+      "date": "2023-02-21",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "8ae8e8d495769f1349e8c2ade361f0526e245d3ba0f5e26fc8ed5a7ca4dabded",
+      "date": "2023-02-28",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "b757faccea217743635ff90a9a38aa226a38f75f97f21a9bb5d46a53dc506119",
+      "date": "2023-03-02",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "3f1f66298b9c4a38519f39fbe56cb3e7bf2c4f7ea48b0ca2c5b437e261ce7010",
+      "date": "2023-03-07",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "3510b65378b8223b662ba8053d733036280359f4b24f1c7e18e362eee2d82290",
+      "date": "2023-03-09",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "f3353c3c8f84c2a34de6b618eefaa758592ccc82c1f93bfe6202d9617799f02f",
+      "date": "2023-03-14",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "77a0b96f94e025b18d26a6de9f100f5a68db43424da5b4a69ef7c716028b7819",
+      "date": "2023-03-16",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "f58191ae366def28e8d7d11faeca5f88ecc7ec7636eb92dae91113460061cc04",
+      "date": "2023-03-21",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "2bc494bbc421808271552cd03955a67b5cd19ed6a2a8da2d374fd444d2a0d6c1",
+      "date": "2023-03-23",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "47b55db8a98bc989e9bf711aaecb95e3d26628300bfdab9e382c683bff72fc49",
+      "date": "2023-03-28",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "d86d4e239cf8ab7ab8a8d247404dc696fb7b0c2dbb5e1e5bbc9cfc4c08476675",
+      "date": "2023-03-30",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "visualNamed": true,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668",
+      "date": "2023-05-12",
+      "committee": "Taxes",
+      "visualNamed": true,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "b0c17b9361f573080b923eb68d486149b5bb3fce43cd9a154436418713acb02b",
+      "date": "2024-02-20",
+      "committee": "Labor",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "b3d74988ae047ee79634a95ab442d8a847f736ea07710ba9bc9d63403c16c86f",
+      "date": "2024-02-22",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "427f6b73e2210b62581635f656837c0eac086015d4f1b2f4966175ae2da73fe3",
+      "date": "2024-02-29",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "8ef4ba912bec5fb1c9245892c44535b2848f4feb6eb73c353ee2a6baa8c757c9",
+      "date": "2024-03-04",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "c7d804a54e6eb7bd7ae21ccc2196b939c1d8dfa9d06fbf090d62424dc6a9d465",
+      "date": "2024-03-05",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "f477a7ab8aa39b38f44f5e36718d9caf70f91e8b934d01064158820f546a6b00",
+      "date": "2024-03-06",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "3cfb9a5b5b517a48fe7d36d6752da376599b6a30b55fec8a117dda1c7aae75da",
+      "date": "2024-03-07",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "496ceb9b9fcb4ee63f89fd895dab09a8db6eccf1b26b22a62d33cef01ec88ae2",
+      "date": "2024-03-07",
+      "committee": "Taxes",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "7aa35a29bb490f09a3873616c3bc7150eeab9880f52d8bda0cd2a03d9170819d",
+      "date": "2024-03-12",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "f71f4c43841230f6800bf4dc897c7d027b997a110d492b6a3cd22915616d3a1b",
+      "date": "2024-03-13",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "ea75ae140647d81ed36d00717f04104b6e2b84559022689dd7c164670cf846a4",
+      "date": "2024-03-14",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "ecc065759f8e7a9ff4a91c65b42077e2300716db88658cec54a3ea3387f0120a",
+      "date": "2024-03-18",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "29b8341e9cccd18efa28c2f9cc3dd0784a660983d079d843ed088539086ca3dd",
+      "date": "2024-03-21",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "d1843c53e1e75bfe173f6fc73927f81ae57242a0f1574baae2465decc7507dd3",
+      "date": "2024-03-26",
+      "committee": "Labor",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "ef0b6ce2b675dcd5ddff742986656d0da95ba183e63c6ed2f31d8bb91f613230",
+      "date": "2024-03-27",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "88160b88df2bf2d6c0f57681bb0ddc8cad148e4b0fff0a91f0cf3005c70e413f",
+      "date": "2024-04-03",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "0690b48d6a1211a760a137f454e8c86930bf899eb41debd67397f6e8a4606b94",
+      "date": "2024-04-03",
+      "committee": "Taxes",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "658b3edecc378d2535940a30854cacbc21d4a9b573f529c04ec542b980a2748b",
+      "date": "2024-04-04",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "9af2dff2c5715024ebc9e05d340dd5fe7339afc62ef238d4a63d46ae530ec6da",
+      "date": "2024-04-04",
+      "committee": "Taxes",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "59136751e9b0b123033b772a66af960e8a1207f98d5e1be7b17fc77be7f7aae4",
+      "date": "2024-04-08",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60",
+      "date": "2024-04-09",
+      "committee": "Labor",
+      "visualNamed": true,
+      "priorInventoryStatus": "named_candidate_original",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 2,
+        "supplement": 4
+      },
+      "psm": {
+        "3": {
+          "status": "named_candidate_original",
+          "candidateQuestions": 4,
+          "choiceOccurrences": 39,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 2,
+            "supplement": 4
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "named_candidate_original",
+          "candidateQuestions": 4,
+          "choiceOccurrences": 39,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 2,
+            "supplement": 4
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "274b78e8e7058d51706b8bc3815452b645ea762806e127d5a38898973a816bc8",
+      "date": "2024-04-09",
+      "committee": "Taxes",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "b63e127a15cf8cdc3aed5130ef19ff4855872328044ca1a00af63999116b0589",
+      "date": "2024-04-11",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "b1fea0297b8b4a1ffa253705725dcfc6c49e6e7ac639131b60b6f2d244a37b7f",
+      "date": "2024-04-16",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "9bef9ddf2764427cd534bec610c7f0dc50438e06f2b9e3aa7f63e7153ca470ec",
+      "date": "2024-04-17",
+      "committee": "Energy, Utilities, Environment and Climate",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "3ccc030c1b5bef90c73bd633ac679dc8fe6da89a08e1985a06fbfeee2afe1ef8",
+      "date": "2024-04-17",
+      "committee": "Taxes",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "57aac45ade79481f25103dc70d3d7a52a8d8679692ac5d8e60847436ce52f26c",
+      "date": "2024-04-18",
+      "committee": "Higher Education",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "7bcd8a85ad9f3662786d9027e6c2691cb0e0a36024e7751659ce1e95e83af439",
+      "date": "2024-04-18",
+      "committee": "Taxes",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "9cb44f0ea122484b920ec4d1625fa1a39e02d6f33a6b002ade0dc410a3f9957e",
+      "date": "2024-05-01",
+      "committee": "Taxes",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "2f7dd46f8857f47208f72e5ef04ae00aff1ffd9b48e931332187b8b02ca9c6e1",
+      "date": "2024-05-02",
+      "committee": "Taxes",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    },
+    {
+      "sourceId": "d444fe972d7d10e2d1b7c709058d53d90975480af5d2f0093cd752f49a4835c5",
+      "date": "2024-05-07",
+      "committee": "Taxes",
+      "visualNamed": false,
+      "priorInventoryStatus": "examined_no_named_roll",
+      "priorParserCounts": {
+        "row": 0,
+        "legacy": 0,
+        "raw": 0,
+        "supplement": 0
+      },
+      "psm": {
+        "3": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        },
+        "11": {
+          "status": "examined_no_named_roll",
+          "candidateQuestions": 0,
+          "choiceOccurrences": 0,
+          "parserCounts": {
+            "row": 0,
+            "legacy": 0,
+            "raw": 0,
+            "supplement": 0
+          },
+          "strictProvenQuestions": 0
+        }
+      }
+    }
+  ]
+}

@@ -54,7 +54,11 @@
     "combinedQualityHoldOriginals": 10,
     "combinedFullyLegibleScopedNegativeOriginals": 220,
     "combinedBlankRasterPages": 8,
-    "remainingOcrOriginalsUnreviewed": 0
+    "remainingOcrOriginalsUnreviewed": 0,
+    "baselineParserNamedOriginals": 1,
+    "additionalVisualNamedOriginals": 2,
+    "combinedBaselineParserNamedOriginals": 12,
+    "combinedVisualOriginalsMissedByFrozenParsers": 5
   },
   "additionalVisualFindings": [
     {
@@ -74,7 +78,8 @@
         13
       ],
       "status": "source_only_question_and_production_reconciliation_required",
-      "newCertifiedVotes": 0
+      "newCertifiedVotes": 0,
+      "missedByFrozenNamedParsers": true
     },
     {
       "sourceId": "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668",
@@ -84,7 +89,8 @@
         2
       ],
       "status": "source_only_question_and_production_reconciliation_required",
-      "newCertifiedVotes": 0
+      "newCertifiedVotes": 0,
+      "missedByFrozenNamedParsers": true
     },
     {
       "sourceId": "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60",
@@ -96,7 +102,8 @@
         4
       ],
       "status": "source_only_question_and_production_reconciliation_required",
-      "newCertifiedVotes": 0
+      "newCertifiedVotes": 0,
+      "missedByFrozenNamedParsers": false
     }
   ],
   "limitations": [
