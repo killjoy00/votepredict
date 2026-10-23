@@ -19,8 +19,8 @@ def mark(mask):
  if not components:return {'classification':'unknown','inkPixels':count,'reason':'unresolved_ink'}
  lines=cv2.HoughLinesP(mask,1,np.pi/180,threshold=4,minLineLength=5,maxLineGap=3)
  positive=[];negative=[]
- for item in ([]if lines is None else lines):
-  x0,y0,x1,y1=map(int,item[0]);dx=x1-x0;dy=y1-y0
+ for item in ([]if lines is None else np.asarray(lines).reshape(-1,4)):
+  x0,y0,x1,y1=map(int,item);dx=x1-x0;dy=y1-y0
   if dx and .25<=abs(dy/dx)<=4:
    (positive if dy/dx>0 else negative).append([x0,y0,x1,y1])
  cross=any(abs((a[0]+a[2]-b[0]-b[2])/2)<12 and abs((a[1]+a[3]-b[1]-b[3])/2)<12 for a in positive for b in negative)
