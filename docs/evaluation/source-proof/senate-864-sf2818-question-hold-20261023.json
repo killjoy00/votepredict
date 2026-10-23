@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "senate864-sf2818-exact-question-investigation-v1",
+  "sourceId": "26bd713e33f085984e2607e8e60ab86251e7e3fe68da3e6b3d10d89663c7257b",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finstgov/20220209/finstgov_20220209_Minutes.pdf",
+  "originalSha256": "baf0ab7abc176b706f34dcd04f015504471f6339c8ac6cd6d904b3a460aed911",
+  "reviewCommit": "54934f257226db4132899e1ca300aef02c5f9a91",
+  "renderedPage": 1,
+  "actualPdfPages": 1,
+  "printedFooter": "1/2",
+  "printedMeetingDate": "2022-02-09",
+  "printedCaptureDate": "2022-02-10",
+  "literalRequest": "Senator Osmek requested a roll call.",
+  "literalSideHeadings": [
+    "Voting in favor:",
+    "Voting in opposition:"
+  ],
+  "literalNames": {
+    "inFavor": [
+      "Kiffmeyer",
+      "Howe",
+      "Koran",
+      "Pratt",
+      "Osmek"
+    ],
+    "inOpposition": [
+      "Carlson",
+      "Clausen",
+      "Fateh"
+    ]
+  },
+  "precedingQuestion": "Senator Kiffmeyer moved the A1 amendment. The motion prevailed and the amendment was adopted.",
+  "followingQuestion": "Senator Kiffmeyer moved that S.F.2818, as amended, be recommended to pass. - MOTION PREVAILED.",
+  "questionAssociationCertified": false,
+  "numericalPrintedTally": null,
+  "canonicalClerkProbe": [
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=16667&ls=92&type=minutes",
+      "hearingId": 16667,
+      "sourceOnly": true,
+      "hold": "HTTPError: HTTP Error 404: Not Found"
+    },
+    {
+      "sourceUrl": "https://goldpages.senate.mn/schedule/hearing_minutes.php?always_show_minutes=Y&hearing_id=16667&ls=92&type=minutes",
+      "hearingId": 16667,
+      "sourceOnly": true,
+      "hold": "URLError: <urlopen error [Errno -2] Name or service not known>"
+    }
+  ],
+  "officialScheduleApi": {
+    "url": "https://www.senate.mn/api/schedule/daily?date=2022-02-09",
+    "rawSha256": "f7e93c291c2e51398f45f4f290c1f5975a180f7e4ded9e14cb5bf560af4bc7a5",
+    "reviewCommit": "e6edbc08aa168026365c819ac07988a99eeb8456",
+    "hearingId": 16667,
+    "date": "2022-02-09",
+    "committee": "State Government Finance and Policy and Elections",
+    "minutesPublic": "N",
+    "minutesLink": null,
+    "noteLinks": [],
+    "agendaBills": [
+      "2957",
+      "2818"
+    ]
+  },
+  "disposition": "held_exact_question_and_printed_tally_unresolved",
+  "reopeningRequirement": "An authenticated contemporaneous original explicitly binds the eight printed choices to a complete, distinct SF2818 parliamentary question and establishes list completeness without attendance or tally inference.",
+  "productionWrites": 0,
+  "noOfficeContact": true,
+  "noManualAudioReview": true
+}
