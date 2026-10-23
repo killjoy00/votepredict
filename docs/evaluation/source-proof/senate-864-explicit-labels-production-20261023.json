@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "senate864-explicit-labels-production-receipt-v1",
+  "implementationPr": 1566,
+  "runId": 39967681431,
+  "independentGateJobId": 120461736077,
+  "productionJobId": 120463414111,
+  "standardChecks": 2468,
+  "focusedTests": 60,
+  "testFailures": 0,
+  "productionDependencyAuditVulnerabilities": 0,
+  "artifact": {
+    "id": 12508111274,
+    "name": "senate864-population-explicit-label-production-verified",
+    "size_in_bytes": 869,
+    "url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12508111274",
+    "archive_download_url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12508111274/zip",
+    "expired": false,
+    "created_at": "2026-10-23T14:18:20Z",
+    "expires_at": "2026-11-06T14:18:19Z",
+    "updated_at": "2026-10-23T14:18:20Z",
+    "digest": "sha256:9c3ab52ae880dae081ac44d00cadf91d8e4fa172b7d9290b44b28eb89fe9e9ff",
+    "workflow_run": {
+      "id": 39967681431,
+      "repository_id": 1201743780,
+      "head_repository_id": 1201743780,
+      "head_branch": "main",
+      "head_sha": "f543c216c964bced601e8d978384f6c4bff5616b"
+    }
+  },
+  "receipt": {
+    "version": "senate864-population-named-rolls-v1",
+    "cohort": "labels",
+    "reviewedCommit": "f543c216c964bced601e8d978384f6c4bff5616b",
+    "verifiedAt": "2026-10-23T14:18:18.866Z",
+    "sourceOriginals": 1,
+    "independentlyReverifiedPriorQuestions": 0,
+    "sourceProvenQuestions": 1,
+    "sourceProvenChoices": 13,
+    "previousExact": 0,
+    "insertedEvents": 1,
+    "insertedChoices": 13,
+    "correctedClassifications": 0,
+    "preservedExistingTargetEventIds": 0,
+    "verifiedExact": 1,
+    "verifiedChoices": 13,
+    "zeroWriteReplay": true,
+    "yearCountsBefore": [
+      {
+        "year": 2022,
+        "stored_events": 38,
+        "declared_named_events": 28,
+        "explicit_stored_choices": 259,
+        "hearing_date_timing_events": 0
+      },
+      {
+        "year": 2023,
+        "stored_events": 53,
+        "declared_named_events": 42,
+        "explicit_stored_choices": 456,
+        "hearing_date_timing_events": 20
+      },
+      {
+        "year": 2024,
+        "stored_events": 58,
+        "declared_named_events": 48,
+        "explicit_stored_choices": 512,
+        "hearing_date_timing_events": 26
+      },
+      {
+        "year": 2025,
+        "stored_events": 53,
+        "declared_named_events": 49,
+        "explicit_stored_choices": 539,
+        "hearing_date_timing_events": 25
+      }
+    ],
+    "yearCountsAfter": [
+      {
+        "year": 2022,
+        "stored_events": 38,
+        "declared_named_events": 28,
+        "explicit_stored_choices": 259,
+        "hearing_date_timing_events": 0
+      },
+      {
+        "year": 2023,
+        "stored_events": 54,
+        "declared_named_events": 43,
+        "explicit_stored_choices": 469,
+        "hearing_date_timing_events": 21
+      },
+      {
+        "year": 2024,
+        "stored_events": 58,
+        "declared_named_events": 48,
+        "explicit_stored_choices": 512,
+        "hearing_date_timing_events": 26
+      },
+      {
+        "year": 2025,
+        "stored_events": 53,
+        "declared_named_events": 49,
+        "explicit_stored_choices": 539,
+        "hearing_date_timing_events": 25
+      }
+    ],
+    "existingEventIdsAndChoicesPreserved": true,
+    "verifiedRepeatableReadReadOnlyAndRollback": true,
+    "serializableWrites": true,
+    "recoveredEvents": [
+      {
+        "questionKey": "1b8b9df1298f93ab49e2e1bdb40bfa23e1dfc7e0c29164f692bc43cb63826c6d",
+        "eventId": "8cbaa9e2-865d-4610-8430-76f91a9c9224",
+        "createdAt": "2026-10-23 14:18:15.548099+00",
+        "choices": 13
+      }
+    ]
+  }
+}

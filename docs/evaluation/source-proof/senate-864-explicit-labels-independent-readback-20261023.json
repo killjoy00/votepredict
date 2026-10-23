@@ -1,0 +1,378 @@
+{
+  "schemaVersion": "senate864-explicit-labels-independent-readback-v1",
+  "source": "independent Neon connector",
+  "readAt": "2026-10-23T14:18:40.047Z",
+  "beforeReadAt": "2026-10-23T13:57:01.858Z",
+  "verifiedRepeatableReadReadOnlyAndExplicitRollback": true,
+  "productionWrites": 0,
+  "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17687&ls=93&type=minutes",
+  "sourceTextSha256": "187af02d788e0787d57ee96e00b0ed6ae4d8acbdd94f9aeaee3bb78c09a7ff66",
+  "sourceQuestionKey": "1b8b9df1298f93ab49e2e1bdb40bfa23e1dfc7e0c29164f692bc43cb63826c6d",
+  "billIdentifier": "SF2051",
+  "amendmentRef": "A2",
+  "meetingDate": "2023-03-07",
+  "committee": "Elections",
+  "eventId": "8cbaa9e2-865d-4610-8430-76f91a9c9224",
+  "createdAt": "2026-10-23 14:18:15.548099+00",
+  "printedYea": 5,
+  "printedNay": 8,
+  "passed": false,
+  "verifiedNamedChoices": [
+    {
+      "printedName": "Carlson",
+      "fullHistoricalName": "Jim Carlson",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Westlin",
+      "fullHistoricalName": "Bonnie S. Westlin",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Koran",
+      "fullHistoricalName": "Mark W. Koran",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Anderson",
+      "fullHistoricalName": "Bruce D. Anderson",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Boldon",
+      "fullHistoricalName": "Liz Boldon",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Cwodzinski",
+      "fullHistoricalName": "Steve A. Cwodzinski",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Dornink",
+      "fullHistoricalName": "Gene Dornink",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Limmer",
+      "fullHistoricalName": "Warren Limmer",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Marty",
+      "fullHistoricalName": "John Marty",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Mathews",
+      "fullHistoricalName": "Andrew Mathews",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Mitchell",
+      "fullHistoricalName": "Nicole Mitchell",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Port",
+      "fullHistoricalName": "Lindsey Port",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Rest",
+      "fullHistoricalName": "Ann H. Rest",
+      "choice": "nay"
+    }
+  ],
+  "historicalFullIdentityAndActiveServiceVerified": true,
+  "all202PriorEventsUnchanged": true,
+  "all1766PriorChoicesUnchanged": true,
+  "previousContextAndRosterPreserved": true,
+  "newEvents": 1,
+  "newChoices": 13,
+  "classificationCorrections": 0,
+  "yearBefore": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 53,
+      "declared_named_events": 42,
+      "explicit_stored_choices": 456,
+      "hearing_date_timing_events": 20
+    },
+    {
+      "year": 2024,
+      "stored_events": 58,
+      "declared_named_events": 48,
+      "explicit_stored_choices": 512,
+      "hearing_date_timing_events": 26
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "yearAfter": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 54,
+      "declared_named_events": 43,
+      "explicit_stored_choices": 469,
+      "hearing_date_timing_events": 21
+    },
+    {
+      "year": 2024,
+      "stored_events": 58,
+      "declared_named_events": 48,
+      "explicit_stored_choices": 512,
+      "hearing_date_timing_events": 26
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "storedByCommittee": [
+    {
+      "year": 2022,
+      "committee": "Education Finance and Policy",
+      "events": 1,
+      "choices": 0
+    },
+    {
+      "year": 2022,
+      "committee": "Environment and Natural Resources Policy and Legacy Finance",
+      "events": 1,
+      "choices": 0
+    },
+    {
+      "year": 2022,
+      "committee": "Finance",
+      "events": 34,
+      "choices": 249
+    },
+    {
+      "year": 2022,
+      "committee": "Labor and Industry Policy",
+      "events": 2,
+      "choices": 10
+    },
+    {
+      "year": 2023,
+      "committee": "Elections",
+      "events": 16,
+      "choices": 212
+    },
+    {
+      "year": 2023,
+      "committee": "Environment, Climate, and Legacy",
+      "events": 2,
+      "choices": 18
+    },
+    {
+      "year": 2023,
+      "committee": "Finance",
+      "events": 4,
+      "choices": 0
+    },
+    {
+      "year": 2023,
+      "committee": "Health and Human Services",
+      "events": 15,
+      "choices": 107
+    },
+    {
+      "year": 2023,
+      "committee": "Judiciary and Public Safety",
+      "events": 12,
+      "choices": 72
+    },
+    {
+      "year": 2023,
+      "committee": "Rules and Administration",
+      "events": 2,
+      "choices": 20
+    },
+    {
+      "year": 2023,
+      "committee": "State and Local Government and Veterans",
+      "events": 3,
+      "choices": 40
+    },
+    {
+      "year": 2024,
+      "committee": "Agriculture, Broadband and Rural Development",
+      "events": 2,
+      "choices": 18
+    },
+    {
+      "year": 2024,
+      "committee": "Capital Investment",
+      "events": 1,
+      "choices": 9
+    },
+    {
+      "year": 2024,
+      "committee": "Commerce and Consumer Protection",
+      "events": 4,
+      "choices": 18
+    },
+    {
+      "year": 2024,
+      "committee": "Education Finance",
+      "events": 6,
+      "choices": 54
+    },
+    {
+      "year": 2024,
+      "committee": "Education Policy",
+      "events": 2,
+      "choices": 20
+    },
+    {
+      "year": 2024,
+      "committee": "Elections",
+      "events": 17,
+      "choices": 205
+    },
+    {
+      "year": 2024,
+      "committee": "Finance",
+      "events": 5,
+      "choices": 0
+    },
+    {
+      "year": 2024,
+      "committee": "Housing and Homelessness Prevention",
+      "events": 1,
+      "choices": 8
+    },
+    {
+      "year": 2024,
+      "committee": "Human Services",
+      "events": 2,
+      "choices": 20
+    },
+    {
+      "year": 2024,
+      "committee": "Judiciary and Public Safety",
+      "events": 15,
+      "choices": 131
+    },
+    {
+      "year": 2024,
+      "committee": "Rules and Administration",
+      "events": 2,
+      "choices": 19
+    },
+    {
+      "year": 2024,
+      "committee": "Taxes",
+      "events": 1,
+      "choices": 10
+    },
+    {
+      "year": 2025,
+      "committee": "Agriculture, Veterans, Broadband and Rural Development - Subcommittee on Veterans",
+      "events": 1,
+      "choices": 0
+    },
+    {
+      "year": 2025,
+      "committee": "Commerce and Consumer Protection",
+      "events": 1,
+      "choices": 11
+    },
+    {
+      "year": 2025,
+      "committee": "Education Finance",
+      "events": 11,
+      "choices": 142
+    },
+    {
+      "year": 2025,
+      "committee": "Education Policy",
+      "events": 1,
+      "choices": 12
+    },
+    {
+      "year": 2025,
+      "committee": "Elections",
+      "events": 9,
+      "choices": 99
+    },
+    {
+      "year": 2025,
+      "committee": "Health and Human Services",
+      "events": 4,
+      "choices": 19
+    },
+    {
+      "year": 2025,
+      "committee": "Human Services",
+      "events": 2,
+      "choices": 18
+    },
+    {
+      "year": 2025,
+      "committee": "Judiciary and Public Safety",
+      "events": 1,
+      "choices": 8
+    },
+    {
+      "year": 2025,
+      "committee": "Labor",
+      "events": 5,
+      "choices": 40
+    },
+    {
+      "year": 2025,
+      "committee": "Rules and Administration",
+      "events": 3,
+      "choices": 30
+    },
+    {
+      "year": 2025,
+      "committee": "State and Local Government",
+      "events": 11,
+      "choices": 124
+    },
+    {
+      "year": 2025,
+      "committee": "Taxes",
+      "events": 4,
+      "choices": 36
+    }
+  ],
+  "totalEvents": 203,
+  "totalChoices": 1779,
+  "replayPlanStatus": "exact",
+  "separateScopeProof": {
+    "readAt": "2026-10-23T14:19:15.677Z",
+    "verifiedRepeatableReadReadOnlyAndExplicitRollback": true,
+    "jurisdiction": "us-mn",
+    "chamber": "senate",
+    "events": 203,
+    "choices": 1779,
+    "productionWrites": 0
+  }
+}
