@@ -15,7 +15,7 @@ const canonical=s=>norm(s.replace(/\b([HS])\s*\.?\s*F\s*\.?\s*0*(\d+)\b/gi,(_,a,
 const bills=s=>[...new Set([...s.matchAll(/\b([HS])\s*\.?\s*F\s*\.?\s*(?:No\.?\s*)?0*(\d+)(?=A-?\d+\b|\b)/gi)].map(m=>m[1].toUpperCase()+'F'+Number(m[2])))];
 const ref=s=>String(s||'').toUpperCase().replace(/[-\s]/g,'');
 const ROW=/^\s*(?:(?:Senator|Sen\.)\s+|(?:Vice\s+Chair|Chair|Lead|Ranking)\s*,?\s+(?:(?:Senator|Sen\.)\s+)?)(.+?)\s*[-–—:]\s*(Yea|Yeas|Aye|Ayes|Yes|Yay|Yays|Nay|Nays|No|Noes|Absent|Absence|Excused|Pass|Abstain(?:ed)?|Not Voting|N\/A)\s*\.?\s*$/i;
-const MOTION=/\b(?:Senator|Vice\s+Chair|Chair|Lead)\s+([\p{L}.'-]+(?:\s+(?!Senator\b)[\p{L}.'-]+){0,3}?)\s+(?:moved|moves|offered|offers)\b/giu;
+const MOTION=/\b(?:Senator|Vice\s+Chair|Chair|Lead)\s+([\p{L}.'-]+(?:\s+(?!Senator\b)[\p{L}.'-]+){0,3}?)\s+(?:moved|moves|offered|offers|renewed\s+(?:(?:his|her|their)\s+)?motion(?=\s+that\b))\b/giu;
 const OUTCOME=/\b(?:the\s+)?(?:m\s?otions?|amendment)\s+(?:was\s+|is\s+)?(did not prevail|does not prevail|did not carry|not adopted|failed|fails|lost|prevailed|prevails|passed|carried|adopted)\b/gi;
 function tally(s){
  const p=[/\b(\d{1,2})\s+(?:voting\s+)?(?:yeas?|ayes?|yes|yays?)(?:\s+votes?)?\s*(?:,\s*(?:and\s+)?|and\s+|to\s+)(\d{1,2})\s+(?:voting\s+)?(?:nays?|nay|noes?|no)\b/i,
@@ -77,6 +77,7 @@ export function extractRowRollQuestions(text,doc){
   if(!intro){row.holds.push('no_explicit_motion_introduction');rows.push(row);continue;}
   const at=intro.index,question=compact(text.slice(at,starts[start]));
   row.motionText=question;row.mover=intro[1];
+  const renewed=/\brenewed\s+(?:(?:his|her|their)\s+)?motion\s+that\b/i.test(question);
   if(question.length>1800||question.length<15)row.holds.push('unbounded_motion_context');
   if(/\bwithdr(?:aw|ew|awn)|\bvoice\s+vote|\b(?:motion|amendment)\s+(?:prevailed|failed|adopted|passed)\b/i.test(question))row.holds.push('intervening_or_withdrawn_question');
   if(intros.filter(m=>m.index>=at).length!==1)row.holds.push('multiple_motion_introductions');
@@ -85,6 +86,7 @@ export function extractRowRollQuestions(text,doc){
   const heads=[...before.matchAll(/^\s*([HS])\s*\.?\s*F\s*\.?\s*(\d+)(?:\s*:|\s+(?=Omnibus\b)[^\n]*)/gim)];
   const head=heads.at(-1),localBills=bills(question),headerBill=head?head[1].toUpperCase()+'F'+Number(head[2]):null;
   row.billIdentifier=localBills.length===1?localBills[0]:headerBill;
+  if(renewed&&(localBills.length!==1||!/^Senator\s+[\p{L}.'-]+(?:\s+[\p{L}.'-]+){0,3}\s+renewed\s+(?:(?:his|her|their)\s+)?motion\s+that\s+[HS]\s*\.?\s*F\s*\.?\s*\d+\b[\s\S]*?\bbe\s+recommended\s+to\s+pass\b/iu.test(question)))row.holds.push('incomplete_renewed_question');
   if(localBills.length>1||localBills.length===1&&headerBill&&headerBill!==localBills[0])row.holds.push('contradictory_bill_association');
   if(!row.billIdentifier)row.holds.push('unresolved_bill_or_nonbill_question');
   const references=[...new Set([...question.matchAll(/\bA-?\d{1,3}(?:-\d+)?\b/gi)].map(m=>ref(m[0])).concat(
@@ -93,7 +95,7 @@ export function extractRowRollQuestions(text,doc){
   const attachedAmendmentAction=/\b(?:moved|moves|offered|offers)\s+[HS]\s*\.?\s*F\s*\.?\s*\d+A-?\d{1,3}\b/i.test(question);
   row.voteKind=attachedAmendmentAction||/\bamend(?:ment|ed)?\b/i.test(amended)?'amendment':'motion';
   row.amendmentRef=references.length===1?references[0]:null;
-  if(references.length>1||/\boral\b|\bdivide\b|\breconsider\b|\brenew/i.test(question))row.holds.push('compound_or_repeated_question');
+  if(references.length>1||renewed&&references.length>0||(/\boral\b|\bdivide\b|\breconsider\b/i.test(question)||!renewed&&/\brenew/i.test(question)))row.holds.push('compound_or_repeated_question');
   if(row.voteKind==='amendment'&&!row.amendmentRef)row.holds.push('unresolved_amendment_identity');
   if(new Set(choices.map(v=>norm(v.name))).size!==choices.length)row.holds.push('duplicate_or_contradictory_names');
   const tail=text.slice(starts[end]??text.length,Math.min(text.length,(starts[end]??text.length)+700));

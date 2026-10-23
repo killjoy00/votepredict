@@ -15,7 +15,7 @@ test('actual originals: six complete paginated amendment rolls and three role-pr
  assert.deepEqual(a.map(q=>q.amendmentRef),['A11','A16','A22','A13','A14','A15']);
  assert.deepEqual(a.map(q=>[q.yea,q.nay,q.excludedOtherLabels,q.passed]),[[6,7,1,false],[6,8,0,false],[7,6,1,true],[6,8,0,false],[6,8,0,false],[7,7,0,false]]);
  const b=extractRowRollQuestions(clerk.text,doc(clerk)).filter(q=>q.confidence==='source_proven_question');
- assert.deepEqual(b.map(q=>[q.billIdentifier,q.amendmentRef,q.voteKind,q.yea,q.nay,q.passed]),[['SF1426','A10','amendment',8,5,true],['SF1426','A28','amendment',8,5,true],['SF1426','A21','amendment',6,8,false]]);
+ assert.deepEqual(b.filter(q=>q.voteKind==='amendment').map(q=>[q.billIdentifier,q.amendmentRef,q.voteKind,q.yea,q.nay,q.passed]),[['SF1426','A10','amendment',8,5,true],['SF1426','A28','amendment',8,5,true],['SF1426','A21','amendment',6,8,false]]);
  const roster=fixture.roster.map((m,i)=>({...m,membership_id:'m'+i}));
  for(const [source,questions]of [[pdf,a],[clerk,b]])for(const q of questions)assert.equal(resolvePrintedHistoricalChoices(q,source.text,roster,doc(source)).length,q.choices.length);
  assert.ok(!b[0].choices.some(v=>/Lang/.test(v.name)),'no vote inferred for a name absent from the printed roll');

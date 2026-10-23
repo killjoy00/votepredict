@@ -31,10 +31,11 @@ test('Absence row preserves a complete PDF roll without supplying an inferred vo
  const q=extractRowRollQuestions(d.candidateOriginalExtractedText,{date:d.date,committee:d.committee,session_slug:d.session})[0];
  assert.equal(q.confidence,'source_proven_question');assert.equal(q.excludedOtherLabels,1);assert.equal(q.choices.length,13);assert.ok(!q.choices.some(v=>v.name==='Port'));
 });
-test('frozen 233-original triage preserves prior proofs and adds only one new distinct key; 56 held occurrences become 43',()=>{
- const r=buildHeldTriage();assert.equal(r.examinedCandidateOriginals,233);assert.equal(r.heldOccurrencesBefore,56);assert.equal(r.heldOccurrencesAfter,43);
- assert.equal(r.newlyProvenSourceWitnesses.length,5);assert.equal(r.newlyProvenSourceWitnesses.filter(q=>q.alreadyProvenFromAnotherOriginal).length,4);
- assert.deepEqual(r.newDistinctQuestionKeys,[{questionKey:planSource('labels').questions[0].questionKey,billIdentifier:'SF2051',amendmentRef:'A2',choices:13}]);
+test('frozen 233-original triage preserves label proofs and admits only the separately reviewed renewal',()=>{
+ const r=buildHeldTriage();assert.equal(r.examinedCandidateOriginals,233);assert.equal(r.heldOccurrencesBefore,56);assert.equal(r.heldOccurrencesAfter,40);
+ assert.equal(r.newlyProvenSourceWitnesses.length,8);assert.equal(r.newlyProvenSourceWitnesses.filter(q=>q.alreadyProvenFromAnotherOriginal).length,5);
+ assert.deepEqual(new Set(r.newDistinctQuestionKeys.map(q=>q.questionKey)),new Set([planSource('labels').questions[0].questionKey,planSource('renewal').questions[0].questionKey]));
+ assert.equal(r.newDistinctQuestionKeys.reduce((n,q)=>n+q.choices,0),27);
  assert.equal(r.coverageByYear.reduce((n,r)=>n+r.ocrVisualQualityUncertified,0),247);
  assert.equal(r.heldOccurrences.length,Object.values(r.primaryCausesAfter).reduce((a,b)=>a+b,0));
 });
