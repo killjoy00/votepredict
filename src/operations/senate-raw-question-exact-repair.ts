@@ -238,7 +238,13 @@ export async function repairRawSenateExactLinks(pool:Pool):Promise<RawQuestionRe
       &&original.stages.separate_direct_paper_question_same_ballot===4
       &&original.stages.printed_question_span_or_bill_unproven===12
       &&original.authenticatedSourceDocuments===57)
-     ||(repeated&&pairs.length===0&&preliminary.length<=16)))
+     ||(repeated&&exactBefore===1354&&before.sameSourceUnlinked===373
+       &&noTallyBefore===99&&pairs.length===0
+       &&preliminary.length===17&&original.authenticatedSourceDocuments===12
+       &&original.stages.separate_direct_paper_question_same_ballot===5
+       &&original.stages.printed_question_span_or_bill_unproven===12)
+     ||(repeated&&exactBefore!==1354&&pairs.length===0
+       &&preliminary.length<=16)))
     throw Error('Independent 105 original source question/ballot proof drifted');
    for(const p of pairs)await oneRawExactLink(db,p);
    const exactAfter=await countExact(db);
