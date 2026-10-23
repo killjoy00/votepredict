@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "senate864-explicit-labels-source-census-v1",
+  "sourceOnlyLocalCheck": true,
+  "productionWrites": 0,
+  "inputSha256": "9101684f03085f6d299cd74dfbed60de0ca0852ce539106afece547941383c4d",
+  "extractorSha256": "91f5ddfda9c20c5db8930aef141448e493814eeb2afd38e1f327e4df24608704",
+  "readableTextsChecked": 2859,
+  "rowCandidateOriginals": 47,
+  "newRowCandidateOriginalsOutsideExisting233": [],
+  "limitation": "Local SHA-checked acquired text census; not a claimed protected Actions run, visual OCR review or production readback."
+}
