@@ -13,13 +13,14 @@ import {assertHistoricalMainPush} from '../src/evidence/senate-864-72-protected-
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.ts';
 import {priorOriginalQueue,authenticatePriorQuestionOriginals,verifiedPriorQuestionEvents} from '../src/evidence/senate-864-prior-question-bridge.mjs';
 import {verifyPriorAmendmentsForRenewal} from '../src/evidence/senate-864-renewed-question-bridge.mjs';
+export const STRUCTURED_MARKER='SENATE864_POPULATION_STRUCTURED_PAIR_V1';
 export const RENEWAL_MARKER='SENATE864_POPULATION_RENEWED_QUESTION_V1';
 export const PRIOR_MARKER='SENATE864_POPULATION_PRIOR_QUESTION_V1';
 export const PLAN_PATH='docs/evaluation/source-proof/senate-864-population-row-repair-plan.json';
 export const WRAPPED_MARKER='SENATE864_POPULATION_WRAPPED_ROWS_V1';
 export const LABELS_MARKER='SENATE864_POPULATION_EXPLICIT_LABELS_V1';
 export const CONTINUATION_MARKER='SENATE864_POPULATION_COMPLETE_ROWS_V1';
-const profiles={renewal:{path:'docs/evaluation/source-proof/senate-864-population-renewed-question-plan.json',documents:1,questions:1,choices:14,add:1,correct:0},labels:{path:'docs/evaluation/source-proof/senate-864-population-explicit-label-repair-plan.json',documents:1,questions:1,choices:13,add:1,correct:0},continuation:{path:'docs/evaluation/source-proof/senate-864-population-complete-row-repair-plan.json',documents:2,questions:9,choices:122,add:3,correct:5},prior:{path:'docs/evaluation/source-proof/senate-864-population-prior-question-plan.json',documents:1,questions:1,choices:14,add:1,correct:0},base:{path:PLAN_PATH,documents:10,questions:14,choices:181,add:14,correct:0},wrapped:{path:'docs/evaluation/source-proof/senate-864-population-wrapped-row-repair-plan.json',documents:5,questions:9,choices:123,add:1,correct:5}};
+const profiles={structured:{path:'docs/evaluation/source-proof/senate-864-population-structured-pair-plan.json',documents:2,questions:2,choices:11,add:2,correct:0},renewal:{path:'docs/evaluation/source-proof/senate-864-population-renewed-question-plan.json',documents:1,questions:1,choices:14,add:1,correct:0},labels:{path:'docs/evaluation/source-proof/senate-864-population-explicit-label-repair-plan.json',documents:1,questions:1,choices:13,add:1,correct:0},continuation:{path:'docs/evaluation/source-proof/senate-864-population-complete-row-repair-plan.json',documents:2,questions:9,choices:122,add:3,correct:5},prior:{path:'docs/evaluation/source-proof/senate-864-population-prior-question-plan.json',documents:1,questions:1,choices:14,add:1,correct:0},base:{path:PLAN_PATH,documents:10,questions:14,choices:181,add:14,correct:0},wrapped:{path:'docs/evaluation/source-proof/senate-864-population-wrapped-row-repair-plan.json',documents:5,questions:9,choices:123,add:1,correct:5}};
 export function planSource(cohort='base'){
  const p=profiles[cohort];if(!p)throw Error('Unknown bounded source cohort');
  const pins=JSON.parse(readFileSync(p.path,'utf8'));
@@ -31,10 +32,17 @@ export async function freshOriginals(fetcher=fetchSenateMinutesHtml,cohort='base
  const pins=planSource(cohort),docs=[];
  for(const p of pins.sourceDocuments){
   const u=new URL(p.url);
-  const committees=['continuation','renewal'].includes(cohort)?['Elections','State and Local Government and Veterans']:['Elections','Taxes'];
-  if(!/^202[34]-0[1-4]-\d\d$/.test(p.date)||!committees.includes(p.committee)||p.session_slug!=='2023-2024')throw Error('Reviewed original source scope changed');
-  let text;
-  if(cohort==='wrapped'||cohort==='continuation'&&p.format==='pdf'){
+  const committees=cohort==='structured'?['Energy and Utilities Finance and Policy','Taxes - Subcommittee on Property Taxes']:['continuation','renewal'].includes(cohort)?['Elections','State and Local Government and Veterans']:['Elections','Taxes'];
+  if(!(cohort==='structured'?/^2022-03-(?:10|30)$/:/^202[34]-0[1-4]-\d\d$/).test(p.date)||!committees.includes(p.committee)||p.session_slug!==(cohort==='structured'?'2021-2022':'2023-2024'))throw Error('Reviewed original source scope changed');
+  let text,originalHtml,clerkRawSha256;
+  if(cohort==='structured'){
+   const paths=['/archive/minutes/senate/2022/Energy/20220310/energy_20220310_Minutes.pdf','/archive/minutes/senate/2022/Subproperty/20220330/subproperty_20220330_Minutes.pdf'];
+   if(p.format!=='pdf'||u.origin!=='https://www.lrl.mn.gov'||!paths.includes(u.pathname))throw Error('Structured PDF scope changed');
+   const cu=new URL(p.clerkUrl);if(cu.origin!=='https://www.senate.mn'||cu.pathname!=='/schedule/hearing_minutes.html'||!['16818','16933'].includes(cu.searchParams.get('hearing_id'))||cu.searchParams.get('ls')!=='92')throw Error('Structured Clerk scope changed');
+   const pdf=await pdfFetcher({url:p.url});if(pdf.contentSha256!==p.sha256)throw Error('Independent original PDF byte SHA drift');
+   originalHtml=await fetcher(p.clerkUrl);clerkRawSha256=sha(originalHtml);text=extractSenateMinutesText(originalHtml);
+   if(sha(text)!==p.textSha256)throw Error('Independent corroborating original Clerk body SHA drift');
+  }else if(cohort==='wrapped'||cohort==='continuation'&&p.format==='pdf'){
    if(p.format!=='pdf'||u.origin!=='https://www.lrl.mn.gov'||!u.pathname.startsWith('/archive/minutes/senate/2024/'))throw Error('Wrapped original PDF scope changed');
    const pdf=await pdfFetcher({url:p.url});text=pdf.text;
    if(pdf.contentSha256!==p.sha256||sha(text)!==p.textSha256)throw Error('Independent original PDF byte/text SHA drift');
@@ -43,7 +51,7 @@ export async function freshOriginals(fetcher=fetchSenateMinutesHtml,cohort='base
    text=extractSenateMinutesText(await fetcher(p.url));
    if(sha(text)!==p.sha256)throw Error('Independently fetched original text SHA drift');
   }
-  const doc={...p,source_url:p.url,content_sha256:p.sha256,text,authenticated:true};
+  const doc={...p,source_url:p.url,content_sha256:p.sha256,text,originalHtml,clerkRawSha256:clerkRawSha256||p.clerkRawSha256,authenticated:true};
   const questions=extractRowRollQuestions(text,doc);
   for(const spec of [...pins.questions,...(cohort==='renewal'?pins.priorQuestions:[])].filter(q=>q.sourceUrl===p.url)){
    const actual=questions.filter(q=>q.questionKey===spec.questionKey&&q.confidence==='source_proven_question');
@@ -92,7 +100,7 @@ async function snapshot(db,o){
  const originals=[...o.docs,...(o.priorDocs||[])];
  const docs=await bounded(SNAPSHOT_SQL.documents,[originals.map(d=>d.url)],21);
  for(const original of originals){const matches=docs.filter(d=>d.source_url===original.url&&d.content_sha256===original.sha256&&d.date===original.date&&d.committee===original.committee&&d.session_slug===original.session_slug);if(matches.length!==1)throw Error('Exact stored original provenance missing or duplicated');}
- const state={docs,events:await bounded(SNAPSHOT_SQL.events,[],601),choices:await bounded(SNAPSHOT_SQL.choices,[],4001),roster:await bounded(SNAPSHOT_SQL.roster,[],401),bills:await bounded(SNAPSHOT_SQL.bills,[[...new Set(o.pins.questions.map(q=>q.billIdentifier))]],21),year:await bounded(COMMITTEE_YEAR_SQL,[],6)};
+ const state={docs,events:await bounded(SNAPSHOT_SQL.events,[],601),choices:await bounded(SNAPSHOT_SQL.choices,[],4001),roster:await bounded(SNAPSHOT_SQL.roster,[],401),bills:await bounded(o.cohort==='structured'?SNAPSHOT_SQL.bills.replace("s.slug='2023-2024'","s.slug='2021-2022'"):SNAPSHOT_SQL.bills,[[...new Set(o.pins.questions.map(q=>q.billIdentifier))]],21),year:await bounded(COMMITTEE_YEAR_SQL,[],6)};
  if(o.priorProof)state.verifiedPriorQuestions=verifiedPriorQuestionEvents(o.priorProof,state);
  if(o.cohort==='renewal')state.verifiedPriorQuestions=verifyPriorAmendmentsForRenewal(o,state);
  return state;
@@ -139,7 +147,7 @@ export async function runProduction(pool,target,o){
  await schemaCheck(db);const locked=await snapshot(db,o);if(!same(before,locked)||!same(plan,correctionPlan(o,locked)))throw Error('Concurrent source or production drift');
  for(const x of changed){const {q,doc,bill,result}=x;
  const metadata={committeeVote:true,committeeName:doc.committee,individualVotesAvailable:true,sourceQuestionKey:q.questionKey,
- sourceQuestion:q.motionText,sourceTextSha256:doc.textSha256||doc.sha256,sourceRawPdfSha256:doc.format==='pdf'?doc.sha256:null,sourceCompleteQuestionPassageSha256:q.fullQuestionPassageSha256,issue864SourceRepair:VERSION,finalPassageStanceInferred:false,mechanicallyActionable:false,modelWeight:0,...senateCommitteeHearingTiming(doc.date).metadata};
+ sourceQuestion:q.motionText,sourceTextSha256:doc.textSha256||doc.sha256,sourceRawPdfSha256:doc.format==='pdf'?doc.sha256:null,...(o.cohort==='structured'?{sourceCorroboratingClerkUrl:doc.clerkUrl,sourceClerkRawSha256:doc.clerkRawSha256,sourceExtraction:'canonical_clerk_html_corroborated_by_reviewed_pdf'}:{}),sourceCompleteQuestionPassageSha256:q.fullQuestionPassageSha256,issue864SourceRepair:VERSION,finalPassageStanceInferred:false,mechanicallyActionable:false,modelWeight:0,...senateCommitteeHearingTiming(doc.date).metadata};
  let eventId,votes;
  if(result.status==='missing_event'){
   const e=await db.query(SF1_INSERT_EVENT,[bill.session_id,bill.chamber_id,bill.id,doc.id,'senate-committee-source-v1:'+q.questionKey,q.voteKind,q.motionText,q.amendmentRef,doc.date,q.yea,q.nay,q.passed,JSON.stringify(metadata)]);
@@ -150,7 +158,7 @@ export async function runProduction(pool,target,o){
   const u=await db.query(`UPDATE vote_events SET bill_id=$3,vote_kind=$4,amendment_ref=$5,passed=$6,is_passage=false,metadata=metadata||$7::jsonb WHERE id=$1 AND source_document_id=$2 RETURNING id::text`,[old.id,doc.id,bill.id,q.voteKind,q.amendmentRef,q.passed,JSON.stringify(metadata)]);
   if(u.rows.length!==1)throw Error('Existing question correction conflict');eventId=old.id;votes=result.missingChoices;if(result.classification)correctedClassifications++;
  }
- for(const v of votes){const r=await db.query(SF1_INSERT_CHOICE,[eventId,v.membershipId,v.name,normalizeMemberName(v.name),v.choice,null,JSON.stringify({committeeVote:true,issue864SourceRepair:VERSION,fullHistoricalNameFromOriginalHeader:true})]);if(r.rows.length!==1)throw Error('Choice concurrent conflict');insertedChoices++;}
+ for(const v of votes){const r=await db.query(SF1_INSERT_CHOICE,[eventId,v.membershipId,v.name,normalizeMemberName(v.name),v.choice,null,JSON.stringify({committeeVote:true,issue864SourceRepair:VERSION,fullHistoricalNameFromOriginalHeader:true,...(v.printedCellName?{literalPrintedCheckboxCellName:v.printedCellName}:{})})]);if(r.rows.length!==1)throw Error('Choice concurrent conflict');insertedChoices++;}
  }
  if(insertedEvents!==add.length||insertedChoices!==expectedChoices||correctedClassifications!==expectedCorrections)throw Error('Exact source-backed write count mismatch');
  await db.query('COMMIT');}catch(e){await db.query('ROLLBACK');throw e}}finally{db.release(true);}}
@@ -167,15 +175,15 @@ export async function runProduction(pool,target,o){
  return {sourceOriginals:o.docs.length+(o.priorDocs||[]).length,independentlyReverifiedPriorQuestions:before.verifiedPriorQuestions?.length||o.priorProof?.length||0,independentlyReverifiedPriorChoices:before.verifiedPriorQuestions?.reduce((n,p)=>n+(p.choices||0),0)||0,sourceProvenQuestions:o.pins.expectedQuestions,sourceProvenChoices:o.pins.expectedChoices,previousExact:plan.filter(x=>x.result.status==='exact').length,insertedEvents,insertedChoices,correctedClassifications,preservedExistingTargetEventIds:edited.size,verifiedExact:o.pins.expectedQuestions,verifiedChoices:o.pins.expectedChoices,zeroWriteReplay:true,yearCountsBefore:before.year,yearCountsAfter:after.year,existingEventIdsAndChoicesPreserved:true,verifiedRepeatableReadReadOnlyAndRollback:true,serializableWrites:true,recoveredEvents:ids};
 }
 async function main(){let phase='main_push_guard',pool;try{
- if(process.argv.length===3&&['--source-only','--source-only=wrapped','--source-only=prior','--source-only=continuation','--source-only=labels','--source-only=renewal'].includes(process.argv[2])){const o=await freshOriginals(undefined,process.argv[2].includes('=')?process.argv[2].split('=')[1]:'base');console.log('SENATE864_POPULATION_ROW_SOURCE_OK='+JSON.stringify({originals:o.docs.length+(o.priorDocs||[]).length,verifiedPriorQuestions:o.priorProof?.length||0,sourcePriorQuestions:o.pins.priorQuestions?.length||0,sourcePriorChoices:o.pins.expectedPriorChoices||0,questions:o.pins.expectedQuestions,choices:o.pins.expectedChoices,productionWrites:0}));return;}
+ if(process.argv.length===3&&['--source-only','--source-only=wrapped','--source-only=prior','--source-only=continuation','--source-only=labels','--source-only=renewal','--source-only=structured'].includes(process.argv[2])){const o=await freshOriginals(undefined,process.argv[2].includes('=')?process.argv[2].split('=')[1]:'base');console.log('SENATE864_POPULATION_ROW_SOURCE_OK='+JSON.stringify({originals:o.docs.length+(o.priorDocs||[]).length,verifiedPriorQuestions:o.priorProof?.length||0,sourcePriorQuestions:o.pins.priorQuestions?.length||0,sourcePriorChoices:o.pins.expectedPriorChoices||0,questions:o.pins.expectedQuestions,choices:o.pins.expectedChoices,productionWrites:0}));return;}
  if(process.argv.length!==2)throw Error('Fixed modes only');const env=process.env,event=JSON.parse(readFileSync(env.GITHUB_EVENT_PATH||''));
  const cohort=env.SENATE864_ROW_COHORT||'base';if(!profiles[cohort])throw Error('Unknown production cohort');
- assertHistoricalMainPush({...env,VOTEPREDICT_864_72_INDEPENDENT_CI:env.SENATE864_INDEPENDENT_MAIN},event);if(!event.head_commit.message.includes(cohort==='renewal'?RENEWAL_MARKER:cohort==='labels'?LABELS_MARKER:cohort==='continuation'?CONTINUATION_MARKER:cohort==='prior'?PRIOR_MARKER:cohort==='wrapped'?WRAPPED_MARKER:MARKER))throw Error('Reviewed marker absent');
+ assertHistoricalMainPush({...env,VOTEPREDICT_864_72_INDEPENDENT_CI:env.SENATE864_INDEPENDENT_MAIN},event);if(!event.head_commit.message.includes(cohort==='structured'?STRUCTURED_MARKER:cohort==='renewal'?RENEWAL_MARKER:cohort==='labels'?LABELS_MARKER:cohort==='continuation'?CONTINUATION_MARKER:cohort==='prior'?PRIOR_MARKER:cohort==='wrapped'?WRAPPED_MARKER:MARKER))throw Error('Reviewed marker absent');
  phase='independent_originals';const o=await freshOriginals(undefined,cohort);phase='existing_primary';
  const target=await discoverExistingVotePredictNeonConnection({apiKey:env.NEON_API_KEY||'',projectId:env.VOTEPREDICT_NEON_PROJECT_ID||'',preferredDatabase:env.VOTEPREDICT_MEDIA_EXISTING_DATABASE||undefined,requirePrimary:true});
  pool=new Pool({host:target.host,port:target.port,user:target.role,password:target.password,database:target.database,ssl:{rejectUnauthorized:true},max:1,connectionTimeoutMillis:10000,query_timeout:60000,statement_timeout:55000,options:'-c lock_timeout=4000',application_name:VERSION});
  phase='protected_repair_and_independent_readback';const result=await runProduction(pool,target,o);
  const receipt={version:VERSION,cohort,reviewedCommit:env.GITHUB_SHA,verifiedAt:new Date().toISOString(),...result};
- mkdirSync('artifacts',{recursive:true});writeFileSync('artifacts/senate864-population-'+(cohort==='renewal'?'renewed-question':cohort==='labels'?'explicit-label':cohort==='continuation'?'complete-row':cohort==='prior'?'prior-row':cohort==='wrapped'?'wrapped-row':'row')+'-readback.json',JSON.stringify(receipt,null,2)+'\n');console.log('SENATE864_POPULATION_ROW_PRODUCTION='+JSON.stringify(receipt));
+ mkdirSync('artifacts',{recursive:true});writeFileSync('artifacts/senate864-population-'+(cohort==='structured'?'structured-pair':cohort==='renewal'?'renewed-question':cohort==='labels'?'explicit-label':cohort==='continuation'?'complete-row':cohort==='prior'?'prior-row':cohort==='wrapped'?'wrapped-row':'row')+'-readback.json',JSON.stringify(receipt,null,2)+'\n');console.log('SENATE864_POPULATION_ROW_PRODUCTION='+JSON.stringify(receipt));
  }catch(e){console.error('SENATE864_POPULATION_ROW_HOLD_AT='+phase);if(e?.code&&/^[A-Z0-9]{5}$/.test(e.code))console.error('SQLSTATE='+e.code);process.exitCode=1;}finally{if(pool)await pool.end();}}
 if(process.argv[1]?.endsWith('/deploy-senate-864-population-row-rolls.mjs'))void main();

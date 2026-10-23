@@ -2,6 +2,7 @@
  * Source offsets locate evidence only. Persistent identity uses the entire bounded
  * question, committee, hearing/session and bill. No tally/slate-derived identity.
  */
+import {extractPrintedCheckboxTables} from './senate-864-printed-checkbox-tables.mjs';
 import {createHash} from 'node:crypto';
 import {parseSenateCommitteeMinuteVotes} from './minnesota-senate-committee-minutes.ts';
 import {parseSenateCommitteeMinutesRaw} from '../sources/minnesota/senate-raw-votes.ts';
@@ -121,6 +122,7 @@ export function extractRowRollQuestions(text,doc){
   row.confidence=row.holds.length?'held_question':'source_proven_question';rows.push(row);
  }
  rows.push(...extractPrintedVotedReferrals(text,doc));
+ rows.push(...extractPrintedCheckboxTables(doc.originalHtml,doc));
  // Repeated identical wording is an ambiguity, never two distinguishable votes.
  for(const q of rows)if(q.questionKey&&rows.filter(r=>r.questionKey===q.questionKey).length>1){q.holds.push('duplicate_question_wording');q.confidence='held_question';}
  return rows;
