@@ -3,7 +3,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {extractRowRollQuestions,sha} from '../src/evidence/senate-864-population-named-rolls.mjs';
 const input='docs/evaluation/source-proof/senate-864-population-original-inventory-20261023-explicit-labels.json';
-if(process.argv.length!==4)throw Error('Usage: node scripts/census-senate-864-acquired-rows.mjs CORPUS_DIRECTORY OUTPUT_JSON');
+if(process.argv.length!==4)throw Error('Usage: node --import tsx scripts/census-senate-864-acquired-rows.mjs CORPUS_DIRECTORY OUTPUT_JSON');
 const bytes=readFileSync(input);
 if(sha(bytes)!=='685f08e5e3645fa8262d04876102e9dbbf529dcf0e7c33c669c84d67348b71ea')throw Error('Frozen inventory changed');
 const inventory=JSON.parse(bytes),candidates=new Set(inventory.originals.filter(d=>d.status==='named_candidate_original').map(d=>d.sourceId));

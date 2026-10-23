@@ -13,9 +13,131 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 23: renewed recommendation recovered; all 192 requested OCR originals reviewed
+
+**Current 2022–2025 committee production: 204 events / 1,793 explicitly named choices.**
+The renewal adds **one event / fourteen choices**, with **zero classification
+corrections**. All **203 earlier events / 1,779 choices are unchanged**.
+Cumulatively from 183 / 1,326: **+21 events / +467 choices / ten classification
+corrections**. #864 remains **OPEN**.
+
+| Year | Events before → after renewal | Choices before → after renewal |
+| --- | ---: | ---: |
+| 2022 | 38 → 38 | 259 → 259 |
+| 2023 | 54 → 55 | 469 → 483 |
+| 2024 | 58 → 58 | 512 → 512 |
+| 2025 | 53 → 53 | 539 → 539 |
+| **Total** | **203 → 204** | **1,779 → 1,793** |
+
+[PR #1569](https://github.com/killjoy00/votepredict/pull/1569), main
+`58cab955ca9dcfca97c9b30bbc166b289f4a0500`, admits a renewed recommendation only
+when the original fully restates the bill and complete parliamentary question.
+It independently re-proves that original's distinct A10/A28/A21 amendments and
+all **40 accepted prior choices** before excluding those different anchors.
+Incomplete renewals and unresolved oral/withdrawn/compound associations stay
+held. The added question is **April 3, 2023 State and Local Government and
+Veterans, SF1426 as amended, recommended to pass and re-referred to Finance**,
+explicitly passed **8–6**. No sides are inferred from attendance, tally or slate.
+
+Protected run [40013876281](https://github.com/killjoy00/votepredict/actions/runs/40013876281),
+independent gate `120620841053`, production job `120622233172`, passed **2,468
+standard checks / 65 focused tests**, zero failures/skips and a clean production
+dependency audit. Fresh original authentication, historical service/identity,
+schema-ledger and READ ONLY/ROLLBACK preflight precede bounded SERIALIZABLE
+writes and exact verification. Replay writes zero rows. The [production receipt](source-proof/senate-864-renewed-question-production-20261023.json)
+preserves artifact `12528295824`, ZIP SHA256
+`fbce92af9265a96f66097d6caad2e61483fabb5d888e271316f0e24ae4323489`.
+
+The separate [Neon connector readback](source-proof/senate-864-renewed-question-independent-readback-20261023.json),
+**2026-10-23T19:49:27.191Z**, verifies the literal question and fourteen sides,
+all three prior amendments/40 choices, every earlier record unchanged and all
+**35 committee/year groups**, inside bounded READ ONLY/explicit ROLLBACK.
+New event `755ebc0d-7e9e-40d3-8b61-67783ac99079`, created
+**2026-10-23 19:49:06.220114+00**, remains a committee motion with null amendment,
+passed=true, is_passage=false, weight=0, actionable=false and sameDay=false.
+
+The [renewal triage](source-proof/senate-864-renewed-question-held-triage-20261023.json)
+preserves every earlier proven passage and reduces held parser occurrences
+**43 → 40**: **13 question identity, 12 tally/incomplete list, eight outcome,
+seven nonbill**. Removed occurrences include duplicate original witnesses and
+an already-proven amendment witness: **one new distinct question**, not three
+votes. A [local source census](source-proof/senate-864-renewed-question-source-census-20261023.json)
+SHA-checks all **2,859 readable acquired texts**, finding no new row-candidate
+original outside the existing 233. This is local source analysis, not a claimed
+protected Actions acquisition or production readback.
+
+**Final population parity:** [PR #1570](https://github.com/killjoy00/votepredict/pull/1570), main
+`db7f5c85d6502a2505e5c0a8d1d6a8508db971ff`, runs the existing protected
+READ ONLY reconciliation, [40017727121](https://github.com/killjoy00/votepredict/actions/runs/40017727121).
+Gate `120634014922` passes **2,468 standard / 41 focused tests**; protected job
+`120635385879` and credential-free publisher `120636060564` succeed. Fresh
+readback **2026-10-23T20:19:24.665Z** confirms **35/35 strict questions and
+468/468 choices**: 34 same-source exact plus the independently verified prior
+alternate-source A35. Strict coverage is **19 questions / 253 choices in 2023**
+and **16 / 215 in 2024**; zero 2022/2025 strict denominators do not mean zero
+historical votes. Immediate prior state was 34/35 questions / 454/468 choices.
+The paired `before` matrices instead reconstruct the original 183 / 1,326
+baseline across all passes.
+
+The five dated renewal/OCR files are the [registry](source-proof/senate-864-population-original-registry-20261023-renewal-ocr.json),
+[complete inventory](source-proof/senate-864-population-original-inventory-20261023-renewal-ocr.json),
+[summary](source-proof/senate-864-population-summary-20261023-renewal-ocr.json),
+[before](source-proof/senate-864-population-committee-before-20261023-renewal-ocr.csv)
+and [after](source-proof/senate-864-population-committee-after-20261023-renewal-ocr.csv)
+matrices. All **233 full candidate texts**, both **111-row** matrices, all
+34 prior strict question/choice fingerprints and every prior proven original
+passage were checked. Population remains **2,860 originals / 2,859 readable /
+233 parser-candidate / 2,626 text-negative / one unparseable**. Original
+registry bytes are unchanged. Artifact `12530110275` has ZIP SHA256
+`f6080f4274e5665be33f70575281defeae2c7d31dee06b14ddfea630f439bd26`;
+the [publication/file-hash receipt](source-proof/senate-864-renewal-ocr-publication-20261023.json)
+preserves its protected run, generated review commit and five exact file blobs.
+This reconciliation performs **zero production writes**.
+
+**OCR review completed:** [PR #1571](https://github.com/killjoy00/votepredict/pull/1571), main
+`6629c482b0b5cab33705fe6a0f5039be70fa7db9`, passes canonical CI and the
+credential-free source-only gate [40018112590](https://github.com/killjoy00/votepredict/actions/runs/40018112590),
+job `120635336748`. The [audit appendix](senate-864-192-ocr-review-20261023.md)
+and [full literal evidence receipt](source-proof/senate-864-192-ocr-rendered-audit-20261023.json)
+authenticate **192/192 raw original PDF hashes** and review **331/331 pages**
+from **136 originals in 2022 / 56 in 2025**. Seven are blank raster pages;
+324 have individual visual indices. At 300 dpi, Tesseract PSM 3/11 and rendered
+inspection find **14 originals with printed individual choices**, versus **11**
+parser candidates. Among the other 178, **168 have no printed individual choices
+observed on fully readable reviewed pages; ten retain clipping/occlusion holds**.
+This is a Codex rendered-page review, not independent human or word-perfect OCR
+certification. Both OCR passes use the same engine. **576** parser comparisons
+reproduce, and seven integrity tests reject incomplete pages, changed text,
+unreviewed orientation or promotion of findings into certified votes.
+
+| Additional visual original missed by named parsers | Remaining requirement |
+| --- | --- |
+| February 9, 2022 State Government, SF2818 area: five in-favor / three opposition names | Exact question association; sides precede the final recommendation. Baseline OCR already has the names. |
+| March 10, 2022 Energy, SF3661 selected passage checkbox: four Yes / three No marks; prevailed Yes | Validated geometry-aware complete-question extraction and historical identities. Mathews' row is blank; infer no choice or absence. |
+| March 30, 2022 Property Taxes, SF3882 referral: Weber/Chamberlain No, Murphy/Klein Yes; 2–2 did not prevail | Validated complete-question extraction of individually printed voted-yes/no lines and historical identities. OCR “Roll cail” defeats literal roll-call markers. |
+
+These are **source-only extractor/question holds**, with **zero OCR-derived
+production writes or newly certified votes**. Additional physical rolls and
+legacy recommendation/amendment classification issues in existing 2022
+candidates are recorded in the appendix. The 2025 Judiciary S.R.15 roll remains
+nonbill. Parser streams/source witnesses are not additive votes. The **233
+parser-candidate / 2,626 text-negative** metrics retain their parser meaning;
+the three visual misses are additional coverage debt.
+
+No inventory `ocrVisualQualityCertified` flag is promoted. The 192-original
+scoped review is complete; ten originals retain quality holds and **55 OCR
+originals from 2023/2024 were outside this visual review**. Date/year/attendance
+conflicts, cross-original aliases, duplicated Education Finance Clerk text, the
+unparseable May 19, 2022 Finance PDF, six missing-Minutes dates (**1,586/1,592**
+date coverage), 2021 print history and 2022 print/electronic equivalence remain
+held. The all-format historical named-roll denominator is **not certified**.
+No floor, serving model, forecast, weights, training, frozen evaluation, Vercel
+or scheduler change occurred. No offices were contacted; no manual audio review
+was used. **#864 remains OPEN.**
+
 ## October 23: explicit yay/Absence labels — production verified and held occurrences classified
 
-**Current 2022–2025 Minnesota Senate committee production: 203 events / 1,779 explicitly named choices.** This pass added **one event / thirteen choices**, with **zero classification corrections**. All **202 previous events and 1,766 previous choices are unchanged**. Cumulatively since the original 183 / 1,326 population baseline, this is **+20 events / +453 choices / ten classification corrections**. #864 remains **OPEN**.
+**Before renewal, 2022–2025 Minnesota Senate committee production: 203 events / 1,779 explicitly named choices.** This pass added **one event / thirteen choices**, with **zero classification corrections**. All **202 previous events and 1,766 previous choices are unchanged**. Cumulatively since the original 183 / 1,326 population baseline, this is **+20 events / +453 choices / ten classification corrections**. #864 remains **OPEN**.
 
 | Year | Events before → after this pass | Named choices before → after |
 | --- | ---: | ---: |

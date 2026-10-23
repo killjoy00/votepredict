@@ -1,0 +1,150 @@
+{
+  "commit": "f73d0f19f16365a824c770b5cc2cd9f56d4962b3",
+  "readAt": "2026-10-23T20:19:24.665Z",
+  "reviewedCommit": "db7f5c85d6502a2505e5c0a8d1d6a8508db971ff",
+  "runId": "40017727121",
+  "files": [
+    {
+      "path": "docs/evaluation/source-proof/senate-864-population-original-registry-20261023-renewal-ocr.json",
+      "bytes": 1766862,
+      "sha256": "7fe7842dfcbf56d9c55200fc01034321af6a067cb921daac52aee29506e95acc",
+      "gitBlobSha": "9c984bb24d7e110d9239bbc5d1f16519fcbbdf07"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-population-original-inventory-20261023-renewal-ocr.json",
+      "bytes": 6854062,
+      "sha256": "dc7d173228cbfcd7bd923c4ba0998e2eec23faed76bf283cf60ca92316878d2f",
+      "gitBlobSha": "05c7e1220aa60f5af6930b0efb36abb11168f827"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-population-summary-20261023-renewal-ocr.json",
+      "bytes": 280209,
+      "sha256": "25334307abe9c32288fb9e4e1947ef25d4d9ad9d0f5d90d06e5145aeaa65cbe9",
+      "gitBlobSha": "c1d41dd48c2a9e433fd78ea6ef9d767452cb00eb"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-population-committee-before-20261023-renewal-ocr.csv",
+      "bytes": 18895,
+      "sha256": "0a42538b139101187e3e4d77afc9ab53db8a02ad308a4d278444e4b5a8dd7b27",
+      "gitBlobSha": "ea4aba247eeab6c13013a0fe8d6b36b31e6b0423"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-population-committee-after-20261023-renewal-ocr.csv",
+      "bytes": 18904,
+      "sha256": "62a4cde538b471956111150d4d6a5e9651c9df08acf642856fb2884fb6b1ec2c",
+      "gitBlobSha": "77fed7e17598bc7d3eff1d338588f6e5f444e0da"
+    }
+  ],
+  "strictQuestions": 35,
+  "strictChoices": 468,
+  "heldOccurrences": 40,
+  "candidateTextsShaVerified": 233,
+  "matrixRowsEach": 111,
+  "sourceOriginals": 2860,
+  "readableOriginals": 2859,
+  "productionWrites": 0,
+  "schemaVersion": "senate864-renewal-ocr-publication-v1",
+  "inventoryImplementationPr": 1570,
+  "inventoryReviewedMain": "db7f5c85d6502a2505e5c0a8d1d6a8508db971ff",
+  "inventoryRunId": 40017727121,
+  "independentGateJobId": 120634014922,
+  "protectedReadonlyJobId": 120635385879,
+  "publicPublisherJobId": 120636060564,
+  "standardChecks": 2468,
+  "focusedTests": 41,
+  "failures": 0,
+  "skips": 0,
+  "productionDependencyAuditVulnerabilities": 0,
+  "artifact": {
+    "id": 12530110275,
+    "name": "senate864-public-population-reports",
+    "size_in_bytes": 1125272,
+    "url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12530110275",
+    "archive_download_url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12530110275/zip",
+    "expired": false,
+    "created_at": "2026-10-23T20:19:27Z",
+    "expires_at": "2026-11-06T20:19:26Z",
+    "updated_at": "2026-10-23T20:19:27Z",
+    "digest": "sha256:f6080f4274e5665be33f70575281defeae2c7d31dee06b14ddfea630f439bd26",
+    "workflow_run": {
+      "id": 40017727121,
+      "repository_id": 1201743780,
+      "head_repository_id": 1201743780,
+      "head_branch": "main",
+      "head_sha": "db7f5c85d6502a2505e5c0a8d1d6a8508db971ff"
+    }
+  },
+  "generatedReviewBranch": "work/864-population-results-40017727121",
+  "generatedReviewCommit": "f73d0f19f16365a824c770b5cc2cd9f56d4962b3",
+  "prior34StrictQuestionAndChoiceFingerprintsPreserved": true,
+  "allPriorProvenOriginalPassageHashesPreserved": true,
+  "originalRegistryBytesUnchanged": true,
+  "productionCategories": {
+    "exact": 34,
+    "different_source_identity": 1
+  },
+  "storedByYear": [
+    {
+      "year": 2022,
+      "storedEvents": 38,
+      "storedExplicitChoices": 259
+    },
+    {
+      "year": 2023,
+      "storedEvents": 55,
+      "storedExplicitChoices": 483
+    },
+    {
+      "year": 2024,
+      "storedEvents": 58,
+      "storedExplicitChoices": 512
+    },
+    {
+      "year": 2025,
+      "storedEvents": 53,
+      "storedExplicitChoices": 539
+    }
+  ],
+  "ocrAudit": {
+    "implementationPr": 1571,
+    "reviewedMain": "6629c482b0b5cab33705fe6a0f5039be70fa7db9",
+    "sourceOnlyRunId": 40018112590,
+    "sourceOnlyJobId": 120635336748,
+    "integrityTests": 7,
+    "parserComparisons": 576,
+    "originals": 192,
+    "pages": 331,
+    "visualNamedOriginals": 14,
+    "additionalVisualOriginals": 3,
+    "qualityHoldOriginals": 10,
+    "newCertifiedVotes": 0,
+    "productionWrites": 0
+  },
+  "appendixFileHashes": [
+    {
+      "path": "docs/evaluation/source-proof/senate-864-renewed-question-held-triage-20261023.json",
+      "bytes": 63220,
+      "sha256": "918bee2f4dba52b8c0c36b377434bd4e8b7f5b32e66f0aec2f34f648743800da"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-renewed-question-independent-readback-20261023.json",
+      "bytes": 9434,
+      "sha256": "a2df02527bc77f2103aaf2fa96cce9ae615504de401e5925c46509e9c7ed8839"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-renewed-question-production-20261023.json",
+      "bytes": 3714,
+      "sha256": "84df5c36aeb8dfa8ed578bdd86d92df84c625613145c6202b7c2c93eb59d333f"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-renewed-question-source-census-20261023.json",
+      "bytes": 790,
+      "sha256": "aacbf07a987c9b085362e13ab0257b0ce15922e9dec7f3c3f230226e51812196"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-192-ocr-rendered-audit-20261023.json",
+      "bytes": 2041713,
+      "sha256": "2890fb4e1a8fb7fc9d52938d4071f937b4c5086c7b325f3a55666defe3de7824"
+    }
+  ]
+}
