@@ -12,18 +12,20 @@ export const sha=s=>createHash('sha256').update(s).digest('hex');
 export const norm=s=>String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
 const compact=s=>s.replace(/\s+/g,' ').trim();
 const canonical=s=>norm(s.replace(/\b([HS])\s*\.?\s*F\s*\.?\s*0*(\d+)\b/gi,(_,a,b)=>a+'F'+Number(b)).replace(/\bA-(\d+)/gi,'A$1'));
-const bills=s=>[...new Set([...s.matchAll(/\b([HS])\s*\.?\s*F\s*\.?\s*(?:No\.?\s*)?0*(\d+)\b/gi)].map(m=>m[1].toUpperCase()+'F'+Number(m[2])))];
+const bills=s=>[...new Set([...s.matchAll(/\b([HS])\s*\.?\s*F\s*\.?\s*(?:No\.?\s*)?0*(\d+)(?=A-?\d+\b|\b)/gi)].map(m=>m[1].toUpperCase()+'F'+Number(m[2])))];
 const ref=s=>String(s||'').toUpperCase().replace(/[-\s]/g,'');
-const ROW=/^\s*(?:Senator|Sen\.)\s+(.+?)\s*[-–—:]\s*(Yea|Yeas|Aye|Yes|Nay|No|Absent|Excused|Pass|Abstain(?:ed)?|Not Voting)\s*\.?\s*$/i;
+const ROW=/^\s*(?:(?:Senator|Sen\.)\s+|(?:Vice\s+Chair|Chair|Lead|Ranking)\s*,?\s+(?:(?:Senator|Sen\.)\s+)?)(.+?)\s*[-–—:]\s*(Yea|Yeas|Aye|Ayes|Yes|Nay|Nays|No|Noes|Absent|Excused|Pass|Abstain(?:ed)?|Not Voting|N\/A)\s*\.?\s*$/i;
 const MOTION=/\b(?:Senator|Vice\s+Chair|Chair|Lead)\s+([\p{L}.'-]+(?:\s+(?!Senator\b)[\p{L}.'-]+){0,3}?)\s+(?:moved|moves|offered|offers)\b/giu;
-const OUTCOME=/\b(?:the\s+)?(?:motion|amendment)\s+(?:was\s+|is\s+)?(did not prevail|did not carry|not adopted|failed|fails|lost|prevailed|prevails|passed|carried|adopted)\b/gi;
+const OUTCOME=/\b(?:the\s+)?(?:m\s?otions?|amendment)\s+(?:was\s+|is\s+)?(did not prevail|does not prevail|did not carry|not adopted|failed|fails|lost|prevailed|prevails|passed|carried|adopted)\b/gi;
 function tally(s){
- const p=[/\b(\d{1,2})\s+(?:yeas?|ayes?|yes)(?:\s+votes?)?\s*(?:,\s*(?:and\s+)?|and\s+|to\s+)(\d{1,2})\s+(?:nays?|nay|noes?|no)\b/i,
+ const p=[/\b(\d{1,2})\s+(?:voting\s+)?(?:yeas?|ayes?|yes)(?:\s+votes?)?\s*(?:,\s*(?:and\s+)?|and\s+|to\s+)(\d{1,2})\s+(?:voting\s+)?(?:nays?|nay|noes?|no)\b/i,
  /\b(?:vote\s+(?:of\s+)?|roll\s+call\s*(?:vote\s*)?)(\d{1,2})\s*[/–-]\s*(\d{1,2})\b/i];
- for(const re of p){const m=s.match(re);if(m)return {yea:Number(m[1]),nay:Number(m[2])};}return null;
+ for(const re of p){const m=s.match(re);if(m)return {yea:Number(m[1]),nay:Number(m[2])};}
+ const reverse=s.match(/\b(\d{1,2})\s+voting\s+(?:NO|NAY)\s+and\s+(\d{1,2})\s+voting\s+(?:YES|YEA)\b/i);
+ if(reverse)return {yea:Number(reverse[2]),nay:Number(reverse[1])};return null;
 }
 function fullRoster(text){
- const stop=text.search(/called\s+the\s+meeting\s+to\s+order/i);
+ const stop=text.search(/\b(?:called|calls)\b[\s\S]{0,180}?\bto\s+order/i);
  if(stop<0||stop>4000)return [];
  const header=compact(text.slice(0,stop));
  return [...header.matchAll(/\bSenator\s+(.+?)(?=,|\bAbsent\s*:|\bSenator\s+|$)/gi)].map(m=>m[1]
@@ -56,8 +58,16 @@ export function extractRowRollQuestions(text,doc){
   const start=i,entries=[];
   while(i<lines.length){
    const m=lines[i].match(ROW);
-   if(m){entries.push({name:m[1].trim(),label:m[2],choice:/^(?:yea|yeas|aye|yes)$/i.test(m[2])?'yea':/^(?:nay|no)$/i.test(m[2])?'nay':'other'});i++;}
+   if(m){entries.push({name:m[1].trim(),label:m[2],choice:/^(?:yea|yeas|aye|ayes|yes)$/i.test(m[2])?'yea':/^(?:nay|nays|no|noes)$/i.test(m[2])?'nay':'other'});i++;}
    else if(!lines[i].trim()||/^\s*--\s*\d+\s+of\s+\d+\s*--\s*$/.test(lines[i]))i++;
+   else if(/^\s*\d+\s*$/.test(lines[i])){
+    // Skip a page number only when the immediately preceding nonblank line
+    // is its matching previous-page footer. Other numeric lines end the roll.
+    let previous=i-1;while(previous>=start&&!lines[previous].trim())previous--;
+    const footer=lines[previous]?.match(/^\s*--\s*(\d+)\s+of\s+(\d+)\s*--\s*$/);
+    if(!footer||Number(lines[i])!==Number(footer[1])+1||Number(lines[i])>Number(footer[2]))break;
+    i++;
+   }
    else break;
   }
   const end=i,choices=entries.filter(v=>v.choice!=='other').map(({name,choice})=>({name,choice}));i--;
@@ -72,14 +82,16 @@ export function extractRowRollQuestions(text,doc){
   if(intros.filter(m=>m.index>=at).length!==1)row.holds.push('multiple_motion_introductions');
   // The nearest explicit bill HEADING may supply an otherwise omitted bill,
   // but a later source summary is never allowed to assign the question.
-  const heads=[...before.matchAll(/^\s*([HS])\s*\.?\s*F\s*\.?\s*(\d+)\s*:/gim)];
+  const heads=[...before.matchAll(/^\s*([HS])\s*\.?\s*F\s*\.?\s*(\d+)(?:\s*:|\s+(?=Omnibus\b)[^\n]*)/gim)];
   const head=heads.at(-1),localBills=bills(question),headerBill=head?head[1].toUpperCase()+'F'+Number(head[2]):null;
   row.billIdentifier=localBills.length===1?localBills[0]:headerBill;
   if(localBills.length>1||localBills.length===1&&headerBill&&headerBill!==localBills[0])row.holds.push('contradictory_bill_association');
   if(!row.billIdentifier)row.holds.push('unresolved_bill_or_nonbill_question');
-  const references=[...new Set([...question.matchAll(/\bA-?\d{1,3}(?:-\d+)?\b/gi)].map(m=>ref(m[0])))];
+  const references=[...new Set([...question.matchAll(/\bA-?\d{1,3}(?:-\d+)?\b/gi)].map(m=>ref(m[0])).concat(
+   [...question.matchAll(/\b[HS]\s*\.?\s*F\s*\.?\s*\d+(A-?\d{1,3}(?:-\d+)?)\b/gi)].map(m=>ref(m[1]))))];
   const amended=question.replace(/\bas\s+amended\b/gi,'');
-  row.voteKind=/\bamend(?:ment|ed)?\b/i.test(amended)?'amendment':'motion';
+  const attachedAmendmentAction=/\b(?:moved|moves|offered|offers)\s+[HS]\s*\.?\s*F\s*\.?\s*\d+A-?\d{1,3}\b/i.test(question);
+  row.voteKind=attachedAmendmentAction||/\bamend(?:ment|ed)?\b/i.test(amended)?'amendment':'motion';
   row.amendmentRef=references.length===1?references[0]:null;
   if(references.length>1||/\boral\b|\bdivide\b|\breconsider\b|\brenew/i.test(question))row.holds.push('compound_or_repeated_question');
   if(row.voteKind==='amendment'&&!row.amendmentRef)row.holds.push('unresolved_amendment_identity');
