@@ -1,0 +1,57 @@
+{
+  "version": "senate864-original-structured-pair-v1",
+  "expectedQuestions": 2,
+  "expectedChoices": 11,
+  "sourceReviewCommit": "54934f257226db4132899e1ca300aef02c5f9a91",
+  "cellReviewCommit": "e6edbc08aa168026365c819ac07988a99eeb8456",
+  "sourceDocuments": [
+    {
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Subproperty/20220330/subproperty_20220330_Minutes.pdf",
+      "sha256": "cf2386e584dbb82c2be97983e75704c1bdcad22237fd8551382277a61d4359cb",
+      "date": "2022-03-30",
+      "committee": "Taxes - Subcommittee on Property Taxes",
+      "session_slug": "2021-2022",
+      "format": "pdf",
+      "clerkUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=16933&ls=92&type=minutes",
+      "clerkRawSha256": "8c23adc48fe2cad66da1101b04939e888d1db07ed177a2baded58f1b35d424f7",
+      "textSha256": "68d9a24ef05d0af17ac39405036b9d73d3ea69d80bb3181648fb8cdf24baeb27"
+    },
+    {
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Energy/20220310/energy_20220310_Minutes.pdf",
+      "sha256": "c4403e23f210f6ccee2e5e9a165013fa9f11c9c001c0e1b1e01fac6bb8fbb7b7",
+      "date": "2022-03-10",
+      "committee": "Energy and Utilities Finance and Policy",
+      "session_slug": "2021-2022",
+      "format": "pdf",
+      "clerkUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=16818&ls=92&type=minutes",
+      "clerkRawSha256": "6bd97b3408bd99f7866b275fc70ec8094249f4ac8042bcc481f843774527eef2",
+      "textSha256": "12697216fc688346a9c1413fe95d44f66b3a1d80444efe255e34c1fbc320937c"
+    }
+  ],
+  "questions": [
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Subproperty/20220330/subproperty_20220330_Minutes.pdf",
+      "questionKey": "b05a37e47e063a833d876ddaa6a9ad09ee45f3286dbaa53e9c5abe113b95502c",
+      "motionText": "Senator Klein requested Roll call to refer S.F. 3882 to Local Government",
+      "billIdentifier": "SF3882",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": false,
+      "yea": 2,
+      "nay": 2,
+      "fullQuestionPassageSha256": "6167383903761fe71db2fa4b99389fabd48ab2e7a2b47c0b398a12098a6c01be"
+    },
+    {
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Energy/20220310/energy_20220310_Minutes.pdf",
+      "questionKey": "27f449cd5c3a41d2471f57f5102e8e570b9b2fbf9e8906c568a5c921099e7451",
+      "motionText": "Senator Rarick requested a Roll Call Vote on: Passage of S. F. No. 3661. Senator Rarick moved that S.F. 3661, be recommended to pass.",
+      "billIdentifier": "SF3661",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 4,
+      "nay": 3,
+      "fullQuestionPassageSha256": "84b990d14e6bff9d63946543561c614e81e395edf8731b23ee62d54dd3f9af9a"
+    }
+  ]
+}

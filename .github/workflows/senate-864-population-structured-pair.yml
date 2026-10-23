@@ -1,0 +1,109 @@
+name: Issue 864 original printed checkbox and voted question pair
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-population-structured-pair.yml
+      - src/evidence/senate-864-population-named-rolls.mjs
+      - src/evidence/senate-864-printed-checkbox-tables.mjs
+      - scripts/deploy-senate-864-population-row-rolls.mjs
+      - tests/senate-864-population-named-rolls.test.mjs
+      - tests/senate-864-structured-pair.test.mjs
+      - tests/fixtures/senate-864-structured-pair.json
+      - docs/evaluation/source-proof/senate-864-population-structured-pair-plan.json
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-population-structured-pair.yml
+      - src/evidence/senate-864-population-named-rolls.mjs
+      - src/evidence/senate-864-printed-checkbox-tables.mjs
+      - scripts/deploy-senate-864-population-row-rolls.mjs
+      - tests/senate-864-population-named-rolls.test.mjs
+      - tests/senate-864-structured-pair.test.mjs
+      - tests/fixtures/senate-864-structured-pair.json
+      - docs/evaluation/source-proof/senate-864-population-structured-pair-plan.json
+permissions:
+  contents: read
+concurrency:
+  group: senate864-population-structured-pair-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  independent-originals-and-tests:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U postgres -d votepredict" --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: node --import tsx --test tests/senate-864-structured-pair.test.mjs tests/senate-864-printed-voted-referral.test.mjs tests/senate-864-population-explicit-labels.test.mjs tests/senate-864-population-complete-rows.test.mjs tests/senate-864-population-named-rolls.test.mjs tests/senate-864-population-inventory.test.mjs tests/senate-864-elections-original-recovery.test.mjs tests/senate-864-elections-2023-original-recovery.test.mjs
+      - name: Install official PDF text extraction prerequisite
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils tesseract-ocr
+      - name: Independently refetch and SHA-verify two original PDF bytes and canonical Clerk bodies
+        run: node --import tsx scripts/deploy-senate-864-population-row-rolls.mjs --source-only=structured
+      - run: npm audit --omit=dev --audit-level=high
+  protected-original-committee-correction:
+    needs: independent-originals-and-tests
+    if: >-
+      needs.independent-originals-and-tests.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 && github.event.repository.full_name == 'killjoy00/votepredict' &&
+      github.event.after == github.sha && github.event.head_commit.id == github.sha &&
+      github.event.forced != true && github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'SENATE864_POPULATION_STRUCTURED_PAIR_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+      SENATE864_ROW_COHORT: structured
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      SENATE864_INDEPENDENT_MAIN: ${{ needs.independent-originals-and-tests.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact reviewed main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Install official PDF text extraction prerequisite
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils tesseract-ocr
+      - name: Original SHA-pinned Minutes, bounded read-only parity, guarded event/choice writes, and independent readback
+        run: node --import tsx scripts/deploy-senate-864-population-row-rolls.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate864-population-structured-pair-production-verified
+          path: artifacts/senate864-population-structured-pair-readback.json
+          if-no-files-found: error
+          retention-days: 14
