@@ -10,7 +10,7 @@
  */
 import type {PoolClient} from 'pg';
 import {ballotSignature,billIdentifier,hash} from './senate-vote-paper-parser.js';
-import {parseOriginal,fullQuestion} from './senate-repeated-paper-original-roll-audit.js';
+import {parseOriginal,fullQuestion,type ParsedOriginal} from './senate-repeated-paper-original-roll-audit.js';
 import type {OriginalJournal,DayAccepted} from './senate-no-tally-original-census.js';
 import type {VoteTextGapAudit} from './senate-vote-text-gap-audit.js';
 
@@ -49,6 +49,15 @@ export interface ClaimedQuestion{
  yea_count:number|null;nay_count:number|null;
  ballot_sha256:string|null;vote_event_id:string;
 }
+/** Restricted in-transaction access to source evidence for a separate
+ * read-only structural amendment ownership audit. NEVER JSON-serialize this.
+ * Source, ballots, accepted IDs, and original question text remain private.
+ */
+export interface UnresolvedOriginalReview{
+ vote:OrphanVote;original:OriginalJournal|null;parsed:ParsedOriginal|null;
+ acceptedPeers:readonly DayAccepted[];claimedQuestions:readonly ClaimedQuestion[];
+ stage:Stage;
+}
 export interface OrphanProof{
  vote:OrphanVote;source:OriginalJournal;resolvedBillId:string;printedBill:string;
  printedQuestion:string;questionStart:number;rollStart:number;
@@ -79,7 +88,8 @@ export function summarizeOrphanJournalOriginals(
  votes:readonly OrphanVote[],docs:readonly OriginalJournal[],
  dayVotes:readonly DayAccepted[],catalog:readonly BillRow[],
  claims:readonly ClaimedQuestion[],gap:VoteTextGapAudit,
- onUnique?:(proof:OrphanProof)=>void
+ onUnique?:(proof:OrphanProof)=>void,
+ onUnresolved?:(item:UnresolvedOriginalReview)=>void
 ):OrphanReport{
  if(votes.length>1100||docs.length>650||dayVotes.length>8000||
   catalog.length>8000||claims.length>8000||
@@ -190,6 +200,12 @@ export function summarizeOrphanJournalOriginals(
    }
   }
   if(stage===null)throw Error('Original orphan Journal vote was not classified');
+  if(cohort==='unresolved_bill')onUnresolved?.({
+   vote:v,original:d??null,parsed:physical??null,
+   acceptedPeers:byDay.get(scope(v.source_url,v.day))??[],
+   claimedQuestions:claims.filter(c=>c.source_url===v.source_url&&c.day===v.day),
+   stage
+  });
   stages[cohort][stage]++;
   const k=JSON.stringify([v.session,v.vote_kind,cohort,stage]);
   const g=groups.get(k)??{session:v.session,vote_kind:v.vote_kind,cohort,stage,count:0};
@@ -250,7 +266,8 @@ const targetSQL=[
  */
 export async function readOrphanJournalOriginalAudit(
  db:PoolClient,gap:VoteTextGapAudit,
- onUnique?:(proof:OrphanProof)=>void
+ onUnique?:(proof:OrphanProof)=>void,
+ onUnresolved?:(item:UnresolvedOriginalReview)=>void
 ):Promise<OrphanReport>{
  const votes=(await db.query<OrphanVote>(targetSQL)).rows;
  if(votes.length>=1101)throw Error('Original orphan accepted votes truncated');
@@ -310,5 +327,5 @@ export async function readOrphanJournalOriginalAudit(
   'ORDER BY s.slug,b.identifier,b.id LIMIT 8001'
  ].join(' '),[identifiers])).rows:[];
  if(catalog.length>=8001)throw Error('Original orphan session bill catalog truncated');
- return summarizeOrphanJournalOriginals(votes,docs,dayVotes,catalog,claims,gap,onUnique);
+ return summarizeOrphanJournalOriginals(votes,docs,dayVotes,catalog,claims,gap,onUnique,onUnresolved);
 }

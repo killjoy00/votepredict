@@ -12,6 +12,7 @@ import {readRepeatedOriginalRollAudit} from '../src/operations/senate-repeated-p
 import {readRepeatedAcceptedOriginalAudit} from '../src/operations/senate-repeated-accepted-original-audit.js';
 import {readNamedMismatchOriginalAudit} from '../src/operations/senate-named-mismatch-original-audit.js';
 import {readOrphanJournalOriginalAudit} from '../src/operations/senate-orphan-journal-original-audit.js';
+import {readNullBillParentStructureAudit} from '../src/operations/senate-null-bill-parent-structure-audit.js';
 import {readNoTallyOriginalCensus,type PreliminaryRawOriginalCandidate} from '../src/operations/senate-no-tally-original-census.js';
 import {summarizeRawOriginalStrongSource} from '../src/operations/senate-raw-original-strong-source-audit.js';
 import {repairNestedSenateExactLinks} from '../src/operations/senate-nested-question-exact-repair.js';
@@ -129,6 +130,11 @@ async function main(){
    // diagnosis of BOTH missing-bill-paper and unresolved-bill Journal cohorts.
    // Source-verified, read-only; proposals are NOT released as exact links.
    const orphanJournalAudit=await readOrphanJournalOriginalAudit(db,gapAudit);
+   // Every unassigned original-Journal event: structural parent-motion
+   // evidence only, never an inferred bill association.
+   const nullBillParentStructureAudit=await readNullBillParentStructureAudit(db,gapAudit);
+   if(nullBillParentStructureAudit.wholeUnassignedOriginalJournalVotes!==orphanJournalAudit.unresolvedBill)
+    throw Error('Entire official original-source parent audit cohort drift');
    // All unmatched SAME original Journal URL/bill/day events: no guessed links.
    const populationRows=await readSameSourceQuestionRows(db);
    const sameSourceCensus=summarizeSameSourceFailures(
@@ -205,7 +211,7 @@ async function main(){
     FROM senate_historical_source_jobs q JOIN legislative_sessions s ON s.id=q.session_id GROUP BY s.slug,q.kind,q.status ORDER BY s.slug,q.kind,q.status`)).rows;
    const sourceAttempts=(await db.query('SELECT result,count(*)::int AS documents FROM senate_paper_source_attempts GROUP BY result ORDER BY result')).rows;
    if(!links.exact_raw_questions||!actions.some(a=>a.literal_papers>0)||!links.historical_roles)throw Error('Paper/history acceptance counts are empty');
-   return {events,actions,links,gapAudit,orphanJournalAudit,sameSourceCensus,repeatedPaperQuestionAudit,repeatedPaperOriginalRollAudit,repeatedAcceptedOriginalAudit,namedMismatchOriginalAudit,noTallyOriginalCensus,rawStrongSourceAudit,passage2022RosterShadow,caseAudit,nestedCandidateAudit,prattShadowReadback,hf100TextChainReadiness,sourceStateChainCensus,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
+   return {events,actions,links,gapAudit,orphanJournalAudit,nullBillParentStructureAudit,sameSourceCensus,repeatedPaperQuestionAudit,repeatedPaperOriginalRollAudit,repeatedAcceptedOriginalAudit,namedMismatchOriginalAudit,noTallyOriginalCensus,rawStrongSourceAudit,passage2022RosterShadow,caseAudit,nestedCandidateAudit,prattShadowReadback,hf100TextChainReadiness,sourceStateChainCensus,roles,roleCoverage,texts,archiveQueue,sourceAttempts};
   });
   const report={status:'committed_and_readback_verified',migrationApplied,batches,sourceVerification,passageRepair,nestedQuestionRepair,rawQuestionRepair,repeatedOriginalQuestionRepair,repeatedAcceptedQuestionRepair,namedMismatchRepair,orphanJournalRepair,baseBodies,datedAssignments,historyJobs,archives,baseConnections,prattSupplement,coverage,
    officialVotesUnchanged:true,sourceBodiesUnchanged:true,servingModelsUnchanged:true,completeStateClaims:false};
