@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "senate864-complete-row-local-source-census-v1",
+  "issue": 864,
+  "origin": "local SHA-checked full acquired text census; not an Actions run or production readback",
+  "checkedAt": "2026-10-23T02:57:15.694Z",
+  "inputPath": "docs/evaluation/source-proof/senate-864-population-original-inventory-20261022.json",
+  "inputSha256": "61b299d278d19859518c47b370392c822fa29e6a95f8c9b991a66b6c1e6205d3",
+  "extractorSha256": "77c73e5226932cca390e3ebba90559c9a925166e17dfdfa8681553e7b15b4634",
+  "readableOriginalTextsVerified": 2859,
+  "sourceTextReadSetSha256": "b87ff2c47cc6ef7e86f392b6cce2009f29540d639d2dc974739be4a01068f86f",
+  "additionalRowCandidateOriginalsOutsidePublishedNamedScope": [],
+  "sourceProvenOccurrences": 47,
+  "uniqueQuestionKeys": 37,
+  "excludedAliasKeys": 4,
+  "strictQuestions": 33,
+  "strictChoices": 441,
+  "priorStrictQuestionsPreserved": 24,
+  "newDistinctQuestions": 9,
+  "newExplicitChoices": 122,
+  "heldRowOccurrences": 56,
+  "heldByYear": {
+    "2023": 44,
+    "2024": 12
+  },
+  "productionWrites": 0
+}

@@ -1,0 +1,480 @@
+{
+  "schemaVersion": "senate864-complete-rows-independent-readback-v1",
+  "issue": 864,
+  "readAt": "2026-10-23T02:58:18.835Z",
+  "connection": "independent Neon connector on independently verified default/primary branch",
+  "boundedRepeatableReadReadOnlyWithExplicitRollback": true,
+  "preservedPriorEvents": 199,
+  "preservedPriorChoices": 1644,
+  "preservedTargetIds": 6,
+  "eventsBefore": 199,
+  "eventsAfter": 202,
+  "choicesBefore": 1644,
+  "choicesAfter": 1766,
+  "verifiedQuestions": 9,
+  "verifiedChoices": 122,
+  "strictSourceCohortBefore": {
+    "correctQuestions": 24,
+    "denominatorQuestions": 33,
+    "correctChoices": 319,
+    "denominatorChoices": 441
+  },
+  "strictSourceCohortAfter": {
+    "correctQuestions": 33,
+    "denominatorQuestions": 33,
+    "correctChoices": 441,
+    "denominatorChoices": 441
+  },
+  "scopeOfStrictBaseline": "Previously independently verified 24-question /319-choice cohort preserved unchanged, plus current nine-question source-proof admission; final full protected population parity is separate.",
+  "targets": [
+    {
+      "questionKey": "38ea61982afd79c67107ad31f1ada241ae3198da2dc7e4f53d072989963563fb",
+      "eventId": "ef928182-3f17-404d-a4b2-ac7b6637caa5",
+      "createdAt": "2026-10-23 02:56:59.228939+00",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+      "sourceOriginalSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "sourceTextSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "bill": "SF1426",
+      "amendmentRef": "A10",
+      "voteKind": "amendment",
+      "passed": true,
+      "yea": 8,
+      "nay": 5,
+      "exactChoices": 13,
+      "existingIdPreserved": false,
+      "sourceIdentityKind": "extracted_official_clerk_text"
+    },
+    {
+      "questionKey": "762785e20ecf1dc7bc44a51b32f9fbab8b6783066389cc462ca7756da61decab",
+      "eventId": "9eb14cfb-c9f1-42ff-bfcf-69680b734eec",
+      "createdAt": "2026-10-23 02:56:59.228939+00",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+      "sourceOriginalSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "sourceTextSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "bill": "SF1426",
+      "amendmentRef": "A28",
+      "voteKind": "amendment",
+      "passed": true,
+      "yea": 8,
+      "nay": 5,
+      "exactChoices": 13,
+      "existingIdPreserved": false,
+      "sourceIdentityKind": "extracted_official_clerk_text"
+    },
+    {
+      "questionKey": "32f5c435e3533a250c507569a393127f1c0f326ffffc98d45c87c8db894a6b03",
+      "eventId": "f4765c19-4cf0-4d07-8ec0-03c498f28769",
+      "createdAt": "2026-10-23 02:56:59.228939+00",
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+      "sourceOriginalSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "sourceTextSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "bill": "SF1426",
+      "amendmentRef": "A21",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 8,
+      "exactChoices": 14,
+      "existingIdPreserved": false,
+      "sourceIdentityKind": "extracted_official_clerk_text"
+    },
+    {
+      "questionKey": "a77b979df2cdc107e991db1071380c0ffcae0bf864c1a7c9534df99c4f8d3a74",
+      "eventId": "6e1be891-2c0f-43c4-9412-33a5e6a32d88",
+      "createdAt": "2026-10-02 04:48:18.696464+00",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "sourceOriginalSha256": "9124a161c48923c4045af252c3e020a5780f153a6d541f3aef2bd4800c229340",
+      "sourceTextSha256": "46df51dbf63b9f20a827ccd36d9c3b44a62b6a4ca32b34419b93ce63941b310d",
+      "bill": "SF4729",
+      "amendmentRef": "A11",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 7,
+      "exactChoices": 13,
+      "existingIdPreserved": true,
+      "sourceIdentityKind": "raw_pdf_bytes"
+    },
+    {
+      "questionKey": "be5ce856103ffe11807ef3d7be962e727f8257337912bf21b6fc9acb58305355",
+      "eventId": "51457d9a-169a-47f3-9a69-b9416052e5a7",
+      "createdAt": "2026-10-02 04:48:18.757589+00",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "sourceOriginalSha256": "9124a161c48923c4045af252c3e020a5780f153a6d541f3aef2bd4800c229340",
+      "sourceTextSha256": "46df51dbf63b9f20a827ccd36d9c3b44a62b6a4ca32b34419b93ce63941b310d",
+      "bill": "SF4729",
+      "amendmentRef": "A16",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 8,
+      "exactChoices": 14,
+      "existingIdPreserved": true,
+      "sourceIdentityKind": "raw_pdf_bytes"
+    },
+    {
+      "questionKey": "d2d5066d941e8c4e3c2fe5870edc7af6c593ca602459393d6f0aa713430000c8",
+      "eventId": "8f64e816-999d-4245-823d-91c24f47cd01",
+      "createdAt": "2026-10-02 04:48:18.81775+00",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "sourceOriginalSha256": "9124a161c48923c4045af252c3e020a5780f153a6d541f3aef2bd4800c229340",
+      "sourceTextSha256": "46df51dbf63b9f20a827ccd36d9c3b44a62b6a4ca32b34419b93ce63941b310d",
+      "bill": "SF4729",
+      "amendmentRef": "A22",
+      "voteKind": "amendment",
+      "passed": true,
+      "yea": 7,
+      "nay": 6,
+      "exactChoices": 13,
+      "existingIdPreserved": true,
+      "sourceIdentityKind": "raw_pdf_bytes"
+    },
+    {
+      "questionKey": "38bb9f3c77537d02629b3ffca071e3162be2995d6f4370a0df8d2b03237f0fa7",
+      "eventId": "98ba59c6-4284-4366-9407-2c13334ace4f",
+      "createdAt": "2026-10-02 04:48:18.878733+00",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "sourceOriginalSha256": "9124a161c48923c4045af252c3e020a5780f153a6d541f3aef2bd4800c229340",
+      "sourceTextSha256": "46df51dbf63b9f20a827ccd36d9c3b44a62b6a4ca32b34419b93ce63941b310d",
+      "bill": "SF4729",
+      "amendmentRef": "A13",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 8,
+      "exactChoices": 14,
+      "existingIdPreserved": true,
+      "sourceIdentityKind": "raw_pdf_bytes"
+    },
+    {
+      "questionKey": "ad5ec65ea47933b0729eedb6f2179933f419c41dd66abd25f4c866ccf3a5fcd1",
+      "eventId": "f201bab7-5d77-41a1-8f1a-543a3b03b695",
+      "createdAt": "2026-10-02 04:48:18.938956+00",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "sourceOriginalSha256": "9124a161c48923c4045af252c3e020a5780f153a6d541f3aef2bd4800c229340",
+      "sourceTextSha256": "46df51dbf63b9f20a827ccd36d9c3b44a62b6a4ca32b34419b93ce63941b310d",
+      "bill": "SF4729",
+      "amendmentRef": "A14",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 8,
+      "exactChoices": 14,
+      "existingIdPreserved": true,
+      "sourceIdentityKind": "raw_pdf_bytes"
+    },
+    {
+      "questionKey": "d02f20330f9ed4f8189f104429c0bb08d3c9bbe984dcb3167c7d677a930720f9",
+      "eventId": "ec9a3b0b-9483-43c3-9552-f1cc57e9cf6d",
+      "createdAt": "2026-10-02 04:48:19.000506+00",
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240321/Elections_20240321_Minutes.pdf",
+      "sourceOriginalSha256": "9124a161c48923c4045af252c3e020a5780f153a6d541f3aef2bd4800c229340",
+      "sourceTextSha256": "46df51dbf63b9f20a827ccd36d9c3b44a62b6a4ca32b34419b93ce63941b310d",
+      "bill": "SF4729",
+      "amendmentRef": "A15",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 7,
+      "nay": 7,
+      "exactChoices": 14,
+      "existingIdPreserved": true,
+      "sourceIdentityKind": "raw_pdf_bytes"
+    }
+  ],
+  "exactCommitteeLabelMatrix": [
+    {
+      "year": 2022,
+      "committee": "Education Finance and Policy",
+      "eventsBefore": 1,
+      "eventsAfter": 1,
+      "choicesBefore": 0,
+      "choicesAfter": 0
+    },
+    {
+      "year": 2022,
+      "committee": "Environment and Natural Resources Policy and Legacy Finance",
+      "eventsBefore": 1,
+      "eventsAfter": 1,
+      "choicesBefore": 0,
+      "choicesAfter": 0
+    },
+    {
+      "year": 2022,
+      "committee": "Finance",
+      "eventsBefore": 34,
+      "eventsAfter": 34,
+      "choicesBefore": 249,
+      "choicesAfter": 249
+    },
+    {
+      "year": 2022,
+      "committee": "Labor and Industry Policy",
+      "eventsBefore": 2,
+      "eventsAfter": 2,
+      "choicesBefore": 10,
+      "choicesAfter": 10
+    },
+    {
+      "year": 2023,
+      "committee": "Elections",
+      "eventsBefore": 15,
+      "eventsAfter": 15,
+      "choicesBefore": 199,
+      "choicesAfter": 199
+    },
+    {
+      "year": 2023,
+      "committee": "Environment, Climate, and Legacy",
+      "eventsBefore": 2,
+      "eventsAfter": 2,
+      "choicesBefore": 18,
+      "choicesAfter": 18
+    },
+    {
+      "year": 2023,
+      "committee": "Finance",
+      "eventsBefore": 4,
+      "eventsAfter": 4,
+      "choicesBefore": 0,
+      "choicesAfter": 0
+    },
+    {
+      "year": 2023,
+      "committee": "Health and Human Services",
+      "eventsBefore": 15,
+      "eventsAfter": 15,
+      "choicesBefore": 107,
+      "choicesAfter": 107
+    },
+    {
+      "year": 2023,
+      "committee": "Judiciary and Public Safety",
+      "eventsBefore": 12,
+      "eventsAfter": 12,
+      "choicesBefore": 72,
+      "choicesAfter": 72
+    },
+    {
+      "year": 2023,
+      "committee": "Rules and Administration",
+      "eventsBefore": 2,
+      "eventsAfter": 2,
+      "choicesBefore": 20,
+      "choicesAfter": 20
+    },
+    {
+      "year": 2023,
+      "committee": "State and Local Government and Veterans",
+      "eventsBefore": 0,
+      "eventsAfter": 3,
+      "choicesBefore": 0,
+      "choicesAfter": 40
+    },
+    {
+      "year": 2024,
+      "committee": "Agriculture, Broadband and Rural Development",
+      "eventsBefore": 2,
+      "eventsAfter": 2,
+      "choicesBefore": 18,
+      "choicesAfter": 18
+    },
+    {
+      "year": 2024,
+      "committee": "Capital Investment",
+      "eventsBefore": 1,
+      "eventsAfter": 1,
+      "choicesBefore": 9,
+      "choicesAfter": 9
+    },
+    {
+      "year": 2024,
+      "committee": "Commerce and Consumer Protection",
+      "eventsBefore": 4,
+      "eventsAfter": 4,
+      "choicesBefore": 18,
+      "choicesAfter": 18
+    },
+    {
+      "year": 2024,
+      "committee": "Education Finance",
+      "eventsBefore": 6,
+      "eventsAfter": 6,
+      "choicesBefore": 54,
+      "choicesAfter": 54
+    },
+    {
+      "year": 2024,
+      "committee": "Education Policy",
+      "eventsBefore": 2,
+      "eventsAfter": 2,
+      "choicesBefore": 20,
+      "choicesAfter": 20
+    },
+    {
+      "year": 2024,
+      "committee": "Elections",
+      "eventsBefore": 17,
+      "eventsAfter": 17,
+      "choicesBefore": 123,
+      "choicesAfter": 205
+    },
+    {
+      "year": 2024,
+      "committee": "Finance",
+      "eventsBefore": 5,
+      "eventsAfter": 5,
+      "choicesBefore": 0,
+      "choicesAfter": 0
+    },
+    {
+      "year": 2024,
+      "committee": "Housing and Homelessness Prevention",
+      "eventsBefore": 1,
+      "eventsAfter": 1,
+      "choicesBefore": 8,
+      "choicesAfter": 8
+    },
+    {
+      "year": 2024,
+      "committee": "Human Services",
+      "eventsBefore": 2,
+      "eventsAfter": 2,
+      "choicesBefore": 20,
+      "choicesAfter": 20
+    },
+    {
+      "year": 2024,
+      "committee": "Judiciary and Public Safety",
+      "eventsBefore": 15,
+      "eventsAfter": 15,
+      "choicesBefore": 131,
+      "choicesAfter": 131
+    },
+    {
+      "year": 2024,
+      "committee": "Rules and Administration",
+      "eventsBefore": 2,
+      "eventsAfter": 2,
+      "choicesBefore": 19,
+      "choicesAfter": 19
+    },
+    {
+      "year": 2024,
+      "committee": "Taxes",
+      "eventsBefore": 1,
+      "eventsAfter": 1,
+      "choicesBefore": 10,
+      "choicesAfter": 10
+    },
+    {
+      "year": 2025,
+      "committee": "Agriculture, Veterans, Broadband and Rural Development - Subcommittee on Veterans",
+      "eventsBefore": 1,
+      "eventsAfter": 1,
+      "choicesBefore": 0,
+      "choicesAfter": 0
+    },
+    {
+      "year": 2025,
+      "committee": "Commerce and Consumer Protection",
+      "eventsBefore": 1,
+      "eventsAfter": 1,
+      "choicesBefore": 11,
+      "choicesAfter": 11
+    },
+    {
+      "year": 2025,
+      "committee": "Education Finance",
+      "eventsBefore": 11,
+      "eventsAfter": 11,
+      "choicesBefore": 142,
+      "choicesAfter": 142
+    },
+    {
+      "year": 2025,
+      "committee": "Education Policy",
+      "eventsBefore": 1,
+      "eventsAfter": 1,
+      "choicesBefore": 12,
+      "choicesAfter": 12
+    },
+    {
+      "year": 2025,
+      "committee": "Elections",
+      "eventsBefore": 9,
+      "eventsAfter": 9,
+      "choicesBefore": 99,
+      "choicesAfter": 99
+    },
+    {
+      "year": 2025,
+      "committee": "Health and Human Services",
+      "eventsBefore": 4,
+      "eventsAfter": 4,
+      "choicesBefore": 19,
+      "choicesAfter": 19
+    },
+    {
+      "year": 2025,
+      "committee": "Human Services",
+      "eventsBefore": 2,
+      "eventsAfter": 2,
+      "choicesBefore": 18,
+      "choicesAfter": 18
+    },
+    {
+      "year": 2025,
+      "committee": "Judiciary and Public Safety",
+      "eventsBefore": 1,
+      "eventsAfter": 1,
+      "choicesBefore": 8,
+      "choicesAfter": 8
+    },
+    {
+      "year": 2025,
+      "committee": "Labor",
+      "eventsBefore": 5,
+      "eventsAfter": 5,
+      "choicesBefore": 40,
+      "choicesAfter": 40
+    },
+    {
+      "year": 2025,
+      "committee": "Rules and Administration",
+      "eventsBefore": 3,
+      "eventsAfter": 3,
+      "choicesBefore": 30,
+      "choicesAfter": 30
+    },
+    {
+      "year": 2025,
+      "committee": "State and Local Government",
+      "eventsBefore": 11,
+      "eventsAfter": 11,
+      "choicesBefore": 124,
+      "choicesAfter": 124
+    },
+    {
+      "year": 2025,
+      "committee": "Taxes",
+      "eventsBefore": 4,
+      "eventsAfter": 4,
+      "choicesBefore": 36,
+      "choicesAfter": 36
+    }
+  ],
+  "independentScopeCheck": {
+    "readAt": "2026-10-23T02:59:52.056Z",
+    "readOnly": "on",
+    "isolation": "repeatable read",
+    "explicitRollback": true,
+    "groups": [
+      {
+        "jurisdiction": "us-mn",
+        "chamber": "senate",
+        "events": 202,
+        "choices": 1766
+      }
+    ]
+  }
+}
