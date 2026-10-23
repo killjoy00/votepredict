@@ -1,0 +1,45 @@
+name: Issue 864 structured original roll regression tests
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-structured-rolls.yml
+      - src/evidence/senate-864-population-named-rolls.mjs
+      - tests/senate-864-printed-voted-referral.test.mjs
+      - tests/fixtures/senate-864-printed-voted-referral.json
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-structured-rolls.yml
+      - src/evidence/senate-864-population-named-rolls.mjs
+      - tests/senate-864-printed-voted-referral.test.mjs
+      - tests/fixtures/senate-864-printed-voted-referral.json
+permissions:
+  contents: read
+jobs:
+  independent-structured-originals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U postgres -d votepredict" --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: node --import tsx --test tests/senate-864-printed-voted-referral.test.mjs tests/senate-864-population-renewed-question.test.mjs tests/senate-864-population-explicit-labels.test.mjs tests/senate-864-population-complete-rows.test.mjs tests/senate-864-population-named-rolls.test.mjs tests/senate-864-population-inventory.test.mjs tests/senate-864-elections-original-recovery.test.mjs tests/senate-864-elections-2023-original-recovery.test.mjs
+      - run: npm audit --omit=dev --audit-level=high

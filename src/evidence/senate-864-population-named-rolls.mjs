@@ -120,6 +120,7 @@ export function extractRowRollQuestions(text,doc){
   row.questionKey=sha(JSON.stringify([doc.session_slug,doc.committee,doc.date,row.billIdentifier,row.voteKind,row.amendmentRef,row.questionCanonical]));
   row.confidence=row.holds.length?'held_question':'source_proven_question';rows.push(row);
  }
+ rows.push(...extractPrintedVotedReferrals(text,doc));
  // Repeated identical wording is an ambiguity, never two distinguishable votes.
  for(const q of rows)if(q.questionKey&&rows.filter(r=>r.questionKey===q.questionKey).length>1){q.holds.push('duplicate_question_wording');q.confidence='held_question';}
  return rows;
@@ -183,4 +184,38 @@ export function reconcileRowQuestion(q,doc,snapshot){
  });
  if(potential.length)return {status:'ambiguous_production_match',reason:'unresolved_existing_question_or_source_identity'};
  return {status:'missing_event',choices};
+}
+
+/** A complete, explicit referral request followed by individually printed voted sides.
+ * A later lay-over motion cannot supply this question or its outcome. */
+export function extractPrintedVotedReferrals(text,doc){
+ const lines=text.split('\n'),starts=[];let n=0;for(const line of lines){starts.push(n);n+=line.length+1;}
+ const label=/^\s*(?:[*•·«¢+]\s*)?(?:Senator|Sen\.)\s+([\p{L}.' -]+?)\s+voted\s+(yes|no|yea|nay|aye)\s*\.?\s*$/iu;
+ const intro=/^\s*Senator\s+([\p{L}.'-]+(?:\s+[\p{L}.'-]+){0,3})\s+requested\s+(?:a\s+)?Roll\s+c(?:all|ail)\s+to\s+refer\s+([HS])\s*\.?\s*F\s*\.?\s*(\d+)\s+to\s+([\p{L} ,&'-]{3,90})\.?\s*$/iu;
+ const out=[];
+ for(let i=0;i<lines.length;i++){
+  if(!label.test(lines[i]))continue;
+  const first=i,choices=[];let end=i;
+  while(end<lines.length){const m=lines[end].match(label);if(m){choices.push({name:m[1].trim(),choice:/^(yes|yea|aye)$/i.test(m[2])?'yea':'nay'});end++;}else if(!lines[end].trim())end++;else break;}
+  i=end-1;if(choices.length<2)continue;
+  let at=first-1;while(at>=0&&!lines[at].trim())at--;
+  const m=lines[at]?.match(intro),result=lines[end]||'';
+  const q={format:'individually_printed_voted_referral',sourceOffset:starts[first],sourceEnd:starts[end]??text.length,choices,excludedOtherLabels:0,confidence:'held_question',holds:[],yea:choices.filter(v=>v.choice==='yea').length,nay:choices.filter(v=>v.choice==='nay').length,voteKind:'motion',amendmentRef:null};
+  if(!m){q.holds.push('no_complete_explicit_referral_request');out.push(q);continue;}
+  q.motionText=compact(lines[at]);q.mover=m[1];q.billIdentifier=m[2].toUpperCase()+'F'+Number(m[3]);
+  const headings=[...text.slice(0,starts[at]).matchAll(/^\s*([HS])\s*\.?\s*F\s*\.?\s*(\d+)\s*:/gim)];
+  const heading=headings.at(-1);if(heading&&heading[1].toUpperCase()+'F'+Number(heading[2])!==q.billIdentifier)q.holds.push('contradictory_bill_association');
+  if(new Set(choices.map(v=>norm(v.name))).size!==choices.length)q.holds.push('duplicate_or_contradictory_names');
+  // An unlabeled tie is symmetric: no Yea/Nay ordering convention is inferred.
+  const tie=result.match(/^\s*(\d{1,2})\s*[-–/]\s*(\d{1,2})\s+(?:the\s+)?motion\s+(did not prevail|prevailed|failed|passed)\s*\.?\s*$/i);
+  if(!tie||Number(tie[1])!==Number(tie[2])||Number(tie[1])!==q.yea||Number(tie[2])!==q.nay)q.holds.push('missing_or_disagreeing_explicit_referral_tally');
+  if(!tie)q.holds.push('missing_uniquely_bound_referral_outcome');
+  else q.passed=!/not|fail/i.test(tie[3]);
+  q.outcomeText=compact(result);
+  if(tie){q.fullQuestionPassage=text.slice(starts[at],(starts[end]??text.length)+result.length);q.fullQuestionPassageSha256=sha(q.fullQuestionPassage);}
+  q.questionCanonical=canonical(q.motionText.replace(/\bRoll cail\b/i,'Roll call'));
+  q.questionKey=sha(JSON.stringify([doc.session_slug,doc.committee,doc.date,q.billIdentifier,q.voteKind,q.amendmentRef,q.questionCanonical]));
+  q.confidence=q.holds.length?'held_question':'source_proven_question';out.push(q);
+ }
+ return out;
 }
