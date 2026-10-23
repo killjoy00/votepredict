@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "senate864-structured-followup-current-overlay-v1",
+  "issue": 864,
+  "issueState": "OPEN",
+  "readAt": "2026-10-23T22:34:44.723Z",
+  "reviewedImplementationCommit": "94585be08386b87d69a2ec37c227c2671a1685f8",
+  "implementationPr": 1576,
+  "production": {
+    "events": 206,
+    "explicitChoices": 1804,
+    "newEvents": 2,
+    "newChoices": 11,
+    "classificationCorrections": 0,
+    "all204PriorEventsUnchanged": true,
+    "all1793PriorChoicesUnchanged": true,
+    "yearCounts": [
+      {
+        "year": 2022,
+        "events": 40,
+        "choices": 270
+      },
+      {
+        "year": 2023,
+        "events": 55,
+        "choices": 483
+      },
+      {
+        "year": 2024,
+        "events": 58,
+        "choices": 512
+      },
+      {
+        "year": 2025,
+        "events": 53,
+        "choices": 539
+      }
+    ],
+    "weight": 0,
+    "mechanicallyActionable": false,
+    "sameDayEligible": false,
+    "isPassage": false
+  },
+  "reviewedQuestionPool": {
+    "priorStrictRowQuestions": 35,
+    "priorStrictRowChoices": 468,
+    "additionalStructuredQuestions": 2,
+    "additionalStructuredChoices": 11,
+    "currentReviewedQuestions": 37,
+    "currentReviewedChoices": 479,
+    "byYear": [
+      {
+        "year": 2022,
+        "questions": 2,
+        "choices": 11
+      },
+      {
+        "year": 2023,
+        "questions": 19,
+        "choices": 253
+      },
+      {
+        "year": 2024,
+        "questions": 16,
+        "choices": 215
+      }
+    ],
+    "basis": "Preserved prior strict population plus two independently source-authenticated and production-verified questions; not a new all-original acquisition or universal denominator."
+  },
+  "frozenPopulation": {
+    "originals": 2860,
+    "readableOriginals": 2859,
+    "parserCandidateOriginals": 233,
+    "textNegativeOriginals": 2626,
+    "unparseable": 1,
+    "heldRowOccurrences": 40,
+    "priorInventoryReadAt": "2026-10-23T20:19:24.665Z",
+    "registrySha256": "7fe7842dfcbf56d9c55200fc01034321af6a067cb921daac52aee29506e95acc",
+    "inventorySha256": "dc7d173228cbfcd7bd923c4ba0998e2eec23faed76bf283cf60ca92316878d2f",
+    "baselineMatrixSha256": "62a4cde538b471956111150d4d6a5e9651c9df08acf642856fb2884fb6b1ec2c",
+    "all111BaselineMatrixRowsPreserved": true
+  },
+  "ocrReview": {
+    "originalsAuthenticated": 55,
+    "pagesRenderedAndReviewed": 85,
+    "visualNamedOriginals": 3,
+    "visualNoIndividualChoicesObservedOriginals": 52,
+    "qualityHoldOriginals": 0,
+    "blankRasterPages": 1,
+    "combinedOcrOriginalsReviewed": 247,
+    "combinedPagesReviewed": 416,
+    "combinedVisualNamedOriginals": 17,
+    "combinedNoIndividualChoicesObserved": 230,
+    "combinedQualityHoldOriginals": 10,
+    "combinedFullyLegibleScopedNegativeOriginals": 220,
+    "combinedBlankRasterPages": 8,
+    "remainingOcrOriginalsUnreviewed": 0,
+    "baselineParserNamedOriginals": 1,
+    "additionalVisualNamedOriginals": 2,
+    "combinedBaselineParserNamedOriginals": 12,
+    "combinedVisualOriginalsMissedByFrozenParsers": 5,
+    "wordPerfectOcrCertified": false,
+    "visualQualityFlagsPromoted": 0,
+    "sourceOnlyVisualWrites": 0
+  },
+  "sf2818": {
+    "status": "held_exact_question_and_printed_tally_unresolved",
+    "productionEventsAdded": 0,
+    "investigation": "senate-864-sf2818-question-hold-20261023.json"
+  },
+  "newVisualQueue": {
+    "originals": 3,
+    "handwrittenParserMissOriginals": 2,
+    "existingLabeledCandidateOriginals": 1,
+    "certifiedNewVotes": 0,
+    "sourceIds": [
+      "818cb59c8729396adddd18a7d249dce414e0dc457425577aae607d57cdc56351",
+      "ed614fdfc68258e7b5d0a79d3cf3061bb280d42170d4bfe6d017694b9b0a9668",
+      "2aad93d8e201ca044b298921a528a13419bae567f9f941fa41ab667eb0371c60"
+    ]
+  },
+  "matrix": "senate-864-population-committee-20261023-structured-followup.csv",
+  "limitations": [
+    "Parser metrics remain dated frozen inventory measurements; current counts and explicit additions are separate columns.",
+    "All 247 OCR originals are visually reviewed; ten old clipping/occlusion holds remain.",
+    "New handwritten/nested-question joins and Labor question reconstruction require separate explicit source proof and reconciliation before repair.",
+    "SF2818 question association remains unresolved.",
+    "2021 print history, 2022 electronic/print equivalence, date/header conflicts, cross-original aliases, one unparseable PDF and six missing minutes dates remain held."
+  ],
+  "productionReadback": "senate-864-structured-pair-independent-readback-20261023.json"
+}

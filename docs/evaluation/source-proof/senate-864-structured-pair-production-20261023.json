@@ -1,0 +1,123 @@
+{
+  "version": "senate864-population-named-rolls-v1",
+  "cohort": "structured",
+  "reviewedCommit": "94585be08386b87d69a2ec37c227c2671a1685f8",
+  "verifiedAt": "2026-10-23T22:34:17.270Z",
+  "sourceOriginals": 2,
+  "independentlyReverifiedPriorQuestions": 0,
+  "independentlyReverifiedPriorChoices": 0,
+  "sourceProvenQuestions": 2,
+  "sourceProvenChoices": 11,
+  "previousExact": 0,
+  "insertedEvents": 2,
+  "insertedChoices": 11,
+  "correctedClassifications": 0,
+  "preservedExistingTargetEventIds": 0,
+  "verifiedExact": 2,
+  "verifiedChoices": 11,
+  "zeroWriteReplay": true,
+  "yearCountsBefore": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 55,
+      "declared_named_events": 44,
+      "explicit_stored_choices": 483,
+      "hearing_date_timing_events": 22
+    },
+    {
+      "year": 2024,
+      "stored_events": 58,
+      "declared_named_events": 48,
+      "explicit_stored_choices": 512,
+      "hearing_date_timing_events": 26
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "yearCountsAfter": [
+    {
+      "year": 2022,
+      "stored_events": 40,
+      "declared_named_events": 30,
+      "explicit_stored_choices": 270,
+      "hearing_date_timing_events": 2
+    },
+    {
+      "year": 2023,
+      "stored_events": 55,
+      "declared_named_events": 44,
+      "explicit_stored_choices": 483,
+      "hearing_date_timing_events": 22
+    },
+    {
+      "year": 2024,
+      "stored_events": 58,
+      "declared_named_events": 48,
+      "explicit_stored_choices": 512,
+      "hearing_date_timing_events": 26
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "existingEventIdsAndChoicesPreserved": true,
+  "verifiedRepeatableReadReadOnlyAndRollback": true,
+  "serializableWrites": true,
+  "recoveredEvents": [
+    {
+      "questionKey": "b05a37e47e063a833d876ddaa6a9ad09ee45f3286dbaa53e9c5abe113b95502c",
+      "eventId": "1384690d-9f40-4f89-9548-ec626784919a",
+      "createdAt": "2026-10-23 22:34:13.412648+00",
+      "choices": 4
+    },
+    {
+      "questionKey": "27f449cd5c3a41d2471f57f5102e8e570b9b2fbf9e8906c568a5c921099e7451",
+      "eventId": "807d5c3b-4475-40ad-a9c8-e47cedca018d",
+      "createdAt": "2026-10-23 22:34:13.412648+00",
+      "choices": 7
+    }
+  ],
+  "runId": 40033870365,
+  "independentGateJobId": 120688469606,
+  "protectedProductionJobId": 120689685852,
+  "standardChecks": 2468,
+  "focusedTests": 69,
+  "failures": 0,
+  "skips": 0,
+  "productionDependencyAuditVulnerabilities": 0,
+  "artifact": {
+    "id": 12536432022,
+    "name": "senate864-population-structured-pair-production-verified",
+    "size_in_bytes": 954,
+    "url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12536432022",
+    "archive_download_url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12536432022/zip",
+    "expired": false,
+    "created_at": "2026-10-23T22:34:18Z",
+    "expires_at": "2026-11-06T22:34:17Z",
+    "updated_at": "2026-10-23T22:34:18Z",
+    "digest": "sha256:f37cdd6ff87281df24d23276e914dd580a807ade2e420b3008ae85055a518c23",
+    "workflow_run": {
+      "id": 40033870365,
+      "repository_id": 1201743780,
+      "head_repository_id": 1201743780,
+      "head_branch": "main",
+      "head_sha": "94585be08386b87d69a2ec37c227c2671a1685f8"
+    }
+  }
+}

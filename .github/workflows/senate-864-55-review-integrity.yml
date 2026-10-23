@@ -1,0 +1,42 @@
+name: Issue 864 completed 55 original visual review integrity
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-55-review-integrity.yml
+      - scripts/verify-senate-864-55-review.mjs
+      - docs/evaluation/source-proof/senate-864-55-ocr-rendered-audit-20261023.json
+      - docs/evaluation/source-proof/senate-864-sf2818-question-hold-20261023.json
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-55-review-integrity.yml
+      - scripts/verify-senate-864-55-review.mjs
+      - docs/evaluation/source-proof/senate-864-55-ocr-rendered-audit-20261023.json
+permissions:
+  contents: read
+jobs:
+  source-only-review-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          ref: 54934f257226db4132899e1ca300aef02c5f9a91
+          path: .source-review
+          sparse-checkout: docs/evaluation/source-proof/senate-864-55-followup-review
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx scripts/verify-senate-864-55-review.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate864-55-review-integrity-parser-comparison
+          path: artifacts/senate864-55-review-comparison.json
+          if-no-files-found: error
+          retention-days: 14
