@@ -26,7 +26,7 @@ def download(url,limit):
   b=r.read(limit+1)
  if len(b)>limit:raise ValueError('Original byte bound')
  return b
-def one(d):
+def one(d,geometry=False):
  sid=d['sourceId'];directory=ROOT/sid;directory.mkdir(parents=True,exist_ok=True)
  result={**d,'sourceOnly':True,'productionWrites':0,'pages':[]}
  with tempfile.TemporaryDirectory(prefix='senate864-55-') as tmp:
@@ -57,6 +57,9 @@ def one(d):
     x0,y0,x1,y1=box;review=review.crop((max(0,x0-30),max(0,y0-30),min(im.width,x1+30),min(im.height,y1+30)))
    review.thumbnail((1100,1500));jpg=directory/('page-'+str(i)+'.jpg');review.save(jpg,quality=88)
    p={'page':i,'raw300dpiPageSha256':sha(path.read_bytes()),'width':im.width,'height':im.height,'rotationClockwise':rotation,'osd':osd,'blankRaster':box is None,'reviewImageSha256':sha(jpg.read_bytes()),'renderedReview':'pending','passes':{}}
+   if geometry:
+    from senate864_checkbox_grid import extract_grid_from_raster
+    p['checkboxGrids']=extract_grid_from_raster(im)
    for mode in (3,11):
     prefix=tmp/('ocr-'+str(mode));run(['tesseract',str(upright),str(prefix),'-l','eng','--psm',str(mode),'txt','tsv'])
     text=prefix.with_suffix('.txt').read_text();words=[]
@@ -84,13 +87,21 @@ def clerk_probes():
  (ROOT/'clerk-probes.json').write_text(json.dumps(out,indent=2)+'\n')
 if __name__=='__main__':
  import sys
- ds=targets()
+ ds=targets();geometry=sys.argv[1:]==['--structured-pair']
  if sys.argv[1:]==['--scope-only']:print('FIXED_PUBLIC_SOURCES=58 (55 remaining OCR + 3 parser misses)');sys.exit(0)
- if sys.argv[1:]:raise ValueError('Fixed acquisition mode only')
+ if sys.argv[1:] and not geometry:raise ValueError('Fixed acquisition mode only')
+ if geometry:ds=[d for d in ds if d['sourceId'] in {'b09b0b455312903eaa01defd0167b7bcf6fda405807352f2ff6739b1d59509f5','38c8be767d77dada704fac695980816414f9a5b13cc4aa9091abc9fc09a556d5'}]
  ROOT.mkdir(parents=True,exist_ok=True);results=[]
  with concurrent.futures.ThreadPoolExecutor(max_workers=3)as pool:
-  for result in pool.map(one,ds):results.append(result);print('SOURCE_ONLY_ORIGINALS='+str(len(results))+'/58',flush=True)
- clerk_probes();manifest={'schemaVersion':'senate864-55-followup-review-v1','reviewedCommit':os.environ.get('GITHUB_SHA'),'runId':os.environ.get('GITHUB_RUN_ID'),'sourceOnly':True,'productionWrites':0,'registrySha256':REG_SHA,'remainingOcrOriginals':55,'demonstratedParserMissOriginals':3,'originalsAuthenticated':len(results),'pages':sum(d['pageCount']for d in results),'sameEngineDifferentSegmentation':True,'dpi':300,'psmModes':[3,11],'sources':results,'renderedReview':'pending','files':[]}
+  for result in pool.map(lambda d:one(d,geometry),ds):results.append(result);print('SOURCE_ONLY_ORIGINALS='+str(len(results))+'/'+str(len(ds)),flush=True)
+ if geometry:
+  probe={'sourceUrl':'https://www.senate.mn/api/schedule/daily?date=2022-02-09','sourceOnly':True}
+  try:
+   raw=download(probe['sourceUrl'],2000000);probe.update({'rawSha256':sha(raw),'data':json.loads(raw)})
+  except Exception as e:probe['hold']=type(e).__name__+': '+str(e)[:180]
+  (ROOT/'clerk-probes.json').write_text(json.dumps([probe],indent=2)+'\n')
+ else:clerk_probes()
+ manifest={'schemaVersion':'senate864-structured-pair-review-v1'if geometry else 'senate864-55-followup-review-v1','reviewedCommit':os.environ.get('GITHUB_SHA'),'runId':os.environ.get('GITHUB_RUN_ID'),'sourceOnly':True,'productionWrites':0,'registrySha256':REG_SHA,'remainingOcrOriginals':0 if geometry else 55,'demonstratedParserMissOriginals':2 if geometry else 3,'originalsAuthenticated':len(results),'pages':sum(d['pageCount']for d in results),'sameEngineDifferentSegmentation':True,'dpi':300,'psmModes':[3,11],'sources':results,'renderedReview':'pending','files':[]}
  for p in sorted(ROOT.rglob('*')):
   if p.is_file():manifest['files'].append({'path':str(p.relative_to(ROOT)),'bytes':p.stat().st_size,'sha256':sha(p.read_bytes())})
  (ROOT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
