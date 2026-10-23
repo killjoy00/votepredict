@@ -44,6 +44,10 @@ export function resolvePrintedHistoricalChoices(q,text,roster,doc){
   const active=roster.filter(m=>m.session_slug===doc.session_slug&&m.starts_on&&m.ends_on&&m.starts_on<=doc.date&&m.ends_on>=doc.date&&
    [...fullKeys(m.name)].some(k=>k&&keys.has(k)));
   if(active.length!==1)throw Error('historical_full_identity_or_service_hold');
+  if(v.printedCellName){
+   const literal=norm(v.printedCellName),supported=[names[0],...(active[0].aliases||[])].some(n=>fullKeys(n).has(literal)||norm(n)===literal||norm(n).endsWith(' '+literal));
+   if(!supported)throw Error('contradictory_printed_cell_full_identity');
+  }
   out.push({...v,fullName:names[0],membershipId:active[0].membership_id});
  }
  if(new Set(out.map(v=>v.membershipId)).size!==out.length)throw Error('contradictory_person_sides');
