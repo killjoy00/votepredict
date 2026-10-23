@@ -677,6 +677,37 @@ Role recovery has three explicit bases:
 
 ## Coverage and remaining uncertainty
 
+### Original Senate Journal parent-motion structure audit for 372 unresolved bill IDs (#1498)
+
+The independently production-verified **99** missing-paper vote links are live. The
+separate source-identity investigation focuses on the **372** Senate Journal
+accepted votes without `bill_id`. The original complete question/ballot audit
+found **237** unique original questions without a bill identifier *inside the
+question*, **80** physically repeated identical question+ballots, **43**
+unauthenticated/duplicate originals, and **12** unproved question boundaries.
+
+`senate-null-bill-parent-structure-audit.ts` is a new **read-only** original
+government-Journal structural ownership *hypothesis* audit. On all 372 it
+reuses the same physically printed roll and question positions, accepted
+full member names and choices, original PDF receipt and SHA, and complete
+accepted source-day peers (including other bills and linked votes). For the
+237 with unique question but no literal bill, it classifies whether a single
+bounded printed **initiating amendment motion explicitly naming a bill**
+appears before the exact question, with no intervening distinct motion,
+bill conflict, question or roll. Merely finding the nearest bill heading,
+calendar reference, earlier roll or tally cannot establish bill ownership.
+Printed source parent markers surviving this triage are **not** bill-ID
+repair proofs: original-motion target identity, amendment parent-child
+scope and uniqueness still require separate independent review and a
+separately authorized writer. No inferred adoption or amended bill text,
+2026/2021–25 time conflation, or forecast-serving use.
+
+The protected `REPEATABLE READ READ ONLY` audit groups the full 372 by
+source and structural first-failure stage, never emits original text,
+member names, UUIDs, ballots or URLs, and changes **zero** vote bill IDs,
+paper actions, source documents, accepted events, prior bill versions
+or models.
+
 ### Source-original question audit for missing papers and unresolved bills (#1498)
 **Protected original source audit verified:** [PR #1544](https://github.com/killjoy00/votepredict/pull/1544)
 merged after both exact-head source-PDF and general CI passed, and [protected
