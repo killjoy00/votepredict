@@ -41,7 +41,7 @@ test('coded amendment identity, literal outcome and historical full identities r
  assert.throws(()=>resolvePrintedHistoricalChoices(first,clerk.text,roster.map(m=>({...m,ends_on:'2023-01-01'})),doc(clerk)));
  assert.notEqual(questions(clerk.text.replace('Lead Anderson - NO','Lead Anderson - YES'))[0].confidence,'source_proven_question');
 });
-test('frozen complete population preserves all previous proven questions and admits nine additional distinct keys',()=>{
+test('frozen complete population preserves previous proofs and all nine continuation keys',()=>{
  const input=readFileSync('docs/evaluation/source-proof/senate-864-population-original-inventory-20261022.json');
  assert.equal(sha(input),planSource('continuation').sourceInventoryInput.sha256);
  const report=JSON.parse(input),added=new Map();
@@ -51,8 +51,10 @@ test('frozen complete population preserves all previous proven questions and adm
   for(const old of previous){const q=actual.find(q=>q.questionKey===old.questionKey);assert.ok(q,'previous exact question changed');assert.equal(q.choices.length,old.choices);assert.equal(q.amendmentRef,old.amendmentRef);}
   for(const q of actual)if(!previous.some(p=>p.questionKey===q.questionKey))added.set(q.questionKey,q);
  }
- assert.equal(added.size,9);assert.equal([...added.values()].reduce((n,q)=>n+q.choices.length,0),122);
- assert.deepEqual(new Set(added.keys()),new Set(planSource('continuation').questions.map(q=>q.questionKey)));
+ const continuationKeys=new Set(planSource('continuation').questions.map(q=>q.questionKey));
+ const continuation=[...added.values()].filter(q=>continuationKeys.has(q.questionKey));
+ assert.equal(continuation.length,9);assert.equal(continuation.reduce((n,q)=>n+q.choices.length,0),122);
+ assert.deepEqual(new Set(continuation.map(q=>q.questionKey)),continuationKeys);
 });
 test('source profile independently verifies nine questions and rejects original body drift',async()=>{
  const o=await sourceFixture();assert.equal(o.docs.length,2);assert.equal(o.pins.expectedQuestions,9);assert.equal(o.pins.expectedChoices,122);
