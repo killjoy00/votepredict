@@ -16,6 +16,15 @@ test('actual original HTML cells agree with every independently rendered PDF cho
  assert.equal(cells.filter(c=>c.yes==='blank'&&c.no==='blank').length,1);
  const roster=f.roster.map((m,i)=>({...m,membership_id:'m'+i}));assert.equal(resolvePrintedHistoricalChoices(q,energy.text,roster,energy).length,7);
 });
+test('printed cell given names require full original header or an explicit historical alias; a unique surname cannot hide a contradictory given name',()=>{
+ const q=extractPrintedCheckboxTables(energy.originalHtml,energy)[0],roster=f.roster.map((m,i)=>({...m,membership_id:'m'+i}));
+ assert.equal(resolvePrintedHistoricalChoices(q,energy.text,roster,energy).length,7);
+ for(const [from,to] of [['Dave Senjem','Bob Senjem'],['Nick Frentz','Roger Frentz']]){
+  const altered=structuredClone(q);altered.choices.find(v=>v.printedCellName===from).printedCellName=to;
+  assert.throws(()=>resolvePrintedHistoricalChoices(altered,energy.text,roster,energy),/contradictory_printed_cell_full_identity/);
+ }
+ const noAlias=roster.map(m=>({...m,aliases:[]}));assert.throws(()=>resolvePrintedHistoricalChoices(q,energy.text,noAlias,energy),/contradictory_printed_cell_full_identity/);
+});
 test('selected question, full grid, known marks, agreeing labeled tally and direct recommendation are all required',()=>{
  const html=energy.originalHtml,table=extractPrintedCheckboxTables(html,energy)[0].sourceTableHtml;
  const changes=[s=>s.replace('____X_____ Passage','_________ Passage'),s=>s.replace('4 Yes votes','3 Yes votes'),s=>s.replace('be recommended to pass.','be laid over.'),s=>s.replace('S.F. 3661, be recommended','S.F. 9999, be recommended'),s=>s.replace('Did Not Prevail ____________','Did Not Prevail _____yes_______'),s=>s.replace('<strong>YES</strong>','<strong>NO</strong>'),s=>s.replace(table,table.replace(/>\s*X\s*</,'> ? <')),s=>s.replace(table,table.replace('width:71px;height:22px;','width:71px;height:22px;" colspan="2')),s=>s.replace(table,table.replace(/<tr>[\s\S]*?Andrew Mathews[\s\S]*?<\/tr>/,'<tr></tr>'))];
