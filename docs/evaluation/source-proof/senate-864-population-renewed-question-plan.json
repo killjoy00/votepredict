@@ -1,0 +1,81 @@
+{
+  "version": "senate864-complete-renewed-question-plan-v1",
+  "profile": "renewal",
+  "expectedQuestions": 1,
+  "expectedChoices": 14,
+  "sourceDocuments": [
+    {
+      "url": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+      "sha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "textSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+      "date": "2023-04-03",
+      "committee": "State and Local Government and Veterans",
+      "session_slug": "2023-2024",
+      "format": "html"
+    }
+  ],
+  "questions": [
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+      "questionKey": "ce8585994eb6e11187eda9096be6f68dd0da2352ef83a19102f6f26a85074078",
+      "billIdentifier": "SF1426",
+      "amendmentRef": null,
+      "voteKind": "motion",
+      "passed": true,
+      "yea": 8,
+      "nay": 6,
+      "motionText": "Senator Murphy renewed her motion that SF1426, as amended, be recommended to pass and re-referred to Finance Committee. Roll call requested.",
+      "fullQuestionPassageSha256": "19188e360d2064b693e7a0bb70cd2ed5315f483cbdc739e68b2ab3cc7cb9d2f0"
+    }
+  ],
+  "priorQuestions": [
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+      "questionKey": "38ea61982afd79c67107ad31f1ada241ae3198da2dc7e4f53d072989963563fb",
+      "billIdentifier": "SF1426",
+      "amendmentRef": "A10",
+      "voteKind": "amendment",
+      "passed": true,
+      "yea": 8,
+      "nay": 5,
+      "motionText": "Senator Murphy moved SF1426A10. Roll call requested.",
+      "fullQuestionPassageSha256": "b77f4fe8f3e3ddfeb9c854d753fd91d1741f9deb8da37be3e80dd0d92585f320"
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+      "questionKey": "762785e20ecf1dc7bc44a51b32f9fbab8b6783066389cc462ca7756da61decab",
+      "billIdentifier": "SF1426",
+      "amendmentRef": "A28",
+      "voteKind": "amendment",
+      "passed": true,
+      "yea": 8,
+      "nay": 5,
+      "motionText": "Senator Murphy moved SF1426A28. Roll call requested.",
+      "fullQuestionPassageSha256": "16e9ac9c5cfb1de0e7153608f18d202a438066b6fe4e5f49d25ddd2fef19316b"
+    },
+    {
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+      "questionKey": "32f5c435e3533a250c507569a393127f1c0f326ffffc98d45c87c8db894a6b03",
+      "billIdentifier": "SF1426",
+      "amendmentRef": "A21",
+      "voteKind": "amendment",
+      "passed": false,
+      "yea": 6,
+      "nay": 8,
+      "motionText": "Senator Koran moved SF1426A21. Roll call requested",
+      "fullQuestionPassageSha256": "04777b5ebc9da44651a38373e547950f5da5195f6f6f29d3b081c8239e83cefe"
+    }
+  ],
+  "expectedPriorQuestions": 3,
+  "expectedPriorChoices": 40,
+  "productionExpected": {
+    "insertedEvents": 1,
+    "insertedChoices": 14,
+    "classificationCorrections": 0,
+    "preservedExistingTargetEventIds": 0
+  },
+  "sourceInventoryInput": {
+    "path": "docs/evaluation/source-proof/senate-864-population-original-inventory-20261023-explicit-labels.json",
+    "sha256": "685f08e5e3645fa8262d04876102e9dbbf529dcf0e7c33c669c84d67348b71ea"
+  }
+}
