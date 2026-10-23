@@ -10,7 +10,7 @@ import type {OriginalJournal,DayAccepted}
 
 const question='The question was taken on adoption of the amendment.';
 const parent='Senator Jordan moved that S.F. No. 2345 be amended as follows:';
-const s=(text:string)=>scanExplicitParentMotion(text,text.indexOf('The question'),
+const s=(text:string)=>scanExplicitParentMotion(text,text.lastIndexOf('The question'),
  null,question,'amendment');
 test('only an explicit, same-motion amendment parent is a review candidate, not a repaired bill',()=>{
  const x=s('GENERAL ORDERS\n'+parent+'\nDelete page 1 line 2.\n'+question);
@@ -41,7 +41,7 @@ test('new motion, intervening roll, or new question breaks grammatical ownership
   'intervening_vote_question_or_roll');
 });
 test('long unbounded unrelated parent is held, even if its bill is unique',()=>{
- assert.equal(s(parent+'\nSome literal amendment language. '.repeat(130)+'\n'+question).stage,
+ assert.equal(s(parent+'\nSome literal amendment language. '.repeat(90)+'\n'+question).stage,
   'parent_more_than_2400_chars_away');
 });
 test('no parent motion without even a distinct bill reference is not a bill match',()=>{
