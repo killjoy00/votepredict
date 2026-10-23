@@ -3,6 +3,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {extractRowRollQuestions,sha} from '../src/evidence/senate-864-population-named-rolls.mjs';
 export const INPUT='docs/evaluation/source-proof/senate-864-population-original-inventory-20261023.json';
 export const INPUT_SHA='9101684f03085f6d299cd74dfbed60de0ca0852ce539106afece547941383c4d';
+const reopening={question_identity:'Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.',nonbill_question:'Validate separate nonbill-question identity and storage semantics, with complete printed named sides, tally and explicit outcome; do not assign a nearby bill.',printed_outcome:'Acquire or extract an authenticated explicit result uniquely bound to this complete question and every printed named side; do not infer it from the slate.',printed_tally_or_incomplete_rows:'Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.'};
 const count=items=>Object.fromEntries([...new Set(items)].sort().map(k=>[k,items.filter(x=>x===k).length]));
 function primary(holds){
  if(holds.some(h=>/compound|withdrawn|unresolved_amendment|contradictory_bill/.test(h)))return 'question_identity';
@@ -18,7 +19,7 @@ export function buildHeldTriage(bytes=readFileSync(INPUT)){
  for(const d of candidates){
   if(sha(d.candidateOriginalExtractedText)!==d.extractedTextSha256)throw Error('Authenticated source text hash mismatch');
   const qs=extractRowRollQuestions(d.candidateOriginalExtractedText,{date:d.date,committee:d.committee,session_slug:d.session});
-  const item=q=>({sourceId:d.sourceId,sourceUrl:d.sourceUrl,originalSha256:d.originalSha256,textSha256:d.extractedTextSha256,date:d.date,committee:d.committee,format:d.format,questionKey:q.questionKey||null,motionText:q.motionText||null,holds:q.holds,primaryCause:primary(q.holds)});
+  const item=q=>({sourceId:d.sourceId,sourceUrl:d.sourceUrl,originalSha256:d.originalSha256,textSha256:d.extractedTextSha256,date:d.date,committee:d.committee,format:d.format,questionKey:q.questionKey||null,motionText:q.motionText||null,holds:q.holds,primaryCause:primary(q.holds),reopeningCondition:reopening[primary(q.holds)]});
   for(const q of d.rowQuestions.filter(q=>q.confidence==='held_question'))before.push(item(q));
   for(const q of qs){
    if(q.confidence==='held_question'){after.push({...item(q),sourceOffset:q.sourceOffset,printedChoiceOccurrences:q.choices.length});continue;}

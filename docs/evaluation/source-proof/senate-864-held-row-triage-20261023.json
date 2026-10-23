@@ -56,6 +56,7 @@
       "motionText": "Senator Westlin moved that SF 26 be recommended to pass as amended and re-referred to the Judiciary and Public Safety Committee. Senator Koran requested a roll call vote, and a roll call was granted.",
       "holds": [],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "choices": 13,
       "yea": 7,
       "nay": 6,
@@ -74,6 +75,7 @@
       "motionText": "Senator Koran moved the A2 Amendment and requested a roll call and a roll call was granted.",
       "holds": [],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "choices": 13,
       "yea": 5,
       "nay": 8,
@@ -92,6 +94,7 @@
       "motionText": "Senator Koran moved the A25 Amendment and requested a roll call, and a roll call was granted.",
       "holds": [],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "choices": 14,
       "yea": 6,
       "nay": 8,
@@ -110,6 +113,7 @@
       "motionText": "Senator Koran moved the A28 Amendment and requested a roll call, and a roll call was granted.",
       "holds": [],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "choices": 14,
       "yea": 6,
       "nay": 8,
@@ -128,6 +132,7 @@
       "motionText": "Senator Westlin moved that SF 1636, as amended, be recommended to pass and re-referred to the Committee on Finance. Senator Koran requested a roll call and a roll call was granted.",
       "holds": [],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "choices": 14,
       "yea": 8,
       "nay": 6,
@@ -201,6 +206,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_outcome",
+      "reopeningCondition": "Acquire or extract an authenticated explicit result uniquely bound to this complete question and every printed named side; do not infer it from the slate.",
       "sourceOffset": 6375,
       "printedChoiceOccurrences": 8
     },
@@ -218,6 +224,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 6780,
       "printedChoiceOccurrences": 8
     },
@@ -236,6 +243,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_outcome",
+      "reopeningCondition": "Acquire or extract an authenticated explicit result uniquely bound to this complete question and every printed named side; do not infer it from the slate.",
       "sourceOffset": 5739,
       "printedChoiceOccurrences": 8
     },
@@ -253,6 +261,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 6155,
       "printedChoiceOccurrences": 8
     },
@@ -271,6 +280,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 1586,
       "printedChoiceOccurrences": 14
     },
@@ -288,6 +298,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 2107,
       "printedChoiceOccurrences": 14
     },
@@ -305,6 +316,7 @@
         "compound_or_repeated_question"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 1525,
       "printedChoiceOccurrences": 14
     },
@@ -323,6 +335,7 @@
         "compound_or_repeated_question"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 2659,
       "printedChoiceOccurrences": 12
     },
@@ -340,6 +353,7 @@
         "compound_or_repeated_question"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 3238,
       "printedChoiceOccurrences": 12
     },
@@ -358,6 +372,7 @@
         "compound_or_repeated_question"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 2624,
       "printedChoiceOccurrences": 12
     },
@@ -375,6 +390,7 @@
         "compound_or_repeated_question"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 3219,
       "printedChoiceOccurrences": 12
     },
@@ -393,6 +409,7 @@
         "unresolved_amendment_identity"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 1339,
       "printedChoiceOccurrences": 14
     },
@@ -411,6 +428,7 @@
         "unresolved_amendment_identity"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 1268,
       "printedChoiceOccurrences": 14
     },
@@ -428,6 +446,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 1972,
       "printedChoiceOccurrences": 12
     },
@@ -446,6 +465,7 @@
         "unresolved_amendment_identity"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 3314,
       "printedChoiceOccurrences": 12
     },
@@ -464,6 +484,7 @@
         "unresolved_amendment_identity"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 3199,
       "printedChoiceOccurrences": 12
     },
@@ -481,6 +502,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 4371,
       "printedChoiceOccurrences": 8
     },
@@ -498,6 +520,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 4911,
       "printedChoiceOccurrences": 9
     },
@@ -515,6 +538,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 5289,
       "printedChoiceOccurrences": 4
     },
@@ -533,6 +557,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_outcome",
+      "reopeningCondition": "Acquire or extract an authenticated explicit result uniquely bound to this complete question and every printed named side; do not infer it from the slate.",
       "sourceOffset": 5561,
       "printedChoiceOccurrences": 4
     },
@@ -550,6 +575,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 3845,
       "printedChoiceOccurrences": 9
     },
@@ -567,6 +593,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 4426,
       "printedChoiceOccurrences": 9
     },
@@ -585,6 +612,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_outcome",
+      "reopeningCondition": "Acquire or extract an authenticated explicit result uniquely bound to this complete question and every printed named side; do not infer it from the slate.",
       "sourceOffset": 4815,
       "printedChoiceOccurrences": 8
     },
@@ -603,6 +631,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_outcome",
+      "reopeningCondition": "Acquire or extract an authenticated explicit result uniquely bound to this complete question and every printed named side; do not infer it from the slate.",
       "sourceOffset": 1489,
       "printedChoiceOccurrences": 2
     },
@@ -620,6 +649,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 1570,
       "printedChoiceOccurrences": 2
     },
@@ -637,6 +667,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 1752,
       "printedChoiceOccurrences": 11
     },
@@ -654,6 +685,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 2099,
       "printedChoiceOccurrences": 14
     },
@@ -672,6 +704,7 @@
         "compound_or_repeated_question"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 2763,
       "printedChoiceOccurrences": 14
     },
@@ -690,6 +723,7 @@
         "compound_or_repeated_question"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 2433,
       "printedChoiceOccurrences": 14
     },
@@ -708,6 +742,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_outcome",
+      "reopeningCondition": "Acquire or extract an authenticated explicit result uniquely bound to this complete question and every printed named side; do not infer it from the slate.",
       "sourceOffset": 2718,
       "printedChoiceOccurrences": 4
     },
@@ -726,6 +761,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_outcome",
+      "reopeningCondition": "Acquire or extract an authenticated explicit result uniquely bound to this complete question and every printed named side; do not infer it from the slate.",
       "sourceOffset": 3134,
       "printedChoiceOccurrences": 4
     },
@@ -743,6 +779,7 @@
         "compound_or_repeated_question"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 1077,
       "printedChoiceOccurrences": 14
     },
@@ -760,6 +797,7 @@
         "compound_or_repeated_question"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 1981,
       "printedChoiceOccurrences": 14
     },
@@ -778,6 +816,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_outcome",
+      "reopeningCondition": "Acquire or extract an authenticated explicit result uniquely bound to this complete question and every printed named side; do not infer it from the slate.",
       "sourceOffset": 1876,
       "printedChoiceOccurrences": 2
     },
@@ -797,6 +836,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "question_identity",
+      "reopeningCondition": "Authenticate the complete distinct parliamentary question, including oral/renewed/withdrawn relationships, with exact named sides and outcome; validate a reusable extractor before admitting it.",
       "sourceOffset": 2520,
       "printedChoiceOccurrences": 7
     },
@@ -814,6 +854,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "printed_tally_or_incomplete_rows",
+      "reopeningCondition": "Authenticate a complete contiguous named list and agreeing printed tally for this exact question; missing labels or fragmented pages cannot supply inferred choices.",
       "sourceOffset": 1659,
       "printedChoiceOccurrences": 9
     },
@@ -831,6 +872,7 @@
         "unresolved_bill_or_nonbill_question"
       ],
       "primaryCause": "nonbill_question",
+      "reopeningCondition": "Validate separate nonbill-question identity and storage semantics, with complete printed named sides, tally and explicit outcome; do not assign a nearby bill.",
       "sourceOffset": 6278,
       "printedChoiceOccurrences": 4
     },
@@ -848,6 +890,7 @@
         "unresolved_bill_or_nonbill_question"
       ],
       "primaryCause": "nonbill_question",
+      "reopeningCondition": "Validate separate nonbill-question identity and storage semantics, with complete printed named sides, tally and explicit outcome; do not assign a nearby bill.",
       "sourceOffset": 5692,
       "printedChoiceOccurrences": 4
     },
@@ -866,6 +909,7 @@
         "ambiguous_or_missing_printed_outcome"
       ],
       "primaryCause": "nonbill_question",
+      "reopeningCondition": "Validate separate nonbill-question identity and storage semantics, with complete printed named sides, tally and explicit outcome; do not assign a nearby bill.",
       "sourceOffset": 863,
       "printedChoiceOccurrences": 9
     },
@@ -884,6 +928,7 @@
         "ambiguous_or_missing_printed_outcome"
       ],
       "primaryCause": "nonbill_question",
+      "reopeningCondition": "Validate separate nonbill-question identity and storage semantics, with complete printed named sides, tally and explicit outcome; do not assign a nearby bill.",
       "sourceOffset": 1553,
       "printedChoiceOccurrences": 9
     },
@@ -902,6 +947,7 @@
         "ambiguous_or_missing_printed_outcome"
       ],
       "primaryCause": "nonbill_question",
+      "reopeningCondition": "Validate separate nonbill-question identity and storage semantics, with complete printed named sides, tally and explicit outcome; do not assign a nearby bill.",
       "sourceOffset": 2208,
       "printedChoiceOccurrences": 8
     },
@@ -921,6 +967,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "nonbill_question",
+      "reopeningCondition": "Validate separate nonbill-question identity and storage semantics, with complete printed named sides, tally and explicit outcome; do not assign a nearby bill.",
       "sourceOffset": 3027,
       "printedChoiceOccurrences": 2
     },
@@ -940,6 +987,7 @@
         "missing_or_disagreeing_printed_tally"
       ],
       "primaryCause": "nonbill_question",
+      "reopeningCondition": "Validate separate nonbill-question identity and storage semantics, with complete printed named sides, tally and explicit outcome; do not assign a nearby bill.",
       "sourceOffset": 3092,
       "printedChoiceOccurrences": 6
     }
