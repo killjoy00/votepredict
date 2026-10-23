@@ -6,7 +6,9 @@ const base='docs/evaluation/source-proof/',a=JSON.parse(readFileSync(base+'senat
 const root='.source-review/'+a.sourceReview.directory;
 const manifestBytes=readFileSync(root+'manifest.json'),m=JSON.parse(manifestBytes);
 assert.equal(m.registrySha256,a.sourceReview.registrySha256);assert.equal(m.originalsAuthenticated,58);assert.equal(m.pages,90);
-const inventory=JSON.parse(readFileSync(base+'senate-864-population-original-inventory-20261023-renewal-ocr.json'));
+const inventoryBytes=readFileSync(base+'senate-864-population-original-inventory-20261023-renewal-ocr.json');assert.equal(sha(inventoryBytes),'dc7d173228cbfcd7bd923c4ba0998e2eec23faed76bf283cf60ca92316878d2f');const inventory=JSON.parse(inventoryBytes);
+const priorBytes=readFileSync(a.scope.prior192Audit);assert.equal(sha(priorBytes),a.scope.prior192AuditSha256);const prior=JSON.parse(priorBytes);
+assert.equal(new Set([...prior.sources,...a.sources].map(s=>s.sourceId)).size,247);assert.equal(prior.summary.pagesRenderedAndReviewed+a.sources.reduce((n,s)=>n+s.pages.length,0),416);assert.equal(prior.summary.visualNamedOriginals+a.sources.filter(s=>s.printedIndividualChoicesObserved).length,17);assert.equal(prior.summary.qualityHoldOriginals,10);
 const registryBytes=readFileSync(base+'senate-864-population-original-registry-20261023-renewal-ocr.json');assert.equal(sha(registryBytes),m.registrySha256);
 const verified=new Map();
 for(const f of m.files){assert.ok(/^[a-zA-Z0-9/_.,-]+$/.test(f.path)&&!f.path.includes('..'));const b=readFileSync(root+f.path);assert.equal(b.length,f.bytes);assert.equal(sha(b),f.sha256);verified.set(f.path,f);}
