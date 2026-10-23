@@ -43,6 +43,7 @@ jobs:
         ports: ['5432:5432']
         options: --health-cmd "pg_isready -U postgres -d votepredict" --health-interval 10s --health-timeout 5s --health-retries 5
     env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
       DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
       VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
     steps:
@@ -76,6 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
       SENATE864_ROW_COHORT: structured
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
       VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
