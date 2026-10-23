@@ -1,0 +1,37 @@
+name: Issue 864 scoped OCR audit integrity
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-ocr-audit.yml
+      - scripts/audit-senate-864-ocr-originals.py
+      - scripts/verify-senate-864-ocr-audit.mjs
+      - scripts/compare-senate-864-ocr-parsers.mjs
+      - tests/senate-864-ocr-audit.test.mjs
+      - docs/evaluation/source-proof/senate-864-192-ocr-rendered-audit-20261023.json
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-ocr-audit.yml
+      - scripts/audit-senate-864-ocr-originals.py
+      - scripts/verify-senate-864-ocr-audit.mjs
+      - scripts/compare-senate-864-ocr-parsers.mjs
+      - tests/senate-864-ocr-audit.test.mjs
+      - docs/evaluation/source-proof/senate-864-192-ocr-rendered-audit-20261023.json
+permissions:
+  contents: read
+jobs:
+  source-only-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: python -m py_compile scripts/audit-senate-864-ocr-originals.py
+      - run: npm ci --no-fund --no-audit
+      - run: node scripts/verify-senate-864-ocr-audit.mjs
+      - run: node --test tests/senate-864-ocr-audit.test.mjs
+      - run: node --import tsx scripts/compare-senate-864-ocr-parsers.mjs

@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "senate864-renewed-question-production-receipt-v1",
+  "implementationPr": 1569,
+  "runId": 40013876281,
+  "independentGateJobId": 120620841053,
+  "productionJobId": 120622233172,
+  "standardChecks": 2468,
+  "focusedTests": 65,
+  "testFailures": 0,
+  "productionDependencyAuditVulnerabilities": 0,
+  "artifact": {
+    "id": 12528295824,
+    "name": "senate864-population-renewed-question-production-verified",
+    "size_in_bytes": 885,
+    "url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12528295824",
+    "archive_download_url": "https://api.github.com/repos/killjoy00/votepredict/actions/artifacts/12528295824/zip",
+    "expired": false,
+    "created_at": "2026-10-23T19:49:08Z",
+    "expires_at": "2026-11-06T19:49:08Z",
+    "updated_at": "2026-10-23T19:49:08Z",
+    "digest": "sha256:fbce92af9265a96f66097d6caad2e61483fabb5d888e271316f0e24ae4323489",
+    "workflow_run": {
+      "id": 40013876281,
+      "repository_id": 1201743780,
+      "head_repository_id": 1201743780,
+      "head_branch": "main",
+      "head_sha": "58cab955ca9dcfca97c9b30bbc166b289f4a0500"
+    }
+  },
+  "receipt": {
+    "version": "senate864-population-named-rolls-v1",
+    "cohort": "renewal",
+    "reviewedCommit": "58cab955ca9dcfca97c9b30bbc166b289f4a0500",
+    "verifiedAt": "2026-10-23T19:49:08.062Z",
+    "sourceOriginals": 1,
+    "independentlyReverifiedPriorQuestions": 3,
+    "independentlyReverifiedPriorChoices": 40,
+    "sourceProvenQuestions": 1,
+    "sourceProvenChoices": 14,
+    "previousExact": 0,
+    "insertedEvents": 1,
+    "insertedChoices": 14,
+    "correctedClassifications": 0,
+    "preservedExistingTargetEventIds": 0,
+    "verifiedExact": 1,
+    "verifiedChoices": 14,
+    "zeroWriteReplay": true,
+    "yearCountsBefore": [
+      {
+        "year": 2022,
+        "stored_events": 38,
+        "declared_named_events": 28,
+        "explicit_stored_choices": 259,
+        "hearing_date_timing_events": 0
+      },
+      {
+        "year": 2023,
+        "stored_events": 54,
+        "declared_named_events": 43,
+        "explicit_stored_choices": 469,
+        "hearing_date_timing_events": 21
+      },
+      {
+        "year": 2024,
+        "stored_events": 58,
+        "declared_named_events": 48,
+        "explicit_stored_choices": 512,
+        "hearing_date_timing_events": 26
+      },
+      {
+        "year": 2025,
+        "stored_events": 53,
+        "declared_named_events": 49,
+        "explicit_stored_choices": 539,
+        "hearing_date_timing_events": 25
+      }
+    ],
+    "yearCountsAfter": [
+      {
+        "year": 2022,
+        "stored_events": 38,
+        "declared_named_events": 28,
+        "explicit_stored_choices": 259,
+        "hearing_date_timing_events": 0
+      },
+      {
+        "year": 2023,
+        "stored_events": 55,
+        "declared_named_events": 44,
+        "explicit_stored_choices": 483,
+        "hearing_date_timing_events": 22
+      },
+      {
+        "year": 2024,
+        "stored_events": 58,
+        "declared_named_events": 48,
+        "explicit_stored_choices": 512,
+        "hearing_date_timing_events": 26
+      },
+      {
+        "year": 2025,
+        "stored_events": 53,
+        "declared_named_events": 49,
+        "explicit_stored_choices": 539,
+        "hearing_date_timing_events": 25
+      }
+    ],
+    "existingEventIdsAndChoicesPreserved": true,
+    "verifiedRepeatableReadReadOnlyAndRollback": true,
+    "serializableWrites": true,
+    "recoveredEvents": [
+      {
+        "questionKey": "ce8585994eb6e11187eda9096be6f68dd0da2352ef83a19102f6f26a85074078",
+        "eventId": "755ebc0d-7e9e-40d3-8b61-67783ac99079",
+        "createdAt": "2026-10-23 19:49:06.220114+00",
+        "choices": 14
+      }
+    ]
+  }
+}

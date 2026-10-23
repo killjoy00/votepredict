@@ -1,0 +1,396 @@
+{
+  "schemaVersion": "senate864-renewed-question-independent-readback-v1",
+  "source": "independent Neon connector",
+  "beforeReadAt": "2026-10-23T19:35:01.581Z",
+  "readAt": "2026-10-23T19:49:27.191Z",
+  "verifiedRepeatableReadReadOnlyAndExplicitRollback": true,
+  "productionWrites": 0,
+  "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17940&ls=93&type=minutes",
+  "sourceTextSha256": "282157457e4a26d6e047319a028e5c1171a17eed1259bbe7663b0e184ea01833",
+  "questionKey": "ce8585994eb6e11187eda9096be6f68dd0da2352ef83a19102f6f26a85074078",
+  "motionText": "Senator Murphy renewed her motion that SF1426, as amended, be recommended to pass and re-referred to Finance Committee. Roll call requested.",
+  "eventId": "755ebc0d-7e9e-40d3-8b61-67783ac99079",
+  "createdAt": "2026-10-23 19:49:06.220114+00",
+  "billIdentifier": "SF1426",
+  "voteKind": "motion",
+  "amendmentRef": null,
+  "passed": true,
+  "yea": 8,
+  "nay": 6,
+  "verifiedNamedChoices": [
+    {
+      "printedName": "Mitchell",
+      "fullHistoricalName": "Nicole Mitchell",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Anderson",
+      "fullHistoricalName": "Bruce D. Anderson",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Bahr",
+      "fullHistoricalName": "Calvin K. Bahr",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Carlson",
+      "fullHistoricalName": "Jim Carlson",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Cwodzinski",
+      "fullHistoricalName": "Steve A. Cwodzinski",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Drazkowski",
+      "fullHistoricalName": "Steve Drazkowski",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Fateh",
+      "fullHistoricalName": "Omar Fateh",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Gustafson",
+      "fullHistoricalName": "Heather Gustafson",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Jasinski",
+      "fullHistoricalName": "John R. Jasinski",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Koran",
+      "fullHistoricalName": "Mark W. Koran",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Lang",
+      "fullHistoricalName": "Andrew R. Lang",
+      "choice": "nay"
+    },
+    {
+      "printedName": "Maye Quade",
+      "fullHistoricalName": "Erin K. Maye Quade",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Morrison",
+      "fullHistoricalName": "Kelly L. Morrison",
+      "choice": "yea"
+    },
+    {
+      "printedName": "Murphy",
+      "fullHistoricalName": "Erin P. Murphy",
+      "choice": "yea"
+    }
+  ],
+  "fullHistoricalIdentityAndServiceBoundsVerified": true,
+  "priorAmendments": [
+    {
+      "eventId": "ef928182-3f17-404d-a4b2-ac7b6637caa5",
+      "questionKey": "38ea61982afd79c67107ad31f1ada241ae3198da2dc7e4f53d072989963563fb",
+      "amendmentRef": "A10",
+      "choices": 13,
+      "completePassageSha256": "b77f4fe8f3e3ddfeb9c854d753fd91d1741f9deb8da37be3e80dd0d92585f320"
+    },
+    {
+      "eventId": "9eb14cfb-c9f1-42ff-bfcf-69680b734eec",
+      "questionKey": "762785e20ecf1dc7bc44a51b32f9fbab8b6783066389cc462ca7756da61decab",
+      "amendmentRef": "A28",
+      "choices": 13,
+      "completePassageSha256": "16e9ac9c5cfb1de0e7153608f18d202a438066b6fe4e5f49d25ddd2fef19316b"
+    },
+    {
+      "eventId": "f4765c19-4cf0-4d07-8ec0-03c498f28769",
+      "questionKey": "32f5c435e3533a250c507569a393127f1c0f326ffffc98d45c87c8db894a6b03",
+      "amendmentRef": "A21",
+      "choices": 14,
+      "completePassageSha256": "04777b5ebc9da44651a38373e547950f5da5195f6f6f29d3b081c8239e83cefe"
+    }
+  ],
+  "all203PriorEventsUnchanged": true,
+  "all1779PriorChoicesUnchanged": true,
+  "newEvents": 1,
+  "newChoices": 14,
+  "classificationCorrections": 0,
+  "totalEvents": 204,
+  "totalChoices": 1793,
+  "yearBefore": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 54,
+      "declared_named_events": 43,
+      "explicit_stored_choices": 469,
+      "hearing_date_timing_events": 21
+    },
+    {
+      "year": 2024,
+      "stored_events": 58,
+      "declared_named_events": 48,
+      "explicit_stored_choices": 512,
+      "hearing_date_timing_events": 26
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "yearAfter": [
+    {
+      "year": 2022,
+      "stored_events": 38,
+      "declared_named_events": 28,
+      "explicit_stored_choices": 259,
+      "hearing_date_timing_events": 0
+    },
+    {
+      "year": 2023,
+      "stored_events": 55,
+      "declared_named_events": 44,
+      "explicit_stored_choices": 483,
+      "hearing_date_timing_events": 22
+    },
+    {
+      "year": 2024,
+      "stored_events": 58,
+      "declared_named_events": 48,
+      "explicit_stored_choices": 512,
+      "hearing_date_timing_events": 26
+    },
+    {
+      "year": 2025,
+      "stored_events": 53,
+      "declared_named_events": 49,
+      "explicit_stored_choices": 539,
+      "hearing_date_timing_events": 25
+    }
+  ],
+  "storedByCommittee": [
+    {
+      "year": 2022,
+      "committee": "Education Finance and Policy",
+      "events": 1,
+      "choices": 0
+    },
+    {
+      "year": 2022,
+      "committee": "Environment and Natural Resources Policy and Legacy Finance",
+      "events": 1,
+      "choices": 0
+    },
+    {
+      "year": 2022,
+      "committee": "Finance",
+      "events": 34,
+      "choices": 249
+    },
+    {
+      "year": 2022,
+      "committee": "Labor and Industry Policy",
+      "events": 2,
+      "choices": 10
+    },
+    {
+      "year": 2023,
+      "committee": "Elections",
+      "events": 16,
+      "choices": 212
+    },
+    {
+      "year": 2023,
+      "committee": "Environment, Climate, and Legacy",
+      "events": 2,
+      "choices": 18
+    },
+    {
+      "year": 2023,
+      "committee": "Finance",
+      "events": 4,
+      "choices": 0
+    },
+    {
+      "year": 2023,
+      "committee": "Health and Human Services",
+      "events": 15,
+      "choices": 107
+    },
+    {
+      "year": 2023,
+      "committee": "Judiciary and Public Safety",
+      "events": 12,
+      "choices": 72
+    },
+    {
+      "year": 2023,
+      "committee": "Rules and Administration",
+      "events": 2,
+      "choices": 20
+    },
+    {
+      "year": 2023,
+      "committee": "State and Local Government and Veterans",
+      "events": 4,
+      "choices": 54
+    },
+    {
+      "year": 2024,
+      "committee": "Agriculture, Broadband and Rural Development",
+      "events": 2,
+      "choices": 18
+    },
+    {
+      "year": 2024,
+      "committee": "Capital Investment",
+      "events": 1,
+      "choices": 9
+    },
+    {
+      "year": 2024,
+      "committee": "Commerce and Consumer Protection",
+      "events": 4,
+      "choices": 18
+    },
+    {
+      "year": 2024,
+      "committee": "Education Finance",
+      "events": 6,
+      "choices": 54
+    },
+    {
+      "year": 2024,
+      "committee": "Education Policy",
+      "events": 2,
+      "choices": 20
+    },
+    {
+      "year": 2024,
+      "committee": "Elections",
+      "events": 17,
+      "choices": 205
+    },
+    {
+      "year": 2024,
+      "committee": "Finance",
+      "events": 5,
+      "choices": 0
+    },
+    {
+      "year": 2024,
+      "committee": "Housing and Homelessness Prevention",
+      "events": 1,
+      "choices": 8
+    },
+    {
+      "year": 2024,
+      "committee": "Human Services",
+      "events": 2,
+      "choices": 20
+    },
+    {
+      "year": 2024,
+      "committee": "Judiciary and Public Safety",
+      "events": 15,
+      "choices": 131
+    },
+    {
+      "year": 2024,
+      "committee": "Rules and Administration",
+      "events": 2,
+      "choices": 19
+    },
+    {
+      "year": 2024,
+      "committee": "Taxes",
+      "events": 1,
+      "choices": 10
+    },
+    {
+      "year": 2025,
+      "committee": "Agriculture, Veterans, Broadband and Rural Development - Subcommittee on Veterans",
+      "events": 1,
+      "choices": 0
+    },
+    {
+      "year": 2025,
+      "committee": "Commerce and Consumer Protection",
+      "events": 1,
+      "choices": 11
+    },
+    {
+      "year": 2025,
+      "committee": "Education Finance",
+      "events": 11,
+      "choices": 142
+    },
+    {
+      "year": 2025,
+      "committee": "Education Policy",
+      "events": 1,
+      "choices": 12
+    },
+    {
+      "year": 2025,
+      "committee": "Elections",
+      "events": 9,
+      "choices": 99
+    },
+    {
+      "year": 2025,
+      "committee": "Health and Human Services",
+      "events": 4,
+      "choices": 19
+    },
+    {
+      "year": 2025,
+      "committee": "Human Services",
+      "events": 2,
+      "choices": 18
+    },
+    {
+      "year": 2025,
+      "committee": "Judiciary and Public Safety",
+      "events": 1,
+      "choices": 8
+    },
+    {
+      "year": 2025,
+      "committee": "Labor",
+      "events": 5,
+      "choices": 40
+    },
+    {
+      "year": 2025,
+      "committee": "Rules and Administration",
+      "events": 3,
+      "choices": 30
+    },
+    {
+      "year": 2025,
+      "committee": "State and Local Government",
+      "events": 11,
+      "choices": 124
+    },
+    {
+      "year": 2025,
+      "committee": "Taxes",
+      "events": 4,
+      "choices": 36
+    }
+  ],
+  "zeroWriteReplayPlanExact": true
+}

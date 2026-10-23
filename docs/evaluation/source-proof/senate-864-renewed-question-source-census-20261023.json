@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "senate864-renewed-question-local-source-census-v1",
+  "sourceOnlyLocalCheck": true,
+  "productionWrites": 0,
+  "input": {
+    "path": "docs/evaluation/source-proof/senate-864-population-original-inventory-20261023-explicit-labels.json",
+    "sha256": "685f08e5e3645fa8262d04876102e9dbbf529dcf0e7c33c669c84d67348b71ea"
+  },
+  "extractorSha256": "c2c1a139b69d91b93c9468bce1247bbcb2c6a2e23747d3b86406e404cc2dec63",
+  "readableTextsChecked": 2859,
+  "rowCandidateOriginals": 47,
+  "newRowCandidateOriginalsOutsideExisting233": [],
+  "limitation": "Local SHA-checked acquired text census; not a protected Actions acquisition or production readback. The separate 192-original rendered-page audit found three visual named originals outside these parser-candidate metrics."
+}
