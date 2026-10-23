@@ -215,6 +215,17 @@ export async function repairRawSenateExactLinks(pool:Pool):Promise<RawQuestionRe
    const original=summarizeRawOriginalStrongSource(preliminary,
     census.rawRollUniqueQuestionBallotCandidates,p=>strong.push(p));
    const pairs=strictRawOriginalQuestionLinks(preliminary,strong);
+   // Post-99 source-only questions can reclassify the other 51 known-bill
+   // paperless holds into no-tally first failures. Diagnose solely with
+   // whole-cohort integer counts; do not emit source text, IDs, or ballots.
+   if(repeated&&exactBefore===1354)console.log(
+    'SENATE_RAW_REPLAY_COUNTS='+JSON.stringify({
+     exact:exactBefore,unlinked:before.sameSourceUnlinked,
+     noTally:noTallyBefore,preliminary:preliminary.length,
+     strong:original.strictlyPrintedAndSourceUnique,pairs:pairs.length,
+     sourceDocs:original.authenticatedSourceDocuments,
+     stages:original.stages
+    }));
    if(census.originalSameSourceUnlinked!==before.sameSourceUnlinked
     ||original.preliminaryOriginalRawCandidates!==preliminary.length
     ||pairs.length!==original.strictlyPrintedAndSourceUnique
