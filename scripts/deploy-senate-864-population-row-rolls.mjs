@@ -48,7 +48,7 @@ async function freshReviewedOriginals(pins,fetcher,pdfFetcher){
    // a claim that today's OCR reproduces handwriting or every original word.
    if(!d.allowNullStoredCommittee||!/^Taxes Committee\n/.test(text)||!d.reviewedCheckboxEvidence)throw Error('Printed committee or cell review absent');
   }else{
-   if(d.allowNullStoredCommittee||d.reviewedCheckboxEvidence||d.corroboratingPdfUrl!=='https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240409/labor_20240409_minutes.pdf')throw Error('Canonical grouped source scope changed');
+   if(d.explicitGroupedRollEvidence!==true||d.allowNullStoredCommittee||d.reviewedCheckboxEvidence||d.corroboratingPdfUrl!=='https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240409/labor_20240409_minutes.pdf')throw Error('Canonical grouped source scope changed');
    originalHtml=await fetcher(p.url);text=extractSenateMinutesText(originalHtml);
    const pdf=await pdfFetcher({url:d.corroboratingPdfUrl});if(pdf.contentSha256!==d.corroboratingPdfSha256)throw Error('Corroborating Labor original PDF SHA drift');
   }

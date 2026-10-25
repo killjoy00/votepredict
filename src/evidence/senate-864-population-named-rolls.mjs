@@ -134,7 +134,9 @@ export function extractRowRollQuestions(text,doc){
  }
  rows.push(...extractPrintedVotedReferrals(text,doc));
  rows.push(...extractPrintedCheckboxTables(doc.originalHtml,doc));
- rows.push(...extractExplicitGroupedRolls(text,doc));
+ // This evidence lane is explicitly opted into by an authenticated reviewed
+ // source artifact. Historical census inputs retain their original recognizers.
+ if(doc.explicitGroupedRollEvidence===true)rows.push(...extractExplicitGroupedRolls(text,doc));
  rows.push(...extractReviewedCheckboxQuestions(text,doc));
  // Repeated identical wording is an ambiguity, never two distinguishable votes.
  for(const q of rows)if(q.questionKey&&rows.filter(r=>r.questionKey===q.questionKey).length>1){q.holds.push('duplicate_question_wording');q.confidence='held_question';}

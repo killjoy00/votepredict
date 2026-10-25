@@ -10,6 +10,13 @@ const pdf=async({url})=>({contentSha256:url===tax.url?tax.sha256:labor.corrobora
 const originals=()=>freshOriginals(async()=>html(),'reviewed',pdf);
 const roster=f.roster.map((m,i)=>({...m,membership_id:'m'+i}));
 const proven=(text,d)=>extractRowRollQuestions(text,d).filter(q=>q.confidence==='source_proven_question');
+test('reviewed cell images and raw raster hashes match the already published page audit; grouped parsing requires explicit reviewed opt-in',()=>{
+ const audit=JSON.parse(readFileSync('docs/evaluation/source-proof/senate-864-55-ocr-rendered-audit-20261023.json'));
+ assert.equal(f.review.renderCommit,audit.sourceReview.commit);
+ const source=audit.sources.find(s=>s.sourceId===tax.sourceId);assert.equal(source.originalSha256,tax.sha256);assert.equal(source.extractedTextSha256,tax.textSha256);
+ for(const t of tax.reviewedCheckboxEvidence.tables){const p=source.pages.find(p=>p.page===t.page);assert.equal(t.raw300dpiPageSha256,p.raw300dpiPageSha256);assert.equal(t.reviewImageSha256,p.reviewImageSha256);assert.equal(p.legible,true);}
+ const d={...labor,explicitGroupedRollEvidence:false};assert.ok(!extractRowRollQuestions(d.text,d).some(q=>q.format==='explicit_labeled_roll_after_bound_motion'));
+});
 test('actual ten reviewed handwritten grids and five canonical grouped rolls prove 15 distinct questions and 146 binary choices',()=>{
  const a=proven(tax.text,tax),b=proven(labor.text,labor);
  assert.equal(a.length,10);assert.equal(b.length,5);

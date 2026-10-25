@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "scope": "Two exact existing originals; 15 add-only committee questions, 146 explicit binary choices; no source-document writes",
-  "reviewArtifactSha256": "989450934117f032f77b065b9787d73d96ff15698c03aa55bb04b3d73bf509cf",
+  "reviewArtifactSha256": "dd43ee52ef885ca494178b1b394d87d586dfc90345b2ae2dbf0a6b218f722e23",
   "expectedQuestions": 15,
   "expectedChoices": 146,
   "sourceDocuments": [
@@ -26,7 +26,8 @@
       "format": "html",
       "textSha256": "f6fa9a3eae50f12e501c8f2420a87bd12bdd6cd87869b54bf0ea17e706f1effd",
       "corroboratingPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240409/labor_20240409_minutes.pdf",
-      "corroboratingPdfSha256": "de6ad3d443d8846bb7cf9a6e669a0c6919fea44caba7b8973d01ff17ae19b4f1"
+      "corroboratingPdfSha256": "de6ad3d443d8846bb7cf9a6e669a0c6919fea44caba7b8973d01ff17ae19b4f1",
+      "explicitGroupedRollEvidence": true
     }
   ],
   "questions": [
