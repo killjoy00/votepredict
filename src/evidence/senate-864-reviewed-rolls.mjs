@@ -23,6 +23,8 @@ export function extractExplicitGroupedRolls(text,doc){
   if(!h||!request||intros.length!==1){q.holds.push('missing_unique_motion_request_or_bill');out.push(q);continue;}
   q.billIdentifier=h[1].toUpperCase()+'F'+Number(h[2]);
   const intro=intros[0],context=before.slice(intro.index),body=compact(context),amended=!!m[7];
+  const presented=[...text.slice(h.index,intro.index).matchAll(/\bpresented\s+(?:(Senate|House)\s+File|([HS])\s*\.?\s*F\.?)\s*(\d+)/gi)];
+  if(presented.length!==1||(presented[0][2]||presented[0][1][0]).toUpperCase()+'F'+Number(presented[0][3])!==q.billIdentifier)q.holds.push('missing_or_contradictory_bill_presentation');
   if([...context.matchAll(/\b([HS])\s*\.?\s*F\s*\.?\s*(\d+)\b/gi)].some(x=>x[1].toUpperCase()+'F'+Number(x[2])!==q.billIdentifier))q.holds.push('contradictory_bill_association');
   const otherRefs=[...context.matchAll(/\bA-?(\d+)\b/gi)].some(x=>'A'+Number(x[1])!==ref);
   if(context.length>2500||otherRefs||/withdraw|reconsider|renew|not adopted|fails/i.test(context))q.holds.push('intervening_or_compound_question');
