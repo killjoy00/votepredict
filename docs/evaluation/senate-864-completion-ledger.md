@@ -13,9 +13,92 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 25: reviewed Taxes grids and Labor rolls — production verified
+
+**Current 2022–2025 committee production: 221 events / 1,950 explicitly named choices.**
+This pass adds **15 events / 146 choices**, with zero classification corrections,
+source-document writes or alias writes. All **206 previous events / 1,804 choices**
+remain unchanged across all audited fields in the independent bounded readback. Cumulatively
+from the original 183 / 1,326 baseline: **+38 events / +624 choices / ten classification
+corrections**. **#864 remains OPEN.**
+
+| Year | Current events | Current named choices |
+| --- | ---: | ---: |
+| 2022 | 40 | 270 |
+| 2023 | 65 | 580 |
+| 2024 | 63 | 561 |
+| 2025 | 53 | 539 |
+| **Total** | **221** | **1,950** |
+
+[PR #1579](https://github.com/killjoy00/votepredict/pull/1579), reviewed main
+`af0d768464ed53a59992d42383d837089b0f50df`, recovers ten **April 27, 2023 Taxes / SF1811** questions with
+**97 explicit binary choices**, and five **April 9, 2024 Labor / SF5266**
+amendment rolls with **49 choices**. The [source review](senate-864-reviewed-rolls-20261025.md)
+lists every question, selected handwritten field, nested/accepted oral change,
+original URL and SHA. The [bounded plan](source-proof/senate-864-population-reviewed-rolls-plan.json)
+pins the complete reviewed cell artifact and literal question fingerprints.
+
+Changed-vote annotations explicitly resolve Klein's A35 Yes and Dziedzic's A26
+No. Pass, Absent and blank rows yield no binary votes. The A12 Absent/abstention
+conflict remains metadata; only nine explicit Yes/No choices are inserted.
+The blank withdrawn A31 sheet yields no event. The final SF1811 record is a
+committee recommendation as amended, not floor passage. The existing Taxes
+source's null committee field is preserved; the event committee comes only from
+the same SHA-pinned original's printed header.
+
+Labor A5/A12 bind the accepted friendly oral changes and explicit voice adoption
+to the same parent before the subsequent named roll. The SF5266 bill heading and
+presentation must agree. A9's literal “Hauschilld” requires the existing exact
+historical alias plus one active membership and the original full Grant Hauschild
+header. No alias is invented. The reviewed grouped lane requires explicit source
+opt-in, preserving all older census recognizers and accepted passage fingerprints.
+
+Protected [run 40201293559](https://github.com/killjoy00/votepredict/actions/runs/40201293559),
+independent job `121192834030`, production job `121193693166`, passed **2,468 standard checks /
+79 focused tests**, fresh source authentication and the dependency audit.
+Disposable PostgreSQL verifies add-only recovery, unrelated-row preservation,
+exact readback and a second zero-write run. All ten applicable reviewed-head gates
+passed before merge. Required audit also found three existing Undici advisories;
+only its locked transitive version was patched **7.30.0 → 7.30.1**, with no manifest
+or other dependency change. Audit then reported zero vulnerabilities.
+
+The [durable production receipt](source-proof/senate-864-reviewed-rolls-production-20261025.json)
+preserves the exact main/run/job/artifact identifiers and all new IDs/timestamps.
+The existing protected path reauthenticates both PDFs, the canonical Labor body
+and the reviewed artifact before verified READ ONLY/ROLLBACK preflight,
+schema-ledger checks and locked SERIALIZABLE bounds. Exact independent writer
+readback and replay pass. All new events retain hearing-date availability,
+same-day exclusion, is_passage=false, modelWeight=0 and mechanicallyActionable=false.
+
+The separate [Neon connector readback](source-proof/senate-864-reviewed-rolls-independent-readback-20261025.json)
+at **2026-10-25T14:19:49.580Z**, compared with **2026-10-25T14:01:37.843Z**, independently
+checks all 146 choices, source/question identity, active historical service,
+timing/model guards and preservation of every previous record, all three bounded
+source records, 205 memberships, three bills and the full 36-entry schema ledger.
+Only **2023 Taxes +10/97** and **2024 Labor +5/49** change.
+
+The [current summary](source-proof/senate-864-reviewed-rolls-summary-20261025.json)
+and [111-row committee matrix](source-proof/senate-864-population-committee-20261025-reviewed-rolls.csv)
+preserve every dated baseline column, distinguish this pass's additions, and extend
+the reviewed subset **37/479 → 52/625**. This is a preserved-and-extended subset,
+not a newly certified all-format denominator. The dated frozen census remains
+2,860 originals / 2,859 readable / 233 parser candidates / 2,626 text-negative /
+one unparseable; its 40 held parser occurrences were **not recomputed** here.
+
+**Remaining holds:** May 12, 2023 Taxes still has an ambiguous/misused selected
+question field and lacks the exact stored PDF source; no source or event is added.
+SF2818 still lacks an authenticated complete question/tally. The earlier question,
+identity, incomplete-list, outcome and nonbill holds, ten clipped/occluded originals,
+date/header/attendance conflicts, cross-original aliases, unparseable Finance PDF,
+six missing-Minutes dates, 2021 print history and 2022 print/electronic equivalence
+remain open. All 247 OCR originals / 416 pages remain scoped visually reviewed;
+no word-perfect OCR or quality-certification flag is promoted. No floor, serving
+model, forecast, weights, training, frozen-evaluation, Vercel or scheduler change;
+no office contact or manual audio review.
+
 ## October 23: printed checkbox/voted rows recovered; all 247 OCR originals reviewed
 
-**Current 2022–2025 committee production: 206 events / 1,804 explicitly named choices.**
+**At the October 23 snapshot: 206 events / 1,804 explicitly named choices.**
 This pass adds **two events / eleven choices**, with zero classification corrections.
 The independent readback confirms all **204 previous events / 1,793 choices unchanged**.
 Cumulatively from 183 / 1,326: **+23 events / +478 choices / ten classification corrections**.
@@ -1639,3 +1722,4 @@ independent exact-question evidence. Existing historical event IDs and
 choices, Senate floor, serving/weights/training/evaluation freezes, Vercel,
 and scheduler state are unchanged. **Issue #864 remains open** because this
 one repaired question is not a population-wide completeness certificate.
+
