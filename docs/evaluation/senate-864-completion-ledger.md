@@ -13,6 +13,54 @@ are appendices of this one maintained ledger. Older linked reports remain dated 
 not competing current completion ledgers. A workflow success, source inventory or empty
 query does not establish completeness.
 
+## October 25 final closeout: repair workstream complete; source dependencies blocked
+
+**The user-approved bounded closeout is complete. No new repair batch is needed.**
+The accepted **2026-10-25T15:04:57.332Z** snapshot reconciles the existing corpus
+across all four categories in verified READ ONLY / REPEATABLE READ with explicit
+ROLLBACK. It makes zero production writes, new source acquisitions or outcome
+experiments. All 36 schema-ledger entries match. The initial query attempt was
+not accepted because its source-type filter omitted the known Taxes PDF; the
+fixed complete snapshot includes that exact original rather than mixing times.
+
+| Category | Verified closeout result |
+| --- | --- |
+| Committee | **221 events / 1,950 choices** inventoried; all **52 reviewed questions / 625 choices** reconciled: 51 same-source exact plus one independently verified alternate-source match. |
+| Websites | **1,194 / 1,194** exact source/literal/person/clock/flag matches; **92 people / 123 bodies**, three known scope exclusions. Both frozen protocols and the examined experiment result are unchanged. |
+| Finance | **830 / 830** exact registry versions / **813 bodies**; retained Miller PDF bytes verified, **25 exact mechanical links / three unchanged purpose holds**. **58,555** legacy eligibility claims and **32,711** possible early-date flags remain explicit revalidation debt. |
+| Media | **948** context rows accounted for (794 in-range / 154 outside); all **three** previously certified Miller fragments exact. Context mentions create no new attributable statements. |
+
+The [final human-readable closeout and fixed blocked list](senate-864-final-closeout-20261025.md),
+[machine-readable reconciliation](source-proof/senate-864-final-closeout-20261025.json)
+and [file-hash publication receipt](source-proof/senate-864-final-closeout-publication-20261025.json)
+are the final appendices of this workstream. The existing strict source validators
+were reused; six focused tests cover incorrect source/person/clock bindings,
+read-only query bounds, missing schema proof, frozen-input drift and private-field
+rejection. Private database snapshots, raw donor information and retained PDF
+bytes are not published.
+
+The current retained-text row-parser check still has **40 held occurrences** and
+four excluded cross-original question keys. These overlap across sources and
+fragments; they are not certified missing events or a universal denominator.
+Nonbill cases also require separately scoped identity/storage semantics, rather
+than assignment to a nearby bill; those are scope/design holds as well as proof gaps.
+The final blocked list also preserves May 12 Taxes/SF2818 question holds, six
+missing-Minutes dates, ten quality holds, the unparseable committee PDF,
+2021/2022 print boundaries, finance publication/obligation gaps, wider owned-site
+coverage and media attribution gaps. No existing hold is silently certified.
+
+- [x] Reconcile the fixed existing evidence against current storage across all four categories.
+- [x] Assess the single allowed final repair batch: **not needed; zero newly proven discrepancies**.
+- [x] Publish the final report, receipts and explicit source-blocked list.
+- [x] End this repair workstream; no new collection, retries, parser expansion, experiment or recurring task.
+
+**#864 remains OPEN and source-blocked under its original completeness criteria.**
+There is no active engineering queue. Reopening requires separately scoped work
+with new exact source evidence or a demonstrated defect. All earlier sections
+below are dated history, not instructions to restart completed investigations.
+Senate floor, serving, forecasts, weights, training, frozen evaluation, Vercel
+and scheduler state remain unchanged; no offices were contacted or audio reviewed.
+
 ## October 25: reviewed Taxes grids and Labor rolls — production verified
 
 **Current 2022–2025 committee production: 221 events / 1,950 explicitly named choices.**
@@ -1223,7 +1271,11 @@ compatibility planner; the corrected default is v2. That bounded source-verified
 The completed v1 writer now requires its explicit reviewed-commit marker, so this name fix
 does not trigger archive acquisition or database access.
 
-## Calendar-year reconciliation
+## Calendar-year reconciliation — earlier dated snapshot
+
+This table preserves the earlier October 19/20 accounting. Its committee numbers
+are historical baseline values, superseded by the October 25 verified totals
+and final closeout above. It is not a separate current completion claim.
 
 The website rows report the latest verified 1,194-record storage; earlier v1/v2 counts remain dated receipts below. Archive observation year is distinct from target-vote year. Earlier observations are itemized in the latest continuation receipt.
 

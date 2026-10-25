@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "senate864-final-closeout-publication-v1",
+  "baseMain": "e87fdc1ad63cb961e363ce1adbb2d56c2d4778e8",
+  "acceptedReadAt": "2026-10-25T15:04:57.332Z",
+  "workstreamClosed": true,
+  "issue": 864,
+  "issueMustRemainOpen": true,
+  "issueDisposition": "SOURCE_BLOCKED_NO_ACTIVE_REPAIR_QUEUE",
+  "productionWrites": 0,
+  "newSourceAcquisitions": 0,
+  "repairBatchesExecuted": 0,
+  "acceptedReadOnlyReconciliations": 1,
+  "queryAttempts": 2,
+  "initialAttemptAccepted": false,
+  "initialAttemptReason": "Known Taxes source omitted by source-kind filter; corrected complete snapshot rerun",
+  "queryPlanSha256": "a85c348c36a6b99aff581c7b97556a2886ef80c15f01a1c122aab716b8835d04",
+  "snapshotFingerprintSha256": "62d13b737d7c6c8aac716d1fcf62fbe3fa9a6ecc7196a8e52808747a248929bf",
+  "schemaLedgerEntries": 36,
+  "existingPrimaryDefaultVerified": true,
+  "projectId": "long-sunset-19921337",
+  "branchId": "br-billowing-wave-aecfbwky",
+  "tests": {
+    "focused": 6,
+    "failures": 0,
+    "skips": 0
+  },
+  "files": [
+    {
+      "path": "scripts/audit-senate-864-bounded-closeout.mjs",
+      "bytes": 19692,
+      "sha256": "fccff5041cdd9334d3f1a4d0fa8d8d12103a3320752826c3598cb3e648152430"
+    },
+    {
+      "path": "tests/senate-864-bounded-closeout.test.mjs",
+      "bytes": 3645,
+      "sha256": "2e6898bb50d0ecc1063f8f9c06809db22051fdd393b8bc0a97de7772a99e49c2"
+    },
+    {
+      "path": ".github/workflows/senate-864-bounded-closeout.yml",
+      "bytes": 1032,
+      "sha256": "58069c577a1665f10f1631e4c670785b95971942b2bc20c59bd489d50fc5c075"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-final-closeout-20261025.json",
+      "bytes": 156473,
+      "sha256": "78c7152b9a1d1989288208cc1b819c44fdbbc0914bf29a12f1e9d4cb0c01665a"
+    },
+    {
+      "path": "docs/evaluation/senate-864-final-closeout-20261025.md",
+      "bytes": 9237,
+      "sha256": "30d23143a519cdc1540fd810cd67ce0ba88732529d4ab342dd2c6bb019451d59"
+    },
+    {
+      "path": "docs/evaluation/senate-864-completion-ledger.md",
+      "bytes": 187090,
+      "sha256": "da93bf6b08fc85dcf9ee2f7e806910246ed735b06ef67018950094657d1b1aaf"
+    }
+  ]
+}

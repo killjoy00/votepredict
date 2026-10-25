@@ -1,0 +1,5413 @@
+{
+  "schemaVersion": "senate864-bounded-closeout-v1",
+  "baseMain": "e87fdc1ad63cb961e363ce1adbb2d56c2d4778e8",
+  "auditorSha256": "fccff5041cdd9334d3f1a4d0fa8d8d12103a3320752826c3598cb3e648152430",
+  "queryPlanSha256": "a85c348c36a6b99aff581c7b97556a2886ef80c15f01a1c122aab716b8835d04",
+  "snapshotFingerprintSha256": "62d13b737d7c6c8aac716d1fcf62fbe3fa9a6ecc7196a8e52808747a248929bf",
+  "frozenInputsVerified": {
+    "docs/evaluation/senate-864-website-experiment-protocol-v1.json": "ba6b6bddc901fb26f2ea19897bf855a25d9f6b3ca81d9de5b3fedfb78eeff43b",
+    "docs/evaluation/senate-864-website-experiment-protocol-v2.json": "e3b57c7c6460e329b73e8acf58e6c9606777db7b75cbd6b4420e0870a7108ac0",
+    "docs/evaluation/source-proof/senate-864-website-v2-executed-20261019.json": "2a088ecbddbda8158dba0835adac345efe56dbe9fd9e75fc81cca6f46bd2e0b7"
+  },
+  "schemaLedgerEntries": 36,
+  "sourceDocumentsRead": 2832,
+  "previousCommitteeStatePreserved": {
+    "readAt": "2026-10-25T14:19:49.580Z",
+    "events": 221,
+    "choices": 1950,
+    "eventRowsSha256": "0c5d19a2084fd1bc7a04e7398ce21fdc428675960ff3498186fa70e4c4b71e40",
+    "choiceRowsSha256": "f12bca75b1478184c729221928c6e726061b3fdef5bf2cd7eb4f7cb5f0a455dc"
+  },
+  "readAt": "2026-10-25T15:04:57.332Z",
+  "verifiedRepeatableReadReadOnlyAndExplicitRollback": true,
+  "productionWrites": 0,
+  "newSourceAcquisitions": 0,
+  "outcomeExperiments": 0,
+  "scope": "Existing committed source corpus and exact prior repair cohorts only",
+  "committee": {
+    "events": 221,
+    "choices": 1950,
+    "years": [
+      {
+        "year": 2022,
+        "stored_events": 40,
+        "declared_named_events": 30,
+        "explicit_stored_choices": 270,
+        "hearing_date_timing_events": 2
+      },
+      {
+        "year": 2023,
+        "stored_events": 65,
+        "declared_named_events": 54,
+        "explicit_stored_choices": 580,
+        "hearing_date_timing_events": 32
+      },
+      {
+        "year": 2024,
+        "stored_events": 63,
+        "declared_named_events": 53,
+        "explicit_stored_choices": 561,
+        "hearing_date_timing_events": 31
+      },
+      {
+        "year": 2025,
+        "stored_events": 53,
+        "declared_named_events": 49,
+        "explicit_stored_choices": 539,
+        "hearing_date_timing_events": 25
+      }
+    ],
+    "reviewedQuestions": 52,
+    "reviewedChoices": 625,
+    "exactReviewedQuestions": 52,
+    "questions": [
+      {
+        "questionKey": "e6f47803c373538422e1009a94d4706fecae5a04cf79ab21bc58243be079e4b5",
+        "date": "2023-01-17",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "9dd16a7d2bb16ef312a17ab5eef8f90cb7c38906fe60d53fe340cfd373e94a16",
+        "date": "2023-01-31",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "eb92023662d714175d4a5ad0bf35e9dd6b58f6a33c7dcacf847c621a27dec019",
+        "date": "2023-02-07",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "288381efbb72bdbc529c18cab7328bccd80131cfe6b11778a16753471912974f",
+        "date": "2023-02-07",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "different_source_identity",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": true,
+        "sourceWitnessClasses": [
+          "different_source_identity"
+        ]
+      },
+      {
+        "questionKey": "417a51f681afd8b373a8f382726f297150b2f127eeddd987230f253deb6e8cf4",
+        "date": "2023-02-14",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "3db07afa8fa2bc437bba420ec90972790a08b91e215acb50333c14bffe088015",
+        "date": "2023-02-14",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "310c1a4332c19b619b147f5f48da8d6735504b15c89b055eadd2599c04ba3b7f",
+        "date": "2023-02-16",
+        "committee": "Elections",
+        "choices": 12,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "14d4c76e9b7c8a697cc33549e4c865e2cc8338f3fca00bfa11be798ac01d77da",
+        "date": "2023-02-21",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "1b8b9df1298f93ab49e2e1bdb40bfa23e1dfc7e0c29164f692bc43cb63826c6d",
+        "date": "2023-03-07",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "11de96b46563778139add6d0492d04d77160ea620b17301955655b88cd147946",
+        "date": "2023-03-14",
+        "committee": "Elections",
+        "choices": 12,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "754f819bb76c724d019466aa15df70b08639fc1264474d18ed3242c78c20e348",
+        "date": "2023-03-16",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "0ef6eae3c2e20900ca1b529dcc5eaf6e54db7abf855039b4b521a92c6d4635b5",
+        "date": "2023-03-16",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "449bd58264fd538b71ce520b549d2569e666eef3236accd4412546659ce6068a",
+        "date": "2023-04-03",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "d0c8947aca849104bc8ed2f5ce8fa0a37ce77e24782fd8a0e814a786206889aa",
+        "date": "2023-04-03",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "0463d1396118dde64d7d4dcd5ed1982cd7d4267808e8bde3064480b83883336c",
+        "date": "2023-04-03",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "38ea61982afd79c67107ad31f1ada241ae3198da2dc7e4f53d072989963563fb",
+        "date": "2023-04-03",
+        "committee": "State and Local Government and Veterans",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "32f5c435e3533a250c507569a393127f1c0f326ffffc98d45c87c8db894a6b03",
+        "date": "2023-04-03",
+        "committee": "State and Local Government and Veterans",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "ce8585994eb6e11187eda9096be6f68dd0da2352ef83a19102f6f26a85074078",
+        "date": "2023-04-03",
+        "committee": "State and Local Government and Veterans",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "different_source_identity",
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "762785e20ecf1dc7bc44a51b32f9fbab8b6783066389cc462ca7756da61decab",
+        "date": "2023-04-03",
+        "committee": "State and Local Government and Veterans",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "7f87953de65d5aad9e04dd238b8a041ded49269482a47cd4ff00b517738af301",
+        "date": "2024-02-20",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "d5411d9eff61bd555db011737ab5930de6356fd8f0eedec041acd6226d33064d",
+        "date": "2024-02-20",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "7344e36c5bc89437c953d47f8f41e84886a4a2d9bc9377d5db0328f23b00b2e5",
+        "date": "2024-02-20",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "0ba4aa148ba5de0a629d35f10fe1628827a3652cde128bfd723947390b957dba",
+        "date": "2024-02-20",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "58b570cdc2551b9c6e1aaa8e3d99c03a4db25c3d430e27d16e7973cb6b3007fa",
+        "date": "2024-02-22",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "6cd98670a1968ed6124b66a749467580d4c4f44d79a6a68a6555ec5d6dc87d7a",
+        "date": "2024-02-22",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "bd2b5c6949f9ddf29ffcea6ff8400b8caaa570539fb80dfdc973f31e9a7b6cb5",
+        "date": "2024-02-29",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "a91ce8f5052cee6c93b84e1c1f9de53844a58c25314ed167448468c418132fd3",
+        "date": "2024-03-12",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "6812faf0448a64e3a876859974c633056674e8dbd5613998d83ce52c4474efe9",
+        "date": "2024-03-14",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "14cfe27031c8c491c6b7394022fee80b7fd2ecead255e30ff4a5badd76826139",
+        "date": "2024-03-14",
+        "committee": "Taxes",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "a77b979df2cdc107e991db1071380c0ffcae0bf864c1a7c9534df99c4f8d3a74",
+        "date": "2024-03-21",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "be5ce856103ffe11807ef3d7be962e727f8257337912bf21b6fc9acb58305355",
+        "date": "2024-03-21",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "d2d5066d941e8c4e3c2fe5870edc7af6c593ca602459393d6f0aa713430000c8",
+        "date": "2024-03-21",
+        "committee": "Elections",
+        "choices": 13,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "38bb9f3c77537d02629b3ffca071e3162be2995d6f4370a0df8d2b03237f0fa7",
+        "date": "2024-03-21",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "ad5ec65ea47933b0729eedb6f2179933f419c41dd66abd25f4c866ccf3a5fcd1",
+        "date": "2024-03-21",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "d02f20330f9ed4f8189f104429c0bb08d3c9bbe984dcb3167c7d677a930720f9",
+        "date": "2024-03-21",
+        "committee": "Elections",
+        "choices": 14,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "b05a37e47e063a833d876ddaa6a9ad09ee45f3286dbaa53e9c5abe113b95502c",
+        "date": "2022-03-30",
+        "committee": "Taxes - Subcommittee on Property Taxes",
+        "choices": 4,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "27f449cd5c3a41d2471f57f5102e8e570b9b2fbf9e8906c568a5c921099e7451",
+        "date": "2022-03-10",
+        "committee": "Energy and Utilities Finance and Policy",
+        "choices": 7,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "b8f463e9f40329923866ca217f8f3defbe70786d832829bf2530899f33996cdf",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 9,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "820f486c699a6a05df1b0ab4b93217f737fafe34ea9c5239890f2abf3ddb8b09",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "f4f03fe58665308197999665b8255262b0aa044927ce15120f960a49c1f54e45",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 9,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "b009b219f30020b44617394f0c39cc1e6ac04f14f064fb4f0e8de56afa67e84e",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "58e111e5b73c355a581f6261d931ebe2d89f82d2865ae1dc4b38f6b1c99174a8",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 9,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "2181b1fc5f23d3c2973b0754aa04de79ebcfc2604567b418f0690fc499c5ebf1",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "1ab9d0fdcd499b354fef4cb5e56b636c51d2220590ddd76d21d40e1399452618",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "f7db7f869a5eb3438899c1e4c49d7f5dc6b6bc9434c64518983f4401ade8005c",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "4d767b78fd8bf99234900770d659189ce20c6c26d052abdd06cb7026d6de6c63",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "2418d9f259cec7a58305ff4708474f8dc7f174dda1dbb7408e2076df632d4fc8",
+        "date": "2023-04-27",
+        "committee": "Taxes",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "deaf23e0a6b82f041937dc506a80d70c9a8dc08aae74c72b250000b5ff41e726",
+        "date": "2024-04-09",
+        "committee": "Labor",
+        "choices": 9,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "03f839e1e1219fd5570aa4e68ceb1a4d1da967fada881593f61cf2751f5aa5f7",
+        "date": "2024-04-09",
+        "committee": "Labor",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "010fc81f973b89f5191dd4f32ad8cd254980d107916dde07ff24bb97fe9c7f72",
+        "date": "2024-04-09",
+        "committee": "Labor",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "4685a44f4dc412aafe04f90c8838921360a253fa16d6a324cb2d56c8388e1b73",
+        "date": "2024-04-09",
+        "committee": "Labor",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      },
+      {
+        "questionKey": "b2fc2e8aef1442776fbd423a06b31e319c906f756b809265b0b05633b63b4bbd",
+        "date": "2024-04-09",
+        "committee": "Labor",
+        "choices": 10,
+        "status": "exact",
+        "reason": null,
+        "classification": false,
+        "missingChoices": 0,
+        "alternateSourceParityVerified": false,
+        "sourceWitnessClasses": [
+          "exact"
+        ]
+      }
+    ],
+    "heldParserOccurrences": 40,
+    "heldOccurrences": [
+      {
+        "sourceId": "f48742952a35391cf0fa48e2ce8f4c1aded138f3ff919ea01a5ffd41ec6653f6",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230130/Jobs_20230130_Minutes.pdf",
+        "date": "2023-01-30",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 6375,
+        "holds": [
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 8
+      },
+      {
+        "sourceId": "f48742952a35391cf0fa48e2ce8f4c1aded138f3ff919ea01a5ffd41ec6653f6",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230130/Jobs_20230130_Minutes.pdf",
+        "date": "2023-01-30",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 6780,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 8
+      },
+      {
+        "sourceId": "221ea41b62067d4490ca3976f280f92f96f00ec7e78bb7fb3694ddcc037142b7",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17456&ls=93&type=minutes",
+        "date": "2023-01-30",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 5739,
+        "holds": [
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 8
+      },
+      {
+        "sourceId": "221ea41b62067d4490ca3976f280f92f96f00ec7e78bb7fb3694ddcc037142b7",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17456&ls=93&type=minutes",
+        "date": "2023-01-30",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 6155,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 8
+      },
+      {
+        "sourceId": "521a7ddaf552c942cd8752628c320cd673ed6ac66d6acc1ef19d9b56db3431df",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230207/Elections_20230207_Minutes.pdf",
+        "date": "2023-02-07",
+        "committee": "Elections",
+        "sourceOffset": 1586,
+        "holds": [
+          "compound_or_repeated_question",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 14
+      },
+      {
+        "sourceId": "521a7ddaf552c942cd8752628c320cd673ed6ac66d6acc1ef19d9b56db3431df",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230207/Elections_20230207_Minutes.pdf",
+        "date": "2023-02-07",
+        "committee": "Elections",
+        "sourceOffset": 2107,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 14
+      },
+      {
+        "sourceId": "2a7764ae134e3251dac000e3a0eb2cc007a4c583bf0bede4893311cc436f59a3",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17523&ls=93&type=minutes",
+        "date": "2023-02-07",
+        "committee": "Elections",
+        "sourceOffset": 1525,
+        "holds": [
+          "compound_or_repeated_question"
+        ],
+        "printedChoiceOccurrences": 14
+      },
+      {
+        "sourceId": "4815edd15d4f7c18cf06517ccfbe83fa9c680d7b35c07f32df294fcdbda2a090",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230216/Elections_20230216_Minutes.pdf",
+        "date": "2023-02-16",
+        "committee": "Elections",
+        "sourceOffset": 2659,
+        "holds": [
+          "intervening_or_withdrawn_question",
+          "compound_or_repeated_question"
+        ],
+        "printedChoiceOccurrences": 12
+      },
+      {
+        "sourceId": "4815edd15d4f7c18cf06517ccfbe83fa9c680d7b35c07f32df294fcdbda2a090",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230216/Elections_20230216_Minutes.pdf",
+        "date": "2023-02-16",
+        "committee": "Elections",
+        "sourceOffset": 3238,
+        "holds": [
+          "compound_or_repeated_question"
+        ],
+        "printedChoiceOccurrences": 12
+      },
+      {
+        "sourceId": "7b821f9cd1743cda6ed984c18318dc2e8b39537a91170fe1cd832a00d230c330",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17601&ls=93&type=minutes",
+        "date": "2023-02-16",
+        "committee": "Elections",
+        "sourceOffset": 2624,
+        "holds": [
+          "intervening_or_withdrawn_question",
+          "compound_or_repeated_question"
+        ],
+        "printedChoiceOccurrences": 12
+      },
+      {
+        "sourceId": "7b821f9cd1743cda6ed984c18318dc2e8b39537a91170fe1cd832a00d230c330",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17601&ls=93&type=minutes",
+        "date": "2023-02-16",
+        "committee": "Elections",
+        "sourceOffset": 3219,
+        "holds": [
+          "compound_or_repeated_question"
+        ],
+        "printedChoiceOccurrences": 12
+      },
+      {
+        "sourceId": "3f7ff19ad349bc7438813cf9fdfbcc9e6903662cbd06663b62347a351824aea1",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230302/Elections_20230302_Minutes.pdf",
+        "date": "2023-03-02",
+        "committee": "Elections",
+        "sourceOffset": 1339,
+        "holds": [
+          "compound_or_repeated_question",
+          "unresolved_amendment_identity"
+        ],
+        "printedChoiceOccurrences": 14
+      },
+      {
+        "sourceId": "374138295b04e641588cf2b016a381bdf73947275428f596428ecab41db67755",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17662&ls=93&type=minutes",
+        "date": "2023-03-02",
+        "committee": "Elections",
+        "sourceOffset": 1268,
+        "holds": [
+          "compound_or_repeated_question",
+          "unresolved_amendment_identity"
+        ],
+        "printedChoiceOccurrences": 14
+      },
+      {
+        "sourceId": "a8a53ce8c0007fc53cb02d3ea09a6e55862439bd3015be3f3b54dd5a371fefb1",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230307/Elections_20230307_Minutes.pdf",
+        "date": "2023-03-07",
+        "committee": "Elections",
+        "sourceOffset": 1972,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 12
+      },
+      {
+        "sourceId": "45eb2f12a51f83c84da6051ef10e350b858c7a017b8c1c8b99d050bbb096d3b8",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230316/Elections_20230316_Minutes.pdf",
+        "date": "2023-03-16",
+        "committee": "Elections",
+        "sourceOffset": 3314,
+        "holds": [
+          "intervening_or_withdrawn_question",
+          "unresolved_amendment_identity"
+        ],
+        "printedChoiceOccurrences": 12
+      },
+      {
+        "sourceId": "92533db059da9ae413f2a02fd3c13d34ae8425d237bb1aa779e2016ec0087b39",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17825&ls=93&type=minutes",
+        "date": "2023-03-16",
+        "committee": "Elections",
+        "sourceOffset": 3199,
+        "holds": [
+          "intervening_or_withdrawn_question",
+          "unresolved_amendment_identity"
+        ],
+        "printedChoiceOccurrences": 12
+      },
+      {
+        "sourceId": "c78451a57beb19fb21f9d90018e64f4ec266e22a576899e5accea29060c5c2d7",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230323/Jobs_20230323_Minutes.pdf",
+        "date": "2023-03-23",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 4371,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 8
+      },
+      {
+        "sourceId": "c78451a57beb19fb21f9d90018e64f4ec266e22a576899e5accea29060c5c2d7",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230323/Jobs_20230323_Minutes.pdf",
+        "date": "2023-03-23",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 4911,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 9
+      },
+      {
+        "sourceId": "c78451a57beb19fb21f9d90018e64f4ec266e22a576899e5accea29060c5c2d7",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230323/Jobs_20230323_Minutes.pdf",
+        "date": "2023-03-23",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 5289,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 4
+      },
+      {
+        "sourceId": "c78451a57beb19fb21f9d90018e64f4ec266e22a576899e5accea29060c5c2d7",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/jobs/20230323/Jobs_20230323_Minutes.pdf",
+        "date": "2023-03-23",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 5561,
+        "holds": [
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 4
+      },
+      {
+        "sourceId": "12ab82b9d5e8db52e916559760abc3b4b81439e4444552973834657473fd909e",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17898&ls=93&type=minutes",
+        "date": "2023-03-23",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 3845,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 9
+      },
+      {
+        "sourceId": "12ab82b9d5e8db52e916559760abc3b4b81439e4444552973834657473fd909e",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17898&ls=93&type=minutes",
+        "date": "2023-03-23",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 4426,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 9
+      },
+      {
+        "sourceId": "12ab82b9d5e8db52e916559760abc3b4b81439e4444552973834657473fd909e",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17898&ls=93&type=minutes",
+        "date": "2023-03-23",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 4815,
+        "holds": [
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 8
+      },
+      {
+        "sourceId": "fbbac630ea7033076d35f2103e8961164c59990e5381d303a49296ef076b6498",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17893&ls=93&type=minutes",
+        "date": "2023-03-23",
+        "committee": "State and Local Government and Veterans",
+        "sourceOffset": 1489,
+        "holds": [
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 2
+      },
+      {
+        "sourceId": "ba2c0053bc05ec00b2bb605c45ea9cc9ac9474d38c5e865e71321ec639da77be",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/finstlocalgov/20230403/finstlocalgov_20230403_Minutes.pdf",
+        "date": "2023-04-03",
+        "committee": "State and Local Government and Veterans",
+        "sourceOffset": 1570,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 2
+      },
+      {
+        "sourceId": "ba2c0053bc05ec00b2bb605c45ea9cc9ac9474d38c5e865e71321ec639da77be",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/finstlocalgov/20230403/finstlocalgov_20230403_Minutes.pdf",
+        "date": "2023-04-03",
+        "committee": "State and Local Government and Veterans",
+        "sourceOffset": 1752,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 11
+      },
+      {
+        "sourceId": "44467e2c707f408b0572e8250924f570e28a0556e88004d6433d59e780c3dd38",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18222&ls=93&type=minutes",
+        "date": "2023-05-17",
+        "committee": "Conference Committee on S.F. 2934",
+        "sourceOffset": 2718,
+        "holds": [
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 4
+      },
+      {
+        "sourceId": "546d23281ac6bd99c7a85b4a38569a19f287bd3451a5e85aaf7235adf496fced",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/human/20230517/Human_20230517_Minutes.pdf",
+        "date": "2023-05-17",
+        "committee": "Human Services",
+        "sourceOffset": 3134,
+        "holds": [
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 4
+      },
+      {
+        "sourceId": "10b73de8d4bec6d5abf067f8e899ecc70c3a119fe9a71c5128af512133617749",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240229/Elections_20240229_Minutes.pdf",
+        "date": "2024-02-29",
+        "committee": "Elections",
+        "sourceOffset": 1077,
+        "holds": [
+          "compound_or_repeated_question"
+        ],
+        "printedChoiceOccurrences": 14
+      },
+      {
+        "sourceId": "10b73de8d4bec6d5abf067f8e899ecc70c3a119fe9a71c5128af512133617749",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/elections/20240229/Elections_20240229_Minutes.pdf",
+        "date": "2024-02-29",
+        "committee": "Elections",
+        "sourceOffset": 1981,
+        "holds": [
+          "compound_or_repeated_question"
+        ],
+        "printedChoiceOccurrences": 14
+      },
+      {
+        "sourceId": "6f4b17042bcf304e3e31509d116c2541ebc2d822642a3cd5b11f22693fec9935",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/jobs/20240320/Jobs_20240320_Minutes.pdf",
+        "date": "2024-03-20",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 1876,
+        "holds": [
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 2
+      },
+      {
+        "sourceId": "6f4b17042bcf304e3e31509d116c2541ebc2d822642a3cd5b11f22693fec9935",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/jobs/20240320/Jobs_20240320_Minutes.pdf",
+        "date": "2024-03-20",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 2520,
+        "holds": [
+          "intervening_or_withdrawn_question",
+          "contradictory_bill_association",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 7
+      },
+      {
+        "sourceId": "a2a97e995291bba8ec34e2672723934d3a3f6039505fb0338b8b7a01c790e5cd",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18444&ls=93&type=minutes",
+        "date": "2024-03-20",
+        "committee": "Jobs and Economic Development",
+        "sourceOffset": 1659,
+        "holds": [
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 9
+      },
+      {
+        "sourceId": "f6a69a816d6e1dbb6b20241817ea4745f94a84bab508a2628d6a6e051d87aef6",
+        "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/rulesethical/20240507/rulesethical_20240507_Minutes.pdf",
+        "date": "2024-05-07",
+        "committee": "Rules and Administration - Subcommittee on Ethical Conduct",
+        "sourceOffset": 6278,
+        "holds": [
+          "unresolved_bill_or_nonbill_question"
+        ],
+        "printedChoiceOccurrences": 4
+      },
+      {
+        "sourceId": "4f9cbb26996fddecb5099e0485422d8ebeeef3b52dfb0630cd48ae3c5e317d87",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18732&ls=93&type=minutes",
+        "date": "2024-05-07",
+        "committee": "Rules and Administration - Subcommittee on Ethical Conduct",
+        "sourceOffset": 5692,
+        "holds": [
+          "unresolved_bill_or_nonbill_question"
+        ],
+        "printedChoiceOccurrences": 4
+      },
+      {
+        "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+        "date": "2024-06-05",
+        "committee": "Rules and Administration",
+        "sourceOffset": 863,
+        "holds": [
+          "unresolved_bill_or_nonbill_question",
+          "ambiguous_or_missing_printed_outcome"
+        ],
+        "printedChoiceOccurrences": 9
+      },
+      {
+        "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+        "date": "2024-06-05",
+        "committee": "Rules and Administration",
+        "sourceOffset": 1553,
+        "holds": [
+          "unresolved_bill_or_nonbill_question",
+          "ambiguous_or_missing_printed_outcome"
+        ],
+        "printedChoiceOccurrences": 9
+      },
+      {
+        "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+        "date": "2024-06-05",
+        "committee": "Rules and Administration",
+        "sourceOffset": 2208,
+        "holds": [
+          "unresolved_bill_or_nonbill_question",
+          "ambiguous_or_missing_printed_outcome"
+        ],
+        "printedChoiceOccurrences": 8
+      },
+      {
+        "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+        "date": "2024-06-05",
+        "committee": "Rules and Administration",
+        "sourceOffset": 3027,
+        "holds": [
+          "unresolved_bill_or_nonbill_question",
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 2
+      },
+      {
+        "sourceId": "c2c2b04ae77b49f6a8527d6c4f9c932a3c751639ecb7a21422405bef609f1c0b",
+        "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18855&ls=93&type=minutes",
+        "date": "2024-06-05",
+        "committee": "Rules and Administration",
+        "sourceOffset": 3092,
+        "holds": [
+          "unresolved_bill_or_nonbill_question",
+          "ambiguous_or_missing_printed_outcome",
+          "missing_or_disagreeing_printed_tally"
+        ],
+        "printedChoiceOccurrences": 6
+      }
+    ],
+    "unadmittedCrossOriginalKeys": [
+      "a4c3db80aa9280a3bd787eecb815bafc586a5b90d61c9689fb550aad64d2146f",
+      "be27478e8724fe29bfb9aec6106c513a4c56c072776f113c99a60bf09c50205c",
+      "eef9191c4f36acac3906b858fde0c83586358969828df94abccdd93798d209f6",
+      "d522cc44f54493534477521b688ab792ae651b4090b103dfe6cd9d4047e5eb40"
+    ],
+    "sourceCandidatesReconciled": 233,
+    "baselineOriginals": 2860,
+    "officialAllMotionDenominator": "UNKNOWN"
+  },
+  "website": {
+    "expected": 1194,
+    "exact": 1194,
+    "sourcePlanSha256": "a040c7d1ed699eb207cf36e17e3c90fe40e35b586f5fccc08b99287abd4bbd67",
+    "people": 92,
+    "originalBodies": 123,
+    "byObservationYear": {
+      "2004": 12,
+      "2007": 8,
+      "2009": 18,
+      "2010": 14,
+      "2012": 13,
+      "2013": 31,
+      "2014": 12,
+      "2016": 42,
+      "2018": 17,
+      "2019": 25,
+      "2020": 181,
+      "2021": 51,
+      "2022": 723,
+      "2024": 18,
+      "2025": 29
+    },
+    "knownScopeExclusions": 3,
+    "unmaterializedAggregateOnlyRecords": 88,
+    "wholeSiteDenominator": "UNKNOWN",
+    "frozenExperimentsUnchanged": true
+  },
+  "finance": {
+    "registryExact": {
+      "stored": "830",
+      "indexed": "830",
+      "exact": "830",
+      "missing": "0",
+      "distinct_bodies": "813"
+    },
+    "canonical": [
+      {
+        "year": "2021",
+        "family": "candidate_contribution",
+        "evidence_copies": 5794,
+        "canonical_transactions": 2091,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 5590,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 5794,
+        "canonical_in_indexed_registrations": 2091,
+        "copies_in_indexed_committee_years": 5794,
+        "canonical_in_indexed_committee_years": 2091
+      },
+      {
+        "year": "2021",
+        "family": "candidate_expenditure",
+        "evidence_copies": 4425,
+        "canonical_transactions": 1543,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 4389,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 4425,
+        "canonical_in_indexed_registrations": 1543,
+        "copies_in_indexed_committee_years": 4425,
+        "canonical_in_indexed_committee_years": 1543
+      },
+      {
+        "year": "2021",
+        "family": "independent_expenditure",
+        "evidence_copies": 35,
+        "canonical_transactions": 7,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 35,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 0,
+        "canonical_in_indexed_registrations": 0,
+        "copies_in_indexed_committee_years": 0,
+        "canonical_in_indexed_committee_years": 0
+      },
+      {
+        "year": "2022",
+        "family": "candidate_contribution",
+        "evidence_copies": 9503,
+        "canonical_transactions": 2588,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 9315,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 9503,
+        "canonical_in_indexed_registrations": 2588,
+        "copies_in_indexed_committee_years": 9503,
+        "canonical_in_indexed_committee_years": 2588
+      },
+      {
+        "year": "2022",
+        "family": "candidate_expenditure",
+        "evidence_copies": 9987,
+        "canonical_transactions": 3386,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 6182,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 9987,
+        "canonical_in_indexed_registrations": 3386,
+        "copies_in_indexed_committee_years": 9984,
+        "canonical_in_indexed_committee_years": 3383
+      },
+      {
+        "year": "2022",
+        "family": "independent_expenditure",
+        "evidence_copies": 1630,
+        "canonical_transactions": 326,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 1570,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 0,
+        "canonical_in_indexed_registrations": 0,
+        "copies_in_indexed_committee_years": 0,
+        "canonical_in_indexed_committee_years": 0
+      },
+      {
+        "year": "2023",
+        "family": "candidate_contribution",
+        "evidence_copies": 2493,
+        "canonical_transactions": 1651,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 2302,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 2493,
+        "canonical_in_indexed_registrations": 1651,
+        "copies_in_indexed_committee_years": 1493,
+        "canonical_in_indexed_committee_years": 1407
+      },
+      {
+        "year": "2023",
+        "family": "candidate_expenditure",
+        "evidence_copies": 2150,
+        "canonical_transactions": 1506,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 1970,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 2150,
+        "canonical_in_indexed_registrations": 1506,
+        "copies_in_indexed_committee_years": 1327,
+        "canonical_in_indexed_committee_years": 1285
+      },
+      {
+        "year": "2024",
+        "family": "candidate_contribution",
+        "evidence_copies": 2659,
+        "canonical_transactions": 1563,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 2626,
+        "unclassified_contributor_type_copies": 9,
+        "copies_in_indexed_registrations": 2659,
+        "canonical_in_indexed_registrations": 1563,
+        "copies_in_indexed_committee_years": 1328,
+        "canonical_in_indexed_committee_years": 1276
+      },
+      {
+        "year": "2024",
+        "family": "candidate_expenditure",
+        "evidence_copies": 2070,
+        "canonical_transactions": 1535,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 1958,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 2070,
+        "canonical_in_indexed_registrations": 1535,
+        "copies_in_indexed_committee_years": 1337,
+        "canonical_in_indexed_committee_years": 1304
+      },
+      {
+        "year": "2024",
+        "family": "independent_expenditure",
+        "evidence_copies": 135,
+        "canonical_transactions": 27,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 115,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 0,
+        "canonical_in_indexed_registrations": 0,
+        "copies_in_indexed_committee_years": 0,
+        "canonical_in_indexed_committee_years": 0
+      },
+      {
+        "year": "2025",
+        "family": "candidate_contribution",
+        "evidence_copies": 16666,
+        "canonical_transactions": 3027,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 16586,
+        "unclassified_contributor_type_copies": 26,
+        "copies_in_indexed_registrations": 16483,
+        "canonical_in_indexed_registrations": 2844,
+        "copies_in_indexed_committee_years": 16483,
+        "canonical_in_indexed_committee_years": 2844
+      },
+      {
+        "year": "2025",
+        "family": "candidate_expenditure",
+        "evidence_copies": 6163,
+        "canonical_transactions": 1983,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 5917,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 6017,
+        "canonical_in_indexed_registrations": 1837,
+        "copies_in_indexed_committee_years": 6017,
+        "canonical_in_indexed_committee_years": 1837
+      },
+      {
+        "year": "2025",
+        "family": "independent_expenditure",
+        "evidence_copies": 155,
+        "canonical_transactions": 31,
+        "copies_missing_canonical_identity": 0,
+        "legacy_eligible_copies": 0,
+        "unclassified_contributor_type_copies": 0,
+        "copies_in_indexed_registrations": 0,
+        "canonical_in_indexed_registrations": 0,
+        "copies_in_indexed_committee_years": 0,
+        "canonical_in_indexed_committee_years": 0
+      }
+    ],
+    "versionsByYear": [
+      {
+        "year": 2021,
+        "versions": 121,
+        "pdf_bodies": 121,
+        "tracked_historical_version_public_by_proofs": 0,
+        "versions_with_cached_bodies": 121
+      },
+      {
+        "year": 2022,
+        "versions": 346,
+        "pdf_bodies": 344,
+        "tracked_historical_version_public_by_proofs": 0,
+        "versions_with_cached_bodies": 346
+      },
+      {
+        "year": 2023,
+        "versions": 110,
+        "pdf_bodies": 108,
+        "tracked_historical_version_public_by_proofs": 0,
+        "versions_with_cached_bodies": 110
+      },
+      {
+        "year": 2024,
+        "versions": 123,
+        "pdf_bodies": 118,
+        "tracked_historical_version_public_by_proofs": 0,
+        "versions_with_cached_bodies": 123
+      },
+      {
+        "year": 2025,
+        "versions": 130,
+        "pdf_bodies": 122,
+        "tracked_historical_version_public_by_proofs": 0,
+        "versions_with_cached_bodies": 130
+      }
+    ],
+    "legacyEligibilityDebt": [
+      {
+        "year": "2021",
+        "family": "candidate_contribution",
+        "scope": "senate_member",
+        "eligible_copies": "5577",
+        "candidate_year_candidates": "5577",
+        "unique_candidate_pdf": "3930",
+        "ambiguous_candidate_pdfs": "1647",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "5577",
+        "before_every_candidate_legal_floor": "3199",
+        "before_every_candidate_estimate": "3199",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "3214",
+        "archived_disclosure_claims": "2363",
+        "missing_published_at": "0",
+        "missing_report_due_on": "5577"
+      },
+      {
+        "year": "2021",
+        "family": "candidate_contribution",
+        "scope": "senate_metadata_only",
+        "eligible_copies": "13",
+        "candidate_year_candidates": "13",
+        "unique_candidate_pdf": "0",
+        "ambiguous_candidate_pdfs": "13",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "13",
+        "before_every_candidate_legal_floor": "13",
+        "before_every_candidate_estimate": "13",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "13",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "13"
+      },
+      {
+        "year": "2021",
+        "family": "candidate_expenditure",
+        "scope": "senate_member",
+        "eligible_copies": "4361",
+        "candidate_year_candidates": "4361",
+        "unique_candidate_pdf": "3232",
+        "ambiguous_candidate_pdfs": "1129",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "4361",
+        "before_every_candidate_legal_floor": "2707",
+        "before_every_candidate_estimate": "2707",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "2711",
+        "archived_disclosure_claims": "1650",
+        "missing_published_at": "0",
+        "missing_report_due_on": "4361"
+      },
+      {
+        "year": "2021",
+        "family": "candidate_expenditure",
+        "scope": "senate_metadata_only",
+        "eligible_copies": "28",
+        "candidate_year_candidates": "28",
+        "unique_candidate_pdf": "28",
+        "ambiguous_candidate_pdfs": "0",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "28",
+        "before_every_candidate_legal_floor": "28",
+        "before_every_candidate_estimate": "28",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "28",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "28"
+      },
+      {
+        "year": "2021",
+        "family": "independent_expenditure",
+        "scope": "senate_member",
+        "eligible_copies": "35",
+        "candidate_year_candidates": "0",
+        "unique_candidate_pdf": "0",
+        "ambiguous_candidate_pdfs": "0",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "35",
+        "before_every_candidate_legal_floor": "0",
+        "before_every_candidate_estimate": "0",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "0",
+        "archived_disclosure_claims": "35",
+        "missing_published_at": "0",
+        "missing_report_due_on": "35"
+      },
+      {
+        "year": "2022",
+        "family": "candidate_contribution",
+        "scope": "senate_member",
+        "eligible_copies": "9315",
+        "candidate_year_candidates": "9315",
+        "unique_candidate_pdf": "47",
+        "ambiguous_candidate_pdfs": "9268",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "9315",
+        "before_every_candidate_legal_floor": "912",
+        "before_every_candidate_estimate": "912",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "6461",
+        "archived_disclosure_claims": "2854",
+        "missing_published_at": "0",
+        "missing_report_due_on": "9315"
+      },
+      {
+        "year": "2022",
+        "family": "candidate_expenditure",
+        "scope": "senate_member",
+        "eligible_copies": "6182",
+        "candidate_year_candidates": "6182",
+        "unique_candidate_pdf": "1",
+        "ambiguous_candidate_pdfs": "6181",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "6182",
+        "before_every_candidate_legal_floor": "1335",
+        "before_every_candidate_estimate": "1335",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "6182",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "6182"
+      },
+      {
+        "year": "2022",
+        "family": "independent_expenditure",
+        "scope": "senate_member",
+        "eligible_copies": "1570",
+        "candidate_year_candidates": "0",
+        "unique_candidate_pdf": "0",
+        "ambiguous_candidate_pdfs": "0",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "1570",
+        "before_every_candidate_legal_floor": "0",
+        "before_every_candidate_estimate": "0",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "90",
+        "archived_disclosure_claims": "1480",
+        "missing_published_at": "0",
+        "missing_report_due_on": "1570"
+      },
+      {
+        "year": "2023",
+        "family": "candidate_contribution",
+        "scope": "senate_member",
+        "eligible_copies": "2227",
+        "candidate_year_candidates": "1245",
+        "unique_candidate_pdf": "796",
+        "ambiguous_candidate_pdfs": "449",
+        "no_candidate_pdf": "982",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "2227",
+        "before_every_candidate_legal_floor": "980",
+        "before_every_candidate_estimate": "980",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "2227",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "2227"
+      },
+      {
+        "year": "2023",
+        "family": "candidate_contribution",
+        "scope": "senate_metadata_only",
+        "eligible_copies": "75",
+        "candidate_year_candidates": "58",
+        "unique_candidate_pdf": "18",
+        "ambiguous_candidate_pdfs": "40",
+        "no_candidate_pdf": "17",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "75",
+        "before_every_candidate_legal_floor": "23",
+        "before_every_candidate_estimate": "23",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "75",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "75"
+      },
+      {
+        "year": "2023",
+        "family": "candidate_expenditure",
+        "scope": "senate_member",
+        "eligible_copies": "1908",
+        "candidate_year_candidates": "1123",
+        "unique_candidate_pdf": "665",
+        "ambiguous_candidate_pdfs": "458",
+        "no_candidate_pdf": "785",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "1908",
+        "before_every_candidate_legal_floor": "842",
+        "before_every_candidate_estimate": "842",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "1908",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "1908"
+      },
+      {
+        "year": "2023",
+        "family": "candidate_expenditure",
+        "scope": "senate_metadata_only",
+        "eligible_copies": "62",
+        "candidate_year_candidates": "36",
+        "unique_candidate_pdf": "2",
+        "ambiguous_candidate_pdfs": "34",
+        "no_candidate_pdf": "26",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "62",
+        "before_every_candidate_legal_floor": "2",
+        "before_every_candidate_estimate": "2",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "62",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "62"
+      },
+      {
+        "year": "2024",
+        "family": "candidate_contribution",
+        "scope": "senate_member",
+        "eligible_copies": "2226",
+        "candidate_year_candidates": "910",
+        "unique_candidate_pdf": "594",
+        "ambiguous_candidate_pdfs": "316",
+        "no_candidate_pdf": "1316",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "2226",
+        "before_every_candidate_legal_floor": "736",
+        "before_every_candidate_estimate": "736",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "2226",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "2226"
+      },
+      {
+        "year": "2024",
+        "family": "candidate_contribution",
+        "scope": "senate_metadata_only",
+        "eligible_copies": "400",
+        "candidate_year_candidates": "400",
+        "unique_candidate_pdf": "0",
+        "ambiguous_candidate_pdfs": "400",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "400",
+        "before_every_candidate_legal_floor": "0",
+        "before_every_candidate_estimate": "0",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "400",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "400"
+      },
+      {
+        "year": "2024",
+        "family": "candidate_expenditure",
+        "scope": "senate_member",
+        "eligible_copies": "1822",
+        "candidate_year_candidates": "1090",
+        "unique_candidate_pdf": "765",
+        "ambiguous_candidate_pdfs": "325",
+        "no_candidate_pdf": "732",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "1822",
+        "before_every_candidate_legal_floor": "811",
+        "before_every_candidate_estimate": "811",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "1822",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "1822"
+      },
+      {
+        "year": "2024",
+        "family": "candidate_expenditure",
+        "scope": "senate_metadata_only",
+        "eligible_copies": "136",
+        "candidate_year_candidates": "136",
+        "unique_candidate_pdf": "0",
+        "ambiguous_candidate_pdfs": "136",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "136",
+        "before_every_candidate_legal_floor": "3",
+        "before_every_candidate_estimate": "3",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "136",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "136"
+      },
+      {
+        "year": "2024",
+        "family": "independent_expenditure",
+        "scope": "senate_member",
+        "eligible_copies": "115",
+        "candidate_year_candidates": "0",
+        "unique_candidate_pdf": "0",
+        "ambiguous_candidate_pdfs": "0",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "115",
+        "before_every_candidate_legal_floor": "0",
+        "before_every_candidate_estimate": "0",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "115",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "115"
+      },
+      {
+        "year": "2025",
+        "family": "candidate_contribution",
+        "scope": "senate_member",
+        "eligible_copies": "16195",
+        "candidate_year_candidates": "16195",
+        "unique_candidate_pdf": "15055",
+        "ambiguous_candidate_pdfs": "1140",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "16195",
+        "before_every_candidate_legal_floor": "15852",
+        "before_every_candidate_estimate": "15852",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "16195",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "16195"
+      },
+      {
+        "year": "2025",
+        "family": "candidate_contribution",
+        "scope": "senate_metadata_only",
+        "eligible_copies": "391",
+        "candidate_year_candidates": "224",
+        "unique_candidate_pdf": "56",
+        "ambiguous_candidate_pdfs": "168",
+        "no_candidate_pdf": "167",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "391",
+        "before_every_candidate_legal_floor": "6",
+        "before_every_candidate_estimate": "6",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "391",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "391"
+      },
+      {
+        "year": "2025",
+        "family": "candidate_expenditure",
+        "scope": "senate_member",
+        "eligible_copies": "5642",
+        "candidate_year_candidates": "5642",
+        "unique_candidate_pdf": "5054",
+        "ambiguous_candidate_pdfs": "588",
+        "no_candidate_pdf": "0",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "5642",
+        "before_every_candidate_legal_floor": "5259",
+        "before_every_candidate_estimate": "5259",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "5642",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "5642"
+      },
+      {
+        "year": "2025",
+        "family": "candidate_expenditure",
+        "scope": "senate_metadata_only",
+        "eligible_copies": "275",
+        "candidate_year_candidates": "135",
+        "unique_candidate_pdf": "6",
+        "ambiguous_candidate_pdfs": "129",
+        "no_candidate_pdf": "140",
+        "exact_version_reference": "0",
+        "no_exact_version_reference": "275",
+        "before_every_candidate_legal_floor": "3",
+        "before_every_candidate_estimate": "3",
+        "exact_reference_before_candidate_legal_floor": "0",
+        "filing_derived_claims": "275",
+        "archived_disclosure_claims": "0",
+        "missing_published_at": "0",
+        "missing_report_due_on": "275"
+      }
+    ],
+    "legacyEligibleCopies": 58555,
+    "possibleEarlyDateFlags": 32711,
+    "millerExactMechanicalLinks": 25,
+    "millerHeldPurposes": 3,
+    "owedReportDenominator": "UNKNOWN",
+    "historicalPublicationNotInferred": true
+  },
+  "media": {
+    "scope": "Existing 44-seed contexts plus previously verified Miller original fragments; no new attribution",
+    "rows": 948,
+    "outsideStudyCaptureYear": 154,
+    "invalidArchiveClock": 0,
+    "unknownSeed": 0,
+    "unresolvedFullNameMentionTokens": 652,
+    "unsafeNeutralFlags": 0,
+    "inRangeDistinctSourceDocuments": 688,
+    "years": [
+      {
+        "year": 2021,
+        "contexts": 131,
+        "distinctSources": 122,
+        "publisherDatedContexts": 52
+      },
+      {
+        "year": 2022,
+        "contexts": 182,
+        "distinctSources": 163,
+        "publisherDatedContexts": 118
+      },
+      {
+        "year": 2023,
+        "contexts": 155,
+        "distinctSources": 132,
+        "publisherDatedContexts": 124
+      },
+      {
+        "year": 2024,
+        "contexts": 118,
+        "distinctSources": 103,
+        "publisherDatedContexts": 88
+      },
+      {
+        "year": 2025,
+        "contexts": 208,
+        "distinctSources": 168,
+        "publisherDatedContexts": 155
+      }
+    ],
+    "nonzeroSenatorYearSourceCells": [
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "axios-twin-cities-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "bring-me-the-news-minnesota-archive",
+        "contextRows": 4,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "finance-commerce-article-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "knsi-central-minnesota-archive",
+        "contextRows": 22,
+        "distinctSources": 22
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 7,
+        "distinctSources": 7
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 5,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "minnesota-daily-article-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 8,
+        "distinctSources": 6
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 10,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "roseau-times-region-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "tpt-almanac-capitol-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2021,
+        "seedId": "winona-daily-news-local-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "axios-twin-cities-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 7,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "bring-me-the-news-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "finance-commerce-article-archive",
+        "contextRows": 13,
+        "distinctSources": 13
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "mankato-free-press-local-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "mn-spokesman-recorder-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "post-bulletin-local-news-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "republican-eagle-news-archive",
+        "contextRows": 5,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "roseau-times-region-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 5,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "tpt-almanac-capitol-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "uptake-politics-archive",
+        "contextRows": 24,
+        "distinctSources": 24
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2022,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "axios-twin-cities-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "bring-me-the-news-minnesota-archive",
+        "contextRows": 5,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 6,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "finance-commerce-article-archive",
+        "contextRows": 5,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "fox9-minnesota-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "kstp-news-archive",
+        "contextRows": 11,
+        "distinctSources": 10
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "mankato-free-press-local-news-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "mille-lacs-messenger-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "minnesota-daily-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "mn-spokesman-recorder-dated-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 5,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "post-bulletin-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "republican-eagle-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "tpt-almanac-capitol-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2023,
+        "seedId": "winona-daily-news-local-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "axios-twin-cities-archive",
+        "contextRows": 5,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 5,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "cbs-minnesota-news-archive",
+        "contextRows": 5,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "finance-commerce-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 6,
+        "distinctSources": 6
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 5,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 5,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "kstp-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "mille-lacs-messenger-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "minnesota-daily-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "mn-spokesman-recorder-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "post-bulletin-local-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "republican-eagle-news-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "roseau-times-region-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2024,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "bemidji-pioneer-minnesota-archive",
+        "contextRows": 5,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "cbs-minnesota-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 5,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "finance-commerce-article-archive",
+        "contextRows": 5,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "fox9-minnesota-news-archive",
+        "contextRows": 4,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 6,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "mankato-free-press-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "mille-lacs-messenger-news-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "minnesota-daily-article-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 7,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 8,
+        "distinctSources": 7
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 5,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "post-bulletin-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 4,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "tpt-almanac-capitol-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 0,
+        "year": 2025,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 1,
+        "year": 2023,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 6,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 1,
+        "year": 2024,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 1,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 1,
+        "year": 2025,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 2,
+        "year": 2025,
+        "seedId": "fox9-minnesota-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 3,
+        "year": 2021,
+        "seedId": "mille-lacs-messenger-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 3,
+        "year": 2022,
+        "seedId": "mille-lacs-messenger-news-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 4,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 4,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 4,
+        "year": 2024,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 5,
+        "year": 2023,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 7,
+        "year": 2022,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 7,
+        "year": 2022,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 7,
+        "year": 2023,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 7,
+        "year": 2023,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 7,
+        "year": 2024,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 7,
+        "year": 2025,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 8,
+        "year": 2025,
+        "seedId": "bemidji-pioneer-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 8,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 10,
+        "year": 2021,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 10,
+        "year": 2023,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 10,
+        "year": 2023,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 10,
+        "year": 2024,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 11,
+        "year": 2021,
+        "seedId": "mn-spokesman-recorder-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 11,
+        "year": 2022,
+        "seedId": "mn-spokesman-recorder-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 11,
+        "year": 2023,
+        "seedId": "mn-spokesman-recorder-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 11,
+        "year": 2023,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 6,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 11,
+        "year": 2024,
+        "seedId": "mn-spokesman-recorder-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 11,
+        "year": 2024,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 11,
+        "year": 2025,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 12,
+        "year": 2023,
+        "seedId": "tpt-almanac-capitol-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 13,
+        "year": 2024,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 13,
+        "year": 2025,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 13,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 13,
+        "year": 2025,
+        "seedId": "fox9-minnesota-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 13,
+        "year": 2025,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 13,
+        "year": 2025,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2021,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2022,
+        "seedId": "bemidji-pioneer-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2022,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2022,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2022,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2023,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2023,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2023,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2023,
+        "seedId": "post-bulletin-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 15,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 8,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 16,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 16,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 17,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 17,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 18,
+        "year": 2023,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 18,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 18,
+        "year": 2024,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 20,
+        "year": 2023,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 20,
+        "year": 2025,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 21,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 21,
+        "year": 2025,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 22,
+        "year": 2021,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 22,
+        "year": 2023,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 22,
+        "year": 2023,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 22,
+        "year": 2025,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 24,
+        "year": 2022,
+        "seedId": "kstp-news-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 24,
+        "year": 2024,
+        "seedId": "kstp-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 24,
+        "year": 2025,
+        "seedId": "kstp-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 25,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 25,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 25,
+        "year": 2024,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 25,
+        "year": 2025,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 25,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 25,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 25,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 25,
+        "year": 2025,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 26,
+        "year": 2023,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 26,
+        "year": 2025,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 27,
+        "year": 2022,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 27,
+        "year": 2023,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 27,
+        "year": 2023,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 27,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 27,
+        "year": 2024,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 27,
+        "year": 2024,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 27,
+        "year": 2025,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 27,
+        "year": 2025,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 28,
+        "year": 2021,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 28,
+        "year": 2022,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 28,
+        "year": 2023,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 28,
+        "year": 2024,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 28,
+        "year": 2025,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 29,
+        "year": 2021,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 11,
+        "distinctSources": 11
+      },
+      {
+        "personOrdinal": 29,
+        "year": 2023,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 29,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 29,
+        "year": 2024,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 29,
+        "year": 2025,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 31,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 31,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 31,
+        "year": 2023,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 31,
+        "year": 2023,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 31,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 31,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2022,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2023,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2023,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2023,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2024,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2024,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2024,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2024,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2024,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2024,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2025,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2025,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2025,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 32,
+        "year": 2025,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 34,
+        "year": 2022,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 34,
+        "year": 2023,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 34,
+        "year": 2024,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 36,
+        "year": 2022,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 36,
+        "year": 2024,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 36,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 36,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2022,
+        "seedId": "kstp-news-archive",
+        "contextRows": 7,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2022,
+        "seedId": "mankato-free-press-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2023,
+        "seedId": "kstp-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2024,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2024,
+        "seedId": "kstp-news-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2025,
+        "seedId": "kstp-news-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 39,
+        "year": 2025,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 40,
+        "year": 2023,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 41,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 41,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 41,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 41,
+        "year": 2024,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 41,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 42,
+        "year": 2023,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 42,
+        "year": 2025,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 43,
+        "year": 2021,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 43,
+        "year": 2022,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 43,
+        "year": 2023,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 43,
+        "year": 2023,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 43,
+        "year": 2024,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 43,
+        "year": 2025,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 44,
+        "year": 2022,
+        "seedId": "mankato-free-press-local-news-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 44,
+        "year": 2022,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 44,
+        "year": 2023,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 44,
+        "year": 2023,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 44,
+        "year": 2023,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 44,
+        "year": 2024,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 44,
+        "year": 2025,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 44,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 45,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 46,
+        "year": 2025,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 48,
+        "year": 2025,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 49,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 49,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 49,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 49,
+        "year": 2023,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 49,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 49,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 50,
+        "year": 2023,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 50,
+        "year": 2023,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 50,
+        "year": 2024,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 50,
+        "year": 2025,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 50,
+        "year": 2025,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 50,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 16,
+        "distinctSources": 14
+      },
+      {
+        "personOrdinal": 51,
+        "year": 2024,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 52,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 52,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 52,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 52,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 52,
+        "year": 2025,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 53,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 53,
+        "year": 2025,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 53,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 54,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 54,
+        "year": 2023,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 54,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 55,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 55,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 55,
+        "year": 2023,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 55,
+        "year": 2023,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 56,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 57,
+        "year": 2025,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 58,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 58,
+        "year": 2024,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 58,
+        "year": 2024,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 59,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 59,
+        "year": 2023,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 59,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 59,
+        "year": 2024,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 59,
+        "year": 2025,
+        "seedId": "roseau-times-region-story-archive",
+        "contextRows": 8,
+        "distinctSources": 8
+      },
+      {
+        "personOrdinal": 60,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 60,
+        "year": 2025,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 60,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 61,
+        "year": 2021,
+        "seedId": "knsi-central-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 61,
+        "year": 2023,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 61,
+        "year": 2024,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 61,
+        "year": 2024,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 61,
+        "year": 2024,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 61,
+        "year": 2025,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 61,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 62,
+        "year": 2021,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 62,
+        "year": 2021,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 62,
+        "year": 2022,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 62,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 62,
+        "year": 2022,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 62,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 62,
+        "year": 2023,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 62,
+        "year": 2025,
+        "seedId": "bemidji-pioneer-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 62,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 63,
+        "year": 2021,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 63,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 64,
+        "year": 2022,
+        "seedId": "kstp-news-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 64,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 64,
+        "year": 2024,
+        "seedId": "kstp-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 64,
+        "year": 2024,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 64,
+        "year": 2025,
+        "seedId": "kstp-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 64,
+        "year": 2025,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2021,
+        "seedId": "knsi-central-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2022,
+        "seedId": "bemidji-pioneer-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2022,
+        "seedId": "knsi-central-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2022,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2023,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2024,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 69,
+        "year": 2025,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 71,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 71,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 71,
+        "year": 2023,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 6,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 71,
+        "year": 2024,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 71,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 71,
+        "year": 2025,
+        "seedId": "mankato-free-press-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 71,
+        "year": 2025,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 72,
+        "year": 2023,
+        "seedId": "tpt-almanac-capitol-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 72,
+        "year": 2024,
+        "seedId": "fox9-minnesota-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 72,
+        "year": 2025,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 72,
+        "year": 2025,
+        "seedId": "cbs-minnesota-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 72,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 4,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 72,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 72,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 5,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 72,
+        "year": 2025,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 72,
+        "year": 2025,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 73,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 73,
+        "year": 2024,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 73,
+        "year": 2025,
+        "seedId": "fox9-minnesota-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 73,
+        "year": 2025,
+        "seedId": "minnesota-daily-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 73,
+        "year": 2025,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 73,
+        "year": 2025,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 74,
+        "year": 2023,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 74,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 74,
+        "year": 2024,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 74,
+        "year": 2025,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2021,
+        "seedId": "axios-twin-cities-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2021,
+        "seedId": "knsi-central-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2021,
+        "seedId": "marshall-independent-local-news-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2021,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2021,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2021,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2021,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2021,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2022,
+        "seedId": "axios-twin-cities-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 4,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 7,
+        "distinctSources": 7
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2022,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2022,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 4,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2022,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2023,
+        "seedId": "axios-twin-cities-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2023,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2023,
+        "seedId": "finance-commerce-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2023,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 4,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2023,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2023,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 5,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2023,
+        "seedId": "northern-news-now-dated-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2024,
+        "seedId": "axios-twin-cities-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2024,
+        "seedId": "finance-commerce-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2024,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2024,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2024,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2024,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2025,
+        "seedId": "bemidji-pioneer-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 7,
+        "distinctSources": 6
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2025,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 8,
+        "distinctSources": 7
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2025,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 75,
+        "year": 2025,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 78,
+        "year": 2023,
+        "seedId": "tpt-almanac-capitol-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2022,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2023,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2023,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2024,
+        "seedId": "star-tribune-minnesota-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 80,
+        "year": 2025,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 83,
+        "year": 2021,
+        "seedId": "knsi-central-minnesota-archive",
+        "contextRows": 4,
+        "distinctSources": 4
+      },
+      {
+        "personOrdinal": 83,
+        "year": 2021,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 83,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 83,
+        "year": 2022,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 83,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 83,
+        "year": 2025,
+        "seedId": "bemidji-pioneer-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 83,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 83,
+        "year": 2025,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 86,
+        "year": 2021,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 86,
+        "year": 2022,
+        "seedId": "cbs-minnesota-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 86,
+        "year": 2022,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 86,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 86,
+        "year": 2023,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 86,
+        "year": 2024,
+        "seedId": "cbs-minnesota-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 86,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 86,
+        "year": 2025,
+        "seedId": "republican-eagle-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 87,
+        "year": 2022,
+        "seedId": "brainerd-dispatch-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 87,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 87,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 87,
+        "year": 2024,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 87,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 87,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 87,
+        "year": 2025,
+        "seedId": "kaxe-local-news-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2021,
+        "seedId": "mesabi-tribune-news-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2021,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2021,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2021,
+        "seedId": "winona-daily-news-local-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2023,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2024,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2025,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2025,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2025,
+        "seedId": "minnesota-reformer-article-archive",
+        "contextRows": 4,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2025,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 88,
+        "year": 2025,
+        "seedId": "west-central-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 89,
+        "year": 2025,
+        "seedId": "mshale-politics-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 91,
+        "year": 2021,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 91,
+        "year": 2022,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 91,
+        "year": 2022,
+        "seedId": "grand-forks-herald-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 91,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 91,
+        "year": 2022,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 91,
+        "year": 2023,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 3,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 91,
+        "year": 2023,
+        "seedId": "duluth-news-tribune-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 91,
+        "year": 2023,
+        "seedId": "minnpost-state-government-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 91,
+        "year": 2025,
+        "seedId": "agweek-policy-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 93,
+        "year": 2021,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 2,
+        "distinctSources": 2
+      },
+      {
+        "personOrdinal": 93,
+        "year": 2021,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 93,
+        "year": 2022,
+        "seedId": "inforum-minnesota-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 93,
+        "year": 2022,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 93,
+        "year": 2022,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 93,
+        "year": 2023,
+        "seedId": "minnesota-lawyer-article-archive",
+        "contextRows": 3,
+        "distinctSources": 3
+      },
+      {
+        "personOrdinal": 93,
+        "year": 2023,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 93,
+        "year": 2023,
+        "seedId": "pioneer-press-dated-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 93,
+        "year": 2024,
+        "seedId": "mpr-news-story-archive",
+        "contextRows": 1,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 95,
+        "year": 2023,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 10,
+        "distinctSources": 5
+      },
+      {
+        "personOrdinal": 95,
+        "year": 2024,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      },
+      {
+        "personOrdinal": 95,
+        "year": 2025,
+        "seedId": "sahan-journal-democracy-politics-archive",
+        "contextRows": 2,
+        "distinctSources": 1
+      }
+    ],
+    "zeroCellsMean": "Unobserved in this bounded stored context, never no published statement",
+    "namedAttributableStatementsCertifiedByThisContextAudit": 0,
+    "publicationsDenominator": "UNKNOWN",
+    "millerExactFragments": 3,
+    "millerEarliestObservation": "2022-10-05T01:59:37Z"
+  },
+  "provenRepairDiscrepancies": [],
+  "repairBatchNeeded": false,
+  "closeoutStatus": "ACTIONABLE_REPAIR_WORK_COMPLETE_ARCHIVAL_DEPENDENCIES_BLOCKED",
+  "stoppingRule": "No new collecting, failed-endpoint retries, archive search, parser expansion or experiments. Reopen only as separately scoped work with new exact source evidence or a demonstrated defect."
+}
