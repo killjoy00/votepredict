@@ -1,0 +1,375 @@
+{
+  "schemaVersion": "senate864-reviewed-rolls-independent-readback-v1",
+  "productionWrites": 0,
+  "beforeReadAt": "2026-10-25T14:01:37.843Z",
+  "readAt": "2026-10-25T14:19:49.580Z",
+  "projectId": "long-sunset-19921337",
+  "branchId": "br-billowing-wave-aecfbwky",
+  "independentlyVerifiedPrimaryAndDefault": true,
+  "database": "votepredict",
+  "verifiedRepeatableReadReadOnlyAndExplicitRollback": true,
+  "before": {
+    "events": 206,
+    "choices": 1804
+  },
+  "after": {
+    "events": 221,
+    "choices": 1950
+  },
+  "delta": {
+    "events": 15,
+    "choices": 146,
+    "classificationCorrections": 0,
+    "sourceDocumentWrites": 0,
+    "aliasWrites": 0
+  },
+  "preserved": {
+    "docs": {
+      "rows": 3,
+      "beforeSha256": "3c43fb69eeece824c63a523f8499dc1a4010244c9f0749021853faa8d73d90e5",
+      "afterSameRowsSha256": "3c43fb69eeece824c63a523f8499dc1a4010244c9f0749021853faa8d73d90e5",
+      "exact": true
+    },
+    "events": {
+      "rows": 206,
+      "beforeSha256": "5f003f657a10c55c9e4f65297701c9925e503fa18cf4a73317c736225e83f791",
+      "afterSameRowsSha256": "5f003f657a10c55c9e4f65297701c9925e503fa18cf4a73317c736225e83f791",
+      "exact": true
+    },
+    "choices": {
+      "rows": 1804,
+      "beforeSha256": "8355902e2b2e37910e1da218df74659279f5f1105fbce61dba1ed3b6f882a072",
+      "afterSameRowsSha256": "8355902e2b2e37910e1da218df74659279f5f1105fbce61dba1ed3b6f882a072",
+      "exact": true
+    },
+    "roster": {
+      "rows": 205,
+      "beforeSha256": "adccade4f489c58a06009a5cd508063a223461fa70ede8b1fb72edd0e5b766af",
+      "afterSameRowsSha256": "adccade4f489c58a06009a5cd508063a223461fa70ede8b1fb72edd0e5b766af",
+      "exact": true
+    },
+    "bills": {
+      "rows": 3,
+      "beforeSha256": "abd7fa11a2f23a44374921db77dc2c7a91dbf7a5bbc8b98d716890602ecb0232",
+      "afterSameRowsSha256": "abd7fa11a2f23a44374921db77dc2c7a91dbf7a5bbc8b98d716890602ecb0232",
+      "exact": true
+    },
+    "schema": {
+      "rows": 36,
+      "beforeSha256": "17f0a7a8a3974648b33d99674c39ac7224fa80a1189b265db8ca028ac1be59fc",
+      "afterSameRowsSha256": "17f0a7a8a3974648b33d99674c39ac7224fa80a1189b265db8ca028ac1be59fc",
+      "exact": true
+    }
+  },
+  "yearCounts": [
+    {
+      "year": 2022,
+      "events": 40,
+      "choices": 270
+    },
+    {
+      "year": 2023,
+      "events": 65,
+      "choices": 580
+    },
+    {
+      "year": 2024,
+      "events": 63,
+      "choices": 561
+    },
+    {
+      "year": 2025,
+      "events": 53,
+      "choices": 539
+    }
+  ],
+  "committeeYearChanges": [
+    {
+      "year": 2023,
+      "committee": "Taxes",
+      "before": {
+        "events": 0,
+        "choices": 0
+      },
+      "after": {
+        "events": 10,
+        "choices": 97
+      }
+    },
+    {
+      "year": 2024,
+      "committee": "Labor",
+      "before": {
+        "events": 0,
+        "choices": 0
+      },
+      "after": {
+        "events": 5,
+        "choices": 49
+      }
+    }
+  ],
+  "allNewSourceQuestionIdentityChoicesHistoricalServiceTimingAndModelGuardsExact": true,
+  "recoveredEvents": [
+    {
+      "questionKey": "b8f463e9f40329923866ca217f8f3defbe70786d832829bf2530899f33996cdf",
+      "eventId": "88829f4a-8ef0-4926-8a25-6125ba857337",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": "A36",
+      "yea": 5,
+      "nay": 4,
+      "passed": true,
+      "choices": 9,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "447f2bbeadf2b034b04e77d267dc6fa0bf44bb68c3d0bbbe95636bef58d6ec6c",
+      "explicitChoicesFingerprintSha256": "9f73817745fa138b5b1dd419d75d29dd437e53831bb059bc6c88be7db4828029"
+    },
+    {
+      "questionKey": "820f486c699a6a05df1b0ab4b93217f737fafe34ea9c5239890f2abf3ddb8b09",
+      "eventId": "525ce8b0-8f0f-4297-b2a8-d42d8c494d6f",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": "A35",
+      "yea": 4,
+      "nay": 6,
+      "passed": false,
+      "choices": 10,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "7f16bc0e8803f02f000f076fea31c96c78ccaa1c5b92d2964de5252a6eb49020",
+      "explicitChoicesFingerprintSha256": "538f32d68afc27cb6b8d10d14d4e76af2d0a816083a3a1bf9824165dde1116fa"
+    },
+    {
+      "questionKey": "f4f03fe58665308197999665b8255262b0aa044927ce15120f960a49c1f54e45",
+      "eventId": "1e2b7b55-0f47-4305-95dc-93893f80b662",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": "A37",
+      "yea": 5,
+      "nay": 4,
+      "passed": true,
+      "choices": 9,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "8df363e41d64a6df33ec0e1dd2735cce13109847c7c2dc57bee68aee9b544041",
+      "explicitChoicesFingerprintSha256": "9f73817745fa138b5b1dd419d75d29dd437e53831bb059bc6c88be7db4828029"
+    },
+    {
+      "questionKey": "b009b219f30020b44617394f0c39cc1e6ac04f14f064fb4f0e8de56afa67e84e",
+      "eventId": "3d74631c-a000-4a80-a52e-3a8151b6be3b",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": "A28",
+      "yea": 4,
+      "nay": 6,
+      "passed": false,
+      "choices": 10,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "d06b4e9015767fb2154d31ccbf9c68722e96ce479fed72c1c8e5da235be11d9d",
+      "explicitChoicesFingerprintSha256": "59881f132a3d8d4c801242c53264b4a8133707c39049237331a854496216f1ed"
+    },
+    {
+      "questionKey": "58e111e5b73c355a581f6261d931ebe2d89f82d2865ae1dc4b38f6b1c99174a8",
+      "eventId": "6612ba05-b85a-40c6-b8e4-ff874db4ede8",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": "A12",
+      "yea": 4,
+      "nay": 5,
+      "passed": false,
+      "choices": 9,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "6624a60c6f3d90785eb41de895a4969537b373d86c02fcdb6811420560c359c8",
+      "explicitChoicesFingerprintSha256": "d814fa4bc90dbba93e6107df3ce1c5b6bbe243d333c98a78329061de4282f2bc"
+    },
+    {
+      "questionKey": "2181b1fc5f23d3c2973b0754aa04de79ebcfc2604567b418f0690fc499c5ebf1",
+      "eventId": "17955ea1-c639-4aaa-a960-3dc6e5d8709f",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": "A24",
+      "yea": 2,
+      "nay": 8,
+      "passed": false,
+      "choices": 10,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "4f44d4adeb39ac69cf7116507cc19bf01aad75d42fac5171243f593bc9bdef03",
+      "explicitChoicesFingerprintSha256": "d5404716a2cbf31e9ebf9e9ba4757bc8409494ca2ca4944b49563ade53263c5c"
+    },
+    {
+      "questionKey": "1ab9d0fdcd499b354fef4cb5e56b636c51d2220590ddd76d21d40e1399452618",
+      "eventId": "ecd0ebfe-2ed4-466c-8741-e8fb046a6621",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": "A23",
+      "yea": 10,
+      "nay": 0,
+      "passed": true,
+      "choices": 10,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "737745640bae6fc3a2b75b76c174bdebc09f37934a41e004af68e12a417e2df0",
+      "explicitChoicesFingerprintSha256": "aa083d464cdfa14acdd4ea4f9d3790004775689ed852d9512704fa85a7edde76"
+    },
+    {
+      "questionKey": "f7db7f869a5eb3438899c1e4c49d7f5dc6b6bc9434c64518983f4401ade8005c",
+      "eventId": "c3e106e9-c860-4845-a355-1bcc42d20cde",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": "A4",
+      "yea": 5,
+      "nay": 5,
+      "passed": false,
+      "choices": 10,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "f354af6025b32ff33088172b4d945628e190003c4cf4b4520cbdcc39d47b2f16",
+      "explicitChoicesFingerprintSha256": "b39b05a2fbe3d83eefc66bb9a031e5a92b01259c4f53d47a502797dd45401cf8"
+    },
+    {
+      "questionKey": "4d767b78fd8bf99234900770d659189ce20c6c26d052abdd06cb7026d6de6c63",
+      "eventId": "5db38439-029b-42e0-bc0b-6d4e8deda9f7",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": "A26",
+      "yea": 4,
+      "nay": 6,
+      "passed": false,
+      "choices": 10,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "3dd001b8638f2c4c8836f31936ac09d2448eb347f2b7e31db42cb9f09d95cf5e",
+      "explicitChoicesFingerprintSha256": "59881f132a3d8d4c801242c53264b4a8133707c39049237331a854496216f1ed"
+    },
+    {
+      "questionKey": "2418d9f259cec7a58305ff4708474f8dc7f174dda1dbb7408e2076df632d4fc8",
+      "eventId": "c9af533f-6b1f-4b8f-9613-379f30603a3d",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2023-04-27",
+      "committee": "Taxes",
+      "bill": "SF1811",
+      "amendmentRef": null,
+      "yea": 8,
+      "nay": 2,
+      "passed": true,
+      "choices": 10,
+      "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/taxes/20230427/Taxes_20230427_Signed-Minutes.pdf",
+      "sourceSha256": "e3a4137544f6a73289707f71e83d16e881bde925d2953469970484db3cfad4ec",
+      "questionPassageSha256": "c28c7e85899e997a3733c2ac2fea67f4b5af8a6cf8d3c3306016ff0067a72a82",
+      "explicitChoicesFingerprintSha256": "d9841e83f6c393ea2cf1060f7cbafc5edc3bf9a855c6c4b52db163df4f0b4db4"
+    },
+    {
+      "questionKey": "deaf23e0a6b82f041937dc506a80d70c9a8dc08aae74c72b250000b5ff41e726",
+      "eventId": "e0a868e1-ead9-4bb4-b59e-b1cbe8a12d13",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2024-04-09",
+      "committee": "Labor",
+      "bill": "SF5266",
+      "amendmentRef": "A10",
+      "yea": 6,
+      "nay": 3,
+      "passed": true,
+      "choices": 9,
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18645&ls=93&type=minutes",
+      "sourceSha256": "f6fa9a3eae50f12e501c8f2420a87bd12bdd6cd87869b54bf0ea17e706f1effd",
+      "questionPassageSha256": "4b418f7411eed1a0ff177b0ef6015c45e68b44d84ebce8787665ff20bc663616",
+      "explicitChoicesFingerprintSha256": "4d6ef889e4003320befa934636deb5629f9927b96ad1aae8cafe53e44d8d3511"
+    },
+    {
+      "questionKey": "03f839e1e1219fd5570aa4e68ceb1a4d1da967fada881593f61cf2751f5aa5f7",
+      "eventId": "49a7e0bb-8884-4d07-84b3-b85ae508bcb7",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2024-04-09",
+      "committee": "Labor",
+      "bill": "SF5266",
+      "amendmentRef": "A9",
+      "yea": 6,
+      "nay": 4,
+      "passed": true,
+      "choices": 10,
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18645&ls=93&type=minutes",
+      "sourceSha256": "f6fa9a3eae50f12e501c8f2420a87bd12bdd6cd87869b54bf0ea17e706f1effd",
+      "questionPassageSha256": "880611671358c01624d2ec78c74867d47f97100a4c1feaf17ec61829c72a61df",
+      "explicitChoicesFingerprintSha256": "5e23852066d82bd66e697e518192cdb9d9b09465217c93f3a0cc464084f87c32"
+    },
+    {
+      "questionKey": "010fc81f973b89f5191dd4f32ad8cd254980d107916dde07ff24bb97fe9c7f72",
+      "eventId": "5df9b768-8fdd-4ca8-90ea-05ece4ed5c9e",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2024-04-09",
+      "committee": "Labor",
+      "bill": "SF5266",
+      "amendmentRef": "A5",
+      "yea": 4,
+      "nay": 6,
+      "passed": false,
+      "choices": 10,
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18645&ls=93&type=minutes",
+      "sourceSha256": "f6fa9a3eae50f12e501c8f2420a87bd12bdd6cd87869b54bf0ea17e706f1effd",
+      "questionPassageSha256": "7a22994d38ccfad9d8cc14fa8a64c10b4fd5fa5689d568fac0c6d47cac428b5f",
+      "explicitChoicesFingerprintSha256": "f62afbaa6ddbece94d81d6727362faccbb2da798d295319f32dfac8c89b9f1e0"
+    },
+    {
+      "questionKey": "4685a44f4dc412aafe04f90c8838921360a253fa16d6a324cb2d56c8388e1b73",
+      "eventId": "0ead4615-4977-405e-bdbc-df646f6e8ee2",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2024-04-09",
+      "committee": "Labor",
+      "bill": "SF5266",
+      "amendmentRef": "A12",
+      "yea": 6,
+      "nay": 4,
+      "passed": true,
+      "choices": 10,
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18645&ls=93&type=minutes",
+      "sourceSha256": "f6fa9a3eae50f12e501c8f2420a87bd12bdd6cd87869b54bf0ea17e706f1effd",
+      "questionPassageSha256": "959d7207e079a242c71a5718e78ec7af9f0f17608e0861b400405f5146e35fec",
+      "explicitChoicesFingerprintSha256": "acc5f3f6389b46ba46257c3367a941ad1d7861128ee9b14081a32690cd043a00"
+    },
+    {
+      "questionKey": "b2fc2e8aef1442776fbd423a06b31e319c906f756b809265b0b05633b63b4bbd",
+      "eventId": "b447a84c-53be-41a7-a999-f5b9fc684bad",
+      "createdAt": "2026-10-25 14:19:09.666011+00",
+      "date": "2024-04-09",
+      "committee": "Labor",
+      "bill": "SF5266",
+      "amendmentRef": "A17",
+      "yea": 4,
+      "nay": 6,
+      "passed": false,
+      "choices": 10,
+      "sourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=18645&ls=93&type=minutes",
+      "sourceSha256": "f6fa9a3eae50f12e501c8f2420a87bd12bdd6cd87869b54bf0ea17e706f1effd",
+      "questionPassageSha256": "92a14d43fabe362cd3989c0c37c737ed0f86634c0867391287bf2466f9c7ba09",
+      "explicitChoicesFingerprintSha256": "f62afbaa6ddbece94d81d6727362faccbb2da798d295319f32dfac8c89b9f1e0"
+    }
+  ],
+  "limitations": [
+    "Independent connector readback, not a new census or independent-human source certification",
+    "Nonbinary Absent/abstention conflict preserved; no inferred binary or nonbinary choices",
+    "May 12 Taxes remains held; all prior unrelated source holds remain open"
+  ]
+}

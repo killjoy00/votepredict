@@ -1,0 +1,198 @@
+{
+  "schemaVersion": "senate864-reviewed-rolls-production-v1",
+  "pullRequest": 1579,
+  "mainCommit": "af0d768464ed53a59992d42383d837089b0f50df",
+  "reviewedHead": "3ddf7e5694ae432e68f724e7288fb5319cd53983",
+  "runId": 40201293559,
+  "independentJobId": 121192834030,
+  "productionJobId": 121193693166,
+  "mainCiRunId": 40201293524,
+  "reviewedHeadGateRunId": 40200953463,
+  "reviewedHeadGateJobId": 121191827735,
+  "standardTests": 2468,
+  "focusedTests": 79,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "productionDependencyAuditVulnerabilities": 0,
+  "artifact": {
+    "id": 12601904873,
+    "name": "senate864-population-reviewed-rolls-production-verified",
+    "zipSha256": "6c3bb04fc2fed8da6c090af0d12eb87cab6ecf225641f4e85c8590ece4375d79",
+    "downloadedAndIndependentlyVerified": true,
+    "zipMemberMatchesLoggedReceipt": true
+  },
+  "receipt": {
+    "version": "senate864-population-named-rolls-v1",
+    "cohort": "reviewed",
+    "reviewedCommit": "af0d768464ed53a59992d42383d837089b0f50df",
+    "verifiedAt": "2026-10-25T14:19:13.887Z",
+    "sourceOriginals": 2,
+    "independentlyReverifiedPriorQuestions": 0,
+    "independentlyReverifiedPriorChoices": 0,
+    "sourceProvenQuestions": 15,
+    "sourceProvenChoices": 146,
+    "previousExact": 0,
+    "insertedEvents": 15,
+    "insertedChoices": 146,
+    "correctedClassifications": 0,
+    "preservedExistingTargetEventIds": 0,
+    "verifiedExact": 15,
+    "verifiedChoices": 146,
+    "zeroWriteReplay": true,
+    "yearCountsBefore": [
+      {
+        "year": 2022,
+        "stored_events": 40,
+        "declared_named_events": 30,
+        "explicit_stored_choices": 270,
+        "hearing_date_timing_events": 2
+      },
+      {
+        "year": 2023,
+        "stored_events": 55,
+        "declared_named_events": 44,
+        "explicit_stored_choices": 483,
+        "hearing_date_timing_events": 22
+      },
+      {
+        "year": 2024,
+        "stored_events": 58,
+        "declared_named_events": 48,
+        "explicit_stored_choices": 512,
+        "hearing_date_timing_events": 26
+      },
+      {
+        "year": 2025,
+        "stored_events": 53,
+        "declared_named_events": 49,
+        "explicit_stored_choices": 539,
+        "hearing_date_timing_events": 25
+      }
+    ],
+    "yearCountsAfter": [
+      {
+        "year": 2022,
+        "stored_events": 40,
+        "declared_named_events": 30,
+        "explicit_stored_choices": 270,
+        "hearing_date_timing_events": 2
+      },
+      {
+        "year": 2023,
+        "stored_events": 65,
+        "declared_named_events": 54,
+        "explicit_stored_choices": 580,
+        "hearing_date_timing_events": 32
+      },
+      {
+        "year": 2024,
+        "stored_events": 63,
+        "declared_named_events": 53,
+        "explicit_stored_choices": 561,
+        "hearing_date_timing_events": 31
+      },
+      {
+        "year": 2025,
+        "stored_events": 53,
+        "declared_named_events": 49,
+        "explicit_stored_choices": 539,
+        "hearing_date_timing_events": 25
+      }
+    ],
+    "existingEventIdsAndChoicesPreserved": true,
+    "verifiedRepeatableReadReadOnlyAndRollback": true,
+    "serializableWrites": true,
+    "recoveredEvents": [
+      {
+        "questionKey": "b8f463e9f40329923866ca217f8f3defbe70786d832829bf2530899f33996cdf",
+        "eventId": "88829f4a-8ef0-4926-8a25-6125ba857337",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 9
+      },
+      {
+        "questionKey": "820f486c699a6a05df1b0ab4b93217f737fafe34ea9c5239890f2abf3ddb8b09",
+        "eventId": "525ce8b0-8f0f-4297-b2a8-d42d8c494d6f",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "f4f03fe58665308197999665b8255262b0aa044927ce15120f960a49c1f54e45",
+        "eventId": "1e2b7b55-0f47-4305-95dc-93893f80b662",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 9
+      },
+      {
+        "questionKey": "b009b219f30020b44617394f0c39cc1e6ac04f14f064fb4f0e8de56afa67e84e",
+        "eventId": "3d74631c-a000-4a80-a52e-3a8151b6be3b",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "58e111e5b73c355a581f6261d931ebe2d89f82d2865ae1dc4b38f6b1c99174a8",
+        "eventId": "6612ba05-b85a-40c6-b8e4-ff874db4ede8",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 9
+      },
+      {
+        "questionKey": "2181b1fc5f23d3c2973b0754aa04de79ebcfc2604567b418f0690fc499c5ebf1",
+        "eventId": "17955ea1-c639-4aaa-a960-3dc6e5d8709f",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "1ab9d0fdcd499b354fef4cb5e56b636c51d2220590ddd76d21d40e1399452618",
+        "eventId": "ecd0ebfe-2ed4-466c-8741-e8fb046a6621",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "f7db7f869a5eb3438899c1e4c49d7f5dc6b6bc9434c64518983f4401ade8005c",
+        "eventId": "c3e106e9-c860-4845-a355-1bcc42d20cde",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "4d767b78fd8bf99234900770d659189ce20c6c26d052abdd06cb7026d6de6c63",
+        "eventId": "5db38439-029b-42e0-bc0b-6d4e8deda9f7",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "2418d9f259cec7a58305ff4708474f8dc7f174dda1dbb7408e2076df632d4fc8",
+        "eventId": "c9af533f-6b1f-4b8f-9613-379f30603a3d",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "deaf23e0a6b82f041937dc506a80d70c9a8dc08aae74c72b250000b5ff41e726",
+        "eventId": "e0a868e1-ead9-4bb4-b59e-b1cbe8a12d13",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 9
+      },
+      {
+        "questionKey": "03f839e1e1219fd5570aa4e68ceb1a4d1da967fada881593f61cf2751f5aa5f7",
+        "eventId": "49a7e0bb-8884-4d07-84b3-b85ae508bcb7",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "010fc81f973b89f5191dd4f32ad8cd254980d107916dde07ff24bb97fe9c7f72",
+        "eventId": "5df9b768-8fdd-4ca8-90ea-05ece4ed5c9e",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "4685a44f4dc412aafe04f90c8838921360a253fa16d6a324cb2d56c8388e1b73",
+        "eventId": "0ead4615-4977-405e-bdbc-df646f6e8ee2",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      },
+      {
+        "questionKey": "b2fc2e8aef1442776fbd423a06b31e319c906f756b809265b0b05633b63b4bbd",
+        "eventId": "b447a84c-53be-41a7-a999-f5b9fc684bad",
+        "createdAt": "2026-10-25 14:19:09.666011+00",
+        "choices": 10
+      }
+    ]
+  }
+}

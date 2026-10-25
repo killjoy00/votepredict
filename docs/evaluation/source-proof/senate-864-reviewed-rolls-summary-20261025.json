@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "senate864-reviewed-rolls-summary-v1",
+  "readAt": "2026-10-25T14:19:49.580Z",
+  "issue": 864,
+  "issueState": "OPEN",
+  "production": {
+    "events": 221,
+    "choices": 1950
+  },
+  "yearCounts": [
+    {
+      "year": 2022,
+      "events": 40,
+      "choices": 270
+    },
+    {
+      "year": 2023,
+      "events": 65,
+      "choices": 580
+    },
+    {
+      "year": 2024,
+      "events": 63,
+      "choices": 561
+    },
+    {
+      "year": 2025,
+      "events": 53,
+      "choices": 539
+    }
+  ],
+  "thisPass": {
+    "events": 15,
+    "choices": 146,
+    "classificationCorrections": 0,
+    "sourceDocumentWrites": 0,
+    "aliasWrites": 0
+  },
+  "reviewedSubset": {
+    "previousQuestions": 37,
+    "previousChoices": 479,
+    "addedQuestions": 15,
+    "addedChoices": 146,
+    "currentQuestions": 52,
+    "currentChoices": 625,
+    "priorExactSubsetPreserved": true,
+    "notUniversalDenominator": true
+  },
+  "baselineCensus": {
+    "originals": 2860,
+    "readable": 2859,
+    "parserCandidates": 233,
+    "textNegative": 2626,
+    "unparseable": 1,
+    "heldRowOccurrences": 40,
+    "datedFrozenMeasurement": true,
+    "recomputedThisPass": false
+  },
+  "renderedReview": {
+    "originals": 247,
+    "pages": 416,
+    "visualNamedOriginals": 17,
+    "fullyLegibleScopedNegativeOriginals": 220,
+    "qualityHeldOriginals": 10,
+    "blankPages": 8,
+    "wordPerfectOcrCertified": false,
+    "independentHumanReview": false,
+    "newQualityFlagsPromoted": 0
+  },
+  "remainingFindings": [
+    "May 12 2023 Taxes: wrong/ambiguous selected question field and no exact stored PDF source; no write",
+    "SF2818: complete distinct question and printed tally still unavailable",
+    "Earlier question/identity/tally/outcome/nonbill holds require exact source evidence; the dated 40-occurrence count is not recomputed",
+    "Ten clipped/occluded originals, date/header/attendance conflicts and cross-original aliases",
+    "Unparseable Finance PDF, six missing-Minutes dates, 2021 print history and 2022 print/electronic equivalence"
+  ],
+  "committeeYearChanges": [
+    {
+      "year": 2023,
+      "committee": "Taxes",
+      "before": {
+        "events": 0,
+        "choices": 0
+      },
+      "after": {
+        "events": 10,
+        "choices": 97
+      }
+    },
+    {
+      "year": 2024,
+      "committee": "Labor",
+      "before": {
+        "events": 0,
+        "choices": 0
+      },
+      "after": {
+        "events": 5,
+        "choices": 49
+      }
+    }
+  ],
+  "scope": {
+    "sourceDocumentWrites": 0,
+    "aliasWrites": 0,
+    "floorChanges": 0,
+    "modelOrForecastChanges": 0,
+    "frozenEvaluationChanges": 0,
+    "vercelOrSchedulerChanges": 0,
+    "officeContact": false,
+    "manualAudioReview": false
+  },
+  "reports": {
+    "production": "senate-864-reviewed-rolls-production-20261025.json",
+    "independent": "senate-864-reviewed-rolls-independent-readback-20261025.json",
+    "matrix": "senate-864-population-committee-20261025-reviewed-rolls.csv",
+    "sourceReview": "../senate-864-reviewed-rolls-20261025.md"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "senate864-reviewed-rolls-publication-v1",
+  "mainCommit": "af0d768464ed53a59992d42383d837089b0f50df",
+  "issue": 864,
+  "issueState": "OPEN",
+  "productionRunId": 40201293559,
+  "independentReadAt": "2026-10-25T14:19:49.580Z",
+  "checks": {
+    "matrixRows": 111,
+    "previousEventsUnchanged": 206,
+    "previousChoicesUnchanged": 1804,
+    "newQuestionsVerified": 15,
+    "newChoicesVerified": 146,
+    "reviewedSubsetQuestions": 52,
+    "reviewedSubsetChoices": 625,
+    "frozenCensusRecomputed": false
+  },
+  "files": [
+    {
+      "path": "docs/evaluation/source-proof/senate-864-reviewed-rolls-production-20261025.json",
+      "bytes": 6832,
+      "sha256": "cbf38d3064747fe5beef688356218effdfb1861b489505208a7f2c8ed759a6c0"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-reviewed-rolls-independent-readback-20261025.json",
+      "bytes": 15610,
+      "sha256": "c18d8b090d7fba9fbea1a38809292616306c290260a05f5c8dcb7c26d88480b1"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-reviewed-rolls-summary-20261025.json",
+      "bytes": 3056,
+      "sha256": "8d0667eee23897ca60769bb2e97eda74454a14a3effcdc36206062c3e2522899"
+    },
+    {
+      "path": "docs/evaluation/source-proof/senate-864-population-committee-20261025-reviewed-rolls.csv",
+      "bytes": 24017,
+      "sha256": "a0a8055a7ddc2cf08eb24930d521cd4fc6efa9feb19f832a0e63e18109a2a1b2"
+    },
+    {
+      "path": "docs/evaluation/senate-864-completion-ledger.md",
+      "bytes": 183037,
+      "sha256": "0fb1b1c389eba8144facf14f134af46b47df55c433869b47b387283a22667e54"
+    }
+  ]
+}
