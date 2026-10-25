@@ -47,13 +47,13 @@
     },
     {
       "path": "docs/evaluation/senate-864-final-closeout-20261025.md",
-      "bytes": 8976,
-      "sha256": "8c34b791bde47abfdd9b32a0d529657dc21f29e1022bc0be7909ac6241f8c3c1"
+      "bytes": 9237,
+      "sha256": "30d23143a519cdc1540fd810cd67ce0ba88732529d4ab342dd2c6bb019451d59"
     },
     {
       "path": "docs/evaluation/senate-864-completion-ledger.md",
-      "bytes": 186924,
-      "sha256": "cb5c223c3dca54bdd3f089ad6e1946a41e8225ed61e952048ef6b5eb47ea5398"
+      "bytes": 187090,
+      "sha256": "da93bf6b08fc85dcf9ee2f7e806910246ed735b06ef67018950094657d1b1aaf"
     }
   ]
 }

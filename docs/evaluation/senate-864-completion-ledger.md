@@ -42,6 +42,8 @@ bytes are not published.
 The current retained-text row-parser check still has **40 held occurrences** and
 four excluded cross-original question keys. These overlap across sources and
 fragments; they are not certified missing events or a universal denominator.
+Nonbill cases also require separately scoped identity/storage semantics, rather
+than assignment to a nearby bill; those are scope/design holds as well as proof gaps.
 The final blocked list also preserves May 12 Taxes/SF2818 question holds, six
 missing-Minutes dates, ten quality holds, the unparseable committee PDF,
 2021/2022 print boundaries, finance publication/obligation gaps, wider owned-site
