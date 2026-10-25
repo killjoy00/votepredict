@@ -3,6 +3,7 @@
  * question, committee, hearing/session and bill. No tally/slate-derived identity.
  */
 import {extractPrintedCheckboxTables} from './senate-864-printed-checkbox-tables.mjs';
+import {extractExplicitGroupedRolls,extractReviewedCheckboxQuestions} from './senate-864-reviewed-rolls.mjs';
 import {createHash} from 'node:crypto';
 import {parseSenateCommitteeMinuteVotes} from './minnesota-senate-committee-minutes.ts';
 import {parseSenateCommitteeMinutesRaw} from '../sources/minnesota/senate-raw-votes.ts';
@@ -38,7 +39,13 @@ export function resolvePrintedHistoricalChoices(q,text,roster,doc){
  const printed=[...new Set(fullRoster(text))],out=[];
  for(const v of q.choices){
   const short=norm(v.name);
-  const names=printed.filter(n=>norm(n)===short||norm(n).endsWith(' '+short));
+  let names=printed.filter(n=>norm(n)===short||norm(n).endsWith(' '+short)),literalPrintedAlias;
+  if(!names.length&&q.format==='explicit_labeled_roll_after_bound_motion'){
+   const aliases=roster.filter(m=>m.session_slug===doc.session_slug&&m.starts_on&&m.ends_on&&m.starts_on<=doc.date&&m.ends_on>=doc.date&&(m.aliases||[]).some(a=>norm(a)===short));
+   if(aliases.length!==1)throw Error('explicit_historical_alias_ambiguous_or_missing');
+   const keys=fullKeys(aliases[0].name);
+   names=printed.filter(n=>[...fullKeys(n)].some(k=>k&&keys.has(k)));literalPrintedAlias=v.name;
+  }
   if(names.length!==1)throw Error('full_printed_identity_ambiguous');
   const keys=fullKeys(names[0]);
   const active=roster.filter(m=>m.session_slug===doc.session_slug&&m.starts_on&&m.ends_on&&m.starts_on<=doc.date&&m.ends_on>=doc.date&&
@@ -48,7 +55,7 @@ export function resolvePrintedHistoricalChoices(q,text,roster,doc){
    const literal=norm(v.printedCellName),supported=[names[0],...(active[0].aliases||[])].some(n=>fullKeys(n).has(literal)||norm(n)===literal||norm(n).endsWith(' '+literal));
    if(!supported)throw Error('contradictory_printed_cell_full_identity');
   }
-  out.push({...v,fullName:names[0],membershipId:active[0].membership_id});
+  out.push({...v,fullName:names[0],membershipId:active[0].membership_id,...(literalPrintedAlias?{literalPrintedAlias}:{}),...(['explicit_labeled_roll_after_bound_motion','reviewed_handwritten_checkbox_cells'].includes(q.format)?{name:names[0],literalPrintedName:v.name}:{})});
  }
  if(new Set(out.map(v=>v.membershipId)).size!==out.length)throw Error('contradictory_person_sides');
  return out;
@@ -127,6 +134,8 @@ export function extractRowRollQuestions(text,doc){
  }
  rows.push(...extractPrintedVotedReferrals(text,doc));
  rows.push(...extractPrintedCheckboxTables(doc.originalHtml,doc));
+ rows.push(...extractExplicitGroupedRolls(text,doc));
+ rows.push(...extractReviewedCheckboxQuestions(text,doc));
  // Repeated identical wording is an ambiguity, never two distinguishable votes.
  for(const q of rows)if(q.questionKey&&rows.filter(r=>r.questionKey===q.questionKey).length>1){q.holds.push('duplicate_question_wording');q.confidence='held_question';}
  return rows;
@@ -225,3 +234,4 @@ export function extractPrintedVotedReferrals(text,doc){
  }
  return out;
 }
+
