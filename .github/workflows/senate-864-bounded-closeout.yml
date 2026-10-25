@@ -1,0 +1,31 @@
+name: Issue 864 bounded closeout integrity
+on:
+  pull_request:
+    paths:
+      - scripts/audit-senate-864-bounded-closeout.mjs
+      - tests/senate-864-bounded-closeout.test.mjs
+      - docs/evaluation/source-proof/senate-864-final-closeout-20261025.json
+      - .github/workflows/senate-864-bounded-closeout.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit-senate-864-bounded-closeout.mjs
+      - tests/senate-864-bounded-closeout.test.mjs
+      - docs/evaluation/source-proof/senate-864-final-closeout-20261025.json
+      - .github/workflows/senate-864-bounded-closeout.yml
+permissions:
+  contents: read
+jobs:
+  fixed-inputs-and-negative-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/senate-864-bounded-closeout.test.mjs
