@@ -15,8 +15,8 @@ export async function executeQuickRuntimeForecast(
     throw new Error('executeQuickRuntimeForecast requires researchMode=quick');
   }
   const quick = await executeRuntimeForecast(request);
+  // Both initial attempt records committed with the revision and sealed inputs.
   try {
-    await recordCaptureAttempt(pool,quick.revisionId,'member_cap20','started');
     const cap20=await captureMemberHistoryCap20ProspectiveShadow(request, quick);
     await recordCaptureAttempt(pool,quick.revisionId,'member_cap20',cap20?'completed':'not_applicable');
   } catch (error) {
@@ -29,7 +29,6 @@ export async function executeQuickRuntimeForecast(
     });
   }
   try {
-    await recordCaptureAttempt(pool,quick.revisionId,'quick_evidence','started');
     const evidence=await captureQuickEvidenceShadow(request, quick);
     await recordCaptureAttempt(pool,quick.revisionId,'quick_evidence',evidence?'completed':'not_applicable');
   } catch (error) {

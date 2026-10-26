@@ -1,4 +1,5 @@
 import { retainedTargetTextAsOf, retainRuntimeBillText, type RetainedTargetText } from './runtime-bill-text';
+import { recordRequiredCaptureAttempts } from '../operations/forecast-capture-observability';
 import { createHash } from 'node:crypto';
 import { ordinaryMinnesotaPassageRule } from './minnesota-rules';
 import type { PoolClient } from 'pg';
@@ -614,6 +615,7 @@ async function persistRevision(
     const manifestJson=JSON.stringify(inputManifest);
     await client.query(`INSERT INTO forecast_input_manifests(revision_id,schema_version,manifest_json,manifest_sha256)
       VALUES($1,'forecast-input-manifest-v1',$2,$3)`,[revisionId,manifestJson,createHash('sha256').update(manifestJson).digest('hex')]);
+    if (request.researchMode === 'quick') await recordRequiredCaptureAttempts(client, revisionId);
     await insertMemberPredictions(client, revisionId, members, memberShadows);
     await client.query(`UPDATE forecasts SET status = 'complete', updated_at = now() WHERE id = $1`, [request.forecastId]);
     await client.query('COMMIT');

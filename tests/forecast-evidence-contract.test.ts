@@ -9,7 +9,7 @@ import type { VerifiedImpactProof } from '../src/evidence/verified-impact-proof'
 import { supersessionAsOfSql } from '../src/evidence/asof-supersession';
 import { retainedTargetTextAsOf,retainRuntimeBillText } from '../src/forecasting/runtime-bill-text';
 import { classifyForecastEvidence,readForecastEvidence,type AccessibleEvidence } from '../src/evidence/forecast-evidence-access';
-import { captureHealth,recordCaptureAttempt } from '../src/operations/forecast-capture-observability';
+import { captureHealth,recordCaptureAttempt,recordRequiredCaptureAttempts } from '../src/operations/forecast-capture-observability';
 import { assertForecastEvidenceRemediationRun } from '../src/operations/forecast-evidence-remediation-gate';
 import { verifySealedShadowRetry } from '../src/forecasting/sealed-shadow-retry';
 
@@ -121,18 +121,40 @@ export async function exerciseForecastEvidenceContract(db:Pool) {
   await assert.rejects(db.query(`UPDATE evidence_content_blobs SET body=body WHERE sha256=$1`,[first.textSha256]),/append-only/);
   await assert.rejects(db.query(`DELETE FROM forecast_bill_text_observations WHERE bill_id=$1`,[b]),/append-only/);
   const forecast=(await one(`INSERT INTO forecasts(owner_user_id,target_type,target_kind,bill_id,target_chamber_id,session_id) VALUES('fixture','bill','senate_floor_passage',$1,$2,$3) RETURNING id`,[b,c,s])).id;
-  const revision=(await one(`INSERT INTO forecast_revisions(forecast_id,revision_number,research_mode,generated_at) VALUES($1,1,'quick',now()) RETURNING id`,[forecast])).id;
   const manifest=JSON.stringify({fixture:true,asOf:cutoff,targetTextHash:first.textSha256,missingMeans:'unknown'});
-  await db.query(`INSERT INTO forecast_input_manifests(revision_id,schema_version,manifest_json,manifest_sha256) VALUES($1,'forecast-input-manifest-v1',$2,$3)`,[revision,manifest,sha(manifest)]);
+  const transaction=await db.connect();
+  let revision='',rolledBackRevision='';
+  try {
+    await transaction.query('BEGIN');
+    revision=(await transaction.query(`INSERT INTO forecast_revisions(forecast_id,revision_number,research_mode,generated_at) VALUES($1,1,'quick',now()) RETURNING id`,[forecast])).rows[0].id;
+    await transaction.query(`INSERT INTO forecast_input_manifests(revision_id,schema_version,manifest_json,manifest_sha256) VALUES($1,'forecast-input-manifest-v1',$2,$3)`,[revision,manifest,sha(manifest)]);
+    await recordRequiredCaptureAttempts(transaction,revision);
+    await transaction.query('COMMIT');
+    // A worker stopping immediately after commit still leaves both captures visible.
+    assert.deepEqual(await captureHealth(db),{incomplete:2,failed:0,unsealed:0});
+    await transaction.query('BEGIN');
+    rolledBackRevision=(await transaction.query(`INSERT INTO forecast_revisions(forecast_id,revision_number,research_mode,generated_at) VALUES($1,2,'quick',now()) RETURNING id`,[forecast])).rows[0].id;
+    await transaction.query(`INSERT INTO forecast_input_manifests(revision_id,schema_version,manifest_json,manifest_sha256) VALUES($1,'forecast-input-manifest-v1',$2,$3)`,[rolledBackRevision,manifest,sha(manifest)]);
+    await recordRequiredCaptureAttempts(transaction,rolledBackRevision);
+    await transaction.query('ROLLBACK');
+  } catch(error) { await transaction.query('ROLLBACK');throw error; }
+  finally { transaction.release(); }
+  const rolledBack=(await one(`SELECT
+    (SELECT count(*)::int FROM forecast_revisions WHERE id=$1) AS revisions,
+    (SELECT count(*)::int FROM forecast_input_manifests WHERE revision_id=$1) AS manifests,
+    (SELECT count(*)::int FROM forecast_capture_attempts WHERE revision_id=$1) AS attempts`,[rolledBackRevision]));
+  assert.deepEqual(rolledBack,{revisions:0,manifests:0,attempts:0});
   await assert.rejects(db.query(`UPDATE forecast_input_manifests SET manifest_json=manifest_json WHERE revision_id=$1`,[revision]),/append-only/);
-  await recordCaptureAttempt(db,revision,'quick_evidence','started');
+  await recordCaptureAttempt(db,revision,'member_cap20','not_applicable');
+  assert.deepEqual(await captureHealth(db),{incomplete:1,failed:0,unsealed:0});
   await recordCaptureAttempt(db,revision,'quick_evidence','failed');
-  assert.ok((await captureHealth(db)).failed>=1);
+  assert.deepEqual(await captureHealth(db),{incomplete:0,failed:1,unsealed:0});
   await recordCaptureAttempt(db,revision,'quick_evidence','completed');
-  const statuses=(await db.query(`SELECT status FROM forecast_capture_attempts WHERE revision_id=$1 ORDER BY sequence`,[revision])).rows;
+  assert.deepEqual(await captureHealth(db),{incomplete:0,failed:0,unsealed:0});
+  const statuses=(await db.query(`SELECT status FROM forecast_capture_attempts WHERE revision_id=$1 AND capture_kind='quick_evidence' ORDER BY sequence`,[revision])).rows;
   assert.deepEqual(statuses.map(x=>x.status),['started','failed','completed']);
   assert.equal((await one(`SELECT manifest_sha256 FROM forecast_input_manifests WHERE revision_id=$1`,[revision])).manifest_sha256,sha(manifest));
-  return {committeeVenue:true,historicalTextInvariant:true,futureSupersessionSafe:true,appendOnly:true,captureFailureAndRetry:true,syntheticOnly:true};
+  return {committeeVenue:true,historicalTextInvariant:true,futureSupersessionSafe:true,appendOnly:true,captureFailureAndRetry:true,captureCrashVisible:true,captureRegistrationAtomic:true,syntheticOnly:true};
 }
 
 const url=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
