@@ -4,6 +4,7 @@ on:
     paths:
       - src/evidence/**
       - src/forecasting/**
+      - src/operations/forecast-evidence-remediation-gate.ts
       - src/operations/forecast-capture-observability.ts
       - src/operations/research-artifact-retention.ts
       - migrations/0037_forecast_evidence_contract.sql
@@ -16,6 +17,7 @@ on:
     paths:
       - src/evidence/**
       - src/forecasting/**
+      - src/operations/forecast-evidence-remediation-gate.ts
       - src/operations/forecast-capture-observability.ts
       - src/operations/research-artifact-retention.ts
       - migrations/0037_forecast_evidence_contract.sql

@@ -413,3 +413,12 @@ FROM member_votes mv JOIN vote_events ve ON ve.id=mv.vote_event_id
 JOIN source_documents d ON d.id=ve.source_document_id JOIN chambers c ON c.id=ve.chamber_id
 JOIN jurisdictions j ON j.id=c.jurisdiction_id
 WHERE c.slug='senate' AND j.slug='us-mn';
+
+CREATE FUNCTION normalized_senate_votes_asof_v1(cutoff date,target_membership uuid,target_bill uuid,target_venue text)
+RETURNS SETOF normalized_senate_vote_evidence_v1 LANGUAGE sql STABLE AS $$
+ SELECT e.* FROM normalized_senate_vote_evidence_v1 e
+ JOIN memberships original ON original.id=e.membership_id
+ JOIN memberships target ON target.legislator_id=original.legislator_id AND target.id=target_membership
+ WHERE e.available_on<cutoff AND e.bill_id=target_bill AND e.venue=target_venue
+  AND target_venue IN ('committee','floor')
+$$;
