@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "forecast-evidence-remediation-completion-v1",
+  "completedAtUtc": "2026-10-26T04:09:23.432Z",
+  "implementationPullRequest": "https://github.com/killjoy00/votepredict/pull/1582",
+  "implementationMainCommit": "61bff42156b1948d707c3571c3c075b2678c1a13",
+  "ci": {
+    "nodeMajor": 22,
+    "postgresMajor": 18,
+    "tests": 2474,
+    "passed": 2474,
+    "failed": 0,
+    "skipped": 0,
+    "typecheck": "passed",
+    "build": "passed",
+    "productionDependencyVulnerabilities": 0,
+    "standardMainRun": "https://github.com/killjoy00/votepredict/actions/runs/40267258649",
+    "remediationMainRun": "https://github.com/killjoy00/votepredict/actions/runs/40267258604",
+    "protectedJob": "https://github.com/killjoy00/votepredict/actions/runs/40267258604/job/121392993264"
+  },
+  "database": {
+    "existingDefaultPrimaryVerified": true,
+    "independentReadback": {
+      "readOnly": true,
+      "isolation": "repeatable read",
+      "explicitRollback": true
+    },
+    "migrationEntries": 37,
+    "allChecksumsMatchReviewedRepository": true,
+    "newMigration": {
+      "filename": "0037_forecast_evidence_contract.sql",
+      "checksum": "4fd4d8b6c36ec84ec40b166eac5c42ffbf2f89c5aff7fc81593009b2514ee946"
+    },
+    "appendOnlyTriggersEnabled": true,
+    "targetedIndexes": [
+      "evidence_items_ingestion_key_idx",
+      "evidence_items_series_key_idx",
+      "evidence_relationships_to_kind_idx",
+      "forecast_bill_text_asof_idx",
+      "forecast_capture_revision_idx"
+    ],
+    "committeeChoices": 1950,
+    "committeeVenueProjectionCorrect": true,
+    "committeeEventsWithIndividualChoices": 186,
+    "storedCommitteeEventsIncludingNoChoiceRecords": 221,
+    "normalizedVoteChoiceIdsUnique": true
+  },
+  "retention": {
+    "originalArchives": [
+      {
+        "artifactId": "10660140930",
+        "sha256": "c92989a2e3919bb2b8da6b0084b648b3e7faa10c5985e1e43622ee475a0ef38e",
+        "bytes": 9659,
+        "databaseBytesHashMatches": true,
+        "internalDigests": {
+          "members": {
+            "quick-evidence-combined-historical-robustness-v2.json": "afef5c3b08b8102adc5ed6768d8e39bb5472200618b0a60fcb04ea22f1f75309"
+          }
+        }
+      },
+      {
+        "artifactId": "10772991611",
+        "sha256": "72a42063a028114b4f6cbd8a356e74940eb00bdcda28a83cadf884aaa346061e",
+        "bytes": 42997,
+        "databaseBytesHashMatches": true,
+        "internalDigests": {
+          "members": {
+            "model.json": "850aa4344bfe1635622af95c8f0871a38cbc234dc23eb9ae50085da668fcfc76",
+            "summary.json": "b25381b1cd705bce9b94f3a4a210ba8b4eddc2d4b34cc010c4672ea7795977c8"
+          },
+          "modelContentSha256": "abcf583153939d46aa021dccf2afe61d698ad4538a981059cdee265c03166a65"
+        }
+      },
+      {
+        "artifactId": "11494634289",
+        "sha256": "710bacebb4aeeafa60821a38ba376b6e321e785b7dc1d75aced92743859e9e29",
+        "bytes": 5534838,
+        "databaseBytesHashMatches": true,
+        "internalDigests": {
+          "members": {
+            "evidence-quality-historical-feature-matrix-v1.8.ndjson.gz": "42f9d79bd69df63b46a2f0f5c1636f4cc7f8fd0ec0a65ae905d85f28fd436700",
+            "evidence-quality-historical-feature-matrix-v1.8-manifest.json": "449564349fa304604bc81879c76832dd3aab79f15aa7015a1808218612e4586d"
+          },
+          "matrixRows": 135457,
+          "matrixSha256": "2d4ed4993fd7efce5a0c7de2a4331f1f3a0f163e323f437c6f9e7dacf266a30b"
+        }
+      }
+    ],
+    "databaseOnlyRestoreVerified": true,
+    "independentBackupRestored": true,
+    "independentBundleSha256": "882a8988e228e1ff82f5770d64cbf28c193a3789bb97503bea9bc9d385dd2e33"
+  },
+  "boundedPlanChecks": {
+    "beforeMigration": 36,
+    "afterMigration": 37,
+    "ingestionKeyLookup": {
+      "beforeMs": 8211.033,
+      "afterMs": 1.874,
+      "index": "evidence_items_ingestion_key_idx"
+    },
+    "supersessionLookup": {
+      "beforeMs": 169.877,
+      "afterMs": 0.063,
+      "index": "evidence_relationships_to_kind_idx"
+    },
+    "financeReader": {
+      "year": 2023,
+      "maximumRows": 2000,
+      "returnedRows": 57,
+      "executionMs": 8.895,
+      "access": "research/context only"
+    },
+    "limitation": "Single bounded before/after samples, with cache and hint-bit differences; not a controlled load test or a broad-union performance guarantee."
+  },
+  "unchangedObservedCounts": {
+    "sourceDocuments": 63652,
+    "evidenceItems": 344597,
+    "sourceDocumentTexts": 342,
+    "rawStatements": 4005,
+    "testimony": 32181,
+    "forecastRevisions": 849,
+    "latestForecastCreatedAtUtc": "2026-10-06T01:41:50.788Z"
+  },
+  "priorCollection": {
+    "officialBillTextCapturesAtReview": 13805,
+    "officialBillTextCapturesAtReadback": 13819,
+    "additionalCaptures": 14,
+    "latestFetchUtc": "2026-10-26T01:16:41.356Z",
+    "note": "These 14 captures predate the remediation deployment. They are not new acquisition by this package."
+  },
+  "activation": {
+    "newRuntimeManifests": 0,
+    "newRuntimeBillTextObservations": 0,
+    "newCaptureAttempts": 0,
+    "modelsFitted": 0,
+    "forecastsComputed": 0,
+    "newServingFeatures": false,
+    "vercelContacted": false,
+    "schedulerActivated": false,
+    "applicationRuntimeRelease": "paused under issue #732; code merged and tested, not claimed deployed"
+  },
+  "remainingBoundaries": [
+    "Historical source gaps and exact-row finance publication proof remain explicitly excluded or unknown.",
+    "Unverified Deep evidence cannot move probabilities; the gateway supplies no trusted proof receipt.",
+    "Predictive lift and future-session universe/calendar/source authentication still require their original evaluation/launch gates.",
+    "Old forecasts without sealed manifests are not retroactively certified.",
+    "New runtime safety and capture code awaits an intentional application release under #732."
+  ]
+}
