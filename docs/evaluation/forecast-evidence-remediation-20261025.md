@@ -117,6 +117,22 @@ identity, literal-text and author-change assertions remain intact. This is a
 test-isolation repair and does not change production SQL or trigger another
 database deployment.
 
+## Atomic capture registration: October 26, 2026
+
+The continuation review found a crash window between committing a Quick revision
+and recording its first capture attempt. A worker stopping in that interval
+could leave no ledger entry for the health reader to see. Both required capture
+attempts now start in the same transaction as the revision and sealed input
+manifest. The wrapper appends only completed, failed or not-applicable results.
+An interruption after commit remains visible as unfinished work; an interruption
+before commit rolls back the revision, manifest and both obligations together.
+
+The disposable-database integration checks the committed-but-not-yet-captured
+state, full rollback, explicit not-applicable completion, failed capture, and
+successful retry. The existing schema is sufficient. No new migration or
+production data write is needed, and this runtime change remains subject to the
+same intentional application-release gate as the other runtime safeguards.
+
 ## Forecasting and source holds
 
 Keep the accepted Quick model and all frozen evaluation protocols unchanged.

@@ -1,5 +1,11 @@
 import type { Pool } from 'pg';
 
+/** Register both obligations inside the Quick revision/input-manifest transaction. */
+export async function recordRequiredCaptureAttempts(db: Pick<Pool,'query'>, revisionId: string): Promise<void> {
+  await db.query(`INSERT INTO forecast_capture_attempts(revision_id,capture_kind,status)
+    VALUES($1,'member_cap20','started'),($1,'quick_evidence','started')`,[revisionId]);
+}
+
 export async function recordCaptureAttempt(db: Pick<Pool,'query'>, revisionId: string,
   kind: 'quick_evidence' | 'member_cap20', status: 'started' | 'completed' | 'failed' | 'not_applicable'): Promise<void> {
   await db.query(`INSERT INTO forecast_capture_attempts(revision_id,capture_kind,status,error_code)
