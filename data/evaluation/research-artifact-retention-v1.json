@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "research-artifact-retention-v1",
+  "pins": [
+    {
+      "artifactId": 10772991611,
+      "runId": 35910925882,
+      "name": "lifecycle-p8-prospective-model-v1-2733a6c8f96e88e1028dbcea7c5d9caac212ab08",
+      "fileName": "p8-original-model.zip",
+      "archiveSha256": "72a42063a028114b4f6cbd8a356e74940eb00bdcda28a83cadf884aaa346061e",
+      "expiresAt": "2026-12-22T19:40:46Z",
+      "members": {
+        "model.json": "850aa4344bfe1635622af95c8f0871a38cbc234dc23eb9ae50085da668fcfc76",
+        "summary.json": "b25381b1cd705bce9b94f3a4a210ba8b4eddc2d4b34cc010c4672ea7795977c8"
+      }
+    },
+    {
+      "artifactId": 11494634289,
+      "runId": 37647888556,
+      "name": "evidence-quality-historical-feature-freeze-v1-8",
+      "fileName": "evidence-v1-8-original.zip",
+      "archiveSha256": "710bacebb4aeeafa60821a38ba376b6e321e785b7dc1d75aced92743859e9e29",
+      "expiresAt": "2027-01-05T15:55:17Z",
+      "members": {
+        "evidence-quality-historical-feature-matrix-v1.8-manifest.json": "449564349fa304604bc81879c76832dd3aab79f15aa7015a1808218612e4586d",
+        "evidence-quality-historical-feature-matrix-v1.8.ndjson.gz": "42f9d79bd69df63b46a2f0f5c1636f4cc7f8fd0ec0a65ae905d85f28fd436700"
+      }
+    },
+    {
+      "artifactId": 10660140930,
+      "runId": 35644055220,
+      "name": "quick-evidence-combined-historical-robustness-v2-619f20b102bfff855cc42e3f63f754ad57bad88c",
+      "fileName": "combined-robustness-original.zip",
+      "archiveSha256": "c92989a2e3919bb2b8da6b0084b648b3e7faa10c5985e1e43622ee475a0ef38e",
+      "expiresAt": "2026-12-20T19:19:05Z",
+      "members": {
+        "quick-evidence-combined-historical-robustness-v2.json": "afef5c3b08b8102adc5ed6768d8e39bb5472200618b0a60fcb04ea22f1f75309"
+      }
+    }
+  ]
+}

@@ -1,11 +1,13 @@
 import type { EvidenceDraft } from './types';
+import { impactProofError, type VerifiedImpactProof } from './verified-impact-proof';
 
 export interface EvidenceImpactPolicyDecision {
   mechanicallyActionable: boolean;
   rationale: string;
 }
 
-export function evidenceImpactPolicy(draft: EvidenceDraft): EvidenceImpactPolicyDecision {
+/** Frozen v1 mechanics for the already examined historical and Quick-shadow protocols only. */
+export function legacyEvidenceImpactPolicyV1(draft: EvidenceDraft): EvidenceImpactPolicyDecision {
   if (draft.metadata?.mechanicallyActionable === false) {
     return { mechanicallyActionable: false, rationale: 'Evidence is explicitly marked context-only/non-actionable by its durable ingestion policy.' };
   }
@@ -34,4 +36,12 @@ export function evidenceImpactPolicy(draft: EvidenceDraft): EvidenceImpactPolicy
     return { mechanicallyActionable: false, rationale: 'Extraction confidence is below the initial impact threshold.' };
   }
   return { mechanicallyActionable: true, rationale: 'Directional evidence passed the initial provenance, as-of, relevance, and confidence checks.' };
+}
+
+export function evidenceImpactPolicy(draft: EvidenceDraft, proof?: VerifiedImpactProof, asOf?: string): EvidenceImpactPolicyDecision {
+  const prior = legacyEvidenceImpactPolicyV1(draft);
+  if (!prior.mechanicallyActionable) return prior;
+  const error = impactProofError(draft, proof, asOf);
+  return error ? { mechanicallyActionable: false, rationale: error }
+    : { mechanicallyActionable: true, rationale: 'Exact content, attribution and positive pre-cutoff availability proof verified.' };
 }

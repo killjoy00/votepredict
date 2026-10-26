@@ -1,4 +1,5 @@
 import { simulateChamber, type ChamberSimulation, type PassageRule } from '../forecasting/chamber';
+import { createHash } from 'node:crypto';
 import { diagnoseEvidence, type EvidenceDiagnostics } from './diagnostics';
 import { applyEvidenceSignals } from './impact';
 import { evidenceImpactPolicy } from './policy';
@@ -120,7 +121,10 @@ export async function executeDeepResearch(
 
   const memberUpdates: DeepMemberUpdate[] = members.map((member) => {
     const evidence = scopedEvidence.get(member.membershipId) ?? [];
-    const evidenceDecisions = evidence.map((draft) => ({ sourceUrl: draft.sourceUrl, ...evidenceImpactPolicy(draft) }));
+    const evidenceDecisions = evidence.map((draft) => ({ sourceUrl: draft.sourceUrl, ...evidenceImpactPolicy(draft,
+      providerResult.verifiedImpactProofs?.find(proof => proof.sourceUrl === draft.sourceUrl
+        && proof.membershipId === draft.targetMembershipId && proof.billId === draft.targetBillId
+        && proof.excerptSha256 === createHash('sha256').update(draft.excerpt ?? '').digest('hex')), context.asOf) }));
     const actionableEvidence = evidence.filter((_, index) => evidenceDecisions[index].mechanicallyActionable);
     if (member.yesProbability === undefined || actionableEvidence.length === 0) {
       return {

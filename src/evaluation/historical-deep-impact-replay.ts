@@ -6,7 +6,7 @@ import {
   type HistoricalArchivePacket,
   type HistoricalArchiveSource,
 } from '../evidence/historical-archive-provider';
-import { evidenceImpactPolicy } from '../evidence/policy';
+import { legacyEvidenceImpactPolicyV1 as evidenceImpactPolicy } from '../evidence/policy';
 import type { DeepResearchRequest } from '../evidence/provider';
 import type { EvidenceDraft, EvidenceFreshness, EvidenceSignal } from '../evidence/types';
 import { scorePairedMemberForecasts, type PairedMemberForecast, type PairedProbabilityComparison } from './deep-vs-quick';

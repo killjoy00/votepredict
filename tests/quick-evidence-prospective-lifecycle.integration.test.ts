@@ -70,9 +70,11 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
         confidence double precision,
         published_at timestamptz,
         claim text NOT NULL DEFAULT '',
-        metadata jsonb NOT NULL DEFAULT '{}'
+        metadata jsonb NOT NULL DEFAULT '{}',
+        created_at timestamptz NOT NULL DEFAULT now()
       );
       CREATE TABLE evidence_relationships (
+        from_evidence_id uuid NOT NULL,
         to_evidence_id uuid NOT NULL,
         relation_kind text NOT NULL
       );
@@ -201,8 +203,8 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
          '{"quickEvidenceCandidate":true,"sourceVerified":true,"mechanicallyActionable":false,"evidenceSeriesKey":"member-position:alpha:hf1"}')
     `, [evidence1, evidence2, source1, source2, member1, member2, billId, priorEvidence1, priorSource1, priorMember1, priorEvidence2, priorSource2, priorEvidence3]);
     await client.query(
-      "INSERT INTO evidence_relationships(to_evidence_id,relation_kind) VALUES ($1,'supersedes')",
-      [priorEvidence1],
+      "INSERT INTO evidence_relationships(to_evidence_id,from_evidence_id,relation_kind) VALUES ($1,$2,'supersedes')",
+      [priorEvidence1,priorEvidence2],
     );
 
     await client.query(`
@@ -318,6 +320,10 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
        WHERE revision_id=$1::uuid
        ORDER BY membership_id
     `, [revisionId]);
+    const retry = await captureQuickEvidenceShadow(request, quick);
+    assert.equal(retry?.capturedMembers,2);
+    const afterRetry=await client.query(`SELECT membership_id::text,context FROM forecast_member_predictions WHERE revision_id=$1::uuid ORDER BY membership_id`,[revisionId]);
+    assert.deepEqual(afterRetry.rows,captured.rows,'a retry must preserve the original complete sealed vectors');
     assert.equal(captured.rows.length, 2);
     const shadows = captured.rows.map((row) =>
       (row.context as Array<Record<string, unknown>>)

@@ -49,6 +49,7 @@ type QuickAccrualAlert = {
 };
 
 type ShadowHealth = {
+  captureIntegrity?: {incomplete:number;failed:number;unsealed:number};
   failureGraceHours: number;
   productionEvidence: ProductionEvidenceStatus;
   quickEvidence: ShadowStatus & {
@@ -115,6 +116,12 @@ function ProspectiveShadowCapturePanel() {
       </div>
       {error ? <p>{error}</p> : health ? (
         <>
+          {health.captureIntegrity && (
+            <p role={health.captureIntegrity.failed || health.captureIntegrity.unsealed ? 'alert' : 'status'}>
+              Capture integrity: {health.captureIntegrity.failed} failed, {health.captureIntegrity.incomplete} unfinished,
+              {' '}{health.captureIntegrity.unsealed} without sealed inputs.
+            </p>
+          )}
           <div className="shadow-health-grid">
             <div className="shadow-experiment">
               <div><strong>Independent serving evidence</strong><small>{health.productionEvidence.session} · real bills · no historical backfill</small></div>

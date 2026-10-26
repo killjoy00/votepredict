@@ -1,6 +1,9 @@
 import { pool } from '@/lib/db';
 import { evidenceLogitDelta, EVIDENCE_IMPACT_VERSION } from '@/evidence/impact';
-import { evidenceImpactPolicy } from '@/evidence/policy';
+// Keep the already-frozen shadow formula; serving Deep uses proof-required v2.
+import { legacyEvidenceImpactPolicyV1 as evidenceImpactPolicy } from '@/evidence/policy';
+import { supersessionAsOfSql } from '@/evidence/asof-supersession';
+import { verifySealedShadowRetry } from './sealed-shadow-retry';
 import { dedupeTemporalEvidenceHistory } from '@/evidence/temporal-statement-history';
 import type { EvidenceDraft, EvidenceSignal } from '@/evidence/types';
 import {
@@ -366,12 +369,9 @@ async function loadAvailability(membershipIds: readonly string[], asOf: string):
         FROM evidence_items ei
         JOIN source_documents sd ON sd.id=ei.source_document_id
        WHERE ei.membership_id = ANY($1::uuid[])
+         AND ei.created_at <= $2::timestamptz
          AND sd.fetched_at <= $2::timestamptz
-         AND NOT EXISTS (
-           SELECT 1 FROM evidence_relationships er
-            WHERE er.to_evidence_id=ei.id
-              AND er.relation_kind='supersedes'
-         )
+         AND ${supersessionAsOfSql('$2')}
     )
     SELECT membership_id::text,
            count(*)::int AS total_items,
@@ -416,15 +416,12 @@ async function loadDirectionalEvidence(
       JOIN target_memberships target ON target.legislator_id=evidence_membership.legislator_id
       JOIN source_documents sd ON sd.id=ei.source_document_id
      WHERE ei.bill_id = $2::uuid
+       AND ei.created_at <= $3::timestamptz
        AND sd.fetched_at <= $3::timestamptz
        AND (ei.published_at IS NULL OR ei.published_at <= $3::timestamptz)
        AND (
          ei.evidence_kind IN ('direct_statement','related_statement')
-         OR NOT EXISTS (
-           SELECT 1 FROM evidence_relationships er
-            WHERE er.to_evidence_id=ei.id
-              AND er.relation_kind='supersedes'
-         )
+         OR ${supersessionAsOfSql('$3')}
        )
      ORDER BY target.target_membership_id, COALESCE(ei.published_at,sd.fetched_at) DESC, ei.id DESC`, [
     membershipIds,
@@ -450,13 +447,10 @@ async function loadStructuredPublic(
       SELECT ei.*, sd.fetched_at
         FROM evidence_items ei
         JOIN source_documents sd ON sd.id=ei.source_document_id
-       WHERE sd.fetched_at <= $3::timestamptz
+       WHERE ei.created_at <= $3::timestamptz
+         AND sd.fetched_at <= $3::timestamptz
          AND (ei.published_at IS NULL OR ei.published_at <= $3::timestamptz)
-         AND NOT EXISTS (
-           SELECT 1 FROM evidence_relationships er
-            WHERE er.to_evidence_id=ei.id
-              AND er.relation_kind='supersedes'
-         )
+         AND ${supersessionAsOfSql('$3')}
     ), member_bill AS (
       SELECT membership_id,
              count(*) FILTER (WHERE metadata->>'subtype'='floor_amendment_offer')::int AS floor_amendment_offers,
@@ -728,7 +722,8 @@ export async function captureQuickEvidenceShadow(
         JSON.stringify([row.shadow]),
         marker,
       ]);
-      updated += result.rowCount ?? 0;
+      if ((result.rowCount ?? 0) === 0) await verifySealedShadowRetry(client,quick.revisionId,row.membershipId,row.shadow as unknown as Record<string,unknown>);
+      updated += 1;
     }
     if (updated !== shadows.length) {
       throw new Error(`Quick Evidence shadow updated ${updated}/${shadows.length} member rows`);

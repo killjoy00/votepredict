@@ -1,3 +1,5 @@
+import { retainedTargetTextAsOf, retainRuntimeBillText, type RetainedTargetText } from './runtime-bill-text';
+import { createHash } from 'node:crypto';
 import { ordinaryMinnesotaPassageRule } from './minnesota-rules';
 import type { PoolClient } from 'pg';
 import { extractDeterministicBillFeatures, retrieveHistoricalAnalogues, type BillFeatureIdentity, type HistoricalAnalogueCandidate } from '@/features/bills';
@@ -167,6 +169,7 @@ type DatedVersionRow = {
   published_at: string;
   raw_text: string;
   text_url: string | null;
+  retained?: RetainedTargetText;
 };
 
 type AnalogueVoteRow = {
@@ -177,6 +180,8 @@ type AnalogueVoteRow = {
 };
 
 type RuntimeTargetVersion = {
+  retained?: RetainedTargetText;
+  billVersionId?: string;
   id: string;
   versionKey: string;
   publishedAt: string;
@@ -254,8 +259,11 @@ async function mapWithConcurrency<T, R>(items: readonly T[], limit: number, mapp
   return results;
 }
 
-async function persistRevisorVersion(billId: string, version: RevisorBillVersionMetadata & { text: string; textSha256: string }): Promise<DatedVersionRow> {
-  const result = await pool.query<DatedVersionRow>(`
+async function persistRevisorVersion(billId: string, version: RevisorBillVersionMetadata & { text: string; textSha256: string }, observedTitle?: string): Promise<DatedVersionRow> {
+  const client=await pool.connect();
+  try {
+  await client.query('BEGIN');
+  const result = await client.query<DatedVersionRow>(`
     INSERT INTO bill_versions (bill_id, version_key, published_at, text_url, text_hash, raw_text, source_url)
     VALUES ($1, $2, $3::date, $4, $5, $6, $4)
     ON CONFLICT (bill_id, version_key) DO UPDATE SET
@@ -272,7 +280,11 @@ async function persistRevisorVersion(billId: string, version: RevisorBillVersion
     version.textSha256,
     version.text,
   ]);
-  return result.rows[0];
+  const row=result.rows[0];
+  row.retained=await retainRuntimeBillText(client,{billId,billVersionId:row.id,versionKey:row.version_key,sourceUrl:version.textUrl,claimedPublishedAt:row.published_at,observedAt:new Date().toISOString(),text:row.raw_text,title:observedTitle});
+  await client.query('COMMIT');
+  return row;
+  } catch(error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); }
 }
 
 async function existingDatedVersionAsOf(billId: string, occurredOn: string): Promise<DatedVersionRow | undefined> {
@@ -290,37 +302,24 @@ async function existingDatedVersionAsOf(billId: string, occurredOn: string): Pro
 }
 
 async function targetVersionFromDatabase(billId: string, asOf: string): Promise<RuntimeTargetVersion | undefined> {
-  const result = await pool.query<{ id: string; version_key: string; published_at: string | null; raw_text: string }>(`
-    SELECT id, version_key, published_at::text, raw_text
-      FROM bill_versions
-     WHERE bill_id = $1
-       AND raw_text IS NOT NULL
-       AND length(raw_text) >= 100
-     ORDER BY published_at DESC NULLS LAST,
-              (version_key = 'latest') DESC,
-              created_at DESC
-     LIMIT 1`, [billId]);
-  const row = result.rows[0];
-  if (!row) return undefined;
-  return {
-    id: row.id,
-    versionKey: row.version_key,
-    publishedAt: row.published_at ?? asOf,
-    text: row.raw_text,
-  };
+  const retained=await retainedTargetTextAsOf(pool,billId,asOf);
+  return retained ? {...retained,retained} : undefined;
 }
 
-async function ensureTargetBillVersion(subject: Extract<ForecastRuntimeSubject, { kind: 'bill' }>, asOf: string): Promise<RuntimeTargetVersion> {
+async function ensureTargetBillVersion(subject: Extract<ForecastRuntimeSubject, { kind: 'bill' }>, asOf: string, allowLive: boolean): Promise<RuntimeTargetVersion> {
   const session = sessionForSlug(subject.sessionSlug);
   try {
+    if (!allowLive) throw new Error('Historical requests use retained observations only');
     const metadata = await fetchRevisorBill(session.sessionKey, subject.identifier, false);
     const current = metadata.versions.find((version) => metadata.currentVersion && version.versionKey === metadata.currentVersion)
       ?? metadata.versions.at(-1);
     if (current) {
       const fetched = await fetchRevisorBillVersion(current);
-      const persisted = await persistRevisorVersion(subject.billId, fetched);
+      const persisted = await persistRevisorVersion(subject.billId, fetched, subject.title);
       return {
-        id: persisted.id,
+        id: persisted.retained!.id,
+        billVersionId: persisted.id,
+        retained: persisted.retained,
         versionKey: persisted.version_key,
         publishedAt: persisted.published_at,
         text: persisted.raw_text,
@@ -333,7 +332,7 @@ async function ensureTargetBillVersion(subject: Extract<ForecastRuntimeSubject, 
   }
 
   const stored = await targetVersionFromDatabase(subject.billId, asOf);
-  if (!stored) throw new ForecastRuntimeError('SOURCE_NOT_READY', 'The selected bill does not have usable official text yet.');
+  if (!stored || (!allowLive && !stored.retained?.title)) throw new ForecastRuntimeError('SOURCE_NOT_READY', 'The selected bill does not have usable official text yet.');
   return { ...stored, companionIdentifier: subject.companionIdentifier ?? undefined };
 }
 
@@ -454,12 +453,16 @@ function versionAsOf(metadata: RevisorBillMetadata, occurredOn: string): Revisor
     .sort((a, b) => b.postedOn.localeCompare(a.postedOn) || b.ordinal - a.ordinal)[0];
 }
 
-async function loadSafeCandidates(events: readonly CandidateEventRow[]): Promise<HistoricalAnalogueCandidate[]> {
+async function loadSafeCandidates(events: readonly CandidateEventRow[], historical = false): Promise<HistoricalAnalogueCandidate[]> {
   const metadataCache = new Map<string, Promise<RevisorBillMetadata>>();
   const fetchedVersionCache = new Map<string, Promise<DatedVersionRow>>();
 
   const results = await mapWithConcurrency(events, REVISOR_CONCURRENCY, async (event): Promise<HistoricalAnalogueCandidate | undefined> => {
-    let dated = await existingDatedVersionAsOf(event.bill_id, event.occurred_on);
+    const retained=historical ? await retainedTargetTextAsOf(pool,event.bill_id,event.occurred_on+'T00:00:00.000Z') : undefined;
+    if (historical && !retained?.title) return undefined;
+    let dated: DatedVersionRow | undefined = retained
+      ? {id:retained.id,version_key:retained.versionKey,published_at:retained.publishedAt,raw_text:retained.text,text_url:retained.sourceUrl,retained}
+      : await existingDatedVersionAsOf(event.bill_id, event.occurred_on);
     if (!dated) {
       const session = sessionForSlug(event.session_slug);
       const metadataKey = `${event.session_slug}:${event.identifier}`;
@@ -488,10 +491,10 @@ async function loadSafeCandidates(events: readonly CandidateEventRow[]): Promise
       billVersionId: dated.id,
       identifier: event.identifier,
       session: event.session_slug,
-      title: event.title,
+      title: retained?.title ?? event.title,
       publishedAt: dated.published_at,
-      companionIdentifier: event.companion_identifier ?? undefined,
-      features: extractDeterministicBillFeatures({ title: event.title, text: dated.raw_text }),
+      companionIdentifier: historical ? undefined : event.companion_identifier ?? undefined,
+      features: extractDeterministicBillFeatures({ title: retained?.title ?? event.title, text: dated.raw_text }),
       voteEventId: event.vote_event_id,
       occurredAt: `${event.occurred_on}T23:59:59Z`,
       chamber: event.chamber_slug,
@@ -552,6 +555,7 @@ async function persistRevision(
   analogues: readonly ForecastRuntimeAnalogue[],
   diagnostics: ForecastRuntimeResult['diagnostics'],
   asOf: string,
+  inputManifest: Record<string, unknown>,
 ): Promise<{ revisionId: string; revisionNumber: number }> {
   const client = await pool.connect();
   try {
@@ -607,6 +611,9 @@ async function persistRevision(
       JSON.stringify(metadata),
     ]);
     const revisionId = revisionResult.rows[0].id;
+    const manifestJson=JSON.stringify(inputManifest);
+    await client.query(`INSERT INTO forecast_input_manifests(revision_id,schema_version,manifest_json,manifest_sha256)
+      VALUES($1,'forecast-input-manifest-v1',$2,$3)`,[revisionId,manifestJson,createHash('sha256').update(manifestJson).digest('hex')]);
     await insertMemberPredictions(client, revisionId, members, memberShadows);
     await client.query(`UPDATE forecasts SET status = 'complete', updated_at = now() WHERE id = $1`, [request.forecastId]);
     await client.query('COMMIT');
@@ -663,11 +670,10 @@ async function insertMemberPredictions(
 }
 
 export async function executeRuntimeForecast(request: ForecastRuntimeRequest): Promise<ForecastRuntimeResult> {
-  const asOf = request.asOf ?? new Date().toISOString();
-  const asOfDate = asOf.slice(0, 10);
+  let asOf = request.asOf ?? new Date().toISOString();
   const modelConfig = resolveServingMemberModelConfig();
   const targetVersion = request.subject.kind === 'bill'
-    ? await ensureTargetBillVersion(request.subject, asOf)
+    ? await ensureTargetBillVersion(request.subject, asOf, request.asOf === undefined)
     : {
       id: `proposal:${request.subject.proposalId}`,
       versionKey: 'proposal',
@@ -676,15 +682,17 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
       companionIdentifier: undefined,
     };
 
+  if (request.asOf === undefined) asOf = new Date().toISOString();
+  const asOfDate = asOf.slice(0, 10);
   const targetIdentity: BillFeatureIdentity = {
     billId: request.subject.kind === 'bill' ? request.subject.billId : `proposal:${request.subject.proposalId}`,
     billVersionId: targetVersion.id,
     identifier: request.subject.kind === 'bill' ? request.subject.identifier : 'PROPOSAL',
     session: request.subject.sessionSlug,
-    title: request.subject.title,
+    title: request.asOf && request.subject.kind === 'bill' ? targetVersion.retained!.title! : request.subject.title,
     publishedAt: targetVersion.publishedAt,
-    companionIdentifier: targetVersion.companionIdentifier ?? (request.subject.kind === 'bill' ? request.subject.companionIdentifier ?? undefined : undefined),
-    features: extractDeterministicBillFeatures({ title: request.subject.title, text: targetVersion.text }),
+    companionIdentifier: request.asOf ? undefined : targetVersion.companionIdentifier ?? (request.subject.kind === 'bill' ? request.subject.companionIdentifier ?? undefined : undefined),
+    features: extractDeterministicBillFeatures({ title: request.asOf && request.subject.kind === 'bill' ? targetVersion.retained!.title! : request.subject.title, text: targetVersion.text }),
   };
 
   const [activeMembers, historicalSupport] = await Promise.all([
@@ -699,7 +707,7 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
     request.subject.kind === 'bill' ? request.subject.billId : undefined,
     targetIdentity.companionIdentifier,
   );
-  const safeCandidates = await loadSafeCandidates(prefilteredEvents);
+  const safeCandidates = await loadSafeCandidates(prefilteredEvents,request.asOf !== undefined);
   if (safeCandidates.length === 0) {
     throw new ForecastRuntimeError('NO_SAFE_ANALOGUES', 'No dated, as-of-safe historical analogue text could be assembled for this measure.');
   }
@@ -717,6 +725,7 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
     votesByLegislator.set(row.legislator_id, rows);
   }
 
+  const modelInputs: unknown[] = [];
   let directAnalogueMembers = 0;
   const memberShadows = new Map<string, MemberModelShadow>();
   const servingMemberMap = modelConfig.memberHistoryHalfLifeDays === null
@@ -759,6 +768,7 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
       analogueYesRate: analogueWeight > 0 ? analogueYesWeight / analogueWeight : undefined,
       analogueEffectiveWeight: analogueWeight,
     };
+    modelInputs.push({membershipId:member.membership_id,serving:{...commonInput,memberHistory:memberSupport},shadow:{...commonInput,memberHistory:shadowMemberSupport}});
     const estimate = estimateMemberProbability({
       ...commonInput,
       memberHistory: memberSupport,
@@ -836,7 +846,7 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
     : 'partial';
   const persisted = await persistRevision(
     request,
-    request.subject.kind === 'bill' && !targetVersion.id.startsWith('proposal:') ? targetVersion.id : null,
+    request.subject.kind === 'bill' ? targetVersion.billVersionId ?? null : null,
     members,
     memberShadows,
     modelConfig,
@@ -845,6 +855,10 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
     analogues,
     diagnostics,
     asOf,
+    {schemaVersion:'forecast-input-manifest-v1',asOf,modelConfig,
+      codeRevision:process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.GITHUB_SHA ?? null,
+      target:{billId:request.subject.kind==='bill'?request.subject.billId:null,textSha256:createHash('sha256').update(targetVersion.text).digest('hex'),retained:'retained' in targetVersion?targetVersion.retained:null,providedText:request.subject.kind==='proposal'?targetVersion.text:undefined},
+      passageRule,modelInputs,analogues,retrievalInputs:safeCandidates,targetFeatures:targetIdentity.features},
   );
 
   return {

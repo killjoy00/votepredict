@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "research-artifact-independent-backup-v1",
+  "bundleSha256": "882a8988e228e1ff82f5770d64cbf28c193a3789bb97503bea9bc9d385dd2e33",
+  "independentOwnerBackupVerified": true,
+  "restoreUsedGitHubOrOriginalWebsites": false,
+  "originalArchivesVerified": 3,
+  "originalArtifactIds": [
+    10772991611,
+    11494634289,
+    10660140930
+  ],
+  "note": "Owner-private independent persistent copy restored and verified. Not a notarized WORM guarantee."
+}

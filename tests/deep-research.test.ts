@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { executeDeepResearch, planDeepResearch } from '../src/evidence/deep-revision.js';
 import type { DeepResearchProvider } from '../src/evidence/provider.js';
+import { createHash } from 'node:crypto';
 
 test('Deep research plan targets the consequential under-evidenced swing member', () => {
   const members = [
@@ -30,9 +31,17 @@ test('Deep research returns inspectable before/after member and chamber changes'
       return {
         provider: this.name,
         providerVersion: this.version,
+        verifiedImpactProofs: [{version:'content-bound-impact-v1',sourceUrl:'https://example.test/member-statement',
+          sourceContentSha256:'a'.repeat(64),excerptSha256:createHash('sha256').update('I will support bill 1.').digest('hex'),
+          membershipId:'research-me',billId:'bill-1',availableAt:'2026-09-06T01:00:00Z',observedAt:'2026-09-06T01:00:00Z',
+          basis:'authenticated_archive',attributionVerified:true}],
         evidence: [
           {
             sourceUrl: 'https://example.test/member-statement',
+            excerpt: 'I will support bill 1.',
+            targetBillId: 'bill-1',
+            publishedAt: '2026-09-06T01:00:00Z',
+            metadata: {sourceVerified:true},
             kind: 'direct_statement',
             stance: 'supports',
             claim: 'Member says they plan to vote for the bill.',
