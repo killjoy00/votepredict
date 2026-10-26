@@ -81,14 +81,14 @@
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
-    "@vercel/functions": "3.9.11",
-    "ai": "7.0.137",
+    "@vercel/functions": "3.10.3",
+    "ai": "7.0.150",
     "drizzle-orm": "0.45.4",
     "next": "16.4.2",
     "pdf-parse": "2.4.5",
     "pg": "8.23.1",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
