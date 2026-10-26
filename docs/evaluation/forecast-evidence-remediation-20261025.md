@@ -68,8 +68,46 @@ captures and retries. It also archives and restores all three original packages
 from database bytes. The CI integration uses a unique throwaway schema so older
 view-migration tests cannot race with these assertions.
 
-The executed production/CI receipt is appended separately after successful
-merge, rather than asserting deployment from a prepared workflow.
+## Executed completion: October 25, 2026 Central time
+
+[PR #1582](https://github.com/killjoy00/votepredict/pull/1582) merged as
+`61bff42156b1948d707c3571c3c075b2678c1a13`. Both main CI and the
+[protected remediation run](https://github.com/killjoy00/votepredict/actions/runs/40267258604)
+passed. PostgreSQL 18 CI ran all **2,474 tests with zero failures or skips**;
+typecheck, build and the production dependency audit passed with zero reported
+vulnerabilities.
+
+The protected job applied migration 0037 and archived all three pinned original
+ZIPs. It restored the actual database bytes without GitHub or original source
+access and rechecked every internal digest, model-content digest and the matrix
+row count. An independent read-only, repeatable-read transaction with explicit
+rollback at **2026-10-26 04:09:23 UTC** matched all 37 migration checksums,
+confirmed all five append-only triggers and all five targeted indexes, and
+rehashed the stored ZIP bytes successfully. The committee projection now labels
+all **1,950 individual choices** correctly. The normalized view exposes 186
+committee events with individual choices; the older total of 221 stored events
+also includes 35 events without stored individual choices. Those absences are
+preserved.
+
+Bounded plans use the new indexes. A sampled ingestion-key lookup changed from
+8,211.033 ms to 1.874 ms; a reverse supersession lookup changed from 169.877 ms
+to 0.063 ms. The bounded 2023 finance reader returned 57 observations in 8.895 ms.
+These single samples have different cache/hint-bit conditions and are not a
+controlled throughput test. The broad UNION is still a research index.
+
+Core source/evidence/text/statement/testimony counts and the 849 forecast revisions
+match the original review. Fourteen official bill-text captures were fetched
+between that review and 2026-10-26 01:16:41 UTC, before this deployment; the new
+total is 13,819. This package did not acquire those captures. No new forecast,
+model, runtime manifest, bill-text observation or capture attempt was generated.
+The latter three new tables correctly remain empty while the application release
+is paused.
+
+The machine-readable
+[completion receipt](../../data/evaluation/forecast-evidence-remediation-completion-20261025.json)
+records the exact run, hashes, counts and limits. This closes the bounded
+correctness/access/preservation repair package. It does not certify missing
+historical evidence, predictive lift or an unreleased runtime.
 
 ## Forecasting and source holds
 
