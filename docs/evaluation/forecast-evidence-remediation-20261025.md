@@ -109,6 +109,14 @@ records the exact run, hashes, counts and limits. This closes the bounded
 correctness/access/preservation repair package. It does not certify missing
 historical evidence, predictive lift or an unreleased runtime.
 
+A subsequent documentation-merge CI run exposed intermittent interference in
+the older repair integration fixture's shared catalog and bounded backfill
+queue. That fixture now applies all migrations in its own throwaway schema,
+using the same isolation as the new contract test. Its original strict-clock,
+identity, literal-text and author-change assertions remain intact. This is a
+test-isolation repair and does not change production SQL or trigger another
+database deployment.
+
 ## Forecasting and source holds
 
 Keep the accepted Quick model and all frozen evaluation protocols unchanged.
