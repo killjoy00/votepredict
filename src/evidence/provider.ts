@@ -1,4 +1,5 @@
 import type { EvidenceDraft } from './types';
+import type { VerifiedImpactProof } from './verified-impact-proof';
 
 export interface DeepResearchSubject {
   identifier?: string;
@@ -36,6 +37,8 @@ export interface DeepResearchProviderResult {
   evidence: EvidenceDraft[];
   sourceReferences?: DeepResearchSourceReference[];
   diagnostics?: Record<string, unknown>;
+  /** Trusted verifier output; the gateway's model schema cannot supply these receipts. */
+  verifiedImpactProofs?: readonly VerifiedImpactProof[];
 }
 
 export interface DeepResearchProvider {

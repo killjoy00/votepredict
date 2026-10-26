@@ -265,7 +265,7 @@ async function persistSupersessionRelationships(input: {
       JOIN source_documents prior_source ON prior_source.id = prior.source_document_id
       JOIN source_documents current_source ON current_source.id = $2::uuid
      WHERE prior.id <> $1::uuid
-       AND prior.metadata->>'evidenceSeriesKey' = $3
+       AND prior.metadata ? 'evidenceSeriesKey' AND prior.metadata->>'evidenceSeriesKey' = $3
        AND prior.membership_id IS NOT DISTINCT FROM $4::uuid
        AND prior.bill_id IS NOT DISTINCT FROM $5::uuid
        AND prior_source.fetched_at < current_source.fetched_at
@@ -284,7 +284,7 @@ async function persistSupersessionRelationships(input: {
       JOIN source_documents newer_source ON newer_source.id = newer_item.source_document_id
       JOIN source_documents current_source ON current_source.id = $2::uuid
      WHERE newer_item.id <> $1::uuid
-       AND newer_item.metadata->>'evidenceSeriesKey' = $3
+       AND newer_item.metadata ? 'evidenceSeriesKey' AND newer_item.metadata->>'evidenceSeriesKey' = $3
        AND newer_item.membership_id IS NOT DISTINCT FROM $4::uuid
        AND newer_item.bill_id IS NOT DISTINCT FROM $5::uuid
        AND newer_source.fetched_at > current_source.fetched_at
@@ -378,7 +378,7 @@ export async function persistDurableEvidence(
           continue;
         }
       }
-      const existing = await client.query<{ id: string }>(`SELECT id::text FROM evidence_items WHERE metadata->>'ingestionKey' = $1 LIMIT 1`, [key]);
+      const existing = await client.query<{ id: string }>(`SELECT id::text FROM evidence_items WHERE metadata ? 'ingestionKey' AND metadata->>'ingestionKey' = $1 LIMIT 1`, [key]);
       if (existing.rows[0]) {
         if (seriesKey) {
           await client.query(`

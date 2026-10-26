@@ -1,0 +1,89 @@
+name: Forecast evidence remediation
+on:
+  pull_request:
+    paths:
+      - src/evidence/**
+      - src/forecasting/**
+      - src/operations/forecast-capture-observability.ts
+      - src/operations/research-artifact-retention.ts
+      - migrations/0037_forecast_evidence_contract.sql
+      - tests/forecast-evidence-contract.test.ts
+      - scripts/deploy-forecast-evidence-remediation.ts
+      - data/evaluation/research-artifact-retention-v1.json
+      - .github/workflows/forecast-evidence-remediation.yml
+  push:
+    branches: [main]
+    paths:
+      - src/evidence/**
+      - src/forecasting/**
+      - src/operations/forecast-capture-observability.ts
+      - src/operations/research-artifact-retention.ts
+      - migrations/0037_forecast_evidence_contract.sql
+      - tests/forecast-evidence-contract.test.ts
+      - scripts/deploy-forecast-evidence-remediation.ts
+      - data/evaluation/research-artifact-retention-v1.json
+      - .github/workflows/forecast-evidence-remediation.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  protected-production:
+    needs: verify
+    if: >-
+      needs.verify.result == 'success' && github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 && github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha && github.event.forced != true &&
+      github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'FORECAST_EVIDENCE_REMEDIATION')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Apply reviewed additive schema, retain exact originals and restore from DB
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+          VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+          GITHUB_TOKEN: ${{ github.token }}
+          VOTEPREDICT_REMEDIATION_CI: 'true'
+        run: node --import tsx scripts/deploy-forecast-evidence-remediation.ts

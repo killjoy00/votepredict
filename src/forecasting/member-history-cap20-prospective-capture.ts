@@ -1,4 +1,5 @@
 import { pool } from '@/lib/db';
+import { verifySealedShadowRetry } from './sealed-shadow-retry';
 import {
   estimateMemberHistoryCap20ProspectiveShadow,
   MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT,
@@ -223,7 +224,8 @@ export async function captureMemberHistoryCap20ProspectiveShadow(
         JSON.stringify([write.context]),
         JSON.stringify([{ experiment: MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT }]),
       ]);
-      updated += result.rowCount ?? 0;
+      if ((result.rowCount ?? 0) === 0) await verifySealedShadowRetry(client,quick.revisionId,write.membershipId,write.context as unknown as Record<string,unknown>);
+      updated += 1;
     }
     if (updated !== writes.length) {
       throw new Error(`Prospective cap-20 capture updated ${updated}/${writes.length} member rows`);

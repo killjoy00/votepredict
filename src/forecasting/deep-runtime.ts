@@ -142,7 +142,10 @@ async function materializeResearchSource(
     signal: AbortSignal.timeout(15_000),
   });
   if (!response.ok) throw new Error(`Could not materialize research source (${response.status}): ${reference.url}`);
-  const content = await response.text();
+  if (!response.body) throw new Error('Research source has no body');
+  const chunks:Uint8Array[]=[];let bytes=0;
+  for await (const part of response.body) { bytes+=part.length;if(bytes>8000000)throw new Error('Research source exceeds retention budget');chunks.push(part); }
+  const content = Buffer.concat(chunks);
   if (content.length === 0) throw new Error(`Research source returned no content: ${reference.url}`);
   const contentSha256 = createHash('sha256').update(content).digest('hex');
   const result = await pool.query<{ id: string }>(`
@@ -154,7 +157,6 @@ async function materializeResearchSource(
       FROM legislative_sessions s
      WHERE s.id = $1
     ON CONFLICT (source_url, content_sha256) DO UPDATE SET
-      fetched_at = EXCLUDED.fetched_at,
       http_status = EXCLUDED.http_status,
       metadata = source_documents.metadata || EXCLUDED.metadata
     RETURNING id`, [
@@ -163,9 +165,11 @@ async function materializeResearchSource(
     reference.url,
     contentSha256,
     response.status,
-    JSON.stringify({ sourceReferenceId: reference.id, title: reference.title ?? null }),
+    JSON.stringify({ sourceReferenceId: reference.id, title: reference.title ?? null,retainedBodySha256:contentSha256 }),
   ]);
   if (!result.rows[0]) throw new Error(`Could not persist research source provenance: ${reference.url}`);
+  await pool.query(`INSERT INTO evidence_content_blobs(sha256,body,media_type) VALUES($1,$2,$3) ON CONFLICT(sha256) DO NOTHING`,
+    [contentSha256,content,response.headers.get('content-type')??'application/octet-stream']);
   return result.rows[0].id;
 }
 
