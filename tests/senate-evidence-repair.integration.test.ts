@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {randomUUID,createHash} from 'node:crypto';
-import {readFileSync} from 'node:fs';
+import {readFileSync,readdirSync} from 'node:fs';
 import {Pool} from 'pg';
 import {assertEvidenceRepairRun} from '../src/operations/senate-evidence-repair-gate.js';
 import {backfillJournalAuthorEvents,backfillScorecardContentObservations} from '../src/operations/senate-evidence-repair.js';
@@ -154,10 +154,19 @@ export async function exerciseRepair(pool:Pool){
 }
 
 const connection=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
+const local=!!connection&&['localhost','127.0.0.1'].includes(new URL(connection).hostname);
 test('real Postgres: strict clocks, full words, PDF/link parity, dated roles and person carry-forward',
- {skip:!connection,timeout:90000},async()=>{
-   const pool=new Pool({connectionString:connection,max:3});
-   try{await exerciseRepair(pool)}finally{await pool.end()}
+ {skip:!local,timeout:90000},async()=>{
+   // Global backfills must see only this fixture's catalog and pending queue.
+   const schema='repair_contract_'+randomUUID().replaceAll('-','');
+   const admin=new Pool({connectionString:connection,max:1});
+   const pool=new Pool({connectionString:connection,max:3,options:'-c search_path='+schema+',public'});
+   try{
+     await admin.query('CREATE SCHEMA '+schema);
+     for(const file of readdirSync('migrations').filter(f=>f.endsWith('.sql')).sort())
+       await pool.query(readFileSync('migrations/'+file,'utf8').replaceAll('public.',schema+'.'));
+     await exerciseRepair(pool);
+   }finally{await pool.end();await admin.query('DROP SCHEMA IF EXISTS '+schema+' CASCADE');await admin.end()}
  });
 
 test('repair is additive and official minute hearing dates remain intact',()=>{
