@@ -26,6 +26,8 @@ test('database binding ignores credentials and pooling but distinguishes endpoin
     assert.notEqual(hash, databaseTargetFingerprint(replacement));
   assert.equal(databaseTargetFingerprint(undefined), null);
   assert.equal(databaseTargetFingerprint('https://example.test/db'), null);
+  for (const key of ['host', 'hostaddr', 'port', 'user', 'options', 'service'])
+    assert.equal(databaseTargetFingerprint(original + '&' + key + '=other'), null);
 });
 
 test('Vercel remains paused even for missing, unknown or requested active modes', () => {

@@ -14,6 +14,9 @@ export function databaseTargetFingerprint(connection: string | undefined): strin
   try {
     const url = new URL(connection);
     if (!['postgres:', 'postgresql:'].includes(url.protocol)) return null;
+    // pg gives several query parameters precedence over the URL authority.
+    // Require an endpoint-qualified URL, rather than certifying a hidden override.
+    if (['host', 'hostaddr', 'port', 'user', 'options', 'service'].some(key => url.searchParams.has(key))) return null;
     const host = url.hostname.toLowerCase().replace(/-pooler(?=\.)/, '');
     const identity = [host, url.port || '5432', decodeURIComponent(url.pathname.slice(1)), decodeURIComponent(url.username)];
     if (identity.some((value) => !value)) return null;
