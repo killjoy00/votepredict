@@ -4,6 +4,8 @@ _Frozen evidence metrics reconciled: 2026-10-08. Research/operating closeout rev
 
 This is a **dated, provenance-linked index**, not a fresh production database query. Never combine general persisted context, reviewed semantic claims, and unique directional feature rows into one evidence count.
 
+**Separate October 29 coverage snapshot:** [Senator × session × issue map and current vote-to-text reconciliation](senate-forecast-coverage-20261029.md) preserves 3,280 descriptive cells, independent Journal/committee denominators and a bounded timing-investigation queue. It does not update the frozen directional rows below or admit research text into serving.
+
 ## Program state
 
 | Lane | Status | Meaning and source |
