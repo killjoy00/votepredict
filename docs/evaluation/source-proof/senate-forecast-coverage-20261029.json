@@ -1,0 +1,2004 @@
+{
+  "schemaVersion": "senate-person-session-issue-coverage-v1",
+  "snapshotAt": "2026-10-29 21:12:06.448839+00",
+  "readOnly": true,
+  "rollback": true,
+  "queryBundleSha256": "8ae0d75b3376a757062f57e33dd23cf7b5dc61911e322b14c3b1ca14929d6a27",
+  "aggregateReadbackSha256": "a4566f0db066aec820fe1401439b4acea474c5c8d16c5502ea385ed9193a1788",
+  "scope": "retained_mn_senate_2021_2026",
+  "missingMeans": "unknown",
+  "servingAllowed": false,
+  "issueSemantics": "overlapping retained v2.1 bill policy tags; descriptive, not historically available features",
+  "evidenceSemantics": "stable-person retained literals repeated across session rows; pre-vote counts use each original Journal event midnight UTC; unmapped labels do not assert issue applicability",
+  "lanesExcluded": [
+    "finance",
+    "media",
+    "frozen_v1.8_directional",
+    "historical_quality_37_feature_matrix"
+  ],
+  "issueCrosswalk": {
+    "agriculture": "agriculture",
+    "commerce": "commerce_consumer",
+    "education": "education",
+    "elections": "elections",
+    "environment": "environment_natural_resources",
+    "health": "health",
+    "housing": "housing",
+    "human_services": "human_services",
+    "judiciary": "judiciary_civil_law",
+    "labor": "labor_employment",
+    "local_government": "local_government",
+    "public_safety": "public_safety",
+    "state_government": "state_government",
+    "taxes": "taxes_revenue",
+    "transportation": "transportation"
+  },
+  "map": {
+    "file": "senate-person-session-issue-coverage-20261029.csv",
+    "rows": 3280,
+    "sha256": "bbab2550eac033bf065bbabb6cbf06793852dc62287e69971f1d0e02fffbdb50"
+  },
+  "denominators": [
+    {
+      "session": "2021-2022",
+      "source_family": "committee_minutes",
+      "events": 40,
+      "member_choices": 270,
+      "unresolved_bill_events": 8,
+      "roster_memberships": 67,
+      "unresolved_or_out_of_term_choices": 0
+    },
+    {
+      "session": "2021-2022",
+      "source_family": "senate_journal",
+      "events": 444,
+      "member_choices": 29241,
+      "unresolved_bill_events": 91,
+      "roster_memberships": 67,
+      "unresolved_or_out_of_term_choices": 0
+    },
+    {
+      "session": "2023-2024",
+      "source_family": "committee_minutes",
+      "events": 128,
+      "member_choices": 1141,
+      "unresolved_bill_events": 12,
+      "roster_memberships": 68,
+      "unresolved_or_out_of_term_choices": 0
+    },
+    {
+      "session": "2023-2024",
+      "source_family": "senate_journal",
+      "events": 1100,
+      "member_choices": 71644,
+      "unresolved_bill_events": 166,
+      "roster_memberships": 68,
+      "unresolved_or_out_of_term_choices": 0
+    },
+    {
+      "session": "2025-2026",
+      "source_family": "committee_minutes",
+      "events": 53,
+      "member_choices": 539,
+      "unresolved_bill_events": 10,
+      "roster_memberships": 70,
+      "unresolved_or_out_of_term_choices": 0
+    },
+    {
+      "session": "2025-2026",
+      "source_family": "senate_journal",
+      "events": 591,
+      "member_choices": 38711,
+      "unresolved_bill_events": 115,
+      "roster_memberships": 70,
+      "unresolved_or_out_of_term_choices": 0
+    }
+  ],
+  "issueSummary": [
+    {
+      "session": "2021-2022",
+      "issue": "agriculture",
+      "memberships": 67,
+      "members_with_retained_website": 12,
+      "members_with_prevote_website": 10,
+      "recorded_member_events": 6404,
+      "member_events_with_prevote_website": 795
+    },
+    {
+      "session": "2021-2022",
+      "issue": "commerce_consumer",
+      "memberships": 67,
+      "members_with_retained_website": 17,
+      "members_with_prevote_website": 12,
+      "recorded_member_events": 14560,
+      "member_events_with_prevote_website": 2083
+    },
+    {
+      "session": "2021-2022",
+      "issue": "education",
+      "memberships": 67,
+      "members_with_retained_website": 37,
+      "members_with_prevote_website": 22,
+      "recorded_member_events": 11528,
+      "member_events_with_prevote_website": 2828
+    },
+    {
+      "session": "2021-2022",
+      "issue": "elections",
+      "memberships": 67,
+      "members_with_retained_website": 5,
+      "members_with_prevote_website": 2,
+      "recorded_member_events": 7921,
+      "member_events_with_prevote_website": 151
+    },
+    {
+      "session": "2021-2022",
+      "issue": "environment_natural_resources",
+      "memberships": 67,
+      "members_with_retained_website": 24,
+      "members_with_prevote_website": 13,
+      "recorded_member_events": 8657,
+      "member_events_with_prevote_website": 1259
+    },
+    {
+      "session": "2021-2022",
+      "issue": "health",
+      "memberships": 67,
+      "members_with_retained_website": 30,
+      "members_with_prevote_website": 18,
+      "recorded_member_events": 11880,
+      "member_events_with_prevote_website": 2134
+    },
+    {
+      "session": "2021-2022",
+      "issue": "housing",
+      "memberships": 67,
+      "members_with_retained_website": 10,
+      "members_with_prevote_website": 5,
+      "recorded_member_events": 12722,
+      "member_events_with_prevote_website": 697
+    },
+    {
+      "session": "2021-2022",
+      "issue": "human_services",
+      "memberships": 67,
+      "members_with_retained_website": 20,
+      "members_with_prevote_website": 9,
+      "recorded_member_events": 8251,
+      "member_events_with_prevote_website": 845
+    },
+    {
+      "session": "2021-2022",
+      "issue": "judiciary_civil_law",
+      "memberships": 67,
+      "members_with_retained_website": 13,
+      "members_with_prevote_website": 8,
+      "recorded_member_events": 9959,
+      "member_events_with_prevote_website": 1026
+    },
+    {
+      "session": "2021-2022",
+      "issue": "labor_employment",
+      "memberships": 67,
+      "members_with_retained_website": 23,
+      "members_with_prevote_website": 15,
+      "recorded_member_events": 11472,
+      "member_events_with_prevote_website": 2041
+    },
+    {
+      "session": "2021-2022",
+      "issue": "local_government",
+      "memberships": 67,
+      "members_with_retained_website": 4,
+      "members_with_prevote_website": 2,
+      "recorded_member_events": 10953,
+      "member_events_with_prevote_website": 271
+    },
+    {
+      "session": "2021-2022",
+      "issue": "public_safety",
+      "memberships": 67,
+      "members_with_retained_website": 30,
+      "members_with_prevote_website": 16,
+      "recorded_member_events": 8901,
+      "member_events_with_prevote_website": 1602
+    },
+    {
+      "session": "2021-2022",
+      "issue": "state_government",
+      "memberships": 67,
+      "members_with_retained_website": 17,
+      "members_with_prevote_website": 12,
+      "recorded_member_events": 16022,
+      "member_events_with_prevote_website": 2282
+    },
+    {
+      "session": "2021-2022",
+      "issue": "taxes_revenue",
+      "memberships": 67,
+      "members_with_retained_website": 25,
+      "members_with_prevote_website": 16,
+      "recorded_member_events": 12058,
+      "member_events_with_prevote_website": 2238
+    },
+    {
+      "session": "2021-2022",
+      "issue": "transportation",
+      "memberships": 67,
+      "members_with_retained_website": 24,
+      "members_with_prevote_website": 13,
+      "recorded_member_events": 9820,
+      "member_events_with_prevote_website": 1504
+    },
+    {
+      "session": "2021-2022",
+      "issue": "unmapped_issue",
+      "memberships": 67,
+      "members_with_retained_website": 27,
+      "members_with_prevote_website": 0,
+      "recorded_member_events": 10131,
+      "member_events_with_prevote_website": 0
+    },
+    {
+      "session": "2023-2024",
+      "issue": "agriculture",
+      "memberships": 68,
+      "members_with_retained_website": 10,
+      "members_with_prevote_website": 10,
+      "recorded_member_events": 31833,
+      "member_events_with_prevote_website": 4675
+    },
+    {
+      "session": "2023-2024",
+      "issue": "commerce_consumer",
+      "memberships": 68,
+      "members_with_retained_website": 18,
+      "members_with_prevote_website": 18,
+      "recorded_member_events": 41438,
+      "member_events_with_prevote_website": 11141
+    },
+    {
+      "session": "2023-2024",
+      "issue": "education",
+      "memberships": 68,
+      "members_with_retained_website": 42,
+      "members_with_prevote_website": 41,
+      "recorded_member_events": 37574,
+      "member_events_with_prevote_website": 23107
+    },
+    {
+      "session": "2023-2024",
+      "issue": "elections",
+      "memberships": 68,
+      "members_with_retained_website": 9,
+      "members_with_prevote_website": 9,
+      "recorded_member_events": 37088,
+      "member_events_with_prevote_website": 5073
+    },
+    {
+      "session": "2023-2024",
+      "issue": "environment_natural_resources",
+      "memberships": 68,
+      "members_with_retained_website": 26,
+      "members_with_prevote_website": 25,
+      "recorded_member_events": 33809,
+      "member_events_with_prevote_website": 12755
+    },
+    {
+      "session": "2023-2024",
+      "issue": "health",
+      "memberships": 68,
+      "members_with_retained_website": 39,
+      "members_with_prevote_website": 38,
+      "recorded_member_events": 44181,
+      "member_events_with_prevote_website": 25179
+    },
+    {
+      "session": "2023-2024",
+      "issue": "housing",
+      "memberships": 68,
+      "members_with_retained_website": 15,
+      "members_with_prevote_website": 15,
+      "recorded_member_events": 40233,
+      "member_events_with_prevote_website": 9155
+    },
+    {
+      "session": "2023-2024",
+      "issue": "human_services",
+      "memberships": 68,
+      "members_with_retained_website": 23,
+      "members_with_prevote_website": 22,
+      "recorded_member_events": 35030,
+      "member_events_with_prevote_website": 11522
+    },
+    {
+      "session": "2023-2024",
+      "issue": "judiciary_civil_law",
+      "memberships": 68,
+      "members_with_retained_website": 13,
+      "members_with_prevote_website": 13,
+      "recorded_member_events": 41028,
+      "member_events_with_prevote_website": 8060
+    },
+    {
+      "session": "2023-2024",
+      "issue": "labor_employment",
+      "memberships": 68,
+      "members_with_retained_website": 26,
+      "members_with_prevote_website": 25,
+      "recorded_member_events": 41521,
+      "member_events_with_prevote_website": 15666
+    },
+    {
+      "session": "2023-2024",
+      "issue": "local_government",
+      "memberships": 68,
+      "members_with_retained_website": 5,
+      "members_with_prevote_website": 5,
+      "recorded_member_events": 39919,
+      "member_events_with_prevote_website": 2976
+    },
+    {
+      "session": "2023-2024",
+      "issue": "public_safety",
+      "memberships": 68,
+      "members_with_retained_website": 38,
+      "members_with_prevote_website": 37,
+      "recorded_member_events": 36094,
+      "member_events_with_prevote_website": 19991
+    },
+    {
+      "session": "2023-2024",
+      "issue": "state_government",
+      "memberships": 68,
+      "members_with_retained_website": 15,
+      "members_with_prevote_website": 14,
+      "recorded_member_events": 45244,
+      "member_events_with_prevote_website": 9339
+    },
+    {
+      "session": "2023-2024",
+      "issue": "taxes_revenue",
+      "memberships": 68,
+      "members_with_retained_website": 25,
+      "members_with_prevote_website": 24,
+      "recorded_member_events": 41110,
+      "member_events_with_prevote_website": 14697
+    },
+    {
+      "session": "2023-2024",
+      "issue": "transportation",
+      "memberships": 68,
+      "members_with_retained_website": 21,
+      "members_with_prevote_website": 20,
+      "recorded_member_events": 39593,
+      "member_events_with_prevote_website": 11921
+    },
+    {
+      "session": "2023-2024",
+      "issue": "unmapped_issue",
+      "memberships": 68,
+      "members_with_retained_website": 24,
+      "members_with_prevote_website": 0,
+      "recorded_member_events": 20894,
+      "member_events_with_prevote_website": 0
+    },
+    {
+      "session": "2025-2026",
+      "issue": "agriculture",
+      "memberships": 70,
+      "members_with_retained_website": 10,
+      "members_with_prevote_website": 10,
+      "recorded_member_events": 15226,
+      "member_events_with_prevote_website": 2236
+    },
+    {
+      "session": "2025-2026",
+      "issue": "commerce_consumer",
+      "memberships": 70,
+      "members_with_retained_website": 18,
+      "members_with_prevote_website": 18,
+      "recorded_member_events": 22274,
+      "member_events_with_prevote_website": 6041
+    },
+    {
+      "session": "2025-2026",
+      "issue": "education",
+      "memberships": 70,
+      "members_with_retained_website": 44,
+      "members_with_prevote_website": 44,
+      "recorded_member_events": 18935,
+      "member_events_with_prevote_website": 12156
+    },
+    {
+      "session": "2025-2026",
+      "issue": "elections",
+      "memberships": 70,
+      "members_with_retained_website": 9,
+      "members_with_prevote_website": 9,
+      "recorded_member_events": 15565,
+      "member_events_with_prevote_website": 1998
+    },
+    {
+      "session": "2025-2026",
+      "issue": "environment_natural_resources",
+      "memberships": 70,
+      "members_with_retained_website": 26,
+      "members_with_prevote_website": 25,
+      "recorded_member_events": 15774,
+      "member_events_with_prevote_website": 5802
+    },
+    {
+      "session": "2025-2026",
+      "issue": "health",
+      "memberships": 70,
+      "members_with_retained_website": 41,
+      "members_with_prevote_website": 41,
+      "recorded_member_events": 20566,
+      "member_events_with_prevote_website": 12284
+    },
+    {
+      "session": "2025-2026",
+      "issue": "housing",
+      "memberships": 70,
+      "members_with_retained_website": 15,
+      "members_with_prevote_website": 15,
+      "recorded_member_events": 22527,
+      "member_events_with_prevote_website": 5076
+    },
+    {
+      "session": "2025-2026",
+      "issue": "human_services",
+      "memberships": 70,
+      "members_with_retained_website": 24,
+      "members_with_prevote_website": 24,
+      "recorded_member_events": 17143,
+      "member_events_with_prevote_website": 6085
+    },
+    {
+      "session": "2025-2026",
+      "issue": "judiciary_civil_law",
+      "memberships": 70,
+      "members_with_retained_website": 13,
+      "members_with_prevote_website": 13,
+      "recorded_member_events": 20019,
+      "member_events_with_prevote_website": 3902
+    },
+    {
+      "session": "2025-2026",
+      "issue": "labor_employment",
+      "memberships": 70,
+      "members_with_retained_website": 26,
+      "members_with_prevote_website": 26,
+      "recorded_member_events": 20898,
+      "member_events_with_prevote_website": 7878
+    },
+    {
+      "session": "2025-2026",
+      "issue": "local_government",
+      "memberships": 70,
+      "members_with_retained_website": 5,
+      "members_with_prevote_website": 5,
+      "recorded_member_events": 21002,
+      "member_events_with_prevote_website": 1565
+    },
+    {
+      "session": "2025-2026",
+      "issue": "public_safety",
+      "memberships": 70,
+      "members_with_retained_website": 40,
+      "members_with_prevote_website": 40,
+      "recorded_member_events": 18591,
+      "member_events_with_prevote_website": 10727
+    },
+    {
+      "session": "2025-2026",
+      "issue": "state_government",
+      "memberships": 70,
+      "members_with_retained_website": 17,
+      "members_with_prevote_website": 17,
+      "recorded_member_events": 23898,
+      "member_events_with_prevote_website": 5483
+    },
+    {
+      "session": "2025-2026",
+      "issue": "taxes_revenue",
+      "memberships": 70,
+      "members_with_retained_website": 26,
+      "members_with_prevote_website": 26,
+      "recorded_member_events": 21024,
+      "member_events_with_prevote_website": 7820
+    },
+    {
+      "session": "2025-2026",
+      "issue": "transportation",
+      "memberships": 70,
+      "members_with_retained_website": 22,
+      "members_with_prevote_website": 22,
+      "recorded_member_events": 19575,
+      "member_events_with_prevote_website": 6354
+    },
+    {
+      "session": "2025-2026",
+      "issue": "unmapped_issue",
+      "memberships": 70,
+      "members_with_retained_website": 24,
+      "members_with_prevote_website": 0,
+      "recorded_member_events": 12251,
+      "member_events_with_prevote_website": 0
+    }
+  ],
+  "unmappedWebsiteTags": [
+    {
+      "issue_tag": "abortion",
+      "retained_copies": 9
+    },
+    {
+      "issue_tag": "abortion_access",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "accountability",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "affordable_housing",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "agricultural_economy",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "alternative_fuels",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "business_fees",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "business_growth",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "business_regulation",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "business_taxes",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "candidate_accountability",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "career_training",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "child_care",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "city_jobs_selfreport",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "civil_liberty",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "clean_energy",
+      "retained_copies": 5
+    },
+    {
+      "issue_tag": "clean_energy_jobs",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "climate",
+      "retained_copies": 5
+    },
+    {
+      "issue_tag": "climate_adaptation",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "college_affordability",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "college_readiness",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "community_opportunity",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "constituent_cooperation",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "constituent_outreach",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "constituent_voice",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "contraception",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "covid_testing",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "criminal_justice",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "crop_insurance",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "democracy",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "drug_affordability",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "early_childhood",
+      "retained_copies": 4
+    },
+    {
+      "issue_tag": "economic_and_health_equity",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "economic_equity",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "economy",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "education_curriculum",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "education_equity",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "education_health",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "education_local_control",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "electric_vehicles",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "emergency_powers",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "employment",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "energy",
+      "retained_copies": 5
+    },
+    {
+      "issue_tag": "energy_efficiency",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "environment",
+      "retained_copies": 8
+    },
+    {
+      "issue_tag": "family",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "family_farms",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "family_tax_credits",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "family_values",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "federal_budget",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "federalism",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "free_market",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "gas_tax",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "gender_pay_gap",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "government_efficiency",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "government_size",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "government_spending",
+      "retained_copies": 8
+    },
+    {
+      "issue_tag": "government_transparency",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "gun_rights",
+      "retained_copies": 11
+    },
+    {
+      "issue_tag": "gun_safety",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "hazard_pay",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "health_care",
+      "retained_copies": 22
+    },
+    {
+      "issue_tag": "health_insurance",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "healthcare_access",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "healthcare_coverage",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "higher_education",
+      "retained_copies": 7
+    },
+    {
+      "issue_tag": "home_care",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "home_energy_community_work",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "immigration",
+      "retained_copies": 6
+    },
+    {
+      "issue_tag": "in_person_learning",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "infrastructure",
+      "retained_copies": 9
+    },
+    {
+      "issue_tag": "jobs",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "jobs_budget",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "labor",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "legislative_transparency",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "living_wage",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "local_agriculture",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "local_economy",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "local_government_coordination",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "local_government_mandates",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "long_term_care",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "medical_costs",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "medical_privacy",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "medical_research",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "medical_workforce",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "mental_health",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "minimum_wage",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "mining",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "multilingual_voter_transport",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "open_government",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "paid_leave",
+      "retained_copies": 4
+    },
+    {
+      "issue_tag": "pandemic_policy",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "pandemic_testing",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "parental_choice",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "police_accountability",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "police_funding",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "police_reform",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "police_trust",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "pollinator_protection",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "prescription_drugs",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "property_recording",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "property_rights",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "property_taxes",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "public_education",
+      "retained_copies": 24
+    },
+    {
+      "issue_tag": "public_health",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "public_pay",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "public_safety_net_biography",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "public_service_motivation",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "public_spending",
+      "retained_copies": 5
+    },
+    {
+      "issue_tag": "racial_justice",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "regional_government",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "regional_income",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "regulation",
+      "retained_copies": 4
+    },
+    {
+      "issue_tag": "renewable_energy",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "reproductive_health",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "reproductive_rights",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "right_to_repair",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "rural_equity",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "rural_health_care",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "rural_jobs",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "rural_technology",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "school_choice",
+      "retained_copies": 6
+    },
+    {
+      "issue_tag": "school_funding",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "school_governance",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "school_meals",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "school_meals_biography",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "school_safety",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "school_support",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "science",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "senior_services",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "small_business",
+      "retained_copies": 9
+    },
+    {
+      "issue_tag": "social_security_tax",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "special_education",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "spending",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "state_budget",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "stem_cell",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "stem_cell_research",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "student_counseling",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "student_discipline",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "student_loans",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "student_mental_health",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "tax_policy",
+      "retained_copies": 10
+    },
+    {
+      "issue_tag": "taxation",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "taxes",
+      "retained_copies": 13
+    },
+    {
+      "issue_tag": "teacher_diversity",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "teacher_pay",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "teacher_support",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "term_limits",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "transparency",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "unemployment",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "vaccine_policy",
+      "retained_copies": 3
+    },
+    {
+      "issue_tag": "vaccines",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "veterans",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "vocational_education",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "wage",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "water_air_conservation",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "water_infrastructure",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "water_resources",
+      "retained_copies": 2
+    },
+    {
+      "issue_tag": "welfare",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "workforce",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "workforce_development",
+      "retained_copies": 1
+    },
+    {
+      "issue_tag": "workforce_training",
+      "retained_copies": 1
+    }
+  ],
+  "paperInventory": {
+    "current_actions": 2445,
+    "amendment_actions": 1556,
+    "assembled_states": 0,
+    "base_components": 96
+  },
+  "voteText": {
+    "schemaVersion": "senate-vote-text-gap-v1",
+    "auditedEvents": 2356,
+    "groups": [
+      {
+        "session": "2021-2022",
+        "vote_kind": "amendment",
+        "event_count": 21,
+        "source_family": "committee_minutes",
+        "evidence_stage": "bill_papers_on_other_dates",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "amendment",
+        "event_count": 8,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_parsed_paper_for_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "amendment",
+        "event_count": 8,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "amendment",
+        "event_count": 84,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 17,
+        "exact_verified_original": 84,
+        "exact_in_journal_prior_adoptions": 12
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "amendment",
+        "event_count": 55,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "amendment",
+        "event_count": 17,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "motion",
+        "event_count": 3,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_parsed_paper_for_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "motion",
+        "event_count": 7,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 7,
+        "exact_in_journal_prior_adoptions": 1
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "motion",
+        "event_count": 1,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "motion",
+        "event_count": 20,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "other",
+        "event_count": 6,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 1,
+        "exact_verified_original": 6,
+        "exact_in_journal_prior_adoptions": 1
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "other",
+        "event_count": 35,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "passage",
+        "event_count": 181,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 181,
+        "exact_in_journal_prior_adoptions": 56
+      },
+      {
+        "session": "2021-2022",
+        "vote_kind": "passage",
+        "event_count": 38,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "amendment",
+        "event_count": 38,
+        "source_family": "committee_minutes",
+        "evidence_stage": "bill_papers_on_other_dates",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "amendment",
+        "event_count": 56,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_parsed_paper_for_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "amendment",
+        "event_count": 11,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "amendment",
+        "event_count": 25,
+        "source_family": "senate_journal",
+        "evidence_stage": "bill_papers_on_other_dates",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "amendment",
+        "event_count": 327,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 35,
+        "exact_explicit_base": 35,
+        "exact_proposed_text": 137,
+        "exact_verified_original": 327,
+        "exact_in_journal_prior_adoptions": 80
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "amendment",
+        "event_count": 4,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_parsed_paper_for_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "amendment",
+        "event_count": 116,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "amendment",
+        "event_count": 160,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "motion",
+        "event_count": 7,
+        "source_family": "committee_minutes",
+        "evidence_stage": "bill_papers_on_other_dates",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "motion",
+        "event_count": 14,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_parsed_paper_for_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "motion",
+        "event_count": 1,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "motion",
+        "event_count": 154,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 154,
+        "exact_in_journal_prior_adoptions": 13
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "motion",
+        "event_count": 27,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "motion",
+        "event_count": 9,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "other",
+        "event_count": 1,
+        "source_family": "committee_minutes",
+        "evidence_stage": "bill_papers_on_other_dates",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "other",
+        "event_count": 33,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 3,
+        "exact_verified_original": 33,
+        "exact_in_journal_prior_adoptions": 6
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "other",
+        "event_count": 23,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "other",
+        "event_count": 4,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "passage",
+        "event_count": 186,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 186,
+        "exact_in_journal_prior_adoptions": 68
+      },
+      {
+        "session": "2023-2024",
+        "vote_kind": "passage",
+        "event_count": 32,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "amendment",
+        "event_count": 7,
+        "source_family": "committee_minutes",
+        "evidence_stage": "bill_papers_on_other_dates",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "amendment",
+        "event_count": 26,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_parsed_paper_for_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "amendment",
+        "event_count": 7,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "amendment",
+        "event_count": 4,
+        "source_family": "senate_journal",
+        "evidence_stage": "bill_papers_on_other_dates",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "amendment",
+        "event_count": 136,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 1,
+        "exact_proposed_text": 71,
+        "exact_verified_original": 136,
+        "exact_in_journal_prior_adoptions": 52
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "amendment",
+        "event_count": 3,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_parsed_paper_for_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "amendment",
+        "event_count": 72,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "amendment",
+        "event_count": 62,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "motion",
+        "event_count": 1,
+        "source_family": "committee_minutes",
+        "evidence_stage": "bill_papers_on_other_dates",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "motion",
+        "event_count": 9,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_parsed_paper_for_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "motion",
+        "event_count": 3,
+        "source_family": "committee_minutes",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "motion",
+        "event_count": 34,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 34,
+        "exact_in_journal_prior_adoptions": 7
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "motion",
+        "event_count": 12,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "other",
+        "event_count": 15,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 8,
+        "exact_verified_original": 15,
+        "exact_in_journal_prior_adoptions": 8
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "other",
+        "event_count": 31,
+        "source_family": "senate_journal",
+        "evidence_stage": "no_resolved_bill",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "other",
+        "event_count": 1,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "passage",
+        "event_count": 191,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 191,
+        "exact_in_journal_prior_adoptions": 64
+      },
+      {
+        "session": "2025-2026",
+        "vote_kind": "passage",
+        "event_count": 30,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked",
+        "exact_captured_base": 0,
+        "exact_explicit_base": 0,
+        "exact_proposed_text": 0,
+        "exact_verified_original": 0,
+        "exact_in_journal_prior_adoptions": 0
+      }
+    ],
+    "examples": [
+      {
+        "bill": "HF1",
+        "session": "2023-2024",
+        "vote_day": "2023-01-27",
+        "vote_kind": "amendment",
+        "event_count": 30,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF5284",
+        "session": "2023-2024",
+        "vote_day": "2024-05-06",
+        "vote_kind": "amendment",
+        "event_count": 18,
+        "source_family": "senate_journal",
+        "evidence_stage": "bill_papers_on_other_dates"
+      },
+      {
+        "bill": "HF4",
+        "session": "2023-2024",
+        "vote_day": "2023-02-21",
+        "vote_kind": "amendment",
+        "event_count": 14,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "HF3",
+        "session": "2023-2024",
+        "vote_day": "2023-04-26",
+        "vote_kind": "amendment",
+        "event_count": 10,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF1426",
+        "session": "2023-2024",
+        "vote_day": "2023-04-20",
+        "vote_kind": "amendment",
+        "event_count": 8,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF3045",
+        "session": "2025-2026",
+        "vote_day": "2025-04-25",
+        "vote_kind": "amendment",
+        "event_count": 8,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF2",
+        "session": "2023-2024",
+        "vote_day": "2023-05-08",
+        "vote_kind": "amendment",
+        "event_count": 7,
+        "source_family": "senate_journal",
+        "evidence_stage": "bill_papers_on_other_dates"
+      },
+      {
+        "bill": "SF4535",
+        "session": "2025-2026",
+        "vote_day": "2026-04-30",
+        "vote_kind": "amendment",
+        "event_count": 7,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF3975",
+        "session": "2021-2022",
+        "vote_day": "2022-05-02",
+        "vote_kind": "amendment",
+        "event_count": 6,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "HF7",
+        "session": "2023-2024",
+        "vote_day": "2023-02-02",
+        "vote_kind": "amendment",
+        "event_count": 6,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF1832",
+        "session": "2025-2026",
+        "vote_day": "2025-04-29",
+        "vote_kind": "amendment",
+        "event_count": 6,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF2865",
+        "session": "2025-2026",
+        "vote_day": "2025-04-30",
+        "vote_kind": "amendment",
+        "event_count": 6,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF2995",
+        "session": "2023-2024",
+        "vote_day": "2023-04-19",
+        "vote_kind": "amendment",
+        "event_count": 5,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF4942",
+        "session": "2023-2024",
+        "vote_day": "2024-05-06",
+        "vote_kind": "amendment",
+        "event_count": 5,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "SF1417",
+        "session": "2025-2026",
+        "vote_day": "2025-04-30",
+        "vote_kind": "amendment",
+        "event_count": 5,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "HF2310",
+        "session": "2023-2024",
+        "vote_day": "2023-04-20",
+        "vote_kind": "amendment",
+        "event_count": 4,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "HF2335",
+        "session": "2023-2024",
+        "vote_day": "2023-04-25",
+        "vote_kind": "amendment",
+        "event_count": 4,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      },
+      {
+        "bill": "HF4124",
+        "session": "2023-2024",
+        "vote_day": "2024-05-03",
+        "vote_kind": "amendment",
+        "event_count": 4,
+        "source_family": "senate_journal",
+        "evidence_stage": "same_source_day_bill_unlinked"
+      }
+    ],
+    "hf100Pilot": [
+      {
+        "vote_kind": "amendment",
+        "event_count": 4,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 4
+      },
+      {
+        "vote_kind": "motion",
+        "event_count": 1,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0
+      },
+      {
+        "vote_kind": "passage",
+        "event_count": 1,
+        "source_family": "senate_journal",
+        "evidence_stage": "exact_question",
+        "exact_captured_base": 0
+      }
+    ]
+  }
+}
