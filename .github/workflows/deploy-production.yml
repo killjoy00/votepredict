@@ -87,6 +87,9 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           CANARY_REASON: ${{ inputs.reason }}
+          # Independently verified existing Neon default-primary target, 2026-10-29.
+          # This nonsecret binding is scoped to this deployment, not project settings.
+          EXPECTED_DATABASE_FINGERPRINT: c83b5c90959a206d07079762d50255adca7ba97b2e920a3c7ee70b4ce64425ba
         run: |
           set -euo pipefail
           if [ -z "${VERCEL_TOKEN:-}" ] || [ "${#CANARY_REASON}" -lt 15 ]; then
@@ -98,7 +101,7 @@ jobs:
             echo "::error::Main advanced to $current after the freshness gate; refusing to deploy stale $RELEASE_SHA."
             exit 1
           fi
-          output="$(npx --yes vercel@59.13.1 deploy --prod --skip-domain --yes --build-env VOTEPREDICT_REQUIRE_MIGRATION_LEDGER=1 --env VOTEPREDICT_EXECUTION_MODE=readiness)"
+          output="$(npx --yes vercel@59.13.1 deploy --prod --skip-domain --yes --build-env VOTEPREDICT_REQUIRE_MIGRATION_LEDGER=1 --build-env VOTEPREDICT_EXPECTED_DATABASE_FINGERPRINT="$EXPECTED_DATABASE_FINGERPRINT" --env VOTEPREDICT_EXPECTED_DATABASE_FINGERPRINT="$EXPECTED_DATABASE_FINGERPRINT" --env VOTEPREDICT_EXECUTION_MODE=readiness)"
           url="$(printf '%s\n' "$output" | grep -E '^https://[^ ]+$' | tail -n 1 || true)"
           if [ -z "$url" ]; then
             echo '::error::Vercel completed without returning a recognizable deployment URL.'
