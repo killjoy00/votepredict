@@ -81,15 +81,15 @@
   },
   "dependencies": {
     "@neondatabase/auth": "0.7.0-beta",
-    "@vercel/functions": "3.9.11",
-    "ai": "7.0.137",
+    "@vercel/functions": "3.10.3",
+    "ai": "7.0.154",
     "drizzle-orm": "0.45.4",
-    "next": "16.4.2",
+    "next": "16.4.3",
     "pdf-parse": "2.4.5",
     "pg": "8.23.1",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "@better-auth/api-key": "1.7.7"
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "@better-auth/api-key": "1.7.13"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
@@ -104,7 +104,7 @@
     "better-auth": "1.7.7",
     "@better-auth/core": "1.7.7",
     "@better-auth/oauth-provider": "1.7.7",
-    "@better-auth/api-key": "1.7.7",
+    "@better-auth/api-key": "1.7.13",
     "@better-auth/passkey": "1.7.7"
   }
 }
