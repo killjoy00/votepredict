@@ -1,3 +1,4 @@
+import { assertForecastExecutionAllowed } from '@/operations/release-readiness';
 import { createHash, randomBytes } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { pool } from '@/lib/db';
@@ -371,6 +372,7 @@ async function revisionSummary(row: RevisionRow): Promise<ForecastRevisionSummar
 }
 
 export async function updateForecast(forecastId: string, ownerUserId: string, researchMode: RuntimeResearchMode): Promise<ForecastUpdateResult> {
+  assertForecastExecutionAllowed();
   const context = await ownedForecastContext(forecastId, ownerUserId);
   const baseRequest = runtimeRequest(context, 'quick');
   const quick = await executeQuickRuntimeForecast(baseRequest);

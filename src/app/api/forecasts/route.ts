@@ -5,6 +5,7 @@ import { executeQuickRuntimeForecast } from '@/forecasting/quick-runtime';
 import { ForecastRuntimeError, type ForecastRuntimeSubject } from '@/forecasting/runtime';
 import { floorTargetForChamber, forecastTargetDefinition } from '@/forecasting/targets';
 import { requireOwner } from '@/lib/auth/guard';
+import { executionPosture } from '@/operations/release-readiness';
 import { db, pool } from '@/lib/db';
 import { bills, chambers, forecasts, forecastSchedules, legislativeSessions, proposals } from '@/lib/db/schema';
 
@@ -35,6 +36,7 @@ function errorMessage(error: unknown): string {
 
 export async function POST(request: Request) {
   const user = await requireOwner();
+  if (!executionPosture().forecastsEnabled) return NextResponse.json({ error: 'Forecast execution is paused for read-only readiness verification.' }, { status: 503 });
   const body = await request.json().catch(() => null) as CreateForecastBody | null;
 
   if (!body) return badRequest('Invalid request body.');

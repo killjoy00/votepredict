@@ -12,6 +12,7 @@ import { classifyForecastEvidence,readForecastEvidence,type AccessibleEvidence }
 import { captureHealth,recordCaptureAttempt,recordRequiredCaptureAttempts } from '../src/operations/forecast-capture-observability';
 import { assertForecastEvidenceRemediationRun } from '../src/operations/forecast-evidence-remediation-gate';
 import { verifySealedShadowRetry } from '../src/forecasting/sealed-shadow-retry';
+import { assertReadinessDrillRun, deliverReadinessDrillAlert } from '../src/operations/readiness-alert';
 
 const sha=(s:string)=>createHash('sha256').update(s).digest('hex');
 const draft:EvidenceDraft={sourceUrl:'https://example.test/statement',excerpt:'I support SF1.',kind:'direct_statement',stance:'supports',
@@ -149,8 +150,15 @@ export async function exerciseForecastEvidenceContract(db:Pool) {
   assert.deepEqual(await captureHealth(db),{incomplete:1,failed:0,unsealed:0});
   await recordCaptureAttempt(db,revision,'quick_evidence','failed');
   assert.deepEqual(await captureHealth(db),{incomplete:0,failed:1,unsealed:0});
+  if (process.env.VOTEPREDICT_READINESS_ALERT_DRILL === '1') {
+    assertReadinessDrillRun(process.env,JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH!,'utf8')));
+    console.log(JSON.stringify(await deliverReadinessDrillAlert(await captureHealth(db),process.env.GITHUB_RUN_ID!,process.env.GITHUB_TOKEN!)));
+  }
   await recordCaptureAttempt(db,revision,'quick_evidence','completed');
   assert.deepEqual(await captureHealth(db),{incomplete:0,failed:0,unsealed:0});
+  if (process.env.VOTEPREDICT_READINESS_ALERT_DRILL === '1') {
+    console.log(JSON.stringify(await deliverReadinessDrillAlert(await captureHealth(db),process.env.GITHUB_RUN_ID!,process.env.GITHUB_TOKEN!)));
+  }
   const statuses=(await db.query(`SELECT status FROM forecast_capture_attempts WHERE revision_id=$1 AND capture_kind='quick_evidence' ORDER BY sequence`,[revision])).rows;
   assert.deepEqual(statuses.map(x=>x.status),['started','failed','completed']);
   assert.equal((await one(`SELECT manifest_sha256 FROM forecast_input_manifests WHERE revision_id=$1`,[revision])).manifest_sha256,sha(manifest));

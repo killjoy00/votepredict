@@ -1,3 +1,4 @@
+import { assertForecastExecutionAllowed } from '@/operations/release-readiness';
 import { retainedTargetTextAsOf, retainRuntimeBillText, type RetainedTargetText } from './runtime-bill-text';
 import { recordRequiredCaptureAttempts } from '../operations/forecast-capture-observability';
 import { createHash } from 'node:crypto';
@@ -672,6 +673,7 @@ async function insertMemberPredictions(
 }
 
 export async function executeRuntimeForecast(request: ForecastRuntimeRequest): Promise<ForecastRuntimeResult> {
+  assertForecastExecutionAllowed();
   let asOf = request.asOf ?? new Date().toISOString();
   const modelConfig = resolveServingMemberModelConfig();
   const targetVersion = request.subject.kind === 'bill'
