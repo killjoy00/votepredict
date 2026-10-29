@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { databaseTargetFingerprint, executionPosture, migrationLedgerDigest, readReleaseBinding } from '../src/operations/release-readiness';
 import { assertGreenMainRelease } from '../src/operations/release-ci';
 import schema from '../src/operations/release-schema.json';
@@ -9,6 +10,15 @@ import schema from '../src/operations/release-schema.json';
 const entries = readdirSync('migrations').filter(f => f.endsWith('.sql')).sort().map(filename => ({
   filename, checksum: createHash('sha256').update(readFileSync('migrations/' + filename)).digest('hex'),
 }));
+
+test('manual release CLI entry loads under the exact workflow command and fails closed without credentials', () => {
+  const result = spawnSync(process.execPath, ['--import', 'tsx', 'scripts/check-release-ci.ts'], {
+    encoding: 'utf8', timeout: 15_000, env: { ...process.env, GITHUB_TOKEN: '', RELEASE_SHA: 'a'.repeat(40) },
+  });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /GitHub Actions credential required/);
+  assert.doesNotMatch(result.stderr, /Transform failed|Top-level await/);
+});
 
 test('bundled release schema binds every migration, including changed SQL bytes', () => {
   assert.equal(schema.count, entries.length);
