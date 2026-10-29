@@ -3,10 +3,12 @@ import { pool } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { ensureProspectiveEvidenceForecasts } from '@/operations/prospective-evidence';
 import { runScheduledForecasts } from '@/operations/scheduled-forecasts';
+import { executionPosture } from '@/operations/release-readiness';
 
 export const maxDuration = 300;
 
 export async function GET(request: Request) {
+  if (!executionPosture().schedulerEnabled) return NextResponse.json({ error: 'Scheduling is paused.' }, { status: 503 });
   const secret = process.env.CRON_SECRET;
   if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -44,6 +46,7 @@ export async function GET(request: Request) {
 
 // Explicit authenticated operation; never part of the automatic scheduled GET batch.
 export async function POST(request: Request) {
+  if (!executionPosture().schedulerEnabled) return NextResponse.json({ error: 'Scheduling is paused.' }, { status: 503 });
   const secret = process.env.CRON_SECRET;
   if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

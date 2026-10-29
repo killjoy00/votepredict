@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServingMemberModelStatus } from '@/forecasting/member-model-serving';
-import { databaseConnectionSource, pool } from '@/lib/db';
+import { databaseConnectionSource, pool, runtimeDatabaseTargetFingerprint } from '@/lib/db';
+import { executionPosture, readReleaseBinding } from '@/operations/release-readiness';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 20;
 
 function configurationStatus() {
   return {
@@ -31,15 +33,18 @@ export async function GET() {
   const memberModel = publicMemberModelStatus();
 
   try {
-    await pool.query('select 1');
+    const binding = await readReleaseBinding(pool, runtimeDatabaseTargetFingerprint,
+      process.env.VOTEPREDICT_EXPECTED_DATABASE_FINGERPRINT);
     return NextResponse.json({
-      status: 'ok',
+      status: binding.verified ? 'ok' : 'degraded',
       database: 'ok',
       databaseSource: databaseConnectionSource,
       deploymentCommitSha: deployedCommit,
       memberModel,
       authConfiguration,
-    });
+      binding,
+      execution: executionPosture(),
+    }, { status: binding.verified ? 200 : 503 });
   } catch {
     return NextResponse.json(
       {
@@ -50,6 +55,7 @@ export async function GET() {
         deploymentCommitSha: deployedCommit,
         memberModel,
         authConfiguration,
+        execution: executionPosture(),
       },
       { status: 503 },
     );

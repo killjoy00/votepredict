@@ -1,4 +1,5 @@
 import { pool } from '../lib/db';
+import { assertForecastExecutionAllowed } from './release-readiness';
 import { updateForecast } from '../forecasting/workflows';
 import { listSafeOutcomeCandidates, resolveSafeForecastOutcome } from './safe-resolution';
 
@@ -27,6 +28,7 @@ export const CLAIM_DUE_SCHEDULES_SQL = `
       FROM advanced a JOIN forecasts f ON f.id = a.forecast_id`;
 
 export async function claimDueSchedules(limit: number, forecastId?: string): Promise<DueSchedule[]> {
+  assertForecastExecutionAllowed();
   const result = await pool.query<DueSchedule>(CLAIM_DUE_SCHEDULES_SQL, [limit, forecastId ?? null]);
   return result.rows;
 }

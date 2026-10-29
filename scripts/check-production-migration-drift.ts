@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { Client } from 'pg';
+import { databaseTargetFingerprint } from '../src/operations/release-readiness.js';
+import { normalizePgSslMode } from '../src/lib/db/connection-string.js';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 import {
   compareMigrationLedgers,
@@ -32,7 +34,8 @@ async function productionEnvironment(): Promise<Record<string, string | undefine
 
 async function main(): Promise<void> {
   const runtime = await productionEnvironment();
-  const connectionString = runtime.DATABASE_URL_UNPOOLED || runtime.DATABASE_URL;
+  // Match the application's preference exactly; checking a different URL is not a release binding.
+  const connectionString = normalizePgSslMode(runtime.DATABASE_URL || runtime.POSTGRES_URL || runtime.DATABASE_URL_UNPOOLED || runtime.POSTGRES_URL_NON_POOLING);
   const required = runtime.VOTEPREDICT_REQUIRE_MIGRATION_LEDGER === '1';
 
   if (!connectionString && !required) {
@@ -44,11 +47,18 @@ async function main(): Promise<void> {
   }
 
   const expected = await expectedMigrationLedger();
-  const client = new Client({ connectionString });
+  const targetFingerprint = databaseTargetFingerprint(connectionString);
+  if (required && (!targetFingerprint || targetFingerprint !== runtime.VOTEPREDICT_EXPECTED_DATABASE_FINGERPRINT)) {
+    throw new Error('Runtime database target does not match the independently approved release fingerprint.');
+  }
+  const client = new Client({ connectionString, connectionTimeoutMillis: 10_000 });
   await client.connect();
 
   try {
-    await client.query('SET default_transaction_read_only = on');
+    await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
+    await client.query("SET LOCAL statement_timeout = '5000ms'");
+    const readOnly = await client.query("SELECT current_setting('transaction_read_only') AS read_only");
+    if (readOnly.rows[0]?.read_only !== 'on') throw new Error('Migration check did not establish a read-only transaction.');
     const tableResult = await client.query<{ exists: boolean }>(
       "SELECT to_regclass('public.votepredict_schema_migrations') IS NOT NULL AS exists",
     );
@@ -73,7 +83,7 @@ async function main(): Promise<void> {
       throw new Error('Production migration ledger does not exactly match this release. Refusing deployment.');
     }
   } finally {
-    await client.end();
+    try { await client.query('ROLLBACK'); } finally { await client.end(); }
   }
 }
 

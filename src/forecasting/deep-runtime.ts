@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { assertForecastExecutionAllowed } from '@/operations/release-readiness';
 import type { PoolClient } from 'pg';
 import { AiGatewayDeepResearchProvider } from '@/evidence/ai-gateway-provider';
 import type { DeepForecastMember } from '@/evidence/deep-revision';
@@ -366,6 +367,7 @@ export async function executeDeepRuntimeForecast(
   request: ForecastRuntimeRequest,
   base: ForecastRuntimeResult,
 ): Promise<DeepRuntimeResult> {
+  assertForecastExecutionAllowed();
   if (request.researchMode !== 'deep') throw new Error('Deep runtime requires researchMode=deep');
   const skeleton = await createDeepRevisionSkeleton(request.forecastId, base.revisionId, base.modelVersion, base.asOf);
   const deepMembers: DeepForecastMember[] = base.members.map((member) => ({

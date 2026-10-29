@@ -1,0 +1,67 @@
+name: Baseline read-only readiness rehearsal
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/baseline-readiness.yml
+      - src/operations/readiness-alert.ts
+      - tests/forecast-evidence-contract.test.ts
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run typecheck
+      - run: node --import tsx --test tests/release-readiness.test.ts tests/readiness-alert.test.ts tests/evidence-operating-posture.test.ts
+  delivery-recovery-drill:
+    needs: verify
+    if: >-
+      needs.verify.result == 'success' && github.event_name == 'push' &&
+      github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 && github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha && github.event.forced != true &&
+      github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'BASELINE_READINESS_CANARY_20261026')
+    permissions:
+      contents: read
+      issues: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Missed capture, actual repository alert readback, retry and recovery
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          VOTEPREDICT_READINESS_ALERT_DRILL: '1'
+          VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+        run: node --import tsx --test tests/forecast-evidence-contract.test.ts
