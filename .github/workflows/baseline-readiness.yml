@@ -64,4 +64,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           VOTEPREDICT_READINESS_ALERT_DRILL: '1'
           VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
-        run: node --import tsx --test tests/forecast-evidence-contract.test.ts
+        run: node --import tsx --test tests/forecast-evidence-contract.test.ts tests/quick-evidence-prospective-lifecycle.integration.test.ts
