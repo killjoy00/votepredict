@@ -168,7 +168,7 @@ jobs:
       PROTECTED: ${{ needs.guarded-existing-neon-raw-backfill.result }}
       SAFE_B64: ${{ needs.guarded-existing-neon-raw-backfill.outputs.safe_cfb_schedules_b64 }}
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v9
         with:
           script: |
             const pre=process.env.PRESECRET;

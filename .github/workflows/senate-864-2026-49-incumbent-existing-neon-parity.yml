@@ -210,7 +210,7 @@ jobs:
       SAFE_PARITY_B64: ${{ needs.protected-readonly.outputs.safe_source_parity_b64 }}
       SAFE_FAILURE_PHASE: ${{ needs.protected-readonly.outputs.safe_failure_phase }}
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         with:
           script: |
             const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;

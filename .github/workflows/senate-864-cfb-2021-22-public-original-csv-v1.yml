@@ -156,7 +156,7 @@ jobs:
       PROBE_RESULT: ${{ needs.one-shot-public-source.result }}
       PROBE_RECEIPT_B64: ${{ needs.one-shot-public-source.outputs.public_csv_proof_b64 }}
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         with:
           script: |
             const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;

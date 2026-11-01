@@ -191,7 +191,7 @@ jobs:
       SAFE_ARCHIVE_V3_B64: ${{ needs.one-shot-readonly.outputs.safe_archive_v3_b64 }}
       HELD_PHASE: ${{ needs.one-shot-readonly.outputs.held_phase }}
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         with:
           script: |
             const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;

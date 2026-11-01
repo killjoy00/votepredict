@@ -346,7 +346,7 @@ jobs:
       SAFE_B64: ${{ needs.protected-existing-neon-readonly.outputs.safe_yea_v13_b64 }}
       SAFE_PHASE: ${{ needs.protected-existing-neon-readonly.outputs.safe_failure_phase }}
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         with:
           script: |
             const head=[
