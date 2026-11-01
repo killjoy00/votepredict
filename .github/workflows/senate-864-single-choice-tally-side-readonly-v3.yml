@@ -104,7 +104,7 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
       - name: Pin existing original government source artifact 1 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2022-original-action-source-metadata
           repository: killjoy00/votepredict
@@ -112,7 +112,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts
       - name: Pin existing original government source artifact 2 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2023-original-action-source-metadata
           repository: killjoy00/votepredict
@@ -120,7 +120,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts
       - name: Pin existing original government source artifact 3 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2024-original-action-source-metadata
           repository: killjoy00/votepredict
@@ -128,7 +128,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts
       - name: Pin existing original government source artifact 4 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2025-original-action-source-metadata
           repository: killjoy00/votepredict
@@ -136,7 +136,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts
       - name: Pin existing original government source artifact 5 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-six-scanned-original-ocr-metadata
           repository: killjoy00/votepredict
@@ -144,7 +144,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 6 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2022-second-ocr-sample-metadata
           repository: killjoy00/votepredict
@@ -152,7 +152,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 7 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2023-second-ocr-sample-metadata
           repository: killjoy00/votepredict
@@ -160,7 +160,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 8 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2024-second-ocr-sample-metadata
           repository: killjoy00/votepredict
@@ -168,7 +168,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 9 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2025-second-ocr-sample-metadata
           repository: killjoy00/votepredict
@@ -176,7 +176,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 10 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2023-remaining-scanned-originals-metadata
           repository: killjoy00/votepredict
@@ -184,7 +184,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 11 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-committee-2024-remaining-scanned-originals-metadata
           repository: killjoy00/votepredict
@@ -192,7 +192,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 12 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-final-scanned-2022-batch-0-metadata
           repository: killjoy00/votepredict
@@ -200,7 +200,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 13 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-final-scanned-2022-batch-1-metadata
           repository: killjoy00/votepredict
@@ -208,7 +208,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 14 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-final-scanned-2022-batch-2-metadata
           repository: killjoy00/votepredict
@@ -216,7 +216,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 15 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-final-scanned-2022-batch-3-metadata
           repository: killjoy00/votepredict
@@ -224,7 +224,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 16 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-final-scanned-2022-batch-4-metadata
           repository: killjoy00/votepredict
@@ -232,7 +232,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 17 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-final-scanned-2022-batch-5-metadata
           repository: killjoy00/votepredict
@@ -240,7 +240,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 18 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-final-scanned-2025-batch-0-metadata
           repository: killjoy00/votepredict
@@ -248,7 +248,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 19 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-final-scanned-2025-batch-1-metadata
           repository: killjoy00/votepredict
@@ -256,7 +256,7 @@ jobs:
           github-token: ${{ github.token }}
           path: artifacts/ocr
       - name: Pin existing original government source artifact 20 of 20
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-final-scanned-2025-batch-2-metadata
           repository: killjoy00/votepredict
@@ -359,7 +359,7 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
       - name: Download earlier pre-secret independently SHA-pinned metadata from this same run
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: senate-864-v3-source-metadata-only
           path: artifacts/

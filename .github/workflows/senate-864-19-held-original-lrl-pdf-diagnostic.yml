@@ -49,7 +49,7 @@ jobs:
           digest=$(gh api repos/killjoy00/votepredict/actions/artifacts/11948425264 --jq '.digest')
           test "$digest" = "sha256:1e4fa7a20643e3b10d750cf991935a62af70956e03d63de18a4ba545362ca893"
       - name: Download exact original government LRL missing-minute date and URL evidence from successful prior run
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11948425264'
           repository: killjoy00/votepredict
