@@ -90,7 +90,7 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Guarded source/database exact identity correction and independent post-write read-back
         run: node --import tsx scripts/deploy-senate-864-elections-2023-original-recovery.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: senate864-elections-2023-original-production-verified
           path: artifacts/senate864-elections-2023-production-readback.json

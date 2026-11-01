@@ -267,7 +267,7 @@ jobs:
         run: node --import tsx scripts/audit-senate-864-single-choice-side-readonly-v3.ts --source-preflight
       - name: Transfer only previously SHA-pinned original metadata within the same reviewed main run
         if: github.event_name == 'push'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-v3-source-metadata-only
           path: artifacts/

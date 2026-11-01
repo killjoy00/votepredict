@@ -56,7 +56,7 @@ jobs:
             --output artifacts/senate-864-2024-25-53-original-clerk-motions.json
       - name: Upload all source proof and source gap HOLDS; no original HTML bodies
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-2024-25-53-high-gap-original-source-records
           path: artifacts/senate-864-2024-25-53-original-clerk-motions.json

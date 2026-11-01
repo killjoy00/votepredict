@@ -58,7 +58,7 @@ jobs:
           node --import tsx scripts/audit-senate-media-pinned-original-passages-public.ts \
             --output artifacts/senate-media-pinned-original-passages.json
       - name: Publish only Boolean source-observation metadata for seven days
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: senate-media-pinned-original-visible-passages
           path: artifacts/senate-media-pinned-original-passages.json

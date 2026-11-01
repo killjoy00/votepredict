@@ -88,7 +88,7 @@ jobs:
             artifacts/remaining-ocr-${{ matrix.year }}-${{ matrix.shard }}.json
       - name: Save exact source SHA and bounded review categories only
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-remaining-ocr-${{ matrix.year }}-${{ matrix.shard }}
           path: artifacts/remaining-ocr-${{ matrix.year }}-${{ matrix.shard }}.json

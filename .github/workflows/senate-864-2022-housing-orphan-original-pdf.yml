@@ -40,7 +40,7 @@ jobs:
             --output artifacts/senate-864-2022-housing-original-pdf-source.json
       - name: Publish only source checksums, original page references and no-outcome proposals
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-2022-housing-original-orphan-minutes-PDF
           path: artifacts/senate-864-2022-housing-original-pdf-source.json

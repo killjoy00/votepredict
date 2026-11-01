@@ -143,7 +143,7 @@ jobs:
       - run: pip install numpy==2.2.6 scipy==1.15.3 scikit-learn==1.6.1
       - name: Verified read-only frozen cohort, rollback, isolated private-input evaluation
         run: node --import tsx scripts/evaluate-senate-864-website-v2.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: senate864-website-experiment-v2
           path: artifacts/senate864-website-experiment-v2.json
@@ -236,7 +236,7 @@ jobs:
           path: artifacts/judiciary
           merge-multiple: true
       - run: node --import tsx scripts/audit-senate-864-existing-committee-originals.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: senate864-existing-committee-readback
           path: artifacts/senate864-existing-committee-readback.json

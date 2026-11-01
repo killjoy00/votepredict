@@ -73,7 +73,7 @@ jobs:
       - name: Public Wayback exact historical original CDX/replay proof, no collector or DB
         run: node --import tsx scripts/probe-senate-media-track-d-seven-alias-three-pdf-v6.ts --public-index-probe
       - name: Retain original archive public metadata only
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: track-d-946-987-seven-alias-three-pdf-public-only
           path: track-d-946-987-v6-public-research-metadata.json

@@ -47,7 +47,7 @@ jobs:
             --output artifacts/senate-2021-publication-anchor-probe-v3.json
 
       - name: Upload publication probe artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: senate-2021-publication-anchor-probe-v3
           path: artifacts/senate-2021-publication-anchor-probe-v3.json

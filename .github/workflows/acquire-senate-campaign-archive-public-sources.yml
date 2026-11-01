@@ -54,7 +54,7 @@ jobs:
 
       - name: Retain verified source bytes and explicit failures for manual review
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: senate-campaign-public-archive-source-acquisition-v1
           path: artifacts/senate-campaign-public-archive-acquisition-v1/

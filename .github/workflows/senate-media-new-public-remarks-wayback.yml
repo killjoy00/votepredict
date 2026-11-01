@@ -68,7 +68,7 @@ jobs:
             --replay-count "$PROBE_REPLAY_COUNT" \
             --output artifacts/senate-media-new-remarks-public-wayback.json
       - name: Save metadata only with seven-day artifact retention
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: senate-media-new-remarks-public-wayback
           path: artifacts/senate-media-new-remarks-public-wayback.json

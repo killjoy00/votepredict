@@ -284,7 +284,7 @@ jobs:
         run: node --import tsx scripts/audit-senate-864-2025-judiciary-postrollback-v6.ts --source-preflight
       - name: Carry only verified original source metadata into the protected job
         if: github.event_name == 'push'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-2025-judiciary-v6-source-only
           path: artifacts/

@@ -101,7 +101,7 @@ jobs:
             --output artifacts/results/flagged-ocr-motion-anchors-${{ matrix.shard }}.json
       - name: Preserve only source motion cue slots, date/committee and document SHA; never private row choices
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-81-original-motion-anchors-${{ matrix.shard }}
           path: artifacts/results/flagged-ocr-motion-anchors-${{ matrix.shard }}.json

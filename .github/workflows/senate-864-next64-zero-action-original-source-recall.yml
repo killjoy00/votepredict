@@ -67,7 +67,7 @@ jobs:
             --mode ${{ matrix.mode }}
       - name: Save source byte SHA and original motion/roll/voice source candidate recall
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-next64-original-motion-recall-${{ matrix.year }}-${{ matrix.mode }}
           path: artifacts/next64-original-motion-recall-${{ matrix.year }}-${{ matrix.mode }}.json

@@ -54,7 +54,7 @@ jobs:
             --output artifacts/2023-online-senate-no-LRL-minutes-original-source-actions.json
       - name: Preserve public source receipt and categorized unresolved holds, even when source comparison fails
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-2023-official-online-hearing-minute-action-proofs
           path: artifacts/2023-online-senate-no-LRL-minutes-original-source-actions.json

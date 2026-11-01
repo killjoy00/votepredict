@@ -93,7 +93,7 @@ jobs:
       - name: Fresh read-only preflight, bounded source-proven transaction, independent post-commit rollback/read-back
         run: node --import tsx scripts/deploy-senate-864-judiciary-six-motions.ts
       - name: Save only aggregate exact source/write/readback receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate864-judiciary-six-motion-repair
           path: artifacts/senate864-judiciary-six-motion-repair.json

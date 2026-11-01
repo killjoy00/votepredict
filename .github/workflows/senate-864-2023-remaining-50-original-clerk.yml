@@ -53,7 +53,7 @@ jobs:
             --output artifacts/senate-864-2023-50-original-government-Clerk-source-reconciliation.json
       - name: Preserve source-original SHA and held-source rows without raw HTML or member names
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-2023-fifty-original-government-clerk-2022-25-scope
           path: artifacts/senate-864-2023-50-original-government-Clerk-source-reconciliation.json
