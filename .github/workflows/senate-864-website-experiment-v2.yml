@@ -44,7 +44,7 @@ jobs:
       - run: npm run db:migrate
       - run: npm run typecheck
       - run: node --import tsx --test tests/senate-864-website-experiment.test.mjs tests/senate-864-website-expansion.test.mjs tests/senate-864-protected-source-db-parity.test.ts
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - run: pip install numpy==2.2.6 scipy==1.15.3 scikit-learn==1.6.1
@@ -137,7 +137,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - run: pip install numpy==2.2.6 scipy==1.15.3 scikit-learn==1.6.1
