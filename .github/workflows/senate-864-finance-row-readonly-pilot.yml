@@ -166,7 +166,7 @@ jobs:
       SAFE_FINANCE_PILOT_B64: ${{ needs.one-shot-readonly.outputs.safe_finance_pilot_b64 }}
       HELD_PHASE: ${{ needs.one-shot-readonly.outputs.held_phase }}
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         with:
           script: |
             const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;

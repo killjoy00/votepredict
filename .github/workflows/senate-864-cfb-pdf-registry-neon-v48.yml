@@ -167,7 +167,7 @@ jobs:
       PROTECTED: ${{ needs.protected-existing-neon-pdf-registry.result }}
       SAFE_COUNTS_B64: ${{ needs.protected-existing-neon-pdf-registry.outputs.safe_cfb_v48_b64 }}
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         with:
           script: |
             const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;

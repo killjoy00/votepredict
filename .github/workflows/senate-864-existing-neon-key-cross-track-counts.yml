@@ -187,7 +187,7 @@ jobs:
       SAFE_COUNTS_B64: ${{ needs.one-shot-readonly.outputs.public_counts_b64 }}
       SAFE_FAILURE_PHASE: ${{ needs.one-shot-readonly.outputs.failure_phase }}
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         with:
           script: |
             const result=process.env.AUDIT_JOB_RESULT;
