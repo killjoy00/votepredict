@@ -39,7 +39,7 @@ jobs:
       - name: Fail-closed official no-PDF, original-motion and no-inferred-member regression tests
         run: node --import tsx --test tests/senate-864-2023-online-missing-minutes.test.ts
       - name: Exact original independent 1592 meeting LRL source-index metadata
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11674762938'
           repository: killjoy00/votepredict

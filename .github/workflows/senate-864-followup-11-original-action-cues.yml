@@ -61,7 +61,7 @@ jobs:
           digest=$(gh api repos/killjoy00/votepredict/actions/artifacts/${{ matrix.artifact_id }} --jq '.digest')
           test "$digest" = "sha256:${{ matrix.zip_sha }}"
       - name: Download previously SHA-vetted 32 original PDFs metadata, select only 11 motion-cue flags
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '${{ matrix.artifact_id }}'
           repository: killjoy00/votepredict

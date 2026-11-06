@@ -40,7 +40,7 @@ jobs:
           tests/senate-864-three-high-gap-2024-25-original-sha-receipts.test.ts
           tests/senate-864-three-high-gap-2024-25-original-source-reparse-receipts-v2.test.ts
       - name: Fetch SHA-pinned official original 1592 indexed meeting census
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11674762938'
           repository: killjoy00/votepredict

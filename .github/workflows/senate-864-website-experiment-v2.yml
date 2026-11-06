@@ -50,7 +50,7 @@ jobs:
       - run: pip install numpy==2.2.6 scipy==1.15.3 scikit-learn==1.6.1
       - run: python -m unittest discover -s research/website864 -p 'test_*.py'
       - name: Four original 2022-25 electronic Minutes PDF source manifests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11674729430,11674568363,11675315164,11675014092'
           repository: killjoy00/votepredict
@@ -59,7 +59,7 @@ jobs:
           path: artifacts
           merge-multiple: true
       - name: First six original low-embedded-text PDF OCR proofs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11676072623'
           repository: killjoy00/votepredict
@@ -68,7 +68,7 @@ jobs:
           path: artifacts/ocr
           merge-multiple: true
       - name: Second 24 original OCR proofs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11675539378,11676162360,11675569424,11675584270'
           repository: killjoy00/votepredict
@@ -77,7 +77,7 @@ jobs:
           path: artifacts/ocr
           merge-multiple: true
       - name: Next 25 original OCR proofs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11678185896,11677986160'
           repository: killjoy00/votepredict
@@ -86,7 +86,7 @@ jobs:
           path: artifacts/ocr
           merge-multiple: true
       - name: Final 152 original OCR proofs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11677439544,11678168763,11677629231,11677879406,11678358764,11678323861,11677409668,11678273765,11677519671'
           repository: killjoy00/votepredict
@@ -95,7 +95,7 @@ jobs:
           path: artifacts/ocr
           merge-multiple: true
       - name: Original 2025 Judiciary 8-choice full source proof
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11676168658'
           repository: killjoy00/votepredict
@@ -182,7 +182,7 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
       - name: Four original 2022-25 electronic Minutes PDF source manifests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11674729430,11674568363,11675315164,11675014092'
           repository: killjoy00/votepredict
@@ -191,7 +191,7 @@ jobs:
           path: artifacts
           merge-multiple: true
       - name: First six original low-embedded-text PDF OCR proofs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11676072623'
           repository: killjoy00/votepredict
@@ -200,7 +200,7 @@ jobs:
           path: artifacts/ocr
           merge-multiple: true
       - name: Second 24 original OCR proofs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11675539378,11676162360,11675569424,11675584270'
           repository: killjoy00/votepredict
@@ -209,7 +209,7 @@ jobs:
           path: artifacts/ocr
           merge-multiple: true
       - name: Next 25 original OCR proofs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11678185896,11677986160'
           repository: killjoy00/votepredict
@@ -218,7 +218,7 @@ jobs:
           path: artifacts/ocr
           merge-multiple: true
       - name: Final 152 original OCR proofs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11677439544,11678168763,11677629231,11677879406,11678358764,11678323861,11677409668,11678273765,11677519671'
           repository: killjoy00/votepredict
@@ -227,7 +227,7 @@ jobs:
           path: artifacts/ocr
           merge-multiple: true
       - name: Original 2025 Judiciary 8-choice full source proof
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: '11676168658'
           repository: killjoy00/votepredict
