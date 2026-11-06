@@ -12,7 +12,6 @@ import {decideRecovery,MIN_IDLE_MS} from './senate-dfl-sitemap-watchdog.mjs';
 export const REPO='killjoy00/votepredict';
 export const TEXT_WORKFLOW_ID=387035882;
 export const TEXT_WORKFLOW_PATH='.github/workflows/senate-official-bill-text-production.yml';
-export const WATCHDOG_CRON='13 * * * *';
 const ACTIVE=new Set(['queued','in_progress','waiting','pending','requested']);
 const EVENTS=new Set(['push','schedule','workflow_dispatch']);
 const THROTTLE_BACKOFF_MS=6*60*60*1000;
@@ -22,18 +21,10 @@ export function validateGitHubEvent(env,payload){
     || env.GITHUB_REF!=='refs/heads/main' || env.GITHUB_RUN_ATTEMPT!=='1'
     || !/^[a-f0-9]{40}$/.test(env.GITHUB_SHA??''))
     return {eligible:false,reason:'not_reviewed_main_repository'};
-  if(env.GITHUB_EVENT_NAME==='push'){
-    if(payload.ref!=='refs/heads/main'||payload.after!==env.GITHUB_SHA
-      ||payload.deleted===true||payload.forced===true
-      ||payload.head_commit?.id!==env.GITHUB_SHA)
-      return {eligible:false,reason:'untrusted_main_push'};
-  }else if(env.GITHUB_EVENT_NAME==='schedule'){
-    if(payload.schedule!==WATCHDOG_CRON)
-      return {eligible:false,reason:'unexpected_schedule'};
-  }else if(env.GITHUB_EVENT_NAME==='workflow_dispatch'){
-    if(payload.ref&&!['main','refs/heads/main'].includes(payload.ref))
-      return {eligible:false,reason:'dispatch_not_main'};
-  }else return {eligible:false,reason:'unapproved_event'};
+  if(env.GITHUB_EVENT_NAME!=='workflow_dispatch')
+    return {eligible:false,reason:'unapproved_event'};
+  if(payload.ref&&!['main','refs/heads/main'].includes(payload.ref))
+    return {eligible:false,reason:'dispatch_not_main'};
   return {eligible:true,reason:'reviewed_main_event'};
 }
 
@@ -151,13 +142,6 @@ async function readbackForCompleted(run){
   return {kind:receipt?'verified':'missing_or_invalid_production_readback',receipt};
 }
 
-export function shouldFailOnKnownDegradation(eventName){
-  // Only repeated observations of a known degraded/stalled source are de-duplicated.
-  // API exceptions, failed recovery dispatches, and other unexpected errors still
-  // exit nonzero on *all* event types, including push.
-  return eventName!=='push';
-}
-
 export async function main(){
   if(!process.env.GITHUB_EVENT_PATH)throw Error('GitHub event payload missing');
   const payload=JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH,'utf8'));
@@ -183,9 +167,8 @@ export async function main(){
   if(!decision.dispatch&&decision.reason==='existing_collection_stuck'){
     report({status:'stalled',reason:decision.reason,latestId:decision.latestId,
       ageMinutes:decision.ageMinutes});
-    // A stalled collector is reported once by the scheduled/manual watchdog;
-    // push observations must not generate a new failure email for every commit.
-    if(shouldFailOnKnownDegradation(process.env.GITHUB_EVENT_NAME))process.exitCode=1;
+    // Manual invocation reports a stall to the operator without recurring email alerts.
+    process.exitCode=1;
     return;
   }
   let inspected={kind:'no_completed_run',receipt:null};
@@ -213,7 +196,7 @@ export async function main(){
     report({status:degraded?'degraded':'healthy',
       ...observation,
       ...(noNewText?{progressWarning:'no_new_official_versions_with_bill_backlog'}:{})});
-    if(degraded&&shouldFailOnKnownDegradation(process.env.GITHUB_EVENT_NAME))process.exitCode=1;
+    if(degraded)process.exitCode=1;
     return;
   }
   await github('POST','/actions/workflows/'+TEXT_WORKFLOW_ID+'/dispatches',{ref:'main'});
