@@ -90,7 +90,7 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - run: node --import tsx scripts/audit-senate-864-completion-readonly.mjs --protected
       - name: Save only the allowlisted aggregate completion receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate864-authoritative-completion-readback
           path: artifacts/senate864-completion-readback.json

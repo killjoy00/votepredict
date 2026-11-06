@@ -35,7 +35,7 @@ jobs:
         run: |
           node scripts/audit-senate-2021-apr08-judiciary-acoustic-overlap.mjs \
             --output artifacts/2021-apr08-judiciary-acoustic-overlap/source.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: senate-2021-apr08-judiciary-original-acoustic-overlap-metadata-only

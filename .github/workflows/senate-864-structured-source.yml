@@ -59,7 +59,7 @@ jobs:
       - run: python -m pip install Pillow opencv-python-headless
       - name: Authenticate two original PDFs and inspect ruled checkbox cells
         run: python scripts/acquire-senate-864-55-followup.py --structured-pair
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: senate864-structured-pair-public-originals
           path: artifacts/senate864-55-followup/

@@ -105,7 +105,7 @@ jobs:
           node --import tsx scripts/build-senate-864-independent-committee-ledger.ts \
             --output-dir artifacts/senate-864-independent-committee-ledger
       - name: Publish only public official metadata, without private rows or names
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-original-official-meeting-to-source-action-ledgers
           path: artifacts/senate-864-independent-committee-ledger/

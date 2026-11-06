@@ -93,7 +93,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y poppler-utils tesseract-ocr
       - name: Authenticate population originals and compare source questions with READ ONLY production
         run: node --import tsx scripts/inventory-senate-864-population.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: senate864-public-population-reports
           path: |

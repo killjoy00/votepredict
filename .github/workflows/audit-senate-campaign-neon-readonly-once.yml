@@ -49,7 +49,7 @@ jobs:
       - name: Bounded existing Neon default-branch SQL READ ONLY transaction and ROLLBACK
         run: node --import tsx scripts/audit-senate-campaign-neon-defaultbranch-readonly.ts
       - name: Retain private three-district retrospective source reconciliation metadata
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: senate-2025-campaign-issue-neon-readonly-v1
           path: artifacts/senate-campaign-2025-neon-readonly-reconciliation-v1.json

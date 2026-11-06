@@ -77,7 +77,7 @@ jobs:
             --output artifacts/senate-864-followup-11-original-motions-${{ matrix.year }}.json
       - name: Save only independently verified original text cue/provenance with member choice lists redacted
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-followup-11-original-motions-${{ matrix.year }}
           path: artifacts/senate-864-followup-11-original-motions-${{ matrix.year }}.json

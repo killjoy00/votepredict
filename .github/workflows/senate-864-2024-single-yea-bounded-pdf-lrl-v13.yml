@@ -264,7 +264,7 @@ jobs:
           npm run typecheck
           npm audit --omit=dev --audit-level=high
       - name: Carry exactly original source proof to protected environment
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-2024-yea-v13-source-only
           path: artifacts/

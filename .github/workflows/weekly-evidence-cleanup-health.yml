@@ -95,7 +95,7 @@ jobs:
           PYTHON
 
       - name: Upload weekly evidence-cleanup artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: weekly-evidence-cleanup-health-${{ github.run_id }}
           path: |

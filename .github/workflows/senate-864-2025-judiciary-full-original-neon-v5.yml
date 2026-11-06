@@ -278,7 +278,7 @@ jobs:
         run: node --import tsx scripts/audit-senate-864-2025-judiciary-full-source-neon-v5.ts --source-preflight
       - name: Carry only verified original source metadata into the protected job
         if: github.event_name == 'push'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-2025-judiciary-v5-source-only
           path: artifacts/

@@ -74,7 +74,7 @@ jobs:
       - name: Exactly seven known 2021-25 dated URLs, fourteen selected Common Crawl indexes, original WARC SHA checks
         run: node --import tsx scripts/run-senate-946-reformer-exact-commoncrawl-originals-v7.ts --capture
       - name: Retain sanitized public original WARC provenance only
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-946-reformer-seven-original-dated-commoncrawl-v7-metadata
           path: reformer-946-v7-original-commoncrawl-public-metadata.json

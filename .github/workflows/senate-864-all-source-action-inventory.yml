@@ -79,7 +79,7 @@ jobs:
             --output artifacts/senate-864-all-known-2022-25-committee-actions.json
       - name: Preserve public evidence-only detailed action inventory as original source audit artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-2022-25-all-known-source-action-inventory
           path: artifacts/senate-864-all-known-2022-25-committee-actions.json

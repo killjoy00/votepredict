@@ -101,7 +101,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y poppler-utils tesseract-ocr
       - name: Original SHA-pinned Minutes, bounded read-only parity, guarded event/choice writes, and independent readback
         run: node --import tsx scripts/deploy-senate-864-population-row-rolls.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: senate864-population-reviewed-rolls-production-verified
           path: artifacts/senate864-population-reviewed-rolls-readback.json

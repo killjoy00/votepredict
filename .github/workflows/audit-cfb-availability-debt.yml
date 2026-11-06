@@ -46,7 +46,7 @@ jobs:
             --output artifacts/cfb-availability-debt-audit-v1.json
 
       - name: Upload debt audit artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: cfb-availability-debt-audit-v1
           path: artifacts/cfb-availability-debt-audit-v1.json

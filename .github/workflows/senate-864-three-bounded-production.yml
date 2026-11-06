@@ -42,7 +42,7 @@ jobs:
       - run: npm run check
       - run: node --import tsx --test tests/senate-864-three-bounded-evidence.test.mjs tests/senate-864-three-bounded-production.test.mjs
       - run: node --import tsx scripts/verify-senate-864-three-bounded-originals.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: senate864-three-bounded-originals
           path: artifacts/senate864-three-bounded-originals.json
@@ -84,7 +84,7 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Fresh originals, verified read-only preflight, bounded SERIALIZABLE write and independent read-back
         run: node --import tsx scripts/deploy-senate-864-three-bounded.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: senate864-three-bounded-production
           path: artifacts/senate864-three-bounded-production.json

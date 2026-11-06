@@ -47,7 +47,7 @@ jobs:
             --output artifacts/cfb-ie-2021-untouched-proof-probe-v1.json
 
       - name: Upload proof probe artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: cfb-ie-2021-untouched-proof-probe-v1
           path: artifacts/cfb-ie-2021-untouched-proof-probe-v1.json

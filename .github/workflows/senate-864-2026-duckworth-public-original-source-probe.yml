@@ -40,7 +40,7 @@ jobs:
           node scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs --out-dir proof
       - name: Upload tiny source receipt only, not copyrighted pages or contact data
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: senate-864-2026-duckworth-four-dated-original-speaker-html-receipts-v1
           path: proof/
