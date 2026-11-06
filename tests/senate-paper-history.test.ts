@@ -206,7 +206,7 @@ test('paper-history production requires exact reviewed main, independent CI, fir
   assert.throws(()=>assertPaperHistoryRun({...env,...change},event));
  assert.throws(()=>assertPaperHistoryRun(env,{...event,forced:true}));
  assert.throws(()=>assertPaperHistoryRun(env,{...event,head_commit:{id:sha,message:'unmarked merge'}}));
- assert.throws(()=>assertPaperHistoryRun({...env,GITHUB_EVENT_NAME:'schedule'},{repository:event.repository,schedule:'11 * * * *'}));
+ assert.throws(()=>assertPaperHistoryRun({...env,GITHUB_EVENT_NAME:'schedule'},{repository:event.repository}));
  const workflow=readFileSync('.github/workflows/senate-paper-history-production.yml','utf8');
  assert.doesNotMatch(workflow,/^  schedule:/m);
  assert.doesNotMatch(workflow,/github\.event\.schedule/);
