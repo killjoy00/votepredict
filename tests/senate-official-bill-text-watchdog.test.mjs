@@ -2,20 +2,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {
-  REPO,TEXT_WORKFLOW_ID,TEXT_WORKFLOW_PATH,WATCHDOG_CRON,
+  REPO,TEXT_WORKFLOW_ID,TEXT_WORKFLOW_PATH,
   validateGitHubEvent,eligibleCollectorRuns,decideBillTextRecovery,
-  parseProtectedReadback,applyReceiptGuard,shouldFailOnKnownDegradation,
+  parseProtectedReadback,applyReceiptGuard,
 } from '../scripts/senate-official-bill-text-watchdog.mjs';
 
 const NOW=Date.parse('2026-10-17T02:00:00Z');
 const env={
   GITHUB_REPOSITORY:REPO,GITHUB_REF:'refs/heads/main',
-  GITHUB_SHA:'a'.repeat(40),GITHUB_RUN_ATTEMPT:'1',GITHUB_EVENT_NAME:'push',
+  GITHUB_SHA:'a'.repeat(40),GITHUB_RUN_ATTEMPT:'1',GITHUB_EVENT_NAME:'workflow_dispatch',
 };
-const push={
-  ref:'refs/heads/main',after:env.GITHUB_SHA,
-  repository:{full_name:REPO},head_commit:{id:env.GITHUB_SHA},
-};
+const dispatch={repository:{full_name:REPO},ref:'refs/heads/main'};
 const run=(minutes,status='completed',event='workflow_dispatch',id=100)=>({
   id,created_at:new Date(NOW-minutes*60_000).toISOString(),
   status,event,head_branch:'main',conclusion:status==='completed'?'success':null,
@@ -36,28 +33,20 @@ const log=(value)=>'Other protected messages\nSENATE_OFFICIAL_TEXT_RAW_READBACK=
 test('watchdog pins expected repo and approved GitHub workflow',()=>{
   assert.equal(TEXT_WORKFLOW_ID,387035882);
   assert.equal(TEXT_WORKFLOW_PATH,'.github/workflows/senate-official-bill-text-production.yml');
-  assert.equal(WATCHDOG_CRON,'13 * * * *');
 });
-test('only verified main events can inspect/dispatch protected collector',()=>{
-  assert.equal(validateGitHubEvent(env,push).eligible,true);
-  assert.equal(validateGitHubEvent({...env,GITHUB_REPOSITORY:'other/repo'},push).eligible,false);
-  assert.equal(validateGitHubEvent({...env,GITHUB_REF:'refs/heads/test'},push).eligible,false);
-  assert.equal(validateGitHubEvent({...env,GITHUB_RUN_ATTEMPT:'2'},push).eligible,false);
-  assert.equal(validateGitHubEvent(env,{...push,after:'b'.repeat(40)}).eligible,false);
-  assert.equal(validateGitHubEvent(env,{...push,head_commit:{id:'b'.repeat(40)}}).eligible,false);
-  assert.equal(validateGitHubEvent(env,{...push,forced:true}).eligible,false);
-  assert.equal(validateGitHubEvent(env,{...push,deleted:true}).eligible,false);
-  assert.equal(validateGitHubEvent({...env,GITHUB_EVENT_NAME:'pull_request'},push).eligible,false);
-});
-test('watchdog accepts only its cron and default-branch dispatch',()=>{
+test('only explicitly dispatched main recovery is permitted',()=>{
+  assert.equal(validateGitHubEvent(env,dispatch).eligible,true);
+  assert.equal(validateGitHubEvent({...env,GITHUB_REPOSITORY:'other/repo'},dispatch).eligible,false);
+  assert.equal(validateGitHubEvent({...env,GITHUB_REF:'refs/heads/test'},dispatch).eligible,false);
+  assert.equal(validateGitHubEvent({...env,GITHUB_RUN_ATTEMPT:'2'},dispatch).eligible,false);
+  assert.equal(validateGitHubEvent({...env,GITHUB_EVENT_NAME:'push'},dispatch).eligible,false);
   assert.equal(validateGitHubEvent({...env,GITHUB_EVENT_NAME:'schedule'},
-    {repository:{full_name:REPO},schedule:WATCHDOG_CRON}).eligible,true);
-  assert.equal(validateGitHubEvent({...env,GITHUB_EVENT_NAME:'schedule'},
-    {repository:{full_name:REPO},schedule:'27 */6 * * *'}).eligible,false);
-  assert.equal(validateGitHubEvent({...env,GITHUB_EVENT_NAME:'workflow_dispatch'},
-    {repository:{full_name:REPO},ref:'main'}).eligible,true);
-  assert.equal(validateGitHubEvent({...env,GITHUB_EVENT_NAME:'workflow_dispatch'},
-    {repository:{full_name:REPO},ref:'feature'}).eligible,false);
+    {...dispatch,schedule:'13 * * * *'}).eligible,false);
+  assert.equal(validateGitHubEvent({...env,GITHUB_EVENT_NAME:'pull_request'},dispatch).eligible,false);
+  assert.equal(validateGitHubEvent(env,{...dispatch,ref:'feature'}).eligible,false);
+  const yaml=readFileSync(new URL('../.github/workflows/senate-official-bill-text-watchdog.yml',import.meta.url),'utf8');
+  assert.doesNotMatch(yaml,/^  (?:schedule|push):/m);
+  assert.match(yaml,/^  workflow_dispatch:/m);
 });
 test('PR checks and skipped main triggers cannot mask a missed collector',()=>{
   const pr={...run(10),event:'pull_request'};
@@ -110,15 +99,10 @@ test('skip dispatch on completed backlog and cool down when source throttled',()
   assert.equal(applyReceiptGuard(due,null,NOW,run(90)).dispatch,true);
 });
 
-// A push can observe the same known collector degradation dozens of times.
-// Preserve scheduled/manual watchdog failures and hard API/dispatch failures.
-test('only duplicate push degradation is non-fatal',()=>{
-  assert.equal(shouldFailOnKnownDegradation('push'),false);
-  assert.equal(shouldFailOnKnownDegradation('schedule'),true);
-  assert.equal(shouldFailOnKnownDegradation('workflow_dispatch'),true);
-  assert.equal(shouldFailOnKnownDegradation('unrecognized'),true);
+test('manual watchdog preserves recovery permissions and fails on errors',()=>{
   const yaml=readFileSync(new URL('../.github/workflows/senate-official-bill-text-watchdog.yml',import.meta.url),'utf8');
-  assert.ok(yaml.includes("  schedule:\n    - cron: '13 * * * *'"));
+  assert.match(yaml,/^  workflow_dispatch:/m);
+  assert.doesNotMatch(yaml,/^  (?:push|schedule):/m);
   assert.ok(yaml.includes("\n  actions: write\n"));
   assert.ok(yaml.includes('run: node scripts/senate-official-bill-text-watchdog.mjs'));
   assert.ok(!yaml.includes('continue-on-error:'));

@@ -21,10 +21,11 @@ test('repair runs require reviewed main, first attempt, exact protected workflow
    assert.throws(()=>assertEvidenceRepairRun({...env,...patch},event));
  assert.throws(()=>assertEvidenceRepairRun(env,{...event,forced:true}));
  assert.throws(()=>assertEvidenceRepairRun(env,{...event,head_commit:undefined}));
- assert.doesNotThrow(()=>assertEvidenceRepairRun({...env,GITHUB_EVENT_NAME:'schedule'},
-   {repository:event.repository,schedule:'23 * * * *'}));
  assert.throws(()=>assertEvidenceRepairRun({...env,GITHUB_EVENT_NAME:'schedule'},
-   {repository:event.repository,schedule:'* * * * *'}));
+   {repository:event.repository}));
+ const workflow=readFileSync('.github/workflows/senate-evidence-repair-production.yml','utf8');
+ assert.doesNotMatch(workflow,/\b(?:schedule|cron):/);
+ assert.match(workflow,/github.event_name == 'push'/);
 });
 
 test('archive proofs require exact original body, and SQL failures cannot become source unavailability',async()=>{

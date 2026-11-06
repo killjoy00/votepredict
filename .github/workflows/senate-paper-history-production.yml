@@ -69,8 +69,6 @@ on:
       - tests/senate-hf100-original-shadow.test.ts
       - src/operations/senate-history-archive.ts
       - .github/workflows/senate-paper-history-production.yml
-  schedule:
-    - cron: '11 * * * *'
   push:
     branches: [main]
     paths:
@@ -146,8 +144,8 @@ permissions:
 
 concurrency:
   # PRs are keyless. Their per-PR queue must never evict a pending guarded
-  # main push/schedule verification from GitHub's one-pending-run limit.
-  # Production push/schedule continue to serialize against each other.
+  # an explicitly marked main-push verification from GitHub's one-pending-run limit.
+  # Protected main pushes remain serialized.
   group: ${{ github.event_name == 'pull_request' && format('senate-paper-history-pr-{0}', github.event.pull_request.number) || 'senate-paper-history-neon-production' }}
   cancel-in-progress: false
 
@@ -201,16 +199,15 @@ jobs:
 
   independent-main:
     if: >-
-      (github.event_name == 'push' || github.event_name == 'schedule') &&
+      github.event_name == 'push' &&
       github.repository == 'killjoy00/votepredict' &&
       github.event.repository.full_name == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      ((github.event_name == 'schedule' && github.event.schedule == '11 * * * *') ||
-       (github.event_name == 'push' && github.event.after == github.sha &&
-        github.event.head_commit.id == github.sha && github.event.deleted != true &&
-        github.event.forced != true &&
-        contains(github.event.head_commit.message, 'SENATE_PAPER_HISTORY_PRODUCTION')))
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha && github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PAPER_HISTORY_PRODUCTION')
     runs-on: ubuntu-latest
     timeout-minutes: 75
     services:
@@ -263,16 +260,15 @@ jobs:
     needs: [independent-main]
     if: >-
       needs.independent-main.result == 'success' &&
-      (github.event_name == 'push' || github.event_name == 'schedule') &&
+      github.event_name == 'push' &&
       github.repository == 'killjoy00/votepredict' &&
       github.event.repository.full_name == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      ((github.event_name == 'schedule' && github.event.schedule == '11 * * * *') ||
-       (github.event_name == 'push' && github.event.after == github.sha &&
-        github.event.head_commit.id == github.sha && github.event.deleted != true &&
-        github.event.forced != true &&
-        contains(github.event.head_commit.message, 'SENATE_PAPER_HISTORY_PRODUCTION')))
+      github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha && github.event.deleted != true &&
+      github.event.forced != true &&
+      contains(github.event.head_commit.message, 'SENATE_PAPER_HISTORY_PRODUCTION')
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 55

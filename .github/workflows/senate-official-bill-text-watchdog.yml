@@ -1,13 +1,8 @@
 name: Recover missed Minnesota Senate official bill-text collection
 run-name: "Official text recovery ${{ github.event_name }} #${{ github.run_number }}"
 
-# The event-driven path keeps collection moving when GitHub drops scheduled
-# events. The separate hourly cron is a fallback, not the sole trigger.
+# Automatic recovery retired 2026-11-06; explicit manual dispatch only.
 on:
-  push:
-    branches: [main]
-  schedule:
-    - cron: '13 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -25,11 +20,7 @@ jobs:
       github.event.repository.full_name == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      (
-        github.event_name == 'push' ||
-        (github.event_name == 'schedule' && github.event.schedule == '13 * * * *') ||
-        github.event_name == 'workflow_dispatch'
-      )
+      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 9
     steps:

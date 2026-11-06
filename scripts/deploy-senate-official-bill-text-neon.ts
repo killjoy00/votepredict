@@ -2,7 +2,7 @@
  * Protected, resumable raw-only Minnesota Senate official bill-text backfill.
  * Uses existing Neon primary and preexisting bill/vote links; never writes
  * bill_versions, source_documents, vote_events, member_votes or serving tables.
- * On checked main merge and later scheduled main runs, collect bounded pages.
+ * Runs on an explicitly marker-approved main push or manual dispatch only.
  */
 import { createHash } from 'node:crypto';
 import { appendFileSync, readFileSync, readdirSync } from 'node:fs';
@@ -22,9 +22,9 @@ const MIGRATION='0027_senate_official_bill_text_raw.sql';
 const REPO='killjoy00/votepredict';
 const SESSIONS=['2025-2026','2023-2024','2021-2022'];
 // A guarded merge push is a small live-source canary. Once it proves real
-// captures, the scheduled and guarded recovery runs use the full polite budgets.
+// captures, explicitly dispatched recovery runs use the full polite budgets.
 const PUSH_CANARY=process.env.GITHUB_EVENT_NAME==='push';
-// Increase only full scheduled/recovery bill discovery to clear the final
+// Increase only manually dispatched bill discovery to clear the final
 // historical session sooner. Preserve the 15-bill push canary, serial 1150ms
 // source pacer, 1100-version fetch cap, throttle stop and protected timeout.
 const MAX_NEW_BILLS=PUSH_CANARY?15:600,MAX_DISCOVER=PUSH_CANARY?15:600,
@@ -48,16 +48,11 @@ function guard(e:NodeJS.ProcessEnv):void{
     throw Error('checked_main_gate_missing');
   if(!e.GITHUB_EVENT_PATH)throw Error('production_event_payload_missing');
   const event=JSON.parse(readFileSync(e.GITHUB_EVENT_PATH,'utf8')) as {
-    ref?:string;after?:string;deleted?:boolean;forced?:boolean;schedule?:string;
+    ref?:string;after?:string;deleted?:boolean;forced?:boolean;
     repository?:{full_name?:string};head_commit?:{id?:string;message?:string};
   };
   if(event.repository?.full_name!==REPO)
     throw Error('production_event_repository_mismatch');
-  if(e.GITHUB_EVENT_NAME==='schedule'){
-    if(event.schedule!=='37 * * * *')
-      throw Error('unexpected_official_text_collection_cron');
-    return;
-  }
   if(e.GITHUB_EVENT_NAME==='workflow_dispatch'){
     // The only supported recovery action is dispatch of the exact reviewed
     // main commit; GitHub's existing protected Neon environment remains gated.
