@@ -132,11 +132,20 @@ export async function ingestLrlMembershipSession(
   checkedAt = new Date(),
 ): Promise<LrlMembershipIngestResult> {
   const records = await listLrlMemberships(session);
+  // Validate the actual distinct persistence identities before any database write.
+  // Multiple source term blocks for one legislator/chamber cannot fill missing seats.
+  const house = new Set(records.filter((record) => record.chamber === 'house').map((record) => record.lrlId)).size;
+  const senate = new Set(records.filter((record) => record.chamber === 'senate').map((record) => record.lrlId)).size;
+  if (house < 130 || senate < 65) {
+    throw new Error(`[${session.slug}] implausible membership coverage: House=${house}, Senate=${senate}`);
+  }
+
   const client = await pool.connect();
   try {
-    const context = await ensureSession(client, session, checkedAt);
     await client.query('BEGIN');
     try {
+      // Session rollover, legislator, membership and alias changes are atomic.
+      const context = await ensureSession(client, session, checkedAt);
       for (const record of records) await persistRecord(client, context, record);
       await client.query('COMMIT');
     } catch (error) {
@@ -145,12 +154,6 @@ export async function ingestLrlMembershipSession(
     }
   } finally {
     client.release();
-  }
-
-  const house = records.filter((record) => record.chamber === 'house').length;
-  const senate = records.filter((record) => record.chamber === 'senate').length;
-  if (house < 130 || senate < 65) {
-    throw new Error(`[${session.slug}] implausible membership coverage: House=${house}, Senate=${senate}`);
   }
   return {
     session: session.slug,
