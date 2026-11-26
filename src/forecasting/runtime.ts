@@ -7,7 +7,7 @@ import type { PoolClient } from 'pg';
 import { extractDeterministicBillFeatures, retrieveHistoricalAnalogues, type BillFeatureIdentity, type HistoricalAnalogueCandidate } from '@/features/bills';
 import { pool } from '@/lib/db';
 import { fetchRevisorBill, fetchRevisorBillVersion, type RevisorBillMetadata, type RevisorBillVersionMetadata } from '@/sources/minnesota/revisor';
-import { MINNESOTA_HOUSE_HISTORICAL_SESSIONS } from '@/sources/minnesota/sessions';
+import { MINNESOTA_HOUSE_SUPPORTED_SESSIONS } from '@/sources/minnesota/sessions';
 import { simulateChamber, type ChamberSimulation, type PassageRule } from './chamber';
 import { estimateMemberProbability, type RateEvidence } from './member-model';
 import {
@@ -210,7 +210,7 @@ function toCount(value: unknown): number {
 }
 
 function sessionForSlug(slug: string) {
-  const session = MINNESOTA_HOUSE_HISTORICAL_SESSIONS.find((candidate) => candidate.slug === slug);
+  const session = MINNESOTA_HOUSE_SUPPORTED_SESSIONS.find((candidate) => candidate.slug === slug);
   if (!session) throw new Error(`Unsupported Minnesota session slug: ${slug}`);
   return session;
 }
