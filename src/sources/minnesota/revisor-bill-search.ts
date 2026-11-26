@@ -116,6 +116,51 @@ export function parseRevisorBillSearchXml(xml: string): RevisorBillSearchResult[
   return rows;
 }
 
+/**
+ * The live session may not be published yet. A successful HTTP response is not
+ * enough: reject malformed or wrong-session rows rather than importing prior
+ * biennium/special-session material or interpreting it as an empty search.
+ * Keep retrospective parsers and historical ingestion behavior unchanged.
+ */
+export function validate2027RevisorSearchScope(xml: string, rows: readonly RevisorBillSearchResult[], input: {
+  body: RevisorBillSearchBody; firstBill: number; lastBill: number;
+}): void {
+  if (!/<SEARCH_RESULTS(?:\s[^>]*)?>[\s\S]*<\/SEARCH_RESULTS\s*>/i.test(xml) &&
+      !/<SEARCH_RESULTS\s*\/>/i.test(xml)) {
+    throw new Error('Incomplete 2027 Revisor search envelope');
+  }
+  const openings = [...xml.matchAll(/<BILL_RESULT(?:\s|>)/gi)].length;
+  const closings = [...xml.matchAll(/<\/BILL_RESULT\s*>/gi)].length;
+  if (openings !== closings || openings !== rows.length) {
+    throw new Error('Malformed or unsupported 2027 Revisor bill result');
+  }
+  const type = expectedFileType(input.body);
+  const seen = new Set<string>();
+  for (const row of rows) {
+    if (row.fileType !== type || row.fileNumber < input.firstBill || row.fileNumber > input.lastBill ||
+        seen.has(row.identifier)) {
+      throw new Error(`2027 Revisor result outside requested chamber/range or duplicate: ${row.identifier}`);
+    }
+    seen.add(row.identifier);
+    const status = new URL(row.statusXmlUrl);
+    const statusPath = status.pathname.match(/^\/bills\/v1\/95\/2027\/0\/(HF|SF)\/(\d+)\/?$/i);
+    if (status.origin !== 'https://api.revisor.mn.gov' || status.username || status.password ||
+        status.search || status.hash || !statusPath || statusPath[1].toUpperCase() !== row.fileType ||
+        Number(statusPath[2]) !== row.fileNumber) {
+      throw new Error(`2027 Revisor status URI does not identify the requested regular-session bill: ${row.identifier}`);
+    }
+    if (row.latestTextHtmlUrl) {
+      const latest = new URL(row.latestTextHtmlUrl);
+      const textPath = latest.pathname.match(/^\/bills\/95\/2027\/0\/(HF|SF)\/(\d+)\/latest\/?$/i);
+      if (latest.origin !== 'https://www.revisor.mn.gov' || latest.username || latest.password ||
+          latest.search || latest.hash || !textPath || textPath[1].toUpperCase() !== row.fileType ||
+          Number(textPath[2]) !== row.fileNumber) {
+        throw new Error(`2027 Revisor latest-text URI does not identify the requested regular-session bill: ${row.identifier}`);
+      }
+    }
+  }
+}
+
 export async function fetchRevisorBillSearchRangeDocument(input: {
   sessionKey: string;
   body: RevisorBillSearchBody;
@@ -133,11 +178,24 @@ export async function fetchRevisorBillSearchRangeDocument(input: {
   if (!/<SEARCH_RESULTS(?:\s|>)/i.test(text)) {
     throw new Error('Minnesota Revisor search did not return the documented XML envelope');
   }
+  const results = parseRevisorBillSearchXml(text);
+  if (getMinnesotaHouseSession(input.sessionKey).slug === '2027-2028') {
+    if (response.url && response.url !== sourceUrl) {
+      const finalUrl = new URL(response.url);
+      const requested = new URL(sourceUrl);
+      if (finalUrl.origin !== requested.origin || finalUrl.pathname !== requested.pathname ||
+          ['session', 'body', 'location', 'bill', 'bill_type', 'format'].some(key =>
+            finalUrl.searchParams.get(key) !== requested.searchParams.get(key))) {
+        throw new Error('2027 Revisor search redirected outside requested scope');
+      }
+    }
+    validate2027RevisorSearchScope(text, results, input);
+  }
   return {
     sourceUrl: response.url || sourceUrl,
     contentSha256: createHash('sha256').update(text).digest('hex'),
     fetchedAt: new Date().toISOString(),
-    results: parseRevisorBillSearchXml(text),
+    results,
   };
 }
 
