@@ -1,0 +1,39 @@
+name: Recover exact frozen 2027 introduction candidate
+on:
+  pull_request:
+    paths:
+      - 'scripts/recover-2027-introduction-artifact.ts'
+      - '.github/workflows/recover-2027-introduction-artifact.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  recover:
+    if: github.repository == 'killjoy00/votepredict' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'prep/2027-frozen-introduction-recovery'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Download pinned original artifact with read-only GitHub token
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/killjoy00/votepredict/actions/artifacts/10772991611/zip > "$RUNNER_TEMP/p8-original.zip"
+          echo "72a42063a028114b4f6cbd8a356e74940eb00bdcda28a83cadf884aaa346061e  $RUNNER_TEMP/p8-original.zip" | sha256sum -c -
+          unzip -p "$RUNNER_TEMP/p8-original.zip" model.json > "$RUNNER_TEMP/p8-original-model.json"
+          echo "850aa4344bfe1635622af95c8f0871a38cbc234dc23eb9ae50085da668fcfc76  $RUNNER_TEMP/p8-original-model.json" | sha256sum -c -
+      - name: Verify original bytes and recover introduction candidate
+        run: node --import tsx scripts/recover-2027-introduction-artifact.ts "$RUNNER_TEMP/p8-original-model.json"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: exact-frozen-2027-introduction-candidate
+          path: artifacts/recovered-2027-introduction/
+          if-no-files-found: error
+          retention-days: 30
