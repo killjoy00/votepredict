@@ -7,6 +7,9 @@ import {
   fetchHouseVoteDetail,
   fetchHouseVoteSummary,
   parseHouseVoteDetailHtml,
+  resolveHouseVoteIngestSession,
+  validate2027HouseVotePage,
+  validate2027HouseSummary,
 } from '../src/sources/minnesota/house-votes.js';
 import { reconcileHouseMemberName, type MembershipCandidate } from '../src/sources/minnesota/member-reconciliation.js';
 import {
@@ -164,11 +167,13 @@ async function persistVotePage(
   session: MinnesotaHouseSession,
   sourceUrl: string,
   html: string,
+  expectedBill: string,
   candidates: MembershipCandidate[],
   counters: Counters,
 ): Promise<void> {
   const events = parseHouseVoteDetailHtml({ html, sessionKey: session.sessionKey, sourceUrl });
   if (events.length === 0) throw new Error(`No recorded vote events parsed from ${sourceUrl}`);
+  validate2027HouseVotePage(session, expectedBill, events);
 
   await client.query('BEGIN');
   try {
@@ -254,9 +259,16 @@ async function persistVotePage(
   }
 }
 
-async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession, options: CliOptions): Promise<number> {
+async function runSession(pool: Pool | undefined, configuredSession: MinnesotaHouseSession, options: CliOptions): Promise<number> {
+  // A live bill's recorded votes may change; historical URL-exists skipping
+  // would miss subsequent roll calls. No live scheduler is enabled here.
+  if (configuredSession.slug === '2027-2028' && options.skipExisting) {
+    throw new Error('--skip-existing is unsafe for live 2027 House vote pages');
+  }
+  const session = await resolveHouseVoteIngestSession(configuredSession);
   const summary = await fetchHouseVoteSummary(session.sessionKey);
   const allLinks = discoverHouseVoteBillLinks(summary.html, session.sessionKey);
+  validate2027HouseSummary(session, summary.html, allLinks);
   if (allLinks.length === 0) throw new Error(`No House vote bill links found for ${session.slug}`);
   const links = options.limit ? allLinks.slice(0, options.limit) : allLinks;
 
@@ -269,6 +281,8 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
       try {
         const detail = await fetchHouseVoteDetail(session.sessionKey, link.billIdentifier);
         const events = parseHouseVoteDetailHtml({ html: detail.html, sessionKey: session.sessionKey, sourceUrl: detail.sourceUrl });
+        if (session.slug === '2027-2028' && !events.length) throw new Error('No recorded 2027 House vote events parsed');
+        validate2027HouseVotePage(session, link.billIdentifier, events);
         counters.sourceDocuments += 1;
         counters.voteEvents += events.length;
         counters.memberVotes += events.reduce((sum, event) => sum + event.memberVotes.length, 0);
@@ -308,7 +322,7 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
             skippedExisting += 1;
           } else {
             const detail = await fetchHouseVoteDetail(session.sessionKey, link.billIdentifier);
-            await persistVotePage(client, context, session, detail.sourceUrl, detail.html, candidates, counters);
+            await persistVotePage(client, context, session, detail.sourceUrl, detail.html, link.billIdentifier, candidates, counters);
           }
         } catch (error) {
           failures.push({ billIdentifier: link.billIdentifier, error: error instanceof Error ? error.message : String(error) });

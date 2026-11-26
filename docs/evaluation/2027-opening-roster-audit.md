@@ -39,3 +39,7 @@ complete directory coverage, final recount outcomes for every district, or the
 prior years. The source review did not run this audit against the live directory.
 
 November 26 recheck: the Secretary of State's downloadable district results are distinct from final recount certification. The statewide Senate District 4 recount report (recountId=62) remains explicitly unofficial despite full precinct reporting. The House 32A recount report (recountId=61) likewise carries an unofficial warning; verify the actual canvass certificate. Senate District 33 is reported certified November 19. Do not treat provisional winners or a future oath date as settled opening-day evidence.
+
+## First House votes
+
+The explicit `--session=2027-2028` House history importer resolves the numeric native key from the official regular-session index only, verifies the summary heading and vote page bill/date scope, and rejects `--skip-existing` for the live biennium because previously observed bill pages can receive new votes. The 2027 Senate identity namespace remains unchanged. Start with a bounded source-only dry run after publication; do not activate production collection through this document.
