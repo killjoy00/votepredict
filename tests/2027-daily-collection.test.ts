@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createHash } from 'node:crypto';
 import { classify2027CollectionUrl,assert2027InitialTextUrl,collectionSourceFetch,with2027ArchivedSources,COLLECTION_LIMITS } from '../src/sources/minnesota/2027-collection-source.js';
-import { DAILY_COLLECTION_PLAN,assertDailyCollectionRun,assertDailyRunAvailable,collectionAlerts,archive2027Source,type CollectionHealth } from '../src/operations/2027-daily-collection.js';
+import { DAILY_COLLECTION_PLAN,assertDailyCollectionRun,assertDailyRunAvailable,collectionAlerts,archive2027Source,inspectCollectionHeartbeat,previousCollectionDay,storeCollectionEvent,readCollectionEvents,DAILY_COLLECTION_SOURCE_RECEIPT_TYPE,type CollectionHealth } from '../src/operations/2027-daily-collection.js';
 import { databaseTargetFingerprint } from '../src/operations/release-readiness.js';
 import { buildRevisorBillSearchUrl } from '../src/sources/minnesota/revisor-bill-search.js';
 
@@ -68,4 +68,66 @@ test('health distinguishes bounded work from incomplete data coverage',()=>{
   const counters={requests:2,bytes:100,archived:1,failed:1,byKind:{catalog:1,status:1,initial_text:0},receiptSha256s:[]};
   const alerts=collectionAlerts(before,{...before,staleStatus:80,missingInitialText:4},199,counters,true);
   for(const item of ['SOURCE_OR_COLLECTION_FAILURE','UNARCHIVED_SOURCE_ATTEMPTS','CATALOG_COVERAGE_REGRESSION','STATUS_BACKLOG_OR_STALE','INITIAL_TEXT_BACKLOG'])assert.ok(alerts.includes(item));
+});
+
+test('heartbeat distinguishes missing, partial, interrupted and recovered collection days',()=>{
+  assert.equal(previousCollectionDay('2028-03-01'),'2028-02-29');
+  assert.equal(inspectCollectionHeartbeat([],'2027-01-11').state,'not_due');
+  const day='2027-01-12';
+  assert.equal(inspectCollectionHeartbeat([],day).state,'missing');
+  const start={day,runId:'1:1',state:'started'};
+  assert.equal(inspectCollectionHeartbeat([start],day).state,'interrupted');
+  assert.equal(inspectCollectionHeartbeat([start,{...start,state:'partial_failure'}],day).state,'partial_failure');
+  const retry={day,runId:'2:1',state:'started'};
+  const result=inspectCollectionHeartbeat([start,retry,{...retry,state:'completed_batch'}],day);
+  assert.equal(result.state,'completed_batch');assert.equal(result.unclosedStarts,1);
+  assert.ok(result.alerts.includes('PREVIOUS_COLLECTION_INTERRUPTED_ATTEMPT'));
+});
+
+import { Pool } from 'pg';
+import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+test('disposable PostgreSQL stores original entity bytes and distinct observation receipts immutably',async t=>{
+  const uri=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
+  if(!uri){t.skip('disposable PostgreSQL not configured');return;}
+  assert.ok(['localhost','127.0.0.1','[::1]'].includes(new URL(uri).hostname),'test must use localhost PostgreSQL');
+  const schema='collection_'+randomUUID().replaceAll('-','');
+  const admin=new Pool({connectionString:uri,max:1});
+  let db:Pool|undefined;
+  try{
+    await admin.query('CREATE SCHEMA '+schema);
+    db=new Pool({connectionString:uri,max:2,options:'-c search_path='+schema});
+    // Exercise exactly the already-deployed content-store DDL, not a
+    // production migration or simplified test-only mock.
+    const migration=readFileSync('migrations/0037_forecast_evidence_contract.sql','utf8');
+    const start=migration.indexOf('CREATE TABLE evidence_content_blobs (');
+    const end=migration.indexOf('CREATE TABLE forecast_bill_text_observations',start);
+    assert.ok(start>=0&&end>start);
+    await db.query(migration.slice(start,end));
+    const raw=Buffer.from([0xef,0xbb,0xbf,60,66,73,76,76,47,62]);
+    const observedAt=new Date().toISOString();
+    const first={schemaVersion:'2027-source-observation-v1' as const,session:'2027-2028' as const,runId:'123:1',
+      sourceKind:'status' as const,sourceUrl:status,httpStatus:200,mediaType:'application/xml',
+      observedAt,responseBodySha256:sha(raw),responseBodyBytes:raw.length};
+    const firstHash=await archive2027Source(db,first,raw);
+    assert.equal(await archive2027Source(db,first,raw),firstHash);
+    const secondHash=await archive2027Source(db,{...first,runId:'124:1'},raw);
+    assert.notEqual(secondHash,firstHash);
+    const stored=(await db.query<{body:Buffer;media_type:string}>('SELECT body,media_type FROM evidence_content_blobs WHERE sha256=$1',[sha(raw)])).rows[0];
+    assert.deepEqual(stored.body,raw);assert.equal(stored.media_type,'application/octet-stream');
+    const receipts=(await db.query<{body:Buffer}>('SELECT body FROM evidence_content_blobs WHERE media_type=$1 ORDER BY accepted_at',[DAILY_COLLECTION_SOURCE_RECEIPT_TYPE])).rows;
+    assert.equal(receipts.length,2);
+    assert.deepEqual(JSON.parse(receipts[0].body.toString()),first);
+    await assert.rejects(archive2027Source(db,{...first,responseBodyBytes:raw.length+1},raw),/does not match/);
+    await assert.rejects(archive2027Source(db,{...first,observedAt:'2020-01-01T00:00:00.000Z'},raw),/clocks disagree/);
+    assert.equal((await db.query('SELECT * FROM evidence_content_blobs')).rowCount,3);
+    await assert.rejects(db.query('UPDATE evidence_content_blobs SET media_type=$1 WHERE sha256=$2',['bad',sha(raw)]),/append-only/);
+    await assert.rejects(db.query('DELETE FROM evidence_content_blobs WHERE sha256=$1',[sha(raw)]),/append-only/);
+    await assert.rejects(db.query('TRUNCATE evidence_content_blobs'),/append-only/);
+    const actualDay=(await db.query<{day:string}>("SELECT (clock_timestamp() AT TIME ZONE 'America/Chicago')::date::text AS day")).rows[0].day;
+    const event={day:actualDay,runId:'123:1',state:'started'};
+    await storeCollectionEvent(db,event);
+    assert.deepEqual(await readCollectionEvents(db,actualDay),[event]);
+    assert.throws(()=>assertDailyRunAvailable([event],actualDay,'123:1'));
+  }finally{if(db)await db.end();await admin.query('DROP SCHEMA IF EXISTS '+schema+' CASCADE');await admin.end();}
 });

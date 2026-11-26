@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import type { Pool,PoolClient } from 'pg';
-import { COLLECTION_LIMITS,type CollectionSourceReceipt,type CollectionCounters } from '@/sources/minnesota/2027-collection-source';
+import { classify2027CollectionUrl,COLLECTION_LIMITS,type CollectionSourceReceipt,type CollectionCounters } from '@/sources/minnesota/2027-collection-source';
 import { minnesotaLocalDate } from '@/sources/minnesota/sessions';
 import { databaseTargetFingerprint,readReleaseBinding } from './release-readiness';
 
@@ -14,7 +14,7 @@ const digest=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
 export type CollectionHealth={knownBills:number;houseBills:number;senateBills:number;neverObserved:number;staleStatus:number;failedStatus:number;missingInitialText:number};
 export type CollectionReport={schemaVersion:'2027-collection-report-v1';session:'2027-2028';runId:string;day:string;startedAt:string;finishedAt:string;
   state:'completed_batch'|'partial_failure';stages:Record<string,unknown>;before:CollectionHealth;after:CollectionHealth|null;
-  counters:CollectionCounters;alerts:string[];officialUniverseVerified:false;fullDailyCoverageVerified:false;productionForecastingActive:false};
+  counters:CollectionCounters;alerts:string[];previousHeartbeat:CollectionHeartbeat;officialUniverseVerified:false;fullDailyCoverageVerified:false;productionForecastingActive:false};
 
 export function assertDailyCollectionRun(env:Record<string,string|undefined>,now:Date):{runId:string;day:string;databaseUrl:string;role:string;fingerprint:string}{
   const day=minnesotaLocalDate(now);
@@ -40,28 +40,38 @@ export function assertDailyCollectionRun(env:Record<string,string|undefined>,now
 
 /** Uses the existing migration 0037 content-addressed, trigger-protected store.
  * Retains exact received entity bytes; acceptance is not an external timestamp. */
-async function storeBlob(db:Pick<PoolClient,'query'>,body:Buffer,mediaType:string):Promise<string>{
+async function storeBlob(db:Pick<PoolClient,'query'>,body:Buffer,mediaType:string,requireType=false):Promise<string>{
   const sha=digest(body);
   await db.query('INSERT INTO evidence_content_blobs(sha256,body,media_type) VALUES($1,$2,$3) ON CONFLICT(sha256) DO NOTHING',[sha,body,mediaType]);
-  const stored=(await db.query<{sha256:string;bytes:number;verified:boolean}>(
-    'SELECT sha256,octet_length(body)::int AS bytes,encode(sha256(body),\'hex\')=sha256 AS verified FROM evidence_content_blobs WHERE sha256=$1',[sha])).rows[0];
-  if(!stored||stored.sha256!==sha||stored.bytes!==body.length||!stored.verified)throw Error('Immutable archive readback mismatch');
+  const stored=(await db.query<{sha256:string;bytes:number;verified:boolean;media_type:string;accepted_at:Date}>(
+    'SELECT sha256,media_type,accepted_at,octet_length(body)::int AS bytes,encode(sha256(body),\'hex\')=sha256 AS verified FROM evidence_content_blobs WHERE sha256=$1',[sha])).rows[0];
+  if(!stored||stored.sha256!==sha||stored.bytes!==body.length||!stored.verified||(requireType&&stored.media_type!==mediaType))throw Error('Immutable archive readback mismatch');
   return sha;
 }
 export async function archive2027Source(db:Pick<Pool,'connect'>,receipt:CollectionSourceReceipt,body:Buffer):Promise<string>{
-  if(digest(body)!==receipt.responseBodySha256||body.length!==receipt.responseBodyBytes||
+  if(receipt.schemaVersion!=='2027-source-observation-v1'||receipt.session!=='2027-2028'||
+    classify2027CollectionUrl(receipt.sourceUrl)!==receipt.sourceKind||
+    !/^[0-9]{1,20}:[0-9]{1,6}$/.test(receipt.runId)||
+    !Number.isInteger(receipt.httpStatus)||receipt.httpStatus<100||receipt.httpStatus>599||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(receipt.observedAt)||
+    !Number.isFinite(Date.parse(receipt.observedAt))||
+    digest(body)!==receipt.responseBodySha256||body.length!==receipt.responseBodyBytes||
     body.length<1||body.length>COLLECTION_LIMITS.maxResponseBytes)throw Error('Source body does not match receipt');
   const client=await db.connect();
   try{
     await client.query('BEGIN');
     await client.query("SET LOCAL statement_timeout='10s'");
-    await storeBlob(client,body,receipt.mediaType);
-    const receiptSha=await storeBlob(client,Buffer.from(JSON.stringify(receipt)),DAILY_COLLECTION_SOURCE_RECEIPT_TYPE);
+    await storeBlob(client,body,'application/octet-stream');
+    const receiptSha=await storeBlob(client,Buffer.from(JSON.stringify(receipt)),DAILY_COLLECTION_SOURCE_RECEIPT_TYPE,true);
+    const accepted=(await client.query<{accepted_at:Date}>(
+      'SELECT accepted_at FROM evidence_content_blobs WHERE sha256=$1',[receiptSha])).rows[0]?.accepted_at;
+    if(!accepted||Math.abs(accepted.getTime()-Date.parse(receipt.observedAt))>300000)
+      throw Error('Acquisition and independent DB acceptance clocks disagree');
     await client.query('COMMIT');return receiptSha;
   }catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
 }
 export async function storeCollectionEvent(db:Pick<PoolClient,'query'>,event:Record<string,unknown>):Promise<string>{
-  return storeBlob(db,Buffer.from(JSON.stringify(event)),DAILY_COLLECTION_REPORT_TYPE);
+  return storeBlob(db,Buffer.from(JSON.stringify(event)),DAILY_COLLECTION_REPORT_TYPE,true);
 }
 
 export async function readCollectionHealth(db:Pick<Pool,'query'>):Promise<CollectionHealth>{
@@ -143,4 +153,30 @@ export function collectionAlerts(before:CollectionHealth,after:CollectionHealth|
     if(after.missingInitialText>0)alerts.push('INITIAL_TEXT_BACKLOG');
   }
   return alerts;
+}
+
+export type CollectionHeartbeat={
+  expectedDay:string;state:'not_due'|'missing'|'interrupted'|'partial_failure'|'completed_batch';
+  starts:number;terminalRecords:number;unclosedStarts:number;alerts:string[];
+};
+export function previousCollectionDay(day:string):string{
+  const date=new Date(day+'T00:00:00Z');
+  if(!Number.isFinite(date.getTime())||date.toISOString().slice(0,10)!==day)throw Error('Invalid collection day');
+  date.setUTCDate(date.getUTCDate()-1);
+  return date.toISOString().slice(0,10);
+}
+export function inspectCollectionHeartbeat(events:readonly Record<string,unknown>[],expectedDay:string):CollectionHeartbeat{
+  const rows=events.filter(e=>e.day===expectedDay);
+  const starts=rows.filter(e=>e.state==='started');
+  const terminal=rows.filter(e=>e.state==='completed_batch'||e.state==='partial_failure');
+  const unclosed=starts.filter(e=>!terminal.some(t=>t.runId===e.runId)).length;
+  const completed=terminal.some(e=>e.state==='completed_batch');
+  const alerts:string[]=[];
+  let state:CollectionHeartbeat['state'];
+  if(expectedDay<'2027-01-12')state='not_due';
+  else if(starts.length===0){state='missing';alerts.push('PREVIOUS_DAILY_COLLECTION_MISSING');}
+  else if(completed){state='completed_batch';if(unclosed>0)alerts.push('PREVIOUS_COLLECTION_INTERRUPTED_ATTEMPT');}
+  else if(unclosed>0){state='interrupted';alerts.push('PREVIOUS_DAILY_COLLECTION_INTERRUPTED');}
+  else{state='partial_failure';alerts.push('PREVIOUS_DAILY_COLLECTION_PARTIAL_FAILURE');}
+  return {expectedDay,state,starts:starts.length,terminalRecords:terminal.length,unclosedStarts:unclosed,alerts};
 }

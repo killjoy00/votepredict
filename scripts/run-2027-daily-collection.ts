@@ -1,7 +1,7 @@
 import { writeFileSync,mkdirSync } from 'node:fs';
 import { COLLECTION_LIMITS,with2027ArchivedSources } from '../src/sources/minnesota/2027-collection-source.js';
 import { DAILY_COLLECTION_PLAN,assertDailyCollectionRun,verifyCollectionTarget,archive2027Source,storeCollectionEvent,
-  readCollectionEvents,assertDailyRunAvailable,readCollectionHealth,collectionAlerts,type CollectionReport } from '../src/operations/2027-daily-collection.js';
+  readCollectionEvents,assertDailyRunAvailable,readCollectionHealth,collectionAlerts,previousCollectionDay,inspectCollectionHeartbeat,type CollectionReport } from '../src/operations/2027-daily-collection.js';
 
 async function main(){
   if(process.argv.length===3&&process.argv[2]==='--plan'){console.log(JSON.stringify(DAILY_COLLECTION_PLAN,null,2));return;}
@@ -19,6 +19,8 @@ async function main(){
       locked=acquired.rows[0]?.locked===true;
       if(!locked)throw Error('Another daily collector owns the DB lock');
       assertDailyRunAvailable(await readCollectionEvents(client,target.day),target.day,target.runId);
+      const priorDay=previousCollectionDay(target.day);
+      const previousHeartbeat=inspectCollectionHeartbeat(await readCollectionEvents(client,priorDay),priorDay);
       const before=await readCollectionHealth(client);
       const startedAt=new Date().toISOString();
       await storeCollectionEvent(client,{schemaVersion:'2027-collection-event-v1',session:'2027-2028',runId:target.runId,day:target.day,state:'started',startedAt});
@@ -36,10 +38,10 @@ async function main(){
           stages.initialText=await backfillRevisorInitialTextBatch(COLLECTION_LIMITS.initialTextBatch,'2027-2028');
         }catch{phaseFailed=true;stages.error='BOUNDED_COLLECTION_STAGE_FAILED';}
         try{after=await readCollectionHealth(client);}catch{phaseFailed=true;}
-        const alerts=collectionAlerts(before,after,discovered,counters,phaseFailed);
+        const alerts=[...previousHeartbeat.alerts,...collectionAlerts(before,after,discovered,counters,phaseFailed)];
         const result:CollectionReport={schemaVersion:'2027-collection-report-v1',session:'2027-2028',runId:target.runId,day:target.day,startedAt,finishedAt:new Date().toISOString(),
           state:phaseFailed||counters.failed>0||counters.archived!==counters.requests?'partial_failure':'completed_batch',
-          stages,before,after,counters,alerts,officialUniverseVerified:false,fullDailyCoverageVerified:false,productionForecastingActive:false};
+          stages,before,after,counters,alerts,previousHeartbeat,officialUniverseVerified:false,fullDailyCoverageVerified:false,productionForecastingActive:false};
         return result;
       });
       const reportSha=await storeCollectionEvent(client,report);
