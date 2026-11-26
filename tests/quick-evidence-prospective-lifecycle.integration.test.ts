@@ -357,6 +357,13 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
       voteEventId: voteId,
     });
 
+    // Deliberately introduce a later vote-day and post-vote revision without
+    // shadows. Neither may displace the legitimate strictly pre-vote revision.
+    await client.query(`
+      INSERT INTO forecast_revisions(id,forecast_id,revision_number,research_mode,model_version,generated_at,metadata)
+      VALUES(gen_random_uuid(),$1,2,'quick','member-eb-v1.2-decay180','2027-02-05T09:00:00Z','{}'),
+            (gen_random_uuid(),$1,3,'quick','member-eb-v1.2-decay180','2027-02-06T12:00:00Z','{}')
+    `,[forecastId]);
     const sealed = await getQuickEvidenceProspectiveScorecard({ query } as any);
     assert.equal(sealed.status, 'accruing');
     assert.equal(sealed.primaryScoringAllowed, false);
@@ -389,6 +396,16 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
       [forecastId],
     );
     assert.equal(schedule.rows[0].enabled, false);
+
+    // A missing shadow on the latest eligible pre-vote revision is an explicit
+    // exclusion; do not fall back to a more convenient earlier revision.
+    const missing = (await client.query<{id:string}>(`INSERT INTO forecast_revisions(id,forecast_id,revision_number,research_mode,model_version,generated_at,metadata)
+      VALUES(gen_random_uuid(),$1,4,'quick','member-eb-v1.2-decay180','2027-02-04T12:00:00Z','{"passageRule":{"kind":"fixed","requiredYes":1}}') RETURNING id`,[forecastId])).rows[0].id;
+    await client.query('INSERT INTO forecast_member_predictions(revision_id,membership_id,yes_probability,context) VALUES($1,$2,0.55,\'[]\')',[missing,member1]);
+    const excluded = await getQuickEvidenceProspectiveScorecard({ query } as any);
+    assert.equal(excluded.cohort.selectedStrictlyPreVoteCases,0);
+    assert.equal(excluded.cohort.exclusions[0]?.revisionId,missing);
+    assert.equal(excluded.cohort.exclusions[0]?.reason,'missing_quick_evidence_shadow');
   } finally {
     await client.query('DROP SCHEMA IF EXISTS ' + schema + ' CASCADE').catch(() => undefined);
     client.release();
