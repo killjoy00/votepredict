@@ -41,3 +41,29 @@ test('reported tally agreement is not certification, recounts remain separate, a
   assert.equal(status('senate:67'),'missing_election');
   assert.equal(result.authoritativeRosterVerified,false);
 });
+
+import { OPENING_ROSTER_NAME_VARIANTS, isObservedOpeningNameVariant } from '../src/operations/2027-opening-roster-name-variants.js';
+
+test('observed 2027 variants are exact audit-only tuples with no fuzzy fallback', () => {
+  assert.equal(OPENING_ROSTER_NAME_VARIANTS.length, 43);
+  assert.equal(new Set(OPENING_ROSTER_NAME_VARIANTS.map(x => x.seat)).size, 43);
+  for (const item of OPENING_ROSTER_NAME_VARIANTS) {
+    const input = { seat: item.seat, lrlId: item.lrlId, electionName: item.electionName,
+      lrlName: item.lrlName, electionParty: item.party, lrlParty: item.lrlParty };
+    assert.equal(isObservedOpeningNameVariant(input), true);
+    assert.equal(isObservedOpeningNameVariant({...input, lrlId:'different'}), false);
+    assert.equal(isObservedOpeningNameVariant({...input, seat:'house:99A'}), false);
+    assert.equal(isObservedOpeningNameVariant({...input, electionName:input.electionName+' altered'}), false);
+    assert.equal(isObservedOpeningNameVariant({...input, lrlName:input.lrlName+' altered'}), false);
+    assert.equal(isObservedOpeningNameVariant({...input, lrlParty:'OTHER'}), false);
+  }
+  const house = parseOpeningElectionRows(row('house','25B','0301','Andy Smith','DFL',100),'house');
+  const records = [member('house','25B','15606','Andrew Smith','DFL')];
+  const now = reconcile2027OpeningElection(records, house, [], '2026-11-26');
+  assert.equal(now.results.find(r=>r.seat==='house:25B')?.status,'observed_same_seat_name_variant');
+  assert.equal(now.matchedReportedLeaders,0);
+  assert.equal(now.observedNameVariants,1);
+  assert.equal(now.authoritativeRosterVerified,false);
+  assert.equal(reconcile2027OpeningElection(records, house, [], '2026-11-25').observedNameVariants,0);
+  assert.equal(reconcile2027OpeningElection([{...records[0], party:'R'}], house, [], '2026-11-26').observedNameVariants,0);
+});

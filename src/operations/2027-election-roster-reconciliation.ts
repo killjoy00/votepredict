@@ -2,6 +2,7 @@ import { parseSosLegislativeByDistrict, normalizeMinnesotaDistrict, type SosLegi
 import { normalizeMemberName } from '@/sources/minnesota/house-votes';
 import type { HistoricalMembershipRecord } from '@/sources/minnesota/lrl-members';
 import { assess2027OpeningRoster } from './2027-opening-roster-audit';
+import { isObservedOpeningNameVariant, OPENING_ROSTER_NAME_VARIANT_SOURCE } from './2027-opening-roster-name-variants';
 
 export const SOS_2026_DISTRICT_SOURCES = {
   house: 'https://electionresultsfiles.sos.mn.gov/20261103/LegislativeByDistrict.txt',
@@ -61,7 +62,7 @@ export function reconcile2027OpeningElection(
       groups.set(key, [...(groups.get(key) ?? []), row]);
     }
   }
-  const results: Array<{ seat: string; status: 'matched_reported_leader' | 'recount_requires_certification' | 'missing_election' | 'incomplete_election' | 'no_unique_named_leader' | 'missing_lrl' | 'identity_or_party_mismatch'; leader?: string; leaderParty?: string; lrlId?: string; lrlName?: string }> = [];
+  const results: Array<{ seat: string; status: 'matched_reported_leader' | 'observed_same_seat_name_variant' | 'recount_requires_certification' | 'missing_election' | 'incomplete_election' | 'no_unique_named_leader' | 'missing_lrl' | 'identity_or_party_mismatch'; leader?: string; leaderParty?: string; lrlId?: string; lrlName?: string; lrlParty?: string; variantSource?: typeof OPENING_ROSTER_NAME_VARIANT_SOURCE }> = [];
   const expected = Array.from({ length: 67 }, (_, i) => i + 1).flatMap(n => [`house:${n}A`, `house:${n}B`, `senate:${n}`]);
   for (const key of expected) {
     const rows = groups.get(key) ?? [];
@@ -83,18 +84,28 @@ export function reconcile2027OpeningElection(
     const name = [leader.candidateName, leader.suffix].filter(Boolean).join(' ');
     const candidate = members.get(key);
     const member = candidate ? recordsBySeat.get(key + ':' + candidate.lrlId) : undefined;
-    const common = { seat: key, leader: name, leaderParty: leader.party, lrlId: member?.lrlId, lrlName: member?.name };
+    const common = { seat: key, leader: name, leaderParty: leader.party, lrlId: member?.lrlId, lrlName: member?.name, lrlParty: member?.party };
     if (RECOUNT_SEATS.has(key)) { results.push({ ...common, status: 'recount_requires_certification' }); continue; }
     if (!member) { results.push({ ...common, status: 'missing_lrl' }); continue; }
-    // No fuzzy winner/name substitution: middle names and aliases may require
-    // documentary reconciliation. Report disagreement rather than infer identity.
+    // Exact matches remain distinct from observed same-seat name variants.
+    // Never fuzzy-match a changed name, party, seat or identity. Never certify
+    // a recorded pairing or use it to resolve historical vote identity.
     const same = normalizeMemberName(name) === normalizeMemberName(member.name) && leader.party === member.party;
-    results.push({ ...common, status: same ? 'matched_reported_leader' : 'identity_or_party_mismatch' });
+    if (same) { results.push({ ...common, status: 'matched_reported_leader' }); continue; }
+    if (observedOn >= OPENING_ROSTER_NAME_VARIANT_SOURCE.observedOn && isObservedOpeningNameVariant({
+      seat: key, lrlId: member.lrlId, electionName: name, lrlName: member.name,
+      electionParty: leader.party, lrlParty: member.party,
+    })) {
+      results.push({ ...common, status: 'observed_same_seat_name_variant', variantSource: OPENING_ROSTER_NAME_VARIANT_SOURCE });
+      continue;
+    }
+    results.push({ ...common, status: 'identity_or_party_mismatch' });
   }
   return {
     session: '2027-2028', observedOn, expectedSeats: 201,
     lrlTermCoverage: roster.singleCandidateSeats,
     matchedReportedLeaders: results.filter(r => r.status === 'matched_reported_leader').length,
+    observedNameVariants: results.filter(r => r.status === 'observed_same_seat_name_variant').length,
     authoritativeRosterVerified: false as const,
     // Bulk tallies and LRL entries alone never prove the canvass, vacancies,
     // active membership, or that future reported oaths actually took place.
