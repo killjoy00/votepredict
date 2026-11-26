@@ -55,7 +55,8 @@ export async function archive2027Source(db:Pick<Pool,'connect'>,receipt:Collecti
     !Number.isInteger(receipt.httpStatus)||receipt.httpStatus<100||receipt.httpStatus>599||
     !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(receipt.observedAt)||
     !Number.isFinite(Date.parse(receipt.observedAt))||
-    (receipt.requestMethod==='POST'&&(receipt.sourceUrl!=='https://www.house.mn.gov/Votes/GetVoteSummary'||!/^\w{64}$/.test(receipt.requestBodySha256??'')))||
+    (receipt.requestMethod!==undefined&&receipt.requestMethod!=='GET'&&receipt.requestMethod!=='POST')||
+    (receipt.requestMethod==='POST'&&(receipt.sourceUrl!=='https://www.house.mn.gov/Votes/GetVoteSummary'||!/^[a-f0-9]{64}$/.test(receipt.requestBodySha256??'')))||
     (receipt.sourceUrl==='https://www.house.mn.gov/Votes/GetVoteSummary'&&receipt.requestMethod!=='POST')||
     (receipt.requestMethod!=='POST'&&receipt.requestBodySha256!==undefined)||
     digest(body)!==receipt.responseBodySha256||body.length!==receipt.responseBodyBytes||

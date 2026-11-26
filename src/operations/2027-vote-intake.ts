@@ -130,9 +130,32 @@ async function readAttempts(db:Pick<Pool,'query'>){
 }
 
 type IntakeContext=Awaited<ReturnType<typeof readContext>>;
-type Candidate=ReturnType<typeof reconcile2027VoteCandidate>;
-async function retainDocument(db:Pool,context:IntakeContext,chamber:Chamber,source:Proof,discovery:readonly Proof[],events:NormalizedVoteEvent[],parserVersion:string){
-  if(events.length>500||new Set(events.map(e=>e.externalKey)).size!==events.length)throw Error('Vote document event count or keys invalid');
+export async function retain2027VoteCandidateDocument(db:Pool,context:IntakeContext,chamber:Chamber,source:Proof,discovery:readonly Proof[],events:NormalizedVoteEvent[],parserVersion:string){
+  require2027CollectionScope();
+  if(events.length===0||events.length>500||new Set(events.map(e=>e.externalKey)).size!==events.length)throw Error('Vote document event count or keys invalid');
+  if(source.receipt.sourceKind!==(chamber==='house'?'house_vote':'senate_vote')||
+    source.receipt.httpStatus!==200||!discovery.length||
+    [source,...discovery].some(proof=>proof.receipt.session!=='2027-2028'||proof.receipt.runId!==source.receipt.runId||
+      proof.receipt.httpStatus!==200||proof.receipt.sourceKind!==source.receipt.sourceKind||
+      Date.parse(proof.receipt.observedAt)>Date.parse(source.receipt.observedAt)))
+    throw Error('Vote candidate discovery/source lineage mismatch');
+  if(chamber==='house'){
+    const url=new URL(source.receipt.sourceUrl),key=url.searchParams.get('SessionKey'),bill=url.searchParams.get('BillNumber');
+    if(!key||!bill||url.pathname!=='/Votes/Details'||source.receipt.sourceUrl!==buildHouseVoteDetailUrl(key,bill)||
+      discovery.length!==3||discovery[0].receipt.sourceUrl!=='https://www.house.mn.gov/Votes'||
+      discovery[1].receipt.sourceUrl!==buildHouseVoteSummaryUrl(key)||
+      discovery[2].receipt.sourceUrl!=='https://www.house.mn.gov/Votes/GetVoteSummary'||
+      discovery[2].receipt.requestMethod!=='POST'||
+      discovery[2].receipt.requestBodySha256!==sha(JSON.stringify({SessionKey:Number(key),sortOption:'BillNumber'}))||
+      events.some(event=>event.billIdentifier!==bill||!event.externalKey.startsWith(key+':'+bill+':')))
+      throw Error('House detail and discovery receipt scope mismatch');
+  }else{
+    const url=new URL(source.receipt.sourceUrl);
+    const date=/^\/journals\/2027-2028\/(\d{4})(\d{2})(\d{2})\d{2,3}\.pdf$/.exec(url.pathname);
+    if(!date||discovery.length!==1||discovery[0].receipt.sourceUrl!==buildSenateJournalIndexUrl('2027-2028')||
+      events.some(event=>event.occurredOn!==date.slice(1,4).join('-')))
+      throw Error('Senate journal and discovery receipt scope mismatch');
+  }
   for(const proof of [source,...discovery])await verifyProof(db,proof);
   const candidates=events.map(event=>{
     if(event.sourceUrl!==source.receipt.sourceUrl||!dateInSession(event.occurredOn,source.receipt.observedAt))
@@ -154,7 +177,7 @@ type IntakeStats={selected:number;archivedDocuments:number;events:number;reconci
 const newStats=():IntakeStats=>({selected:0,archivedDocuments:0,events:0,reconciled:0,needsReview:0,passageCandidates:0,failed:0,discovered:null,sourceState:'unavailable'});
 
 async function processTargets<T extends SourceTarget>(db:Pool,chamber:Chamber,targets:readonly T[],stats:IntakeStats,
-  collect:(target:T)=>Promise<Awaited<ReturnType<typeof retainDocument>>>){
+  collect:(target:T)=>Promise<Awaited<ReturnType<typeof retain2027VoteCandidateDocument>>>){
   stats.selected=targets.length;
   for(const target of targets){
     const attemptedAt=new Date().toISOString();
@@ -197,7 +220,7 @@ export async function collect2027VoteIntake(db:Pool){
       const events=parseHouseVoteDetailHtml({html:await detail.response.text(),sessionKey:session.sessionKey,sourceUrl:link.sourceUrl});
       if(!events.length)throw Error('House roll call document did not parse');
       validate2027HouseVotePage(session,link.billIdentifier,events,new Date(detail.proof.receipt.observedAt));
-      return retainDocument(db,context,'house',detail.proof,[index.proof,summary.proof,json.proof],events,'mn-house-vote-detail-existing-parser');
+      return retain2027VoteCandidateDocument(db,context,'house',detail.proof,[index.proof,summary.proof,json.proof],events,'mn-house-vote-detail-existing-parser');
     });
   }catch{house.failed++;}
   try{
@@ -216,7 +239,7 @@ export async function collect2027VoteIntake(db:Pool){
         sourceUrl:link.sourceUrl,occurredOn:link.date,knownMemberNames:[...new Set(names)],allowRosterMismatch:true});
       // No parsed roll calls does not prove that a journal held none.
       if(events.length===0)throw Error('No recognizable journal roll calls; review original PDF');
-      return retainDocument(db,context,'senate',doc.proof,[index.proof],events,SENATE_JOURNAL_VOTE_PARSER_VERSION);
+      return retain2027VoteCandidateDocument(db,context,'senate',doc.proof,[index.proof],events,SENATE_JOURNAL_VOTE_PARSER_VERSION);
     });
   }catch{senate.failed++;}
   return {house,senate,failedSources:house.failed+senate.failed,canonicalVotesWritten:0,forecastsResolved:0,
