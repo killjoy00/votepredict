@@ -392,11 +392,13 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
       "SELECT id,session_id,originating_chamber_id,title FROM bills WHERE identifier='HF1' AND session_id=(SELECT id FROM legislative_sessions WHERE slug='2027-2028')"
     )).rows[0];
     const { forecastSourceChamberPassageAtIntroduction } = await import('../src/forecasting/introduction-runtime.js');
-    // The audited serving artifact is restricted to 2025-2026. Until the
-    // existing 2027 preparation/promotion protocol supplies its own artifact,
-    // the introduction runtime must fail closed rather than extrapolate.
-    await assert.rejects(forecastSourceChamberPassageAtIntroduction(target.id),
-      /No frozen introduction model is available for Minnesota session 2027-2028/);
+    const introductionForecast = await forecastSourceChamberPassageAtIntroduction(target.id);
+    assert.equal(introductionForecast.targetKind,'source_chamber_passage');
+    assert.equal(introductionForecast.asOfIntroduction,'2027-01-12');
+    assert.equal(introductionForecast.model.targetSession,'2027-2028');
+    assert.equal(introductionForecast.model.trainingBills,31010);
+    assert.equal(introductionForecast.model.artifactSha256,'522e4f838b982145215e7cd759962bb57d26165857435c2c4690ced7b52dbe2d');
+    assert.ok(introductionForecast.probability>=0.0025 && introductionForecast.probability<=0.35);
     assert.equal((await ensureProspectiveEvidenceForecasts()).seededForecasts, 0,
       'the separate introduction forecast does not enroll a pre-engrossment bill in the Quick cohort');
 
@@ -543,8 +545,8 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
       '2027-02-02T10:00:00Z','2027-02-02T12:00:00Z');
     assert.notEqual(hash2,hash1);
     assert.equal((await retainedTargetTextAsOf(db,target.id,request.asOf))?.textSha256,hash1);
-    await assert.rejects(forecastSourceChamberPassageAtIntroduction(target.id),
-      /No frozen introduction model is available for Minnesota session 2027-2028/);
+    assert.deepEqual(await forecastSourceChamberPassageAtIntroduction(target.id),introductionForecast,
+      'later engrossments must not change the introduction prediction or original model identity');
     assert.equal((await db.query<{text_hash:string}>('SELECT text_hash FROM bill_versions WHERE id=$1',[initialVersion.id])).rows[0].text_hash,initialHash);
     assert.equal((await ensureProspectiveEvidenceForecasts()).seededForecasts,0);
 

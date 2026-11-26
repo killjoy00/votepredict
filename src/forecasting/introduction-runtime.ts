@@ -1,6 +1,6 @@
 import { pool } from '@/lib/db';
 import {
-  FROZEN_INTRODUCTION_PRIOR_ARTIFACT,
+  selectFrozenIntroductionArtifact,
   scoreIntroductionPriorRow,
   type IntroductionPriorBillRow,
 } from '@/forecasting/introduction-prior-runtime';
@@ -32,6 +32,8 @@ export type IntroductionStageForecast = {
     purposeTextOnly: true;
     frozen: true;
     trainedThroughSession: string;
+    artifactSha256: string;
+    targetSession: string;
   };
 };
 
@@ -83,7 +85,8 @@ export async function forecastSourceChamberPassageAtIntroduction(billId: string)
     throw new Error(`No frozen introduction model is available for Minnesota session ${row.session_slug}.`);
   }
 
-  const artifact = FROZEN_INTRODUCTION_PRIOR_ARTIFACT;
+  const artifact = selectFrozenIntroductionArtifact(row.session_slug,row.session_start);
+  if (!artifact) throw new Error('Frozen introduction model is disabled or unavailable.');
   return {
     targetKind: 'source_chamber_passage',
     modelVersion: INTRODUCTION_MODEL_VERSION,
@@ -108,6 +111,8 @@ export async function forecastSourceChamberPassageAtIntroduction(billId: string)
       purposeTextOnly: true,
       frozen: true,
       trainedThroughSession: artifact.trainedThroughSessionSlug,
+      artifactSha256: prior.artifact.runtimeAssembledSha256,
+      targetSession: artifact.targetSessionSlug,
     },
   };
 }

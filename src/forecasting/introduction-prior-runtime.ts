@@ -4,6 +4,8 @@ import titleStats1 from './generated/introduction-v4-title-stats-1.json';
 import titleStats2 from './generated/introduction-v4-title-stats-2.json';
 import titleStats3 from './generated/introduction-v4-title-stats-3.json';
 import textStats from './generated/introduction-v4-text-stats.json';
+import candidate2027 from '../../data/evaluation/frozen-introduction-v4-2027-2028-candidate.json';
+import { LIFECYCLE_P8_INTRO_MODEL_CONTENT_SHA256, LIFECYCLE_P8_INTRO_TRAINING_CORPUS_SHA256 } from '../evaluation/lifecycle-p8-prospective';
 import {
   INTRODUCTION_PRIOR_MODEL_VERSION,
   predictIntroductionPriorFromArtifact,
@@ -53,6 +55,44 @@ function verifyFrozenArtifact(): void {
 
 verifyFrozenArtifact();
 
+export const INTRODUCTION_2027_ROLLBACK_ENV = 'VOTEPREDICT_DISABLE_2027_INTRODUCTION_PRIOR' as const;
+export const INTRODUCTION_2027_SERVING_PROVENANCE = Object.freeze({
+  runtimeAssembledArtifactSha256: '522e4f838b982145215e7cd759962bb57d26165857435c2c4690ced7b52dbe2d',
+  frozenModelContentSha256: LIFECYCLE_P8_INTRO_MODEL_CONTENT_SHA256,
+  trainingCorpusSha256: LIFECYCLE_P8_INTRO_TRAINING_CORPUS_SHA256,
+  sourceRunId: 35910925882,
+  sourceArtifactId: 10772991611,
+});
+export const FROZEN_INTRODUCTION_2027_ARTIFACT = candidate2027 as unknown as SerializedIntroductionPriorModelV4;
+
+function verifyFrozen2027Artifact(): void {
+  const artifact = FROZEN_INTRODUCTION_2027_ARTIFACT;
+  const { provenance: _provenance, ...core } = artifact;
+  const sha = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
+  if (artifact.schemaVersion !== 1 || artifact.model !== INTRODUCTION_PRIOR_MODEL_VERSION ||
+      artifact.targetKind !== 'source_chamber_passage' ||
+      artifact.targetSessionSlug !== '2027-2028' || artifact.targetSessionStart !== '2027-01-01' ||
+      artifact.trainedThroughSessionSlug !== '2025-2026' ||
+      artifact.trainingRows !== 31010 || artifact.trainingPositives !== 654 ||
+      artifact.titleStats.length !== 1606 || artifact.textStats.length !== 422 ||
+      JSON.stringify(artifact.trainingSessions) !== JSON.stringify(['2021-2022','2023-2024','2025-2026']) ||
+      sha(core) !== INTRODUCTION_2027_SERVING_PROVENANCE.frozenModelContentSha256 ||
+      sha(artifact) !== INTRODUCTION_2027_SERVING_PROVENANCE.runtimeAssembledArtifactSha256) {
+    throw new Error('Frozen 2027 introduction artifact failed pinned identity or content verification');
+  }
+}
+verifyFrozen2027Artifact();
+
+export function selectFrozenIntroductionArtifact(sessionSlug: string, sessionStart: string,
+  env: Record<string,string|undefined> = process.env): SerializedIntroductionPriorModelV4 | undefined {
+  if (sessionSlug === '2025-2026' && sessionStart === '2025-01-01') return FROZEN_INTRODUCTION_PRIOR_ARTIFACT;
+  if (sessionSlug === '2027-2028' && sessionStart === '2027-01-01' &&
+      !['1','true','yes'].includes(env[INTRODUCTION_2027_ROLLBACK_ENV]?.toLowerCase() ?? '')) {
+    return FROZEN_INTRODUCTION_2027_ARTIFACT;
+  }
+  return undefined;
+}
+
 export interface ForecastIntroductionPrior {
   targetKind: 'source_chamber_passage';
   modelVersion: typeof INTRODUCTION_PRIOR_MODEL_VERSION;
@@ -68,9 +108,13 @@ export interface ForecastIntroductionPrior {
     evaluationCommit: string;
     generatedAt: string;
     runtimeAssembledSha256: string;
-    originalMinifiedSha256: string;
-    originalExportSha256: string;
-    predictionSha256: string;
+    originalMinifiedSha256: string | null;
+    originalExportSha256: string | null;
+    predictionSha256: string | null;
+    frozenModelContentSha256?: string;
+    trainingCorpusSha256?: string;
+    sourceRunId?: number;
+    sourceArtifactId?: number;
   };
 }
 
@@ -87,7 +131,8 @@ export interface IntroductionPriorBillRow {
 }
 
 export function scoreIntroductionPriorRow(row: IntroductionPriorBillRow): ForecastIntroductionPrior | undefined {
-  const artifact = FROZEN_INTRODUCTION_PRIOR_ARTIFACT;
+  const artifact = selectFrozenIntroductionArtifact(row.session_slug,row.session_start);
+  if (!artifact) return undefined;
   if (!row.in_authoritative_universe || !row.introduced_on) return undefined;
   if (row.model_eligible !== 'true' && row.model_eligible !== 'false') return undefined;
   if (row.model_eligible === 'true' && (!row.raw_text || !row.text_hash)) return undefined;
@@ -115,10 +160,19 @@ export function scoreIntroductionPriorRow(row: IntroductionPriorBillRow): Foreca
       trainingPositives: artifact.trainingPositives,
       evaluationCommit: artifact.provenance.evaluationCommit,
       generatedAt: artifact.provenance.generatedAt,
-      runtimeAssembledSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.runtimeAssembledArtifactSha256,
-      originalMinifiedSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.originalMinifiedArtifactSha256,
-      originalExportSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.originalExportSha256,
-      predictionSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.predictionSha256,
+      ...(artifact.targetSessionSlug === '2027-2028'
+        ? { runtimeAssembledSha256: INTRODUCTION_2027_SERVING_PROVENANCE.runtimeAssembledArtifactSha256,
+            frozenModelContentSha256: INTRODUCTION_2027_SERVING_PROVENANCE.frozenModelContentSha256,
+            trainingCorpusSha256: INTRODUCTION_2027_SERVING_PROVENANCE.trainingCorpusSha256,
+            sourceRunId: INTRODUCTION_2027_SERVING_PROVENANCE.sourceRunId,
+            sourceArtifactId: INTRODUCTION_2027_SERVING_PROVENANCE.sourceArtifactId,
+            originalMinifiedSha256: null, originalExportSha256: null, predictionSha256: null }
+        : {
+          runtimeAssembledSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.runtimeAssembledArtifactSha256,
+          originalMinifiedSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.originalMinifiedArtifactSha256,
+          originalExportSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.originalExportSha256,
+          predictionSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.predictionSha256,
+        }),
     },
   };
 }
