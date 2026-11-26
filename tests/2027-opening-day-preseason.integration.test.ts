@@ -125,7 +125,7 @@ function billTextHtml(identifier: string): string {
   return `<html><body><main><div id="document"><p>${text}</p></div></main></body></html>`;
 }
 
-function installSyntheticMinnesotaSources(options: { missingSenateDetails: number; duplicateHouseDistrict?: boolean } = { missingSenateDetails: 0 }): () => void {
+function installSyntheticMinnesotaSources(options: { missingSenateDetails: number; duplicateHouseDistrict?: boolean; wrongBillStatus?: boolean } = { missingSenateDetails: 0 }): () => void {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async (input: string | URL | Request) => {
     const href = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
@@ -155,7 +155,9 @@ function installSyntheticMinnesotaSources(options: { missingSenateDetails: numbe
       const match = url.pathname.match(/\/HF\/(\d+)\/$/i) ?? url.pathname.match(/\/SF\/(\d+)\/$/i);
       const type = url.pathname.includes('/HF/') ? 'HF' : url.pathname.includes('/SF/') ? 'SF' : null;
       if (match && type) {
-        return new Response(statusXml(type, Number(match[1])), {
+        const xml = options.wrongBillStatus && type === 'HF' && Number(match[1]) === 1
+          ? statusXml('HF', 2) : statusXml(type, Number(match[1]));
+        return new Response(xml, {
           status: 200,
           headers: { 'content-type': 'application/xml' },
         });
@@ -192,7 +194,7 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
 
     process.env.DATABASE_URL = rehearsalUrl;
     process.env.DATABASE_URL_UNPOOLED = rehearsalUrl;
-    const sourceFixture = { missingSenateDetails: 0, duplicateHouseDistrict: false };
+    const sourceFixture = { missingSenateDetails: 0, duplicateHouseDistrict: false, wrongBillStatus: false };
     restoreFetch = installSyntheticMinnesotaSources(sourceFixture);
 
     const dbModule = await import('../src/lib/db/index.js');
@@ -315,6 +317,26 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     assert.equal(universeAgain.insertedBills, 0);
     assert.equal(universeAgain.updatedBills, 3);
 
+    // A wrong bill response is rejected, recorded as a failed attempt, and
+    // does not keep an unattempted bill out of the next bounded batch.
+    sourceFixture.wrongBillStatus = true;
+    const rejected = await syncLiveRevisorStatusBatch(1);
+    assert.equal(rejected.selected, 1);
+    assert.equal(rejected.fetched, 0);
+    assert.equal(rejected.failed, 1);
+    assert.equal(rejected.failures[0].identifier, 'HF1');
+    assert.match(rejected.failures[0].message, /does not identify the requested bill/);
+    const rejectedState = await dbModule.pool.query<{ fetched: string|null; attempted: string|null; state: string|null }>(
+      `SELECT metadata #>> '{revisorLiveStatus,fetchedAt}' AS fetched,
+              metadata #>> '{revisorLiveStatusAttempt,attemptedAt}' AS attempted,
+              metadata #>> '{revisorLiveStatusAttempt,state}' AS state FROM bills WHERE identifier='HF1'`);
+    assert.equal(rejectedState.rows[0].fetched, null);
+    assert.ok(rejectedState.rows[0].attempted);
+    assert.equal(rejectedState.rows[0].state, 'failed');
+    const healthy = await syncLiveRevisorStatusBatch(1);
+    assert.equal(healthy.fetched, 1);
+    assert.equal(healthy.failed, 0);
+    sourceFixture.wrongBillStatus = false;
     const status = await syncLiveRevisorStatusBatch();
     assert.equal(status.selected, 3);
     assert.equal(status.fetched, 3);
@@ -358,6 +380,14 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
       { identifier: 'SF1', versionKind: 'introduction', passageObserved: 'false', hasOutcome: false, hasInitialTextHash: true },
     ]);
 
+    // A failed fresh observation must not seed a new forecast from an old
+    // successful snapshot. After recovery the original valid bill is eligible.
+    sourceFixture.wrongBillStatus = true;
+    const failedRefresh = await syncLiveRevisorStatusBatch();
+    assert.equal(failedRefresh.failed, 1);
+    assert.equal((await ensureProspectiveEvidenceForecasts()).seededForecasts, 0);
+    sourceFixture.wrongBillStatus = false;
+    assert.equal((await syncLiveRevisorStatusBatch()).failed, 0);
     const seeded = await ensureProspectiveEvidenceForecasts();
     assert.equal(seeded.session, '2027-2028');
     assert.equal(seeded.seededForecasts, 1);

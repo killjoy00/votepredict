@@ -28,6 +28,9 @@ async function main() {
       maxBatches: INITIAL_TEXT_BATCHES_PER_RUN,
     },
   }));
+  // A partially failed collection must be visible as an operational failure,
+  // even when other bills and initial texts were successfully persisted.
+  if (status.failed > 0) process.exitCode = 1;
 }
 
 main().catch((error) => {
