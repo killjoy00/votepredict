@@ -6,12 +6,12 @@ import { databaseTargetFingerprint,readReleaseBinding } from './release-readines
 
 export const DAILY_COLLECTION_PLAN = Object.freeze({session:'2027-2028',timezone:'America/Chicago',
   proposedCadence:'once daily',productionScheduleEnabled:false,limits:COLLECTION_LIMITS,
-  stages:['catalog','status','initial_text','health'] as const,
+  stages:['catalog','status','initial_text','current_text','health'] as const,
   forecastsEnabled:false,voteIngestionEnabled:false,p8CaptureEnabled:false,vercelRequired:false});
 export const DAILY_COLLECTION_REPORT_TYPE='application/vnd.votepredict.2027-collection-report+json';
 export const DAILY_COLLECTION_SOURCE_RECEIPT_TYPE='application/vnd.votepredict.2027-source-observation+json';
 const digest=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
-export type CollectionHealth={knownBills:number;houseBills:number;senateBills:number;neverObserved:number;staleStatus:number;failedStatus:number;missingInitialText:number};
+export type CollectionHealth={knownBills:number;houseBills:number;senateBills:number;neverObserved:number;staleStatus:number;failedStatus:number;missingInitialText:number;missingCurrentText:number};
 export type CollectionReport={schemaVersion:'2027-collection-report-v1';session:'2027-2028';runId:string;day:string;startedAt:string;finishedAt:string;
   state:'completed_batch'|'partial_failure';stages:Record<string,unknown>;before:CollectionHealth;after:CollectionHealth|null;
   counters:CollectionCounters;alerts:string[];previousHeartbeat:CollectionHeartbeat;officialUniverseVerified:false;fullDailyCoverageVerified:false;productionForecastingActive:false};
@@ -81,7 +81,10 @@ export async function readCollectionHealth(db:Pick<Pool,'query'>):Promise<Collec
       count(*) FILTER(WHERE b.metadata #>> '{revisorLiveStatus,fetchedAt}' IS NULL)::int AS "neverObserved",
       count(*) FILTER(WHERE NULLIF(b.metadata #>> '{revisorLiveStatus,fetchedAt}','')::timestamptz < now()-interval '24 hours')::int AS "staleStatus",
       count(*) FILTER(WHERE b.metadata #>> '{revisorLiveStatusAttempt,state}'='failed')::int AS "failedStatus",
-      count(*) FILTER(WHERE bv.id IS NULL OR bv.raw_text IS NULL OR bv.text_hash IS NULL)::int AS "missingInitialText"
+      count(*) FILTER(WHERE bv.id IS NULL OR bv.raw_text IS NULL OR bv.text_hash IS NULL)::int AS "missingInitialText",
+      count(*) FILTER(WHERE b.metadata #>> '{revisorLiveStatus,currentVersionKind}'='engrossment' AND
+        (b.metadata #>> '{revisorCurrentTextCapture,versionKey}' IS DISTINCT FROM b.metadata #>> '{revisorLiveStatus,currentVersion,documentName}'
+         OR b.metadata #>> '{revisorCurrentTextCapture,receiptSha256}' IS NULL))::int AS "missingCurrentText"
     FROM bills b JOIN legislative_sessions s ON s.id=b.session_id AND s.slug='2027-2028'
     JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
     JOIN chambers c ON c.id=b.originating_chamber_id AND c.slug IN ('house','senate')
@@ -99,6 +102,12 @@ export async function verifyCollectionTarget(db:Pool,expected:{role:string;finge
   try{
     await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
     await client.query("SET LOCAL statement_timeout='5s'");
+    const observationPrivileges=(await client.query<{allowed:boolean}>(`SELECT (has_table_privilege(current_user,'public.forecast_bill_text_observations','SELECT') AND
+      has_table_privilege(current_user,'public.forecast_bill_text_observations','INSERT') AND
+      NOT (has_table_privilege(current_user,'public.forecast_bill_text_observations','UPDATE') OR
+      has_table_privilege(current_user,'public.forecast_bill_text_observations','DELETE') OR
+      has_table_privilege(current_user,'public.forecast_bill_text_observations','TRUNCATE'))) AS allowed`)).rows[0];
+    if(!observationPrivileges?.allowed)throw Error('Collector requires insert/select-only text observations');
     const role=(await client.query<{role:string;unsafe:boolean;archiveInsert:boolean;archiveSelect:boolean;archiveMutate:boolean;forbidden:boolean}>(`
       SELECT current_user::text AS role,
         (r.rolsuper OR r.rolcreaterole OR r.rolcreatedb OR r.rolreplication OR r.rolbypassrls OR
@@ -151,6 +160,7 @@ export function collectionAlerts(before:CollectionHealth,after:CollectionHealth|
     if(after.neverObserved>0||after.staleStatus>0)alerts.push('STATUS_BACKLOG_OR_STALE');
     if(after.failedStatus>0)alerts.push('STATUS_FAILURES');
     if(after.missingInitialText>0)alerts.push('INITIAL_TEXT_BACKLOG');
+    if(after.missingCurrentText>0)alerts.push('CURRENT_TEXT_BACKLOG');
   }
   return alerts;
 }

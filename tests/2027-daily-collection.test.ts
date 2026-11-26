@@ -64,10 +64,10 @@ test('live collection is dormant and rejects wrong dates, repo, attempts, target
   assert.throws(()=>assertDailyRunAvailable([{day,runId:'122:1',state:'started'},{day,runId:'121:1',state:'started'}],day,'123:1'));
 });
 test('health distinguishes bounded work from incomplete data coverage',()=>{
-  const before:CollectionHealth={knownBills:200,houseBills:120,senateBills:80,neverObserved:0,staleStatus:0,failedStatus:0,missingInitialText:0};
-  const counters={requests:2,bytes:100,archived:1,failed:1,byKind:{catalog:1,status:1,initial_text:0},receiptSha256s:[]};
-  const alerts=collectionAlerts(before,{...before,staleStatus:80,missingInitialText:4},199,counters,true);
-  for(const item of ['SOURCE_OR_COLLECTION_FAILURE','UNARCHIVED_SOURCE_ATTEMPTS','CATALOG_COVERAGE_REGRESSION','STATUS_BACKLOG_OR_STALE','INITIAL_TEXT_BACKLOG'])assert.ok(alerts.includes(item));
+  const before:CollectionHealth={knownBills:200,houseBills:120,senateBills:80,neverObserved:0,staleStatus:0,failedStatus:0,missingInitialText:0,missingCurrentText:0};
+  const counters={requests:2,bytes:100,archived:1,failed:1,byKind:{catalog:1,status:1,initial_text:0,current_text:0},receiptSha256s:[]};
+  const alerts=collectionAlerts(before,{...before,staleStatus:80,missingInitialText:4,missingCurrentText:2},199,counters,true);
+  for(const item of ['SOURCE_OR_COLLECTION_FAILURE','UNARCHIVED_SOURCE_ATTEMPTS','CATALOG_COVERAGE_REGRESSION','STATUS_BACKLOG_OR_STALE','INITIAL_TEXT_BACKLOG','CURRENT_TEXT_BACKLOG'])assert.ok(alerts.includes(item));
 });
 
 test('heartbeat distinguishes missing, partial, interrupted and recovered collection days',()=>{
@@ -130,4 +130,28 @@ test('disposable PostgreSQL stores original entity bytes and distinct observatio
     assert.deepEqual(await readCollectionEvents(db,actualDay),[event]);
     assert.throws(()=>assertDailyRunAvailable([event],actualDay,'123:1'));
   }finally{if(db)await db.end();await admin.query('DROP SCHEMA IF EXISTS '+schema+' CASCADE');await admin.end();}
+});
+
+import { assert2027CurrentTextUrl,fetch2027CurrentText } from '../src/operations/2027-current-text-collection.js';
+test('numbered official current text is bound to the archived original and rejects other versions',async()=>{
+  const target={identifier:'HF1',version_key:'2027.0-HF0001-2',text_url:'https://www.revisor.mn.gov/bills/95/2027/0/HF/1/versions/2/'};
+  const html='<main><div id="document"><p>'+('HF 1 synthetic official engrossment 2; test legislation. '.repeat(8))+'</p></div></main>';
+  assert.equal(classify2027CollectionUrl(target.text_url),'current_text');
+  for(const patch of [{version_key:'2027.0-HF0001-1'},{identifier:'HF2'},{text_url:target.text_url.replace('/versions/2/','/versions/latest/')},{text_url:target.text_url.replace('/2027/','/2028/')}])
+    assert.throws(()=>{const row={...target,...patch};assert2027CurrentTextUrl(row.identifier,row.version_key,row.text_url);});
+  await with2027ArchivedSources('127:1',async(receipt,body)=>{
+    assert.equal(receipt.sourceKind,'current_text');
+    assert.equal(receipt.responseBodySha256,sha(Buffer.from(html)));
+    assert.deepEqual(body,Buffer.from(html));
+    return 'c'.repeat(64);
+  },async counters=>{
+    const result=await fetch2027CurrentText(target);
+    assert.equal(result.receiptSha256,'c'.repeat(64));
+    assert.equal(result.textSha256,sha(Buffer.from(result.text)));
+    assert.equal(result.receipt.responseBodySha256,sha(Buffer.from(html)));
+    assert.equal(counters.byKind.current_text,1);
+  },async()=>new Response(html,{headers:{'content-type':'text/html'}}));
+  await with2027ArchivedSources('128:1',async()=>{throw Error('archive unavailable');},async()=>{
+    await assert.rejects(fetch2027CurrentText(target),/archive unavailable/);
+  },async()=>new Response(html));
 });

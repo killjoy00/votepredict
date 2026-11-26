@@ -27,6 +27,7 @@ async function main(){
       const {syncLiveRevisorUniverse}=await import('../src/operations/live-revisor-universe.js');
       const {syncLiveRevisorStatusBatch}=await import('../src/operations/live-revisor-status.js');
       const {backfillRevisorInitialTextBatch}=await import('../src/operations/revisor-initial-text-backfill.js');
+      const {collect2027CurrentTextBatch}=await import('../src/operations/2027-current-text-collection.js');
       const report=await with2027ArchivedSources(target.runId,(receipt,bytes)=>archive2027Source(pool,receipt,bytes),async counters=>{
         const stages:Record<string,unknown>={};let discovered:number|null=null;let phaseFailed=false;let after:Awaited<ReturnType<typeof readCollectionHealth>>|null=null;
         try{
@@ -36,6 +37,9 @@ async function main(){
           stages.status={selected:status.selected,fetched:status.fetched,failed:status.failed,versionsRecorded:status.versionsRecorded,sourceDocumentsRecorded:status.sourceDocumentsRecorded};
           if(status.failed>0||status.selected===0)throw Error('Status collection incomplete');
           stages.initialText=await backfillRevisorInitialTextBatch(COLLECTION_LIMITS.initialTextBatch,'2027-2028');
+          const currentText=await collect2027CurrentTextBatch(pool,COLLECTION_LIMITS.currentTextBatch);
+          stages.currentText=currentText;
+          if(currentText.failed>0)throw Error('Current official text collection incomplete');
         }catch{phaseFailed=true;stages.error='BOUNDED_COLLECTION_STAGE_FAILED';}
         try{after=await readCollectionHealth(client);}catch{phaseFailed=true;}
         const alerts=[...previousHeartbeat.alerts,...collectionAlerts(before,after,discovered,counters,phaseFailed)];

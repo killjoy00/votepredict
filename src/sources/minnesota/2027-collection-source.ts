@@ -2,11 +2,11 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { createHash } from 'node:crypto';
 
 export const COLLECTION_LIMITS = Object.freeze({
-  catalogRequests:32,statusRequests:40,initialTextRequests:60,totalRequests:132,
+  catalogRequests:32,statusRequests:40,initialTextRequests:60,currentTextRequests:20,totalRequests:152,
   maxResponseBytes:2*1024*1024,maxRunBytes:32*1024*1024,maxRunMilliseconds:8*60*1000,
-  statusBatch:40,initialTextBatch:20,
+  statusBatch:40,initialTextBatch:20,currentTextBatch:20,
 });
-export type CollectionSourceKind = 'catalog'|'status'|'initial_text';
+export type CollectionSourceKind = 'catalog'|'status'|'initial_text'|'current_text';
 export type CollectionSourceReceipt = {
   schemaVersion:'2027-source-observation-v1';session:'2027-2028';runId:string;
   sourceKind:CollectionSourceKind;sourceUrl:string;httpStatus:number;mediaType:string;
@@ -18,6 +18,8 @@ export type CollectionCounters = {
 };
 type Context={runId:string;archive:CollectionArchive;fetcher:typeof fetch;started:number;counters:CollectionCounters};
 const scope=new AsyncLocalStorage<Context>();
+const responseReceipts=new WeakMap<Response,{receipt:CollectionSourceReceipt;receiptSha256:string}>();
+export function getArchivedCollectionResponse(response:Response){return responseReceipts.get(response);}
 const sha=(value:Uint8Array)=>createHash('sha256').update(value).digest('hex');
 
 export function classify2027CollectionUrl(value:string):CollectionSourceKind {
@@ -25,8 +27,10 @@ export function classify2027CollectionUrl(value:string):CollectionSourceKind {
   if(url.protocol!=='https:'||url.username||url.password||url.hash)throw Error('Unapproved collection URL');
   if(url.origin==='https://api.revisor.mn.gov'&&!url.search&&
     /^\/bills\/v1\/95\/(2027|2028)\/0\/(HF|SF)\/[1-9]\d*\/?$/.test(url.pathname))return 'status';
-  if(url.origin==='https://www.revisor.mn.gov'&&!url.search&&
-    /^\/bills\/95\/(?:(2027|2028)\/0\/)?(HF|SF)\/[1-9]\d*\/versions\/0\/?$/.test(url.pathname))return 'initial_text';
+  if(url.origin==='https://www.revisor.mn.gov'&&!url.search){
+    const version=/^\/bills\/95\/(?:(2027|2028)\/0\/)?(HF|SF)\/[1-9]\d*\/versions\/(0|[1-9]\d{0,3})\/?$/.exec(url.pathname);
+    if(version)return version[3]==='0'?'initial_text':'current_text';
+  }
   if(url.origin==='https://www.revisor.mn.gov'&&url.pathname==='/bills/status_result.php'){
     const p=url.searchParams;
     const allowed=['body','search','session','location','bill','bill_type','rev_number','submit_bill','keyword_type','keyword','keyword_field_text','titleword','format'];
@@ -57,7 +61,7 @@ export function with2027ArchivedSources<T>(runId:string,archive:CollectionArchiv
   task:(counters:CollectionCounters)=>Promise<T>,fetcher:typeof fetch=fetch):Promise<T>{
   if(!/^[0-9]{1,20}:[0-9]{1,6}$/.test(runId)||scope.getStore())throw Error('Invalid or nested collection scope');
   const counters:CollectionCounters={requests:0,bytes:0,archived:0,failed:0,
-    byKind:{catalog:0,status:0,initial_text:0},receiptSha256s:[]};
+    byKind:{catalog:0,status:0,initial_text:0,current_text:0},receiptSha256s:[]};
   return scope.run({runId,archive,fetcher,started:Date.now(),counters},()=>task(counters));
 }
 
@@ -71,7 +75,7 @@ export async function collectionSourceFetch(url:string,init:RequestInit={}):Prom
   const c=ctx.counters;
   try{
     const kind=classify2027CollectionUrl(url);
-    const kindLimit=kind==='catalog'?COLLECTION_LIMITS.catalogRequests:kind==='status'?COLLECTION_LIMITS.statusRequests:COLLECTION_LIMITS.initialTextRequests;
+    const kindLimit=kind==='catalog'?COLLECTION_LIMITS.catalogRequests:kind==='status'?COLLECTION_LIMITS.statusRequests:kind==='initial_text'?COLLECTION_LIMITS.initialTextRequests:COLLECTION_LIMITS.currentTextRequests;
     if(c.requests>=COLLECTION_LIMITS.totalRequests||c.byKind[kind]>=kindLimit||
       c.bytes>=COLLECTION_LIMITS.maxRunBytes||Date.now()-ctx.started>=COLLECTION_LIMITS.maxRunMilliseconds)
       throw Error('2027 collection budget exhausted');
@@ -106,6 +110,7 @@ export async function collectionSourceFetch(url:string,init:RequestInit={}):Prom
     if(!response.ok)throw Error('Official source HTTP failure: '+response.status);
     const replay=new Response(new Uint8Array(bytes),{status:response.status,headers:response.headers});
     Object.defineProperty(replay,'url',{value:response.url||url});
+    responseReceipts.set(replay,{receipt,receiptSha256:receiptSha});
     return replay;
   }catch(error){c.failed++;throw error;}
 }
