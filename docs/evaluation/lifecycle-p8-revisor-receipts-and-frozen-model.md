@@ -41,7 +41,7 @@ To verify an original locally extracted model file, **without any network or DB 
 npm run verify:lifecycle:p8:offline -- --model-json /path/to/original/model.json
 ```
 
-The original GitHub Actions artifact is subject to expiration; **long-term durable frozen-model hosting remains unresolved**. The repository does **not** introduce a new replacement model or republish an assumed-equivalent reconstructed JSON file.
+**November 26 retention:** the exact 42,997-byte original ZIP is retained at [`data/evaluation/frozen-lifecycle-p8-2027-2028-original.zip`](../../data/evaluation/frozen-lifecycle-p8-2027-2028-original.zip), independently verified against the frozen archive, raw model and raw summary digests. It includes the original full introduction, P4, P5 and P6 components, not a refit or reserialization. The [retention receipt](../../data/evaluation/frozen-lifecycle-p8-2027-2028-retention.json) records the original and recovery lineage. Run `npm run verify:lifecycle:p8:offline` with no arguments to validate and recover both original entries directly from the committed ZIP; CI uses the same strict offline verification. Actions expiry on December 22 no longer threatens the retained copy. Repository history is not an independently administered WORM archive: original 2027 source-byte retention, external seals and restricted capture permissions remain unresolved.
 
 ## What was tested, and what remains
 

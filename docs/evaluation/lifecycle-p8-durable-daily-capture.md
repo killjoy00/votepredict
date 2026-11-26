@@ -24,7 +24,7 @@ The prior local [offline daily-file prototype](lifecycle-p8-daily-offline-protot
 ## Remaining P8 activation gates
 
 1. Independently acquire and verify a complete official 2027–28 HF/SF bill-universe index, official initial bill text, Revisor source observation times, and authoritative session calendar bytes. The currently supplied list cannot establish this.
-2. Preserve original source XML/calendar and frozen original September 2026 P8 model bytes in a durable independent WORM/backup system with digest and retention guarantees. This DB table is a research receipt and does not substitute for an original-byte archive.
+2. Preserve original source XML/calendar in a durable independent WORM/backup system with digest and retention guarantees. The September 2026 original model ZIP is now byte-for-byte retained in the repository and tested offline (see [retained model](lifecycle-p8-revisor-receipts-and-frozen-model.md)); independently administered backup/retention and source-byte seals remain outstanding. This DB table is a research receipt and does not substitute for an original-byte archive.
 3. Authorize and test a day-to-day collector invoking this durable backend under least-privilege DB permissions, cost limits, retry controls, audit/alert notification routing, and fail-closed timing. No scheduled job is added by this change.
 4. Preserve [#732](https://github.com/killjoy00/votepredict/issues/732) Vercel pause and [P8 frozen protocol](../../data/evaluation/lifecycle-p8-prospective-plan-v1.json). No re-fit, auto-promotion, live predictions, target labels or score reveal before July 1, 2028 UTC plus all frozen completeness thresholds.
 
