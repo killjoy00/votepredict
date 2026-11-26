@@ -1,0 +1,4510 @@
+{
+  "schemaVersion": 1,
+  "sourceRun": "https://github.com/killjoy00/votepredict/actions/runs/45885687489",
+  "jobId": 140135700444,
+  "sourceCommit": "6e7636776efdea10b7a8da2443931ea0df4bb0f1",
+  "summary": {
+    "observedAt": "2026-11-26T19:43:21.154Z",
+    "directoryRefs": 201,
+    "detailPagesObserved": 201,
+    "detailErrors": 0,
+    "membershipRecords": 201,
+    "expectedSeats": {
+      "house": 134,
+      "senate": 67,
+      "total": 201
+    },
+    "singleCandidateSeats": {
+      "house": 134,
+      "senate": 67
+    },
+    "completeSourceTermCoverage": true,
+    "counts": {
+      "matched_reported_leader": 155,
+      "identity_or_party_mismatch": 43,
+      "recount_requires_certification": 3
+    },
+    "oathCounts": {
+      "future_reported_date": 201
+    },
+    "missingSeats": [],
+    "conflictingSeats": [],
+    "unresolvedTerms": [],
+    "invalidDistricts": [],
+    "outsideOpeningTerm": [],
+    "multiSeatIdentities": [],
+    "authoritativeRosterVerified": false,
+    "readyForActivation": false
+  },
+  "sources": [
+    {
+      "sourceUrl": "https://electionresultsfiles.sos.mn.gov/20261103/LegislativeByDistrict.txt",
+      "fetchedAt": "2026-11-26T19:43:21.380Z",
+      "sha256": "e0fb3e732e6f223cadac8b6c96a8f37ecf3d716eda65dae8a5b6e817ca2e0a40",
+      "byteLength": 36156
+    },
+    {
+      "sourceUrl": "https://electionresultsfiles.sos.mn.gov/20261103/stsenate.txt",
+      "fetchedAt": "2026-11-26T19:43:21.374Z",
+      "sha256": "f2ad12678a5397fea1ede148ef19c944f376c6f182426d3f7184c9131f0b9208",
+      "byteLength": 17160
+    }
+  ],
+  "detailDigests": [
+    {
+      "lrlId": "15513",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15513",
+      "fetchedAt": "2026-11-26T19:43:21.901Z",
+      "sha256": "553100c0097a62ae7b02d93816d68aaa31321b743ab6c5275929e9ad15c9160f",
+      "records": 1
+    },
+    {
+      "lrlId": "15551",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15551",
+      "fetchedAt": "2026-11-26T19:43:22.201Z",
+      "sha256": "da41526b4922115af99d16efdc2f907e41a7d62b208fccfed09370671a2fadd9",
+      "records": 1
+    },
+    {
+      "lrlId": "15627",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15627",
+      "fetchedAt": "2026-11-26T19:43:22.469Z",
+      "sha256": "a49a104212f92f57a4e800d3a32e50dbacb0ec774f1b2c4617a279186acb1a2d",
+      "records": 1
+    },
+    {
+      "lrlId": "15602",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15602",
+      "fetchedAt": "2026-11-26T19:43:22.760Z",
+      "sha256": "90f7fb77553b3b4dfd8e5fac5dd32e81d90b0f9ffab7f143bed214a1bf932b82",
+      "records": 1
+    },
+    {
+      "lrlId": "15301",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15301",
+      "fetchedAt": "2026-11-26T19:43:23.230Z",
+      "sha256": "896ce0907c0f40930a726ae1f122bc74d555c720d8301fd8af923e45eab38464",
+      "records": 1
+    },
+    {
+      "lrlId": "15428",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15428",
+      "fetchedAt": "2026-11-26T19:43:23.566Z",
+      "sha256": "6706fa27dc289e0d742721bbf42c9b649d3c8b9a3e0fd6d8ef1865cab5c9000e",
+      "records": 1
+    },
+    {
+      "lrlId": "15505",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15505",
+      "fetchedAt": "2026-11-26T19:43:23.894Z",
+      "sha256": "b17bfcb4683332a9445208bdc1a570a0447de870ae5ad01dc6828873396642a6",
+      "records": 1
+    },
+    {
+      "lrlId": "15455",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15455",
+      "fetchedAt": "2026-11-26T19:43:24.244Z",
+      "sha256": "9afb6f40e96d87ecdff9fd17cc6fab89dd61f2ada0d7f692406a702fb736559f",
+      "records": 1
+    },
+    {
+      "lrlId": "15429",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15429",
+      "fetchedAt": "2026-11-26T19:43:24.655Z",
+      "sha256": "d68a19fdfad2b978ca6247b32dde35b3bbda0fb5e62d22e51967aec63ea08c91",
+      "records": 1
+    },
+    {
+      "lrlId": "15684",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15684",
+      "fetchedAt": "2026-11-26T19:43:24.913Z",
+      "sha256": "68ace15d453a09ce085b9684258dbc0cd9880a5a7c48d2119de59d1c2f62aaec",
+      "records": 1
+    },
+    {
+      "lrlId": "15667",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15667",
+      "fetchedAt": "2026-11-26T19:43:25.174Z",
+      "sha256": "b6ea000d5fed049629a9e32b3de511f7c20dfc6ab889dd6d7ead149a193e5ce4",
+      "records": 1
+    },
+    {
+      "lrlId": "15526",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15526",
+      "fetchedAt": "2026-11-26T19:43:25.483Z",
+      "sha256": "cf4e66f2fde7f15cab7771924a3be1800443e5c8b4ec27f7ca7f3ca477bf8d1c",
+      "records": 1
+    },
+    {
+      "lrlId": "15679",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15679",
+      "fetchedAt": "2026-11-26T19:43:25.745Z",
+      "sha256": "dd27600f281c8fdd19301778fedf198d6c578927788f9cb485fcedaf9c871c03",
+      "records": 1
+    },
+    {
+      "lrlId": "15458",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15458",
+      "fetchedAt": "2026-11-26T19:43:26.051Z",
+      "sha256": "29ddaf8bd41baeb54ecdcfbf98bdfaa1c06deaee177ffd969280d120ac5bbd5b",
+      "records": 1
+    },
+    {
+      "lrlId": "15545",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15545",
+      "fetchedAt": "2026-11-26T19:43:26.354Z",
+      "sha256": "e6e09fa9be97cc03067a93bb7a25d631cfcad441f123b49dbb7e3e27bef0f13b",
+      "records": 1
+    },
+    {
+      "lrlId": "15655",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15655",
+      "fetchedAt": "2026-11-26T19:43:26.661Z",
+      "sha256": "ed293c7069ecbc877f9f68a4d2fc0407fb3f523628b0808b23d29fc86633e7ba",
+      "records": 1
+    },
+    {
+      "lrlId": "15538",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15538",
+      "fetchedAt": "2026-11-26T19:43:26.970Z",
+      "sha256": "d829cff8083d2467c2e316386ea22ea1f62da0c87ce6a165371f9d0584d917fa",
+      "records": 1
+    },
+    {
+      "lrlId": "15524",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15524",
+      "fetchedAt": "2026-11-26T19:43:27.267Z",
+      "sha256": "8274db27ae28704ba5c4a0b5138fcb54ca6b5d673aab68eca9722e61045f1a4f",
+      "records": 1
+    },
+    {
+      "lrlId": "15617",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15617",
+      "fetchedAt": "2026-11-26T19:43:27.584Z",
+      "sha256": "8f7973e84f6562e5c829b3e3d4025d16744294cafe9f69dc0d1609d7db88b694",
+      "records": 1
+    },
+    {
+      "lrlId": "15621",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15621",
+      "fetchedAt": "2026-11-26T19:43:27.877Z",
+      "sha256": "8e98da52ef4fe5cb0d3f24245120354d4e9d2a2fd8f2dc957ac70ede846fbda9",
+      "records": 1
+    },
+    {
+      "lrlId": "15317",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15317",
+      "fetchedAt": "2026-11-26T19:43:28.338Z",
+      "sha256": "27649af6c64131693ff5c7df599b9248ba3726c7d04a2a9923be747887c7665f",
+      "records": 1
+    },
+    {
+      "lrlId": "15568",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15568",
+      "fetchedAt": "2026-11-26T19:43:28.629Z",
+      "sha256": "3806bda4b069e14fd3aa91b10084664222d70cdf8ecf8f5a07d86475fa197f78",
+      "records": 1
+    },
+    {
+      "lrlId": "15649",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15649",
+      "fetchedAt": "2026-11-26T19:43:28.924Z",
+      "sha256": "5be721547710beb9ce72196b47169fe82ab5699f562b9dfe70836618576a7ce5",
+      "records": 1
+    },
+    {
+      "lrlId": "15658",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15658",
+      "fetchedAt": "2026-11-26T19:43:29.189Z",
+      "sha256": "0d2b7e331c47b78b69f25dd8e19091d279016eadb6a6baf1d94c6828a3147a48",
+      "records": 1
+    },
+    {
+      "lrlId": "15685",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15685",
+      "fetchedAt": "2026-11-26T19:43:29.469Z",
+      "sha256": "1cd057ea398a9e5db11a2cb742d567dd5ecc5cf266f0f345c1ac94bc737ffcbd",
+      "records": 1
+    },
+    {
+      "lrlId": "15556",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15556",
+      "fetchedAt": "2026-11-26T19:43:29.796Z",
+      "sha256": "c745f1c1a46cc5c4065f540e5e5eb89061987e93df693e94a7932bca2a443f02",
+      "records": 1
+    },
+    {
+      "lrlId": "15567",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15567",
+      "fetchedAt": "2026-11-26T19:43:30.092Z",
+      "sha256": "05071bddfa4b1a27ef9b66ec709aa6869072400d35c95bc7c064a24b4cba3b7a",
+      "records": 1
+    },
+    {
+      "lrlId": "15698",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15698",
+      "fetchedAt": "2026-11-26T19:43:30.397Z",
+      "sha256": "b6bf2c460d97c9a1cfdab22b6958ca42fc7f5b2742a4d8a41ea7b49811381518",
+      "records": 1
+    },
+    {
+      "lrlId": "15614",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15614",
+      "fetchedAt": "2026-11-26T19:43:30.688Z",
+      "sha256": "fa60a9dbf902d6a8133f9e7e485a132be46ceaba4846c10bbd1d8eab95633196",
+      "records": 1
+    },
+    {
+      "lrlId": "15663",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15663",
+      "fetchedAt": "2026-11-26T19:43:30.949Z",
+      "sha256": "6ea27e5884e36da7a1cc10b0f567d723684b370b5df83f7a1bed74bb0bddc8bf",
+      "records": 1
+    },
+    {
+      "lrlId": "10123",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10123",
+      "fetchedAt": "2026-11-26T19:43:31.471Z",
+      "sha256": "df2ec46495aa397e75c190f4d62da091c8e5ff1c4b4971fabb6115e45fc88e42",
+      "records": 1
+    },
+    {
+      "lrlId": "15594",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15594",
+      "fetchedAt": "2026-11-26T19:43:31.764Z",
+      "sha256": "29f5939de1a1af3cf2574b7da41e5cc16a30a9d06feb7353f4318fd7115f7e19",
+      "records": 1
+    },
+    {
+      "lrlId": "15674",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15674",
+      "fetchedAt": "2026-11-26T19:43:32.029Z",
+      "sha256": "13675f402b58377611c6e12758c7c5a518faf19c0e270e5964077b3c2b6c0432",
+      "records": 1
+    },
+    {
+      "lrlId": "10142",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10142",
+      "fetchedAt": "2026-11-26T19:43:32.499Z",
+      "sha256": "60928a004bf7c2a81f01c425838bc4aecd9e5c5a998cb0360ca1c7fbc89dbd37",
+      "records": 1
+    },
+    {
+      "lrlId": "15393",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15393",
+      "fetchedAt": "2026-11-26T19:43:32.769Z",
+      "sha256": "55496aed74c3596209173952b09191ee937575e253819fa470ce7add2ea275e3",
+      "records": 1
+    },
+    {
+      "lrlId": "15560",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15560",
+      "fetchedAt": "2026-11-26T19:43:33.073Z",
+      "sha256": "f8cdd1e3bbc11f9932e847da00a46fe55e42751cf6b43d82b3d291be50c53dc8",
+      "records": 1
+    },
+    {
+      "lrlId": "15558",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15558",
+      "fetchedAt": "2026-11-26T19:43:33.402Z",
+      "sha256": "3819b7b3b5d14ed40e9ff1c025eb50055df02c8343388b043bb989475d236117",
+      "records": 1
+    },
+    {
+      "lrlId": "15629",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15629",
+      "fetchedAt": "2026-11-26T19:43:33.669Z",
+      "sha256": "f8497be88d14716bf518d28f035893026b0c3e505a388e3931b55ad4894599e8",
+      "records": 1
+    },
+    {
+      "lrlId": "15517",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15517",
+      "fetchedAt": "2026-11-26T19:43:33.997Z",
+      "sha256": "d34c59df142a571585b221d8fe04fd727a9fe85f0ec37a2ac35d545ad9fc4b73",
+      "records": 1
+    },
+    {
+      "lrlId": "15686",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15686",
+      "fetchedAt": "2026-11-26T19:43:34.256Z",
+      "sha256": "e9f8bb6c8e1a40b219624d0b70b7cff381e50c5070031bdab3759029c3d85b0d",
+      "records": 1
+    },
+    {
+      "lrlId": "15678",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15678",
+      "fetchedAt": "2026-11-26T19:43:34.523Z",
+      "sha256": "c373bd543a77e7ce7c0efc8bcbae0521c4eda48cea68abaaafd7198c25fbb4c0",
+      "records": 1
+    },
+    {
+      "lrlId": "15630",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15630",
+      "fetchedAt": "2026-11-26T19:43:34.798Z",
+      "sha256": "3a5eb00c8e11dd6c253aff69ca6ee016a6c93ce4a258f0c23147646d5053d067",
+      "records": 1
+    },
+    {
+      "lrlId": "15579",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15579",
+      "fetchedAt": "2026-11-26T19:43:35.096Z",
+      "sha256": "f22f6290075343586f84ad6c3e32d6690344b8547dd64ddb93dea8f3e1600aa3",
+      "records": 1
+    },
+    {
+      "lrlId": "15559",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15559",
+      "fetchedAt": "2026-11-26T19:43:35.428Z",
+      "sha256": "33d54f6509691d49e62efaf0c0a4455b6cb4586a06be08ff39f93b89b09d0289",
+      "records": 1
+    },
+    {
+      "lrlId": "15575",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15575",
+      "fetchedAt": "2026-11-26T19:43:35.761Z",
+      "sha256": "a6aad3d239e26dbd0d0ff5ce04256e7344b8f0e54883231bd15012234874132b",
+      "records": 1
+    },
+    {
+      "lrlId": "15396",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15396",
+      "fetchedAt": "2026-11-26T19:43:36.126Z",
+      "sha256": "594974648228de63474c480c755074d0164b6349a59e93fe3631876a2e7a80b8",
+      "records": 1
+    },
+    {
+      "lrlId": "15604",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15604",
+      "fetchedAt": "2026-11-26T19:43:36.416Z",
+      "sha256": "47f08d50153e05ca56e9849f34f59d9478a318f078b5afa4ac3306d26ac3dee5",
+      "records": 1
+    },
+    {
+      "lrlId": "15691",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15691",
+      "fetchedAt": "2026-11-26T19:43:36.711Z",
+      "sha256": "e25a0836cf3245718638c7222a910b124e0fede07ce0b475a07ca6fd9690a66d",
+      "records": 1
+    },
+    {
+      "lrlId": "15680",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15680",
+      "fetchedAt": "2026-11-26T19:43:36.972Z",
+      "sha256": "54325f193c6d2c6f4b1dba41d129af17819ac6c950197748dba00929aa9ae179",
+      "records": 1
+    },
+    {
+      "lrlId": "15347",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15347",
+      "fetchedAt": "2026-11-26T19:43:37.358Z",
+      "sha256": "7de998b9906eb1dafdd75dad2b2b1b0d2676769357c0ad7afab9c93404a2d35c",
+      "records": 1
+    },
+    {
+      "lrlId": "15542",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15542",
+      "fetchedAt": "2026-11-26T19:43:37.700Z",
+      "sha256": "f4568ea4e11c2cfd7316e68874835f101e14d47dff95d632263133a646eb761a",
+      "records": 1
+    },
+    {
+      "lrlId": "15398",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15398",
+      "fetchedAt": "2026-11-26T19:43:38.127Z",
+      "sha256": "b765c6d49d50f63c53068b0f8d0c627f35fd312e244929aae603a5f83e620a3d",
+      "records": 1
+    },
+    {
+      "lrlId": "15481",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15481",
+      "fetchedAt": "2026-11-26T19:43:38.491Z",
+      "sha256": "99a269ff5fc7df7c54bfa364365309f1a7b27258621194d8b3fb088d417da24a",
+      "records": 1
+    },
+    {
+      "lrlId": "15631",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15631",
+      "fetchedAt": "2026-11-26T19:43:38.794Z",
+      "sha256": "0c4c495bc25c803ccec98f11119a5a2a55e98adfef84b12a14a16415e05d1e01",
+      "records": 1
+    },
+    {
+      "lrlId": "15687",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15687",
+      "fetchedAt": "2026-11-26T19:43:39.095Z",
+      "sha256": "5e2f009e7f293f1f82cec8fb6018b0c58f37dec7aeb79d77682e2b2572ddf186",
+      "records": 1
+    },
+    {
+      "lrlId": "15600",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15600",
+      "fetchedAt": "2026-11-26T19:43:39.433Z",
+      "sha256": "9a0c05d6605082c1ddc8de8ac12721907baf6c15a26c82c6c49aac95ff76624d",
+      "records": 1
+    },
+    {
+      "lrlId": "15702",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15702",
+      "fetchedAt": "2026-11-26T19:43:39.733Z",
+      "sha256": "969990601b0e5dbbd857beb6006c0b2f0b70eec05946533cbde7338853871e47",
+      "records": 1
+    },
+    {
+      "lrlId": "15661",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15661",
+      "fetchedAt": "2026-11-26T19:43:39.998Z",
+      "sha256": "c13a09568cbe65b99fb7208dbde20155838af6023627474bce61b7ff05ab0966",
+      "records": 1
+    },
+    {
+      "lrlId": "15531",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15531",
+      "fetchedAt": "2026-11-26T19:43:40.374Z",
+      "sha256": "4d295970cf3e71dff97a3485c6ca90759a1e96379e6804eb1020d3049f20ca09",
+      "records": 1
+    },
+    {
+      "lrlId": "15632",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15632",
+      "fetchedAt": "2026-11-26T19:43:40.681Z",
+      "sha256": "4c7b56accfe2a204119782090203483f42d37662fcf7924ec684da02466a8343",
+      "records": 1
+    },
+    {
+      "lrlId": "15650",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15650",
+      "fetchedAt": "2026-11-26T19:43:40.985Z",
+      "sha256": "eca46aae49950dc07006186cd7f107ab39a05752403b9a706515b7fcb7c2f45d",
+      "records": 1
+    },
+    {
+      "lrlId": "15395",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15395",
+      "fetchedAt": "2026-11-26T19:43:41.357Z",
+      "sha256": "392473a7a7c6b5edfa8c58a66709a499d088ac103c955afd06d99343f6d58561",
+      "records": 1
+    },
+    {
+      "lrlId": "15633",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15633",
+      "fetchedAt": "2026-11-26T19:43:41.660Z",
+      "sha256": "c967e26d944ed4babdbe045014a8f783cb88f1c6c24aaa353a776c862381a458",
+      "records": 1
+    },
+    {
+      "lrlId": "15552",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15552",
+      "fetchedAt": "2026-11-26T19:43:42.010Z",
+      "sha256": "36c85948a9ef9a2247f976d090d03343668b18c3116c5f105c02cdf840f5d6bb",
+      "records": 1
+    },
+    {
+      "lrlId": "15350",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15350",
+      "fetchedAt": "2026-11-26T19:43:42.381Z",
+      "sha256": "2c0c7f581caafe687c2f4beeb398d69fcf46a5119dd3dc3c8f52c85039096915",
+      "records": 1
+    },
+    {
+      "lrlId": "15700",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15700",
+      "fetchedAt": "2026-11-26T19:43:42.643Z",
+      "sha256": "3a2d3e4b1fae0af02bcb08d65d1141e594d0c827e538a24605555f48c0a5090b",
+      "records": 1
+    },
+    {
+      "lrlId": "15582",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15582",
+      "fetchedAt": "2026-11-26T19:43:42.939Z",
+      "sha256": "87adfc4166e4391931fb77505f9b90fd295ee1564dc02186809ca5386fe23ae7",
+      "records": 1
+    },
+    {
+      "lrlId": "12282",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12282",
+      "fetchedAt": "2026-11-26T19:43:43.407Z",
+      "sha256": "a12cdcf3e6d35754687e5913d6a62569ebabd563114302bf95b9b9a1dda15df5",
+      "records": 1
+    },
+    {
+      "lrlId": "15563",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15563",
+      "fetchedAt": "2026-11-26T19:43:43.753Z",
+      "sha256": "7ddbe330e6bd0dcda5cfc38872e16947e70b5e6803fe5f3cb84a1d3e4f0b6e83",
+      "records": 1
+    },
+    {
+      "lrlId": "15666",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15666",
+      "fetchedAt": "2026-11-26T19:43:44.008Z",
+      "sha256": "a9e97e2890c2ca67c72540ce91d5b52aa9986ad1bd1ca9395baec83a12a6d80c",
+      "records": 1
+    },
+    {
+      "lrlId": "15601",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15601",
+      "fetchedAt": "2026-11-26T19:43:44.302Z",
+      "sha256": "589673dc3952950f26f4cf7c102f0700c80ea3bbb3358e36039b825cde04ca76",
+      "records": 1
+    },
+    {
+      "lrlId": "15577",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+      "fetchedAt": "2026-11-26T19:43:44.600Z",
+      "sha256": "fa4d91985e7258ae33752dad61edaa5339d2fa6fdfda0ad80a9317710f6e1c2b",
+      "records": 1
+    },
+    {
+      "lrlId": "15380",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15380",
+      "fetchedAt": "2026-11-26T19:43:44.998Z",
+      "sha256": "5f30b038965929e4c635c209faf1d8c217aaab3990c310260d5d1e95346c033a",
+      "records": 1
+    },
+    {
+      "lrlId": "15673",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15673",
+      "fetchedAt": "2026-11-26T19:43:45.262Z",
+      "sha256": "8403f7aa6116d2b77e281644cbe9479b2964557374b68b99e543bd46a05bda76",
+      "records": 1
+    },
+    {
+      "lrlId": "15435",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15435",
+      "fetchedAt": "2026-11-26T19:43:45.596Z",
+      "sha256": "0558972cf9a422627d02393db6a855488b0f276410c7cb07f991a04ed6751929",
+      "records": 1
+    },
+    {
+      "lrlId": "15651",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15651",
+      "fetchedAt": "2026-11-26T19:43:45.863Z",
+      "sha256": "f581807107cd28a7d052ce706b7122eebd46ea07879ec3b54730f58ee023c9c6",
+      "records": 1
+    },
+    {
+      "lrlId": "15620",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15620",
+      "fetchedAt": "2026-11-26T19:43:46.160Z",
+      "sha256": "2b95ac4373ae694f5687df183e0fa04b7420093bc62e8c53b6b81e6fb0bc7ee7",
+      "records": 1
+    },
+    {
+      "lrlId": "15664",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15664",
+      "fetchedAt": "2026-11-26T19:43:46.419Z",
+      "sha256": "d1002e942eb97fc2f080874ff54d32de9bd2ad72242dd8618730284e1766cced",
+      "records": 1
+    },
+    {
+      "lrlId": "15605",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15605",
+      "fetchedAt": "2026-11-26T19:43:46.764Z",
+      "sha256": "d4b7c093cdd410d7417bb5ca51b5264cba499824aae0409d3606f51ccbb68dd2",
+      "records": 1
+    },
+    {
+      "lrlId": "15611",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15611",
+      "fetchedAt": "2026-11-26T19:43:47.105Z",
+      "sha256": "e8636166e808af9e02b56df667eefc97fbcf97ed4e7ad8083cf07c6fdefd2760",
+      "records": 1
+    },
+    {
+      "lrlId": "15381",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15381",
+      "fetchedAt": "2026-11-26T19:43:47.504Z",
+      "sha256": "570090900949d65e8d95a08defae1b5660ebe9a83a3edd5057e0557c64c3542f",
+      "records": 1
+    },
+    {
+      "lrlId": "15553",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15553",
+      "fetchedAt": "2026-11-26T19:43:47.850Z",
+      "sha256": "ef6cf4c0d472a578f3122c53271fc745ea685fb1702bbe5314c1a876d8cedd42",
+      "records": 1
+    },
+    {
+      "lrlId": "15653",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15653",
+      "fetchedAt": "2026-11-26T19:43:48.109Z",
+      "sha256": "8054fd0f287ad0efc1d89a47ee592de37ec44521bd94f55bbe6880a960ae572b",
+      "records": 1
+    },
+    {
+      "lrlId": "15382",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15382",
+      "fetchedAt": "2026-11-26T19:43:48.473Z",
+      "sha256": "a9969bfc78668857360e261bf45f0979549657aba89b9768f8709e3a25282bb3",
+      "records": 1
+    },
+    {
+      "lrlId": "15518",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15518",
+      "fetchedAt": "2026-11-26T19:43:48.840Z",
+      "sha256": "7a3fa8ba5ca8566c2049b6ca0bc33bcdb4e78eae6d8079b9998e09ee8eb3f177",
+      "records": 1
+    },
+    {
+      "lrlId": "15607",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15607",
+      "fetchedAt": "2026-11-26T19:43:49.172Z",
+      "sha256": "258734d3895eb5742000988b53d70a0da0b1132bb28f609b2c43f07f96d23f1d",
+      "records": 1
+    },
+    {
+      "lrlId": "15696",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15696",
+      "fetchedAt": "2026-11-26T19:43:49.472Z",
+      "sha256": "0086aaf42ec8773441c896461f5e4e3cb06453590077e0024177cb1a2c9b6ee5",
+      "records": 1
+    },
+    {
+      "lrlId": "15527",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15527",
+      "fetchedAt": "2026-11-26T19:43:49.839Z",
+      "sha256": "d640ee85c85c863a52c1af17d074ee60786fc238708e0bdf650c10da4553d31f",
+      "records": 1
+    },
+    {
+      "lrlId": "15573",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15573",
+      "fetchedAt": "2026-11-26T19:43:50.168Z",
+      "sha256": "54e3031091811a3bfcb966eaccb5b905be012c75f93081ba3b03d72ceea76fc8",
+      "records": 1
+    },
+    {
+      "lrlId": "15540",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15540",
+      "fetchedAt": "2026-11-26T19:43:50.498Z",
+      "sha256": "83cc936a2b428275076c886a7bb960f1a91fbf0a76d8bfae6634ad1a24674e36",
+      "records": 1
+    },
+    {
+      "lrlId": "15603",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15603",
+      "fetchedAt": "2026-11-26T19:43:50.828Z",
+      "sha256": "94e63b01dd73806021bbc6cf4d462abeb1f6764273d76278d46b31164dac6fa9",
+      "records": 1
+    },
+    {
+      "lrlId": "15693",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15693",
+      "fetchedAt": "2026-11-26T19:43:51.130Z",
+      "sha256": "8df1911fe781b0f97c2498ac045eb76fbb0038bc651f22ef80470e264860ead4",
+      "records": 1
+    },
+    {
+      "lrlId": "15483",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15483",
+      "fetchedAt": "2026-11-26T19:43:51.495Z",
+      "sha256": "ecaa7391297336936d45e99a02bf484ea86549f09f15acadaf7a2b7c1562aeee",
+      "records": 1
+    },
+    {
+      "lrlId": "15683",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15683",
+      "fetchedAt": "2026-11-26T19:43:51.757Z",
+      "sha256": "936111bb9ec8f420bf3046565e9dfd51f69e87bebd657c08a0947ea5c4cee71f",
+      "records": 1
+    },
+    {
+      "lrlId": "15690",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15690",
+      "fetchedAt": "2026-11-26T19:43:52.055Z",
+      "sha256": "e90c4236ff66643366f850f6e01d7ac2c93c01804a46f709187f7d185e218b26",
+      "records": 1
+    },
+    {
+      "lrlId": "15485",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15485",
+      "fetchedAt": "2026-11-26T19:43:52.448Z",
+      "sha256": "e9a9e26ac7465a09325442d1e07a32a5e6a65f88c8e14f0462e8ab135cac16be",
+      "records": 1
+    },
+    {
+      "lrlId": "15636",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15636",
+      "fetchedAt": "2026-11-26T19:43:52.717Z",
+      "sha256": "ad8e3565ebf65c51fd04f9cd860df3a29b69e4510e92582ff902f12d447725c9",
+      "records": 1
+    },
+    {
+      "lrlId": "15555",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15555",
+      "fetchedAt": "2026-11-26T19:43:53.014Z",
+      "sha256": "e50caeb9dbf35ad67875c76509dd8a8cc1fa6f9ecc93c4fa48616e5037e690f8",
+      "records": 1
+    },
+    {
+      "lrlId": "15638",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15638",
+      "fetchedAt": "2026-11-26T19:43:53.328Z",
+      "sha256": "e30f38790aa28e24ec838afe26fe94b092549fe0e1bca56c527ead608741a878",
+      "records": 1
+    },
+    {
+      "lrlId": "15535",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15535",
+      "fetchedAt": "2026-11-26T19:43:53.683Z",
+      "sha256": "7bdd538ee22cd00b6c3b5ad59d0bacadfd75a641a7d8fcab16f53137c2df0425",
+      "records": 1
+    },
+    {
+      "lrlId": "15591",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15591",
+      "fetchedAt": "2026-11-26T19:43:54.021Z",
+      "sha256": "b2f4bd1b61aa3e82db5733a2ef7b69dc120240891cbb65c9507247be057d8b58",
+      "records": 1
+    },
+    {
+      "lrlId": "15676",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15676",
+      "fetchedAt": "2026-11-26T19:43:54.280Z",
+      "sha256": "afaa477f3fb130383cb17de2b06a2f754eac4cb569e41beb3b639afda3b09883",
+      "records": 1
+    },
+    {
+      "lrlId": "15512",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15512",
+      "fetchedAt": "2026-11-26T19:43:54.654Z",
+      "sha256": "1978290bbc8acc778acf87793c88d3ec55ab7d78ce6d44a500e383b77f8b3145",
+      "records": 1
+    },
+    {
+      "lrlId": "15689",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15689",
+      "fetchedAt": "2026-11-26T19:43:54.948Z",
+      "sha256": "fcdf5d80c269083a12c203a2c7028511c488dcef0f12d187d5c0e3d90c6da380",
+      "records": 1
+    },
+    {
+      "lrlId": "15592",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15592",
+      "fetchedAt": "2026-11-26T19:43:55.282Z",
+      "sha256": "83d80abf28db6680832da6f2266c6b1ffdf52256bf7125594c4e4499abbb1484",
+      "records": 1
+    },
+    {
+      "lrlId": "15487",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15487",
+      "fetchedAt": "2026-11-26T19:43:55.642Z",
+      "sha256": "3093b81031f249f7e89253f402cc742dad1fec7afb4290e32d29f8baddc424b5",
+      "records": 1
+    },
+    {
+      "lrlId": "15515",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15515",
+      "fetchedAt": "2026-11-26T19:43:56.012Z",
+      "sha256": "7d7a216d483c02dc65e54021948e4ed9a3aeb9025a06fa40e1fec5de87f6be4c",
+      "records": 1
+    },
+    {
+      "lrlId": "15595",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15595",
+      "fetchedAt": "2026-11-26T19:43:56.347Z",
+      "sha256": "f61bf5618040b93cf3b847d6eedcbe60b09513428a4aa267b69fa1310eed1342",
+      "records": 1
+    },
+    {
+      "lrlId": "15436",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15436",
+      "fetchedAt": "2026-11-26T19:43:56.693Z",
+      "sha256": "7beff4cc92e719b1f734b90a66ba7622e151f083162fae5cbf5d70360ed4e8fe",
+      "records": 1
+    },
+    {
+      "lrlId": "15619",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15619",
+      "fetchedAt": "2026-11-26T19:43:57.025Z",
+      "sha256": "cd17b999628f939e42c614f21cf51cd187db45f3484927d9b08294f68ea5ef93",
+      "records": 1
+    },
+    {
+      "lrlId": "15466",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15466",
+      "fetchedAt": "2026-11-26T19:43:57.411Z",
+      "sha256": "6d4a03267cd123bdef1c21e5cf200bfd1b444056aa9d96a3d1343b9f39d1f507",
+      "records": 1
+    },
+    {
+      "lrlId": "15489",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15489",
+      "fetchedAt": "2026-11-26T19:43:57.766Z",
+      "sha256": "1848eeb8555b0e2f5539a85f303d4c9c606d23e5749b685d224a293be8273e11",
+      "records": 1
+    },
+    {
+      "lrlId": "10772",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10772",
+      "fetchedAt": "2026-11-26T19:43:58.213Z",
+      "sha256": "80acc9a2f72b5eaceff3382f95bf3fd7916802724c69e303934c8c6cf1c13c6f",
+      "records": 1
+    },
+    {
+      "lrlId": "15626",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15626",
+      "fetchedAt": "2026-11-26T19:43:58.546Z",
+      "sha256": "f1f4e30a9414809e07cda752903c0e83a657f900d80c5e926a1b0c473e48cf85",
+      "records": 1
+    },
+    {
+      "lrlId": "15468",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15468",
+      "fetchedAt": "2026-11-26T19:43:58.881Z",
+      "sha256": "8a0f5507d23aea3d1fcd120143391b633bc098b81a2fc3a50a08f8cad55c2e13",
+      "records": 1
+    },
+    {
+      "lrlId": "15576",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15576",
+      "fetchedAt": "2026-11-26T19:43:59.227Z",
+      "sha256": "64ed138d740e685fabc4a2acce011ba934038b9efc022a098c00927cdb105b60",
+      "records": 1
+    },
+    {
+      "lrlId": "15652",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15652",
+      "fetchedAt": "2026-11-26T19:43:59.495Z",
+      "sha256": "42802233bc44df7dee8e95d40b2d033139f11066e10652c8146157df22c56c85",
+      "records": 1
+    },
+    {
+      "lrlId": "15699",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15699",
+      "fetchedAt": "2026-11-26T19:43:59.793Z",
+      "sha256": "a083eb9cf2b5c8bc72d3a8e54f1c7e88b6e39d847d37dbf3f3ed7d7016f7cb4d",
+      "records": 1
+    },
+    {
+      "lrlId": "15682",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15682",
+      "fetchedAt": "2026-11-26T19:44:00.047Z",
+      "sha256": "e2d725296df4deb4639b15a59f2acaa7ab11f0e7960f5b2e15f41c575d13b730",
+      "records": 1
+    },
+    {
+      "lrlId": "12268",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12268",
+      "fetchedAt": "2026-11-26T19:44:00.524Z",
+      "sha256": "51a83a9c1689453a2327034f2d59053cc0ff3bffbd6013ab1cec2384a85686dc",
+      "records": 1
+    },
+    {
+      "lrlId": "12269",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12269",
+      "fetchedAt": "2026-11-26T19:44:01.039Z",
+      "sha256": "bd46ef7fe6af0a39c812983d9195eb15c2917bae1db65a5171231ce2dc047ecf",
+      "records": 1
+    },
+    {
+      "lrlId": "15662",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15662",
+      "fetchedAt": "2026-11-26T19:44:01.296Z",
+      "sha256": "217308b546fb1e13b6b8ceb696b9d97e5997bbb03a4c64219b1a99719f102128",
+      "records": 1
+    },
+    {
+      "lrlId": "15529",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15529",
+      "fetchedAt": "2026-11-26T19:44:01.680Z",
+      "sha256": "ab55a1782a7a40a9fd3f758ad6ae5281fa4d4c2d469519d685e9b93d444211b9",
+      "records": 1
+    },
+    {
+      "lrlId": "15438",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15438",
+      "fetchedAt": "2026-11-26T19:44:02.062Z",
+      "sha256": "735e67db1dc93e26636faa05a53716939ba83eeaf44c80098251929d9461b25c",
+      "records": 1
+    },
+    {
+      "lrlId": "15654",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15654",
+      "fetchedAt": "2026-11-26T19:44:02.370Z",
+      "sha256": "73555db03d37ced89337f5909bb087e5e09e63c1c896f770a957fcc69d83a696",
+      "records": 1
+    },
+    {
+      "lrlId": "15639",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15639",
+      "fetchedAt": "2026-11-26T19:44:02.675Z",
+      "sha256": "58a3aa756dbe30079549bc0ba5922d65026e8440609db989bffa2b871c64ad96",
+      "records": 1
+    },
+    {
+      "lrlId": "15677",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15677",
+      "fetchedAt": "2026-11-26T19:44:02.934Z",
+      "sha256": "c181ef3052f89de142de1cad695ed28712f75a2269e257fbf6c0ca2443d72363",
+      "records": 1
+    },
+    {
+      "lrlId": "10403",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10403",
+      "fetchedAt": "2026-11-26T19:44:03.479Z",
+      "sha256": "be524c922508a8b9ff06c208bf6d4f7153c40e11a17b29e75aa633acb86d8a6c",
+      "records": 1
+    },
+    {
+      "lrlId": "15491",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15491",
+      "fetchedAt": "2026-11-26T19:44:03.814Z",
+      "sha256": "9910890762490bb768e5c477243b193aef8dca2eab5b57bd229b306ab365136e",
+      "records": 1
+    },
+    {
+      "lrlId": "15473",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15473",
+      "fetchedAt": "2026-11-26T19:44:04.145Z",
+      "sha256": "4c49c66524823ba9c880c68b0fa61760631a7b579a84cf257cc59ce122a31c5d",
+      "records": 1
+    },
+    {
+      "lrlId": "15360",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15360",
+      "fetchedAt": "2026-11-26T19:44:04.565Z",
+      "sha256": "69ba6fa6a65828e949bbe3175a752a8851512d78d8f3a4b3bfa032868ee20a6c",
+      "records": 1
+    },
+    {
+      "lrlId": "15537",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15537",
+      "fetchedAt": "2026-11-26T19:44:04.890Z",
+      "sha256": "2806c41c025797c42186a6635a870398c1c16e27de327c32d6065b7f2354f0a6",
+      "records": 1
+    },
+    {
+      "lrlId": "15675",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15675",
+      "fetchedAt": "2026-11-26T19:44:05.148Z",
+      "sha256": "3e1b0b83d3bdf88dcdd7887b0b2f290b1fea63912b8259f177077f06e2f0cf39",
+      "records": 1
+    },
+    {
+      "lrlId": "15500",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15500",
+      "fetchedAt": "2026-11-26T19:44:05.504Z",
+      "sha256": "fa9a220e4420140da77f50f174256cd13c6dd1d1134f64825a36236b5ae6dc8a",
+      "records": 1
+    },
+    {
+      "lrlId": "15588",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15588",
+      "fetchedAt": "2026-11-26T19:44:05.803Z",
+      "sha256": "5d4724186233a44c834db5b28b7244d150d934af4c194dd895b82e3a9b80aa3f",
+      "records": 1
+    },
+    {
+      "lrlId": "15634",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15634",
+      "fetchedAt": "2026-11-26T19:44:06.063Z",
+      "sha256": "8ff55050b6648ce028c34fd5b15d423720eaca700bbcf76c97290f338c6adb75",
+      "records": 1
+    },
+    {
+      "lrlId": "15561",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15561",
+      "fetchedAt": "2026-11-26T19:44:06.412Z",
+      "sha256": "bf6989bcb6a8452375081bcc6e2d3d38393b1a87867a6be0735e8cffbc048f90",
+      "records": 1
+    },
+    {
+      "lrlId": "15496",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15496",
+      "fetchedAt": "2026-11-26T19:44:06.751Z",
+      "sha256": "442ea48d48e2486929a9f88f65707bf5fc6483cabf731e66839a4a049087f856",
+      "records": 1
+    },
+    {
+      "lrlId": "15284",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15284",
+      "fetchedAt": "2026-11-26T19:44:07.213Z",
+      "sha256": "5af5c1a52a75687217b8e2ed2bf8b3103ec4677c53e360db69a07a4a3a23f4e8",
+      "records": 1
+    },
+    {
+      "lrlId": "15596",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15596",
+      "fetchedAt": "2026-11-26T19:44:07.550Z",
+      "sha256": "fb0099fa2ccb6053f16d8c221f6c9499bdf31180769ca6ed36a94701bb2e486a",
+      "records": 1
+    },
+    {
+      "lrlId": "15618",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15618",
+      "fetchedAt": "2026-11-26T19:44:07.881Z",
+      "sha256": "2fe15f8bae61102caa6842077bfe38629bd6a3b65b3293ade17e1de842a89b27",
+      "records": 1
+    },
+    {
+      "lrlId": "15441",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15441",
+      "fetchedAt": "2026-11-26T19:44:08.246Z",
+      "sha256": "24ddc0fabae57491b429881391ab723ec10d2d2716cd5d8034cf06a67a090122",
+      "records": 1
+    },
+    {
+      "lrlId": "15692",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15692",
+      "fetchedAt": "2026-11-26T19:44:08.540Z",
+      "sha256": "906814666a2746a888ec3fc80cacaff49e9ae2c45d3826b700eb52af2f8abafd",
+      "records": 1
+    },
+    {
+      "lrlId": "15534",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15534",
+      "fetchedAt": "2026-11-26T19:44:08.886Z",
+      "sha256": "5ed4cb3767e4c57d797f5caacecb656fc4646655a518f1509d9d45a6020d0a2e",
+      "records": 1
+    },
+    {
+      "lrlId": "15608",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15608",
+      "fetchedAt": "2026-11-26T19:44:09.220Z",
+      "sha256": "780a8b80fc30617f9bff72ce20c3c1e4a8e531aad3d01b6714f034176cae31cb",
+      "records": 1
+    },
+    {
+      "lrlId": "15528",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15528",
+      "fetchedAt": "2026-11-26T19:44:09.596Z",
+      "sha256": "2d55b935fe82e313b74d46ab5a715bb4ddf609e3aa57c061a771539860022a13",
+      "records": 1
+    },
+    {
+      "lrlId": "15609",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15609",
+      "fetchedAt": "2026-11-26T19:44:09.925Z",
+      "sha256": "a0ebc89b10cdfba77dcb354db49d316a6eb501dc93a90db1063526550f426fad",
+      "records": 1
+    },
+    {
+      "lrlId": "15544",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15544",
+      "fetchedAt": "2026-11-26T19:44:10.264Z",
+      "sha256": "58c8eea52cf99f1f221529b7be0ac60dfbf015991bd186fa30f38a95fe910655",
+      "records": 1
+    },
+    {
+      "lrlId": "15701",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15701",
+      "fetchedAt": "2026-11-26T19:44:10.559Z",
+      "sha256": "a3c936d12243a26caaaebcc70d6a4647db69e5bc36cac067b73b8e05309cabac",
+      "records": 1
+    },
+    {
+      "lrlId": "15589",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15589",
+      "fetchedAt": "2026-11-26T19:44:10.860Z",
+      "sha256": "2ac1776d695a0727ec4053aacf5cd343d111f2a0c15c39b620602de75eda2790",
+      "records": 1
+    },
+    {
+      "lrlId": "15703",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15703",
+      "fetchedAt": "2026-11-26T19:44:11.152Z",
+      "sha256": "470c86424650e5cf5d612f1f318e9f1da1d300463dd05a023476d9701dd1abbf",
+      "records": 1
+    },
+    {
+      "lrlId": "15583",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15583",
+      "fetchedAt": "2026-11-26T19:44:11.461Z",
+      "sha256": "48db270564984be04b5d70b63ab8e24455085951e4337c1bb499e135c95b2540",
+      "records": 1
+    },
+    {
+      "lrlId": "15444",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15444",
+      "fetchedAt": "2026-11-26T19:44:11.881Z",
+      "sha256": "264c296aeb3936f0e085563cf50e534bcb32e3eadfaba9bd0b1884be56954f81",
+      "records": 1
+    },
+    {
+      "lrlId": "15557",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15557",
+      "fetchedAt": "2026-11-26T19:44:12.204Z",
+      "sha256": "f7767048ace09d9919c56a5a357f23023945d7c2259dc6dff05408e29e39d680",
+      "records": 1
+    },
+    {
+      "lrlId": "15571",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15571",
+      "fetchedAt": "2026-11-26T19:44:12.539Z",
+      "sha256": "242e321f29502887e46465d52cef121d5f02cff77d8fc31f18d76d23638a1760",
+      "records": 1
+    },
+    {
+      "lrlId": "15564",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15564",
+      "fetchedAt": "2026-11-26T19:44:12.862Z",
+      "sha256": "eb6b44b401c608489dd70324f2ccfe7c73d789ead5240d832dd5167b37528a48",
+      "records": 1
+    },
+    {
+      "lrlId": "15366",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15366",
+      "fetchedAt": "2026-11-26T19:44:13.296Z",
+      "sha256": "b0c251461a6db56e3007c7c83cee6e0711442a12f109c1a15143daea72502a48",
+      "records": 1
+    },
+    {
+      "lrlId": "15445",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15445",
+      "fetchedAt": "2026-11-26T19:44:13.663Z",
+      "sha256": "b1e7339b1f15b84b2a935f8d9ab2f336751a57084c89f3c6fdb051a56a7f6a08",
+      "records": 1
+    },
+    {
+      "lrlId": "15409",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15409",
+      "fetchedAt": "2026-11-26T19:44:14.030Z",
+      "sha256": "8a86771bc0788b59a4812e619f1459401a1f91da49c3db95325b0de50d794c38",
+      "records": 1
+    },
+    {
+      "lrlId": "15541",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15541",
+      "fetchedAt": "2026-11-26T19:44:14.355Z",
+      "sha256": "38a9781e2f252fe15b85ce51deb1a19e527a3eba70878524676ce4ee2330e0e5",
+      "records": 1
+    },
+    {
+      "lrlId": "15622",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15622",
+      "fetchedAt": "2026-11-26T19:44:14.695Z",
+      "sha256": "64d3ad23ca07d77176e49cc2314536668111fc2a51aada9b03c5f096d1d89ddf",
+      "records": 1
+    },
+    {
+      "lrlId": "15640",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15640",
+      "fetchedAt": "2026-11-26T19:44:14.995Z",
+      "sha256": "36adb5c7b39fbd703f1467c2908d73303c59adb02251c9f5a56b0e2b0a9090b7",
+      "records": 1
+    },
+    {
+      "lrlId": "15549",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15549",
+      "fetchedAt": "2026-11-26T19:44:15.333Z",
+      "sha256": "f1a1f60c8e99e1f889061a9241277a4c88a9c3e42a50348fbcc1e273ecca2e7f",
+      "records": 1
+    },
+    {
+      "lrlId": "15642",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15642",
+      "fetchedAt": "2026-11-26T19:44:15.637Z",
+      "sha256": "6aca88436ea11def0eff348ca0bce183b5749d8497185921edaba420a304edba",
+      "records": 1
+    },
+    {
+      "lrlId": "15669",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15669",
+      "fetchedAt": "2026-11-26T19:44:15.895Z",
+      "sha256": "12d3d28d627cec8d59d527d1c083fd8261168c052120ac68fdba40694d506f6f",
+      "records": 1
+    },
+    {
+      "lrlId": "15694",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15694",
+      "fetchedAt": "2026-11-26T19:44:16.193Z",
+      "sha256": "a4c808965f3f06b14de4b465ee62731e43c8a337c449999791776f145f6a4cf5",
+      "records": 1
+    },
+    {
+      "lrlId": "15643",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15643",
+      "fetchedAt": "2026-11-26T19:44:16.452Z",
+      "sha256": "458255736ba6437efe4ce19a6d9e84617bc8e1ef8e93ad069ecd78eb9a0e9bfc",
+      "records": 1
+    },
+    {
+      "lrlId": "15681",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15681",
+      "fetchedAt": "2026-11-26T19:44:16.713Z",
+      "sha256": "58e926e370c3df4fc7191d84ede161c5777946e2deb70da17a8bb46d3553b8c0",
+      "records": 1
+    },
+    {
+      "lrlId": "15597",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15597",
+      "fetchedAt": "2026-11-26T19:44:17.012Z",
+      "sha256": "b730b901f391e53e698968a17dd9d63e49a463634ed3f9fc3320b83f20f34e2d",
+      "records": 1
+    },
+    {
+      "lrlId": "15656",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15656",
+      "fetchedAt": "2026-11-26T19:44:17.276Z",
+      "sha256": "8e1de87ec6a6c349e22b3675e49c14308e3137598bd0ba6a1ac79e9e307c3888",
+      "records": 1
+    },
+    {
+      "lrlId": "15314",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15314",
+      "fetchedAt": "2026-11-26T19:44:17.688Z",
+      "sha256": "f3806c1e05c56828f3a68e3bfabf7d6059b86bc2e4aec6f0a2d75b5b8d762bb0",
+      "records": 1
+    },
+    {
+      "lrlId": "15584",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15584",
+      "fetchedAt": "2026-11-26T19:44:17.981Z",
+      "sha256": "f3cf0155f5c5a8edfe93ec8606225da2f0b22cb089c65923d135c7d095a112f7",
+      "records": 1
+    },
+    {
+      "lrlId": "15688",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15688",
+      "fetchedAt": "2026-11-26T19:44:18.278Z",
+      "sha256": "cf3711c6e6309caaac6dbd3205edf250725d642129abb40b70355e3593ef245d",
+      "records": 1
+    },
+    {
+      "lrlId": "15572",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15572",
+      "fetchedAt": "2026-11-26T19:44:18.583Z",
+      "sha256": "f5e5915616f8661c500979c4aacd2064905b75e0a4369fe05f500a73696a0c73",
+      "records": 1
+    },
+    {
+      "lrlId": "15645",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15645",
+      "fetchedAt": "2026-11-26T19:44:18.848Z",
+      "sha256": "885f03fef64dbd208ce1078b75450f0ad95a3c9ef1576f0728867debc0846a51",
+      "records": 1
+    },
+    {
+      "lrlId": "15623",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15623",
+      "fetchedAt": "2026-11-26T19:44:19.140Z",
+      "sha256": "4351f31949724f775d30976099b9f9b515498cd49ab6c286742576eed76df31a",
+      "records": 1
+    },
+    {
+      "lrlId": "15606",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15606",
+      "fetchedAt": "2026-11-26T19:44:19.469Z",
+      "sha256": "3743171b86f2f7c0530d84b634021608dbf548051eac412d9b693f1aa92a25ec",
+      "records": 1
+    },
+    {
+      "lrlId": "15507",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15507",
+      "fetchedAt": "2026-11-26T19:44:19.845Z",
+      "sha256": "9c590dd92961b09ef1098142a77aa07c086b3562b2184060669ee258a1e7ad56",
+      "records": 1
+    },
+    {
+      "lrlId": "15646",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15646",
+      "fetchedAt": "2026-11-26T19:44:20.111Z",
+      "sha256": "c8f8c95818d9fedaed74eb0f72289504938b707a8536ff142064970eb1f7c9e3",
+      "records": 1
+    },
+    {
+      "lrlId": "15672",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15672",
+      "fetchedAt": "2026-11-26T19:44:20.369Z",
+      "sha256": "9266b0b439ef7ba574d2c0ed3f5c3240ff291546f3f3433567746a98b4dcf687",
+      "records": 1
+    },
+    {
+      "lrlId": "15659",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15659",
+      "fetchedAt": "2026-11-26T19:44:20.626Z",
+      "sha256": "f05ab5d91e31acb8485d34049862d2a5587337358758cb0380875f788ece35cc",
+      "records": 1
+    },
+    {
+      "lrlId": "15695",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15695",
+      "fetchedAt": "2026-11-26T19:44:20.922Z",
+      "sha256": "ba6777269556f20357c7d53bb18cb37dd96d28d0fdaf3caa21ce5351c5ca9324",
+      "records": 1
+    },
+    {
+      "lrlId": "15660",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15660",
+      "fetchedAt": "2026-11-26T19:44:21.182Z",
+      "sha256": "fefc5f9e220e551e9b6922b31ab106aeed132b9dfbb2bcc8dc9c17238ef7f7b4",
+      "records": 1
+    },
+    {
+      "lrlId": "15523",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15523",
+      "fetchedAt": "2026-11-26T19:44:21.507Z",
+      "sha256": "a0b5cb8a35ca312e9361da8f060b2f28747b06a4282a9c1b6d16a3f95bcbbf20",
+      "records": 1
+    },
+    {
+      "lrlId": "15665",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15665",
+      "fetchedAt": "2026-11-26T19:44:21.762Z",
+      "sha256": "11107442bc88ad02fc9a0be871b36faae90ca57a49ff7d026d94a731c231ccfd",
+      "records": 1
+    },
+    {
+      "lrlId": "15697",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15697",
+      "fetchedAt": "2026-11-26T19:44:22.062Z",
+      "sha256": "504fd1c88a055022a7816903f1a50fc0a43af82e22e47be49b4e59ee2f1fdeee",
+      "records": 1
+    },
+    {
+      "lrlId": "15647",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15647",
+      "fetchedAt": "2026-11-26T19:44:22.372Z",
+      "sha256": "f99f41180f7936d1bb15f6cc20de529fc503a6b0f11ef59330f63dfb63c4f143",
+      "records": 1
+    },
+    {
+      "lrlId": "15510",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15510",
+      "fetchedAt": "2026-11-26T19:44:22.676Z",
+      "sha256": "92dca98f979a2ab1a2b2190f91b2bb37463a370af6ace72109167179bf6ae356",
+      "records": 1
+    },
+    {
+      "lrlId": "15625",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15625",
+      "fetchedAt": "2026-11-26T19:44:22.971Z",
+      "sha256": "c89fda7a481d43b7667b2e3e7a51d43eb2498bb64c7d8453a961ca63ef3cacdd",
+      "records": 1
+    },
+    {
+      "lrlId": "15648",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15648",
+      "fetchedAt": "2026-11-26T19:44:23.233Z",
+      "sha256": "9ca5ba589df70f2b929d1ff8e915b9b779cb5168d05b3f1b2d6c4b56cdbddc8a",
+      "records": 1
+    },
+    {
+      "lrlId": "15580",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15580",
+      "fetchedAt": "2026-11-26T19:44:23.524Z",
+      "sha256": "747dcf5c1519bf83655d70401f47a1f50551350aa1f86f922c06e7d04d1dbc17",
+      "records": 1
+    },
+    {
+      "lrlId": "15476",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15476",
+      "fetchedAt": "2026-11-26T19:44:23.857Z",
+      "sha256": "2ef99a540db22002c57cda38c5d001746601167aaab111ee63bbec742bf9b64a",
+      "records": 1
+    },
+    {
+      "lrlId": "15671",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15671",
+      "fetchedAt": "2026-11-26T19:44:24.128Z",
+      "sha256": "298a0a073a563e50e79dd98bf74037f8fdc941da7625fc6372af5f4ccb002cca",
+      "records": 1
+    },
+    {
+      "lrlId": "15585",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15585",
+      "fetchedAt": "2026-11-26T19:44:24.434Z",
+      "sha256": "d765fb1cc7a8fbe6e4fd17647ab8899a5400e3a9421bb911a16b4b48c3dafbf9",
+      "records": 1
+    },
+    {
+      "lrlId": "10709",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10709",
+      "fetchedAt": "2026-11-26T19:44:24.908Z",
+      "sha256": "b25660de797a5ab8e4a8ceb9bdf3f847a35da25e5cca46728aab1a379e67bdce",
+      "records": 1
+    },
+    {
+      "lrlId": "15593",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15593",
+      "fetchedAt": "2026-11-26T19:44:25.215Z",
+      "sha256": "346cfa50c859648b77251f58706ac8e69055e25e23359531f9665d813be1c601",
+      "records": 1
+    },
+    {
+      "lrlId": "15670",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15670",
+      "fetchedAt": "2026-11-26T19:44:25.487Z",
+      "sha256": "87a43d2bad36fbf82967e9ada8672666441996d62767cdb125030f84f069ee58",
+      "records": 1
+    },
+    {
+      "lrlId": "15668",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15668",
+      "fetchedAt": "2026-11-26T19:44:25.753Z",
+      "sha256": "eb4db94f186e76e728e329a72f89bcccac5f2d6f905fcad38e6f2b6c2231fdb7",
+      "records": 1
+    },
+    {
+      "lrlId": "15533",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15533",
+      "fetchedAt": "2026-11-26T19:44:26.146Z",
+      "sha256": "3bccfa2fc0aa5a678fb0ca22735274576c45c7be2ae46e66e5ab999887849807",
+      "records": 1
+    },
+    {
+      "lrlId": "15657",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15657",
+      "fetchedAt": "2026-11-26T19:44:26.415Z",
+      "sha256": "43a8a3dcd7606cf606bda0d8aead6b4827d3b31fea163830dd37452424a75918",
+      "records": 1
+    },
+    {
+      "lrlId": "15450",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15450",
+      "fetchedAt": "2026-11-26T19:44:26.820Z",
+      "sha256": "aa1c99cceac057019fda9f3408c09c8dae309edceefe246784e549a584b32e75",
+      "records": 1
+    }
+  ],
+  "errors": [],
+  "roster": {
+    "session": "2027-2028",
+    "targetOn": "2027-01-04",
+    "observedOn": "2026-11-26",
+    "expectedSeats": {
+      "house": 134,
+      "senate": 67,
+      "total": 201
+    },
+    "singleCandidateSeats": {
+      "house": 134,
+      "senate": 67
+    },
+    "completeSourceTermCoverage": true,
+    "authoritativeRosterVerified": false,
+    "missingSeats": [],
+    "conflictingSeats": [],
+    "multiSeatIdentities": [],
+    "invalidDistricts": [],
+    "unresolvedTerms": [],
+    "outsideOpeningTerm": [],
+    "singleCandidates": [
+      {
+        "seat": "house:1A",
+        "lrlId": "15538",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15538",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:1B",
+        "lrlId": "15631",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15631",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:1",
+        "lrlId": "15485",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15485",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:2A",
+        "lrlId": "15629",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15629",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:2B",
+        "lrlId": "15458",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15458",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:2",
+        "lrlId": "15395",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15395",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:3A",
+        "lrlId": "15623",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15623",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:3B",
+        "lrlId": "15656",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15656",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:3",
+        "lrlId": "15577",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:4A",
+        "lrlId": "15657",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15657",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:4B",
+        "lrlId": "15591",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15591",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:4",
+        "lrlId": "15703",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15703",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:5A",
+        "lrlId": "15592",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15592",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:5B",
+        "lrlId": "15658",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15658",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:5",
+        "lrlId": "15593",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15593",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:6A",
+        "lrlId": "15594",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15594",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:6B",
+        "lrlId": "15435",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15435",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:6",
+        "lrlId": "15651",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15651",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:7A",
+        "lrlId": "15540",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15540",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:7B",
+        "lrlId": "15648",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15648",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:7",
+        "lrlId": "15579",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15579",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:8A",
+        "lrlId": "15636",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15636",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:8B",
+        "lrlId": "15595",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15595",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:8",
+        "lrlId": "15537",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15537",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:9A",
+        "lrlId": "15428",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15428",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:9B",
+        "lrlId": "15596",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15596",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:9",
+        "lrlId": "15541",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15541",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:10A",
+        "lrlId": "15659",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15659",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:10B",
+        "lrlId": "15597",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15597",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:10",
+        "lrlId": "15580",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15580",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:11A",
+        "lrlId": "15660",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15660",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:11B",
+        "lrlId": "15534",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15534",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:11",
+        "lrlId": "15445",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15445",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:12A",
+        "lrlId": "15301",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15301",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:12B",
+        "lrlId": "15347",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15347",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:12",
+        "lrlId": "10709",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10709",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:13A",
+        "lrlId": "15661",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15661",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:13B",
+        "lrlId": "15662",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15662",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:13",
+        "lrlId": "15687",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15687",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:14A",
+        "lrlId": "15663",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15663",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:14B",
+        "lrlId": "15393",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15393",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:14",
+        "lrlId": "15564",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15564",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:15A",
+        "lrlId": "15664",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15664",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:15B",
+        "lrlId": "15665",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15665",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:15",
+        "lrlId": "15688",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15688",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:16A",
+        "lrlId": "15647",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15647",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:16B",
+        "lrlId": "15429",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15429",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:16",
+        "lrlId": "15489",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15489",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:17A",
+        "lrlId": "15600",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15600",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:17B",
+        "lrlId": "15601",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15601",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:17",
+        "lrlId": "15350",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15350",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:18A",
+        "lrlId": "15666",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15666",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:18B",
+        "lrlId": "15542",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15542",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:18",
+        "lrlId": "15481",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15481",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:19A",
+        "lrlId": "15627",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15627",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:19B",
+        "lrlId": "15645",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15645",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:19",
+        "lrlId": "15483",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15483",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:20A",
+        "lrlId": "15602",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15602",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:20B",
+        "lrlId": "15667",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15667",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:20",
+        "lrlId": "15603",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15603",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:21A",
+        "lrlId": "15668",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15668",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:21B",
+        "lrlId": "15604",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15604",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:21",
+        "lrlId": "15689",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15689",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:22A",
+        "lrlId": "15544",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15544",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:22B",
+        "lrlId": "15646",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15646",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:22",
+        "lrlId": "15496",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15496",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:23A",
+        "lrlId": "15669",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15669",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:23B",
+        "lrlId": "15561",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15561",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:23",
+        "lrlId": "15560",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15560",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:24A",
+        "lrlId": "15366",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15366",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:24B",
+        "lrlId": "12268",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12268",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:24",
+        "lrlId": "15702",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15702",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:25A",
+        "lrlId": "15605",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15605",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:25B",
+        "lrlId": "15606",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15606",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:25",
+        "lrlId": "15545",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15545",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:26A",
+        "lrlId": "15670",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15670",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:26B",
+        "lrlId": "10123",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10123",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:26",
+        "lrlId": "15690",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15690",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:27A",
+        "lrlId": "15500",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15500",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:27B",
+        "lrlId": "15626",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15626",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:27",
+        "lrlId": "15491",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15491",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:28A",
+        "lrlId": "15632",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15632",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:28B",
+        "lrlId": "15643",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15643",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:28",
+        "lrlId": "15487",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15487",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:29A",
+        "lrlId": "15360",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15360",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:29B",
+        "lrlId": "15409",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15409",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:29",
+        "lrlId": "15653",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15653",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:30A",
+        "lrlId": "15607",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15607",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:30B",
+        "lrlId": "15671",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15671",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:30",
+        "lrlId": "15438",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15438",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:31A",
+        "lrlId": "15608",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15608",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:31B",
+        "lrlId": "15314",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15314",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:31",
+        "lrlId": "15455",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15455",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:32A",
+        "lrlId": "15476",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15476",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:32B",
+        "lrlId": "15609",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15609",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:32",
+        "lrlId": "15691",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15691",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:33A",
+        "lrlId": "15672",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15672",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:33B",
+        "lrlId": "15611",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15611",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:33",
+        "lrlId": "15382",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15382",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:34A",
+        "lrlId": "15673",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15673",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:34B",
+        "lrlId": "15652",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15652",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:34",
+        "lrlId": "15381",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15381",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:35A",
+        "lrlId": "15507",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15507",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:35B",
+        "lrlId": "15640",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15640",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:35",
+        "lrlId": "15692",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15692",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:36A",
+        "lrlId": "15674",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15674",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:36B",
+        "lrlId": "15614",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15614",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:36",
+        "lrlId": "15582",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15582",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:37A",
+        "lrlId": "15675",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15675",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:37B",
+        "lrlId": "15505",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15505",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:37",
+        "lrlId": "15693",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15693",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:38A",
+        "lrlId": "15634",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15634",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:38B",
+        "lrlId": "15510",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15510",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:38",
+        "lrlId": "15583",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15583",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:39A",
+        "lrlId": "15676",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15676",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:39B",
+        "lrlId": "15677",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15677",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:39",
+        "lrlId": "15466",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15466",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:40A",
+        "lrlId": "15678",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15678",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:40B",
+        "lrlId": "15650",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15650",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:40",
+        "lrlId": "10403",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10403",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:41A",
+        "lrlId": "15679",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15679",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:41B",
+        "lrlId": "15680",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15680",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:41",
+        "lrlId": "15584",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15584",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:42A",
+        "lrlId": "15617",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15617",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:42B",
+        "lrlId": "15512",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15512",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:42",
+        "lrlId": "15585",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15585",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:43A",
+        "lrlId": "15681",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15681",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:43B",
+        "lrlId": "15682",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15682",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:43",
+        "lrlId": "15398",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15398",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:44A",
+        "lrlId": "15396",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15396",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:44B",
+        "lrlId": "12269",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12269",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:44",
+        "lrlId": "15694",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15694",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:45A",
+        "lrlId": "15618",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15618",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:45B",
+        "lrlId": "15513",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15513",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:45",
+        "lrlId": "15555",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15555",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:46A",
+        "lrlId": "15619",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15619",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:46B",
+        "lrlId": "15450",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15450",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:46",
+        "lrlId": "10772",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10772",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:47A",
+        "lrlId": "15655",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15655",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:47B",
+        "lrlId": "15621",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15621",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:47",
+        "lrlId": "15620",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15620",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:48A",
+        "lrlId": "15441",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15441",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:48B",
+        "lrlId": "15622",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15622",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:48",
+        "lrlId": "15556",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15556",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:49A",
+        "lrlId": "15630",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15630",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:49B",
+        "lrlId": "15515",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15515",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:49",
+        "lrlId": "15695",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15695",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:50A",
+        "lrlId": "15633",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15633",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:50B",
+        "lrlId": "15517",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15517",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:50",
+        "lrlId": "15696",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15696",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:51A",
+        "lrlId": "15518",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15518",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:51B",
+        "lrlId": "15567",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15567",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:51",
+        "lrlId": "15697",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15697",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:52A",
+        "lrlId": "15683",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15683",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:52B",
+        "lrlId": "15625",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15625",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:52",
+        "lrlId": "15549",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15549",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:53A",
+        "lrlId": "15568",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15568",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:53B",
+        "lrlId": "12282",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12282",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:53",
+        "lrlId": "15698",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15698",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:54A",
+        "lrlId": "15523",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15523",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:54B",
+        "lrlId": "15684",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15684",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:54",
+        "lrlId": "15701",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15701",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:55A",
+        "lrlId": "15563",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15563",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:55B",
+        "lrlId": "15524",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15524",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:55",
+        "lrlId": "15557",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15557",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:56A",
+        "lrlId": "15526",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15526",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:56B",
+        "lrlId": "15527",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15527",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:56",
+        "lrlId": "15473",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15473",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:57A",
+        "lrlId": "15436",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15436",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:57B",
+        "lrlId": "15685",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15685",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:57",
+        "lrlId": "15558",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15558",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:58A",
+        "lrlId": "15571",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15571",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:58B",
+        "lrlId": "15642",
+        "party": "R",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15642",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:58",
+        "lrlId": "15699",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15699",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:59A",
+        "lrlId": "15468",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15468",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:59B",
+        "lrlId": "15551",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15551",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:59",
+        "lrlId": "15317",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15317",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:60A",
+        "lrlId": "15535",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15535",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:60B",
+        "lrlId": "15528",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15528",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:60",
+        "lrlId": "15649",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15649",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:61A",
+        "lrlId": "15638",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15638",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:61B",
+        "lrlId": "15529",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15529",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:61",
+        "lrlId": "10142",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10142",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:62A",
+        "lrlId": "15531",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15531",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:62B",
+        "lrlId": "15639",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15639",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:62",
+        "lrlId": "15559",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15559",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:63A",
+        "lrlId": "15572",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15572",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:63B",
+        "lrlId": "15552",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15552",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:63",
+        "lrlId": "15588",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15588",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:64A",
+        "lrlId": "15654",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15654",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:64B",
+        "lrlId": "15444",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15444",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:64",
+        "lrlId": "15284",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15284",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:65A",
+        "lrlId": "15573",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15573",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:65B",
+        "lrlId": "15686",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15686",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:65",
+        "lrlId": "15700",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15700",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:66A",
+        "lrlId": "15575",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15575",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:66B",
+        "lrlId": "15553",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15553",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:66",
+        "lrlId": "15589",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15589",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:67A",
+        "lrlId": "15576",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15576",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "house:67B",
+        "lrlId": "15533",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15533",
+        "oathDateStatus": "future_reported_date"
+      },
+      {
+        "seat": "senate:67",
+        "lrlId": "15380",
+        "party": "DFL",
+        "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15380",
+        "oathDateStatus": "future_reported_date"
+      }
+    ]
+  },
+  "results": [
+    {
+      "seat": "house:1A",
+      "leader": "John Burkel",
+      "leaderParty": "R",
+      "lrlId": "15538",
+      "lrlName": "John Burkel",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:1B",
+      "leader": "Steve Gander",
+      "leaderParty": "R",
+      "lrlId": "15631",
+      "lrlName": "Steve Gander",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:1",
+      "leader": "Mark Johnson",
+      "leaderParty": "R",
+      "lrlId": "15485",
+      "lrlName": "Mark T. Johnson",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:2A",
+      "leader": "Bidal Duran Jr",
+      "leaderParty": "R",
+      "lrlId": "15629",
+      "lrlName": "Bidal Duran Jr.",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:2B",
+      "leader": "Matt Bliss",
+      "leaderParty": "R",
+      "lrlId": "15458",
+      "lrlName": "Matt Bliss",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:2",
+      "leader": "Steve Green",
+      "leaderParty": "R",
+      "lrlId": "15395",
+      "lrlName": "Steve Green",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:3A",
+      "leader": "Roger J. Skraba",
+      "leaderParty": "R",
+      "lrlId": "15623",
+      "lrlName": "Roger J Skraba",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:3B",
+      "leader": "Aaron Schweiger",
+      "leaderParty": "DFL",
+      "lrlId": "15656",
+      "lrlName": "Aaron Schweiger",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:3",
+      "leader": "Grant Hauschild",
+      "leaderParty": "DFL",
+      "lrlId": "15577",
+      "lrlName": "Grant Hauschild",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:4A",
+      "leader": "Erika Yoney",
+      "leaderParty": "DFL",
+      "lrlId": "15657",
+      "lrlName": "Erika Yoney",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:4B",
+      "leader": "Jim Joy",
+      "leaderParty": "R",
+      "lrlId": "15591",
+      "lrlName": "Jim Joy",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:4",
+      "leader": "Austin Peterson",
+      "leaderParty": "R",
+      "lrlId": "15703",
+      "lrlName": "Austin Peterson",
+      "status": "recount_requires_certification"
+    },
+    {
+      "seat": "house:5A",
+      "leader": "Krista Knudsen",
+      "leaderParty": "R",
+      "lrlId": "15592",
+      "lrlName": "Krista Knudsen",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:5B",
+      "leader": "Jonathan Claussen",
+      "leaderParty": "R",
+      "lrlId": "15658",
+      "lrlName": "Jonathan Claussen",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:5",
+      "leader": "Mike Wiener",
+      "leaderParty": "R",
+      "lrlId": "15593",
+      "lrlName": "Mike Wiener",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:6A",
+      "leader": "Ben Davis",
+      "leaderParty": "R",
+      "lrlId": "15594",
+      "lrlName": "Ben Davis",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:6B",
+      "leader": "Josh Heintzeman",
+      "leaderParty": "R",
+      "lrlId": "15435",
+      "lrlName": "Joshua Heintzeman",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "senate:6",
+      "leader": "Keri Heintzeman",
+      "leaderParty": "R",
+      "lrlId": "15651",
+      "lrlName": "Keri Heintzeman",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:7A",
+      "leader": "Spencer Igo",
+      "leaderParty": "R",
+      "lrlId": "15540",
+      "lrlName": "Spencer Igo",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:7B",
+      "leader": "Cal Warwas",
+      "leaderParty": "R",
+      "lrlId": "15648",
+      "lrlName": "Cal Warwas",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:7",
+      "leader": "Robert Farnsworth",
+      "leaderParty": "R",
+      "lrlId": "15579",
+      "lrlName": "Robert D. Farnsworth",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:8A",
+      "leader": "Peter Johnson",
+      "leaderParty": "DFL",
+      "lrlId": "15636",
+      "lrlName": "Peter Johnson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:8B",
+      "leader": "Liish Kozlowski",
+      "leaderParty": "DFL",
+      "lrlId": "15595",
+      "lrlName": "Liish Kozlowski",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:8",
+      "leader": "Jen McEwen",
+      "leaderParty": "DFL",
+      "lrlId": "15537",
+      "lrlName": "Jennifer A McEwen",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:9A",
+      "leader": "Jeff Backer",
+      "leaderParty": "R",
+      "lrlId": "15428",
+      "lrlName": "Jeff Backer",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:9B",
+      "leader": "Tom Murphy",
+      "leaderParty": "R",
+      "lrlId": "15596",
+      "lrlName": "Tom Murphy",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:9",
+      "leader": "Jordan Rasmusson",
+      "leaderParty": "R",
+      "lrlId": "15541",
+      "lrlName": "Jordan Rasmusson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:10A",
+      "leader": "Mark Striemer",
+      "leaderParty": "R",
+      "lrlId": "15659",
+      "lrlName": "Mark Striemer",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:10B",
+      "leader": "Isaac Schultz",
+      "leaderParty": "R",
+      "lrlId": "15597",
+      "lrlName": "Isaac Schultz",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:10",
+      "leader": "Nathan Wesenberg",
+      "leaderParty": "R",
+      "lrlId": "15580",
+      "lrlName": "Nathan Wesenberg",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:11A",
+      "leader": "Chris Swanson",
+      "leaderParty": "DFL",
+      "lrlId": "15660",
+      "lrlName": "Chris Swanson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:11B",
+      "leader": "Nathan Nelson",
+      "leaderParty": "R",
+      "lrlId": "15534",
+      "lrlName": "Nathan Nelson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:11",
+      "leader": "Jason Rarick",
+      "leaderParty": "R",
+      "lrlId": "15445",
+      "lrlName": "Jason Rarick",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:12A",
+      "leader": "Paul H. Anderson",
+      "leaderParty": "R",
+      "lrlId": "15301",
+      "lrlName": "Paul H. Anderson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:12B",
+      "leader": "Mary Franson",
+      "leaderParty": "R",
+      "lrlId": "15347",
+      "lrlName": "Mary Franson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:12",
+      "leader": "Torrey Westrom",
+      "leaderParty": "R",
+      "lrlId": "10709",
+      "lrlName": "Torrey N. Westrom",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:13A",
+      "leader": "Tanja Goering",
+      "leaderParty": "R",
+      "lrlId": "15661",
+      "lrlName": "Tanja Goering",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:13B",
+      "leader": "Dawn Loberg",
+      "leaderParty": "R",
+      "lrlId": "15662",
+      "lrlName": "Dawn Loberg",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:13",
+      "leader": "Jared J. Gapinski",
+      "leaderParty": "R",
+      "lrlId": "15687",
+      "lrlName": "Jared J. Gapinski",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:14A",
+      "leader": "Abdi Daisane",
+      "leaderParty": "DFL",
+      "lrlId": "15663",
+      "lrlName": "Abdi Daisane",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:14B",
+      "leader": "Zachary \"Zach\" Dorholt",
+      "leaderParty": "DFL",
+      "lrlId": "15393",
+      "lrlName": "Zachary Dorholt",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "senate:14",
+      "leader": "Aric Putnam",
+      "leaderParty": "DFL",
+      "lrlId": "15564",
+      "lrlName": "Aric Putnam",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:15A",
+      "leader": "Bradley L Hennen",
+      "leaderParty": "R",
+      "lrlId": "15664",
+      "lrlName": "Bradley Hennen",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:15B",
+      "leader": "Geri Theis",
+      "leaderParty": "R",
+      "lrlId": "15665",
+      "lrlName": "Geri Theis",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:15",
+      "leader": "Braxton John Seifert",
+      "leaderParty": "R",
+      "lrlId": "15688",
+      "lrlName": "Braxton Seifert",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:16A",
+      "leader": "Scott Van Binsbergen",
+      "leaderParty": "R",
+      "lrlId": "15647",
+      "lrlName": "Scott Van Binsbergen",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:16B",
+      "leader": "Dave Baker",
+      "leaderParty": "R",
+      "lrlId": "15429",
+      "lrlName": "Dave Baker",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:16",
+      "leader": "Andrew R. Lang",
+      "leaderParty": "R",
+      "lrlId": "15489",
+      "lrlName": "Andrew R. Lang",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:17A",
+      "leader": "Dawn Gillman",
+      "leaderParty": "R",
+      "lrlId": "15600",
+      "lrlName": "Dawn Gillman",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:17B",
+      "leader": "Bobbie Harder",
+      "leaderParty": "R",
+      "lrlId": "15601",
+      "lrlName": "Bobbie V. Harder",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "senate:17",
+      "leader": "Glenn H Gruenhagen",
+      "leaderParty": "R",
+      "lrlId": "15350",
+      "lrlName": "Glenn H. Gruenhagen",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:18A",
+      "leader": "Leah Hanson",
+      "leaderParty": "DFL",
+      "lrlId": "15666",
+      "lrlName": "Leah Hanson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:18B",
+      "leader": "Luke Frederick",
+      "leaderParty": "DFL",
+      "lrlId": "15542",
+      "lrlName": "Luke Frederick",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:18",
+      "leader": "Nick Frentz",
+      "leaderParty": "DFL",
+      "lrlId": "15481",
+      "lrlName": "Nick A. Frentz",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:19A",
+      "leader": "Keith Allen",
+      "leaderParty": "R",
+      "lrlId": "15627",
+      "lrlName": "Keith Allen",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:19B",
+      "leader": "Thomas J. Sexton",
+      "leaderParty": "R",
+      "lrlId": "15645",
+      "lrlName": "Thomas J. Sexton",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:19",
+      "leader": "John R. Jasinski",
+      "leaderParty": "R",
+      "lrlId": "15483",
+      "lrlName": "John R. Jasinski",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:20A",
+      "leader": "Pam Altendorf",
+      "leaderParty": "R",
+      "lrlId": "15602",
+      "lrlName": "Pam Altendorf",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:20B",
+      "leader": "Sara Bertschinger",
+      "leaderParty": "R",
+      "lrlId": "15667",
+      "lrlName": "Sara Bertschinger",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:20",
+      "leader": "Steven E Jacob",
+      "leaderParty": "R",
+      "lrlId": "15603",
+      "lrlName": "Steven E. Jacob",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:21A",
+      "leader": "Krist Wollum",
+      "leaderParty": "R",
+      "lrlId": "15668",
+      "lrlName": "Krist Wollum",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:21B",
+      "leader": "Marj J Fogelman",
+      "leaderParty": "R",
+      "lrlId": "15604",
+      "lrlName": "Marj J. Fogelman",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:21",
+      "leader": "Chris Knoll",
+      "leaderParty": "R",
+      "lrlId": "15689",
+      "lrlName": "Christopher R. Knoll",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:22A",
+      "leader": "Bjorn Olson",
+      "leaderParty": "R",
+      "lrlId": "15544",
+      "lrlName": "Bjorn Olson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:22B",
+      "leader": "Terry Matthew Stier",
+      "leaderParty": "R",
+      "lrlId": "15646",
+      "lrlName": "Terry M. Stier",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "senate:22",
+      "leader": "Jeremy Munson",
+      "leaderParty": "R",
+      "lrlId": "15496",
+      "lrlName": "Jeremy Munson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:23A",
+      "leader": "Nick Ronnenberg",
+      "leaderParty": "R",
+      "lrlId": "15669",
+      "lrlName": "Dominick Ronnenberg",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:23B",
+      "leader": "Patricia Mueller",
+      "leaderParty": "R",
+      "lrlId": "15561",
+      "lrlName": "Patricia K. Mueller",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "senate:23",
+      "leader": "Gene Dornink",
+      "leaderParty": "R",
+      "lrlId": "15560",
+      "lrlName": "Gene Dornink",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:24A",
+      "leader": "Duane Quam",
+      "leaderParty": "R",
+      "lrlId": "15366",
+      "lrlName": "Duane Quam II",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:24B",
+      "leader": "Tina Liebling",
+      "leaderParty": "DFL",
+      "lrlId": "12268",
+      "lrlName": "Tina Liebling",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:24",
+      "leader": "Simon Glaser",
+      "leaderParty": "DFL",
+      "lrlId": "15702",
+      "lrlName": "Simon Glaser",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:25A",
+      "leader": "Kim Hicks",
+      "leaderParty": "DFL",
+      "lrlId": "15605",
+      "lrlName": "Kimberly C Hicks",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:25B",
+      "leader": "Andy Smith",
+      "leaderParty": "DFL",
+      "lrlId": "15606",
+      "lrlName": "Andrew Smith",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "senate:25",
+      "leader": "Liz Boldon",
+      "leaderParty": "DFL",
+      "lrlId": "15545",
+      "lrlName": "Liz Boldon",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:26A",
+      "leader": "Dan Wilson",
+      "leaderParty": "DFL",
+      "lrlId": "15670",
+      "lrlName": "Dan Wilson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:26B",
+      "leader": "Gregory M. Davids",
+      "leaderParty": "R",
+      "lrlId": "10123",
+      "lrlName": "Gregory M. Davids",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:26",
+      "leader": "Cherie Johnson",
+      "leaderParty": "R",
+      "lrlId": "15690",
+      "lrlName": "Cherie Johnson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:27A",
+      "leader": "Shane Mekeland",
+      "leaderParty": "R",
+      "lrlId": "15500",
+      "lrlName": "Shane Mekeland",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:27B",
+      "leader": "Bryan Lawrence",
+      "leaderParty": "R",
+      "lrlId": "15626",
+      "lrlName": "Bryan Lawrence",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:27",
+      "leader": "Andrew Mathews",
+      "leaderParty": "R",
+      "lrlId": "15491",
+      "lrlName": "Andrew Mathews",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:28A",
+      "leader": "James \"Jimmy\" Gordon",
+      "leaderParty": "R",
+      "lrlId": "15632",
+      "lrlName": "James Gordon",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:28B",
+      "leader": "Max Rymer",
+      "leaderParty": "R",
+      "lrlId": "15643",
+      "lrlName": "Max Rymer",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:28",
+      "leader": "Mark Koran",
+      "leaderParty": "R",
+      "lrlId": "15487",
+      "lrlName": "Mark W. Koran",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:29A",
+      "leader": "Joe McDonald",
+      "leaderParty": "R",
+      "lrlId": "15360",
+      "lrlName": "Joe McDonald",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:29B",
+      "leader": "Marion (O'Neill) Rarick",
+      "leaderParty": "R",
+      "lrlId": "15409",
+      "lrlName": "Marion Rarick",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "senate:29",
+      "leader": "Michael Holmstrom Jr",
+      "leaderParty": "R",
+      "lrlId": "15653",
+      "lrlName": "Michael W. Holmstrom Jr.",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:30A",
+      "leader": "Walter Hudson",
+      "leaderParty": "R",
+      "lrlId": "15607",
+      "lrlName": "Walter Hudson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:30B",
+      "leader": "Chad Westberg",
+      "leaderParty": "R",
+      "lrlId": "15671",
+      "lrlName": "Chad Westberg",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:30",
+      "leader": "Eric Lucero",
+      "leaderParty": "R",
+      "lrlId": "15438",
+      "lrlName": "Eric Lucero",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:31A",
+      "leader": "Harry Niska",
+      "leaderParty": "R",
+      "lrlId": "15608",
+      "lrlName": "Harry Niska",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:31B",
+      "leader": "Peggy Scott",
+      "leaderParty": "R",
+      "lrlId": "15314",
+      "lrlName": "Peggy Scott",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:31",
+      "leader": "Calvin Bahr",
+      "leaderParty": "R",
+      "lrlId": "15455",
+      "lrlName": "Calvin K. Bahr",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:32A",
+      "leader": "Nolan West",
+      "leaderParty": "R",
+      "lrlId": "15476",
+      "lrlName": "Nolan West",
+      "status": "recount_requires_certification"
+    },
+    {
+      "seat": "house:32B",
+      "leader": "Matt Norris",
+      "leaderParty": "DFL",
+      "lrlId": "15609",
+      "lrlName": "Matt Norris",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:32",
+      "leader": "Chris Ford",
+      "leaderParty": "DFL",
+      "lrlId": "15691",
+      "lrlName": "Chris Ford",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:33A",
+      "leader": "Stacey Stout",
+      "leaderParty": "R",
+      "lrlId": "15672",
+      "lrlName": "Stacey Stout",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:33B",
+      "leader": "Josiah Hill",
+      "leaderParty": "DFL",
+      "lrlId": "15611",
+      "lrlName": "Josiah Hill",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:33",
+      "leader": "Karin Housley",
+      "leaderParty": "R",
+      "lrlId": "15382",
+      "lrlName": "Karin Housley",
+      "status": "recount_requires_certification"
+    },
+    {
+      "seat": "house:34A",
+      "leader": "Jason Heaser",
+      "leaderParty": "DFL",
+      "lrlId": "15673",
+      "lrlName": "Jason Heaser",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:34B",
+      "leader": "Xp Lee",
+      "leaderParty": "DFL",
+      "lrlId": "15652",
+      "lrlName": "Xp Lee",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:34",
+      "leader": "John Hoffman",
+      "leaderParty": "DFL",
+      "lrlId": "15381",
+      "lrlName": "John A. Hoffman",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:35A",
+      "leader": "Zack Stephenson",
+      "leaderParty": "DFL",
+      "lrlId": "15507",
+      "lrlName": "Zack Stephenson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:35B",
+      "leader": "Kari Rehrauer",
+      "leaderParty": "DFL",
+      "lrlId": "15640",
+      "lrlName": "Kari Rehrauer",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:35",
+      "leader": "Angela Nelson",
+      "leaderParty": "DFL",
+      "lrlId": "15692",
+      "lrlName": "Angela Nelson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:36A",
+      "leader": "Jim DeMay",
+      "leaderParty": "DFL",
+      "lrlId": "15674",
+      "lrlName": "Jim DeMay",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:36B",
+      "leader": "Brion Curran",
+      "leaderParty": "DFL",
+      "lrlId": "15614",
+      "lrlName": "Brion Curran",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:36",
+      "leader": "Heather Gustafson",
+      "leaderParty": "DFL",
+      "lrlId": "15582",
+      "lrlName": "Heather Gustafson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:37A",
+      "leader": "Tom McKee",
+      "leaderParty": "R",
+      "lrlId": "15675",
+      "lrlName": "Tom McKee",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:37B",
+      "leader": "Kristin Bahner",
+      "leaderParty": "DFL",
+      "lrlId": "15505",
+      "lrlName": "Kristin Bahner",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:37",
+      "leader": "Kristy Janigo",
+      "leaderParty": "DFL",
+      "lrlId": "15693",
+      "lrlName": "Kristy A. Janigo",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:38A",
+      "leader": "Huldah Momanyi-Hiltsley",
+      "leaderParty": "DFL",
+      "lrlId": "15634",
+      "lrlName": "Huldah Momanyi-Hiltsley",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:38B",
+      "leader": "Samantha Vang",
+      "leaderParty": "DFL",
+      "lrlId": "15510",
+      "lrlName": "Samantha Vang",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:38",
+      "leader": "Susan Pha",
+      "leaderParty": "DFL",
+      "lrlId": "15583",
+      "lrlName": "Susan Pha",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:39A",
+      "leader": "Aaron Klemz",
+      "leaderParty": "DFL",
+      "lrlId": "15676",
+      "lrlName": "Aaron Klemz",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:39B",
+      "leader": "Amáda Márquez Simula",
+      "leaderParty": "DFL",
+      "lrlId": "15677",
+      "lrlName": "Amáda Márquez Simula",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:39",
+      "leader": "Mary K Kunesh",
+      "leaderParty": "DFL",
+      "lrlId": "15466",
+      "lrlName": "Mary K. Kunesh",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:40A",
+      "leader": "Aisha Elmquist",
+      "leaderParty": "DFL",
+      "lrlId": "15678",
+      "lrlName": "Aisha Elmquist",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:40B",
+      "leader": "David Gottfried",
+      "leaderParty": "DFL",
+      "lrlId": "15650",
+      "lrlName": "David Gottfried",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:40",
+      "leader": "John Marty",
+      "leaderParty": "DFL",
+      "lrlId": "10403",
+      "lrlName": "John J. Marty",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:41A",
+      "leader": "Cole Birkeland",
+      "leaderParty": "DFL",
+      "lrlId": "15679",
+      "lrlName": "Cole Birkeland",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:41B",
+      "leader": "Jen Fox",
+      "leaderParty": "DFL",
+      "lrlId": "15680",
+      "lrlName": "Jen Fox",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:41",
+      "leader": "Judy Seeberger",
+      "leaderParty": "DFL",
+      "lrlId": "15584",
+      "lrlName": "Judy Seeberger",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:42A",
+      "leader": "Ned Carroll",
+      "leaderParty": "DFL",
+      "lrlId": "15617",
+      "lrlName": "Ned Carroll",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:42B",
+      "leader": "Ginny Klevorn",
+      "leaderParty": "DFL",
+      "lrlId": "15512",
+      "lrlName": "Ginny Klevorn",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:42",
+      "leader": "Bonnie Westlin",
+      "leaderParty": "DFL",
+      "lrlId": "15585",
+      "lrlName": "Bonnie S. Westlin",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:43A",
+      "leader": "Kyrstin Schuette",
+      "leaderParty": "DFL",
+      "lrlId": "15681",
+      "lrlName": "Kyrstin Schuette",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:43B",
+      "leader": "Jess Lewis",
+      "leaderParty": "DFL",
+      "lrlId": "15682",
+      "lrlName": "Jess Lewis",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:43",
+      "leader": "Mike Freiberg",
+      "leaderParty": "DFL",
+      "lrlId": "15398",
+      "lrlName": "Mike Freiberg",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:44A",
+      "leader": "Peter M Fischer",
+      "leaderParty": "DFL",
+      "lrlId": "15396",
+      "lrlName": "Peter Fischer",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:44B",
+      "leader": "Leon M. Lillie",
+      "leaderParty": "DFL",
+      "lrlId": "12269",
+      "lrlName": "Leon M. Lillie",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:44",
+      "leader": "Sam Rosemark",
+      "leaderParty": "DFL",
+      "lrlId": "15694",
+      "lrlName": "Samuel J. Rosemark",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:45A",
+      "leader": "Andrew Myers",
+      "leaderParty": "R",
+      "lrlId": "15618",
+      "lrlName": "Andrew Myers",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:45B",
+      "leader": "Patty Acomb",
+      "leaderParty": "DFL",
+      "lrlId": "15513",
+      "lrlName": "Patty Acomb",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:45",
+      "leader": "Ann Johnson Stewart",
+      "leaderParty": "DFL",
+      "lrlId": "15555",
+      "lrlName": "Ann M. Johnson Stewart",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:46A",
+      "leader": "Larry Kraft",
+      "leaderParty": "DFL",
+      "lrlId": "15619",
+      "lrlName": "Larry Kraft",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:46B",
+      "leader": "Cheryl Youakim",
+      "leaderParty": "DFL",
+      "lrlId": "15450",
+      "lrlName": "Cheryl Youakim",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:46",
+      "leader": "Ron Latz",
+      "leaderParty": "DFL",
+      "lrlId": "10772",
+      "lrlName": "Ronald Steven Latz",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:47A",
+      "leader": "Shelley Buck",
+      "leaderParty": "DFL",
+      "lrlId": "15655",
+      "lrlName": "Shelley Buck",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:47B",
+      "leader": "Ethan Cha",
+      "leaderParty": "DFL",
+      "lrlId": "15621",
+      "lrlName": "Ethan Cha",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:47",
+      "leader": "Amanda Hemmingsen-Jaeger",
+      "leaderParty": "DFL",
+      "lrlId": "15620",
+      "lrlName": "Amanda Hemmingsen-Jaeger",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:48A",
+      "leader": "Jim Nash",
+      "leaderParty": "R",
+      "lrlId": "15441",
+      "lrlName": "Jim Nash",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:48B",
+      "leader": "Lucille \"Lucy\" Rehm",
+      "leaderParty": "DFL",
+      "lrlId": "15622",
+      "lrlName": "Lucille Rehm",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "senate:48",
+      "leader": "Julia Coleman",
+      "leaderParty": "R",
+      "lrlId": "15556",
+      "lrlName": "Julia E. Coleman",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:49A",
+      "leader": "Alex Falconer",
+      "leaderParty": "DFL",
+      "lrlId": "15630",
+      "lrlName": "Alexander Falconer",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:49B",
+      "leader": "Carlie Kotyza-Witthuhn",
+      "leaderParty": "DFL",
+      "lrlId": "15515",
+      "lrlName": "Carlie Kotyza-Witthuhn",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:49",
+      "leader": "Krish Subrahmanian",
+      "leaderParty": "DFL",
+      "lrlId": "15695",
+      "lrlName": "Krishnan Subrahmanian",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:50A",
+      "leader": "Julie Greene",
+      "leaderParty": "DFL",
+      "lrlId": "15633",
+      "lrlName": "Julie Greene",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:50B",
+      "leader": "Steve Elkins",
+      "leaderParty": "DFL",
+      "lrlId": "15517",
+      "lrlName": "Steve Elkins",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:50",
+      "leader": "Karla Hult",
+      "leaderParty": "DFL",
+      "lrlId": "15696",
+      "lrlName": "Karla E. Hult",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:51A",
+      "leader": "Michael Howard",
+      "leaderParty": "DFL",
+      "lrlId": "15518",
+      "lrlName": "Michael Howard",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:51B",
+      "leader": "Nathan Coulter",
+      "leaderParty": "DFL",
+      "lrlId": "15567",
+      "lrlName": "Nathan Coulter",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:51",
+      "leader": "Simon Trautmann Cordova",
+      "leaderParty": "DFL",
+      "lrlId": "15697",
+      "lrlName": "Simon Trautmann Cordova",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:52A",
+      "leader": "Christos Roy Jensen",
+      "leaderParty": "DFL",
+      "lrlId": "15683",
+      "lrlName": "Christos Jensen",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:52B",
+      "leader": "Bianca Virnig",
+      "leaderParty": "DFL",
+      "lrlId": "15625",
+      "lrlName": "Bianca Ward Virnig",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "senate:52",
+      "leader": "Liz Reyer",
+      "leaderParty": "DFL",
+      "lrlId": "15549",
+      "lrlName": "Liz Reyer",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:53A",
+      "leader": "Mary Frances Clardy",
+      "leaderParty": "DFL",
+      "lrlId": "15568",
+      "lrlName": "Mary Frances Clardy",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:53B",
+      "leader": "Rick Hansen",
+      "leaderParty": "DFL",
+      "lrlId": "12282",
+      "lrlName": "Rick Hansen",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:53",
+      "leader": "Paul Cumings",
+      "leaderParty": "DFL",
+      "lrlId": "15698",
+      "lrlName": "Paul Cumings",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:54A",
+      "leader": "Brad Tabke",
+      "leaderParty": "DFL",
+      "lrlId": "15523",
+      "lrlName": "Brad Tabke",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:54B",
+      "leader": "Natalie Barnes",
+      "leaderParty": "R",
+      "lrlId": "15684",
+      "lrlName": "Natalie Barnes",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:54",
+      "leader": "Rick Olson",
+      "leaderParty": "DFL",
+      "lrlId": "15701",
+      "lrlName": "Richard Olson",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:55A",
+      "leader": "Jessica Hanson",
+      "leaderParty": "DFL",
+      "lrlId": "15563",
+      "lrlName": "Jessica Hanson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:55B",
+      "leader": "Hunter Cantrell",
+      "leaderParty": "DFL",
+      "lrlId": "15524",
+      "lrlName": "Hunter Cantrell",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:55",
+      "leader": "Lindsey Port",
+      "leaderParty": "DFL",
+      "lrlId": "15557",
+      "lrlName": "Lindsey Port",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:56A",
+      "leader": "Robert Bierman",
+      "leaderParty": "DFL",
+      "lrlId": "15526",
+      "lrlName": "Robert Bierman",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:56B",
+      "leader": "John Huot",
+      "leaderParty": "DFL",
+      "lrlId": "15527",
+      "lrlName": "John Huot",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:56",
+      "leader": "Erin Maye Quade",
+      "leaderParty": "DFL",
+      "lrlId": "15473",
+      "lrlName": "Erin K. Maye Quade",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:57A",
+      "leader": "Jon Koznick",
+      "leaderParty": "R",
+      "lrlId": "15436",
+      "lrlName": "Jon Koznick",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:57B",
+      "leader": "Brian Cohn",
+      "leaderParty": "DFL",
+      "lrlId": "15685",
+      "lrlName": "Brian Cohn",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:57",
+      "leader": "Zach Duckworth",
+      "leaderParty": "R",
+      "lrlId": "15558",
+      "lrlName": "Zach Duckworth",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:58A",
+      "leader": "Kristi Pursell",
+      "leaderParty": "DFL",
+      "lrlId": "15571",
+      "lrlName": "Kristi Pursell",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:58B",
+      "leader": "Drew Roach",
+      "leaderParty": "R",
+      "lrlId": "15642",
+      "lrlName": "Drew Roach",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:58",
+      "leader": "Mark Legvold",
+      "leaderParty": "DFL",
+      "lrlId": "15699",
+      "lrlName": "Mark O. Legvold",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:59A",
+      "leader": "Fue Lee",
+      "leaderParty": "DFL",
+      "lrlId": "15468",
+      "lrlName": "Fue Lee",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:59B",
+      "leader": "Esther Agbaje",
+      "leaderParty": "DFL",
+      "lrlId": "15551",
+      "lrlName": "Esther Agbaje",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:59",
+      "leader": "Bobby Joe Champion",
+      "leaderParty": "DFL",
+      "lrlId": "15317",
+      "lrlName": "Bobby Joe Champion",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:60A",
+      "leader": "Sydney Jordan",
+      "leaderParty": "DFL",
+      "lrlId": "15535",
+      "lrlName": "Sydney Jordan",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:60B",
+      "leader": "Mohamud Noor",
+      "leaderParty": "DFL",
+      "lrlId": "15528",
+      "lrlName": "Mohamud Noor",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:60",
+      "leader": "Doron Clark",
+      "leaderParty": "DFL",
+      "lrlId": "15649",
+      "lrlName": "Doron Clark",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:61A",
+      "leader": "Katie Jones",
+      "leaderParty": "DFL",
+      "lrlId": "15638",
+      "lrlName": "Katie Jones",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:61B",
+      "leader": "Jamie Long",
+      "leaderParty": "DFL",
+      "lrlId": "15529",
+      "lrlName": "Jamie Long",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:61",
+      "leader": "Scott Dibble",
+      "leaderParty": "DFL",
+      "lrlId": "10142",
+      "lrlName": "D. Scott Dibble",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:62A",
+      "leader": "Aisha Gomez",
+      "leaderParty": "DFL",
+      "lrlId": "15531",
+      "lrlName": "Aisha Gomez",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:62B",
+      "leader": "Anquam Mahamoud",
+      "leaderParty": "DFL",
+      "lrlId": "15639",
+      "lrlName": "Anquam Mahamoud",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:62",
+      "leader": "Omar Fateh",
+      "leaderParty": "DFL",
+      "lrlId": "15559",
+      "lrlName": "Omar Fateh",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:63A",
+      "leader": "Samantha Sencer-Mura",
+      "leaderParty": "DFL",
+      "lrlId": "15572",
+      "lrlName": "Samantha Sencer-Mura",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:63B",
+      "leader": "Emma Greenman",
+      "leaderParty": "DFL",
+      "lrlId": "15552",
+      "lrlName": "Emma Greenman",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:63",
+      "leader": "Zaynab Mohamed",
+      "leaderParty": "DFL",
+      "lrlId": "15588",
+      "lrlName": "Zaynab Mohamed",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:64A",
+      "leader": "Meg Luger-Nikolai",
+      "leaderParty": "DFL",
+      "lrlId": "15654",
+      "lrlName": "Meg Luger-Nikolai",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:64B",
+      "leader": "Dave Pinto",
+      "leaderParty": "DFL",
+      "lrlId": "15444",
+      "lrlName": "Dave Pinto",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:64",
+      "leader": "Erin Murphy",
+      "leaderParty": "DFL",
+      "lrlId": "15284",
+      "lrlName": "Erin P. Murphy",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:65A",
+      "leader": "Samakab Hussein",
+      "leaderParty": "DFL",
+      "lrlId": "15573",
+      "lrlName": "Samakab Hussein",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:65B",
+      "leader": "Sebastian Ellefson",
+      "leaderParty": "DFL",
+      "lrlId": "15686",
+      "lrlName": "Sebastian Ellefson",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:65",
+      "leader": "Robyn Gulley",
+      "leaderParty": "DFL",
+      "lrlId": "15700",
+      "lrlName": "Robyn Gulley",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:66A",
+      "leader": "Leigh Finke",
+      "leaderParty": "DFL",
+      "lrlId": "15575",
+      "lrlName": "Leigh Dawn Finke",
+      "status": "identity_or_party_mismatch"
+    },
+    {
+      "seat": "house:66B",
+      "leader": "Athena Hollins",
+      "leaderParty": "DFL",
+      "lrlId": "15553",
+      "lrlName": "Athena Hollins",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:66",
+      "leader": "Clare Oumou Verbeten",
+      "leaderParty": "DFL",
+      "lrlId": "15589",
+      "lrlName": "Clare Oumou Verbeten",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:67A",
+      "leader": "Liz Lee",
+      "leaderParty": "DFL",
+      "lrlId": "15576",
+      "lrlName": "Liz Lee",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "house:67B",
+      "leader": "Jay Xiong",
+      "leaderParty": "DFL",
+      "lrlId": "15533",
+      "lrlName": "Jay Xiong",
+      "status": "matched_reported_leader"
+    },
+    {
+      "seat": "senate:67",
+      "leader": "Foung Hawj",
+      "leaderParty": "DFL",
+      "lrlId": "15380",
+      "lrlName": "Foung Hawj",
+      "status": "matched_reported_leader"
+    }
+  ],
+  "limitations": [
+    "Point-in-time parsed official sources, not canvass certification or actual sworn membership.",
+    "LRL digests cover decoded HTML; election digests cover downloaded bytes; the original responses are not stored here.",
+    "All 201 oath dates were reported in the future on the observation date. Three recount districts require separate certification.",
+    "Name differences are observed pairings of same-district same-party records, not independent proof of legal identity."
+  ]
+}

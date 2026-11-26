@@ -53,6 +53,8 @@ async function main() {
     missingSeats: roster.missingSeats, conflictingSeats: roster.conflictingSeats,
     unresolvedTerms: roster.unresolvedTerms, invalidDistricts: roster.invalidDistricts,
     outsideOpeningTerm: roster.outsideOpeningTerm, multiSeatIdentities: roster.multiSeatIdentities,
+    preseasonPlanComplete: errors.length === 0 && refs.length === 201 && result.preseasonPlan.complete,
+    preseasonPlanCounts: result.preseasonPlan.counts,
     authoritativeRosterVerified: false, readyForActivation: false,
   }));
   console.log('OPENING_ROSTER_RECONCILIATION ' + JSON.stringify({
