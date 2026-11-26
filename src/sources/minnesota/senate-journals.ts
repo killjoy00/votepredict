@@ -9,6 +9,7 @@ const SENATE_LEGISLATURE_BY_SESSION: Readonly<Record<string, number>> = {
   '2021-2022': 92,
   '2023-2024': 93,
   '2025-2026': 94,
+  '2027-2028': 95,
 };
 
 export interface SenateJournalLink {
