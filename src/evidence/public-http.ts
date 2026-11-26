@@ -29,6 +29,8 @@ export interface PublicFetchOptions {
   maxBytes?: number;
   userAgent?: string;
   allowContentTypes?: string[];
+  /** Optional bounded archive-first transport, used only by the 2027 worker. */
+  fetcher?: typeof fetch;
 }
 
 function sha256(value: Uint8Array): string {
@@ -260,7 +262,7 @@ export async function fetchPublicPage(rawUrl: string, options: PublicFetchOption
   for (let redirects = 0; redirects <= MAX_REDIRECTS; redirects += 1) {
     const url = new URL(current);
     await assertPublicHost(url);
-    response = await fetch(url, {
+    response = await (options.fetcher ?? fetch)(url, {
       redirect: 'manual',
       headers: {
         'user-agent': options.userAgent ?? 'VotePredict/2.0 public-evidence-pipeline',
