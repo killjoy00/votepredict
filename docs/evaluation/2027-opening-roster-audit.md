@@ -43,3 +43,9 @@ November 26 recheck: the Secretary of State's downloadable district results are 
 ## First House votes
 
 The explicit `--session=2027-2028` House history importer resolves the numeric native key from the official regular-session index only, verifies the summary heading and vote page bill/date scope, and rejects `--skip-existing` for the live biennium because previously observed bill pages can receive new votes. The 2027 Senate identity namespace remains unchanged. Start with a bounded source-only dry run after publication; do not activate production collection through this document.
+
+## November 26 live checkpoint
+
+The secret-free public-source checkpoint in [run 45885033629](https://github.com/killjoy00/votepredict/actions/runs/45885033629) successfully observed 201 LRL directory references, valid SOS district exports for all 134 House and 67 Senate districts (387 and 201 candidate rows respectively), and empty official Revisor search results for both chambers. The House index did not publish a 2027 numeric key and the Senate index request failed. These are point-in-time observations, not proof of future source completeness or roster certification.
+
+Run the separate opening-roster detail reconciliation only when the public directory is populated. It is capped at 201 detail pages, paced sequentially, and stops after five detail errors. It reports each identity mismatch and source-reported term/oath issue, records the SHA-256 of decoded HTML (not original wire bytes), and never certifies or activates the roster. Its isolated GitHub workflow is manual-only on main; the initial dedicated PR performs one observation. No recurring source requests are scheduled.

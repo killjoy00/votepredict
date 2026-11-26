@@ -1,0 +1,26 @@
+name: 2027 opening roster source reconciliation
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-2027-election-roster.ts'
+      - '.github/workflows/2027-opening-roster-reconciliation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reconcile:
+    if: github.repository == 'killjoy00/votepredict' && (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'audit/2027-opening-roster-reconciliation')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: One bounded read-only roster reconciliation
+        run: node --import tsx scripts/audit-2027-election-roster.ts
