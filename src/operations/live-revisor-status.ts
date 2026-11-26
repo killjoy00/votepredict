@@ -35,6 +35,7 @@ type LiveStatusBillRow = {
   existing_introduced_at: string | null;
 };
 
+type LiveStatusAttempt = { billId: string; attemptedAt: string; state: 'succeeded' | 'failed' };
 type FetchedLiveStatus = LiveStatusBillRow & {
   fetchedAt: string;
   sourceSha256: string;
@@ -104,16 +105,46 @@ async function selectBatch(limit: number): Promise<LiveStatusBillRow[]> {
        AND b.metadata #>> '{revisorUniverse,liveSync}' = 'true'
        AND COALESCE(b.metadata #>> '{revisorUniverse,statusXmlUrl}', b.source_url) IS NOT NULL
      ORDER BY
-       CASE WHEN b.metadata #>> '{revisorLiveStatus,fetchedAt}' IS NULL THEN 0 ELSE 1 END,
-       NULLIF(b.metadata #>> '{revisorLiveStatus,fetchedAt}', '')::timestamptz NULLS FIRST,
+       COALESCE(
+         NULLIF(b.metadata #>> '{revisorLiveStatusAttempt,attemptedAt}', '')::timestamptz,
+         NULLIF(b.metadata #>> '{revisorLiveStatus,fetchedAt}', '')::timestamptz
+       ) ASC NULLS FIRST,
        substring(b.identifier from '[0-9]+$')::integer,
        b.identifier
      LIMIT $2`, [LIVE_REVISOR_STATUS_SESSION, limit]);
   return result.rows;
 }
 
+/** Live-only scope validation. The search URI and returned bill must agree;
+ * a wrong-session version or truncated bill document must not become evidence. */
+export function validateLiveRevisorStatusIdentity(identifier: string, statusXmlUrl: string, xml: string): void {
+  const expected = /^(HF|SF)([1-9]\d*)$/.exec(identifier);
+  const url = new URL(statusXmlUrl);
+  const path = /^\/bills\/v1\/95\/(2027|2028)\/0\/(HF|SF)\/(\d+)\/?$/.exec(url.pathname);
+  if (!expected || url.origin !== 'https://api.revisor.mn.gov' || url.username || url.password ||
+      url.search || url.hash || !path || path[2] !== expected[1] || Number(path[3]) !== Number(expected[2])) {
+    throw new Error(`${identifier}: live status URL outside requested regular-session bill scope`);
+  }
+  const root = /^\s*(?:<\?xml[^?]*\?>\s*)?<(?:[A-Z0-9_.-]+:)?BILL\b[^>]*>([\s\S]*)<\/(?:[A-Z0-9_.-]+:)?BILL\s*>\s*$/i.exec(xml.replace(/^\uFEFF/, ''));
+  const type = root?.[1].match(/<(?:[A-Z0-9_.-]+:)?FILE_TYPE\b[^>]*>\s*(HF|SF)\s*<\/(?:[A-Z0-9_.-]+:)?FILE_TYPE\s*>/i)?.[1];
+  const number = root?.[1].match(/<(?:[A-Z0-9_.-]+:)?FILE_NUMBER\b[^>]*>\s*(\d+)\s*<\/(?:[A-Z0-9_.-]+:)?FILE_NUMBER\s*>/i)?.[1];
+  if (!root || type?.toUpperCase() !== expected[1] || number === undefined || Number(number) !== Number(expected[2])) {
+    throw new Error(`${identifier}: returned status document does not identify the requested bill`);
+  }
+  for (const version of parseRevisorTextVersions(xml)) {
+    // Official bill document names encode year/session, file type, and number.
+    // Do not assign a recognized prior-session or different-bill name to this bill.
+    const document = version.documentName?.match(/^(20\d{2})\.(\d+)-(HF|SF)(\d+)-/i);
+    if (document && (!['2027','2028'].includes(document[1]) || document[2] !== '0' ||
+        document[3].toUpperCase() !== expected[1] || Number(document[4]) !== Number(expected[2]))) {
+      throw new Error(`${identifier}: official text version outside requested regular-session bill scope`);
+    }
+  }
+}
+
 async function fetchOne(row: LiveStatusBillRow): Promise<FetchedLiveStatus> {
   const xml = await fetchRevisorStatusXml(row.status_xml_url);
+  validateLiveRevisorStatusIdentity(row.identifier, row.status_xml_url, xml);
   const introduction = parseRevisorIntroductionMetadata({ xml, identifier: row.identifier });
   const currentDate = existingDate(row.existing_introduced_at);
   if (currentDate && introduction.introducedOn && currentDate !== introduction.introducedOn) {
@@ -138,13 +169,17 @@ async function fetchOne(row: LiveStatusBillRow): Promise<FetchedLiveStatus> {
 async function fetchBatch(rows: readonly LiveStatusBillRow[]): Promise<{
   fetched: FetchedLiveStatus[];
   failures: LiveRevisorStatusFailure[];
+  attempts: LiveStatusAttempt[];
 }> {
   const fetched: FetchedLiveStatus[] = [];
   const failures: LiveRevisorStatusFailure[] = [];
+  const attempts: LiveStatusAttempt[] = [];
   for (let offset = 0; offset < rows.length; offset += FETCH_CONCURRENCY) {
     const group = rows.slice(offset, offset + FETCH_CONCURRENCY);
+    const attemptedAt = new Date().toISOString();
     const settled = await Promise.allSettled(group.map(fetchOne));
     settled.forEach((result, index) => {
+      attempts.push({ billId: group[index].bill_id, attemptedAt, state: result.status === 'fulfilled' ? 'succeeded' : 'failed' });
       if (result.status === 'fulfilled') {
         fetched.push(result.value);
       } else {
@@ -155,7 +190,7 @@ async function fetchBatch(rows: readonly LiveStatusBillRow[]): Promise<{
       }
     });
   }
-  return { fetched, failures };
+  return { fetched, failures, attempts };
 }
 
 function introductionMetadata(row: FetchedLiveStatus): Record<string, unknown> | null {
@@ -225,11 +260,11 @@ function resolvedAuthorshipMetadata(
   };
 }
 
-async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
+async function persistFetched(rows: readonly FetchedLiveStatus[], attempts: readonly LiveStatusAttempt[]): Promise<{
   versionsRecorded: number;
   sourceDocumentsRecorded: number;
 }> {
-  if (rows.length === 0) return { versionsRecorded: 0, sourceDocumentsRecorded: 0 };
+  if (attempts.length === 0) return { versionsRecorded: 0, sourceDocumentsRecorded: 0 };
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -410,6 +445,19 @@ async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
       versionsRecorded = versions.rowCount ?? 0;
     }
 
+    // Failed requests advance only the attempt cursor; successful-source
+    // timestamps, document versions and observed passage evidence stay intact.
+    await client.query(`
+      UPDATE bills b
+         SET metadata = b.metadata || jsonb_build_object('revisorLiveStatusAttempt',
+             jsonb_build_object('attemptedAt', a.attempted_at, 'state', a.state)),
+             updated_at = now()
+        FROM jsonb_to_recordset($1::jsonb) AS a(bill_id uuid, attempted_at timestamptz, state text)
+       WHERE b.id = a.bill_id
+         AND (b.metadata #>> '{revisorLiveStatusAttempt,attemptedAt}' IS NULL
+           OR NULLIF(b.metadata #>> '{revisorLiveStatusAttempt,attemptedAt}', '')::timestamptz <= a.attempted_at)`,
+      [JSON.stringify(attempts.map(a => ({bill_id:a.billId, attempted_at:a.attemptedAt, state:a.state})))]);
+
     await client.query('COMMIT');
     return {
       versionsRecorded,
@@ -428,8 +476,8 @@ export async function syncLiveRevisorStatusBatch(limit = LIVE_REVISOR_STATUS_BAT
     throw new Error(`Live Revisor status limit must be between 1 and ${LIVE_REVISOR_STATUS_BATCH_SIZE}`);
   }
   const selected = await selectBatch(limit);
-  const { fetched, failures } = await fetchBatch(selected);
-  const persisted = await persistFetched(fetched);
+  const { fetched, failures, attempts } = await fetchBatch(selected);
+  const persisted = await persistFetched(fetched, attempts);
   return {
     session: LIVE_REVISOR_STATUS_SESSION,
     parserVersion: LIVE_REVISOR_STATUS_PARSER_VERSION,

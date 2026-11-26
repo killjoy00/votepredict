@@ -1,0 +1,7 @@
+# 2027 live Revisor status collection recovery
+
+The earlier clean-database rehearsal covered a successful bootstrap, but not wrong-bill responses or failure/recovery. A status request must identify the same bill and regular 95th Legislature session as the validated catalog URI; a recognized official text version must agree. Rejected responses must not update the last successful status observation or seed a new prospective forecast from stale evidence.
+
+Every attempted bill records an independent latest-attempt timestamp and succeeded/failed state. Selection orders by most recent attempt (falling back to legacy last-success timestamp), with unattempted bills first. This prevents repeated failed requests at the front of the bounded batch from indefinitely starving untouched bills. A subsequent successful response restores eligibility; failed attempts do not mark a successful observation. Partial failure is surfaced as a nonzero command exit after the available successful results are retained. Existing frozen model weights, cohort limits, evidence protocol, and scoring rules are unchanged; no production execution or recurring collection is authorized by this change.
+
+The disposable PostgreSQL opening-day rehearsal injects a valid-looking wrong-bill response, verifies rejection and independent failure cursor, verifies another untouched bill is reached, restores the correct source, and checks a failed refresh blocks prospective seeding until recovery. This is a synthetic fault injection, not verification of yet-unpublished 2027 status documents.

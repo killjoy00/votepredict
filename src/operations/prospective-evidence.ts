@@ -67,6 +67,7 @@ export async function ensureProspectiveEvidenceForecasts(
            )
            AND b.metadata #>> '{sourceChamberPassage,outcome}' IS NULL
            AND b.metadata #>> '{revisorLiveStatus,passageActionObserved}' IS DISTINCT FROM 'true'
+           AND b.metadata #>> '{revisorLiveStatusAttempt,state}' IS DISTINCT FROM 'failed'
            AND EXISTS (
              SELECT 1
                FROM memberships m
