@@ -5,12 +5,21 @@
  * Usage:
  * npm run verify:lifecycle:p8:offline -- --model-json /path/to/original/model.json
  */
+import { loadRetainedP8Archive } from '../src/evaluation/lifecycle-p8-retained-archive.js';
 import { loadPinnedP8FrozenModelJsonFile } from '../src/evaluation/lifecycle-p8-frozen-model-verify.js';
 
 async function main(): Promise<void> {
+  // Default to the permanent, byte-identical checked-in original archive.
+  if (process.argv.length === 2) {
+    const { verification, archiveVerification, artifact } = await loadRetainedP8Archive();
+    console.log(JSON.stringify({check:'retained-frozen-p8-original-archive',verdict:'passed',
+      ...verification,...archiveVerification,frozenBuildSha:artifact.codeSha,
+      targetSession:artifact.modelContent.targetSession,revealNotBefore:artifact.policy.revealNotBefore}));
+    return;
+  }
   if (process.argv.length !== 4 || process.argv[2] !== '--model-json' ||
       !process.argv[3] || /^https?:/i.test(process.argv[3])) {
-    throw new Error('Pass exactly --model-json /path/to/original/model.json; URLs and live sources forbidden');
+    throw new Error('Pass no arguments for the retained ZIP, or --model-json /path/to/original/model.json; URLs and live sources forbidden');
   }
   const { verification, artifact } = await loadPinnedP8FrozenModelJsonFile(process.argv[3]);
   console.log(JSON.stringify({

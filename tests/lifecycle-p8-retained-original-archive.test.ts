@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import test from 'node:test';
+import { P8_RETAINED_ARCHIVE_PATH, P8_RETAINED_SUMMARY_SHA256, verifyRetainedP8Archive } from '../src/evaluation/lifecycle-p8-retained-archive.js';
+import { P8_FROZEN_MODEL_ARCHIVE_SHA256, P8_FROZEN_MODEL_JSON_RAW_SHA256 } from '../src/evaluation/lifecycle-p8-frozen-model-verify.js';
+import { LIFECYCLE_P8_INTRO_MODEL_CONTENT_SHA256 } from '../src/evaluation/lifecycle-p8-prospective.js';
+
+const sha = (input: string | Uint8Array) => createHash('sha256').update(input).digest('hex');
+test('the complete original P8 ZIP remains recoverable without GitHub Actions, database or network', () => {
+  const raw = readFileSync(P8_RETAINED_ARCHIVE_PATH);
+  const receipt = JSON.parse(readFileSync('data/evaluation/frozen-lifecycle-p8-2027-2028-retention.json','utf8'));
+  const result = verifyRetainedP8Archive(raw);
+  assert.equal(sha(raw),P8_FROZEN_MODEL_ARCHIVE_SHA256);
+  assert.equal(receipt.archiveSha256,sha(raw));
+  assert.equal(receipt.archiveBytes,raw.length);
+  assert.equal(receipt.sourceRunId,35910925882);
+  assert.equal(receipt.sourceArtifactId,10772991611);
+  assert.equal(sha(result.modelJson),P8_FROZEN_MODEL_JSON_RAW_SHA256);
+  assert.equal(sha(result.summaryJson),P8_RETAINED_SUMMARY_SHA256);
+  assert.equal(result.archiveVerification.independentWormVerified,false);
+  assert.equal(result.verification.predictionsComputed,false);
+  assert.equal(result.verification.servingChanged,false);
+  assert.equal(result.verification.productionCaptureActivated,false);
+  assert.equal(result.artifact.policy.revealNotBefore,'2028-07-01T00:00:00.000Z');
+  assert.equal(result.artifact.policy.targetSessionOutcomesUsedForFit,false);
+  assert.equal(result.artifact.policy.automaticPromotionAllowed,false);
+  const { provenance: _provenance, ...intro } = JSON.parse(readFileSync('data/evaluation/frozen-introduction-v4-2027-2028-candidate.json','utf8'));
+  assert.equal(sha(JSON.stringify(intro)),LIFECYCLE_P8_INTRO_MODEL_CONTENT_SHA256);
+  assert.deepEqual(intro,result.artifact.modelContent.introduction.model);
+  const tampered = Buffer.from(raw);
+  tampered[100] ^= 1;
+  assert.throws(()=>verifyRetainedP8Archive(tampered),/original ZIP bytes/);
+  assert.throws(()=>verifyRetainedP8Archive(raw.subarray(0,raw.length-1)),/original ZIP bytes/);
+});
