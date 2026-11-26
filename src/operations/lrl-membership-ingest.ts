@@ -1,4 +1,5 @@
 import type { PoolClient } from 'pg';
+import { assert2027OpeningRosterIntegrity } from './2027-opening-roster-audit';
 import { pool } from '@/lib/db';
 import {
   listLrlMemberships,
@@ -7,6 +8,7 @@ import {
 import { officialMembershipAliasesForLrlId } from '@/sources/minnesota/official-member-aliases';
 import {
   isMinnesotaHouseSessionCurrent,
+  minnesotaLocalDate,
   type MinnesotaHouseSession,
 } from '@/sources/minnesota/sessions';
 
@@ -34,7 +36,11 @@ async function ensureSession(
      ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name RETURNING id`,
   );
   const jurisdictionId = jurisdiction.rows[0].id;
-  const isCurrent = isMinnesotaHouseSessionCurrent(session, checkedAt);
+  const newer = await client.query<{ exists: boolean }>(
+    'SELECT EXISTS (SELECT 1 FROM legislative_sessions WHERE jurisdiction_id=$1 AND starts_on>$2::date AND is_current=true) AS exists',
+    [jurisdictionId, session.startsOn],
+  );
+  const isCurrent = isMinnesotaHouseSessionCurrent(session, checkedAt) && !newer.rows[0].exists;
   if (isCurrent) {
     await client.query(
       `UPDATE legislative_sessions SET is_current=false WHERE jurisdiction_id=$1 AND slug<>$2 AND is_current=true`,
@@ -144,9 +150,37 @@ export async function ingestLrlMembershipSession(
   try {
     await client.query('BEGIN');
     try {
+      // The jurisdiction upsert serializes initial verification with rollover.
+      await client.query(`INSERT INTO jurisdictions (slug,name,country_code) VALUES ('us-mn','Minnesota','US')
+        ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name`);
+      let openingImport = false;
+      if (session.slug === '2027-2028') {
+        const existing = await client.query<{ is_current: boolean }>(
+          `SELECT s.is_current FROM legislative_sessions s JOIN jurisdictions j ON j.id=s.jurisdiction_id
+           WHERE j.slug='us-mn' AND s.slug=$1`, [session.slug]);
+        // Gate initial staging/activation. Later session refreshes must account
+        // for real replacements rather than freezing the opening cohort.
+        openingImport = !existing.rows[0]?.is_current;
+        if (openingImport) assert2027OpeningRosterIntegrity(records, minnesotaLocalDate(checkedAt));
+      }
       // Session rollover, legislator, membership and alias changes are atomic.
       const context = await ensureSession(client, session, checkedAt);
       for (const record of records) await persistRecord(client, context, record);
+      if (openingImport) {
+        // A previously staged stale identity must not survive an otherwise valid
+        // incoming roster. Verify persisted identities before committing; never
+        // silently delete historical membership records.
+        const persisted = await client.query<{ chamber: string; external_key: string; district: string }>(
+          `SELECT c.slug AS chamber, l.external_key, m.district
+             FROM memberships m JOIN chambers c ON c.id=m.chamber_id
+             JOIN legislators l ON l.id=m.legislator_id
+            WHERE m.session_id=$1`, [context.sessionId]);
+        const expected = new Set(records.map((r) => JSON.stringify([r.chamber, `lrl:${r.lrlId}`, r.district])));
+        if (persisted.rows.length !== expected.size ||
+            persisted.rows.some((r) => !expected.has(JSON.stringify([r.chamber, r.external_key, r.district])))) {
+          throw new Error('2027 opening roster persistence differs from verified source identities');
+        }
+      }
       await client.query('COMMIT');
     } catch (error) {
       await client.query('ROLLBACK');

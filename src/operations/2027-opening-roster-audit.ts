@@ -107,3 +107,20 @@ export function assess2027OpeningRoster(
     singleCandidates,
   };
 }
+
+/**
+ * Opening import integrity, not independent election certification.
+ * Never infer a vacancy from a missing record. A genuine vacancy requires
+ * a separate authoritative reconciliation path before activation.
+ */
+export function assert2027OpeningRosterIntegrity(records: readonly HistoricalMembershipRecord[], observedOn: string): void {
+  const audit = assess2027OpeningRoster(records, observedOn);
+  if (!audit.completeSourceTermCoverage || audit.outsideOpeningTerm.length || records.length !== audit.expectedSeats.total) {
+    throw new Error(`2027 opening roster integrity failed: ${JSON.stringify({
+      records: records.length, singleCandidateSeats: audit.singleCandidateSeats,
+      missingSeats: audit.missingSeats, conflictingSeats: audit.conflictingSeats,
+      unresolvedTerms: audit.unresolvedTerms, invalidDistricts: audit.invalidDistricts,
+      outsideOpeningTerm: audit.outsideOpeningTerm, multiSeatIdentities: audit.multiSeatIdentities,
+    })}`);
+  }
+}

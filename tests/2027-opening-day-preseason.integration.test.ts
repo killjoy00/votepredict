@@ -33,7 +33,7 @@ function runCleanMigrations(connectionString: string): void {
 function lrlSearchHtml(): string {
   return [
     '<html><body>',
-    ...Array.from({ length: 195 }, (_, index) => {
+    ...Array.from({ length: 201 }, (_, index) => {
       const id = 900001 + index;
       return `<a href="/legdb/fulldetail?id=${id}">Synthetic Legislator ${index + 1}</a>`;
     }),
@@ -43,17 +43,17 @@ function lrlSearchHtml(): string {
 
 function lrlDetailHtml(id: number): string {
   const index = id - 900001;
-  if (index < 0 || index >= 195) throw new Error(`Unexpected synthetic LRL id ${id}`);
-  const house = index < 130;
-  const seat = house ? index + 1 : index - 129;
+  if (index < 0 || index >= 201) throw new Error(`Unexpected synthetic LRL id ${id}`);
+  const house = index < 134;
+  const seat = house ? `${Math.floor(index / 2) + 1}${index % 2 === 0 ? 'A' : 'B'}` : String(index - 133);
   return `<!doctype html><html><body>
     <h1>Synthetic Legislator ${index + 1} - Legislator Record</h1>
     <h2>95th Legislative Session (2027-2028)</h2>
     <p>Body</p><p>${house ? 'House' : 'Senate'}</p>
     <p>District</p><p>${seat}</p>
     <p>Party</p><p>${index % 2 === 0 ? 'Independent' : 'Republican'}</p>
-    <p>Term of Office</p><p>01/01/2027 - 12/31/2028</p>
-    <p>Oath Date</p><p>01/01/2027</p>
+    <p>Term of Office</p><p>01/04/2027 - 12/31/2028</p>
+    <p>Oath Date</p><p>01/12/2027</p>
   </body></html>`;
 }
 
@@ -125,7 +125,7 @@ function billTextHtml(identifier: string): string {
   return `<html><body><main><div id="document"><p>${text}</p></div></main></body></html>`;
 }
 
-function installSyntheticMinnesotaSources(options: { missingSenateDetails: number } = { missingSenateDetails: 0 }): () => void {
+function installSyntheticMinnesotaSources(options: { missingSenateDetails: number; duplicateHouseDistrict?: boolean } = { missingSenateDetails: 0 }): () => void {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async (input: string | URL | Request) => {
     const href = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
@@ -136,8 +136,9 @@ function installSyntheticMinnesotaSources(options: { missingSenateDetails: numbe
     }
     if (url.hostname === 'www.lrl.mn.gov' && /\/legdb\/fulldetail(?:\.aspx)?$/i.test(url.pathname)) {
       const id = Number(url.searchParams.get('ID') ?? url.searchParams.get('id'));
-      const html = lrlDetailHtml(id);
-      const detail = id >= 900001 + 195 - options.missingSenateDetails
+      const original = lrlDetailHtml(id);
+      const html = options.duplicateHouseDistrict && id === 900002 ? original.replace('<p>1B</p>', '<p>1A</p>') : original;
+      const detail = id >= 900001 + 201 - options.missingSenateDetails
         ? html.replace('95th Legislative Session (2027-2028)', '94th Legislative Session (2025-2026)')
         : html;
       return new Response(detail, { status: 200, headers: { 'content-type': 'text/html' } });
@@ -191,7 +192,7 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
 
     process.env.DATABASE_URL = rehearsalUrl;
     process.env.DATABASE_URL_UNPOOLED = rehearsalUrl;
-    const sourceFixture = { missingSenateDetails: 0 };
+    const sourceFixture = { missingSenateDetails: 0, duplicateHouseDistrict: false };
     restoreFetch = installSyntheticMinnesotaSources(sourceFixture);
 
     const dbModule = await import('../src/lib/db/index.js');
@@ -219,7 +220,7 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     const sourceReadiness = await probeOpeningDaySources(openingDay);
     assert.equal(sourceReadiness.readyForLiveBootstrap, true);
     assert.equal(sourceReadiness.failClosed, false);
-    assert.equal(sourceReadiness.lrl.legislatorRefs, 195);
+    assert.equal(sourceReadiness.lrl.legislatorRefs, 201);
     assert.equal(sourceReadiness.revisor.houseBillsInFirst500, 2);
     assert.equal(sourceReadiness.revisor.senateBillsInFirst500, 1);
 
@@ -247,16 +248,21 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
 
     // A plausible search result can hide missing current-session detail pages.
     sourceFixture.missingSenateDetails = 5;
-    await assert.rejects(ingestLrlMembershipSession(session, openingDay), /implausible membership coverage: House=130, Senate=60/);
+    await assert.rejects(ingestLrlMembershipSession(session, openingDay), /implausible membership coverage: House=134, Senate=62/);
     await assertNoPartialRollover();
     sourceFixture.missingSenateDetails = 0;
+    // A 201-person roster can still omit a seat or claim it twice.
+    sourceFixture.duplicateHouseDistrict = true;
+    await assert.rejects(ingestLrlMembershipSession(session, openingDay), /2027 opening roster integrity failed/);
+    await assertNoPartialRollover();
+    sourceFixture.duplicateHouseDistrict = false;
 
     // Force a database error after at least one membership write. The rollover
     // and all membership writes must roll back together in the disposable DB.
     await dbModule.pool.query(`
       CREATE FUNCTION preseason_reject_membership() RETURNS trigger LANGUAGE plpgsql AS $preseason$
       BEGIN
-        IF NEW.district = '2' THEN RAISE EXCEPTION 'synthetic membership write failure'; END IF;
+        IF NEW.district = '2A' THEN RAISE EXCEPTION 'synthetic membership write failure'; END IF;
         RETURN NEW;
       END; $preseason$;
       CREATE TRIGGER preseason_reject_membership BEFORE INSERT ON memberships
@@ -270,7 +276,7 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     }
 
     const roster = await ingestLrlMembershipSession(session, openingDay);
-    assert.deepEqual(roster, { session: '2027-2028', records: 195, house: 130, senate: 65 });
+    assert.deepEqual(roster, { session: '2027-2028', records: 201, house: 134, senate: 67 });
     const rolled = await ensureOpeningDaySessionMetadata();
     assert.equal(rolled.isCurrent, true);
     const currentSessions = await dbModule.pool.query<{ slug: string }>(`
@@ -297,8 +303,8 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
        ORDER BY c.slug
     `);
     assert.deepEqual(membershipCounts.rows, [
-      { chamber: 'house', members: '130' },
-      { chamber: 'senate', members: '65' },
+      { chamber: 'house', members: '134' },
+      { chamber: 'senate', members: '67' },
     ]);
 
     const universe = await syncLiveRevisorUniverse();
