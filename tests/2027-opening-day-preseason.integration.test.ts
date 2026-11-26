@@ -392,11 +392,11 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
       "SELECT id,session_id,originating_chamber_id,title FROM bills WHERE identifier='HF1' AND session_id=(SELECT id FROM legislative_sessions WHERE slug='2027-2028')"
     )).rows[0];
     const { forecastSourceChamberPassageAtIntroduction } = await import('../src/forecasting/introduction-runtime.js');
-    const intro = await forecastSourceChamberPassageAtIntroduction(target.id);
-    assert.equal(intro.targetKind, 'source_chamber_passage');
-    assert.equal(intro.asOfIntroduction, '2027-01-12');
-    assert.equal(intro.model.frozen, true);
-    assert.ok(intro.probability >= 0 && intro.probability <= 1);
+    // The audited serving artifact is restricted to 2025-2026. Until the
+    // existing 2027 preparation/promotion protocol supplies its own artifact,
+    // the introduction runtime must fail closed rather than extrapolate.
+    await assert.rejects(forecastSourceChamberPassageAtIntroduction(target.id),
+      /No frozen introduction model is available for Minnesota session 2027-2028/);
     assert.equal((await ensureProspectiveEvidenceForecasts()).seededForecasts, 0,
       'the separate introduction forecast does not enroll a pre-engrossment bill in the Quick cohort');
 
@@ -543,8 +543,8 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
       '2027-02-02T10:00:00Z','2027-02-02T12:00:00Z');
     assert.notEqual(hash2,hash1);
     assert.equal((await retainedTargetTextAsOf(db,target.id,request.asOf))?.textSha256,hash1);
-    assert.deepEqual(await forecastSourceChamberPassageAtIntroduction(target.id),intro,
-      'an amendment must not change the frozen introduction-stage forecast');
+    await assert.rejects(forecastSourceChamberPassageAtIntroduction(target.id),
+      /No frozen introduction model is available for Minnesota session 2027-2028/);
     assert.equal((await db.query<{text_hash:string}>('SELECT text_hash FROM bill_versions WHERE id=$1',[initialVersion.id])).rows[0].text_hash,initialHash);
     assert.equal((await ensureProspectiveEvidenceForecasts()).seededForecasts,0);
 
