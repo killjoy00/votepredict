@@ -22,8 +22,7 @@ Even 201 single-candidate seats do not certify the active roster. Reconcile the
 results against certified election outcomes (including final recounts), the
 official chamber rosters and actual oath records. Account for genuine vacancies
 explicitly using authoritative source evidence. Do not make up a legislator to
-fill a seat or change historical models. This report is not an activation gate
-yet; #287 tracks the separate cross-source gate and live bootstrap.
+fill a seat or change historical models. The initial LRL import now enforces district-level integrity in the roster transaction. Independent certified election, vacancy and oath reconciliation remain tracked in #287.
 
 Official source references:
 - https://www.sos.mn.gov/election-administration-campaigns/data-maps/2026-election-by-the-numbers/
@@ -38,3 +37,5 @@ individual records and a House members-elect roster. It did not establish
 complete directory coverage, final recount outcomes for every district, or the
 2027 House voting-system native session key. Do not infer that numeric key from
 prior years. The source review did not run this audit against the live directory.
+
+November 26 recheck: the Secretary of State's downloadable district results are distinct from final recount certification. The statewide Senate District 4 recount report (recountId=62) remains explicitly unofficial despite full precinct reporting. The House 32A recount report (recountId=61) likewise carries an unofficial warning; verify the actual canvass certificate. Senate District 33 is reported certified November 19. Do not treat provisional winners or a future oath date as settled opening-day evidence.
