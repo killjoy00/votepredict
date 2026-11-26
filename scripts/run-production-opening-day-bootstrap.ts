@@ -27,6 +27,7 @@ type Readiness = {
 };
 
 type BootstrapState = {
+  isCurrent: boolean;
   houseMembers: number;
   senateMembers: number;
   houseBills: number;
@@ -49,12 +50,14 @@ async function readBootstrapState(connectionString: string): Promise<BootstrapSt
   const pool = new Pool({ connectionString, max: 1 });
   try {
     const result = await pool.query<{
+      is_current: boolean;
       house_members: string;
       senate_members: string;
       house_bills: string;
       senate_bills: string;
     }>(`
       SELECT
+        s.is_current,
         count(DISTINCT m.id) FILTER (WHERE c.slug = 'house')::text AS house_members,
         count(DISTINCT m.id) FILTER (WHERE c.slug = 'senate')::text AS senate_members,
         count(DISTINCT b.id) FILTER (WHERE bc.slug = 'house')::text AS house_bills,
@@ -70,6 +73,7 @@ async function readBootstrapState(connectionString: string): Promise<BootstrapSt
     if (result.rows.length !== 1) throw new Error('2027-2028 bootstrap verification could not resolve the session');
     const row = result.rows[0];
     return {
+      isCurrent: row.is_current,
       houseMembers: Number(row.house_members),
       senateMembers: Number(row.senate_members),
       houseBills: Number(row.house_bills),
@@ -81,7 +85,7 @@ async function readBootstrapState(connectionString: string): Promise<BootstrapSt
 }
 
 function verifyBootstrap(summary: BootstrapState): void {
-  if (summary.houseMembers < 130 || summary.senateMembers < 65) {
+  if (!summary.isCurrent || summary.houseMembers < 130 || summary.senateMembers < 65) {
     throw new Error(`2027 roster remains implausible after bootstrap: ${JSON.stringify(summary)}`);
   }
   if (summary.houseBills + summary.senateBills < 1) {
@@ -119,7 +123,7 @@ async function main() {
 
   const childEnv = { ...process.env, ...runtime };
   const before = await readBootstrapState(connectionString);
-  if (before.houseMembers < 130 || before.senateMembers < 65) {
+  if (!before.isCurrent || before.houseMembers < 130 || before.senateMembers < 65) {
     runChild('scripts/ingest-lrl-memberships.ts', ['--session=2027-2028'], childEnv);
   } else {
     console.log(JSON.stringify({ rosterBootstrap: 'skipped', reason: 'plausible_roster_already_persisted', state: before }));

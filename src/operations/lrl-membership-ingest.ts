@@ -44,7 +44,7 @@ async function ensureSession(
   const legislativeSession = await client.query<{ id: string }>(
     `INSERT INTO legislative_sessions (jurisdiction_id,slug,name,starts_on,ends_on,is_current)
      VALUES ($1,$2,$3,$4,$5,$6)
-     ON CONFLICT (jurisdiction_id,slug) DO UPDATE SET name=EXCLUDED.name,starts_on=EXCLUDED.starts_on,ends_on=EXCLUDED.ends_on,is_current=EXCLUDED.is_current
+     ON CONFLICT (jurisdiction_id,slug) DO UPDATE SET name=EXCLUDED.name,starts_on=EXCLUDED.starts_on,ends_on=EXCLUDED.ends_on,is_current=(legislative_sessions.is_current OR EXCLUDED.is_current)
      RETURNING id`,
     [jurisdictionId, session.slug, session.name, session.startsOn, session.endsOn, isCurrent],
   );

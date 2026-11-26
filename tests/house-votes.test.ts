@@ -98,6 +98,10 @@ test('current-session state rolls from 2025-2026 to 2027-2028 by date', () => {
   const future = getMinnesotaHouseSession('2027-2028');
   assert.equal(isMinnesotaHouseSessionCurrent(current, new Date('2026-12-31T12:00:00Z')), true);
   assert.equal(isMinnesotaHouseSessionCurrent(future, new Date('2026-12-31T12:00:00Z')), false);
-  assert.equal(isMinnesotaHouseSessionCurrent(current, new Date('2027-01-01T12:00:00Z')), false);
-  assert.equal(isMinnesotaHouseSessionCurrent(future, new Date('2027-01-01T12:00:00Z')), true);
+  assert.equal(isMinnesotaHouseSessionCurrent(current, new Date('2027-01-01T12:00:00Z')), true);
+  assert.equal(isMinnesotaHouseSessionCurrent(future, new Date('2027-01-01T12:00:00Z')), false);
+  assert.equal(isMinnesotaHouseSessionCurrent(current, new Date('2027-01-04T05:59:59Z')), true);
+  assert.equal(isMinnesotaHouseSessionCurrent(future, new Date('2027-01-04T05:59:59Z')), false);
+  assert.equal(isMinnesotaHouseSessionCurrent(current, new Date('2027-01-04T06:00:00Z')), false);
+  assert.equal(isMinnesotaHouseSessionCurrent(future, new Date('2027-01-04T06:00:00Z')), true);
 });

@@ -4,8 +4,8 @@ import test from 'node:test';
 import { Pool } from 'pg';
 
 const integrationUrl = process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
-const openingDay = new Date('2027-01-01T12:00:00Z');
-const preOpeningDay = new Date('2026-12-31T12:00:00Z');
+const openingDay = new Date('2027-01-12T12:00:00Z');
+
 
 function databaseUrl(base: string, database: string): string {
   const parsed = new URL(base);
@@ -196,7 +196,7 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
 
     const dbModule = await import('../src/lib/db/index.js');
     appPool = dbModule.pool;
-    const { ensureOpeningDaySessionMetadata, probeOpeningDaySources } = await import('../src/operations/opening-day-readiness.js');
+    const { ensureOpeningDaySessionMetadata, probeOpeningDaySources, runOpeningDayReadiness } = await import('../src/operations/opening-day-readiness.js');
     const { ingestLrlMembershipSession } = await import('../src/operations/lrl-membership-ingest.js');
     const { syncLiveRevisorUniverse } = await import('../src/operations/live-revisor-universe.js');
     const { syncLiveRevisorStatusBatch } = await import('../src/operations/live-revisor-status.js');
@@ -204,7 +204,7 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     const { ensureProspectiveEvidenceForecasts } = await import('../src/operations/prospective-evidence.js');
     const { getMinnesotaHouseSession } = await import('../src/sources/minnesota/sessions.js');
 
-    const prestart = await ensureOpeningDaySessionMetadata(preOpeningDay);
+    const prestart = await ensureOpeningDaySessionMetadata();
     assert.equal(prestart.slug, '2027-2028');
     assert.equal(prestart.isCurrent, false);
 
@@ -239,6 +239,12 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
       ]);
     };
 
+    // Even after convening, the readiness probe only stages metadata.
+    const readiness = await runOpeningDayReadiness(openingDay);
+    assert.equal(readiness.sessionMetadata.isCurrent, false);
+    assert.equal(readiness.sourceReadiness.readyForLiveBootstrap, true);
+    await assertNoPartialRollover();
+
     // A plausible search result can hide missing current-session detail pages.
     sourceFixture.missingSenateDetails = 5;
     await assert.rejects(ingestLrlMembershipSession(session, openingDay), /implausible membership coverage: House=130, Senate=60/);
@@ -263,7 +269,9 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
       await dbModule.pool.query('DROP TRIGGER preseason_reject_membership ON memberships; DROP FUNCTION preseason_reject_membership()');
     }
 
-    const rolled = await ensureOpeningDaySessionMetadata(openingDay);
+    const roster = await ingestLrlMembershipSession(session, openingDay);
+    assert.deepEqual(roster, { session: '2027-2028', records: 195, house: 130, senate: 65 });
+    const rolled = await ensureOpeningDaySessionMetadata();
     assert.equal(rolled.isCurrent, true);
     const currentSessions = await dbModule.pool.query<{ slug: string }>(`
       SELECT s.slug
@@ -274,10 +282,11 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     `);
     assert.deepEqual(currentSessions.rows.map((row) => row.slug), ['2027-2028']);
 
-    const roster = await ingestLrlMembershipSession(session, openingDay);
-    assert.deepEqual(roster, { session: '2027-2028', records: 195, house: 130, senate: 65 });
     const rosterAgain = await ingestLrlMembershipSession(session, openingDay);
     assert.deepEqual(rosterAgain, roster);
+    // An out-of-order replay before term start must not deactivate the committed session.
+    await ingestLrlMembershipSession(session, new Date('2027-01-03T12:00:00Z'));
+    assert.equal((await ensureOpeningDaySessionMetadata()).isCurrent, true);
 
     const membershipCounts = await dbModule.pool.query<{ chamber: string; members: string }>(`
       SELECT c.slug AS chamber, count(*)::text AS members
