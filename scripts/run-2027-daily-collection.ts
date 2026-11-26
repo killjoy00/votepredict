@@ -28,6 +28,7 @@ async function main(){
       const {syncLiveRevisorStatusBatch}=await import('../src/operations/live-revisor-status.js');
       const {backfillRevisorInitialTextBatch}=await import('../src/operations/revisor-initial-text-backfill.js');
       const {collect2027CurrentTextBatch}=await import('../src/operations/2027-current-text-collection.js');
+      const {collect2027VoteIntake}=await import('../src/operations/2027-vote-intake.js');
       const report=await with2027ArchivedSources(target.runId,(receipt,bytes)=>archive2027Source(pool,receipt,bytes),async counters=>{
         const stages:Record<string,unknown>={};let discovered:number|null=null;let phaseFailed=false;let after:Awaited<ReturnType<typeof readCollectionHealth>>|null=null;
         try{
@@ -41,6 +42,11 @@ async function main(){
           stages.currentText=currentText;
           if(currentText.failed>0)throw Error('Current official text collection incomplete');
         }catch{phaseFailed=true;stages.error='BOUNDED_COLLECTION_STAGE_FAILED';}
+        // Attempt both vote sources even if bill collection had a partial failure.
+        try{
+          const votes=await collect2027VoteIntake(pool);stages.voteIntake=votes;
+          if(votes.failedSources>0)phaseFailed=true;
+        }catch{phaseFailed=true;stages.voteIntake={error:'VOTE_INTAKE_FAILED'};}
         try{after=await readCollectionHealth(client);}catch{phaseFailed=true;}
         const alerts=[...previousHeartbeat.alerts,...collectionAlerts(before,after,discovered,counters,phaseFailed)];
         const result:CollectionReport={schemaVersion:'2027-collection-report-v1',session:'2027-2028',runId:target.runId,day:target.day,startedAt,finishedAt:new Date().toISOString(),
