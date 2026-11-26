@@ -105,7 +105,7 @@ async function persist(db:Pool,target:Target,observed:Awaited<ReturnType<typeof 
 
 /** Only called within the protected archival worker. No latest/ redirect,
  * historical backfill, vote/forecast creation, or replacement of sealed rows. */
-export async function collect2027CurrentTextBatch(db:Pool,limit=COLLECTION_LIMITS.currentTextBatch){
+export async function collect2027CurrentTextBatch(db:Pool,limit:number=COLLECTION_LIMITS.currentTextBatch){
   require2027CollectionScope();
   if(!Number.isInteger(limit)||limit<1||limit>COLLECTION_LIMITS.currentTextBatch)throw Error('Invalid current text batch limit');
   const targets=await selectTargets(db,limit);
