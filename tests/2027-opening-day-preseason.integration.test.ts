@@ -125,7 +125,7 @@ function billTextHtml(identifier: string): string {
   return `<html><body><main><div id="document"><p>${text}</p></div></main></body></html>`;
 }
 
-function installSyntheticMinnesotaSources(): () => void {
+function installSyntheticMinnesotaSources(options: { missingSenateDetails: number } = { missingSenateDetails: 0 }): () => void {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async (input: string | URL | Request) => {
     const href = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
@@ -136,7 +136,11 @@ function installSyntheticMinnesotaSources(): () => void {
     }
     if (url.hostname === 'www.lrl.mn.gov' && /\/legdb\/fulldetail(?:\.aspx)?$/i.test(url.pathname)) {
       const id = Number(url.searchParams.get('ID') ?? url.searchParams.get('id'));
-      return new Response(lrlDetailHtml(id), { status: 200, headers: { 'content-type': 'text/html' } });
+      const html = lrlDetailHtml(id);
+      const detail = id >= 900001 + 195 - options.missingSenateDetails
+        ? html.replace('95th Legislative Session (2027-2028)', '94th Legislative Session (2025-2026)')
+        : html;
+      return new Response(detail, { status: 200, headers: { 'content-type': 'text/html' } });
     }
     if (url.hostname === 'www.revisor.mn.gov' && url.pathname === '/bills/status_result.php') {
       const body = url.searchParams.get('body');
@@ -187,7 +191,8 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
 
     process.env.DATABASE_URL = rehearsalUrl;
     process.env.DATABASE_URL_UNPOOLED = rehearsalUrl;
-    restoreFetch = installSyntheticMinnesotaSources();
+    const sourceFixture = { missingSenateDetails: 0 };
+    restoreFetch = installSyntheticMinnesotaSources(sourceFixture);
 
     const dbModule = await import('../src/lib/db/index.js');
     appPool = dbModule.pool;
@@ -218,6 +223,46 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     assert.equal(sourceReadiness.revisor.houseBillsInFirst500, 2);
     assert.equal(sourceReadiness.revisor.senateBillsInFirst500, 1);
 
+    const session = getMinnesotaHouseSession('2027-2028');
+    const assertNoPartialRollover = async () => {
+      const state = await dbModule.pool.query<{ slug: string; is_current: boolean; memberships: string }>(`
+        SELECT s.slug, s.is_current, count(m.id)::text AS memberships
+          FROM legislative_sessions s
+          JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
+          LEFT JOIN memberships m ON m.session_id = s.id
+         WHERE s.slug IN ('2025-2026', '2027-2028')
+         GROUP BY s.id ORDER BY s.slug
+      `);
+      assert.deepEqual(state.rows, [
+        { slug: '2025-2026', is_current: true, memberships: '0' },
+        { slug: '2027-2028', is_current: false, memberships: '0' },
+      ]);
+    };
+
+    // A plausible search result can hide missing current-session detail pages.
+    sourceFixture.missingSenateDetails = 5;
+    await assert.rejects(ingestLrlMembershipSession(session, openingDay), /implausible membership coverage: House=130, Senate=60/);
+    await assertNoPartialRollover();
+    sourceFixture.missingSenateDetails = 0;
+
+    // Force a database error after at least one membership write. The rollover
+    // and all membership writes must roll back together in the disposable DB.
+    await dbModule.pool.query(`
+      CREATE FUNCTION preseason_reject_membership() RETURNS trigger LANGUAGE plpgsql AS $preseason$
+      BEGIN
+        IF NEW.district = '2' THEN RAISE EXCEPTION 'synthetic membership write failure'; END IF;
+        RETURN NEW;
+      END; $preseason$;
+      CREATE TRIGGER preseason_reject_membership BEFORE INSERT ON memberships
+      FOR EACH ROW EXECUTE FUNCTION preseason_reject_membership();
+    `);
+    try {
+      await assert.rejects(ingestLrlMembershipSession(session, openingDay), /synthetic membership write failure/);
+      await assertNoPartialRollover();
+    } finally {
+      await dbModule.pool.query('DROP TRIGGER preseason_reject_membership ON memberships; DROP FUNCTION preseason_reject_membership()');
+    }
+
     const rolled = await ensureOpeningDaySessionMetadata(openingDay);
     assert.equal(rolled.isCurrent, true);
     const currentSessions = await dbModule.pool.query<{ slug: string }>(`
@@ -229,7 +274,6 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     `);
     assert.deepEqual(currentSessions.rows.map((row) => row.slug), ['2027-2028']);
 
-    const session = getMinnesotaHouseSession('2027-2028');
     const roster = await ingestLrlMembershipSession(session, openingDay);
     assert.deepEqual(roster, { session: '2027-2028', records: 195, house: 130, senate: 65 });
     const rosterAgain = await ingestLrlMembershipSession(session, openingDay);
