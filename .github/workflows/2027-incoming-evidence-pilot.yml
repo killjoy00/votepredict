@@ -1,0 +1,31 @@
+name: 2027 incoming legislator public evidence pilot
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/2027-incoming-evidence-pilot.yml'
+permissions:
+  contents: read
+jobs:
+  collect:
+    if: github.repository == 'killjoy00/votepredict' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'research/2027-incoming-legislator-evidence'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/2027-incoming-evidence.test.ts
+      - name: Bounded keyless public source observations
+        run: node --import tsx scripts/collect-2027-incoming-evidence.ts
+      - uses: actions/upload-artifact@v7
+        if: success()
+        with:
+          name: 2027-incoming-evidence-pilot
+          path: artifacts/2027-incoming-evidence-pilot.json
+          retention-days: 30
+          if-no-files-found: error
