@@ -32,7 +32,8 @@ const errorCode=(error:unknown)=>{
     /private|non-public/i.test(msg)?'NON_PUBLIC_ADDRESS':/timeout|aborted/i.test(msg)?'TIMEOUT':'UNVERIFIED_OR_UNAVAILABLE';
 };
 async function main(){
-  if(process.argv.length!==2||process.env.GITHUB_REPOSITORY!=='killjoy00/votepredict'||process.env.GITHUB_EVENT_NAME!=='pull_request'||
+  const remainingOnly=process.argv.length===3&&process.argv[2]==='--remaining';
+  if((process.argv.length!==2&&!remainingOnly)||process.env.GITHUB_REPOSITORY!=='killjoy00/votepredict'||process.env.GITHUB_EVENT_NAME!=='pull_request'||
     process.env.GITHUB_HEAD_REF!=='research/2027-incoming-legislator-evidence')throw Error('Run only in dedicated keyless pilot PR');
   const rosterRaw=readFileSync(rosterPath,'utf8');
   const approved=JSON.parse(rosterRaw) as {session:string;complete:boolean;members:IncomingMember[]};
@@ -47,7 +48,14 @@ async function main(){
     prior[ordinal]=new Set(discoverLrlLegislators(page.rawContent).map(x=>x.lrlId));
     registries.push(receipt(page));
   }
-  const targets=selectIncomingMembers(approved.members,prior);
+  const fullTargets=selectIncomingMembers(approved.members,prior);
+  const previous=remainingOnly?JSON.parse(readFileSync('docs/evaluation/source-proof/2027-incoming-evidence-pilot-20261126-part1.json','utf8')):null;
+  if(previous&&(previous.summary.rosterSha256!==sha(rosterRaw)||previous.summary.absentFrom2025_26!==fullTargets.length||
+    previous.summary.attemptedMembers!==40||previous.summary.productionWrites!==0||
+    JSON.stringify(previous.targets.map((x:IncomingMember)=>x.lrlId))!==JSON.stringify(fullTargets.map(x=>x.lrlId))))
+    throw Error('Remaining-only pilot prior cohort does not match current verified roster');
+  const attempted=new Set<string>(previous?previous.results.map((x:{lrlId:string})=>x.lrlId):[]);
+  const targets=fullTargets.filter(x=>!attempted.has(x.lrlId));
   let filings:ReturnType<typeof parseCampaignSiteFilings>=[];
   let housing:ReturnType<typeof parse2026HousingIndex>=[];
   for(const [kind,url] of [['campaign_registry',MN_SOS_CANDIDATE_RESULTS_URL],['housing_index',housingIndex]] as const){
@@ -97,9 +105,10 @@ async function main(){
   }
   const summary={schemaVersion:'2027-incoming-evidence-pilot-v1',observedAt:new Date().toISOString(),
     rosterPath,rosterSha256:sha(rosterRaw),projectedMembers:201,priorDirectoryCounts:Object.fromEntries(Object.entries(prior).map(([k,v])=>[k,v.size])),
-    absentFrom2025_26:targets.length,returningRecent:targets.filter(x=>x.service==='returning').length,
-    noRecentService:targets.filter(x=>x.service==='no_recent_service').length,
-    targetCounts:{house:targets.filter(x=>x.chamber==='house').length,senate:targets.filter(x=>x.chamber==='senate').length},
+    absentFrom2025_26:fullTargets.length,returningRecent:fullTargets.filter(x=>x.service==='returning').length,
+    noRecentService:fullTargets.filter(x=>x.service==='no_recent_service').length,
+    targetCounts:{house:fullTargets.filter(x=>x.chamber==='house').length,senate:fullTargets.filter(x=>x.chamber==='senate').length},
+    remainingOnly,previouslyAttempted:attempted.size,
     attemptedMembers:results.length,unattemptedMembers:targets.length-results.length,requests,bytes,
     campaignFilingsObserved:filings.length,housingLinksObserved:housing.length,
     membersWithVerifiedSource:results.filter(x=>x.evidence.length>0).length,

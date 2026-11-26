@@ -1,0 +1,2176 @@
+{
+  "summary": {
+    "schemaVersion": "2027-incoming-evidence-pilot-v1",
+    "observedAt": "2026-11-26T23:13:14.680Z",
+    "rosterPath": "docs/evaluation/source-proof/2027-preseason-roster-20261126.json",
+    "rosterSha256": "3b062058cbe77d2ff6caad8719a65535ad75849d48e0c627c9b460ef48df17bd",
+    "projectedMembers": 201,
+    "priorDirectoryCounts": {
+      "92": 201,
+      "93": 204,
+      "94": 206
+    },
+    "absentFrom2025_26": 51,
+    "returningRecent": 1,
+    "noRecentService": 50,
+    "targetCounts": {
+      "house": 33,
+      "senate": 18
+    },
+    "attemptedMembers": 40,
+    "unattemptedMembers": 11,
+    "requests": 83,
+    "bytes": 22249891,
+    "campaignFilingsObserved": 353,
+    "housingLinksObserved": 66,
+    "membersWithVerifiedSource": 36,
+    "membersWithCampaignSource": 36,
+    "membersWithHousingResponses": 12,
+    "membersWithPolicyExcerpt": 15,
+    "verifiedSourceCount": 73,
+    "failures": 5,
+    "servingEvidenceCreated": 0,
+    "productionWrites": 0
+  },
+  "registries": [
+    {
+      "url": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=92",
+      "requestedUrl": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=92",
+      "observedAt": "2026-11-26T23:12:29.436Z",
+      "claimedPublicationAt": null,
+      "bodySha256": "fd69bcd2d078f06192420995d7c846ee3f540595f577d5bb230b19cb55d3d6f4",
+      "bytes": 315717,
+      "title": "Minnesota Legislators Past & Present - Search Results",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    },
+    {
+      "url": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=93",
+      "requestedUrl": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=93",
+      "observedAt": "2026-11-26T23:12:29.887Z",
+      "claimedPublicationAt": null,
+      "bodySha256": "4c928c7e42560a624f0b901f015ea50524a19e58f43b37207bbfcdcbd60c8612",
+      "bytes": 316431,
+      "title": "Minnesota Legislators Past & Present - Search Results",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    },
+    {
+      "url": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=94",
+      "requestedUrl": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=94",
+      "observedAt": "2026-11-26T23:12:30.351Z",
+      "claimedPublicationAt": null,
+      "bodySha256": "6a5879e088b6107c5ba78c7ba7fa45b432ca1c22fabb299a57b02cfce1387316",
+      "bytes": 315905,
+      "title": "Minnesota Legislators Past & Present - Search Results",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    },
+    {
+      "url": "https://candidates.sos.mn.gov/CandidateFilingResults.aspx?candidateid=0&executive=False&federal=False&judicial=False&level=1&office=0&party=0&representative=True&senate=True",
+      "requestedUrl": "https://candidates.sos.mn.gov/CandidateFilingResults.aspx?candidateid=0&executive=False&federal=False&judicial=False&level=1&office=0&party=0&representative=True&senate=True",
+      "observedAt": "2026-11-26T23:12:31.232Z",
+      "claimedPublicationAt": null,
+      "bodySha256": "10d500f072a487d76feb2e77990e33124f239192aa86c554aa2e85956da5822d",
+      "bytes": 1236484,
+      "title": "Candidate Filings",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    },
+    {
+      "url": "https://mhponline.org/2026-candidate-housing-questionnaire/",
+      "requestedUrl": "https://mhponline.org/2026-candidate-housing-questionnaire/",
+      "observedAt": "2026-11-26T23:12:32.560Z",
+      "claimedPublicationAt": "2026-08-07T13:00:00.000Z",
+      "bodySha256": "5f9bdc90a1a54138058f2b46c46093b87f25fbaa68b0bcd16a97b8c9818a7587",
+      "bytes": 141410,
+      "title": "2026 Candidate Housing Questionnaire - Minnesota Housing Partnership (MHP)",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    }
+  ],
+  "targets": [
+    {
+      "seat": "house:3B",
+      "lrlId": "15656",
+      "name": "Aaron Schweiger",
+      "electionName": "Aaron Schweiger",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15656",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "3B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:4A",
+      "lrlId": "15657",
+      "name": "Erika Yoney",
+      "electionName": "Erika Yoney",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15657",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "4A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:5B",
+      "lrlId": "15658",
+      "name": "Jonathan Claussen",
+      "electionName": "Jonathan Claussen",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15658",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "5B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:10A",
+      "lrlId": "15659",
+      "name": "Mark Striemer",
+      "electionName": "Mark Striemer",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15659",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "10A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:11A",
+      "lrlId": "15660",
+      "name": "Chris Swanson",
+      "electionName": "Chris Swanson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15660",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "11A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:13A",
+      "lrlId": "15661",
+      "name": "Tanja Goering",
+      "electionName": "Tanja Goering",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15661",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "13A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:13B",
+      "lrlId": "15662",
+      "name": "Dawn Loberg",
+      "electionName": "Dawn Loberg",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15662",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "13B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:14A",
+      "lrlId": "15663",
+      "name": "Abdi Daisane",
+      "electionName": "Abdi Daisane",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15663",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "14A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:14B",
+      "lrlId": "15393",
+      "name": "Zachary Dorholt",
+      "electionName": "Zachary \"Zach\" Dorholt",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15393",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "14B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:15A",
+      "lrlId": "15664",
+      "name": "Bradley Hennen",
+      "electionName": "Bradley L Hennen",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15664",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "15A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:15B",
+      "lrlId": "15665",
+      "name": "Geri Theis",
+      "electionName": "Geri Theis",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15665",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "15B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:18A",
+      "lrlId": "15666",
+      "name": "Leah Hanson",
+      "electionName": "Leah Hanson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15666",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "18A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:20B",
+      "lrlId": "15667",
+      "name": "Sara Bertschinger",
+      "electionName": "Sara Bertschinger",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15667",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "20B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:21A",
+      "lrlId": "15668",
+      "name": "Krist Wollum",
+      "electionName": "Krist Wollum",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15668",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "21A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:23A",
+      "lrlId": "15669",
+      "name": "Dominick Ronnenberg",
+      "electionName": "Nick Ronnenberg",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15669",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "23A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:26A",
+      "lrlId": "15670",
+      "name": "Dan Wilson",
+      "electionName": "Dan Wilson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15670",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "26A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:30B",
+      "lrlId": "15671",
+      "name": "Chad Westberg",
+      "electionName": "Chad Westberg",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15671",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "30B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:33A",
+      "lrlId": "15672",
+      "name": "Stacey Stout",
+      "electionName": "Stacey Stout",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15672",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "33A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:34A",
+      "lrlId": "15673",
+      "name": "Jason Heaser",
+      "electionName": "Jason Heaser",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15673",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "34A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:36A",
+      "lrlId": "15674",
+      "name": "Jim DeMay",
+      "electionName": "Jim DeMay",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15674",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "36A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:37A",
+      "lrlId": "15675",
+      "name": "Tom McKee",
+      "electionName": "Tom McKee",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15675",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "37A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:39A",
+      "lrlId": "15676",
+      "name": "Aaron Klemz",
+      "electionName": "Aaron Klemz",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15676",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "39A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:39B",
+      "lrlId": "15677",
+      "name": "Amáda Márquez Simula",
+      "electionName": "Amáda Márquez Simula",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15677",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "39B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:40A",
+      "lrlId": "15678",
+      "name": "Aisha Elmquist",
+      "electionName": "Aisha Elmquist",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15678",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "40A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:41A",
+      "lrlId": "15679",
+      "name": "Cole Birkeland",
+      "electionName": "Cole Birkeland",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15679",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "41A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:41B",
+      "lrlId": "15680",
+      "name": "Jen Fox",
+      "electionName": "Jen Fox",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15680",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "41B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:43A",
+      "lrlId": "15681",
+      "name": "Kyrstin Schuette",
+      "electionName": "Kyrstin Schuette",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15681",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "43A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:43B",
+      "lrlId": "15682",
+      "name": "Jess Lewis",
+      "electionName": "Jess Lewis",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15682",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "43B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:52A",
+      "lrlId": "15683",
+      "name": "Christos Jensen",
+      "electionName": "Christos Roy Jensen",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15683",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "52A",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:54B",
+      "lrlId": "15684",
+      "name": "Natalie Barnes",
+      "electionName": "Natalie Barnes",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15684",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "54B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:55B",
+      "lrlId": "15524",
+      "name": "Hunter Cantrell",
+      "electionName": "Hunter Cantrell",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15524",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "55B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:57B",
+      "lrlId": "15685",
+      "name": "Brian Cohn",
+      "electionName": "Brian Cohn",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15685",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "57B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "house:65B",
+      "lrlId": "15686",
+      "name": "Sebastian Ellefson",
+      "electionName": "Sebastian Ellefson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15686",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "house",
+      "district": "65B",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:4",
+      "lrlId": "15703",
+      "name": "Austin Peterson",
+      "electionName": "Austin Peterson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15703",
+      "basis": "accepted_recount_leader",
+      "recountCertification": "final_certification_unverified",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "4",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:13",
+      "lrlId": "15687",
+      "name": "Jared J. Gapinski",
+      "electionName": "Jared J. Gapinski",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15687",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "13",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:15",
+      "lrlId": "15688",
+      "name": "Braxton Seifert",
+      "electionName": "Braxton John Seifert",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15688",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "15",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:21",
+      "lrlId": "15689",
+      "name": "Christopher R. Knoll",
+      "electionName": "Chris Knoll",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15689",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "21",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:24",
+      "lrlId": "15702",
+      "name": "Simon Glaser",
+      "electionName": "Simon Glaser",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15702",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "24",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:26",
+      "lrlId": "15690",
+      "name": "Cherie Johnson",
+      "electionName": "Cherie Johnson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15690",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "26",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:32",
+      "lrlId": "15691",
+      "name": "Chris Ford",
+      "electionName": "Chris Ford",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15691",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "32",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:35",
+      "lrlId": "15692",
+      "name": "Angela Nelson",
+      "electionName": "Angela Nelson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15692",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "35",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:37",
+      "lrlId": "15693",
+      "name": "Kristy A. Janigo",
+      "electionName": "Kristy Janigo",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15693",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "37",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:44",
+      "lrlId": "15694",
+      "name": "Samuel J. Rosemark",
+      "electionName": "Sam Rosemark",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15694",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "44",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:49",
+      "lrlId": "15695",
+      "name": "Krishnan Subrahmanian",
+      "electionName": "Krish Subrahmanian",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15695",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "49",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:50",
+      "lrlId": "15696",
+      "name": "Karla E. Hult",
+      "electionName": "Karla Hult",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15696",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "50",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:51",
+      "lrlId": "15697",
+      "name": "Simon Trautmann Cordova",
+      "electionName": "Simon Trautmann Cordova",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15697",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "51",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:53",
+      "lrlId": "15698",
+      "name": "Paul Cumings",
+      "electionName": "Paul Cumings",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15698",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "53",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:54",
+      "lrlId": "15701",
+      "name": "Richard Olson",
+      "electionName": "Rick Olson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15701",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "54",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:58",
+      "lrlId": "15699",
+      "name": "Mark O. Legvold",
+      "electionName": "Mark Legvold",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15699",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "58",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:65",
+      "lrlId": "15700",
+      "name": "Robyn Gulley",
+      "electionName": "Robyn Gulley",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15700",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "65",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:22",
+      "lrlId": "15496",
+      "name": "Jeremy Munson",
+      "electionName": "Jeremy Munson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15496",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "22",
+      "service": "returning"
+    }
+  ],
+  "results": [
+    {
+      "seat": "house:3B",
+      "lrlId": "15656",
+      "name": "Aaron Schweiger",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": []
+    },
+    {
+      "seat": "house:4A",
+      "lrlId": "15657",
+      "name": "Erika Yoney",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.yoney4mnhouse.com/",
+          "requestedUrl": "https://yoney4mnhouse.com/",
+          "observedAt": "2026-11-26T23:12:33.777Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "3562821abd9662ebea4312b5e71fa38bd4a4985091f9bc0c31c55893194ebc9c",
+          "bytes": 936459,
+          "title": "Yoney for Minnesota House District 4A | Support Local Change &mdash; Get Involved",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home",
+          "excerpt": "With so much at stake, fully funding our public schools must be a priority."
+        }
+      ]
+    },
+    {
+      "seat": "house:5B",
+      "lrlId": "15658",
+      "name": "Jonathan Claussen",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": []
+    },
+    {
+      "seat": "house:10A",
+      "lrlId": "15659",
+      "name": "Mark Striemer",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.striemerforhouse.com/",
+          "requestedUrl": "https://www.striemerforhouse.com/",
+          "observedAt": "2026-11-26T23:12:34.510Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "d4bb7ca29f232ee009f4eed8efa1cddae1e3228791bb54926b0dfa675a09892a",
+          "bytes": 21057,
+          "title": "App Template",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.striemerforhouse.com/platform",
+          "requestedUrl": "https://www.striemerforhouse.com/platform",
+          "observedAt": "2026-11-26T23:12:34.607Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "fcb7458de3146a4460401a8e485566f26ec0b5e26e471592456266de8f254b1c",
+          "bytes": 33483,
+          "title": "App Template",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy",
+          "excerpt": "Therefore, tax dollars should not be given to organizations who support abortion or sex change therapy."
+        }
+      ]
+    },
+    {
+      "seat": "house:11A",
+      "lrlId": "15660",
+      "name": "Chris Swanson",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://chrisswansonforhouse.com/",
+          "requestedUrl": "https://chrisswansonforhouse.com/",
+          "observedAt": "2026-11-26T23:12:36.489Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "6b0c8769a5569daf2e7876c936c34d4859cc55a708211c417adfd1037507e5c1",
+          "bytes": 140922,
+          "title": "Chris Swanson – Chris Swanson For House",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://chrisswansonforhouse.com/issues/",
+          "requestedUrl": "https://chrisswansonforhouse.com/issues/",
+          "observedAt": "2026-11-26T23:12:36.935Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "095474fede45345b54f2980c6637cf60b76e57eae6537dd3b0738c5e41b4fd21",
+          "bytes": 132012,
+          "title": "Issues – Chris Swanson",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy",
+          "excerpt": "In the legislature, he will fight to bring resources back home to support families, businesses, and public safety."
+        }
+      ]
+    },
+    {
+      "seat": "house:13A",
+      "lrlId": "15661",
+      "name": "Tanja Goering",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://tanjagoeringformn.com/",
+          "requestedUrl": "https://tanjagoeringformn.com/",
+          "observedAt": "2026-11-26T23:12:37.114Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "734ac74e6174459173bf5b5a974457b7d5088f88cc1a9e709336825e0b41f2b2",
+          "bytes": 130199,
+          "title": "Tanja Goering for Minnesota",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://tanjagoeringformn.com/issues",
+          "requestedUrl": "https://tanjagoeringformn.com/issues",
+          "observedAt": "2026-11-26T23:12:37.241Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "49ed2ec5ce746f4ecde2c34d613c4ac36db24ff1e2aeed414f6564e544f5773f",
+          "bytes": 80430,
+          "title": "Tanja Goering for Minnesota",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "house:13B",
+      "lrlId": "15662",
+      "name": "Dawn Loberg",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": []
+    },
+    {
+      "seat": "house:14A",
+      "lrlId": "15663",
+      "name": "Abdi Daisane",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.daisaneformn.com/",
+          "requestedUrl": "https://www.daisaneformn.com/",
+          "observedAt": "2026-11-26T23:12:37.788Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "b748ca7680188bdad4e524e0b75cf0f763026c0a0bb304573386fb97856dddd7",
+          "bytes": 172493,
+          "title": "Daisane | Get Involved Today",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        }
+      ]
+    },
+    {
+      "seat": "house:14B",
+      "lrlId": "15393",
+      "name": "Zachary Dorholt",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.zacharydorholt.com/",
+          "requestedUrl": "https://www.zacharydorholt.com/",
+          "observedAt": "2026-11-26T23:12:38.388Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "d560855eb2535c34bfcd47418129eeadc7cb0cce890f769010184476f7e00ea7",
+          "bytes": 368227,
+          "title": "Vote Zachary Dorholt",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.zacharydorholt.com/issues",
+          "requestedUrl": "https://www.zacharydorholt.com/issues",
+          "observedAt": "2026-11-26T23:12:38.573Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "a20fe7dff67ed96b323dae11861a8f7e0cbd919b205b3d3e9428a94e8585908f",
+          "bytes": 270098,
+          "title": "Issues &mdash; Vote Zachary Dorholt",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "house:15A",
+      "lrlId": "15664",
+      "name": "Bradley Hennen",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": []
+    },
+    {
+      "seat": "house:15B",
+      "lrlId": "15665",
+      "name": "Geri Theis",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://theisforhouse.com/",
+          "requestedUrl": "https://theisforhouse.com/",
+          "observedAt": "2026-11-26T23:12:40.737Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "78d1a8df0d7424fe5a8397d127d05e159d334f3feb37f232c8a156f36417fb78",
+          "bytes": 155351,
+          "title": "theisforhouse.com",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home",
+          "excerpt": "Geri will work to cut red tape and create an environment where businesses can grow right here at home."
+        }
+      ]
+    },
+    {
+      "seat": "house:18A",
+      "lrlId": "15666",
+      "name": "Leah Hanson",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.leahhansonforhouse.com/",
+          "requestedUrl": "https://www.leahhansonforhouse.com/",
+          "observedAt": "2026-11-26T23:12:41.096Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "e9044ed265e7777bad9d2679c2f315e0405d10b78ff75bf26ffd965b91b0f06a",
+          "bytes": 254259,
+          "title": "Leah Hanson for MN House | Meet Leah",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.leahhansonforhouse.com/issues",
+          "requestedUrl": "https://www.leahhansonforhouse.com/issues",
+          "observedAt": "2026-11-26T23:12:41.290Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "43d51853c2e36c5b0e83c5975856610a4b16df8cefe4090145adeed003ef54ea",
+          "bytes": 602616,
+          "title": "Issues | Join the Movement for Change &mdash; Leah Hanson for MN House",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/leah-hanson/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/leah-hanson/",
+          "observedAt": "2026-11-26T23:12:42.125Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "86c7ee7321f21c76393085837d86fb0b94c343922ed2d603500a4df2179f8f66",
+          "bytes": 120697,
+          "title": "Leah Hanson - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:20B",
+      "lrlId": "15667",
+      "name": "Sara Bertschinger",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://bertschingerforhouse.com/",
+          "requestedUrl": "https://bertschingerforhouse.com/",
+          "observedAt": "2026-11-26T23:12:43.039Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "dc16ad7ebe19bf54d6562fefe19667674b56131cd4a1e00da98294544049f156",
+          "bytes": 71405,
+          "title": null,
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://bertschingerforhouse.com/values-and-issues",
+          "requestedUrl": "https://bertschingerforhouse.com/values-and-issues",
+          "observedAt": "2026-11-26T23:12:43.267Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "5fa54f1cdd4ab06beba8cdf4310e538b90c4c89f06c0ce6e62ec4b4d3e20f093",
+          "bytes": 40905,
+          "title": null,
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "house:21A",
+      "lrlId": "15668",
+      "name": "Krist Wollum",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://wollum4house.com/",
+          "requestedUrl": "https://wollum4house.com/",
+          "observedAt": "2026-11-26T23:12:43.605Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "492ab81c00f62eb877825b5bdcbff3cb5c0057adef8bd7bad076bd93d1c4c153",
+          "bytes": 73107,
+          "title": "Wollum For House",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home",
+          "excerpt": "They support their schools, maintain their roads, and invest in their small businesses and local communities."
+        }
+      ]
+    },
+    {
+      "seat": "house:23A",
+      "lrlId": "15669",
+      "name": "Dominick Ronnenberg",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.ronnenbergformn.com/",
+          "requestedUrl": "https://www.ronnenbergformn.com/",
+          "observedAt": "2026-11-26T23:12:44.306Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "4920e607030ac75caacae813a48ce313f60f7aa825c51db0326d22c8043d5fc0",
+          "bytes": 579225,
+          "title": "Nick Ronnenberg for MN",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        }
+      ]
+    },
+    {
+      "seat": "house:26A",
+      "lrlId": "15670",
+      "name": "Dan Wilson",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.danwilsonforhouse.com/",
+          "requestedUrl": "https://danwilsonforhouse.com/",
+          "observedAt": "2026-11-26T23:12:45.147Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "06f233b66eab707290c308f792ea45fd183f62ad1af0b6a461c09756d80c57f5",
+          "bytes": 1241018,
+          "title": "Dan Wilson for Minnesota State House",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/dan-wilson/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/dan-wilson/",
+          "observedAt": "2026-11-26T23:12:45.800Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "69d9cd898cc42e251dbb9d193be656aab2c140a233c6b1d3ab8d4235497b38e1",
+          "bytes": 119231,
+          "title": "Dan Wilson - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:30B",
+      "lrlId": "15671",
+      "name": "Chad Westberg",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.chadwestbergformn.com/",
+          "requestedUrl": "https://chadwestbergformn.com/",
+          "observedAt": "2026-11-26T23:12:46.491Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "858ff673ae38f4d714b05be0d6d1ae48562f59fd55f304a41ff0fbe61c9bd336",
+          "bytes": 711356,
+          "title": "Chad Westberg for MN",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        }
+      ]
+    },
+    {
+      "seat": "house:33A",
+      "lrlId": "15672",
+      "name": "Stacey Stout",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://staceystout.com/",
+          "requestedUrl": "https://staceystout.com/",
+          "observedAt": "2026-11-26T23:12:46.673Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "0f6172bf6d87da5b385b356b273b73b82bd760f94e2647daa3b4d65d66dcc701",
+          "bytes": 156547,
+          "title": "Stacey Stout for House | House of Representatives District 33A",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://staceystout.com/priorities-survey/",
+          "requestedUrl": "https://staceystout.com/priorities-survey/",
+          "observedAt": "2026-11-26T23:12:46.757Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "825e62cd52881aac83039c5cdecec472ea274cb990e4bb640456152600544485",
+          "bytes": 131785,
+          "title": "Priorities Survey | Vote Stacey Stout | House of Representatives District 33A",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "house:34A",
+      "lrlId": "15673",
+      "name": "Jason Heaser",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.heaserforhouse.com/",
+          "requestedUrl": "https://www.heaserforhouse.com/",
+          "observedAt": "2026-11-26T23:12:47.117Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "038c82e77a44b2db5731b7cd27b4cb1e057a6fd430c87056a7579f6bcdec0372",
+          "bytes": 677885,
+          "title": "Jason Heaser for MN House of Representatives District 34A | Get Involved Today",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.heaserforhouse.com/platform",
+          "requestedUrl": "https://www.heaserforhouse.com/platform",
+          "observedAt": "2026-11-26T23:12:47.328Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "11aa27b56e1a6bdafea5c2ccf65f3b1dd2541cd49d48bdead1a89880ee806871",
+          "bytes": 899450,
+          "title": "Platform &mdash; Jason Heaser for MN House of Representatives District 34A",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy",
+          "excerpt": "I believe public safety requires both accountability and prevention."
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/jason-heaser/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/jason-heaser/",
+          "observedAt": "2026-11-26T23:12:48.188Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "b9993f445482e3ca8317d0de860b2c146dc7554fb08b706b86b66df6da02869c",
+          "bytes": 121811,
+          "title": "Jason Heaser - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:36A",
+      "lrlId": "15674",
+      "name": "Jim DeMay",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.demayforhouse.com/",
+          "requestedUrl": "https://demayforhouse.com/",
+          "observedAt": "2026-11-26T23:12:48.979Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "bd1848a78bbac59a78a35f0b959b1d42ce94f74e4c0ed093e948cf087afc8e0c",
+          "bytes": 245716,
+          "title": "Minnesota House District 36A",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.demayforhouse.com/priorities",
+          "requestedUrl": "https://www.demayforhouse.com/priorities",
+          "observedAt": "2026-11-26T23:12:49.065Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "d693378fb0bc6e44f8e99bedd07bc81acf4420a8c9ef470ef0daa5cb17fd2bbe",
+          "bytes": 990201,
+          "title": "Priorities &mdash; Minnesota House District 36A",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy",
+          "excerpt": "Support legislation to build new, affordable and stable single family housing options that meet the needs of the community."
+        }
+      ]
+    },
+    {
+      "seat": "house:37A",
+      "lrlId": "15675",
+      "name": "Tom McKee",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://tommckeemn.com/",
+          "requestedUrl": "https://tommckeemn.com/",
+          "observedAt": "2026-11-26T23:12:49.255Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "f4b23cc91fc45bb96d10efd4b418c303edce746b3d3a28c4088b0fa2014c6b42",
+          "bytes": 246566,
+          "title": "Tom McKee",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://tommckeemn.com/issues",
+          "requestedUrl": "https://tommckeemn.com/issues",
+          "observedAt": "2026-11-26T23:12:49.395Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "11ba4f58b4fd129d81f6783cc74e5fd5bf27429c702e60783368fdc661bfd0ad",
+          "bytes": 174268,
+          "title": "Tom McKee",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "house:39A",
+      "lrlId": "15676",
+      "name": "Aaron Klemz",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.aaronklemz.com/",
+          "requestedUrl": "https://www.aaronklemz.com/",
+          "observedAt": "2026-11-26T23:12:49.729Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "2884a4f58206bf26a25500b123a4b2f6c8236126fefd677bb58085af984be1e5",
+          "bytes": 30457,
+          "title": "Aaron Klemz for Minnesota House 39A",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home",
+          "excerpt": "Read More→ Thriving Public Schools I will prioritize full and equitable funding of our public schools."
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/aaron-klemz/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/aaron-klemz/",
+          "observedAt": "2026-11-26T23:12:50.397Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "1f1ae425c65eb1d5da6dfff195516c0c1b025fceb20eab9cd5b9edab2128091b",
+          "bytes": 121815,
+          "title": "Aaron Klemz - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:39B",
+      "lrlId": "15677",
+      "name": "Amáda Márquez Simula",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.voteamada.com/",
+          "requestedUrl": "https://www.voteamada.com/",
+          "observedAt": "2026-11-26T23:12:50.824Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "98b391ae46ef2cf99bf9a849d15745abeadc3a594a2bde877d23541a4e503114",
+          "bytes": 170123,
+          "title": "Amáda Márquez Simula for Minnesota House 39B",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.voteamada.com/issues/",
+          "requestedUrl": "https://www.voteamada.com/issues/",
+          "observedAt": "2026-11-26T23:12:51.715Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "56cc149fd78e89d54739af43fd5a55cfa2354d37812a43c30e5fcdcf0e574e48",
+          "bytes": 139584,
+          "title": "Issues and Priorities for Amáda Márquez Simula - MN House 39B",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/amada-marquez-simula/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/amada-marquez-simula/",
+          "observedAt": "2026-11-26T23:12:52.389Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "0233d17ec943cb930d9ab492910501b3b393cc6fec985f2de65325b34bc99bcd",
+          "bytes": 125783,
+          "title": "Amáda Márquez Simula - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:40A",
+      "lrlId": "15678",
+      "name": "Aisha Elmquist",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.voteelmquist.com/",
+          "requestedUrl": "https://www.voteelmquist.com/",
+          "observedAt": "2026-11-26T23:12:52.725Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "a90d10d0c04b65277dd7675bd6198dd270cf5bcb0f5a20669e16841f5acb1b4c",
+          "bytes": 184170,
+          "title": "Elmquist for House",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.voteelmquist.com/priorities",
+          "requestedUrl": "https://www.voteelmquist.com/priorities",
+          "observedAt": "2026-11-26T23:12:52.803Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "b426aeb905e8fa47a12a9ca783285dd50a02426e6d4a741e196b977c932cabe4",
+          "bytes": 210132,
+          "title": "Priorities &mdash; Elmquist for House",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/aisha-elmquist/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/aisha-elmquist/",
+          "observedAt": "2026-11-26T23:12:53.615Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "19b7f0ad67244dc5d3b87bb33e3c067617a7d5a8e9b46725807cacb28f57900a",
+          "bytes": 124062,
+          "title": "Aisha Elmquist - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:41A",
+      "lrlId": "15679",
+      "name": "Cole Birkeland",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.colebirkeland.com/",
+          "requestedUrl": "https://www.colebirkeland.com/",
+          "observedAt": "2026-11-26T23:12:53.985Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "a935ebc4e0a4036f6be7137c45cc137d0295d1b444b2bfd29a809047e03e285d",
+          "bytes": 328763,
+          "title": "Cole for House",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home",
+          "excerpt": "Educate and Equip the Next Generation Our high-achieving schools must be focused on good outcomes, not divisive agendas."
+        },
+        {
+          "url": "https://www.colebirkeland.com/priorities",
+          "requestedUrl": "https://www.colebirkeland.com/priorities",
+          "observedAt": "2026-11-26T23:12:54.230Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "2ee73c0078a07db91dd0d912dc6ada53b0a0c93e4943c3d8326712ceee9ff65d",
+          "bytes": 1423864,
+          "title": "Priorities &mdash; Cole for House",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "house:41B",
+      "lrlId": "15680",
+      "name": "Jen Fox",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.jenfoxforhouse.com/",
+          "requestedUrl": "https://jenfoxforhouse.com/",
+          "observedAt": "2026-11-26T23:12:54.559Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "e8ec9ea92210a0cd07b8f0567827c309722cba5b33c528f82e6f2e8f3b464a22",
+          "bytes": 898696,
+          "title": "Jen Fox for House | District 41b | Minnesota, USA",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/jen-fox/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/jen-fox/",
+          "observedAt": "2026-11-26T23:12:55.235Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "9f20499554e5f120ae9f0717d97814044ee8d05b06f6dd9fe1050aa6c1f30699",
+          "bytes": 117719,
+          "title": "Jen Fox - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:43A",
+      "lrlId": "15681",
+      "name": "Kyrstin Schuette",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://kyrstinforminnesota.com/",
+          "requestedUrl": "https://kyrstinforminnesota.com/",
+          "observedAt": "2026-11-26T23:12:55.700Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "752afdb276c248ea240e5e146f251cabf7c81841538e8e0aa6362ef15dda0c18",
+          "bytes": 1273709,
+          "title": "Kyrstin for Minnesota | Join the Movement Today",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://kyrstinforminnesota.com/priorities",
+          "requestedUrl": "https://kyrstinforminnesota.com/priorities",
+          "observedAt": "2026-11-26T23:12:55.959Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "551cdc49fd924f69d30074a0ddcfe7f314b938582198ae1291c6e084a655ba86",
+          "bytes": 208408,
+          "title": "General 1 &mdash; Kyrstin for Minnesota",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/kyrstin-schuette/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/kyrstin-schuette/",
+          "observedAt": "2026-11-26T23:12:56.634Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "a201621cae26fe2eb2f131bf7f789929f50db06094ab10059847878d24069f6a",
+          "bytes": 126839,
+          "title": "Kyrstin Schuette - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:43B",
+      "lrlId": "15682",
+      "name": "Jess Lewis",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.votejesslewis.com/",
+          "requestedUrl": "https://www.votejesslewis.com/",
+          "observedAt": "2026-11-26T23:12:56.982Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "1f2a58b2d61a1e42d4f74307eaef94f8073dcc25d9df0220edc212e242258acc",
+          "bytes": 204842,
+          "title": "Jess Lewis for MN 43B",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home",
+          "excerpt": "That experience deepened my support for organized labor; strong unions are essential to protecting working people and our democracy."
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/jess-lewis/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/jess-lewis/",
+          "observedAt": "2026-11-26T23:12:57.660Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "5abce54680d9e4022f7919feb3280aa038c04cca4513873fd5d17935ad1403db",
+          "bytes": 125680,
+          "title": "Jess Lewis - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:52A",
+      "lrlId": "15683",
+      "name": "Christos Jensen",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://votechristos.com/",
+          "requestedUrl": "https://www.votechristos.com/",
+          "observedAt": "2026-11-26T23:12:58.343Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "f9ae85731703bbdb5f9faa5a54f8accaf4528a33c87185b2b35105107141adb8",
+          "bytes": 201204,
+          "title": "Christos Jensen for MN house | Support Community Growth &mdash; Get Involved",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://votechristos.com/priorities",
+          "requestedUrl": "https://votechristos.com/priorities",
+          "observedAt": "2026-11-26T23:12:58.525Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "0914e0844de3ba2474d4a019c89cc1c1b0a6b1f6b1c11fb5b301be235bfb0d30",
+          "bytes": 293848,
+          "title": "Priorities &mdash; Christos Jensen for MN house",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/christos-jensen/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/christos-jensen/",
+          "observedAt": "2026-11-26T23:12:59.213Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "aac23cd5b093609748a468473254ff8e3b26301a843a394f039ec5868901c54b",
+          "bytes": 126965,
+          "title": "Christos Jensen - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:54B",
+      "lrlId": "15684",
+      "name": "Natalie Barnes",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://nursenatalieformn.com/",
+          "requestedUrl": "https://www.nursenatalieformn.com/",
+          "observedAt": "2026-11-26T23:12:59.626Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "664181bc7ebe8921c4dadf5e7e3f23620c104f9188d95035fc4f601996cc34b3",
+          "bytes": 230707,
+          "title": "Nurse Natalie for MN",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home",
+          "excerpt": "She is committed to advocating for healthcare policies that respect individual choice, support families, and put patients first."
+        },
+        {
+          "url": "https://nursenatalieformn.com/election-issues",
+          "requestedUrl": "https://nursenatalieformn.com/election-issues",
+          "observedAt": "2026-11-26T23:12:59.656Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "312847136593d03293ac08db33a7b10a71b37691acbfdf361266e3626710c376",
+          "bytes": 130000,
+          "title": "Nurse Natalie for MN",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "house:55B",
+      "lrlId": "15524",
+      "name": "Hunter Cantrell",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.huntercantrell.com/",
+          "requestedUrl": "https://www.huntercantrell.com/",
+          "observedAt": "2026-11-26T23:12:59.932Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "3c90631681589a395f4d0fcaa4a4d33100a2a08d4eaa396d5752c4d87060ae9e",
+          "bytes": 159099,
+          "title": "Hunter Cantrell for State Representative",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.huntercantrell.com/a-healthy-minnesota",
+          "requestedUrl": "https://www.huntercantrell.com/issues",
+          "observedAt": "2026-11-26T23:13:00.197Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "cf0dd810ab132a145998a0432263ca26bb9f67afff8005367439b333a28fe988",
+          "bytes": 148587,
+          "title": "A Healthy Minnesota | Support Healthcare Innovation Today &mdash; Hunter Cantrell for State Representative",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "house:57B",
+      "lrlId": "15685",
+      "name": "Brian Cohn",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://briancohn4mn.com/",
+          "requestedUrl": "https://briancohn4mn.com/",
+          "observedAt": "2026-11-26T23:13:02.773Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "70732ba5a78384d6c3e84460a89916cdb76fc6b2050935bc41dc56ad57a19848",
+          "bytes": 168603,
+          "title": "Brian Cohn for Minnesota House 57B, Lakeville",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://briancohn4mn.com/priorities/",
+          "requestedUrl": "https://briancohn4mn.com/priorities/",
+          "observedAt": "2026-11-26T23:13:04.232Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "67ec0450117bd9c415ae332d7fd1324556fd0d437a947742f739aca4e93d6d38",
+          "bytes": 104097,
+          "title": "Priorities – Brian Cohn for Minnesota",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy",
+          "excerpt": "I support research-backed public safety solutions that reduce violence, strengthen communities, and respect responsible gun ownership."
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/brian-cohn/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/brian-cohn/",
+          "observedAt": "2026-11-26T23:13:05.468Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "11ad0b55037ef5c2f95b38c43119a96c6519d8c77c68cd325cd78194f64ad0cc",
+          "bytes": 124679,
+          "title": "Brian Cohn - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "house:65B",
+      "lrlId": "15686",
+      "name": "Sebastian Ellefson",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.teamellefson.com/",
+          "requestedUrl": "https://www.teamellefson.com/",
+          "observedAt": "2026-11-26T23:13:06.371Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "5c744724014c1aaabb4d3f8e4222fb25968a8b39ba12470a180d8062f19809f0",
+          "bytes": 14217,
+          "title": "Sebastian Ellefson for MN House 65B",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.teamellefson.com/issues",
+          "requestedUrl": "https://www.teamellefson.com/issues",
+          "observedAt": "2026-11-26T23:13:06.624Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "d8c35f908205d004b50ca791d6bffd5a66b9edcc904395307602080d783501db",
+          "bytes": 19695,
+          "title": "What Sebastian Will Fight For",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy",
+          "excerpt": "We must work together to usher in the changes necessary to sustain and improve our environment."
+        }
+      ]
+    },
+    {
+      "seat": "senate:4",
+      "lrlId": "15703",
+      "name": "Austin Peterson",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://austin4mn.com/",
+          "requestedUrl": "https://www.austin4mn.com/",
+          "observedAt": "2026-11-26T23:13:07.217Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "6dfd98d7c77073cca216f8a4229a918f4a18b1f651273bf696647ca65971bf96",
+          "bytes": 53625,
+          "title": "Austin Peterson for Minnesota State Senate | Senate District 4",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        }
+      ]
+    },
+    {
+      "seat": "senate:13",
+      "lrlId": "15687",
+      "name": "Jared J. Gapinski",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://gapinskiformnsenate.com/",
+          "requestedUrl": "https://gapinskiformnsenate.com/",
+          "observedAt": "2026-11-26T23:13:07.525Z",
+          "claimedPublicationAt": "2026-06-30T15:46:57.000Z",
+          "bodySha256": "24addfe19c839f1edb8c684373f82e99be95a3c481db821d175b84e72bffb3f4",
+          "bytes": 71236,
+          "title": "Jared Gapinski for Minnesota Senate – District 13",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://gapinskiformnsenate.com/issues/",
+          "requestedUrl": "https://gapinskiformnsenate.com/issues/",
+          "observedAt": "2026-11-26T23:13:07.716Z",
+          "claimedPublicationAt": "2026-06-30T15:47:34.000Z",
+          "bodySha256": "77d4d78e5eb4d206e22d9e9e8be6a9ddd2a1116de7226fece21dbdc1ee07fc40",
+          "bytes": 32149,
+          "title": "Jared Gapinski on the Issues for Central Minnesota",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "senate:15",
+      "lrlId": "15688",
+      "name": "Braxton Seifert",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.seifertforsenate.com/",
+          "requestedUrl": "https://seifertforsenate.com/",
+          "observedAt": "2026-11-26T23:13:08.307Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "12a2c42b4c6084cba95c18215f30c499520d0231cf372f67382995cea85bb05f",
+          "bytes": 12138,
+          "title": "Seifert for Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.seifertforsenate.com/issues",
+          "requestedUrl": "https://www.seifertforsenate.com/issues",
+          "observedAt": "2026-11-26T23:13:08.334Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "ffa38ebc942abdffe95644f5ea41f2ce70373f8c9379a2dac650483135a8d254",
+          "bytes": 18414,
+          "title": "Issues",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy",
+          "excerpt": "We can grow more jobs, expand the tax base and reduce tax rates by growing the economy • Litigation reform."
+        }
+      ]
+    },
+    {
+      "seat": "senate:21",
+      "lrlId": "15689",
+      "name": "Christopher R. Knoll",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://knollformnsenate.com/",
+          "requestedUrl": "https://knollformnsenate.com/",
+          "observedAt": "2026-11-26T23:13:10.346Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "79c6373dfac07450b0af8a2bb9dd8bcbabba3719bc1bb7664ab12587e266847a",
+          "bytes": 68475,
+          "title": "Home",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://knollformnsenate.com/issues",
+          "requestedUrl": "https://knollformnsenate.com/issues",
+          "observedAt": "2026-11-26T23:13:10.463Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "a52ed288671e1e132e39a0eefabd26bc1fc1b45275df37c40326b9551f77f606",
+          "bytes": 82348,
+          "title": "Issues",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy",
+          "excerpt": "Essential Services Support Frontline Workers Teachers, nurses, childcare providers, law enforcement, EMS, and firefighters deserve meaningful support."
+        }
+      ]
+    },
+    {
+      "seat": "senate:24",
+      "lrlId": "15702",
+      "name": "Simon Glaser",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.simonglaser.com/",
+          "requestedUrl": "https://www.simonglaser.com/",
+          "observedAt": "2026-11-26T23:13:10.802Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "bb75f4f536c91fb461db7409f6779f1fbac567440c32cb9db7ee3c752ad08bf8",
+          "bytes": 162309,
+          "title": "Simon Glaser for State Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.simonglaser.com/issues",
+          "requestedUrl": "https://www.simonglaser.com/issues",
+          "observedAt": "2026-11-26T23:13:10.985Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "5765f11d0b9e08ebc97875e7f5240d8f91beda01c8affbe39b7f77eddad89ed1",
+          "bytes": 177428,
+          "title": "Issues &mdash; Simon Glaser for State Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "senate:26",
+      "lrlId": "15690",
+      "name": "Cherie Johnson",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://cheriejohnsonforsenate.com/",
+          "requestedUrl": "https://www.cheriejohnsonforsenate.com/",
+          "observedAt": "2026-11-26T23:13:12.567Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "a73dfe7eac813beee786e0e0c16d8fc0cec480bc1c99f7cb0f24bc6057ee581b",
+          "bytes": 206278,
+          "title": "Home - Cherie Johnson for Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://cheriejohnsonforsenate.com/issues/",
+          "requestedUrl": "https://cheriejohnsonforsenate.com/issues/",
+          "observedAt": "2026-11-26T23:13:13.117Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "f38f9dab7cf2d528507f88190b8fa760ae2b24a7112cf42005ebc2e756c3d3f7",
+          "bytes": 177677,
+          "title": "Issues - Cherie Johnson for Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "senate:32",
+      "lrlId": "15691",
+      "name": "Chris Ford",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.chrisfordformn.com/",
+          "requestedUrl": "https://chrisfordformn.com/",
+          "observedAt": "2026-11-26T23:13:13.753Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "f0ea01f5313875e03c16c0d11330524f5820f213023ce34604c296f4e5ea7e6f",
+          "bytes": 765526,
+          "title": "Chris Ford for MN",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.chrisfordformn.com/priorities",
+          "requestedUrl": "https://www.chrisfordformn.com/priorities",
+          "observedAt": "2026-11-26T23:13:13.825Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "101d6159f7b5db06c87cfb34952bee78007fbcb65cbf57d07e984b85de2cf547",
+          "bytes": 234309,
+          "title": "Priorities &mdash; Chris Ford for MN",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/chris-ford/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/chris-ford/",
+          "observedAt": "2026-11-26T23:13:14.677Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "b8733733340b8376789b84dfbbd613d2959722c79ea0b85860d835a3610d505e",
+          "bytes": 121093,
+          "title": "Chris Ford - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "stage": "campaign_home",
+      "seat": "house:3B",
+      "url": "https://www.aaronformn.com/",
+      "reason": "UNVERIFIED_OR_UNAVAILABLE"
+    },
+    {
+      "stage": "campaign_home",
+      "seat": "house:5B",
+      "url": "https://claussenforhouse.org/",
+      "reason": "UNVERIFIED_OR_UNAVAILABLE"
+    },
+    {
+      "stage": "campaign_home",
+      "seat": "house:13B",
+      "url": "https://lobergformnhouse.com/",
+      "reason": "UNVERIFIED_OR_UNAVAILABLE"
+    },
+    {
+      "stage": "campaign_policy",
+      "seat": "house:14A",
+      "url": "https://www.daisaneformn.com/issues",
+      "reason": "UNVERIFIED_OR_UNAVAILABLE"
+    },
+    {
+      "stage": "campaign_home",
+      "seat": "house:15A",
+      "url": "https://hennen4house.com/",
+      "reason": "UNVERIFIED_OR_UNAVAILABLE"
+    }
+  ],
+  "limitations": [
+    "No recent service means absent from 92nd, 93rd and 94th LRL directories, not proof of never having held office.",
+    "All source bodies were observed during this run; publication claims are not independently verified historical availability.",
+    "Public-repository report retains URLs, hashes, small policy excerpts and answer counts only, not complete original bodies or private contact fields.",
+    "No direction or issue stance is inferred; canonical evidence ingestion requires private raw-body retention and validation.",
+    "Unmatched or unavailable source is unknown evidence, not a negative position."
+  ]
+}
