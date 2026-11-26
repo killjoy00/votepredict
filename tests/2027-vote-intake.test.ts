@@ -121,7 +121,7 @@ test('disposable DB retains source-bound candidates without writing votes or res
     ];
     const source=await seedProof(detail,'<html>Synthetic source-body fixture</html>');
     const event={...vote,externalKey:'901:HF1:2027-01-12:1:1'};
-    const context={roster:roster.map(member=>({...member,chamber:'house' as const})),knownBills:input.knownBills};
+    const context={roster:roster.map(member=>({...member,chamber:'house' as const,normalizedName:member.name.toLowerCase(),aliases:[] as string[]})),knownBills:input.knownBills};
     await with2027ArchivedSources('501:1',async()=>{throw Error('Unexpected network capture');},async()=>{
       const saved=await retain2027VoteCandidateDocument(db!,context,'house',source,discovery,[event],'fixture-parser');
       assert.equal(saved.events,1);assert.equal(saved.reconciled,1);assert.equal(saved.passageCandidates,1);assert.equal(saved.needsReview,1);
