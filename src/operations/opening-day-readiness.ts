@@ -1,7 +1,7 @@
 import { pool } from '@/lib/db';
 import { fetchLrlLegislatorRefs } from '@/sources/minnesota/lrl-members';
 import { fetchRevisorBillSearchRangeDocument, revisorSearchSessionValue } from '@/sources/minnesota/revisor-bill-search';
-import { getMinnesotaHouseSession, isMinnesotaHouseSessionCurrent } from '@/sources/minnesota/sessions';
+import { getMinnesotaHouseSession } from '@/sources/minnesota/sessions';
 import { assessOpeningDaySources, OPENING_DAY_SESSION } from './opening-day-plan';
 
 export type OpeningDayReadinessResult = {
@@ -16,9 +16,9 @@ export type OpeningDayReadinessResult = {
   sourceReadiness: ReturnType<typeof assessOpeningDaySources>;
 };
 
-export async function ensureOpeningDaySessionMetadata(checkedAt = new Date()): Promise<OpeningDayReadinessResult['sessionMetadata']> {
+// Provision metadata only. The validated membership transaction owns rollover.
+export async function ensureOpeningDaySessionMetadata(): Promise<OpeningDayReadinessResult['sessionMetadata']> {
   const session = getMinnesotaHouseSession(OPENING_DAY_SESSION);
-  const shouldBeCurrent = isMinnesotaHouseSessionCurrent(session, checkedAt);
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -38,30 +38,19 @@ export async function ensureOpeningDaySessionMetadata(checkedAt = new Date()): P
         name=EXCLUDED.name,
         kind=EXCLUDED.kind`, [jurisdictionId]);
 
-    if (shouldBeCurrent) {
-      await client.query(`
-        UPDATE legislative_sessions
-           SET is_current=false
-         WHERE jurisdiction_id=$1
-           AND slug <> $2
-           AND is_current=true`, [jurisdictionId, session.slug]);
-    }
-
     const persisted = await client.query<{ id: string; is_current: boolean }>(`
       INSERT INTO legislative_sessions (jurisdiction_id, slug, name, starts_on, ends_on, is_current)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      VALUES ($1, $2, $3, $4, $5, false)
       ON CONFLICT (jurisdiction_id, slug) DO UPDATE SET
         name=EXCLUDED.name,
         starts_on=EXCLUDED.starts_on,
-        ends_on=EXCLUDED.ends_on,
-        is_current=EXCLUDED.is_current
+        ends_on=EXCLUDED.ends_on
       RETURNING id::text, is_current`, [
       jurisdictionId,
       session.slug,
       session.name,
       session.startsOn,
       session.endsOn,
-      shouldBeCurrent,
     ]);
     await client.query('COMMIT');
     return {
@@ -107,7 +96,7 @@ export async function probeOpeningDaySources(checkedAt = new Date()): Promise<Re
 
 export async function runOpeningDayReadiness(checkedAt = new Date()): Promise<OpeningDayReadinessResult> {
   const [sessionMetadata, sourceReadiness] = await Promise.all([
-    ensureOpeningDaySessionMetadata(checkedAt),
+    ensureOpeningDaySessionMetadata(),
     probeOpeningDaySources(checkedAt),
   ]);
   return {

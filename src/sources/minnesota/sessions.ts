@@ -1,3 +1,18 @@
+// Official term dates and regular-session convening are distinct from the
+// nominal biennium used to partition historical data.
+// https://www.leg.mn.gov/leg/faq/faq?id=175
+// https://www.house.mn.gov/hinfo/news.asp
+export const MINNESOTA_2027_TERM_START = '2027-01-04';
+export const MINNESOTA_2027_CONVENES_ON = '2027-01-12';
+
+export function minnesotaLocalDate(asOf: Date): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(asOf);
+  const part = (type: string) => parts.find((item) => item.type === type)!.value;
+  return `${part('year')}-${part('month')}-${part('day')}`;
+}
+
 export interface MinnesotaHouseSession {
   sessionKey: string;
   slug: string;
@@ -77,10 +92,13 @@ export function getMinnesotaHouseSession(sessionKeyOrSlug: string): MinnesotaHou
 /**
  * `isCurrent` on the static records documents the repository's current-era
  * baseline, but ingestion must not persist that flag forever. Derive live
- * current-session state from the canonical biennium dates so rerunning a 2025
- * historical ingester after 2027 starts cannot reactivate the old session.
+ * activation eligibility from Minnesota local dates. The 2027 transition
+ * follows the official term start, not the nominal January 1 partition.
+ * A positive result is eligibility, not proof that roster rollover succeeded.
  */
 export function isMinnesotaHouseSessionCurrent(session: MinnesotaHouseSession, asOf = new Date()): boolean {
-  const date = asOf.toISOString().slice(0, 10);
+  const date = minnesotaLocalDate(asOf);
+  if (session.slug === '2025-2026') return date >= session.startsOn && date < MINNESOTA_2027_TERM_START;
+  if (session.slug === '2027-2028') return date >= MINNESOTA_2027_TERM_START && date <= session.endsOn;
   return date >= session.startsOn && date <= session.endsOn;
 }
