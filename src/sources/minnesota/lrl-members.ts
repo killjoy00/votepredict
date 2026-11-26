@@ -199,9 +199,12 @@ export async function fetchLrlLegislatorRefs(session: MinnesotaHouseSession): Pr
   return discoverLrlLegislators(await fetchHtml(buildLrlSessionSearchUrl(session)));
 }
 
-export async function listLrlMemberships(session: MinnesotaHouseSession): Promise<HistoricalMembershipRecord[]> {
+export async function listLrlMemberships(
+  session: MinnesotaHouseSession,
+  options: { allowIncompleteForAudit?: boolean } = {},
+): Promise<HistoricalMembershipRecord[]> {
   const refs = await fetchLrlLegislatorRefs(session);
-  if (refs.length < 190) throw new Error(`LRL returned only ${refs.length} legislators for ${session.slug}`);
+  if (refs.length < 190 && !options.allowIncompleteForAudit) throw new Error(`LRL returned only ${refs.length} legislators for ${session.slug}`);
   const results: HistoricalMembershipRecord[] = [];
   for (const ref of refs) {
     const records = parseLrlMembershipDetails({ html: await fetchHtml(ref.sourceUrl), session, lrlId: ref.lrlId, fallbackName: ref.displayName, sourceUrl: ref.sourceUrl });
