@@ -248,11 +248,11 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     // Force a database error after at least one membership write. The rollover
     // and all membership writes must roll back together in the disposable DB.
     await dbModule.pool.query(`
-      CREATE FUNCTION preseason_reject_membership() RETURNS trigger LANGUAGE plpgsql AS $
+      CREATE FUNCTION preseason_reject_membership() RETURNS trigger LANGUAGE plpgsql AS $preseason$
       BEGIN
         IF NEW.district = '2' THEN RAISE EXCEPTION 'synthetic membership write failure'; END IF;
         RETURN NEW;
-      END; $;
+      END; $preseason$;
       CREATE TRIGGER preseason_reject_membership BEFORE INSERT ON memberships
       FOR EACH ROW EXECUTE FUNCTION preseason_reject_membership();
     `);
