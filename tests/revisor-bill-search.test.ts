@@ -5,6 +5,7 @@ import {
   parseRevisorBillSearchXml,
   REVISOR_SEARCH_RESULT_LIMIT,
   revisorSearchSessionValue,
+  validate2027RevisorSearchScope,
 } from '../src/sources/minnesota/revisor-bill-search.js';
 
 test('builds Revisor search session keys from canonical VotePredict sessions', () => {
@@ -75,4 +76,25 @@ test('parses Revisor BILL_RESULT rows without fuzzy identifiers', () => {
       latestTextHtmlUrl: undefined,
     },
   ]);
+});
+
+const scope = { body: 'House' as const, firstBill: 1, lastBill: 500 };
+function liveXml(type = 'HF', number = 1, uri = 'api.revisor.mn.gov/bills/v1/95/2027/0/HF/1/') {
+  return `<SEARCH_RESULTS><BILL_RESULT><FILE_TYPE>${type}</FILE_TYPE><FILE_NUMBER>${number}</FILE_NUMBER>
+    <STATUS_XML_URI>${uri}</STATUS_XML_URI></BILL_RESULT></SEARCH_RESULTS>`;
+}
+function validate(xml: string) {
+  validate2027RevisorSearchScope(xml, parseRevisorBillSearchXml(xml), scope);
+}
+test('2027 Revisor source scope admits only requested regular-session bills and valid empty results', () => {
+  assert.doesNotThrow(() => validate(liveXml()));
+  assert.doesNotThrow(() => validate('<SEARCH_RESULTS></SEARCH_RESULTS>'));
+  assert.throws(() => validate(liveXml('HF', 1, 'api.revisor.mn.gov/bills/v1/94/2025/0/HF/1/')), /status URI/);
+  assert.throws(() => validate(liveXml('HF', 1, 'api.revisor.mn.gov/bills/v1/95/2027/1/HF/1/')), /status URI/);
+  assert.throws(() => validate(liveXml('HF', 1, 'example.com/bills/v1/95/2027/0/HF/1/')), /status URI/);
+  assert.throws(() => validate(liveXml('SF')), /chamber\/range/);
+  assert.throws(() => validate(liveXml('HF', 501)), /chamber\/range/);
+  assert.throws(() => validate(liveXml().replace('</BILL_RESULT>', '</BILL_RESULT><BILL_RESULT></BILL_RESULT>')), /Malformed/);
+  assert.throws(() => validate(liveXml().replace('</SEARCH_RESULTS>', '')), /Incomplete/);
+  assert.throws(() => validate(liveXml().replace('</BILL_RESULT>', '<LATEST_TEXT_HTML_URI>www.revisor.mn.gov/bills/94/2025/0/HF/1/latest/</LATEST_TEXT_HTML_URI></BILL_RESULT>')), /latest-text URI/);
 });
