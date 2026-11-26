@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import test from 'node:test';
 import { Pool } from 'pg';
 
@@ -78,9 +79,9 @@ function billSearchXml(body: 'House' | 'Senate', range: string): string {
   </SEARCH_RESULTS>`;
 }
 
-function statusXml(type: 'HF' | 'SF', number: number): string {
+function statusXml(type: 'HF' | 'SF', number: number, hf1Engrossment = 0): string {
   const chamber = type === 'HF' ? 'HOUSE' : 'SENATE';
-  const engrossed = type === 'HF';
+  const engrossed = type === 'HF' && (number !== 1 || hf1Engrossment >= 1);
   const passageObserved = type === 'HF' && number === 2;
   const padded = String(number).padStart(4, '0');
   return `<?xml version="1.0"?>
@@ -90,17 +91,24 @@ function statusXml(type: 'HF' | 'SF', number: number): string {
     <TEXT_VERSION_LIST>
       <DOCUMENT>
         <HTML_URI>www.revisor.mn.gov/bills/95/${type}/${number}/versions/0/</HTML_URI>
-        <DATE_INSERT>2027-01-01 08:00:00</DATE_INSERT>
+        <DATE_INSERT>2027-01-11 08:00:00</DATE_INSERT>
         <DOCUMENT_NAME>2027.0-${type}${padded}-0</DOCUMENT_NAME>
         <DOCUMENT_TYPE>official</DOCUMENT_TYPE>
         <DOCUMENT_ENGROSSMENT>0</DOCUMENT_ENGROSSMENT>
       </DOCUMENT>
       ${engrossed ? `<DOCUMENT>
         <HTML_URI>www.revisor.mn.gov/bills/95/${type}/${number}/versions/1/</HTML_URI>
-        <DATE_INSERT>2027-01-04 10:00:00</DATE_INSERT>
+        <DATE_INSERT>2027-01-20 10:00:00</DATE_INSERT>
         <DOCUMENT_NAME>2027.0-${type}${padded}-1</DOCUMENT_NAME>
         <DOCUMENT_TYPE>official</DOCUMENT_TYPE>
         <DOCUMENT_ENGROSSMENT>1</DOCUMENT_ENGROSSMENT>
+      </DOCUMENT>` : ''}
+      ${type === 'HF' && number === 1 && hf1Engrossment >= 2 ? `<DOCUMENT>
+        <HTML_URI>www.revisor.mn.gov/bills/95/HF/1/versions/2/</HTML_URI>
+        <DATE_INSERT>2027-02-02 10:00:00</DATE_INSERT>
+        <DOCUMENT_NAME>2027.0-HF0001-2</DOCUMENT_NAME>
+        <DOCUMENT_TYPE>official</DOCUMENT_TYPE>
+        <DOCUMENT_ENGROSSMENT>2</DOCUMENT_ENGROSSMENT>
       </DOCUMENT>` : ''}
     </TEXT_VERSION_LIST>
     <ACTIONS>
@@ -108,12 +116,12 @@ function statusXml(type: 'HF' | 'SF', number: number): string {
         <ACTION>
           <ACTION_NUMBER>1</ACTION_NUMBER>
           <ACTION_TEXT>Introduction and first reading, referred to committee</ACTION_TEXT>
-          <ACTION_DATE>2027-01-02 00:00:00</ACTION_DATE>
+          <ACTION_DATE>2027-01-12 00:00:00</ACTION_DATE>
         </ACTION>
         ${passageObserved ? `<ACTION>
           <ACTION_NUMBER>9</ACTION_NUMBER>
           <ACTION_TEXT>Bill was passed as amended</ACTION_TEXT>
-          <ACTION_DATE>2027-01-05 00:00:00</ACTION_DATE>
+          <ACTION_DATE>2027-01-21 00:00:00</ACTION_DATE>
         </ACTION>` : ''}
       </${chamber}>
     </ACTIONS>
@@ -125,7 +133,7 @@ function billTextHtml(identifier: string): string {
   return `<html><body><main><div id="document"><p>${text}</p></div></main></body></html>`;
 }
 
-function installSyntheticMinnesotaSources(options: { missingSenateDetails: number; duplicateHouseDistrict?: boolean; wrongBillStatus?: boolean } = { missingSenateDetails: 0 }): () => void {
+function installSyntheticMinnesotaSources(options: { missingSenateDetails: number; duplicateHouseDistrict?: boolean; wrongBillStatus?: boolean; hf1Engrossment?: number } = { missingSenateDetails: 0 }): () => void {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async (input: string | URL | Request) => {
     const href = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
@@ -156,7 +164,7 @@ function installSyntheticMinnesotaSources(options: { missingSenateDetails: numbe
       const type = url.pathname.includes('/HF/') ? 'HF' : url.pathname.includes('/SF/') ? 'SF' : null;
       if (match && type) {
         const xml = options.wrongBillStatus && type === 'HF' && Number(match[1]) === 1
-          ? statusXml('HF', 2) : statusXml(type, Number(match[1]));
+          ? statusXml('HF', 2) : statusXml(type, Number(match[1]), options.hf1Engrossment);
         return new Response(xml, {
           status: 200,
           headers: { 'content-type': 'application/xml' },
@@ -194,7 +202,7 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
 
     process.env.DATABASE_URL = rehearsalUrl;
     process.env.DATABASE_URL_UNPOOLED = rehearsalUrl;
-    const sourceFixture = { missingSenateDetails: 0, duplicateHouseDistrict: false, wrongBillStatus: false };
+    const sourceFixture = { missingSenateDetails: 0, duplicateHouseDistrict: false, wrongBillStatus: false, hf1Engrossment: 0 };
     restoreFetch = installSyntheticMinnesotaSources(sourceFixture);
 
     const dbModule = await import('../src/lib/db/index.js');
@@ -341,7 +349,7 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     assert.equal(status.selected, 3);
     assert.equal(status.fetched, 3);
     assert.equal(status.failed, 0);
-    assert.equal(status.engrossedBills, 2);
+    assert.equal(status.engrossedBills, 1);
     assert.equal(status.passageActionsObserved, 1);
 
     const firstBackfill = await backfillRevisorInitialTextBatch();
@@ -375,10 +383,27 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
       hasOutcome: row.outcome !== null,
       hasInitialTextHash: Boolean(row.initial_text_hash),
     })), [
-      { identifier: 'HF1', versionKind: 'engrossment', passageObserved: 'false', hasOutcome: false, hasInitialTextHash: true },
+      { identifier: 'HF1', versionKind: 'introduction', passageObserved: 'false', hasOutcome: false, hasInitialTextHash: true },
       { identifier: 'HF2', versionKind: 'engrossment', passageObserved: 'true', hasOutcome: false, hasInitialTextHash: true },
       { identifier: 'SF1', versionKind: 'introduction', passageObserved: 'false', hasOutcome: false, hasInitialTextHash: true },
     ]);
+
+    const target = (await dbModule.pool.query<{id: string; session_id: string; originating_chamber_id: string; title: string}>(
+      "SELECT id,session_id,originating_chamber_id,title FROM bills WHERE identifier='HF1' AND session_id=(SELECT id FROM legislative_sessions WHERE slug='2027-2028')"
+    )).rows[0];
+    const { forecastSourceChamberPassageAtIntroduction } = await import('../src/forecasting/introduction-runtime.js');
+    // The audited serving artifact is restricted to 2025-2026. Until the
+    // existing 2027 preparation/promotion protocol supplies its own artifact,
+    // the introduction runtime must fail closed rather than extrapolate.
+    await assert.rejects(forecastSourceChamberPassageAtIntroduction(target.id),
+      /No frozen introduction model is available for Minnesota session 2027-2028/);
+    assert.equal((await ensureProspectiveEvidenceForecasts()).seededForecasts, 0,
+      'the separate introduction forecast does not enroll a pre-engrossment bill in the Quick cohort');
+
+    sourceFixture.hf1Engrossment = 1;
+    const firstEngrossment = await syncLiveRevisorStatusBatch();
+    assert.equal(firstEngrossment.failed, 0);
+    assert.equal(firstEngrossment.engrossedBills, 2);
 
     // A failed fresh observation must not seed a new forecast from an old
     // successful snapshot. After recovery the original valid bill is eligible.
@@ -411,6 +436,141 @@ test('clean database rehearses 2027 session rollover, official-source bootstrap,
     assert.deepEqual(scheduled.rows, [
       { identifier: 'HF1', enabled: true, cadence_hours: 24, research_mode: 'quick' },
     ]);
+
+    // Continue in the SAME clean, migrated database. The historical analogy,
+    // evidence and outcomes below are synthetic test records, not real votes.
+    const db = dbModule.pool;
+    const { executeQuickRuntimeForecast } = await import('../src/forecasting/quick-runtime.js');
+    const { retainedTargetTextAsOf } = await import('../src/forecasting/runtime-bill-text.js');
+    const { getQuickEvidenceProspectiveScorecard } = await import('../src/operations/quick-evidence-prospective-scorecard.js');
+    const { resolveSafeForecastOutcome } = await import('../src/operations/safe-resolution.js');
+    const priorSession = (await db.query<{id: string}>("SELECT id FROM legislative_sessions WHERE slug='2025-2026'")).rows[0].id;
+    const chamber = target.originating_chamber_id;
+    const firstText = ('Section 1. School districts shall establish a teacher education grant program. ' +
+      'The commissioner of education shall report on student instruction, school grants, and teacher training. ').repeat(4);
+    const secondText = firstText + 'Section 2. Each school district shall publish an additional annual grant report.';
+    const historical = (await db.query<{id: string}>(`
+      INSERT INTO bills(session_id,originating_chamber_id,identifier,title,status)
+      VALUES($1,$2,'HF9000',$3,'Passed') RETURNING id`, [priorSession,chamber,target.title])).rows[0].id;
+    const priorVersion = (await db.query<{id: string}>(`
+      INSERT INTO bill_versions(bill_id,version_key,published_at,text_url,raw_text)
+      VALUES($1,'synthetic-prior','2026-03-01T10:00:00Z','https://fixture.invalid/prior',$2) RETURNING id`,
+      [historical,firstText])).rows[0].id;
+    const storeFixtureObservation = async (billId: string, versionId: string, versionKey: string,
+      text: string, published: string, observed: string) => {
+      const digest = createHash('sha256').update(text).digest('hex');
+      const sourceUrl = 'https://fixture.invalid/text/' + versionKey;
+      await db.query(`INSERT INTO evidence_content_blobs(sha256,body,media_type)
+        VALUES($1,$2,'text/plain; charset=utf-8') ON CONFLICT(sha256) DO NOTHING`, [digest,Buffer.from(text)]);
+      // Both clocks are explicitly synthetic in this disposable database.
+      // Keep the migrated acceptance-clock constraint intact.
+      await db.query(`INSERT INTO forecast_bill_text_observations(bill_id,bill_version_id,version_key,source_url,
+        text_sha256,claimed_published_at,observed_at,accepted_at,title)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$7,$8)`, [billId,versionId,versionKey,sourceUrl,digest,published,observed,target.title]);
+      return digest;
+    };
+    await storeFixtureObservation(historical,priorVersion,'synthetic-prior',firstText,
+      '2026-03-01T10:00:00Z','2026-03-02T10:00:00Z');
+    await db.query(`INSERT INTO memberships(session_id,chamber_id,legislator_id,district,party,title,starts_on,ends_on)
+      SELECT $1,chamber_id,legislator_id,district,party,title,'2025-01-01','2026-12-31'
+        FROM memberships WHERE session_id=$2 AND chamber_id=$3`, [priorSession,target.session_id,chamber]);
+    const makeVote = async (sessionId: string, billId: string, key: string, occurredOn: string, yes: number) => {
+      const sourceId = (await db.query<{id:string}>(`
+        INSERT INTO source_documents(jurisdiction_id,session_id,chamber_id,source_kind,source_url,fetched_at,content_sha256)
+        SELECT jurisdiction_id,$1,$2,'house_vote_detail',$3,$4::date + interval '18 hours',$5
+          FROM legislative_sessions WHERE id=$1 RETURNING id`, [sessionId,chamber,'https://fixture.invalid/vote/'+key,
+            occurredOn,createHash('sha256').update(key).digest('hex')])).rows[0].id;
+      const eventId = (await db.query<{id:string}>(`
+        INSERT INTO vote_events(session_id,chamber_id,bill_id,source_document_id,external_key,vote_kind,motion_text,
+          occurred_on,yea_count,nay_count,passed,is_passage)
+        VALUES($1,$2,$3,$4,$5,'passage','Synthetic floor passage',$6,$7,$8,true,true) RETURNING id`,
+        [sessionId,chamber,billId,sourceId,key,occurredOn,yes,134-yes])).rows[0].id;
+      await db.query(`INSERT INTO member_votes(vote_event_id,membership_id,source_member_name,normalized_member_name,choice)
+        SELECT $1,m.id,l.name,l.normalized_name,CASE WHEN row_number() OVER(ORDER BY m.district,l.id) <= $4 THEN 'yea' ELSE 'nay' END
+          FROM memberships m JOIN legislators l ON l.id=m.legislator_id
+         WHERE m.session_id=$2 AND m.chamber_id=$3`, [eventId,sessionId,chamber,yes]);
+      return eventId;
+    };
+    const historicalVote = await makeVote(priorSession,historical,'synthetic-2026-passage','2026-03-05',80);
+    const currentVersion = async (ordinal: number) => {
+      const key = '2027.0-HF0001-'+ordinal;
+      const result = await db.query<{id:string;version_key:string}>(
+        'SELECT id,version_key FROM bill_versions WHERE bill_id=$1 AND version_key=$2',[target.id,key]);
+      assert.equal(result.rows.length,1);
+      return result.rows[0];
+    };
+    const initialVersion = await currentVersion(0);
+    const version1 = await currentVersion(1);
+    const initialHash = billState.rows.find(row=>row.identifier==='HF1')!.initial_text_hash;
+    const hash1 = await storeFixtureObservation(target.id,version1.id,version1.version_key,firstText,
+      '2027-01-20T10:00:00Z','2027-01-20T12:00:00Z');
+    const request = {
+      forecastId: seeded.forecasts[0].forecastId, chamberId: chamber, chamberSlug:'house', chamberName:'House',
+      subject:{kind:'bill' as const,billId:target.id,identifier:'HF1',title:target.title,sessionId:target.session_id,sessionSlug:'2027-2028'},
+      researchMode:'quick' as const, asOf:'2027-02-01T12:00:00Z',
+    };
+    // The real Quick runtime uses retained text and dated historical support,
+    // not stubbed probabilities or an external model/API.
+    const first = await executeQuickRuntimeForecast(request);
+    assert.equal(first.revisionNumber,1);
+    assert.equal(first.modelVersion,'member-eb-v1.2-decay180');
+    assert.equal(first.members.length,134);
+    assert.ok(first.members.every(m=>typeof m.yesProbability==='number'));
+    assert.ok(first.analogues.some(item=>item.voteEventId===historicalVote));
+    const sealedRevision = async (revisionId:string) => {
+      const revision = (await db.query(`
+        SELECT r.*,m.manifest_json,m.manifest_sha256 FROM forecast_revisions r
+        JOIN forecast_input_manifests m ON m.revision_id=r.id WHERE r.id=$1`,[revisionId])).rows[0];
+      const members = (await db.query('SELECT * FROM forecast_member_predictions WHERE revision_id=$1 ORDER BY membership_id',[revisionId])).rows;
+      assert.equal(members.length,134);
+      assert.equal(createHash('sha256').update(revision.manifest_json).digest('hex'),revision.manifest_sha256);
+      const capture = (await db.query<{status:string}>(`SELECT status FROM forecast_capture_attempts
+        WHERE revision_id=$1 AND capture_kind='quick_evidence' ORDER BY sequence DESC LIMIT 1`,[revisionId])).rows[0];
+      assert.equal(capture?.status,'completed');
+      assert.ok(members.every(row=>row.context.some((item:Record<string,unknown>)=>item.kind==='quick_evidence_shadow')));
+      return {revision,members};
+    };
+    const sealedFirst = await sealedRevision(first.revisionId);
+    assert.equal(sealedFirst.revision.bill_version_id,version1.id);
+    assert.equal(JSON.parse(sealedFirst.revision.manifest_json).target.textSha256,hash1);
+    assert.equal((await getQuickEvidenceProspectiveScorecard(db)).cohort.resolvedForecastsInScope,0);
+
+    // Ingest a later official engrossment and retain distinct content.
+    sourceFixture.hf1Engrossment = 2;
+    assert.equal((await syncLiveRevisorStatusBatch()).failed,0);
+    const version2 = await currentVersion(2);
+    const hash2 = await storeFixtureObservation(target.id,version2.id,version2.version_key,secondText,
+      '2027-02-02T10:00:00Z','2027-02-02T12:00:00Z');
+    assert.notEqual(hash2,hash1);
+    assert.equal((await retainedTargetTextAsOf(db,target.id,request.asOf))?.textSha256,hash1);
+    await assert.rejects(forecastSourceChamberPassageAtIntroduction(target.id),
+      /No frozen introduction model is available for Minnesota session 2027-2028/);
+    assert.equal((await db.query<{text_hash:string}>('SELECT text_hash FROM bill_versions WHERE id=$1',[initialVersion.id])).rows[0].text_hash,initialHash);
+    assert.equal((await ensureProspectiveEvidenceForecasts()).seededForecasts,0);
+
+    const second = await executeQuickRuntimeForecast({...request,asOf:'2027-02-03T12:00:00Z'});
+    assert.equal(second.revisionNumber,2);
+    assert.equal(second.modelVersion,first.modelVersion);
+    const sealedSecond = await sealedRevision(second.revisionId);
+    assert.equal(sealedSecond.revision.bill_version_id,version2.id);
+    assert.equal(JSON.parse(sealedSecond.revision.manifest_json).target.textSha256,hash2);
+    assert.deepEqual(await sealedRevision(first.revisionId),sealedFirst,
+      'a later official version and revision must not rewrite the first revision, inputs or evidence');
+
+    // Make a synthetic recorded final roll call only after the valid revisions.
+    const outcome = await makeVote(target.session_id,target.id,'synthetic-2027-passage','2027-02-05',78);
+    await resolveSafeForecastOutcome({forecastId:request.forecastId,ownerUserId:'system:prospective-evidence-v1',voteEventId:outcome});
+    const scorecard = await getQuickEvidenceProspectiveScorecard(db);
+    assert.equal(scorecard.cohort.selectedStrictlyPreVoteCases,1);
+    assert.equal(scorecard.minimums.memberOutcomes.observed,134);
+    assert.equal(scorecard.primaryScoringAllowed,false);
+    assert.equal(scorecard.metrics,null);
+    assert.equal((await db.query<{enabled:boolean}>('SELECT enabled FROM forecast_schedules WHERE forecast_id=$1',[request.forecastId])).rows[0].enabled,false);
+    assert.deepEqual(await sealedRevision(first.revisionId),sealedFirst);
+    assert.deepEqual(await sealedRevision(second.revisionId),sealedSecond);
+    assert.equal((await ensureProspectiveEvidenceForecasts()).seededForecasts,0);
+    // Synthetic replay metrics only: no serving or primary protocol change.
+    assert.equal((await getQuickEvidenceProspectiveScorecard(db,{revealMetrics:true})).metrics?.memberOutcomes,134);
   } finally {
     restoreFetch?.();
     await appPool?.end().catch(() => undefined);
