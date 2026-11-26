@@ -100,7 +100,12 @@ export async function fetchSenateJournal(sourceUrl: string): Promise<SenateJourn
     signal: AbortSignal.timeout(30_000),
   });
   if (!response.ok) throw new Error(`Minnesota Senate journal returned ${response.status}: ${sourceUrl}`);
-  const bytes = new Uint8Array(await response.arrayBuffer());
+  return parseSenateJournalPdfBytes(new Uint8Array(await response.arrayBuffer()),sourceUrl);
+}
+
+/** Same parser for separately retained original PDF entity bytes. */
+export async function parseSenateJournalPdfBytes(bytes:Uint8Array,sourceUrl:string):Promise<SenateJournalDocument>{
+  validateJournalUrl(sourceUrl);
   if (bytes.byteLength < 1000) throw new Error(`Minnesota Senate journal PDF was unexpectedly small: ${sourceUrl}`);
   // pdf-parse can transfer/detach its input ArrayBuffer. Capture original
   // source-body identity BEFORE giving bytes to its PDF worker.

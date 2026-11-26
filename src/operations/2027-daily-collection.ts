@@ -1,13 +1,13 @@
 import { createHash } from 'node:crypto';
 import type { Pool,PoolClient } from 'pg';
-import { classify2027CollectionUrl,COLLECTION_LIMITS,type CollectionSourceReceipt,type CollectionCounters } from '@/sources/minnesota/2027-collection-source';
+import { classify2027CollectionUrl,collectionResponseByteLimit,COLLECTION_LIMITS,type CollectionSourceReceipt,type CollectionCounters } from '@/sources/minnesota/2027-collection-source';
 import { minnesotaLocalDate } from '@/sources/minnesota/sessions';
 import { databaseTargetFingerprint,readReleaseBinding } from './release-readiness';
 
 export const DAILY_COLLECTION_PLAN = Object.freeze({session:'2027-2028',timezone:'America/Chicago',
   proposedCadence:'once daily',productionScheduleEnabled:false,limits:COLLECTION_LIMITS,
-  stages:['catalog','status','initial_text','current_text','health'] as const,
-  forecastsEnabled:false,voteIngestionEnabled:false,p8CaptureEnabled:false,vercelRequired:false});
+  stages:['catalog','status','initial_text','current_text','vote_intake','health'] as const,
+  forecastsEnabled:false,voteCandidateIntakeEnabled:true,voteIngestionEnabled:false,p8CaptureEnabled:false,vercelRequired:false});
 export const DAILY_COLLECTION_REPORT_TYPE='application/vnd.votepredict.2027-collection-report+json';
 export const DAILY_COLLECTION_SOURCE_RECEIPT_TYPE='application/vnd.votepredict.2027-source-observation+json';
 const digest=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
@@ -40,7 +40,7 @@ export function assertDailyCollectionRun(env:Record<string,string|undefined>,now
 
 /** Uses the existing migration 0037 content-addressed, trigger-protected store.
  * Retains exact received entity bytes; acceptance is not an external timestamp. */
-async function storeBlob(db:Pick<PoolClient,'query'>,body:Buffer,mediaType:string,requireType=false):Promise<string>{
+export async function storeBlob(db:Pick<PoolClient,'query'>,body:Buffer,mediaType:string,requireType=false):Promise<string>{
   const sha=digest(body);
   await db.query('INSERT INTO evidence_content_blobs(sha256,body,media_type) VALUES($1,$2,$3) ON CONFLICT(sha256) DO NOTHING',[sha,body,mediaType]);
   const stored=(await db.query<{sha256:string;bytes:number;verified:boolean;media_type:string;accepted_at:Date}>(
@@ -55,8 +55,11 @@ export async function archive2027Source(db:Pick<Pool,'connect'>,receipt:Collecti
     !Number.isInteger(receipt.httpStatus)||receipt.httpStatus<100||receipt.httpStatus>599||
     !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(receipt.observedAt)||
     !Number.isFinite(Date.parse(receipt.observedAt))||
+    (receipt.requestMethod==='POST'&&(receipt.sourceUrl!=='https://www.house.mn.gov/Votes/GetVoteSummary'||!/^\w{64}$/.test(receipt.requestBodySha256??'')))||
+    (receipt.sourceUrl==='https://www.house.mn.gov/Votes/GetVoteSummary'&&receipt.requestMethod!=='POST')||
+    (receipt.requestMethod!=='POST'&&receipt.requestBodySha256!==undefined)||
     digest(body)!==receipt.responseBodySha256||body.length!==receipt.responseBodyBytes||
-    body.length<1||body.length>COLLECTION_LIMITS.maxResponseBytes)throw Error('Source body does not match receipt');
+    body.length<1||body.length>collectionResponseByteLimit(receipt.sourceUrl))throw Error('Source body does not match receipt');
   const client=await db.connect();
   try{
     await client.query('BEGIN');
@@ -115,7 +118,7 @@ export async function verifyCollectionTarget(db:Pool,expected:{role:string;finge
         has_table_privilege(current_user,'public.evidence_content_blobs','INSERT') AS "archiveInsert",
         has_table_privilege(current_user,'public.evidence_content_blobs','SELECT') AS "archiveSelect",
         (has_table_privilege(current_user,'public.evidence_content_blobs','UPDATE') OR has_table_privilege(current_user,'public.evidence_content_blobs','DELETE') OR has_table_privilege(current_user,'public.evidence_content_blobs','TRUNCATE')) AS "archiveMutate",
-        EXISTS(SELECT 1 FROM unnest(ARRAY['public.forecasts','public.forecast_schedules','public.forecast_revisions','public.vote_events','public.member_votes','public.memberships','public.legislative_sessions']) AS tables(name)
+        EXISTS(SELECT 1 FROM unnest(ARRAY['public.forecasts','public.forecast_schedules','public.forecast_revisions','public.forecast_resolutions','public.forecast_member_predictions','public.legislative_stage_events','public.vote_events','public.member_votes','public.memberships','public.legislative_sessions']) AS tables(name)
           WHERE has_table_privilege(current_user,tables.name,'INSERT') OR has_table_privilege(current_user,tables.name,'UPDATE') OR has_table_privilege(current_user,tables.name,'DELETE') OR has_table_privilege(current_user,tables.name,'TRUNCATE')) AS forbidden
       FROM pg_roles r JOIN pg_database d ON d.datname=current_database() WHERE r.rolname=current_user`)).rows[0];
     if(!role||role.role!==expected.role||role.unsafe||!role.archiveInsert||!role.archiveSelect||role.archiveMutate||role.forbidden)

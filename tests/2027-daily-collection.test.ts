@@ -65,7 +65,7 @@ test('live collection is dormant and rejects wrong dates, repo, attempts, target
 });
 test('health distinguishes bounded work from incomplete data coverage',()=>{
   const before:CollectionHealth={knownBills:200,houseBills:120,senateBills:80,neverObserved:0,staleStatus:0,failedStatus:0,missingInitialText:0,missingCurrentText:0};
-  const counters={requests:2,bytes:100,archived:1,failed:1,byKind:{catalog:1,status:1,initial_text:0,current_text:0},receiptSha256s:[]};
+  const counters={requests:2,bytes:100,archived:1,failed:1,byKind:{catalog:1,status:1,initial_text:0,current_text:0,house_vote:0,senate_vote:0},receiptSha256s:[]};
   const alerts=collectionAlerts(before,{...before,staleStatus:80,missingInitialText:4,missingCurrentText:2},199,counters,true);
   for(const item of ['SOURCE_OR_COLLECTION_FAILURE','UNARCHIVED_SOURCE_ATTEMPTS','CATALOG_COVERAGE_REGRESSION','STATUS_BACKLOG_OR_STALE','INITIAL_TEXT_BACKLOG','CURRENT_TEXT_BACKLOG'])assert.ok(alerts.includes(item));
 });
