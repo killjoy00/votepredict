@@ -45,6 +45,33 @@ export function buildHouseVoteDetailUrl(sessionKey: string, billIdentifier: stri
   return `${HOUSE_BASE}/Votes/Details?SessionKey=${encodeURIComponent(sessionKey)}&BillNumber=${encodeURIComponent(bill)}`;
 }
 
+/**
+ * Discover a native voting-system ID from an exact regular-session label on
+ * the official index. Never extrapolate from older numeric IDs or accept a
+ * special-session link. Multiple distinct keys are a source conflict.
+ */
+export function discoverHouseRegularSessionKey(html: string, sessionSlug: string): string | null {
+  if (!/^\d{4}-\d{4}$/.test(sessionSlug)) throw new Error('Invalid House session slug');
+  const target = `${sessionSlug} regular session`;
+  const keys = new Set<string>();
+  const anchors = /<a\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  for (const match of html.matchAll(anchors)) {
+    const label = decodeHtml(match[2].replace(/<[^>]+>/g, ' '))
+      .replace(/&(?:ndash|mdash);/gi, '-')
+      .replace(/\s*[-–—]\s*/g, '-')
+      .replace(/\s+/g, ' ').trim().toLowerCase();
+    if (label !== target) continue;
+    let url: URL;
+    try { url = new URL(decodeHtml(match[1]), HOUSE_BASE); } catch { continue; }
+    if (url.protocol !== 'https:' || !['www.house.mn.gov', 'house.mn.gov'].includes(url.hostname) ||
+        url.username || url.password || url.port || url.search || url.hash) continue;
+    const key = url.pathname.match(/^\/Votes\/Summary\/(\d+)\/?$/i)?.[1];
+    if (key) keys.add(key);
+  }
+  if (keys.size > 1) throw new Error(`Conflicting House voting-system keys for ${sessionSlug}`);
+  return [...keys][0] ?? null;
+}
+
 export function discoverHouseVoteBillLinks(html: string, fallbackSessionKey?: string): HouseVoteBillLink[] {
   const decoded = decodeHtml(html);
   const found = new Map<string, HouseVoteBillLink>();
@@ -178,6 +205,14 @@ async function fetchOfficialHousePage(sourceUrl: string): Promise<string> {
   });
   if (!response.ok) throw new Error(`Minnesota House page returned ${response.status}: ${sourceUrl}`);
   return response.text();
+}
+
+export async function probeHouseRegularSessionKey(sessionSlug: string): Promise<{
+  sourceUrl: string; sessionSlug: string; sessionKey: string | null;
+}> {
+  const sourceUrl = `${HOUSE_BASE}/Votes`;
+  const html = await fetchOfficialHousePage(sourceUrl);
+  return { sourceUrl, sessionSlug, sessionKey: discoverHouseRegularSessionKey(html, sessionSlug) };
 }
 
 async function fetchHouseSummaryRecords(sessionKey: string): Promise<Array<{ Number?: unknown }>> {

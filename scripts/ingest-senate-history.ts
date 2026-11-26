@@ -1,5 +1,6 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 import { Pool, type PoolClient } from 'pg';
+import { ensureVoteIngestSessionMetadata } from '../src/operations/vote-ingest-session-metadata.js';
 import { fetchSenateJournal, listSenateJournalLinks, parseSenateJournalText, SENATE_JOURNAL_VOTE_PARSER_VERSION } from '../src/sources/minnesota/senate-journals.js';
 import { activeMembershipCandidates, reconcileHouseMemberName, senateJournalNameForms, type MembershipCandidate } from '../src/sources/minnesota/member-reconciliation.js';
 import { getMinnesotaHouseSession, MINNESOTA_HOUSE_HISTORICAL_SESSIONS, type MinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
@@ -55,15 +56,9 @@ async function ensureContext(client: PoolClient, session: MinnesotaHouseSession)
      ON CONFLICT (jurisdiction_id,slug) DO UPDATE SET name=EXCLUDED.name,kind=EXCLUDED.kind RETURNING id`,
     [jurisdictionId],
   );
-  const legislativeSession = await client.query<{ id: string }>(
-    `INSERT INTO legislative_sessions (jurisdiction_id,slug,name,starts_on,ends_on,is_current)
-     VALUES ($1,$2,$3,$4,$5,$6)
-     ON CONFLICT (jurisdiction_id,slug) DO UPDATE SET
-       name=EXCLUDED.name,starts_on=EXCLUDED.starts_on,ends_on=EXCLUDED.ends_on,is_current=EXCLUDED.is_current
-     RETURNING id`,
-    [jurisdictionId, session.slug, session.name, session.startsOn, session.endsOn, session.isCurrent],
-  );
-  return { jurisdictionId, chamberId: chamber.rows[0].id, sessionId: legislativeSession.rows[0].id };
+  const sessionId = await ensureVoteIngestSessionMetadata(client, jurisdictionId, session);
+
+  return { jurisdictionId, chamberId: chamber.rows[0].id, sessionId };
 }
 
 async function candidates(client: PoolClient, context: Context): Promise<MembershipCandidate[]> {
