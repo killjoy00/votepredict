@@ -1,3 +1,4 @@
+import { assert2027InitialTextUrl } from '@/sources/minnesota/2027-collection-source';
 import { pool } from '@/lib/db';
 import { fetchRevisorBillVersion, type RevisorBillVersionMetadata } from '@/sources/minnesota/revisor';
 
@@ -23,7 +24,8 @@ function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-async function fetchWithRetry(row: InitialTextBackfillRow): Promise<FetchedRow> {
+async function fetchWithRetry(row: InitialTextBackfillRow, sessionSlug?: '2027-2028'): Promise<FetchedRow> {
+  if(sessionSlug==='2027-2028')assert2027InitialTextUrl(row.identifier,row.version_key,row.text_url);
   let lastError: unknown;
   const version: RevisorBillVersionMetadata = {
     versionKey: row.version_key,
@@ -43,7 +45,7 @@ async function fetchWithRetry(row: InitialTextBackfillRow): Promise<FetchedRow> 
   throw lastError instanceof Error ? new Error(`${row.identifier}: ${lastError.message}`) : new Error(`${row.identifier}: initial text fetch failed`);
 }
 
-async function selectBatch(limit: number): Promise<InitialTextBackfillRow[]> {
+async function selectBatch(limit: number,sessionSlug?: '2027-2028'): Promise<InitialTextBackfillRow[]> {
   const result = await pool.query<InitialTextBackfillRow>(`
     SELECT bv.id::text AS version_id,
            b.identifier,
@@ -51,22 +53,25 @@ async function selectBatch(limit: number): Promise<InitialTextBackfillRow[]> {
            bv.published_at::date::text AS published_on,
            bv.text_url
       FROM bills b
+      JOIN legislative_sessions s ON s.id=b.session_id
+      JOIN jurisdictions j ON j.id=s.jurisdiction_id
       JOIN bill_versions bv
         ON bv.bill_id = b.id
        AND bv.version_key = b.metadata #>> '{revisorIntroduction,initialDocument,documentName}'
      WHERE b.metadata ? 'revisorUniverse'
        AND b.metadata #>> '{revisorIntroduction,parserVersion}' = 'revisor-introduction-v1'
+       AND ($2::text IS NULL OR (s.slug=$2 AND j.slug='us-mn' AND b.metadata #>> '{revisorUniverse,liveSync}'='true'))
        AND bv.text_url IS NOT NULL
        AND (bv.raw_text IS NULL OR length(trim(bv.raw_text)) = 0 OR bv.text_hash IS NULL)
      ORDER BY b.session_id, b.originating_chamber_id, substring(b.identifier from '[0-9]+$')::integer, b.identifier
-     LIMIT $1`, [limit]);
+     LIMIT $1`, [limit,sessionSlug??null]);
   return result.rows;
 }
 
-async function fetchBatch(rows: readonly InitialTextBackfillRow[]): Promise<FetchedRow[]> {
+async function fetchBatch(rows: readonly InitialTextBackfillRow[],sessionSlug?: '2027-2028'): Promise<FetchedRow[]> {
   const fetched: FetchedRow[] = [];
   for (let offset = 0; offset < rows.length; offset += FETCH_CONCURRENCY) {
-    fetched.push(...await Promise.all(rows.slice(offset, offset + FETCH_CONCURRENCY).map(fetchWithRetry)));
+    fetched.push(...await Promise.all(rows.slice(offset, offset + FETCH_CONCURRENCY).map(row=>fetchWithRetry(row,sessionSlug))));
   }
   return fetched;
 }
@@ -91,13 +96,13 @@ async function persistBatch(rows: readonly FetchedRow[]): Promise<number> {
   return result.rowCount ?? 0;
 }
 
-export async function backfillRevisorInitialTextBatch(limit = INITIAL_TEXT_BACKFILL_MAX_BATCH) {
+export async function backfillRevisorInitialTextBatch(limit = INITIAL_TEXT_BACKFILL_MAX_BATCH,sessionSlug?: '2027-2028') {
   if (!Number.isInteger(limit) || limit < 1 || limit > INITIAL_TEXT_BACKFILL_MAX_BATCH) {
     throw new Error(`Initial text backfill limit must be between 1 and ${INITIAL_TEXT_BACKFILL_MAX_BATCH}`);
   }
-  const selected = await selectBatch(limit);
+  const selected = await selectBatch(limit,sessionSlug);
   if (selected.length === 0) return { processed: 0, done: true };
-  const fetched = await fetchBatch(selected);
+  const fetched = await fetchBatch(selected,sessionSlug);
   const processed = await persistBatch(fetched);
   if (processed !== selected.length) throw new Error(`Initial text persistence mismatch: selected ${selected.length}, updated ${processed}`);
   return { processed, done: false };

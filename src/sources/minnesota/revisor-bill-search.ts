@@ -1,3 +1,4 @@
+import { collectionSourceFetch } from './2027-collection-source';
 import { createHash } from 'node:crypto';
 import { getMinnesotaHouseSession } from './sessions';
 
@@ -168,7 +169,7 @@ export async function fetchRevisorBillSearchRangeDocument(input: {
   lastBill: number;
 }): Promise<RevisorBillSearchDocument> {
   const sourceUrl = buildRevisorBillSearchUrl(input);
-  const response = await fetch(sourceUrl, {
+  const response = await collectionSourceFetch(sourceUrl, {
     headers: { 'User-Agent': 'VotePredict/2.0 official Minnesota bill-universe audit' },
     signal: AbortSignal.timeout(30_000),
     cache: 'no-store',

@@ -1,0 +1,76 @@
+name: 2027 bounded daily bill collection
+
+# Dormant: no schedule, push, PR or post-deploy production trigger.
+on:
+  workflow_dispatch:
+    inputs:
+      run_collection:
+        description: Run one separately approved bounded collection batch (default plan only)
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: votepredict-2027-daily-collector
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/2027-daily-collection.test.ts
+      - run: node --import tsx scripts/run-2027-daily-collection.ts --plan
+      - name: Require exact current green main for live collection
+        if: inputs.run_collection == true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: node --import tsx scripts/check-release-ci.ts
+  collect:
+    needs: verify
+    if: >-
+      inputs.run_collection == true && vars.VOTEPREDICT_2027_COLLECTION_APPROVED == 'true' &&
+      github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1
+    environment: votepredict-2027-collection
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: One bounded direct Neon collection (no Vercel)
+        env:
+          VOTEPREDICT_2027_COLLECTION_AUTHORIZED: 'true'
+          VOTEPREDICT_2027_COLLECTOR_DATABASE_URL: ${{ secrets.VOTEPREDICT_2027_COLLECTOR_DATABASE_URL }}
+          VOTEPREDICT_2027_COLLECTOR_ROLE: ${{ vars.VOTEPREDICT_2027_COLLECTOR_ROLE }}
+          VOTEPREDICT_2027_COLLECTOR_DATABASE_FINGERPRINT: ${{ vars.VOTEPREDICT_2027_COLLECTOR_DATABASE_FINGERPRINT }}
+          PGOPTIONS: '-c statement_timeout=15000 -c lock_timeout=5000 -c idle_in_transaction_session_timeout=30000'
+        run: node --import tsx scripts/run-2027-daily-collection.ts --collect
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: 2027-collection-report-${{ github.run_id }}
+          path: artifacts/2027-collection-report.json
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,3 +1,4 @@
+import { collectionSourceFetch } from './2027-collection-source';
 export type RevisorActionChamber = 'house' | 'senate' | null;
 
 export interface RevisorOfficialAction {
@@ -218,7 +219,7 @@ export async function fetchRevisorStatusXml(statusXmlUrl: string): Promise<strin
   for (let attempt = 0; attempt < fetchAttempts; attempt += 1) {
     let response: Response;
     try {
-      response = await fetch(apiUrl, {
+      response = await collectionSourceFetch(apiUrl, {
         headers: {
           'User-Agent': 'VotePredict/2.0 official Minnesota action-history audit',
           Accept: 'application/xml,text/xml;q=0.9,*/*;q=0.1',

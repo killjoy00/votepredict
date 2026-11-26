@@ -1,3 +1,4 @@
+import { collectionSourceFetch } from './2027-collection-source';
 import { createHash } from 'node:crypto';
 import { getMinnesotaHouseSession } from './sessions';
 
@@ -151,7 +152,7 @@ export function parseRevisorBillTextHtml(html: string): { text: string; sha256: 
 }
 
 async function fetchOfficial(url: string): Promise<OfficialResponse> {
-  const response = await fetch(url, {
+  const response = await collectionSourceFetch(url, {
     headers: { 'User-Agent': 'VotePredict/2.0 official Minnesota bill ingester' },
     signal: AbortSignal.timeout(20_000),
   });
