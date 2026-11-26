@@ -1,0 +1,2032 @@
+{
+  "session": "2027-2028",
+  "observedOn": "2026-11-26",
+  "targetOn": "2027-01-04",
+  "complete": true,
+  "counts": {
+    "exact": 155,
+    "resolvedNameVariants": 43,
+    "acceptedRecounts": 3,
+    "house": 134,
+    "senate": 67,
+    "total": 201
+  },
+  "unresolvedSeats": [],
+  "members": [
+    {
+      "seat": "house:1A",
+      "lrlId": "15538",
+      "name": "John Burkel",
+      "electionName": "John Burkel",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15538",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:1B",
+      "lrlId": "15631",
+      "name": "Steve Gander",
+      "electionName": "Steve Gander",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15631",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:1",
+      "lrlId": "15485",
+      "name": "Mark T. Johnson",
+      "electionName": "Mark Johnson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15485",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:2A",
+      "lrlId": "15629",
+      "name": "Bidal Duran Jr.",
+      "electionName": "Bidal Duran Jr",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15629",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:2B",
+      "lrlId": "15458",
+      "name": "Matt Bliss",
+      "electionName": "Matt Bliss",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15458",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:2",
+      "lrlId": "15395",
+      "name": "Steve Green",
+      "electionName": "Steve Green",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15395",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:3A",
+      "lrlId": "15623",
+      "name": "Roger J Skraba",
+      "electionName": "Roger J. Skraba",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15623",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:3B",
+      "lrlId": "15656",
+      "name": "Aaron Schweiger",
+      "electionName": "Aaron Schweiger",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15656",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:3",
+      "lrlId": "15577",
+      "name": "Grant Hauschild",
+      "electionName": "Grant Hauschild",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:4A",
+      "lrlId": "15657",
+      "name": "Erika Yoney",
+      "electionName": "Erika Yoney",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15657",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:4B",
+      "lrlId": "15591",
+      "name": "Jim Joy",
+      "electionName": "Jim Joy",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15591",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:4",
+      "lrlId": "15703",
+      "name": "Austin Peterson",
+      "electionName": "Austin Peterson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15703",
+      "basis": "accepted_recount_leader",
+      "recountCertification": "final_certification_unverified",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:5A",
+      "lrlId": "15592",
+      "name": "Krista Knudsen",
+      "electionName": "Krista Knudsen",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15592",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:5B",
+      "lrlId": "15658",
+      "name": "Jonathan Claussen",
+      "electionName": "Jonathan Claussen",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15658",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:5",
+      "lrlId": "15593",
+      "name": "Mike Wiener",
+      "electionName": "Mike Wiener",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15593",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:6A",
+      "lrlId": "15594",
+      "name": "Ben Davis",
+      "electionName": "Ben Davis",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15594",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:6B",
+      "lrlId": "15435",
+      "name": "Joshua Heintzeman",
+      "electionName": "Josh Heintzeman",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15435",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:6",
+      "lrlId": "15651",
+      "name": "Keri Heintzeman",
+      "electionName": "Keri Heintzeman",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15651",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:7A",
+      "lrlId": "15540",
+      "name": "Spencer Igo",
+      "electionName": "Spencer Igo",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15540",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:7B",
+      "lrlId": "15648",
+      "name": "Cal Warwas",
+      "electionName": "Cal Warwas",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15648",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:7",
+      "lrlId": "15579",
+      "name": "Robert D. Farnsworth",
+      "electionName": "Robert Farnsworth",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15579",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:8A",
+      "lrlId": "15636",
+      "name": "Peter Johnson",
+      "electionName": "Peter Johnson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15636",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:8B",
+      "lrlId": "15595",
+      "name": "Liish Kozlowski",
+      "electionName": "Liish Kozlowski",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15595",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:8",
+      "lrlId": "15537",
+      "name": "Jennifer A McEwen",
+      "electionName": "Jen McEwen",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15537",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:9A",
+      "lrlId": "15428",
+      "name": "Jeff Backer",
+      "electionName": "Jeff Backer",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15428",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:9B",
+      "lrlId": "15596",
+      "name": "Tom Murphy",
+      "electionName": "Tom Murphy",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15596",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:9",
+      "lrlId": "15541",
+      "name": "Jordan Rasmusson",
+      "electionName": "Jordan Rasmusson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15541",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:10A",
+      "lrlId": "15659",
+      "name": "Mark Striemer",
+      "electionName": "Mark Striemer",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15659",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:10B",
+      "lrlId": "15597",
+      "name": "Isaac Schultz",
+      "electionName": "Isaac Schultz",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15597",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:10",
+      "lrlId": "15580",
+      "name": "Nathan Wesenberg",
+      "electionName": "Nathan Wesenberg",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15580",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:11A",
+      "lrlId": "15660",
+      "name": "Chris Swanson",
+      "electionName": "Chris Swanson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15660",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:11B",
+      "lrlId": "15534",
+      "name": "Nathan Nelson",
+      "electionName": "Nathan Nelson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15534",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:11",
+      "lrlId": "15445",
+      "name": "Jason Rarick",
+      "electionName": "Jason Rarick",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15445",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:12A",
+      "lrlId": "15301",
+      "name": "Paul H. Anderson",
+      "electionName": "Paul H. Anderson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15301",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:12B",
+      "lrlId": "15347",
+      "name": "Mary Franson",
+      "electionName": "Mary Franson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15347",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:12",
+      "lrlId": "10709",
+      "name": "Torrey N. Westrom",
+      "electionName": "Torrey Westrom",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10709",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:13A",
+      "lrlId": "15661",
+      "name": "Tanja Goering",
+      "electionName": "Tanja Goering",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15661",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:13B",
+      "lrlId": "15662",
+      "name": "Dawn Loberg",
+      "electionName": "Dawn Loberg",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15662",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:13",
+      "lrlId": "15687",
+      "name": "Jared J. Gapinski",
+      "electionName": "Jared J. Gapinski",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15687",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:14A",
+      "lrlId": "15663",
+      "name": "Abdi Daisane",
+      "electionName": "Abdi Daisane",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15663",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:14B",
+      "lrlId": "15393",
+      "name": "Zachary Dorholt",
+      "electionName": "Zachary \"Zach\" Dorholt",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15393",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:14",
+      "lrlId": "15564",
+      "name": "Aric Putnam",
+      "electionName": "Aric Putnam",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15564",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:15A",
+      "lrlId": "15664",
+      "name": "Bradley Hennen",
+      "electionName": "Bradley L Hennen",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15664",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:15B",
+      "lrlId": "15665",
+      "name": "Geri Theis",
+      "electionName": "Geri Theis",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15665",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:15",
+      "lrlId": "15688",
+      "name": "Braxton Seifert",
+      "electionName": "Braxton John Seifert",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15688",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:16A",
+      "lrlId": "15647",
+      "name": "Scott Van Binsbergen",
+      "electionName": "Scott Van Binsbergen",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15647",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:16B",
+      "lrlId": "15429",
+      "name": "Dave Baker",
+      "electionName": "Dave Baker",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15429",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:16",
+      "lrlId": "15489",
+      "name": "Andrew R. Lang",
+      "electionName": "Andrew R. Lang",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15489",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:17A",
+      "lrlId": "15600",
+      "name": "Dawn Gillman",
+      "electionName": "Dawn Gillman",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15600",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:17B",
+      "lrlId": "15601",
+      "name": "Bobbie V. Harder",
+      "electionName": "Bobbie Harder",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15601",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:17",
+      "lrlId": "15350",
+      "name": "Glenn H. Gruenhagen",
+      "electionName": "Glenn H Gruenhagen",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15350",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:18A",
+      "lrlId": "15666",
+      "name": "Leah Hanson",
+      "electionName": "Leah Hanson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15666",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:18B",
+      "lrlId": "15542",
+      "name": "Luke Frederick",
+      "electionName": "Luke Frederick",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15542",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:18",
+      "lrlId": "15481",
+      "name": "Nick A. Frentz",
+      "electionName": "Nick Frentz",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15481",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:19A",
+      "lrlId": "15627",
+      "name": "Keith Allen",
+      "electionName": "Keith Allen",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15627",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:19B",
+      "lrlId": "15645",
+      "name": "Thomas J. Sexton",
+      "electionName": "Thomas J. Sexton",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15645",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:19",
+      "lrlId": "15483",
+      "name": "John R. Jasinski",
+      "electionName": "John R. Jasinski",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15483",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:20A",
+      "lrlId": "15602",
+      "name": "Pam Altendorf",
+      "electionName": "Pam Altendorf",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15602",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:20B",
+      "lrlId": "15667",
+      "name": "Sara Bertschinger",
+      "electionName": "Sara Bertschinger",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15667",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:20",
+      "lrlId": "15603",
+      "name": "Steven E. Jacob",
+      "electionName": "Steven E Jacob",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15603",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:21A",
+      "lrlId": "15668",
+      "name": "Krist Wollum",
+      "electionName": "Krist Wollum",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15668",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:21B",
+      "lrlId": "15604",
+      "name": "Marj J. Fogelman",
+      "electionName": "Marj J Fogelman",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15604",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:21",
+      "lrlId": "15689",
+      "name": "Christopher R. Knoll",
+      "electionName": "Chris Knoll",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15689",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:22A",
+      "lrlId": "15544",
+      "name": "Bjorn Olson",
+      "electionName": "Bjorn Olson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15544",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:22B",
+      "lrlId": "15646",
+      "name": "Terry M. Stier",
+      "electionName": "Terry Matthew Stier",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15646",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:22",
+      "lrlId": "15496",
+      "name": "Jeremy Munson",
+      "electionName": "Jeremy Munson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15496",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:23A",
+      "lrlId": "15669",
+      "name": "Dominick Ronnenberg",
+      "electionName": "Nick Ronnenberg",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15669",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:23B",
+      "lrlId": "15561",
+      "name": "Patricia K. Mueller",
+      "electionName": "Patricia Mueller",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15561",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:23",
+      "lrlId": "15560",
+      "name": "Gene Dornink",
+      "electionName": "Gene Dornink",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15560",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:24A",
+      "lrlId": "15366",
+      "name": "Duane Quam II",
+      "electionName": "Duane Quam",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15366",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:24B",
+      "lrlId": "12268",
+      "name": "Tina Liebling",
+      "electionName": "Tina Liebling",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12268",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:24",
+      "lrlId": "15702",
+      "name": "Simon Glaser",
+      "electionName": "Simon Glaser",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15702",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:25A",
+      "lrlId": "15605",
+      "name": "Kimberly C Hicks",
+      "electionName": "Kim Hicks",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15605",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:25B",
+      "lrlId": "15606",
+      "name": "Andrew Smith",
+      "electionName": "Andy Smith",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15606",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:25",
+      "lrlId": "15545",
+      "name": "Liz Boldon",
+      "electionName": "Liz Boldon",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15545",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:26A",
+      "lrlId": "15670",
+      "name": "Dan Wilson",
+      "electionName": "Dan Wilson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15670",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:26B",
+      "lrlId": "10123",
+      "name": "Gregory M. Davids",
+      "electionName": "Gregory M. Davids",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10123",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:26",
+      "lrlId": "15690",
+      "name": "Cherie Johnson",
+      "electionName": "Cherie Johnson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15690",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:27A",
+      "lrlId": "15500",
+      "name": "Shane Mekeland",
+      "electionName": "Shane Mekeland",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15500",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:27B",
+      "lrlId": "15626",
+      "name": "Bryan Lawrence",
+      "electionName": "Bryan Lawrence",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15626",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:27",
+      "lrlId": "15491",
+      "name": "Andrew Mathews",
+      "electionName": "Andrew Mathews",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15491",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:28A",
+      "lrlId": "15632",
+      "name": "James Gordon",
+      "electionName": "James \"Jimmy\" Gordon",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15632",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:28B",
+      "lrlId": "15643",
+      "name": "Max Rymer",
+      "electionName": "Max Rymer",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15643",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:28",
+      "lrlId": "15487",
+      "name": "Mark W. Koran",
+      "electionName": "Mark Koran",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15487",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:29A",
+      "lrlId": "15360",
+      "name": "Joe McDonald",
+      "electionName": "Joe McDonald",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15360",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:29B",
+      "lrlId": "15409",
+      "name": "Marion Rarick",
+      "electionName": "Marion (O'Neill) Rarick",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15409",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:29",
+      "lrlId": "15653",
+      "name": "Michael W. Holmstrom Jr.",
+      "electionName": "Michael Holmstrom Jr",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15653",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:30A",
+      "lrlId": "15607",
+      "name": "Walter Hudson",
+      "electionName": "Walter Hudson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15607",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:30B",
+      "lrlId": "15671",
+      "name": "Chad Westberg",
+      "electionName": "Chad Westberg",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15671",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:30",
+      "lrlId": "15438",
+      "name": "Eric Lucero",
+      "electionName": "Eric Lucero",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15438",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:31A",
+      "lrlId": "15608",
+      "name": "Harry Niska",
+      "electionName": "Harry Niska",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15608",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:31B",
+      "lrlId": "15314",
+      "name": "Peggy Scott",
+      "electionName": "Peggy Scott",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15314",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:31",
+      "lrlId": "15455",
+      "name": "Calvin K. Bahr",
+      "electionName": "Calvin Bahr",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15455",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:32A",
+      "lrlId": "15476",
+      "name": "Nolan West",
+      "electionName": "Nolan West",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15476",
+      "basis": "accepted_recount_leader",
+      "recountCertification": "final_certification_unverified",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:32B",
+      "lrlId": "15609",
+      "name": "Matt Norris",
+      "electionName": "Matt Norris",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15609",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:32",
+      "lrlId": "15691",
+      "name": "Chris Ford",
+      "electionName": "Chris Ford",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15691",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:33A",
+      "lrlId": "15672",
+      "name": "Stacey Stout",
+      "electionName": "Stacey Stout",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15672",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:33B",
+      "lrlId": "15611",
+      "name": "Josiah Hill",
+      "electionName": "Josiah Hill",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15611",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:33",
+      "lrlId": "15382",
+      "name": "Karin Housley",
+      "electionName": "Karin Housley",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15382",
+      "basis": "accepted_recount_leader",
+      "recountCertification": "county_certified_2026-11-19",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:34A",
+      "lrlId": "15673",
+      "name": "Jason Heaser",
+      "electionName": "Jason Heaser",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15673",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:34B",
+      "lrlId": "15652",
+      "name": "Xp Lee",
+      "electionName": "Xp Lee",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15652",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:34",
+      "lrlId": "15381",
+      "name": "John A. Hoffman",
+      "electionName": "John Hoffman",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15381",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:35A",
+      "lrlId": "15507",
+      "name": "Zack Stephenson",
+      "electionName": "Zack Stephenson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15507",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:35B",
+      "lrlId": "15640",
+      "name": "Kari Rehrauer",
+      "electionName": "Kari Rehrauer",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15640",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:35",
+      "lrlId": "15692",
+      "name": "Angela Nelson",
+      "electionName": "Angela Nelson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15692",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:36A",
+      "lrlId": "15674",
+      "name": "Jim DeMay",
+      "electionName": "Jim DeMay",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15674",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:36B",
+      "lrlId": "15614",
+      "name": "Brion Curran",
+      "electionName": "Brion Curran",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15614",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:36",
+      "lrlId": "15582",
+      "name": "Heather Gustafson",
+      "electionName": "Heather Gustafson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15582",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:37A",
+      "lrlId": "15675",
+      "name": "Tom McKee",
+      "electionName": "Tom McKee",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15675",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:37B",
+      "lrlId": "15505",
+      "name": "Kristin Bahner",
+      "electionName": "Kristin Bahner",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15505",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:37",
+      "lrlId": "15693",
+      "name": "Kristy A. Janigo",
+      "electionName": "Kristy Janigo",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15693",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:38A",
+      "lrlId": "15634",
+      "name": "Huldah Momanyi-Hiltsley",
+      "electionName": "Huldah Momanyi-Hiltsley",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15634",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:38B",
+      "lrlId": "15510",
+      "name": "Samantha Vang",
+      "electionName": "Samantha Vang",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15510",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:38",
+      "lrlId": "15583",
+      "name": "Susan Pha",
+      "electionName": "Susan Pha",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15583",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:39A",
+      "lrlId": "15676",
+      "name": "Aaron Klemz",
+      "electionName": "Aaron Klemz",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15676",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:39B",
+      "lrlId": "15677",
+      "name": "Amáda Márquez Simula",
+      "electionName": "Amáda Márquez Simula",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15677",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:39",
+      "lrlId": "15466",
+      "name": "Mary K. Kunesh",
+      "electionName": "Mary K Kunesh",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15466",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:40A",
+      "lrlId": "15678",
+      "name": "Aisha Elmquist",
+      "electionName": "Aisha Elmquist",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15678",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:40B",
+      "lrlId": "15650",
+      "name": "David Gottfried",
+      "electionName": "David Gottfried",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15650",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:40",
+      "lrlId": "10403",
+      "name": "John J. Marty",
+      "electionName": "John Marty",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10403",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:41A",
+      "lrlId": "15679",
+      "name": "Cole Birkeland",
+      "electionName": "Cole Birkeland",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15679",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:41B",
+      "lrlId": "15680",
+      "name": "Jen Fox",
+      "electionName": "Jen Fox",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15680",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:41",
+      "lrlId": "15584",
+      "name": "Judy Seeberger",
+      "electionName": "Judy Seeberger",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15584",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:42A",
+      "lrlId": "15617",
+      "name": "Ned Carroll",
+      "electionName": "Ned Carroll",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15617",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:42B",
+      "lrlId": "15512",
+      "name": "Ginny Klevorn",
+      "electionName": "Ginny Klevorn",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15512",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:42",
+      "lrlId": "15585",
+      "name": "Bonnie S. Westlin",
+      "electionName": "Bonnie Westlin",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15585",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:43A",
+      "lrlId": "15681",
+      "name": "Kyrstin Schuette",
+      "electionName": "Kyrstin Schuette",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15681",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:43B",
+      "lrlId": "15682",
+      "name": "Jess Lewis",
+      "electionName": "Jess Lewis",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15682",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:43",
+      "lrlId": "15398",
+      "name": "Mike Freiberg",
+      "electionName": "Mike Freiberg",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15398",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:44A",
+      "lrlId": "15396",
+      "name": "Peter Fischer",
+      "electionName": "Peter M Fischer",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15396",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:44B",
+      "lrlId": "12269",
+      "name": "Leon M. Lillie",
+      "electionName": "Leon M. Lillie",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12269",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:44",
+      "lrlId": "15694",
+      "name": "Samuel J. Rosemark",
+      "electionName": "Sam Rosemark",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15694",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:45A",
+      "lrlId": "15618",
+      "name": "Andrew Myers",
+      "electionName": "Andrew Myers",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15618",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:45B",
+      "lrlId": "15513",
+      "name": "Patty Acomb",
+      "electionName": "Patty Acomb",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15513",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:45",
+      "lrlId": "15555",
+      "name": "Ann M. Johnson Stewart",
+      "electionName": "Ann Johnson Stewart",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15555",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:46A",
+      "lrlId": "15619",
+      "name": "Larry Kraft",
+      "electionName": "Larry Kraft",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15619",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:46B",
+      "lrlId": "15450",
+      "name": "Cheryl Youakim",
+      "electionName": "Cheryl Youakim",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15450",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:46",
+      "lrlId": "10772",
+      "name": "Ronald Steven Latz",
+      "electionName": "Ron Latz",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10772",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:47A",
+      "lrlId": "15655",
+      "name": "Shelley Buck",
+      "electionName": "Shelley Buck",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15655",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:47B",
+      "lrlId": "15621",
+      "name": "Ethan Cha",
+      "electionName": "Ethan Cha",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15621",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:47",
+      "lrlId": "15620",
+      "name": "Amanda Hemmingsen-Jaeger",
+      "electionName": "Amanda Hemmingsen-Jaeger",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15620",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:48A",
+      "lrlId": "15441",
+      "name": "Jim Nash",
+      "electionName": "Jim Nash",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15441",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:48B",
+      "lrlId": "15622",
+      "name": "Lucille Rehm",
+      "electionName": "Lucille \"Lucy\" Rehm",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15622",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:48",
+      "lrlId": "15556",
+      "name": "Julia E. Coleman",
+      "electionName": "Julia Coleman",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15556",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:49A",
+      "lrlId": "15630",
+      "name": "Alexander Falconer",
+      "electionName": "Alex Falconer",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15630",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:49B",
+      "lrlId": "15515",
+      "name": "Carlie Kotyza-Witthuhn",
+      "electionName": "Carlie Kotyza-Witthuhn",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15515",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:49",
+      "lrlId": "15695",
+      "name": "Krishnan Subrahmanian",
+      "electionName": "Krish Subrahmanian",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15695",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:50A",
+      "lrlId": "15633",
+      "name": "Julie Greene",
+      "electionName": "Julie Greene",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15633",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:50B",
+      "lrlId": "15517",
+      "name": "Steve Elkins",
+      "electionName": "Steve Elkins",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15517",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:50",
+      "lrlId": "15696",
+      "name": "Karla E. Hult",
+      "electionName": "Karla Hult",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15696",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:51A",
+      "lrlId": "15518",
+      "name": "Michael Howard",
+      "electionName": "Michael Howard",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15518",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:51B",
+      "lrlId": "15567",
+      "name": "Nathan Coulter",
+      "electionName": "Nathan Coulter",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15567",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:51",
+      "lrlId": "15697",
+      "name": "Simon Trautmann Cordova",
+      "electionName": "Simon Trautmann Cordova",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15697",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:52A",
+      "lrlId": "15683",
+      "name": "Christos Jensen",
+      "electionName": "Christos Roy Jensen",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15683",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:52B",
+      "lrlId": "15625",
+      "name": "Bianca Ward Virnig",
+      "electionName": "Bianca Virnig",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15625",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:52",
+      "lrlId": "15549",
+      "name": "Liz Reyer",
+      "electionName": "Liz Reyer",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15549",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:53A",
+      "lrlId": "15568",
+      "name": "Mary Frances Clardy",
+      "electionName": "Mary Frances Clardy",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15568",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:53B",
+      "lrlId": "12282",
+      "name": "Rick Hansen",
+      "electionName": "Rick Hansen",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12282",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:53",
+      "lrlId": "15698",
+      "name": "Paul Cumings",
+      "electionName": "Paul Cumings",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15698",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:54A",
+      "lrlId": "15523",
+      "name": "Brad Tabke",
+      "electionName": "Brad Tabke",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15523",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:54B",
+      "lrlId": "15684",
+      "name": "Natalie Barnes",
+      "electionName": "Natalie Barnes",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15684",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:54",
+      "lrlId": "15701",
+      "name": "Richard Olson",
+      "electionName": "Rick Olson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15701",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:55A",
+      "lrlId": "15563",
+      "name": "Jessica Hanson",
+      "electionName": "Jessica Hanson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15563",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:55B",
+      "lrlId": "15524",
+      "name": "Hunter Cantrell",
+      "electionName": "Hunter Cantrell",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15524",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:55",
+      "lrlId": "15557",
+      "name": "Lindsey Port",
+      "electionName": "Lindsey Port",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15557",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:56A",
+      "lrlId": "15526",
+      "name": "Robert Bierman",
+      "electionName": "Robert Bierman",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15526",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:56B",
+      "lrlId": "15527",
+      "name": "John Huot",
+      "electionName": "John Huot",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15527",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:56",
+      "lrlId": "15473",
+      "name": "Erin K. Maye Quade",
+      "electionName": "Erin Maye Quade",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15473",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:57A",
+      "lrlId": "15436",
+      "name": "Jon Koznick",
+      "electionName": "Jon Koznick",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15436",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:57B",
+      "lrlId": "15685",
+      "name": "Brian Cohn",
+      "electionName": "Brian Cohn",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15685",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:57",
+      "lrlId": "15558",
+      "name": "Zach Duckworth",
+      "electionName": "Zach Duckworth",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15558",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:58A",
+      "lrlId": "15571",
+      "name": "Kristi Pursell",
+      "electionName": "Kristi Pursell",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15571",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:58B",
+      "lrlId": "15642",
+      "name": "Drew Roach",
+      "electionName": "Drew Roach",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15642",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:58",
+      "lrlId": "15699",
+      "name": "Mark O. Legvold",
+      "electionName": "Mark Legvold",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15699",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:59A",
+      "lrlId": "15468",
+      "name": "Fue Lee",
+      "electionName": "Fue Lee",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15468",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:59B",
+      "lrlId": "15551",
+      "name": "Esther Agbaje",
+      "electionName": "Esther Agbaje",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15551",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:59",
+      "lrlId": "15317",
+      "name": "Bobby Joe Champion",
+      "electionName": "Bobby Joe Champion",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15317",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:60A",
+      "lrlId": "15535",
+      "name": "Sydney Jordan",
+      "electionName": "Sydney Jordan",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15535",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:60B",
+      "lrlId": "15528",
+      "name": "Mohamud Noor",
+      "electionName": "Mohamud Noor",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15528",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:60",
+      "lrlId": "15649",
+      "name": "Doron Clark",
+      "electionName": "Doron Clark",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15649",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:61A",
+      "lrlId": "15638",
+      "name": "Katie Jones",
+      "electionName": "Katie Jones",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15638",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:61B",
+      "lrlId": "15529",
+      "name": "Jamie Long",
+      "electionName": "Jamie Long",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15529",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:61",
+      "lrlId": "10142",
+      "name": "D. Scott Dibble",
+      "electionName": "Scott Dibble",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10142",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:62A",
+      "lrlId": "15531",
+      "name": "Aisha Gomez",
+      "electionName": "Aisha Gomez",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15531",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:62B",
+      "lrlId": "15639",
+      "name": "Anquam Mahamoud",
+      "electionName": "Anquam Mahamoud",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15639",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:62",
+      "lrlId": "15559",
+      "name": "Omar Fateh",
+      "electionName": "Omar Fateh",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15559",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:63A",
+      "lrlId": "15572",
+      "name": "Samantha Sencer-Mura",
+      "electionName": "Samantha Sencer-Mura",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15572",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:63B",
+      "lrlId": "15552",
+      "name": "Emma Greenman",
+      "electionName": "Emma Greenman",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15552",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:63",
+      "lrlId": "15588",
+      "name": "Zaynab Mohamed",
+      "electionName": "Zaynab Mohamed",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15588",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:64A",
+      "lrlId": "15654",
+      "name": "Meg Luger-Nikolai",
+      "electionName": "Meg Luger-Nikolai",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15654",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:64B",
+      "lrlId": "15444",
+      "name": "Dave Pinto",
+      "electionName": "Dave Pinto",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15444",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:64",
+      "lrlId": "15284",
+      "name": "Erin P. Murphy",
+      "electionName": "Erin Murphy",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15284",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:65A",
+      "lrlId": "15573",
+      "name": "Samakab Hussein",
+      "electionName": "Samakab Hussein",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15573",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:65B",
+      "lrlId": "15686",
+      "name": "Sebastian Ellefson",
+      "electionName": "Sebastian Ellefson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15686",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:65",
+      "lrlId": "15700",
+      "name": "Robyn Gulley",
+      "electionName": "Robyn Gulley",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15700",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:66A",
+      "lrlId": "15575",
+      "name": "Leigh Dawn Finke",
+      "electionName": "Leigh Finke",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15575",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:66B",
+      "lrlId": "15553",
+      "name": "Athena Hollins",
+      "electionName": "Athena Hollins",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15553",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:66",
+      "lrlId": "15589",
+      "name": "Clare Oumou Verbeten",
+      "electionName": "Clare Oumou Verbeten",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15589",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:67A",
+      "lrlId": "15576",
+      "name": "Liz Lee",
+      "electionName": "Liz Lee",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15576",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "house:67B",
+      "lrlId": "15533",
+      "name": "Jay Xiong",
+      "electionName": "Jay Xiong",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15533",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    },
+    {
+      "seat": "senate:67",
+      "lrlId": "15380",
+      "name": "Foung Hawj",
+      "electionName": "Foung Hawj",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15380",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date"
+    }
+  ],
+  "authoritativeRosterVerified": false,
+  "readyForActivation": false
+}

@@ -2,7 +2,7 @@ import { parseSosLegislativeByDistrict, normalizeMinnesotaDistrict, type SosLegi
 import { normalizeMemberName } from '@/sources/minnesota/house-votes';
 import type { HistoricalMembershipRecord } from '@/sources/minnesota/lrl-members';
 import { assess2027OpeningRoster } from './2027-opening-roster-audit';
-import { isObservedOpeningNameVariant, OPENING_ROSTER_NAME_VARIANT_SOURCE } from './2027-opening-roster-name-variants';
+import { isObservedOpeningNameVariant, OPENING_ROSTER_NAME_VARIANT_SOURCE, acceptedRecountLeader, OPENING_RECOUNT_EVIDENCE } from './2027-opening-roster-name-variants';
 
 export const SOS_2026_DISTRICT_SOURCES = {
   house: 'https://electionresultsfiles.sos.mn.gov/20261103/LegislativeByDistrict.txt',
@@ -46,6 +46,35 @@ export function parseOpeningElectionRows(text: string, chamber: Chamber): SosLeg
   return rows;
 }
 
+export type OpeningElectionSeatResult = {
+  seat: string;
+  status: 'matched_reported_leader' | 'matched_name_variant' | 'accepted_recount_leader' | 'recount_requires_certification' | 'missing_election' | 'incomplete_election' | 'no_unique_named_leader' | 'missing_lrl' | 'identity_or_party_mismatch';
+  leader?: string; leaderParty?: string; lrlId?: string; lrlName?: string; lrlParty?: string;
+  variantSource?: typeof OPENING_ROSTER_NAME_VARIANT_SOURCE;
+  recountEvidence?: typeof OPENING_RECOUNT_EVIDENCE;
+  recountCertification?: 'county_certified_2026-11-19' | 'final_certification_unverified';
+};
+
+/** Classify a leader from an already validated district tally. */
+export function resolve2027OpeningLeader(row: Omit<OpeningElectionSeatResult, 'status'>, observedOn: string): OpeningElectionSeatResult {
+  const { seat, lrlId, leader, lrlName, leaderParty, lrlParty } = row;
+  const identity = lrlId && leader && lrlName && leaderParty && lrlParty
+    ? { seat, lrlId, electionName: leader, lrlName, electionParty: leaderParty, lrlParty } : undefined;
+  if (RECOUNT_SEATS.has(seat)) {
+    const assumed = identity && observedOn >= OPENING_RECOUNT_EVIDENCE.observedOn && acceptedRecountLeader(identity);
+    return assumed ? { ...row, status: 'accepted_recount_leader', recountEvidence: OPENING_RECOUNT_EVIDENCE, recountCertification: assumed.certification }
+      : { ...row, status: 'recount_requires_certification' };
+  }
+  if (!identity) return { ...row, status: 'missing_lrl' };
+  if (normalizeMemberName(identity.electionName) === normalizeMemberName(identity.lrlName) && identity.electionParty === identity.lrlParty) {
+    return { ...row, status: 'matched_reported_leader' };
+  }
+  if (observedOn >= OPENING_ROSTER_NAME_VARIANT_SOURCE.observedOn && isObservedOpeningNameVariant(identity)) {
+    return { ...row, status: 'matched_name_variant', variantSource: OPENING_ROSTER_NAME_VARIANT_SOURCE };
+  }
+  return { ...row, status: 'identity_or_party_mismatch' };
+}
+
 export function reconcile2027OpeningElection(
   records: readonly HistoricalMembershipRecord[],
   houseRows: readonly SosLegislativeResultRow[],
@@ -62,7 +91,7 @@ export function reconcile2027OpeningElection(
       groups.set(key, [...(groups.get(key) ?? []), row]);
     }
   }
-  const results: Array<{ seat: string; status: 'matched_reported_leader' | 'observed_same_seat_name_variant' | 'recount_requires_certification' | 'missing_election' | 'incomplete_election' | 'no_unique_named_leader' | 'missing_lrl' | 'identity_or_party_mismatch'; leader?: string; leaderParty?: string; lrlId?: string; lrlName?: string; lrlParty?: string; variantSource?: typeof OPENING_ROSTER_NAME_VARIANT_SOURCE }> = [];
+  const results: OpeningElectionSeatResult[] = [];
   const expected = Array.from({ length: 67 }, (_, i) => i + 1).flatMap(n => [`house:${n}A`, `house:${n}B`, `senate:${n}`]);
   for (const key of expected) {
     const rows = groups.get(key) ?? [];
@@ -85,30 +114,77 @@ export function reconcile2027OpeningElection(
     const candidate = members.get(key);
     const member = candidate ? recordsBySeat.get(key + ':' + candidate.lrlId) : undefined;
     const common = { seat: key, leader: name, leaderParty: leader.party, lrlId: member?.lrlId, lrlName: member?.name, lrlParty: member?.party };
-    if (RECOUNT_SEATS.has(key)) { results.push({ ...common, status: 'recount_requires_certification' }); continue; }
-    if (!member) { results.push({ ...common, status: 'missing_lrl' }); continue; }
-    // Exact matches remain distinct from observed same-seat name variants.
-    // Never fuzzy-match a changed name, party, seat or identity. Never certify
-    // a recorded pairing or use it to resolve historical vote identity.
-    const same = normalizeMemberName(name) === normalizeMemberName(member.name) && leader.party === member.party;
-    if (same) { results.push({ ...common, status: 'matched_reported_leader' }); continue; }
-    if (observedOn >= OPENING_ROSTER_NAME_VARIANT_SOURCE.observedOn && isObservedOpeningNameVariant({
-      seat: key, lrlId: member.lrlId, electionName: name, lrlName: member.name,
-      electionParty: leader.party, lrlParty: member.party,
-    })) {
-      results.push({ ...common, status: 'observed_same_seat_name_variant', variantSource: OPENING_ROSTER_NAME_VARIANT_SOURCE });
-      continue;
-    }
-    results.push({ ...common, status: 'identity_or_party_mismatch' });
+    results.push(resolve2027OpeningLeader(common, observedOn));
   }
   return {
     session: '2027-2028', observedOn, expectedSeats: 201,
     lrlTermCoverage: roster.singleCandidateSeats,
     matchedReportedLeaders: results.filter(r => r.status === 'matched_reported_leader').length,
-    observedNameVariants: results.filter(r => r.status === 'observed_same_seat_name_variant').length,
+    resolvedNameVariants: results.filter(r => r.status === 'matched_name_variant').length,
+    acceptedRecountLeaders: results.filter(r => r.status === 'accepted_recount_leader').length,
+    preseasonPlan: build2027PreseasonRoster(roster, results),
     authoritativeRosterVerified: false as const,
     // Bulk tallies and LRL entries alone never prove the canvass, vacancies,
     // active membership, or that future reported oaths actually took place.
     results,
   };
+}
+
+type OpeningRosterAssessment = ReturnType<typeof assess2027OpeningRoster>;
+const PLANNING_STATUSES = ['matched_reported_leader', 'matched_name_variant', 'accepted_recount_leader'] as const;
+type PlanningStatus = typeof PLANNING_STATUSES[number];
+
+/** Complete planning projection; never an authoritative or production roster. */
+export function build2027PreseasonRoster(roster: OpeningRosterAssessment, results: readonly OpeningElectionSeatResult[]) {
+  const lookup = new Map(roster.singleCandidates.map(candidate => [candidate.seat, candidate]));
+  const members: Array<{
+    seat: string; lrlId: string; name: string; electionName: string; party: string; sourceUrl: string;
+    basis: PlanningStatus; recountCertification?: OpeningElectionSeatResult['recountCertification'];
+    oathDateStatus: OpeningRosterAssessment['singleCandidates'][number]['oathDateStatus'];
+  }> = [];
+  const unresolvedSeats: string[] = [];
+  const seen = new Set<string>();
+  const identities = new Set<string>();
+  for (const row of results) {
+    const candidate = lookup.get(row.seat);
+    const approved = PLANNING_STATUSES.find(status => status === row.status);
+    if (!approved || !candidate || candidate.lrlId !== row.lrlId ||
+        candidate.party !== row.leaderParty || candidate.party !== row.lrlParty ||
+        !row.leader || !row.lrlName || seen.has(row.seat) || identities.has(candidate.lrlId)) {
+      unresolvedSeats.push(row.seat);
+      continue;
+    }
+    seen.add(row.seat);
+    identities.add(candidate.lrlId);
+    members.push({ seat: row.seat, lrlId: candidate.lrlId, name: row.lrlName,
+      electionName: row.leader, party: candidate.party, sourceUrl: candidate.sourceUrl,
+      basis: approved, ...(row.recountCertification ? {recountCertification: row.recountCertification} : {}),
+      oathDateStatus: candidate.oathDateStatus });
+  }
+  for (const candidate of roster.singleCandidates) if (!seen.has(candidate.seat) && !unresolvedSeats.includes(candidate.seat)) unresolvedSeats.push(candidate.seat);
+  const counts = {
+    exact: members.filter(member => member.basis === 'matched_reported_leader').length,
+    resolvedNameVariants: members.filter(member => member.basis === 'matched_name_variant').length,
+    acceptedRecounts: members.filter(member => member.basis === 'accepted_recount_leader').length,
+    house: members.filter(member => member.seat.startsWith('house:')).length,
+    senate: members.filter(member => member.seat.startsWith('senate:')).length,
+    total: members.length,
+  };
+  const complete = roster.completeSourceTermCoverage && roster.outsideOpeningTerm.length === 0 &&
+    results.length === 201 && counts.house === 134 && counts.senate === 67 &&
+    unresolvedSeats.length === 0 && identities.size === 201;
+  return { session: roster.session, observedOn: roster.observedOn, targetOn: roster.targetOn,
+    complete, counts, unresolvedSeats, members, authoritativeRosterVerified: false as const, readyForActivation: false as const };
+}
+
+/** Replay only the original audit's tally-validated rows, without network access. */
+export function replay2027OpeningRosterCheckpoint(roster: OpeningRosterAssessment, original: readonly OpeningElectionSeatResult[]) {
+  const candidates = new Map(roster.singleCandidates.map(candidate => [candidate.seat, candidate]));
+  const results = original.map(row => {
+    if (!['matched_reported_leader', 'identity_or_party_mismatch', 'recount_requires_certification'].includes(row.status)) return row;
+    const candidate = candidates.get(row.seat);
+    const { status: _status, ...observed } = row;
+    return resolve2027OpeningLeader({ ...observed, lrlParty: candidate?.lrlId === row.lrlId ? candidate?.party : undefined }, roster.observedOn);
+  });
+  return build2027PreseasonRoster(roster, results);
 }

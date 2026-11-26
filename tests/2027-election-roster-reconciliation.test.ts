@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { parseOpeningElectionRows, reconcile2027OpeningElection } from '../src/operations/2027-election-roster-reconciliation.js';
+import { parseOpeningElectionRows, reconcile2027OpeningElection, replay2027OpeningRosterCheckpoint, resolve2027OpeningLeader, type OpeningElectionSeatResult } from '../src/operations/2027-election-roster-reconciliation.js';
 import type { HistoricalMembershipRecord } from '../src/sources/minnesota/lrl-members.js';
 
 function row(chamber: 'house' | 'senate', district: string, code: string, name: string, party: string, votes: number, reported=10) {
@@ -42,7 +42,7 @@ test('reported tally agreement is not certification, recounts remain separate, a
   assert.equal(result.authoritativeRosterVerified,false);
 });
 
-import { OPENING_ROSTER_NAME_VARIANTS, isObservedOpeningNameVariant } from '../src/operations/2027-opening-roster-name-variants.js';
+import { OPENING_ROSTER_NAME_VARIANTS, isObservedOpeningNameVariant, OPENING_RECOUNT_ASSUMPTIONS } from '../src/operations/2027-opening-roster-name-variants.js';
 
 test('observed 2027 variants are exact audit-only tuples with no fuzzy fallback', () => {
   assert.equal(OPENING_ROSTER_NAME_VARIANTS.length, 43);
@@ -60,10 +60,52 @@ test('observed 2027 variants are exact audit-only tuples with no fuzzy fallback'
   const house = parseOpeningElectionRows(row('house','25B','0301','Andy Smith','DFL',100),'house');
   const records = [member('house','25B','15606','Andrew Smith','DFL')];
   const now = reconcile2027OpeningElection(records, house, [], '2026-11-26');
-  assert.equal(now.results.find(r=>r.seat==='house:25B')?.status,'observed_same_seat_name_variant');
+  assert.equal(now.results.find(r=>r.seat==='house:25B')?.status,'matched_name_variant');
   assert.equal(now.matchedReportedLeaders,0);
-  assert.equal(now.observedNameVariants,1);
+  assert.equal(now.resolvedNameVariants,1);
   assert.equal(now.authoritativeRosterVerified,false);
-  assert.equal(reconcile2027OpeningElection(records, house, [], '2026-11-25').observedNameVariants,0);
-  assert.equal(reconcile2027OpeningElection([{...records[0], party:'R'}], house, [], '2026-11-26').observedNameVariants,0);
+  assert.equal(reconcile2027OpeningElection(records, house, [], '2026-11-25').resolvedNameVariants,0);
+  assert.equal(reconcile2027OpeningElection([{...records[0], party:'R'}], house, [], '2026-11-26').resolvedNameVariants,0);
+});
+
+import { readFileSync } from 'node:fs';
+import type { assess2027OpeningRoster } from '../src/operations/2027-opening-roster-audit.js';
+
+test('all three owner-approved recount leaders require exact identity and preserve certification status', () => {
+  assert.equal(OPENING_RECOUNT_ASSUMPTIONS.length, 3);
+  for (const assumption of OPENING_RECOUNT_ASSUMPTIONS) {
+    const row = { seat: assumption.seat, leader: assumption.electionName,
+      leaderParty: assumption.party, lrlId: assumption.lrlId, lrlName: assumption.lrlName, lrlParty: assumption.lrlParty };
+    const resolved = resolve2027OpeningLeader(row, '2026-11-26');
+    assert.equal(resolved.status, 'accepted_recount_leader');
+    assert.equal(resolved.recountCertification, assumption.certification);
+    assert.equal(resolve2027OpeningLeader(row, '2026-11-25').status,'recount_requires_certification');
+    for (const changed of [{...row, leader:'Changed Candidate'}, {...row,lrlId:'changed'}, {...row,leaderParty:'DFL'}, {...row,lrlName:'Changed Name'}]) {
+      assert.equal(resolve2027OpeningLeader(changed, '2026-11-26').status,'recount_requires_certification');
+    }
+  }
+});
+
+test('replays the real frozen 201-seat audit into a complete preseason roster without activating it', () => {
+  const snapshot = JSON.parse(readFileSync('docs/evaluation/source-proof/2027-opening-roster-20261126.json','utf8')) as {
+    roster: ReturnType<typeof assess2027OpeningRoster>; results: OpeningElectionSeatResult[];
+    summary: { detailPagesObserved: number; detailErrors: number };
+  };
+  const recordedPlan = JSON.parse(readFileSync('docs/evaluation/source-proof/2027-preseason-roster-20261126.json','utf8'));
+  assert.equal(snapshot.summary.detailPagesObserved, 201);
+  assert.equal(snapshot.summary.detailErrors, 0);
+  const plan = replay2027OpeningRosterCheckpoint(snapshot.roster, snapshot.results);
+  assert.deepEqual(plan.counts, {exact:155,resolvedNameVariants:43,acceptedRecounts:3,house:134,senate:67,total:201});
+  assert.equal(plan.complete, true);
+  assert.deepEqual(plan.unresolvedSeats, []);
+  assert.deepEqual(plan, recordedPlan);
+  assert.equal(plan.authoritativeRosterVerified,false);
+  assert.equal(plan.readyForActivation,false);
+  assert.equal(plan.members.filter(m => m.recountCertification === 'final_certification_unverified').length,2);
+  assert.equal(plan.members.filter(m => m.oathDateStatus === 'future_reported_date').length,201);
+  assert.equal(new Set(plan.members.map(m=>m.lrlId)).size,201);
+  const changed = snapshot.results.map(row => row.seat === 'senate:4' ? {...row, leader:'Different Candidate'} : row);
+  assert.equal(replay2027OpeningRosterCheckpoint(snapshot.roster, changed).complete,false);
+  const missing = snapshot.results.filter(row => row.seat !== 'house:25B');
+  assert.equal(replay2027OpeningRosterCheckpoint(snapshot.roster, missing).complete,false);
 });

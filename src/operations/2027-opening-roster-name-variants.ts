@@ -1,6 +1,7 @@
 // Observed exact tuples from the Nov 26, 2026 official-source checkpoint.
-// These are audit-only review candidates, NOT aliases for vote ingestion or
-// legal identity/certification. A changed seat, name, party or ID is unresolved.
+// Reconciled election-to-LRL names for the 2027 preseason roster.
+// NOT unrestricted vote aliases or independent legal certification.
+// A changed seat, name, party or ID is unresolved.
 export const OPENING_ROSTER_NAME_VARIANT_SOURCE = {
   observedOn: '2026-11-26',
   run: 'https://github.com/killjoy00/votepredict/actions/runs/45885687489',
@@ -400,6 +401,55 @@ export function isObservedOpeningNameVariant(input: {
   seat: string; lrlId: string; electionName: string; lrlName: string; electionParty: string; lrlParty: string;
 }): boolean {
   return OPENING_ROSTER_NAME_VARIANTS.some(record =>
+    record.seat === input.seat && record.lrlId === input.lrlId &&
+    record.electionName === input.electionName && record.lrlName === input.lrlName &&
+    record.party === input.electionParty && record.lrlParty === input.lrlParty &&
+    input.electionParty === input.lrlParty);
+}
+
+/** Owner-approved projection, not authority to activate production. */
+export const OPENING_RECOUNT_ASSUMPTIONS = [
+  {
+    "seat": "senate:4",
+    "lrlId": "15703",
+    "electionName": "Austin Peterson",
+    "lrlName": "Austin Peterson",
+    "party": "R",
+    "lrlParty": "R",
+    "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15703",
+    "certification": "final_certification_unverified"
+  },
+  {
+    "seat": "house:32A",
+    "lrlId": "15476",
+    "electionName": "Nolan West",
+    "lrlName": "Nolan West",
+    "party": "R",
+    "lrlParty": "R",
+    "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15476",
+    "certification": "final_certification_unverified"
+  },
+  {
+    "seat": "senate:33",
+    "lrlId": "15382",
+    "electionName": "Karin Housley",
+    "lrlName": "Karin Housley",
+    "party": "R",
+    "lrlParty": "R",
+    "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15382",
+    "certification": "county_certified_2026-11-19"
+  }
+] as const;
+export const OPENING_RECOUNT_EVIDENCE = {
+  observedOn: '2026-11-26',
+  basis: 'owner_assumed_current_leader',
+  news: 'https://kstp.com/kstp-news/top-news/recount-recap-austin-peterson-wins-senate-district-4-nolan-west-wins-house-district-32a/',
+  housleyCertification: 'https://sos.mn.gov/about-the-office/news-room/state-canvassing-board-certifies-results-of-the-2026-general-election/',
+  petersonCertificationSchedule: 'https://www.sos.mn.gov/about-the-office/news-room/recount-in-senate-district-4-begins/',
+  westRecount: 'https://electionresults.sos.mn.gov/Results/Recount/Index?ersElectionId=201&recountId=61&scenario=RecountCounty',
+} as const;
+export function acceptedRecountLeader(input: Parameters<typeof isObservedOpeningNameVariant>[0]) {
+  return OPENING_RECOUNT_ASSUMPTIONS.find(record =>
     record.seat === input.seat && record.lrlId === input.lrlId &&
     record.electionName === input.electionName && record.lrlName === input.lrlName &&
     record.party === input.electionParty && record.lrlParty === input.lrlParty &&
