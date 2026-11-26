@@ -20,6 +20,7 @@ type Context={runId:string;archive:CollectionArchive;fetcher:typeof fetch;starte
 const scope=new AsyncLocalStorage<Context>();
 const responseReceipts=new WeakMap<Response,{receipt:CollectionSourceReceipt;receiptSha256:string}>();
 export function getArchivedCollectionResponse(response:Response){return responseReceipts.get(response);}
+export function require2027CollectionScope():void{if(!scope.getStore())throw Error('Archived 2027 collection scope required');}
 const sha=(value:Uint8Array)=>createHash('sha256').update(value).digest('hex');
 
 export function classify2027CollectionUrl(value:string):CollectionSourceKind {

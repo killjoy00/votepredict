@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import type { Pool,PoolClient } from 'pg';
-import { classify2027CollectionUrl,collectionSourceFetch,getArchivedCollectionResponse,COLLECTION_LIMITS } from '@/sources/minnesota/2027-collection-source';
+import { classify2027CollectionUrl,collectionSourceFetch,getArchivedCollectionResponse,require2027CollectionScope,COLLECTION_LIMITS } from '@/sources/minnesota/2027-collection-source';
 import { parseRevisorBillTextHtml } from '@/sources/minnesota/revisor';
 import { retainRuntimeBillText } from '@/forecasting/runtime-bill-text';
 import { DAILY_COLLECTION_SOURCE_RECEIPT_TYPE } from './2027-daily-collection';
@@ -21,6 +21,7 @@ export function assert2027CurrentTextUrl(identifier:string,versionKey:string,sou
 }
 
 export async function fetch2027CurrentText(target:Pick<Target,'identifier'|'version_key'|'text_url'>){
+  require2027CollectionScope();
   assert2027CurrentTextUrl(target.identifier,target.version_key,target.text_url);
   const response=await collectionSourceFetch(target.text_url,{headers:{'User-Agent':'VotePredict/2.0 bounded official Minnesota bill-text collector'},signal:AbortSignal.timeout(20000)});
   const proof=getArchivedCollectionResponse(response);
@@ -105,6 +106,7 @@ async function persist(db:Pool,target:Target,observed:Awaited<ReturnType<typeof 
 /** Only called within the protected archival worker. No latest/ redirect,
  * historical backfill, vote/forecast creation, or replacement of sealed rows. */
 export async function collect2027CurrentTextBatch(db:Pool,limit=COLLECTION_LIMITS.currentTextBatch){
+  require2027CollectionScope();
   if(!Number.isInteger(limit)||limit<1||limit>COLLECTION_LIMITS.currentTextBatch)throw Error('Invalid current text batch limit');
   const targets=await selectTargets(db,limit);
   let captured=0,failed=0;

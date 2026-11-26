@@ -132,11 +132,12 @@ test('disposable PostgreSQL stores original entity bytes and distinct observatio
   }finally{if(db)await db.end();await admin.query('DROP SCHEMA IF EXISTS '+schema+' CASCADE');await admin.end();}
 });
 
-import { assert2027CurrentTextUrl,fetch2027CurrentText } from '../src/operations/2027-current-text-collection.js';
+import { assert2027CurrentTextUrl,fetch2027CurrentText,collect2027CurrentTextBatch,CURRENT_TEXT_BINDING_TYPE } from '../src/operations/2027-current-text-collection.js';
 test('numbered official current text is bound to the archived original and rejects other versions',async()=>{
   const target={identifier:'HF1',version_key:'2027.0-HF0001-2',text_url:'https://www.revisor.mn.gov/bills/95/2027/0/HF/1/versions/2/'};
   const html='<main><div id="document"><p>'+('HF 1 synthetic official engrossment 2; test legislation. '.repeat(8))+'</p></div></main>';
   assert.equal(classify2027CollectionUrl(target.text_url),'current_text');
+  await assert.rejects(fetch2027CurrentText(target),/collection scope required/);
   for(const patch of [{version_key:'2027.0-HF0001-1'},{identifier:'HF2'},{text_url:target.text_url.replace('/versions/2/','/versions/latest/')},{text_url:target.text_url.replace('/2027/','/2028/')}])
     assert.throws(()=>{const row={...target,...patch};assert2027CurrentTextUrl(row.identifier,row.version_key,row.text_url);});
   await with2027ArchivedSources('127:1',async(receipt,body)=>{
@@ -154,4 +155,79 @@ test('numbered official current text is bound to the archived original and rejec
   await with2027ArchivedSources('128:1',async()=>{throw Error('archive unavailable');},async()=>{
     await assert.rejects(fetch2027CurrentText(target),/archive unavailable/);
   },async()=>new Response(html));
+});
+
+test('disposable DB captures numbered current versions and never overwrites earlier text or conflicting text',async t=>{
+  const uri=process.env.VOTEPREDICT_INTEGRATION_DATABASE_URL;
+  if(!uri){t.skip('disposable PostgreSQL not configured');return;}
+  assert.ok(['localhost','127.0.0.1','[::1]'].includes(new URL(uri).hostname));
+  const schema='current_text_'+randomUUID().replaceAll('-','');
+  const admin=new Pool({connectionString:uri,max:1});
+  let db:Pool|undefined;
+  try{
+    await admin.query('CREATE SCHEMA '+schema);
+    db=new Pool({connectionString:uri,max:3,options:'-c search_path='+schema});
+    await db.query(readFileSync('migrations/0001_v2_foundation.sql','utf8'));
+    const migration=readFileSync('migrations/0037_forecast_evidence_contract.sql','utf8');
+    const start=migration.indexOf('CREATE TABLE evidence_content_blobs (');
+    const end=migration.indexOf('CREATE TABLE forecast_input_manifests',start);
+    assert.ok(start>=0&&end>start);
+    await db.query(migration.slice(start,end));
+    const jurisdiction=(await db.query<{id:string}>("INSERT INTO jurisdictions(slug,name,country_code) VALUES('us-mn','Fixture Minnesota','US') RETURNING id")).rows[0].id;
+    const session=(await db.query<{id:string}>(`INSERT INTO legislative_sessions(jurisdiction_id,slug,name,starts_on,ends_on,is_current)
+      VALUES($1,'2027-2028','Synthetic session','2027-01-01','2028-12-31',true) RETURNING id`,[jurisdiction])).rows[0].id;
+    const chamber=(await db.query<{id:string}>("INSERT INTO chambers(jurisdiction_id,slug,name,kind) VALUES($1,'house','House','lower') RETURNING id",[jurisdiction])).rows[0].id;
+    const bill=(await db.query<{id:string}>(`INSERT INTO bills(session_id,originating_chamber_id,identifier,title,metadata)
+      VALUES($1,$2,'HF1','Synthetic test bill','{"revisorUniverse":{"liveSync":true}}') RETURNING id`,[session,chamber])).rows[0].id;
+    const html=(ordinal:number)=>'<main><div id="document"><p>'+('HF 1 fixture engrossment '+ordinal+' official synthetic test text. ').repeat(8)+'</p></div></main>';
+    const markCurrent=async(ordinal:number,existingText?:string)=>{
+      const key='2027.0-HF0001-'+ordinal,url='https://www.revisor.mn.gov/bills/95/2027/0/HF/1/versions/'+ordinal+'/';
+      const statusAt=new Date().toISOString();
+      // Calendar is synthetic; acquisition and DB acceptance use the real
+      // test clock. The production runner's January 2027 gate is not bypassed.
+      const version=(await db!.query<{id:string}>(`INSERT INTO bill_versions(bill_id,version_key,published_at,text_url,raw_text,text_hash)
+        VALUES($1,$2,now()-interval '1 day',$3,$4,$5) RETURNING id`,[bill,key,url,existingText??null,existingText?sha(Buffer.from(existingText)):null])).rows[0].id;
+      await db!.query(`UPDATE bills SET metadata=metadata||$2::jsonb WHERE id=$1`,[bill,JSON.stringify({
+        revisorLiveStatus:{fetchedAt:statusAt,currentVersionKind:'engrossment',currentVersion:{documentName:key,htmlUrl:url}},
+        revisorLiveStatusAttempt:{attemptedAt:statusAt,state:'succeeded'},
+      })]);
+      return {version,key,url};
+    };
+    const collect=async(ordinal:number,runId:string)=>{
+      return with2027ArchivedSources(runId,(receipt,bytes)=>archive2027Source(db!,receipt,bytes),
+        ()=>collect2027CurrentTextBatch(db!,1),async url=>{
+          assert.equal(String(url),'https://www.revisor.mn.gov/bills/95/2027/0/HF/1/versions/'+ordinal+'/');
+          return new Response(html(ordinal),{headers:{'content-type':'text/html'}});
+        });
+    };
+    const first=await markCurrent(1);
+    assert.deepEqual(await collect(1,'301:1'),{selected:1,captured:1,failed:0,failedIdentifiers:[]});
+    const observations=async()=> (await db!.query('SELECT * FROM forecast_bill_text_observations ORDER BY observed_at,id')).rows;
+    const original=(await observations())[0];
+    assert.equal(original.bill_version_id,first.version);
+    assert.equal(original.version_key,first.key);
+    assert.deepEqual(await collect(1,'302:1'),{selected:0,captured:0,failed:0,failedIdentifiers:[]});
+    const second=await markCurrent(2);
+    assert.deepEqual(await collect(2,'303:1'),{selected:1,captured:1,failed:0,failedIdentifiers:[]});
+    const rows=await observations();
+    assert.equal(rows.length,2);
+    assert.deepEqual(rows.find(row=>row.id===original.id),original);
+    const latest=rows.find(row=>row.bill_version_id===second.version);
+    assert.ok(latest);assert.notEqual(latest.text_sha256,original.text_sha256);
+    const bindings=(await db.query<{body:Buffer}>('SELECT body FROM evidence_content_blobs WHERE media_type=$1',[CURRENT_TEXT_BINDING_TYPE])).rows.map(row=>JSON.parse(row.body.toString()));
+    assert.equal(bindings.length,2);
+    const binding=bindings.find(row=>row.versionKey===second.key);
+    assert.equal(binding.observationId,'observation:'+latest.id);
+    assert.equal(binding.rawSha256,sha(Buffer.from(html(2))));
+    assert.equal(binding.textSha256,latest.text_sha256);
+    const conflicting='Existing incompatible retained version content. '.repeat(6);
+    const third=await markCurrent(3,conflicting);
+    assert.deepEqual(await collect(3,'304:1'),{selected:1,captured:0,failed:1,failedIdentifiers:['HF1']});
+    assert.deepEqual(await observations(),rows);
+    const retained=(await db.query<{raw_text:string}>('SELECT raw_text FROM bill_versions WHERE id=$1',[third.version])).rows[0];
+    assert.equal(retained.raw_text,conflicting);
+    const state=(await db.query<{capture:string;attempt:string}>(`SELECT metadata #>> '{revisorCurrentTextCapture,versionKey}' AS capture,
+      metadata #>> '{revisorCurrentTextAttempt,state}' AS attempt FROM bills WHERE id=$1`,[bill])).rows[0];
+    assert.deepEqual(state,{capture:second.key,attempt:'failed'});
+  }finally{if(db)await db.end();await admin.query('DROP SCHEMA IF EXISTS '+schema+' CASCADE');await admin.end();}
 });
