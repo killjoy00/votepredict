@@ -1,4 +1,5 @@
 import type { HouseVoteBillLink, NormalizedMemberVote, NormalizedVoteEvent, NormalizedVoteKind } from './types';
+import { MINNESOTA_HOUSE_HISTORICAL_SESSIONS, MINNESOTA_2027_CONVENES_ON, minnesotaLocalDate, type MinnesotaHouseSession } from './sessions';
 
 const HOUSE_BASE = 'https://www.house.mn.gov';
 const HOUSE_SUMMARY_API = `${HOUSE_BASE}/Votes/GetVoteSummary`;
@@ -213,6 +214,61 @@ export async function probeHouseRegularSessionKey(sessionSlug: string): Promise<
   const sourceUrl = `${HOUSE_BASE}/Votes`;
   const html = await fetchOfficialHousePage(sourceUrl);
   return { sourceUrl, sessionSlug, sessionKey: discoverHouseRegularSessionKey(html, sessionSlug) };
+}
+
+/** Resolve only the House adapter's live native ID; keep the Senate/biennium
+ * identifier and all historical IDs unchanged. No speculative numeric key. */
+export async function resolveHouseVoteIngestSession(
+  session: MinnesotaHouseSession,
+  probe: typeof probeHouseRegularSessionKey = probeHouseRegularSessionKey,
+): Promise<MinnesotaHouseSession> {
+  if (session.slug !== '2027-2028') return session;
+  const result = await probe(session.slug);
+  const key = result.sessionKey;
+  if (!key) throw new Error('2027-2028 regular House voting-system key has not been published');
+  if (result.sessionSlug !== session.slug || result.sourceUrl !== `${HOUSE_BASE}/Votes` ||
+      !/^[1-9]\d*$/.test(key) || !Number.isSafeInteger(Number(key)) ||
+      MINNESOTA_HOUSE_HISTORICAL_SESSIONS.some(historical => historical.sessionKey === key)) {
+    throw new Error('2027-2028 House voting-system key is invalid or conflicts with an existing session');
+  }
+  return { ...session, sessionKey: key };
+}
+
+export function validate2027HouseVotePage(
+  session: MinnesotaHouseSession,
+  expectedBill: string,
+  events: readonly NormalizedVoteEvent[],
+  observedAt = new Date(),
+): void {
+  if (session.slug !== '2027-2028') return;
+  const today = minnesotaLocalDate(observedAt);
+  const seen = new Set<string>();
+  for (const event of events) {
+    if (event.billIdentifier !== expectedBill ||
+        event.sourceUrl !== buildHouseVoteDetailUrl(session.sessionKey, expectedBill) ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(event.occurredOn) ||
+        event.occurredOn < MINNESOTA_2027_CONVENES_ON || event.occurredOn > session.endsOn ||
+        event.occurredOn > today || !event.externalKey.startsWith(`${session.sessionKey}:${expectedBill}:`) ||
+        seen.has(event.externalKey)) {
+      throw new Error(`2027 House vote event is outside the requested bill/session/date scope: ${event.externalKey}`);
+    }
+    seen.add(event.externalKey);
+  }
+}
+
+export function validate2027HouseSummary(
+  session: MinnesotaHouseSession,
+  html: string,
+  links: readonly HouseVoteBillLink[],
+): void {
+  if (session.slug !== '2027-2028') return;
+  const heading = [...html.matchAll(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/gi)]
+    .map(match => decodeHtml(match[1].replace(/<[^>]+>/g, ' '))
+      .replace(/&(?:ndash|mdash);/gi, '-').replace(/\s*[-–—]\s*/g, '-').replace(/\s+/g, ' ').trim().toLowerCase());
+  if (!heading.includes('2027-2028 regular session') ||
+      links.some(link => link.sessionKey !== session.sessionKey)) {
+    throw new Error('2027 House vote summary does not match the verified regular-session scope');
+  }
 }
 
 async function fetchHouseSummaryRecords(sessionKey: string): Promise<Array<{ Number?: unknown }>> {
