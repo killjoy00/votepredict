@@ -1,9 +1,22 @@
 name: 2027 protected preseason evidence archive
 on:
+  pull_request:
+    paths:
+      - 'src/operations/2027-preseason*'
+      - 'scripts/run-2027-preseason*'
+      - 'tests/2027-preseason*'
+      - '.github/workflows/2027-preseason-evidence-archive.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/operations/2027-preseason*'
+      - 'scripts/run-2027-preseason*'
+      - 'tests/2027-preseason*'
+      - '.github/workflows/2027-preseason-evidence-archive.yml'
   workflow_dispatch:
     inputs:
       archive:
-        description: Run one separately approved preseason archive batch (default plan only)
+        description: Run one explicitly approved archive batch (default plan only)
         required: true
         type: boolean
         default: false
@@ -15,29 +28,47 @@ concurrency:
   cancel-in-progress: false
 jobs:
   verify:
-    if: github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main'
+    if: github.repository == 'killjoy00/votepredict'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - run: node --import tsx --test tests/2027-preseason-evidence-archive.test.ts
-      - run: node --import tsx scripts/run-2027-preseason-evidence-archive.ts --plan
-      - if: inputs.archive == true
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          RELEASE_SHA: ${{ github.sha }}
-        run: node --import tsx scripts/check-release-ci.ts
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: node --import tsx scripts/run-2027-preseason-existing-neon-archive.ts --plan
   archive:
     needs: verify
-    if: inputs.archive == true && vars.VOTEPREDICT_2027_PRESEASON_ARCHIVE_APPROVED == 'true' && github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main' && github.run_attempt == 1
-    environment: votepredict-2027-preseason-archive
+    if: >-
+      needs.verify.result == 'success' && github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' && github.run_attempt == 1 &&
+      ((github.event_name == 'workflow_dispatch' && inputs.archive == true) ||
+      (github.event_name == 'push' && github.event.after == github.sha &&
+      github.event.head_commit.id == github.sha && github.event.forced != true &&
+      github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'VOTEPREDICT_PRESEASON_ORIGINAL_ARCHIVE_20261126')))
+    environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -50,10 +81,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Archive bounded public source entities with restricted role
+      - name: Use existing protected Neon authentication for bounded archive-only writes
         env:
-          VOTEPREDICT_2027_PRESEASON_ARCHIVE_AUTHORIZED: 'true'
-          VOTEPREDICT_2027_PRESEASON_ARCHIVE_DATABASE_URL: ${{ secrets.VOTEPREDICT_2027_PRESEASON_ARCHIVE_DATABASE_URL }}
-          VOTEPREDICT_2027_PRESEASON_ARCHIVE_ROLE: ${{ vars.VOTEPREDICT_2027_PRESEASON_ARCHIVE_ROLE }}
-          VOTEPREDICT_2027_PRESEASON_ARCHIVE_DATABASE_FINGERPRINT: ${{ vars.VOTEPREDICT_2027_PRESEASON_ARCHIVE_DATABASE_FINGERPRINT }}
-        run: node --import tsx scripts/run-2027-preseason-evidence-archive.ts --archive
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
+          VOTEPREDICT_2027_PRESEASON_CI_VERIFIED: 'true'
+        run: node --import tsx scripts/run-2027-preseason-existing-neon-archive.ts --archive

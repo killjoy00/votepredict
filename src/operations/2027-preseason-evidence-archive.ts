@@ -1,10 +1,10 @@
 import { createHash } from 'node:crypto';
-import type { Pool } from 'pg';
+import type { Pool,PoolClient } from 'pg';
 import { canonicalPublicUrl,fetchPublicPage,publicPageMentionsPerson } from '@/evidence/public-http';
 import { databaseTargetFingerprint,readReleaseBinding } from './release-readiness';
 import { storeBlob } from './2027-daily-collection';
 
-export const PRESEASON_LIMITS=Object.freeze({sources:28,maxPageBytes:2*1024*1024,maxBytes:32*1024*1024,timeoutMs:10000,runMs:6*60*1000});
+export const PRESEASON_LIMITS=Object.freeze({sources:29,maxPageBytes:2*1024*1024,maxBytes:32*1024*1024,timeoutMs:10000,runMs:6*60*1000});
 export const PRESEASON_RECEIPT_TYPE='application/vnd.votepredict.2027-preseason-source-review+json';
 export const PRESEASON_EVENT_TYPE='application/vnd.votepredict.2027-preseason-archive-event+json';
 const hash=(bytes:Buffer|string)=>createHash('sha256').update(bytes).digest('hex');
@@ -35,7 +35,7 @@ export function buildPreseasonTargets(rosterRaw:string,manual:LeadFile,depth:Lea
       targets.push({...person,url:source.url,kind:source.kind,publisher:source.publisher,rosterSha256:rosterDigest});
     }
   }
-  if(targets.length!==PRESEASON_LIMITS.sources||new Set(targets.map(x=>x.url)).size!==targets.length)throw Error('Unexpected preseason source inventory');
+  if(targets.length!==28||new Set(targets.map(x=>x.url)).size!==targets.length)throw Error('Unexpected preseason source inventory');
   return targets;
 }
 
@@ -56,10 +56,10 @@ export async function fetchPreseasonTarget(target:PreseasonTarget,budget:Preseas
       const limit=Math.min(PRESEASON_LIMITS.maxPageBytes,PRESEASON_LIMITS.maxBytes-budget.bytes);
       if(!response.body||Number(response.headers.get('content-length')??0)>limit){await response.body?.cancel();throw Error('SOURCE_SIZE_LIMIT');}
       const reader=response.body.getReader();const chunks:Uint8Array[]=[];let size=0;
-      try{for(;;){const part=await reader.read();if(part.done)break;size+=part.value.byteLength;
+      try{for(;;){const part=await reader.read();if(part.done)break;size+=part.value.byteLength;budget.bytes+=part.value.byteLength;
         if(size>limit){await reader.cancel();throw Error('SOURCE_SIZE_LIMIT');}chunks.push(part.value);}}
       finally{reader.releaseLock();}
-      raw=Buffer.concat(chunks);budget.bytes+=raw.length;observedAt=new Date().toISOString();
+      raw=Buffer.concat(chunks);observedAt=new Date().toISOString();
       const headers=new Headers(response.headers);headers.delete('content-length');headers.delete('content-encoding');
       return new Response(new Uint8Array(raw),{status:200,headers});
     }});
@@ -113,19 +113,21 @@ export async function verifyPreseasonArchiveRole(db:Pool,target:{role:string;fin
   }finally{try{await client.query('ROLLBACK');}finally{client.release();}}
 }
 
-export async function retainPreseasonSource(db:Pick<Pool,'connect'>,target:PreseasonTarget,receipt:PreseasonReceipt,raw:Buffer){
+export async function retainPreseasonSourceInTransaction(client:Pick<PoolClient,'query'>,target:PreseasonTarget,receipt:PreseasonReceipt,raw:Buffer){
   if(receipt.schemaVersion!=='2027-preseason-source-review-v1'||receipt.session!=='2027-2028'||receipt.rosterSha256!==target.rosterSha256||
     receipt.lrlId!==target.lrlId||receipt.seat!==target.seat||receipt.sourceUrl!==target.url||receipt.sourceKind!==target.kind||
     receipt.publisher!==target.publisher||!/^\d{1,20}:1$/.test(receipt.runId)||!Number.isFinite(Date.parse(receipt.observedAt))||
     receipt.rawBodyRetained||receipt.reviewRequired!==true||receipt.servingEligible!==false||receipt.canonicalWriteAllowed!==false||receipt.modelWeight!==0||
     raw.length<1||raw.length>PRESEASON_LIMITS.maxPageBytes||raw.length!==receipt.bodyBytes||hash(raw)!==receipt.bodySha256)throw Error('Invalid preseason source receipt');
-  const client=await db.connect();
-  try{
-    await client.query('BEGIN');
-    await storeBlob(client,raw,'application/octet-stream');
+  await storeBlob(client,raw,'application/octet-stream');
     const digest=await storeBlob(client,Buffer.from(JSON.stringify({...receipt,rawBodyRetained:true})),PRESEASON_RECEIPT_TYPE,true);
     const accepted=(await client.query<{accepted_at:Date}>('SELECT accepted_at FROM evidence_content_blobs WHERE sha256=$1',[digest])).rows[0]?.accepted_at;
     if(!accepted||Math.abs(accepted.getTime()-Date.parse(receipt.observedAt))>300000)throw Error('Preseason archive acceptance clock mismatch');
-    await client.query('COMMIT');return digest;
-  }catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
+  return digest;
+}
+
+export async function retainPreseasonSource(db:Pick<Pool,'connect'>,target:PreseasonTarget,receipt:PreseasonReceipt,raw:Buffer){
+  const client=await db.connect();
+  try{await client.query('BEGIN');const digest=await retainPreseasonSourceInTransaction(client,target,receipt,raw);await client.query('COMMIT');return digest;}
+  catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
 }
