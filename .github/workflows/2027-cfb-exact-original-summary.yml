@@ -1,0 +1,82 @@
+name: 2027 CFB exact archived finance summary recovery
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/2027-cfb-exact-original-summary.yml'
+      - 'src/evidence/2027-cfb-exact-original-summary.ts'
+      - 'scripts/run-2027-cfb-exact-original-summary.ts'
+      - 'tests/2027-cfb-exact-original-summary.test.ts'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/2027-cfb-exact-original-summary.yml'
+      - 'src/evidence/2027-cfb-exact-original-summary.ts'
+      - 'scripts/run-2027-cfb-exact-original-summary.ts'
+      - 'tests/2027-cfb-exact-original-summary.test.ts'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: votepredict-2027-cfb-exact-original-summary
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.repository == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: node --import tsx --test tests/2027-cfb-exact-original-summary.test.ts
+  recover:
+    needs: verify
+    if: >-
+      needs.verify.result == 'success' && github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_attempt == 1 &&
+      github.event.after == github.sha && github.event.head_commit.id == github.sha &&
+      github.event.forced != true && github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'VOTEPREDICT_2027_CFB_EXACT_ORIGINAL_SUMMARY_20261127')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: command -v pdftotext || (sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils)
+      - name: Recheck stored original PDFs and append exact-source summary validations
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
+          FINANCE_DETAIL_CI_VERIFIED: 'true'
+        run: node --import tsx scripts/run-2027-cfb-exact-original-summary.ts
