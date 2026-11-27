@@ -1,0 +1,754 @@
+{
+  "schemaVersion": "2027-preseason-incoming-forum-leads-v1",
+  "session": "2027-2028",
+  "observedOn": "2026-11-27",
+  "rosterStatus": "projected_not_activation_verified",
+  "rosterSource": "docs/evaluation/source-proof/2027-incoming-evidence-pilot-20261126-part1.json",
+  "summary": {
+    "recordingLeads": 28,
+    "distinctIncomingSeats": 35,
+    "remainingIncomingSeats": 16,
+    "verifiedParticipants": 0,
+    "verifiedAnswers": 0
+  },
+  "sources": [
+    {
+      "url": "https://youtu.be/TwcvVoLRa1o",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": null,
+      "listedSeats": [
+        "house:39B"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "house:39B",
+          "lrlId": "15677",
+          "name": "Amáda Márquez Simula"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/fevLhMVCV8s",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": null,
+      "listedSeats": [
+        "house:39A"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "house:39A",
+          "lrlId": "15676",
+          "name": "Aaron Klemz"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/Hr7ocNW9M6U",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-28",
+      "listedSeats": [
+        "house:30B"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:30B",
+          "lrlId": "15671",
+          "name": "Chad Westberg"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/-qpi5ZYjmi8?si=oE2NmDNP45t6V2vy",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-07-21",
+      "listedSeats": [
+        "senate:37",
+        "house:37A",
+        "house:37B"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "house:37A",
+          "lrlId": "15675",
+          "name": "Tom McKee"
+        },
+        {
+          "seat": "senate:37",
+          "lrlId": "15693",
+          "name": "Kristy A. Janigo"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/5-KK1UMnko0?si=mlbbnUzXzXgDyx21",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-16",
+      "listedSeats": [
+        "house:40A"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:40A",
+          "lrlId": "15678",
+          "name": "Aisha Elmquist"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/JQCNfq1lA_k?si=xCqqHGmyitGxyBYO",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-17",
+      "listedSeats": [
+        "house:43A"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "house:43A",
+          "lrlId": "15681",
+          "name": "Kyrstin Schuette"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/PF_Cl_YfRkA",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-10",
+      "listedSeats": [
+        "senate:49"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "senate:49",
+          "lrlId": "15695",
+          "name": "Krishnan Subrahmanian"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/ddpulaWvGLU?si=xw9aQtDYbxAl1zfg",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-16",
+      "listedSeats": [
+        "senate:50",
+        "senate:51"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "senate:50",
+          "lrlId": "15696",
+          "name": "Karla E. Hult"
+        },
+        {
+          "seat": "senate:51",
+          "lrlId": "15697",
+          "name": "Simon Trautmann Cordova"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/shi-F_tFbGk",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-10-06",
+      "listedSeats": [
+        "senate:32"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "senate:32",
+          "lrlId": "15691",
+          "name": "Chris Ford"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=P409YZG09dM",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-09",
+      "listedSeats": [
+        "senate:35"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "senate:35",
+          "lrlId": "15692",
+          "name": "Angela Nelson"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/jJFp8obch6U",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-10-15",
+      "listedSeats": [
+        "house:3B",
+        "house:8A",
+        "house:8B"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "house:3B",
+          "lrlId": "15656",
+          "name": "Aaron Schweiger"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=TE9ZOOEsjnU",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": null,
+      "listedSeats": [
+        "house:34A"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:34A",
+          "lrlId": "15673",
+          "name": "Jason Heaser"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://www.youtube.com/live/H3UNjAS4m98%26t%3D0s",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-09",
+      "listedSeats": [
+        "senate:24"
+      ],
+      "access": "cache_miss_malformed_publisher_link",
+      "targets": [
+        {
+          "seat": "senate:24",
+          "lrlId": "15702",
+          "name": "Simon Glaser"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://www.youtube.com/live/YEG9yUs-LSY?si=jq5tT_eannrrbsAg",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-14",
+      "listedSeats": [
+        "house:20B"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:20B",
+          "lrlId": "15667",
+          "name": "Sara Bertschinger"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/iigaU-iGufM?si=QJ3wtAhk_WUi1uzK",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-17",
+      "listedSeats": [
+        "senate:44"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "senate:44",
+          "lrlId": "15694",
+          "name": "Samuel J. Rosemark"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/xI0w7nQl-kU",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-29",
+      "listedSeats": [
+        "senate:14",
+        "house:14A",
+        "house:14B"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "house:14A",
+          "lrlId": "15663",
+          "name": "Abdi Daisane"
+        },
+        {
+          "seat": "house:14B",
+          "lrlId": "15393",
+          "name": "Zachary Dorholt"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/iaCXOj-4lIU",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-10-07",
+      "listedSeats": [
+        "senate:13",
+        "house:13A",
+        "house:13B"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "house:13A",
+          "lrlId": "15661",
+          "name": "Tanja Goering"
+        },
+        {
+          "seat": "house:13B",
+          "lrlId": "15662",
+          "name": "Dawn Loberg"
+        },
+        {
+          "seat": "senate:13",
+          "lrlId": "15687",
+          "name": "Jared J. Gapinski"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://www.youtube.com/watch?t=14s&v=ZIqMQrom_as",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-15",
+      "listedSeats": [
+        "senate:65",
+        "house:65A",
+        "house:65B"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:65B",
+          "lrlId": "15686",
+          "name": "Sebastian Ellefson"
+        },
+        {
+          "seat": "senate:65",
+          "lrlId": "15700",
+          "name": "Robyn Gulley"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/clEtO-WWgoA?si=AxYp3XTXGb7ZB-YC",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-10",
+      "listedSeats": [
+        "senate:18",
+        "house:18A",
+        "house:18B"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "house:18A",
+          "lrlId": "15666",
+          "name": "Leah Hanson"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/hMLQCXV_A-A?si=vYXpnyJz_BzPH1qZ",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-17",
+      "listedSeats": [
+        "senate:22",
+        "house:22A",
+        "house:22B"
+      ],
+      "access": "title_only",
+      "targets": [
+        {
+          "seat": "senate:22",
+          "lrlId": "15496",
+          "name": "Jeremy Munson"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=Bw4qfcaqUck",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": null,
+      "listedSeats": [
+        "house:33A",
+        "house:33B"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:33A",
+          "lrlId": "15672",
+          "name": "Stacey Stout"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=sXCTtP5Mms0",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-05",
+      "listedSeats": [
+        "house:36A",
+        "house:36B"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:36A",
+          "lrlId": "15674",
+          "name": "Jim DeMay"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://www.facebook.com/share/p/1FFNxzof2f/",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-10",
+      "listedSeats": [
+        "senate:26",
+        "house:26A"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:26A",
+          "lrlId": "15670",
+          "name": "Dan Wilson"
+        },
+        {
+          "seat": "senate:26",
+          "lrlId": "15690",
+          "name": "Cherie Johnson"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/8bj7Uw2H3ss?si=Hqr4PNCsU0T6ZwY8",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-15",
+      "listedSeats": [
+        "senate:41",
+        "house:41A",
+        "house:41B"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:41A",
+          "lrlId": "15679",
+          "name": "Cole Birkeland"
+        },
+        {
+          "seat": "house:41B",
+          "lrlId": "15680",
+          "name": "Jen Fox"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/zym9vNnfYUI?si=dXXCYVxridxUdxqj",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-22",
+      "listedSeats": [
+        "house:4A",
+        "house:4B"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "house:4A",
+          "lrlId": "15657",
+          "name": "Erika Yoney"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/OU8sHgfIZgA?si=dcahRdRHmccAN0A9",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-22",
+      "listedSeats": [
+        "senate:4"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "senate:4",
+          "lrlId": "15703",
+          "name": "Austin Peterson"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://www.youtube.com/live/Y8m5A_UTKeo?si=abSv2M0fGxSa9Go-",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-10-03",
+      "listedSeats": [
+        "senate:51",
+        "house:51A"
+      ],
+      "access": "cache_miss",
+      "targets": [
+        {
+          "seat": "senate:51",
+          "lrlId": "15697",
+          "name": "Simon Trautmann Cordova"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    },
+    {
+      "url": "https://youtu.be/TSE6ibuW4Fc?si=qZHtyGJypVNG4mDl",
+      "publisherIndex": "https://www.lwvmn.org/league-calendar/candidate-forums/",
+      "listedEventOn": "2026-09-09",
+      "listedSeats": [
+        "senate:53",
+        "house:53B"
+      ],
+      "access": "title_and_question_chapters_only",
+      "targets": [
+        {
+          "seat": "senate:53",
+          "lrlId": "15698",
+          "name": "Paul Cumings"
+        }
+      ],
+      "participantIdentityVerified": false,
+      "answerVerified": false,
+      "originalBodyRetained": false,
+      "servingEligible": false,
+      "modelWeight": 0
+    }
+  ],
+  "uncoveredTargets": [
+    {
+      "seat": "house:5B",
+      "lrlId": "15658",
+      "name": "Jonathan Claussen"
+    },
+    {
+      "seat": "house:10A",
+      "lrlId": "15659",
+      "name": "Mark Striemer"
+    },
+    {
+      "seat": "house:11A",
+      "lrlId": "15660",
+      "name": "Chris Swanson"
+    },
+    {
+      "seat": "house:15A",
+      "lrlId": "15664",
+      "name": "Bradley Hennen"
+    },
+    {
+      "seat": "house:15B",
+      "lrlId": "15665",
+      "name": "Geri Theis"
+    },
+    {
+      "seat": "house:21A",
+      "lrlId": "15668",
+      "name": "Krist Wollum"
+    },
+    {
+      "seat": "house:23A",
+      "lrlId": "15669",
+      "name": "Dominick Ronnenberg"
+    },
+    {
+      "seat": "house:43B",
+      "lrlId": "15682",
+      "name": "Jess Lewis"
+    },
+    {
+      "seat": "house:52A",
+      "lrlId": "15683",
+      "name": "Christos Jensen"
+    },
+    {
+      "seat": "house:54B",
+      "lrlId": "15684",
+      "name": "Natalie Barnes"
+    },
+    {
+      "seat": "house:55B",
+      "lrlId": "15524",
+      "name": "Hunter Cantrell"
+    },
+    {
+      "seat": "house:57B",
+      "lrlId": "15685",
+      "name": "Brian Cohn"
+    },
+    {
+      "seat": "senate:15",
+      "lrlId": "15688",
+      "name": "Braxton Seifert"
+    },
+    {
+      "seat": "senate:21",
+      "lrlId": "15689",
+      "name": "Christopher R. Knoll"
+    },
+    {
+      "seat": "senate:54",
+      "lrlId": "15701",
+      "name": "Richard Olson"
+    },
+    {
+      "seat": "senate:58",
+      "lrlId": "15699",
+      "name": "Mark O. Legvold"
+    }
+  ],
+  "limitations": [
+    "Index confirms the linked district and advertised event, not attendance or any candidate statement. Browser video content/transcript was unavailable; do not infer answers from questions, party, or titles.",
+    "Use only permissible public source access; preserve original source provenance, full context, speaker identification, question, timestamp, and qualifications. Do not republish edited clips or use the records for partisan advocacy.",
+    "Hold malformed/cache-miss URLs rather than assuming recordings are unavailable. Follow official publisher alternatives and text interviews for gaps. No original source retention or production evidence writes today."
+  ]
+}
