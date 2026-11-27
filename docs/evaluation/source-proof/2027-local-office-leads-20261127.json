@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "2027-preseason-local-office-source-leads-v1",
+  "observedOn": "2026-11-27",
+  "session": "2027-2028",
+  "rosterFile": "docs/evaluation/source-proof/2027-preseason-roster-20261126.json",
+  "rosterStatus": "projected_not_activation_verified",
+  "originalBodyRetained": false,
+  "servingEligible": false,
+  "canonicalWriteAllowed": false,
+  "modelWeight": 0,
+  "sources": [
+    {
+      "lrlId": "15703",
+      "seat": "senate:4",
+      "name": "Austin Peterson",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15703",
+      "body": "Hawley Public Schools board",
+      "meetingOn": "2025-01-27",
+      "url": "https://www.hawley.k12.mn.us/uploaded/email_files/1-27-25_Minutes.pdf",
+      "kind": "official_minutes_pdf",
+      "reviewStatus": "text_read_image_unavailable",
+      "locators": [
+        {
+          "page": 2,
+          "action": "Resolution directing administration to recommend program and position reductions",
+          "choice": "aye",
+          "attribution": "Peterson explicitly listed among seven members voting in favor; not a vote on particular cuts.",
+          "topic": "education_budget"
+        }
+      ]
+    },
+    {
+      "lrlId": "15703",
+      "seat": "senate:4",
+      "name": "Austin Peterson",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15703",
+      "body": "Hawley Public Schools board",
+      "meetingOn": "2025-10-27",
+      "url": "https://www.hawley.k12.mn.us/uploaded/email/10-27-25_Minutes.pdf",
+      "kind": "official_minutes_pdf",
+      "reviewStatus": "text_read_image_unavailable",
+      "locators": [
+        {
+          "page": 2,
+          "action": "Minnesota State High School League grant request resolution",
+          "choice": "aye",
+          "attribution": "Peterson explicitly named in the roll-call ayes.",
+          "topic": "education_activities"
+        }
+      ]
+    },
+    {
+      "lrlId": "15703",
+      "seat": "senate:4",
+      "name": "Austin Peterson",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15703",
+      "body": "Hawley Public Schools board",
+      "meetingOn": "2025-11-24",
+      "url": "https://www.hawley.k12.mn.us/uploaded/email/11-24-25_Minutes.pdf",
+      "kind": "official_minutes_pdf",
+      "reviewStatus": "first_page_image_reviewed_original_not_retained",
+      "locators": [
+        {
+          "page": 1,
+          "action": "Agenda approval",
+          "choice": null,
+          "attribution": "Peterson appears as second in the Olson/Peterson motion; tally 7–0, no named choice in this item.",
+          "topic": "procedural",
+          "excludeFromSubstantiveEvidence": true
+        },
+        {
+          "page": 1,
+          "action": "Changes to textbook and instructional materials policy 606",
+          "choice": null,
+          "attribution": "Meeting attendance and unanimous board tally only; Peterson not individually named for this vote.",
+          "topic": "education_curriculum",
+          "excludeFromNamedVoteEvidence": true
+        }
+      ]
+    },
+    {
+      "lrlId": "15672",
+      "seat": "house:33A",
+      "name": "Stacey Stout",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15672",
+      "body": "Mahtomedi Public Schools board",
+      "meetingOn": "2021-01-07",
+      "url": "https://meetings.boardbook.org/Documents/DownloadPDF/b8384fcb-20db-4e97-b727-16fe4b35bb64?org=1077",
+      "kind": "official_minutes_pdf",
+      "reviewStatus": "text_read_image_unavailable",
+      "locators": [
+        {
+          "section": "6.E",
+          "action": "Increase school board compensation to the average of member school districts of Northeast Metro 916",
+          "choice": "aye",
+          "attribution": "Stout explicitly named in roll call; 6–0.",
+          "topic": "education_governance"
+        },
+        {
+          "section": "10.B",
+          "action": "Change secondary grades 6–12 from distance learning to hybrid learning with staggered return",
+          "choice": "aye",
+          "attribution": "Stout explicitly named in roll call; 6–0. Preserve pandemic-era timing and conditions; not a general position on all closures.",
+          "topic": "education_public_health"
+        }
+      ]
+    },
+    {
+      "lrlId": "15677",
+      "seat": "house:39B",
+      "name": "Amáda Márquez Simula",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15677",
+      "body": "Columbia Heights City Council",
+      "meetingOn": "2026-09-28",
+      "url": "https://mccmeetings.blob.core.usgovcloudapi.net/columbhtmn-pubu/MEET-Packet-b9bf1cd2709a42fe92d4f7345d5fee0a.pdf",
+      "kind": "official_later_meeting_packet_containing_minutes",
+      "reviewStatus": "text_read_image_unavailable",
+      "locators": [
+        {
+          "packetPages": [
+            29,
+            30
+          ],
+          "minutesPages": [
+            8,
+            9
+          ],
+          "action": "Resolution 2026-057 setting election judge salaries and designating election judges",
+          "choice": "aye",
+          "attribution": "Mayor Márquez Simula explicitly listed among four ayes; one abstention.",
+          "topic": "election_administration"
+        }
+      ],
+      "limitations": [
+        "Prefer standalone approved September 28 minutes; October 13 packet may exceed original archive byte cap. Do not extract unrelated meeting material."
+      ]
+    },
+    {
+      "lrlId": "15698",
+      "seat": "senate:53",
+      "name": "Paul Cumings",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15698",
+      "body": "South St. Paul Public Schools board",
+      "meetingOn": "2025-01-13",
+      "url": "https://meetings.boardbook.org/Public/Agenda/1813?meeting=670450",
+      "kind": "official_agenda_html",
+      "reviewStatus": "agenda_only",
+      "locators": [
+        {
+          "section": "II.A",
+          "action": "Scheduled oath for newly elected school board members including Paul Cumings",
+          "choice": null,
+          "attribution": "Agenda only; not proof of completed oath or a vote.",
+          "topic": "prior_office_context"
+        }
+      ]
+    }
+  ],
+  "portals": [
+    {
+      "lrlId": "15698",
+      "seat": "senate:53",
+      "name": "Paul Cumings",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15698",
+      "url": "https://meetings.boardbook.org/Public/Organization/1813",
+      "status": "official_agendas_minutes_index; obtain actual approved minute attachments, not agenda-like templates"
+    },
+    {
+      "lrlId": "15677",
+      "seat": "house:39B",
+      "name": "Amáda Márquez Simula",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15677",
+      "url": "https://meetings.municode.com/PublishPage/index?cid=COLUMBHTMN&p=1&ppid=97c13af0-253c-4223-b0d7-eb1b77f6fa79",
+      "status": "official meeting portal indexed; direct browser open returned 403"
+    },
+    {
+      "lrlId": "15672",
+      "seat": "house:33A",
+      "name": "Stacey Stout",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15672",
+      "url": "https://meetings.boardbook.org/Public/Agenda/1077?meeting=757636",
+      "status": "official August 10, 2026 agenda verifies scheduled board participation; no recorded choice"
+    }
+  ],
+  "limits": [
+    "These are source-review leads only. Do not count the five named choices in the historical state-legislative votes metric or as admitted evidence before original-byte retention and exact page verification.",
+    "Record local office decisions as local events with source date, question and context; no inferred bill stance, party-wide generalization, or new serving features.",
+    "No new original acquisition today: existing protected daily caps remain unchanged.",
+    "Exclude incidental citizen names, contact details, personnel and donor information from extracted records."
+  ]
+}
