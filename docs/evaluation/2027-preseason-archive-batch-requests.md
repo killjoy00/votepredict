@@ -1,0 +1,7 @@
+# Preseason source archive batch approvals
+
+This append-only operations log documents explicitly approved bounded collection batches. A normal documentation change does not activate an archive run. The protected workflow still requires an explicit archive dispatch or a marked exact-main push, successful disposable database CI, target verification, restricted effective role, daily limit, and unchanged request/byte/time caps.
+
+## November 27, 2026 — pilot-1
+
+Owner requested continuation after the initial successful protected archive and review. Production read-only preflight at 08:35:25 Chicago time confirmed 23 retained policy originals and no archive-start receipt for November 27. Authorize only the existing `pilot-1` tranche of 29 already frozen URLs: all 18 Minnesota Housing Partnership questionnaires first, followed by 11 candidate policy pages. This is a disjoint next batch, not another source discovery project. Trigger via the existing marked merge convention with batch `pilot-1` after all checks pass. No automatic schedule, new credential, model change, membership activation, or canonical admission. Do not activate the finance merge or any other main-changing operation while this batch is at its exact-main gate. Independently verify the committed original receipts, hashes, and document sizes before claiming collection success.
