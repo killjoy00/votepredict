@@ -1,0 +1,669 @@
+{
+  "summary": {
+    "schemaVersion": "2027-incoming-evidence-pilot-v1",
+    "observedAt": "2026-11-26T23:16:28.669Z",
+    "rosterPath": "docs/evaluation/source-proof/2027-preseason-roster-20261126.json",
+    "rosterSha256": "3b062058cbe77d2ff6caad8719a65535ad75849d48e0c627c9b460ef48df17bd",
+    "projectedMembers": 201,
+    "priorDirectoryCounts": {
+      "92": 201,
+      "93": 204,
+      "94": 206
+    },
+    "absentFrom2025_26": 51,
+    "returningRecent": 1,
+    "noRecentService": 50,
+    "targetCounts": {
+      "house": 33,
+      "senate": 18
+    },
+    "remainingOnly": true,
+    "previouslyAttempted": 40,
+    "attemptedMembers": 11,
+    "unattemptedMembers": 0,
+    "requests": 29,
+    "bytes": 9923069,
+    "campaignFilingsObserved": 353,
+    "housingLinksObserved": 66,
+    "membersWithVerifiedSource": 10,
+    "membersWithCampaignSource": 9,
+    "membersWithHousingResponses": 6,
+    "membersWithPolicyExcerpt": 1,
+    "verifiedSourceCount": 22,
+    "failures": 2,
+    "servingEvidenceCreated": 0,
+    "productionWrites": 0
+  },
+  "registries": [
+    {
+      "url": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=92",
+      "requestedUrl": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=92",
+      "observedAt": "2026-11-26T23:16:08.781Z",
+      "claimedPublicationAt": null,
+      "bodySha256": "fd69bcd2d078f06192420995d7c846ee3f540595f577d5bb230b19cb55d3d6f4",
+      "bytes": 315717,
+      "title": "Minnesota Legislators Past & Present - Search Results",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    },
+    {
+      "url": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=93",
+      "requestedUrl": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=93",
+      "observedAt": "2026-11-26T23:16:09.155Z",
+      "claimedPublicationAt": null,
+      "bodySha256": "4c928c7e42560a624f0b901f015ea50524a19e58f43b37207bbfcdcbd60c8612",
+      "bytes": 316431,
+      "title": "Minnesota Legislators Past & Present - Search Results",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    },
+    {
+      "url": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=94",
+      "requestedUrl": "https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=94",
+      "observedAt": "2026-11-26T23:16:09.526Z",
+      "claimedPublicationAt": null,
+      "bodySha256": "6a5879e088b6107c5ba78c7ba7fa45b432ca1c22fabb299a57b02cfce1387316",
+      "bytes": 315905,
+      "title": "Minnesota Legislators Past & Present - Search Results",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    },
+    {
+      "url": "https://candidates.sos.mn.gov/CandidateFilingResults.aspx?candidateid=0&executive=False&federal=False&judicial=False&level=1&office=0&party=0&representative=True&senate=True",
+      "requestedUrl": "https://candidates.sos.mn.gov/CandidateFilingResults.aspx?candidateid=0&executive=False&federal=False&judicial=False&level=1&office=0&party=0&representative=True&senate=True",
+      "observedAt": "2026-11-26T23:16:10.161Z",
+      "claimedPublicationAt": null,
+      "bodySha256": "deff92a877d2d111e772b4537b62bd764ae066b43a63aff65cf8eb03e5e6e493",
+      "bytes": 1236484,
+      "title": "Candidate Filings",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    },
+    {
+      "url": "https://mhponline.org/2026-candidate-housing-questionnaire/",
+      "requestedUrl": "https://mhponline.org/2026-candidate-housing-questionnaire/",
+      "observedAt": "2026-11-26T23:16:10.548Z",
+      "claimedPublicationAt": "2026-08-07T13:00:00.000Z",
+      "bodySha256": "5f9bdc90a1a54138058f2b46c46093b87f25fbaa68b0bcd16a97b8c9818a7587",
+      "bytes": 141410,
+      "title": "2026 Candidate Housing Questionnaire - Minnesota Housing Partnership (MHP)",
+      "rawBodyRetained": false,
+      "availableBeforeObservationProved": false,
+      "servingEligible": false
+    }
+  ],
+  "targets": [
+    {
+      "seat": "senate:35",
+      "lrlId": "15692",
+      "name": "Angela Nelson",
+      "electionName": "Angela Nelson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15692",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "35",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:37",
+      "lrlId": "15693",
+      "name": "Kristy A. Janigo",
+      "electionName": "Kristy Janigo",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15693",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "37",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:44",
+      "lrlId": "15694",
+      "name": "Samuel J. Rosemark",
+      "electionName": "Sam Rosemark",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15694",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "44",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:49",
+      "lrlId": "15695",
+      "name": "Krishnan Subrahmanian",
+      "electionName": "Krish Subrahmanian",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15695",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "49",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:50",
+      "lrlId": "15696",
+      "name": "Karla E. Hult",
+      "electionName": "Karla Hult",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15696",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "50",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:51",
+      "lrlId": "15697",
+      "name": "Simon Trautmann Cordova",
+      "electionName": "Simon Trautmann Cordova",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15697",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "51",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:53",
+      "lrlId": "15698",
+      "name": "Paul Cumings",
+      "electionName": "Paul Cumings",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15698",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "53",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:54",
+      "lrlId": "15701",
+      "name": "Richard Olson",
+      "electionName": "Rick Olson",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15701",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "54",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:58",
+      "lrlId": "15699",
+      "name": "Mark O. Legvold",
+      "electionName": "Mark Legvold",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15699",
+      "basis": "matched_name_variant",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "58",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:65",
+      "lrlId": "15700",
+      "name": "Robyn Gulley",
+      "electionName": "Robyn Gulley",
+      "party": "DFL",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15700",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "65",
+      "service": "no_recent_service"
+    },
+    {
+      "seat": "senate:22",
+      "lrlId": "15496",
+      "name": "Jeremy Munson",
+      "electionName": "Jeremy Munson",
+      "party": "R",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15496",
+      "basis": "matched_reported_leader",
+      "oathDateStatus": "future_reported_date",
+      "chamber": "senate",
+      "district": "22",
+      "service": "returning"
+    }
+  ],
+  "results": [
+    {
+      "seat": "senate:35",
+      "lrlId": "15692",
+      "name": "Angela Nelson",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.nelsonformn.com/",
+          "requestedUrl": "https://nelsonformn.com/",
+          "observedAt": "2026-11-26T23:16:10.792Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "fd1d15c41027a0bf55712b1b91da6bf2c3f22a71ddcd72cfaa1a2280470667b9",
+          "bytes": 731264,
+          "title": "Angela Nelson For Minnesota State Senate | District 35 | Minneapolis, MN 55448, USA",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.nelsonformn.com/priorities",
+          "requestedUrl": "https://www.nelsonformn.com/priorities",
+          "observedAt": "2026-11-26T23:16:10.845Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "1869ac9f4a3180624855314d0d7249f5f31d1a5b6f9a66e94dad65b2f9edd14b",
+          "bytes": 722421,
+          "title": "Priorities | Nelson For MN",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/angela-nelson/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/angela-nelson/",
+          "observedAt": "2026-11-26T23:16:11.872Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "3711800e45acf9d0af1d1a3a2376f64a816624d0bf60ba84aa89d688f750f5ec",
+          "bytes": 119956,
+          "title": "Angela Nelson - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "senate:37",
+      "lrlId": "15693",
+      "name": "Kristy A. Janigo",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://kristyjanigoformn.com/",
+          "requestedUrl": "https://kristyjanigoformn.com/",
+          "observedAt": "2026-11-26T23:16:12.425Z",
+          "claimedPublicationAt": "2025-07-18T22:00:04.000Z",
+          "bodySha256": "7e84be6e9920f901db16399510b5454378cbfa7ae8b1e3b56c50cb5f15221597",
+          "bytes": 323929,
+          "title": "Home - Kristy Janigo for Minnesota State Senate 37",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://kristyjanigoformn.com/priorities/",
+          "requestedUrl": "https://kristyjanigoformn.com/priorities/",
+          "observedAt": "2026-11-26T23:16:12.553Z",
+          "claimedPublicationAt": "2025-08-28T02:49:56.000Z",
+          "bodySha256": "e6c7b80ffb4a69f9a9749793ec6a4dbc5c94d4ad1c1789fbef86203e46da1bfb",
+          "bytes": 228270,
+          "title": "Priorities - Kristy Janigo for Minnesota State Senate 37",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/kristy-janigo/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/kristy-janigo/",
+          "observedAt": "2026-11-26T23:16:13.212Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "11ec37d9b655749f3e4bf23cc3a6df34ba53ffdce24f0f7eae1f8b15a3877cd8",
+          "bytes": 126433,
+          "title": "Kristy Janigo - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "senate:44",
+      "lrlId": "15694",
+      "name": "Samuel J. Rosemark",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://samrosemark.com/",
+          "requestedUrl": "https://samrosemark.com/",
+          "observedAt": "2026-11-26T23:16:15.714Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "14075ecca859c397d3268ae7f0c6f8111ee573549e95e96694b42be8efe0d718",
+          "bytes": 167937,
+          "title": "Home | Sam Rosemark for Senate District 44",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://samrosemark.com/priorities/",
+          "requestedUrl": "https://samrosemark.com/priorities/",
+          "observedAt": "2026-11-26T23:16:18.400Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "9e55dde4a6b479b0f84eb6d3c0c4cd9697a80bc14156945673ed34d14fc8f055",
+          "bytes": 164338,
+          "title": "Priorities | Sam Rosemark for Senate District 44",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "senate:49",
+      "lrlId": "15695",
+      "name": "Krishnan Subrahmanian",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://www.krishforsenate.com/",
+          "requestedUrl": "https://www.krishforsenate.com/",
+          "observedAt": "2026-11-26T23:16:18.769Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "bed5ad3b98ed14720fdd0414dc7bfaa379e15c602615ed343b84ee812471bfeb",
+          "bytes": 728730,
+          "title": "Krish for Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.krishforsenate.com/priorities",
+          "requestedUrl": "https://www.krishforsenate.com/priorities",
+          "observedAt": "2026-11-26T23:16:18.977Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "c0f5e6c2523c4c5093f0ee3b2315efcdef9a52f92cae7638cf309735f839d701",
+          "bytes": 720742,
+          "title": "Priorities &mdash; Krish for Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy",
+          "excerpt": "Support safe, inclusive schools that partner with families from all backgrounds."
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/krish-subrahmanian/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/krish-subrahmanian/",
+          "observedAt": "2026-11-26T23:16:19.815Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "7b0acaedaaf29f728ad1e871803c4a547fe1cf7d360bf08a15522b41429b1a21",
+          "bytes": 123300,
+          "title": "Krish Subrahmanian - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "senate:50",
+      "lrlId": "15696",
+      "name": "Karla E. Hult",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.karlahultforsenate.com/",
+          "requestedUrl": "https://karlahultforsenate.com/",
+          "observedAt": "2026-11-26T23:16:20.354Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "3472ca9b0f2f1f49a89b24fbb79f25de43a0af7e1885eb7d203d53b739e7d0fa",
+          "bytes": 379329,
+          "title": "Karla Hult for Minnesota Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.karlahultforsenate.com/mission-driven-priorities",
+          "requestedUrl": "https://www.karlahultforsenate.com/mission-driven-priorities",
+          "observedAt": "2026-11-26T23:16:20.540Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "6b800a3473e586698bc6eb4b0c4772162568d59666f72ca41321c17bcf893044",
+          "bytes": 260761,
+          "title": "Mission-Driven Priorities &mdash; Karla Hult for Minnesota Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "senate:51",
+      "lrlId": "15697",
+      "name": "Simon Trautmann Cordova",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": []
+    },
+    {
+      "seat": "senate:53",
+      "lrlId": "15698",
+      "name": "Paul Cumings",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.paulcumings.com/",
+          "requestedUrl": "https://paulcumings.com/",
+          "observedAt": "2026-11-26T23:16:21.447Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "45387074efca7a966bef3a8431541eb505804b1c40b0f21c4fe50629834448a1",
+          "bytes": 303208,
+          "title": "Paul Cumings for MN Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        }
+      ]
+    },
+    {
+      "seat": "senate:54",
+      "lrlId": "15701",
+      "name": "Richard Olson",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://rickformn.com/",
+          "requestedUrl": "https://rickformn.com/",
+          "observedAt": "2026-11-26T23:16:23.138Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "86ac522da5cfded3062732454abf7b374d961f2f6a4c589de0014f241a207915",
+          "bytes": 89318,
+          "title": "Home - Rick Olson for State Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://rickformn.com/issues/",
+          "requestedUrl": "https://rickformn.com/issues/",
+          "observedAt": "2026-11-26T23:16:24.280Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "edd957f65ffe054015b32cfb44065d4d95c90036457fabd43a74d90884c264df",
+          "bytes": 89417,
+          "title": "Issues - Rick Olson for State Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/rick-olson/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/rick-olson/",
+          "observedAt": "2026-11-26T23:16:25.099Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "18ad78b59e539a6e7e50db9c07b6f91d017b30cbfee48e2c7a8fb9aead97825e",
+          "bytes": 119067,
+          "title": "Rick Olson - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "senate:58",
+      "lrlId": "15699",
+      "name": "Mark O. Legvold",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 0,
+      "evidence": [
+        {
+          "url": "https://www.legvold4mnsenate58.com/",
+          "requestedUrl": "https://legvold4mnsenate58.com/",
+          "observedAt": "2026-11-26T23:16:25.807Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "04b08b6249d9fc7a73172dc9fec300fd99fbded5048aee73fb6ddc344608b83c",
+          "bytes": 409652,
+          "title": "Legvold for MN Senate | Support Mark Legvold&mdash;Get Involved",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://www.legvold4mnsenate58.com/policy",
+          "requestedUrl": "https://www.legvold4mnsenate58.com/policy",
+          "observedAt": "2026-11-26T23:16:26.500Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "ae260ed532da0b5410f31222e19773d4fdade0953ef6f68a58c32b012e8238ac",
+          "bytes": 1144165,
+          "title": "Policy &mdash; Legvold for MN Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_policy"
+        }
+      ]
+    },
+    {
+      "seat": "senate:65",
+      "lrlId": "15700",
+      "name": "Robyn Gulley",
+      "service": "no_recent_service",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://robyngulley.com/",
+          "requestedUrl": "https://www.robyngulley.com/",
+          "observedAt": "2026-11-26T23:16:27.253Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "8b75929aec2c1ee641d0771fe406fbd8e4e9c0879ec6a29971d2dc3ca050eba9",
+          "bytes": 406574,
+          "title": "Gulley for Senate",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "campaign_home"
+        },
+        {
+          "url": "https://mhponline.org/2026_questionnaire/robyn-gulley/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/robyn-gulley/",
+          "observedAt": "2026-11-26T23:16:27.895Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "60e78f9b09f28142db38820003231771087b0f7fd51adfc3275bb335f4d2ca1a",
+          "bytes": 119124,
+          "title": "Robyn Gulley - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    },
+    {
+      "seat": "senate:22",
+      "lrlId": "15496",
+      "name": "Jeremy Munson",
+      "service": "returning",
+      "campaignRegistryMatches": 1,
+      "questionnaireIndexMatches": 1,
+      "evidence": [
+        {
+          "url": "https://mhponline.org/2026_questionnaire/jeremy-munson/",
+          "requestedUrl": "https://mhponline.org/2026_questionnaire/jeremy-munson/",
+          "observedAt": "2026-11-26T23:16:28.667Z",
+          "claimedPublicationAt": null,
+          "bodySha256": "d57cbc24329aae61e716ecb0f0a3c329fd7aad51cbb1865b1c32db285e752482",
+          "bytes": 119187,
+          "title": "Jeremy Munson - Minnesota Housing Partnership (MHP)",
+          "rawBodyRetained": false,
+          "availableBeforeObservationProved": false,
+          "servingEligible": false,
+          "kind": "housing_questionnaire",
+          "completeAnswers": 6
+        }
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "stage": "campaign_home",
+      "seat": "senate:51",
+      "url": "https://simonfor51.com/",
+      "reason": "UNVERIFIED_OR_UNAVAILABLE"
+    },
+    {
+      "stage": "campaign_home",
+      "seat": "senate:22",
+      "url": "https://www.jeremymunson.com/",
+      "reason": "HTTP_403"
+    }
+  ],
+  "limitations": [
+    "No recent service means absent from 92nd, 93rd and 94th LRL directories, not proof of never having held office.",
+    "All source bodies were observed during this run; publication claims are not independently verified historical availability.",
+    "Public-repository report retains URLs, hashes, small policy excerpts and answer counts only, not complete original bodies or private contact fields.",
+    "No direction or issue stance is inferred; canonical evidence ingestion requires private raw-body retention and validation.",
+    "Unmatched or unavailable source is unknown evidence, not a negative position."
+  ]
+}
