@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {financeRoster,parseFinanceRegistry,matchFinanceRoster,currentFinanceReference,reviewFinanceSummary,selectFinancePilot} from '../src/evidence/2027-current-cfb-finance.js';
+import {financeRoster,parseFinanceRegistry,matchFinanceRoster,currentFinanceReference,selectCurrentFinanceReference,reviewFinanceSummary,selectFinancePilot} from '../src/evidence/2027-current-cfb-finance.js';
 const ref={filingYear:2026,reportName:'2026 Pre-General Report',year:'26',type:'pcc',period:'PG',se:'0',registrationNumber:'12345',amendment:0};
 test('registry requires exact projected full/election name, office and seat; ambiguity is held',()=>{
   const cols=['RegisteredEntityID','CandidateFullName','OfficeSoughtFullName','District','RegistrationDate','TerminationDate'];
@@ -36,4 +36,11 @@ test('frozen 201 identities and balanced bounded pilot',()=>{
  assert.equal(members.filter(m=>m.cohort==='returning').length,150);
  const p=selectFinancePilot(members.map(member=>({member,reference:ref})));
  assert.equal(p.length,24);assert.equal(p.filter(x=>x.member.cohort==='incoming').length,12);
+});
+
+test('candidate viewer tab references use same exact period and version checks',()=>{
+ const old={...ref,year:'25',filingYear:2026,reportName:'2025 Year-End'};
+ const latest={...ref,amendment:3};
+ assert.equal(selectCurrentFinanceReference([old,ref,latest],ref.registrationNumber).reference?.amendment,3);
+ assert.equal(selectCurrentFinanceReference([{...ref,reportName:'2026 Year-End'},ref],ref.registrationNumber).reason,'later_or_final_report_requires_review');
 });

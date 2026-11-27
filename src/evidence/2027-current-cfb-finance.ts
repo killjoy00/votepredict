@@ -1,7 +1,7 @@
 import {createHash} from 'node:crypto';
 import {parseCfbCurrentReportGrid,cfbReportViewerUrl} from './cfb-current-report-acquisition';
 import type {CfbReportViewerReference} from './cfb-report-pdf-proof';
-export const FINANCE_LIMITS=Object.freeze({incoming:12,returning:12,requests:28,maxGridBytes:2*1024*1024,maxPdfBytes:4*1024*1024,maxBytes:48*1024*1024,runMs:240000});
+export const FINANCE_LIMITS=Object.freeze({incoming:12,returning:12,requests:80,maxGridBytes:2*1024*1024,maxPdfBytes:4*1024*1024,maxBytes:48*1024*1024,runMs:240000});
 export const FINANCE_ROSTER_SHA='3b062058cbe77d2ff6caad8719a65535ad75849d48e0c627c9b460ef48df17bd';
 export const FINANCE_RECEIPT_TYPE='application/vnd.votepredict.2027-preseason-finance-report-review+json';
 export const FINANCE_EVENT_TYPE='application/vnd.votepredict.2027-preseason-finance-collection+json';
@@ -69,7 +69,10 @@ export function matchFinanceRoster(members:readonly FinanceMember[],registration
   return {matches,gaps};
 }
 export function currentFinanceReference(raw:unknown,registration:string){
-  const refs=parseCfbCurrentReportGrid(raw).references.filter(r=>r.registrationNumber===registration&&r.filingYear===2026&&['26','2026'].includes(r.year)&&r.type==='pcc');
+  return selectCurrentFinanceReference(parseCfbCurrentReportGrid(raw).references,registration);
+}
+export function selectCurrentFinanceReference(references:readonly CfbReportViewerReference[],registration:string){
+  const refs=references.filter(r=>r.registrationNumber===registration&&r.filingYear===2026&&['26','2026'].includes(r.year)&&r.type==='pcc');
   // The Board currently advertises its 2026 pre-general list. Do not assume
   // every report on it is the latest version, or silently skip a later report.
   const pre=refs.filter(r=>/pre[\s-]*general/i.test(r.reportName));

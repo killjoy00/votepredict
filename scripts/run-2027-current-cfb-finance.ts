@@ -6,6 +6,9 @@ import {createHash} from 'node:crypto';
 import {Pool} from 'pg';
 import {financeRoster,parseFinanceRegistry,matchFinanceRoster,currentFinanceReference,selectFinancePilot,reviewFinanceSummary,FINANCE_LIMITS,FINANCE_ROSTER_SHA,FINANCE_RECEIPT_TYPE,FINANCE_EVENT_TYPE,FINANCE_MARKER} from '../src/evidence/2027-current-cfb-finance.js';
 import {cfbReportViewerUrl} from '../src/evidence/cfb-current-report-acquisition.js';
+import {cfbCandidateReportsTabForm,parseCfbCandidateReportsTabResponse} from '../src/evidence/cfb-candidate-report-history.js';
+import {selectCurrentFinanceReference,type FinanceMember,type FinanceRegistration} from '../src/evidence/2027-current-cfb-finance.js';
+import type {CfbReportViewerReference} from '../src/evidence/cfb-report-pdf-proof.js';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {assertArchiveConnection,withRestrictedArchiveTransaction,ARCHIVE_OWNER,ARCHIVE_ROLE,ARCHIVE_PROJECT} from '../src/operations/2027-preseason-existing-neon-archive.js';
 import {storeBlob} from '../src/operations/2027-daily-collection.js';
@@ -68,16 +71,56 @@ async function main(){
   stage='registry_grid';const registry=await load('all-registered-candidates');
   stage='report_grid';const reports=await load('candidate-reports');
   stage='registry_identity_join';const parsed=parseFinanceRegistry(registry.json),crosswalk=matchFinanceRoster(members,parsed.rows);
-  console.log('CFB_FINANCE_GRID_SHAPE '+JSON.stringify({registryRows:parsed.rawRows,registryMalformed:parsed.malformedLegislativeRows,matched:crosswalk.matches.length,reportColumns:(reports.json as {cols?:unknown}).cols}));
+  const safeGrid=(v:unknown)=>{const o=v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{};return {hasCols:Array.isArray(o.cols),columnCount:Array.isArray(o.cols)?o.cols.length:0,hasData:!!o.data&&typeof o.data==='object',hasTabcontent:typeof o.tabcontent==='string',hasError:Object.hasOwn(o,'error'),hasMessage:Object.hasOwn(o,'message')};};
+  console.log('CFB_FINANCE_GRID_SHAPE '+JSON.stringify({registryRows:parsed.rawRows,registryMalformed:parsed.malformedLegislativeRows,matched:crosswalk.matches.length,reportGrid:safeGrid(reports.json)}));
   stage='report_reference_selection';
-  const candidates=crosswalk.matches.flatMap(x=>{const r=currentFinanceReference(reports.json,x.registration.registrationNumber);return r.reference?[{...x,reference:r.reference}]:[];});
-  const selected=selectFinancePilot(candidates);if(!selected.length){console.log('CFB_FINANCE_SELECTION '+JSON.stringify({matched:crosswalk.matches.length,candidates:candidates.length,referenceReasons:crosswalk.matches.reduce((a,x)=>{const k=currentFinanceReference(reports.json,x.registration.registrationNumber).reason??'matched';a[k]=(a[k]??0)+1;return a;},{} as Record<string,number>)}));throw Error('finance_no_verified_candidates');}
-  stage='report_pdf_collection';
+  type Target={member:FinanceMember;registration:FinanceRegistration;reference:CfbReportViewerReference;reportReferenceReceipt:Record<string,unknown>};
+  const referenceGaps:Array<{lrlId:string;seat:string;cohort:FinanceMember['cohort'];registrationNumber:string;reason:string}>=[];
+  let gridUsable=false;let usedCandidateTabs=false;
+  const candidates:Target[]=[];
+  try{
+    for(const x of crosswalk.matches){
+      const r=currentFinanceReference(reports.json,x.registration.registrationNumber);
+      if(r.reference)candidates.push({...x,reference:r.reference,reportReferenceReceipt:reports.receipt});
+    }
+    gridUsable=true;
+  }catch{candidates.length=0;}
+  let selected:Target[];
+  if(gridUsable&&candidates.length){
+    selected=selectFinancePilot(candidates);
+  }else{
+    usedCandidateTabs=true;
+    // The current-list API no longer returns the established report grid for
+    // the all-period selector. Reuse the already audited per-candidate report
+    // viewer tab contract; never construct guessed report references.
+    const ordered=[...crosswalk.matches].sort((a,b)=>Number(a.member.lrlId)-Number(b.member.lrlId));
+    const tranche=[...ordered.filter(x=>x.member.cohort==='incoming').slice(0,FINANCE_LIMITS.incoming),...ordered.filter(x=>x.member.cohort==='returning').slice(0,FINANCE_LIMITS.returning)];
+    const api='https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/api';
+    stage='candidate_report_tabs';
+    for(const x of tranche){
+      try{
+        const referer='https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/'+x.registration.registrationNumber+'/2026/';
+        // The existing public app session cookie is same-origin; the viewer
+        // POST uses the repository's previously verified form contract.
+        const form=cfbCandidateReportsTabForm(x.registration.registrationNumber,2026).toString();
+        const response=await bounded(api,FINANCE_LIMITS.maxGridBytes,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded; charset=UTF-8','x-requested-with':'XMLHttpRequest',referer,origin:'https://register.cfb.mn.gov',accept:'application/json',...(cookie?{cookie}:{})},body:form});
+        const refs=parseCfbCandidateReportsTabResponse(response.raw.toString('utf8'),x.registration.registrationNumber,2026);
+        const r=selectCurrentFinanceReference(refs,x.registration.registrationNumber);
+        if(!r.reference){referenceGaps.push({lrlId:x.member.lrlId,seat:x.member.seat,cohort:x.member.cohort,registrationNumber:x.registration.registrationNumber,reason:r.reason??'no_reference'});continue;}
+        candidates.push({...x,reference:r.reference,reportReferenceReceipt:{...response.receipt,sourceUrl:referer,method:'POST',requestBodySha256:hash(form),referenceCount:refs.length}});
+      }catch(e){referenceGaps.push({lrlId:x.member.lrlId,seat:x.member.seat,cohort:x.member.cohort,registrationNumber:x.registration.registrationNumber,reason:reason(e)});}
+    }
+    selected=candidates;
+  }
   const counts=(arr:readonly {cohort:string}[])=>({incoming:arr.filter(x=>x.cohort==='incoming').length,returning:arr.filter(x=>x.cohort==='returning').length});
-  const inventory={rosterSha256:FINANCE_ROSTER_SHA,registry:registry.receipt,currentReportList:reports.receipt,registryColumns:parsed.columns,rawRegistryRows:parsed.rawRows,malformedLegislativeRows:parsed.malformedLegislativeRows,matched:counts(crosswalk.matches.map(x=>x.member)),currentPreGeneral:counts(candidates.map(x=>x.member)),selected:counts(selected.map(x=>x.member)),crosswalk:crosswalk.matches.map(x=>({lrlId:x.member.lrlId,seat:x.member.seat,cohort:x.member.cohort,registrationNumber:x.registration.registrationNumber,registeredOn:x.registration.registeredOn,terminatedOn:x.registration.terminatedOn,currentReportReference:candidates.find(c=>c.member.lrlId===x.member.lrlId)?.reference??null})),gaps:crosswalk.gaps};
+  const inventory={rosterSha256:FINANCE_ROSTER_SHA,registry:registry.receipt,currentReportList:reports.receipt,referenceDiscovery:usedCandidateTabs?'candidate_report_tabs':'current_grid',registryColumns:parsed.columns,rawRegistryRows:parsed.rawRows,malformedLegislativeRows:parsed.malformedLegislativeRows,matched:counts(crosswalk.matches.map(x=>x.member)),currentPreGeneral:counts(candidates.map(x=>x.member)),selected:counts(selected.map(x=>x.member)),crosswalk:crosswalk.matches.map(x=>({lrlId:x.member.lrlId,seat:x.member.seat,cohort:x.member.cohort,registrationNumber:x.registration.registrationNumber,registeredOn:x.registration.registeredOn,terminatedOn:x.registration.terminatedOn,currentReportReference:candidates.find(c=>c.member.lrlId===x.member.lrlId)?.reference??null})),gaps:crosswalk.gaps,referenceGaps};
+  console.log('CFB_FINANCE_REGISTRY '+JSON.stringify({rosterSha256:inventory.rosterSha256,registry:inventory.registry,rawRegistryRows:inventory.rawRegistryRows,malformedLegislativeRows:inventory.malformedLegislativeRows,matched:inventory.matched,crosswalk:inventory.crosswalk,gaps:inventory.gaps}));
+  console.log('CFB_FINANCE_REFERENCE_SELECTION '+JSON.stringify({method:inventory.referenceDiscovery,selected:inventory.selected,referenceGaps}));
+  if(!selected.length)throw Error('finance_no_verified_candidates');
+  stage='report_pdf_collection';
   const successes:Array<{record:Record<string,unknown>;raw:Buffer}>=[];const failures:Array<Record<string,unknown>>=[];
   const day=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-  for(const {member,registration,reference} of selected){
+  for(const {member,registration,reference,reportReferenceReceipt} of selected){
     const common={lrlId:member.lrlId,seat:member.seat,cohort:member.cohort,registrationNumber:registration.registrationNumber,reference};
     let dir:string|undefined;
     try{
@@ -87,7 +130,7 @@ async function main(){
       dir=mkdtempSync(join(tmpdir(),'votepredict-cfb-current-'));const file=join(dir,'report.pdf');writeFileSync(file,d.raw,{mode:0o600});
       const text=execFileSync('pdftotext',['-f','1','-l','6','-layout','-nopgbrk',file,'-'],{encoding:'utf8',timeout:12000,maxBuffer:1500000,stdio:['ignore','pipe','ignore']});
       const summary=reviewFinanceSummary(text,reference,d.receipt.observedAt);
-      successes.push({raw:d.raw,record:{schemaVersion:'2027-preseason-finance-report-review-v1',session:'2027-2028',rosterSha256:FINANCE_ROSTER_SHA,rosterStatus:'projected_not_activation_verified',runId:env.GITHUB_RUN_ID+':1',...common,sourceReceipt:d.receipt,summary,registryReceipt:registry.receipt,reportListReceipt:reports.receipt,availableBeforeObservationProved:false,rawBodyRetained:false,servingEligible:false,canonicalWriteAllowed:false,modelWeight:0,reviewRequired:true}});
+      successes.push({raw:d.raw,record:{schemaVersion:'2027-preseason-finance-report-review-v1',session:'2027-2028',rosterSha256:FINANCE_ROSTER_SHA,rosterStatus:'projected_not_activation_verified',runId:env.GITHUB_RUN_ID+':1',...common,sourceReceipt:d.receipt,summary,registryReceipt:registry.receipt,reportListReceipt:reportReferenceReceipt,availableBeforeObservationProved:false,rawBodyRetained:false,servingEligible:false,canonicalWriteAllowed:false,modelWeight:0,reviewRequired:true}});
     }catch(e){failures.push({...common,reason:reason(e)});}finally{if(dir)rmSync(dir,{recursive:true,force:true});}
   }
   const summary={mode,requests,bytes,selected:inventory.selected,verifiedReports:successes.length,verifiedReceiptTotals:successes.filter(x=>(x.record.summary as {totalReceiptsCents:number|null}).totalReceiptsCents!==null).length,verifiedDisbursementTotals:successes.filter(x=>(x.record.summary as {totalDisbursementsCents:number|null}).totalDisbursementsCents!==null).length,failures:failures.length,completeCoverageVerified:false,canonicalWrites:0,modelChanges:0};
