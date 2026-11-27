@@ -1,0 +1,97 @@
+name: 2027 current candidate finance pilot
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/2027-current-cfb-finance.yml'
+      - 'src/evidence/2027-current-cfb-finance.ts'
+      - 'scripts/run-2027-current-cfb-finance.ts'
+      - 'tests/2027-current-cfb-finance.test.ts'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/2027-current-cfb-finance.yml'
+      - 'src/evidence/2027-current-cfb-finance.ts'
+      - 'scripts/run-2027-current-cfb-finance.ts'
+      - 'tests/2027-current-cfb-finance.test.ts'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: votepredict-2027-current-cfb-finance
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.repository == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: npm run check
+  public-pilot:
+    if: github.repository == 'killjoy00/votepredict' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'feat/2027-current-cfb-finance-pilot' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: command -v pdftotext || (sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils)
+      - run: node --import tsx --test tests/2027-current-cfb-finance.test.ts
+      - run: node --import tsx scripts/run-2027-current-cfb-finance.ts --probe
+  archive:
+    needs: verify
+    if: >-
+      needs.verify.result == 'success' && github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' && github.ref == 'refs/heads/main' && github.run_attempt == 1 &&
+      github.event.after == github.sha && github.event.head_commit.id == github.sha &&
+      github.event.forced != true && github.event.deleted != true &&
+      contains(github.event.head_commit.message, 'VOTEPREDICT_2027_CURRENT_CFB_FINANCE_PILOT_20261126')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: command -v pdftotext || (sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils)
+      - name: Store bounded verified original reports in private archive
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
+          FINANCE_CI_VERIFIED: 'true'
+        run: node --import tsx scripts/run-2027-current-cfb-finance.ts --archive
