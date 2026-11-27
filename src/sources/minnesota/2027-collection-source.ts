@@ -4,9 +4,9 @@ import { discoverHouseRegularSessionKey,resolveHouseVoteIngestSession } from './
 import { getMinnesotaHouseSession } from './sessions';
 
 export const COLLECTION_LIMITS = Object.freeze({
-  catalogRequests:32,statusRequests:40,initialTextRequests:60,currentTextRequests:20,houseVoteRequests:13,senateVoteRequests:5,memberEvidenceRequests:38,totalRequests:208,
+  catalogRequests:32,statusRequests:40,initialTextRequests:60,currentTextRequests:20,houseVoteRequests:13,senateVoteRequests:5,memberEvidenceRequests:48,totalRequests:218,
   maxResponseBytes:2*1024*1024,maxJournalBytes:8*1024*1024,maxRunBytes:32*1024*1024,maxRunMilliseconds:8*60*1000,
-  statusBatch:40,initialTextBatch:20,currentTextBatch:20,houseVoteBatch:10,senateJournalBatch:4,memberEvidenceBatch:12,memberEvidenceArticles:2,
+  statusBatch:40,initialTextBatch:20,currentTextBatch:20,houseVoteBatch:10,senateJournalBatch:4,memberEvidenceBatch:12,memberEvidenceArticles:2,houseNewsIndexRequests:2,houseNewsArticlesPerIndex:4,
 });
 export type CollectionSourceKind = 'catalog'|'status'|'initial_text'|'current_text'|'house_vote'|'senate_vote'|'member_evidence';
 export type CollectionSourceReceipt = {
@@ -58,7 +58,7 @@ export function classify2027CollectionUrl(value:string):CollectionSourceKind {
     (url.pathname==='/journals/journal_list.html'&&url.search==='?display_ls_year=95')||
     (!url.search&&/^\/journals\/2027-2028\/(2027|2028)\d{6,7}\.pdf$/.test(url.pathname))))return 'senate_vote';
   if(!url.search&&!/^\/(?:wp-admin|wp-login|wp-json|contact|donate|privacy-policy|terms-of-service)(?:\/|$)/i.test(url.pathname)&&(
-    (url.origin==='https://www.house.mn.gov'&&/^\/members\/profile\/news\/[1-9]\d*(?:\/[1-9]\d*)?\/?$/.test(url.pathname))||
+    (url.origin==='https://www.house.mn.gov'&&(/^\/members\/profile\/news\/[1-9]\d*(?:\/[1-9]\d*)?\/?$/i.test(url.pathname)||['/members/party/news/DFL','/members/party/news/NR'].includes(url.pathname)))||
     (url.origin==='https://senatedfl.mn'&&(/^\/(?:senators|home\/members\/[a-z0-9-]+)\/?$/i.test(url.pathname)||/^\/[a-z0-9][a-z0-9-]{2,199}\/?$/i.test(url.pathname)))||
     (url.origin==='https://www.mnsenaterepublicans.com'&&/^\/[a-z0-9][a-z0-9-]{2,199}\/?$/i.test(url.pathname))))return 'member_evidence';
   throw Error('Unapproved 2027 collection source scope');
