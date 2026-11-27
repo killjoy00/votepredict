@@ -17,16 +17,32 @@ const started=Date.now();let requests=0,bytes=0;let stage='initialization';
 async function bounded(url:string,limit:number,init:RequestInit={}){
   if(requests>=FINANCE_LIMITS.requests||bytes>=FINANCE_LIMITS.maxBytes||Date.now()-started>=FINANCE_LIMITS.runMs)throw Error('finance_budget_exhausted');
   const target=new URL(url);if(target.protocol!=='https:'||!['register.cfb.mn.gov','cfb.mn.gov','www.cfb.mn.gov'].includes(target.hostname)||target.username||target.password||target.port)throw Error('finance_source_url_rejected');
-  requests++;
-  const r=await fetch(url,{...init,redirect:'error',signal:AbortSignal.timeout(Math.min(20000,Math.max(1,FINANCE_LIMITS.runMs-(Date.now()-started)))),headers:{'user-agent':'VotePredict/2.0 bounded current candidate finance archive',...(init.headers as Record<string,string>|undefined)}});
+  const send=async (u:string)=>{
+    if(requests>=FINANCE_LIMITS.requests||Date.now()-started>=FINANCE_LIMITS.runMs)throw Error('finance_budget_exhausted');
+    requests++;
+    return fetch(u,{...init,redirect:'manual',signal:AbortSignal.timeout(Math.min(20000,Math.max(1,FINANCE_LIMITS.runMs-(Date.now()-started)))),headers:{'user-agent':'VotePredict/2.0 bounded current candidate finance archive',...(init.headers as Record<string,string>|undefined)}});
+  };
+  let final=url,r=await send(url);
+  if([301,302,303,307,308].includes(r.status)){
+    const location=r.headers.get('location');await r.body?.cancel();
+    if(!location)throw Error('finance_redirect_missing_location');
+    const next=new URL(location,url);
+    // The public legacy app has an official same-origin canonical route.
+    // Permit only that specific observed app redirect, not arbitrary API or PDF redirects.
+    if(url!==APP||init.method==='POST'||next.origin!=='https://register.cfb.mn.gov'||
+      next.pathname.replace(/\/+$/,'')!=='/reports-and-data/searches-and-lists/other-reports-and-lists/current-lists'||
+      next.searchParams.get('_uri')!=='reports/current-lists/'||[...next.searchParams.keys()].some(k=>k!=='_uri')||next.hash||next.username||next.password)
+      throw Error('finance_redirect_scope_hold');
+    final=next.toString();r=await send(final);
+  }
   if(r.status!==200){await r.body?.cancel();throw Error('finance_http_'+r.status);}
-  if(r.url!==url){await r.body?.cancel();throw Error('finance_source_url_mismatch');}
+  if(r.url!==final){await r.body?.cancel();throw Error('finance_source_url_mismatch');}
   const max=Math.min(limit,FINANCE_LIMITS.maxBytes-bytes);
   if(!r.body||Number(r.headers.get('content-length')??0)>max){await r.body?.cancel();throw Error('finance_source_size_limit');}
   const chunks:Uint8Array[]=[];let size=0;const reader=r.body.getReader();
   try{for(;;){const p=await reader.read();if(p.done)break;size+=p.value.byteLength;bytes+=p.value.byteLength;if(size>max){await reader.cancel();throw Error('finance_source_size_limit');}chunks.push(p.value);}}finally{reader.releaseLock();}
   const raw=Buffer.concat(chunks);const observedAt=new Date().toISOString();
-  return {raw,receipt:{url,observedAt,bodySha256:hash(raw),bodyBytes:raw.length},headers:r.headers};
+  return {raw,receipt:{url,finalUrl:final,observedAt,bodySha256:hash(raw),bodyBytes:raw.length},headers:r.headers};
 }
 function reason(e:unknown){const s=e instanceof Error?e.message:'';return /^finance_[a-z0-9_]+$/.test(s)?s:/abort|timeout/i.test(s)?'finance_source_timeout':/coverage|identity|heading/i.test(s)?'finance_report_identity_or_date_hold':/summary/i.test(s)?'finance_summary_unverified':'finance_source_or_parser_hold';}
 async function main(){
