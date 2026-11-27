@@ -10,7 +10,10 @@ test('historical pilot is deterministic, bounded, and not outcome-selected',()=>
   assert.equal(r.selected[0],'HF1');assert.equal(r.selected.at(-1),'HF50');
   assert.deepEqual(r,selectHistoricalBills([...input].reverse(),16));
   assert.throws(()=>selectHistoricalBills([{Number:'other'}],16));
-  assert.throws(()=>selectHistoricalBills(input,17));
+  assert.throws(()=>selectHistoricalBills(input,33));
+  assert.deepEqual(selectHistoricalBills([{Number:'HF10'},{Number:'SF2'},{Number:'HR1'},{Number:'HC2'}],16),{universe:2,selected:['HF10','SF2'],summaryRows:4,excludedResolutionCounts:{HR:1,HC:1}});
+  assert.throws(()=>selectHistoricalBills([{Number:'HF10'},{Number:'unrecognized'}],16));
+  assert.throws(()=>selectHistoricalBills([{Number:'HF0'}],16));
 });
 test('explicit session link is required; special-session key is not inferred',()=>{
   confirmHistoricalIndex('<a href="/Votes/Summary/239">2013 - 2014 Regular Session</a>',OLD_SESSIONS[0]);

@@ -1,13 +1,13 @@
-name: 2027 incoming prior House vote source pilot
+name: 2027 incoming prior House vote source recovery
 on:
   pull_request:
     paths:
-      - '.github/workflows/2027-incoming-historical-vote-pilot.yml'
+      - '.github/workflows/2027-incoming-historical-vote-recovery.yml'
 permissions:
   contents: read
 jobs:
   proof:
-    if: github.repository == 'killjoy00/votepredict' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'research/2027-incoming-historical-vote-pilot'
+    if: github.repository == 'killjoy00/votepredict' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'research/2027-incoming-historical-vote-recovery'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:

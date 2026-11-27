@@ -15,17 +15,27 @@ export const OLD_TARGETS=[
   {lrlId:'15524',surname:'Cantrell',district:'56A',slug:'2019-2020',from:'2019-01-08',through:'2020-12-31'},
 ] as const;
 export type HistoricalTarget=(typeof OLD_TARGETS)[number];
-export const OLD_VOTE_LIMITS=Object.freeze({billsPerSession:16,requests:72,maxPageBytes:2*1024*1024,maxBytes:32*1024*1024,runMs:5*60*1000});
+export const OLD_VOTE_LIMITS=Object.freeze({billsPerSession:32,requests:72,maxPageBytes:2*1024*1024,maxBytes:32*1024*1024,runMs:5*60*1000});
 export function selectHistoricalBills(raw:unknown,limit:number){
   if(!Number.isInteger(limit)||limit<1||limit>OLD_VOTE_LIMITS.billsPerSession||!Array.isArray(raw)||!raw.length||raw.length>10000)throw Error('Invalid historical summary/limit');
-  const bills=Array.from(new Set(raw.map(x=>{
-    if(!x||typeof x.Number!=='string'||!/^[HS]F\d{1,5}$/i.test(x.Number.replace(/\s+/g,'')))throw Error('Unexpected historical summary row');
-    const value=x.Number.replace(/\s+/g,'').toUpperCase();return value.slice(0,2)+Number(value.slice(2));
-  }))).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
-  if(!bills.length||bills.some(x=>x.endsWith('F0')))throw Error('Empty/invalid historical bill universe');
+  // A regular-session roll-call inventory can also contain resolutions.
+  // Count those separately instead of rejecting every bill or silently
+  // accepting unknown values. No vote/outcome information drives selection.
+  const eligible=new Set<string>();
+  const excludedResolutionCounts:Record<string,number>={};
+  for(const x of raw){
+    if(!x||typeof x.Number!=='string')throw Error('Unexpected historical summary row shape');
+    const value=x.Number.replace(/\s+/g,'').toUpperCase();
+    const m=/^(HF|SF|HR|SR|HC|SC)(\d{1,5})$/.exec(value);
+    if(!m||Number(m[2])<1)throw Error('Unexpected historical summary identifier');
+    if(m[1]==='HF'||m[1]==='SF')eligible.add(m[1]+Number(m[2]));
+    else excludedResolutionCounts[m[1]]=(excludedResolutionCounts[m[1]]??0)+1;
+  }
+  const bills=[...eligible].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+  if(!bills.length)throw Error('Empty historical bill universe');
   const n=Math.min(limit,bills.length);
   const selected=n===1?[bills[0]]:Array.from({length:n},(_,i)=>bills[Math.floor(i*(bills.length-1)/(n-1))]);
-  return {universe:bills.length,selected};
+  return {universe:bills.length,selected,summaryRows:raw.length,excludedResolutionCounts};
 }
 export function verifyHistoricalTarget(session:MinnesotaHouseSession,target:HistoricalTarget,registryHtml:string,profileHtml:string){
   if(target.slug!==session.slug)throw Error('Historical target/session mismatch');

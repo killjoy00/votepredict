@@ -73,3 +73,26 @@ Ronnenberg's official filing URL and both hostname variants were retried; neithe
 A production read-only audit joined exact LRL keys for all 51 incoming targets to prior memberships, vote events and source documents. Only Jeremy Munson has existing prior state membership/votes: 402 distinct bill-linked 2021–2022 House votes, 145 `house_vote_detail` source documents, January 28, 2021 through May 22, 2022. Do not reimport these as new evidence. Official LRL records establish missing older House terms: [Dorholt](https://www.lrl.mn.gov/legdb/fulldetail?ID=15393), 2013–2014, 14B; [Cantrell](https://www.lrl.mn.gov/legdb/fulldetail?ID=15524), 2019–2020, 56A; [Munson](https://www.lrl.mn.gov/legdb/fulldetail?ID=15496), 2018 (oath Feb 20) and 2019–2020, 23B. The official [House votes index](https://www.house.mn.gov/Votes) links native regular-session keys 239, 246 and 249. The existing production corpus starts in 2021. Older terms are not included in the supported production historical corpus.
 
 Added a separate credential-free, PR-only **historical source pilot**: verify index native key, LRL session directory unique surname and exact historic term/district; select at most 16 bills evenly by ordered official bill inventory per regular session, not by policy topic or vote result; check original response digest and size, exact bill/session/date, recorded roll totals, distinct names and journal page; extract only named yea/nay rows during exact prior service. No inferred absence, no claim of exhaustive coverage, no special-session coverage yet, no raw content logs, no production write or training-corpus expansion. The 2017–2018 summary page failed to load in browser but official index link exists; live CI must verify it. No assumption that machine access will succeed. A separate source validation and archival path is still required before admitting older votes. Retire one-shot workflow after recording results.
+
+
+## Older House named-vote pilot — November 26, 2026 (Chicago)
+
+PR #1626 passed CI, Forecast evidence remediation and credential-free historical source pilot (run 45934541467, job 140294611235, commit cbf2c9cd6ac6062d07f50c05706f3d988868a3be), then merged. The official House index and LRL directory/profile proofs verified all four target prior-service terms (three people). The collector attempted 43 requests, 4,607,679 bytes; 14 validated vote-detail documents, 25 parsed roll events, 23 named member votes. It encountered seven rejected 2013–14 bill pages, eleven rejected 2017–18 bill pages, and one 2019–20 session-level summary failure after verifying both memberships. No Cantrell vote was recovered yet. Do not count missing votes as absences or infer a bill outcome.
+
+| Prior session | Official bill inventory | Selected bills | Accepted documents | Named votes |
+|---|---:|---:|---:|---:|
+| 2013–2014 (Dorholt) | 369 | 16 | 9 | 20 |
+| 2017–2018 (Munson, from Feb 20, 2018 only) | 257 | 16 | 5 | 3 |
+| 2019–2020 (Munson/Cantrell) | Unverified | 0 | 0 | 0 |
+
+Batch `2026-11-26-incoming-historical-votes-v1` committed to production through the same restricted effective-role transaction; count/digest and non-serving flags independently verified, temporary SET role grant revoked. 38 records: one full pilot metadata manifest, 14 source document receipts and 23 named-roll review records (20 Dorholt, 3 Munson). Original response digests and LRL source lineage are recorded; original bodies not retained, no canonical votes or serving rows written.
+
+| Media type suffix | Records | Sorted record digest set SHA-256 |
+|---|---:|---|
+| `2027-preseason-historical-vote-pilot+json` | 1 | `4f3046ad52d654a63877742f7c2729d1e4e60aa2aec7ea30324d5ba57e0ed3f9` |
+| `2027-preseason-historical-vote-document+json` | 14 | `02a30de61af62548e0c57e4b68d288b05af6e4af876fcad67fedd59ddc08ab3e` |
+| `2027-preseason-historical-vote-review+json` | 23 | `b6552c7dab9c0dcd33404d7475f39025cf4a3c293acac87964597ff864017581` |
+
+Cumulative archive: 230 records (192 prior + 38); 50/51 reviewed incoming members, 307 policy observations and 23 additional historical named votes. These are separate kinds of staged evidence, not 330 independent model features. Existing 402 canonical Munson 2021–22 votes untouched.
+
+Recovery branch prioritizes 2019–20, selects up to 32 regular-session bills, retries exactly the 18 rejected earlier bills without recollecting accepted documents; retains the 72-request, 32 MiB and five-minute bounds. The House regular-session list explicitly includes recorded floor actions; resolutions such as HC2 are real non-bill items (see https://www.house.mn.gov/htv/archivesHFS.asp?ls_year=91). The new selector counts only recognized HR/SR/HC/SC resolution identifiers separately, still rejects any unrecognized row rather than assuming validity, and logs safe aggregate summary shape diagnostics. This is a bounded hypothesis for the unclassified 2019–20 summary failure, not a confirmed diagnosis. More precise failure codes now distinguish fetch, summary, roster and roll validation. Named-roll and identity rules unchanged. No raw bytes in public logs, no DB credentials, no production writes by the pilot. Original-byte archival and semantic admission remain gated. Retire the first one-shot workflow; record this recovery pilot's actual results before merging.
