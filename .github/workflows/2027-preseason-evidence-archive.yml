@@ -20,6 +20,12 @@ on:
         required: true
         type: boolean
         default: false
+      archive_batch:
+        description: Select exactly one reviewed 29-source tranche
+        type: choice
+        required: true
+        default: initial
+        options: [initial, pilot-1, pilot-2, pilot-3]
 permissions:
   contents: read
   actions: read

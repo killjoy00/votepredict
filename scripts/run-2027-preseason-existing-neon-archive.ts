@@ -4,13 +4,17 @@ import {buildPreseasonTargets,fetchPreseasonTarget,retainPreseasonSourceInTransa
 import {assertExistingArchiveRun,assertArchiveConnection,withRestrictedArchiveTransaction,addRonnenbergTarget,ARCHIVE_OWNER,ARCHIVE_ROLE,ARCHIVE_PROJECT} from '../src/operations/2027-preseason-existing-neon-archive.js';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {storeBlob} from '../src/operations/2027-daily-collection.js';
+import {buildFullPreseasonInventory,selectApprovedArchiveBatch,ARCHIVE_BATCHES} from '../src/operations/2027-preseason-original-inventory.js';
 const read=(s:string)=>readFileSync('docs/evaluation/source-proof/'+s,'utf8');
 const roster=read('2027-preseason-roster-20261126.json'),pilot=JSON.parse(read('2027-incoming-evidence-pilot-20261126-part1.json'));
-const targets=addRonnenbergTarget(buildPreseasonTargets(roster,JSON.parse(read('2027-incoming-evidence-manual-leads-20261126.json')),JSON.parse(read('2027-incoming-evidence-depth-review-20261126.json')),pilot),roster,pilot);
+const initial=addRonnenbergTarget(buildPreseasonTargets(roster,JSON.parse(read('2027-incoming-evidence-manual-leads-20261126.json')),JSON.parse(read('2027-incoming-evidence-depth-review-20261126.json')),pilot),roster,pilot);
+const inventory=buildFullPreseasonInventory(roster,initial,pilot,JSON.parse(read('2027-incoming-evidence-pilot-20261126-part2.json')));
 async function main(){
   if(process.argv.length!==3||!['--plan','--archive'].includes(process.argv[2]))throw Error('Invalid archive mode');
-  if(process.argv[2]==='--plan'){console.log(JSON.stringify({targets:targets.length,members:new Set(targets.map(t=>t.lrlId)).size,maxBytes:PRESEASON_LIMITS.maxBytes,archiveRole:ARCHIVE_ROLE,scheduleEnabled:false}));return;}
-  const {day,runId}=assertExistingArchiveRun(process.env,JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH!,'utf8')),new Date());
+  if(process.argv[2]==='--plan'){console.log(JSON.stringify({totalTargets:Object.values(inventory).flat().length,batches:ARCHIVE_BATCHES.map(batch=>({batch,targets:inventory[batch].length,members:new Set(inventory[batch].map(t=>t.lrlId)).size})),maxBytes:PRESEASON_LIMITS.maxBytes,archiveRole:ARCHIVE_ROLE,scheduleEnabled:false}));return;}
+  const event=JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH!,'utf8')) as Record<string,unknown>;
+  const {day,runId}=assertExistingArchiveRun(process.env,event,new Date());
+  const batch=selectApprovedArchiveBatch(process.env.GITHUB_EVENT_NAME,event),targets=inventory[batch];
   const current=await fetch('https://api.github.com/repos/killjoy00/votepredict/git/ref/heads/main',{headers:{Authorization:'Bearer '+process.env.GITHUB_TOKEN,Accept:'application/vnd.github+json'},signal:AbortSignal.timeout(15000),redirect:'error'});
   if(!current.ok||(await current.json()).object?.sha!==process.env.GITHUB_SHA)throw Error('Reviewed archive revision is not current main');
   if(process.env.VOTEPREDICT_NEON_PROJECT_ID!==ARCHIVE_PROJECT)throw Error('Configured VotePredict project mismatch');
@@ -35,7 +39,7 @@ async function main(){
       const inventory=(await client.query<{url:string}>("SELECT DISTINCT convert_from(body,'UTF8')::jsonb->>'sourceUrl' AS url FROM evidence_content_blobs WHERE media_type=$1 LIMIT 1001",[PRESEASON_RECEIPT_TYPE])).rows;
       if(inventory.length>1000)throw Error('Archive receipt inventory exceeds bound');
       const prior=new Set(inventory.map(r=>r.url));
-      await storeBlob(client,Buffer.from(JSON.stringify({schemaVersion:'2027-preseason-archive-event-v1',runId,day,state:'started',auth:'existing-protected-neon-role-switch'})),PRESEASON_EVENT_TYPE,true);
+      await storeBlob(client,Buffer.from(JSON.stringify({schemaVersion:'2027-preseason-archive-event-v1',runId,day,batch,state:'started',auth:'existing-protected-neon-role-switch'})),PRESEASON_EVENT_TYPE,true);
       const rows:Array<{lrlId:string;seat:string;sourceUrl:string;state:string;bodySha256?:string;bodyBytes?:number;observedAt?:string;identityNameMentioned?:boolean;claimedPublicationAt?:string|null;receiptSha256?:string}>=[];
       for(const {target,data:{receipt,raw}} of captured){
         const common={lrlId:target.lrlId,seat:target.seat,sourceUrl:target.url};
@@ -45,8 +49,8 @@ async function main(){
       }
       for(const failure of failures)rows.push(prior.has(failure.sourceUrl)?{...failure,state:'previously_archived'}:failure);
       const good=rows.filter(r=>r.state==='archived_review_required'),existing=rows.filter(r=>r.state==='previously_archived');
-      const summary={targets:targets.length,attempted:budget.requests,bytes:budget.bytes,rawBodiesRetained:good.length,membersObserved:new Set(good.map(r=>r.lrlId)).size,previouslyArchived:existing.length,failed:rows.length-good.length-existing.length,servingEvidenceCreated:0};
-      await storeBlob(client,Buffer.from(JSON.stringify({schemaVersion:'2027-preseason-archive-event-v1',runId,day,state:summary.failed?'partial_failure':'completed',summary})),PRESEASON_EVENT_TYPE,true);
+      const summary={batch,targets:targets.length,attempted:budget.requests,bytes:budget.bytes,rawBodiesRetained:good.length,membersObserved:new Set(good.map(r=>r.lrlId)).size,previouslyArchived:existing.length,failed:rows.length-good.length-existing.length,servingEvidenceCreated:0};
+      await storeBlob(client,Buffer.from(JSON.stringify({schemaVersion:'2027-preseason-archive-event-v1',runId,day,batch,state:summary.failed?'partial_failure':'completed',summary})),PRESEASON_EVENT_TYPE,true);
       return {rows,summary};
     });
     // Only after commit; no credentials, raw text, or incidental contacts.
