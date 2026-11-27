@@ -10,6 +10,8 @@ import { DAILY_COLLECTION_SOURCE_RECEIPT_TYPE,storeBlob } from './2027-daily-col
 
 const sha=(value:Buffer|string)=>createHash('sha256').update(value).digest('hex');
 export const MEMBER_EVIDENCE_CANDIDATE_TYPE='application/vnd.votepredict.2027-member-evidence-candidate+json';
+export const HOUSE_NEWS_INDEXES=['https://www.house.mn.gov/members/party/news/DFL','https://www.house.mn.gov/members/party/news/NR'] as const;
+export const HOUSE_NEWS_INDEX_ATTEMPT_TYPE='application/vnd.votepredict.2027-house-news-index-attempt+json';
 export const MEMBER_EVIDENCE_ATTEMPT_TYPE='application/vnd.votepredict.2027-member-evidence-attempt+json';
 export type EvidenceMember=MemberPrimaryMember&{membership_id:string;legislator_id:string;newSincePrior:boolean};
 type Proof={receipt:CollectionSourceReceipt;receiptSha256:string};
@@ -118,12 +120,96 @@ export async function retainMemberEvidenceCandidate(db:Pool,member:EvidenceMembe
     billCandidates:drafts.filter(d=>d.candidateKind==='bill_statement_candidate').length};
 }
 
+type HouseNewsLink={member:EvidenceMember;url:string;date:string};
+function houseNewsKey(url:string){return new URL(url).pathname.replace(/\/$/,'').toLowerCase();}
+
+/** The official caucus indexes point directly at LRL-ID-scoped member articles.
+ * Reuse the dated member-archive parser; never attribute by title or party. */
+export function discoverHouseIndexArticles(page:Pick<PublicPage,'rawContent'|'canonicalUrl'>,members:readonly EvidenceMember[],through:string):HouseNewsLink[]{
+  if(!HOUSE_NEWS_INDEXES.some(url=>url===page.canonicalUrl))throw Error('Unrecognized House caucus news index');
+  const all=new Map<string,HouseNewsLink>();
+  const house=members.filter(m=>m.chamber_slug==='house'&&/^lrl:[1-9]\d*$/i.test(m.external_key));
+  if(new Set(house.map(m=>m.external_key.toLowerCase())).size!==house.length)throw Error('Duplicate active House LRL identities');
+  for(const member of house)for(const entry of parseHouseMemberNewsArchiveEntries(page,member.external_key)){
+    if(entry.publishedOn<'2027-01-12'||entry.publishedOn>through||classify2027CollectionUrl(entry.url)!=='member_evidence')continue;
+    const key=houseNewsKey(entry.url);
+    const prior=all.get(key);
+    if(prior&&prior.date!==entry.publishedOn)throw Error('Conflicting House article dates');
+    all.set(key,{member,url:entry.url,date:entry.publishedOn});
+  }
+  return [...all.values()];
+}
+
+export function chooseHouseIndexArticles(links:readonly HouseNewsLink[],observed:ReadonlySet<string>,attempts:ReadonlyMap<string,string>,limit:number){
+  if(!Number.isInteger(limit)||limit<1||limit>COLLECTION_LIMITS.houseNewsArticlesPerIndex)throw Error('Invalid House index batch');
+  return links.filter(x=>!observed.has(houseNewsKey(x.url))).sort((a,b)=>
+    (attempts.get(houseNewsKey(a.url))??'').localeCompare(attempts.get(houseNewsKey(b.url))??'')||
+    a.date.localeCompare(b.date)||Number(b.member.newSincePrior)-Number(a.member.newSincePrior)||a.url.localeCompare(b.url)).slice(0,limit);
+}
+
+async function collectHouseIndexEvidence(db:Pool,members:EvidenceMember[],bills:BillReference[]){
+  const rows=(await db.query<{url:string;at:string;media_type:string}>(`
+    SELECT convert_from(body,'UTF8')::jsonb->>'sourceUrl' AS url,max(accepted_at)::text AS at,media_type
+    FROM evidence_content_blobs
+    WHERE media_type IN ($1,$2)
+    GROUP BY 1,3 LIMIT 50001`,[MEMBER_EVIDENCE_CANDIDATE_TYPE,HOUSE_NEWS_INDEX_ATTEMPT_TYPE])).rows;
+  if(rows.length>50000)throw Error('House article inventory requires review');
+  const observed=new Set<string>(),attempts=new Map<string,string>();
+  for(const row of rows){
+    if(!row.url)continue;
+    const url=new URL(row.url);
+    if(url.origin!=='https://www.house.mn.gov'||!/^\/members\/profile\/news\/[1-9]\d*\/[1-9]\d*\/?$/i.test(url.pathname))continue;
+    const key=houseNewsKey(row.url);
+    if(row.media_type===MEMBER_EVIDENCE_CANDIDATE_TYPE)observed.add(key);
+    else attempts.set(key,new Date(row.at).toISOString());
+  }
+  let indexesObserved=0,discovered=0,uncollected=0,documents=0,issueCandidates=0,billCandidates=0,failed=0;
+  const membersDiscovered=new Set<string>(),attempted=new Set<string>();
+  // Both caucuses get their own four-document allocation; the existing
+  // member rotation stays intact and revisits already observed pages.
+  for(const url of HOUSE_NEWS_INDEXES){
+    try{
+      const index=await archivedPage(url);
+      if(index.page.finalUrl!==url)throw Error('House index URL mismatch');
+      const through=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(index.proof.receipt.observedAt));
+      const links=discoverHouseIndexArticles(index.page,members,through);
+      // Empty current-session results can be legitimate, but an absent
+      // recognized article link is an unverified publisher shape.
+      if(!/href\s*=\s*["'][^"']*\/members\/profile\/news\/[1-9]\d*\/[1-9]\d*\/?["']/i.test(index.page.rawContent))
+        throw Error('House index article shape unverified');
+      indexesObserved++;
+      discovered+=links.length;
+      for(const link of links)membersDiscovered.add(link.member.membership_id);
+      uncollected+=links.filter(x=>!observed.has(houseNewsKey(x.url))).length;
+      for(const link of chooseHouseIndexArticles(links.filter(x=>!attempted.has(houseNewsKey(x.url))),observed,attempts,COLLECTION_LIMITS.houseNewsArticlesPerIndex)){
+        attempted.add(houseNewsKey(link.url));
+        let state='failed';
+        try{
+          const article=await archivedPage(link.url);
+          if(article.page.finalUrl!==link.url||!publicPageMentionsPerson(article.page.text,link.member.name))throw Error('House index article identity unverified');
+          const discovery:MemberPrimaryDiscovery={hostKind:'house_official',publisher:'Minnesota House of Representatives',registryPage:index.page,articleIndexPage:index.page};
+          if(!memberPrimaryArticleMatches(article.page,discovery,link.member))throw Error('House article attribution unverified');
+          const publication=memberPrimaryPublishedAt(article.page)??link.date+'T12:00:00.000Z';
+          if(publication.slice(0,10)!==link.date)throw Error('House index/article date differs');
+          const result=await retainMemberEvidenceCandidate(db,link.member,article,[index],publication,bills);
+          observed.add(houseNewsKey(link.url));documents++;issueCandidates+=result.issueCandidates;billCandidates+=result.billCandidates;state='retained';
+        }catch{failed++;}
+        await storeBlob(db,Buffer.from(JSON.stringify({schemaVersion:'2027-house-news-index-attempt-v1',session:'2027-2028',sourceUrl:link.url,indexUrl:url,indexReceiptSha256:index.proof.receiptSha256,membershipId:link.member.membership_id,state,attemptedAt:new Date().toISOString()})),HOUSE_NEWS_INDEX_ATTEMPT_TYPE,true);
+      }
+    }catch{failed++;}
+  }
+  return {indexesObserved,indexesExpected:2,discovered,membersDiscovered:membersDiscovered.size,uncollectedBeforeBatch:uncollected,attempted:attempted.size,documents,issueCandidates,billCandidates,failed,completeDailyCoverageVerified:false};
+}
+
 export async function collect2027MemberEvidence(db:Pool){
   require2027CollectionScope();
   const {members,bills,attempts}=await context(db);
   const selected=chooseMemberEvidenceTargets(members,attempts,COLLECTION_LIMITS.memberEvidenceBatch);
   const directories=new Map<string,ArchivedPage>();
   let failed=0,documents=0,issueCandidates=0,billCandidates=0,verifiedMembers=0,withoutRecentArticles=0;
+  // Discover broadly before the slower member rotation, within the same archive and global budget.
+  const houseIndexes=await collectHouseIndexEvidence(db,members,bills);
+  failed+=houseIndexes.failed;documents+=houseIndexes.documents;issueCandidates+=houseIndexes.issueCandidates;billCandidates+=houseIndexes.billCandidates;
   for(const party of ['DFL','R']){
     if(!selected.some(m=>m.chamber_slug==='senate'&&(party==='DFL'?m.party==='DFL':['R','GOP','REPUBLICAN'].includes(m.party))))continue;
     try{directories.set(party,await archivedPage(party==='DFL'?MN_SENATE_DFL_DIRECTORY_URL:MN_SENATE_REPUBLICAN_DIRECTORY_URL));}
@@ -186,6 +272,6 @@ export async function collect2027MemberEvidence(db:Pool){
     await storeBlob(db,Buffer.from(JSON.stringify(event)),MEMBER_EVIDENCE_ATTEMPT_TYPE,true);
   }
   return {selected:selected.length,eligibleMembers:members.length,selectedIncoming:selected.filter(m=>m.newSincePrior).length,
-    verifiedMembers,withoutRecentArticles,documents,issueCandidates,billCandidates,failed,servingEvidenceWritten:0,
+    verifiedMembers,withoutRecentArticles,houseIndexes,documents,issueCandidates,billCandidates,failed,servingEvidenceWritten:0,
     fullDailyMemberCoverageVerified:false,committeeAndHearingCoverageVerified:false};
 }
