@@ -9,6 +9,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'docs/evaluation/2027-preseason-archive-batch-requests.md'
       - 'src/operations/2027-preseason*'
       - 'scripts/run-2027-preseason*'
       - 'tests/2027-preseason*'
