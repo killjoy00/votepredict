@@ -97,3 +97,64 @@ export function diagnoseFinanceLayout(text:string){
       moneyCells:[...line.matchAll(amount)].length};
   })};
 }
+
+// Exact electronic layout observed on all 24 originals in protected run
+// 46060153487. No scan of arbitrary pages, no guessing across wrapped rows.
+export const FINANCE_DETAIL_V2_TYPE='application/vnd.votepredict.2027-preseason-finance-summary-validation-v2+json';
+export const FINANCE_DETAIL_V2_MARKER='VOTEPREDICT_2027_CFB_EXACT_ORIGINAL_SUMMARY_V2_20261127';
+export function recoverFinanceSummaryV2(text:string,priorReceiptsCents:number){
+  const legacy=recoverFinanceSummary(text,priorReceiptsCents);
+  const pages=text.replace(/\u0000/g,'').split('\f').slice(0,6);
+  const summaries=pages.filter(p=>/^\s*Committee\s+Transaction\s+Summary\s*$/im.test(p));
+  const page=summaries.length===1?summaries[0].split(/\r?\n/):[];
+  const heading=page.findIndex(l=>/^\s*Committee\s+Transaction\s+Summary\s*$/i.test(l));
+  const after=heading<0?[]:page.slice(heading+1,heading+121);
+  const boundary=after.findIndex(l=>/^\s*(?:Schedule\s+[A-Z]\d|Campaign Finance Reporter|Certification\b|Affidavit\b)/i.test(l));
+  const lines=boundary<0?after:after.slice(0,boundary);
+  const label=(i:number)=>(lines[i]??'').replace(amount,' ').replace(/\s+/g,' ').trim();
+  const money=(i:number,n:number)=>{
+    const cells=[...(lines[i]??'').matchAll(amount)].map(m=>cents(m[1]));
+    return cells.length===n&&cells.every(x=>x!==null)?cells as number[]:null;
+  };
+  const prefix=(l:string)=>/^\s*(\d{1,2}[A-Z]?)\s+\S/i.exec(l)?.[1]?.toUpperCase();
+  const unique=(i:number,id:string)=>prefix(lines[i]??'')===id&&lines.filter(l=>prefix(l)===id).length===1;
+  const sumEquals=(a:readonly number[],b:number)=>{
+    const s=a.reduce((x,y)=>x+y,0);return Number.isSafeInteger(s)&&s===b;
+  };
+  const layout=lines.length>=55&&
+    /^Beginning cash balance\b/i.test(label(2))&&/\bsame as\b.*\bprevious year ending cash balance\b/i.test(label(4))&&
+    /\bReceipts\s+Cash\s+In[- ]kind\s+Total\b/i.test(label(6))&&
+    unique(23,'10')&&/\bTotal Receipts\b/i.test(label(23))&&
+    /\bDisbursements\s+Cash\s+Unpaid Bills\s+In[- ]kind\s+Total\b/i.test(label(25));
+  const o=layout?money(2,1):null;
+  const r=layout?money(23,3):null;
+  const spendLabel=unique(41,'19')&&/^Total Expenditures and$/i.test(label(40))&&
+    /\bSum\b/i.test(label(41))&&/^Disbursements$/i.test(label(42))&&money(40,0)!==null&&money(42,0)!==null;
+  const spend=layout&&spendLabel?money(41,4):null;
+  const cashLabel=unique(44,'20')&&/^Ending cash$/i.test(label(43))&&/\bBalance on\b/i.test(label(44))&&money(43,0)!==null;
+  const ending=layout&&cashLabel?money(44,1):null;
+  const loanLabel=(i:number,id:string,qualifier:RegExp)=>unique(i,id)&&
+    /\bTotal outstanding balance of all loans\b/i.test(label(i))&&qualifier.test(label(i));
+  const loanA=layout&&loanLabel(48,'21A',/\bcurrent year\b/i)?money(48,1):null;
+  const loanB=layout&&loanLabel(49,'21B',/\byear to year\b/i)?money(49,1):null;
+  const loanC=layout&&loanLabel(50,'21C',/\bSum\b/i)?money(50,1):null;
+  const receiptAgree=!!(r&&sumEquals(r.slice(0,2),r[2])&&r[2]===priorReceiptsCents&&
+    legacy.totalReceiptsCents===r[2]&&legacy.cashReceiptsCents===r[0]&&legacy.inKindReceiptsCents===r[1]);
+  const spendAgree=!!(receiptAgree&&spend&&sumEquals(spend.slice(0,3),spend[3]));
+  const cashAgree=!!(spendAgree&&o&&ending&&r&&spend&&sumEquals([o[0],r[0],-spend[0]],ending[0]));
+  const loanAgree=!!(receiptAgree&&loanA&&loanB&&loanC&&sumEquals([loanA[0],loanB[0]],loanC[0]));
+  return {...legacy,
+    // Keep already verified receipt fields even if an unsupported layout is held.
+    totalDisbursementsCents:spendAgree?spend![3]:null,
+    cashDisbursementsCents:spendAgree?spend![0]:null,
+    unpaidBillsDisbursementsCents:spendAgree?spend![1]:null,
+    inKindDisbursementsCents:spendAgree?spend![2]:null,
+    beginningCashBalanceCents:cashAgree?o![0]:null,
+    endingCashBalanceCents:cashAgree?ending![0]:null,
+    reportedOutstandingLoanBalanceCents:loanAgree?loanC![0]:null,
+    diagnostics:{...legacy.diagnostics,observedElectronicLayout:layout,spendingLabelVerified:spendLabel,cashLabelVerified:cashLabel,
+      openingCells:o?.length??0,receiptCells:r?.length??0,spendingCells:spend?.length??0,cashCells:ending?.length??0,
+      loanCells:loanC?.length??0,receiptsAgree:receiptAgree,spendingArithmeticVerified:spendAgree,
+      cashArithmeticVerified:cashAgree,loanArithmeticVerified:loanAgree}
+  };
+}
