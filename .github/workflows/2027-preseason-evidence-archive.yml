@@ -1,0 +1,59 @@
+name: 2027 protected preseason evidence archive
+on:
+  workflow_dispatch:
+    inputs:
+      archive:
+        description: Run one separately approved preseason archive batch (default plan only)
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: votepredict-2027-preseason-archive
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/2027-preseason-evidence-archive.test.ts
+      - run: node --import tsx scripts/run-2027-preseason-evidence-archive.ts --plan
+      - if: inputs.archive == true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: node --import tsx scripts/check-release-ci.ts
+  archive:
+    needs: verify
+    if: inputs.archive == true && vars.VOTEPREDICT_2027_PRESEASON_ARCHIVE_APPROVED == 'true' && github.repository == 'killjoy00/votepredict' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: votepredict-2027-preseason-archive
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Archive bounded public source entities with restricted role
+        env:
+          VOTEPREDICT_2027_PRESEASON_ARCHIVE_AUTHORIZED: 'true'
+          VOTEPREDICT_2027_PRESEASON_ARCHIVE_DATABASE_URL: ${{ secrets.VOTEPREDICT_2027_PRESEASON_ARCHIVE_DATABASE_URL }}
+          VOTEPREDICT_2027_PRESEASON_ARCHIVE_ROLE: ${{ vars.VOTEPREDICT_2027_PRESEASON_ARCHIVE_ROLE }}
+          VOTEPREDICT_2027_PRESEASON_ARCHIVE_DATABASE_FINGERPRINT: ${{ vars.VOTEPREDICT_2027_PRESEASON_ARCHIVE_DATABASE_FINGERPRINT }}
+        run: node --import tsx scripts/run-2027-preseason-evidence-archive.ts --archive
