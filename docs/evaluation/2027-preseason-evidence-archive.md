@@ -41,3 +41,22 @@ GROUP BY media_type;
 ```
 
 The separately guarded original-byte archive remains dormant and still requires a protected direct login credential and verified environment; the manual source review does not waive the original-byte or admission gates. Next: extend the same reviewed-statement treatment to the other 30 incoming members, acquire exact original bytes through the protected archive path, reconcile certified roster and validate subject, direction, timing and provenance before any canonical admission. Remove the completed one-shot keyless probe workflow; the run remains auditable. No forecasting, live feature change, Vercel, paid APIs or recurring schedule enabled.
+
+
+## Second manual protected-data intake: November 26, 2026 (Chicago)
+
+PR #1624 passed CI and merged. A source-by-source browser review of the remaining 30 projected incoming members identified explicit candidate-attributed positions for 29, with one unresolved member. The original two pilot manifests independently bind the same 51 unique targets and projected roster SHA-256. All 95 prior acquisition metadata receipts (46 distinct members) were also imported, preserving their separate acquisition times, exact URLs and original observed digests, without claiming the original entity bytes are stored or that the rendered pages match those bytes.
+
+Batch `2026-11-26-incoming-policy-review-v2` was committed using the same restricted effective-role transaction and independently verified afterward. The temporary role-switch grant was revoked within the transaction, leaving the original NOLOGIN role and creator grant posture unchanged.
+
+| Media type suffix | Records | Members | Statement paraphrases | Sorted record digest set SHA-256 |
+|---|---:|---:|---:|---|
+| `2027-preseason-browser-policy-review+json` | 29 | 29 | 125 | `fc4c49515a017e53ece1f2248f0fa32207af5672457138ad4445202fa7e1f58f` |
+| `2027-preseason-pilot-metadata+json` | 95 | 46 | 0 | `92d4e223ffb7aaac6bbd25c9c0810a068e51d0f4302d76aff53cda47049670c6` |
+| `2027-preseason-policy-review-gap+json` | 1 | 1 | 0 | `15b51e6b913918dc22b9e38b6a1f52928befa8753feadffe491a928e17737eda` |
+
+Across both batches, independently read back 174 records, 50 distinct members with 204 source-attributed policy paraphrases, 123 acquisition metadata receipts (95 original pilot + 28 later keyless probe including eight failures), and one explicit unresolved source gap. All records are hash-verified, non-serving, zero weight and disallow canonical writes. These are review candidates; broad priorities and specific policy commitments are retained distinctly, without asserting a vote on any specific bill. No raw original bodies are retained by either manual import.
+
+**Remaining member:** Dominick "Nick" Ronnenberg (LRL 15669, projected House 23A). The state candidate filing identifies his campaign website, which the pilot fetched but the browser reviewer could not read. His VOTE411 questionnaire reports no responses. Secondary rating sites and unattributed summaries were excluded, and no position was inferred from party. Record the missing evidence rather than manufacturing a position. All 51 have been accounted for; 50 have policy-review statements. The projected roster remains uncertified.
+
+Next: pursue an accessible first-person statement for Ronnenberg, broaden depth beyond one reviewed document per member (especially the 18 MHP questionnaires), archive original bytes using the protected archive workflow, and perform independent semantic/timing/identity validation before any canonical admission. No forecast model or production execution change. 
