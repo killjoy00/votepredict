@@ -4,11 +4,11 @@ import { discoverHouseRegularSessionKey,resolveHouseVoteIngestSession } from './
 import { getMinnesotaHouseSession } from './sessions';
 
 export const COLLECTION_LIMITS = Object.freeze({
-  catalogRequests:32,statusRequests:40,initialTextRequests:60,currentTextRequests:20,houseVoteRequests:13,senateVoteRequests:5,totalRequests:170,
+  catalogRequests:32,statusRequests:40,initialTextRequests:60,currentTextRequests:20,houseVoteRequests:13,senateVoteRequests:5,memberEvidenceRequests:38,totalRequests:208,
   maxResponseBytes:2*1024*1024,maxJournalBytes:8*1024*1024,maxRunBytes:32*1024*1024,maxRunMilliseconds:8*60*1000,
-  statusBatch:40,initialTextBatch:20,currentTextBatch:20,houseVoteBatch:10,senateJournalBatch:4,
+  statusBatch:40,initialTextBatch:20,currentTextBatch:20,houseVoteBatch:10,senateJournalBatch:4,memberEvidenceBatch:12,memberEvidenceArticles:2,
 });
-export type CollectionSourceKind = 'catalog'|'status'|'initial_text'|'current_text'|'house_vote'|'senate_vote';
+export type CollectionSourceKind = 'catalog'|'status'|'initial_text'|'current_text'|'house_vote'|'senate_vote'|'member_evidence';
 export type CollectionSourceReceipt = {
   schemaVersion:'2027-source-observation-v1';session:'2027-2028';runId:string;
   sourceKind:CollectionSourceKind;sourceUrl:string;httpStatus:number;mediaType:string;
@@ -57,6 +57,10 @@ export function classify2027CollectionUrl(value:string):CollectionSourceKind {
   if(url.origin==='https://www.senate.mn'&&(
     (url.pathname==='/journals/journal_list.html'&&url.search==='?display_ls_year=95')||
     (!url.search&&/^\/journals\/2027-2028\/(2027|2028)\d{6,7}\.pdf$/.test(url.pathname))))return 'senate_vote';
+  if(!url.search&&!/^\/(?:wp-admin|wp-login|wp-json|contact|donate|privacy-policy|terms-of-service)(?:\/|$)/i.test(url.pathname)&&(
+    (url.origin==='https://www.house.mn.gov'&&/^\/members\/profile\/news\/[1-9]\d*(?:\/[1-9]\d*)?\/?$/.test(url.pathname))||
+    (url.origin==='https://senatedfl.mn'&&(/^\/(?:senators|home\/members\/[a-z0-9-]+)\/?$/i.test(url.pathname)||/^\/[a-z0-9][a-z0-9-]{2,199}\/?$/i.test(url.pathname)))||
+    (url.origin==='https://www.mnsenaterepublicans.com'&&/^\/[a-z0-9][a-z0-9-]{2,199}\/?$/i.test(url.pathname))))return 'member_evidence';
   throw Error('Unapproved 2027 collection source scope');
 }
 
@@ -95,7 +99,7 @@ export function with2027ArchivedSources<T>(runId:string,archive:CollectionArchiv
   task:(counters:CollectionCounters)=>Promise<T>,fetcher:typeof fetch=fetch):Promise<T>{
   if(!/^[0-9]{1,20}:[0-9]{1,6}$/.test(runId)||scope.getStore())throw Error('Invalid or nested collection scope');
   const counters:CollectionCounters={requests:0,bytes:0,archived:0,failed:0,
-    byKind:{catalog:0,status:0,initial_text:0,current_text:0,house_vote:0,senate_vote:0},receiptSha256s:[]};
+    byKind:{catalog:0,status:0,initial_text:0,current_text:0,house_vote:0,senate_vote:0,member_evidence:0},receiptSha256s:[]};
   return scope.run({runId,archive,fetcher,started:Date.now(),counters},()=>task(counters));
 }
 
@@ -109,7 +113,7 @@ export async function collectionSourceFetch(url:string,init:RequestInit={}):Prom
   const c=ctx.counters;
   try{
     const kind=classify2027CollectionUrl(url);
-    const kindLimit=kind==='catalog'?COLLECTION_LIMITS.catalogRequests:kind==='status'?COLLECTION_LIMITS.statusRequests:kind==='initial_text'?COLLECTION_LIMITS.initialTextRequests:kind==='current_text'?COLLECTION_LIMITS.currentTextRequests:kind==='house_vote'?COLLECTION_LIMITS.houseVoteRequests:COLLECTION_LIMITS.senateVoteRequests;
+    const kindLimit=kind==='catalog'?COLLECTION_LIMITS.catalogRequests:kind==='status'?COLLECTION_LIMITS.statusRequests:kind==='initial_text'?COLLECTION_LIMITS.initialTextRequests:kind==='current_text'?COLLECTION_LIMITS.currentTextRequests:kind==='house_vote'?COLLECTION_LIMITS.houseVoteRequests:kind==='senate_vote'?COLLECTION_LIMITS.senateVoteRequests:COLLECTION_LIMITS.memberEvidenceRequests;
     if(c.requests>=COLLECTION_LIMITS.totalRequests||c.byKind[kind]>=kindLimit||
       c.bytes>=COLLECTION_LIMITS.maxRunBytes||Date.now()-ctx.started>=COLLECTION_LIMITS.maxRunMilliseconds)
       throw Error('2027 collection budget exhausted');

@@ -29,6 +29,7 @@ async function main(){
       const {backfillRevisorInitialTextBatch}=await import('../src/operations/revisor-initial-text-backfill.js');
       const {collect2027CurrentTextBatch}=await import('../src/operations/2027-current-text-collection.js');
       const {collect2027VoteIntake}=await import('../src/operations/2027-vote-intake.js');
+      const {collect2027MemberEvidence}=await import('../src/operations/2027-member-evidence-intake.js');
       const report=await with2027ArchivedSources(target.runId,(receipt,bytes)=>archive2027Source(pool,receipt,bytes),async counters=>{
         const stages:Record<string,unknown>={};let discovered:number|null=null;let phaseFailed=false;let after:Awaited<ReturnType<typeof readCollectionHealth>>|null=null;
         try{
@@ -47,6 +48,10 @@ async function main(){
           const votes=await collect2027VoteIntake(pool);stages.voteIntake=votes;
           if(votes.failedSources>0)phaseFailed=true;
         }catch{phaseFailed=true;stages.voteIntake={error:'VOTE_INTAKE_FAILED'};}
+        try{
+          const evidence=await collect2027MemberEvidence(pool);stages.memberEvidence=evidence;
+          if(evidence.failed>0)phaseFailed=true;
+        }catch{phaseFailed=true;stages.memberEvidence={error:'MEMBER_EVIDENCE_INTAKE_FAILED'};}
         try{after=await readCollectionHealth(client);}catch{phaseFailed=true;}
         const alerts=[...previousHeartbeat.alerts,...collectionAlerts(before,after,discovered,counters,phaseFailed)];
         const result:CollectionReport={schemaVersion:'2027-collection-report-v1',session:'2027-2028',runId:target.runId,day:target.day,startedAt,finishedAt:new Date().toISOString(),

@@ -6,8 +6,8 @@ import { databaseTargetFingerprint,readReleaseBinding } from './release-readines
 
 export const DAILY_COLLECTION_PLAN = Object.freeze({session:'2027-2028',timezone:'America/Chicago',
   proposedCadence:'once daily',productionScheduleEnabled:false,limits:COLLECTION_LIMITS,
-  stages:['catalog','status','initial_text','current_text','vote_intake','health'] as const,
-  forecastsEnabled:false,voteCandidateIntakeEnabled:true,voteIngestionEnabled:false,p8CaptureEnabled:false,vercelRequired:false});
+  stages:['catalog','status','initial_text','current_text','vote_intake','member_evidence','health'] as const,
+  forecastsEnabled:false,voteCandidateIntakeEnabled:true,memberEvidenceCandidateIntakeEnabled:true,voteIngestionEnabled:false,p8CaptureEnabled:false,vercelRequired:false});
 export const DAILY_COLLECTION_REPORT_TYPE='application/vnd.votepredict.2027-collection-report+json';
 export const DAILY_COLLECTION_SOURCE_RECEIPT_TYPE='application/vnd.votepredict.2027-source-observation+json';
 const digest=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
@@ -119,7 +119,7 @@ export async function verifyCollectionTarget(db:Pool,expected:{role:string;finge
         has_table_privilege(current_user,'public.evidence_content_blobs','INSERT') AS "archiveInsert",
         has_table_privilege(current_user,'public.evidence_content_blobs','SELECT') AS "archiveSelect",
         (has_table_privilege(current_user,'public.evidence_content_blobs','UPDATE') OR has_table_privilege(current_user,'public.evidence_content_blobs','DELETE') OR has_table_privilege(current_user,'public.evidence_content_blobs','TRUNCATE')) AS "archiveMutate",
-        EXISTS(SELECT 1 FROM unnest(ARRAY['public.forecasts','public.forecast_schedules','public.forecast_revisions','public.forecast_resolutions','public.forecast_member_predictions','public.legislative_stage_events','public.vote_events','public.member_votes','public.memberships','public.legislative_sessions']) AS tables(name)
+        EXISTS(SELECT 1 FROM unnest(ARRAY['public.forecasts','public.forecast_schedules','public.forecast_revisions','public.forecast_resolutions','public.evidence_items','public.evidence_relationships','public.forecast_member_predictions','public.legislative_stage_events','public.vote_events','public.member_votes','public.memberships','public.legislative_sessions']) AS tables(name)
           WHERE has_table_privilege(current_user,tables.name,'INSERT') OR has_table_privilege(current_user,tables.name,'UPDATE') OR has_table_privilege(current_user,tables.name,'DELETE') OR has_table_privilege(current_user,tables.name,'TRUNCATE')) AS forbidden
       FROM pg_roles r JOIN pg_database d ON d.datname=current_database() WHERE r.rolname=current_user`)).rows[0];
     if(!role||role.role!==expected.role||role.unsafe||!role.archiveInsert||!role.archiveSelect||role.archiveMutate||role.forbidden)
