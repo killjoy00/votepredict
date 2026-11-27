@@ -4,9 +4,9 @@ import { discoverHouseRegularSessionKey,resolveHouseVoteIngestSession } from './
 import { getMinnesotaHouseSession } from './sessions';
 
 export const COLLECTION_LIMITS = Object.freeze({
-  catalogRequests:32,statusRequests:40,initialTextRequests:60,currentTextRequests:20,houseVoteRequests:13,senateVoteRequests:5,memberEvidenceRequests:48,totalRequests:218,
+  catalogRequests:32,statusRequests:40,initialTextRequests:60,currentTextRequests:20,houseVoteRequests:13,senateVoteRequests:5,memberEvidenceRequests:58,totalRequests:228,
   maxResponseBytes:2*1024*1024,maxJournalBytes:8*1024*1024,maxRunBytes:32*1024*1024,maxRunMilliseconds:8*60*1000,
-  statusBatch:40,initialTextBatch:20,currentTextBatch:20,houseVoteBatch:10,senateJournalBatch:4,memberEvidenceBatch:12,memberEvidenceArticles:2,houseNewsIndexRequests:2,houseNewsArticlesPerIndex:4,
+  statusBatch:40,initialTextBatch:20,currentTextBatch:20,houseVoteBatch:10,senateJournalBatch:4,memberEvidenceBatch:12,memberEvidenceArticles:2,houseNewsIndexRequests:2,houseNewsArticlesPerIndex:4,senateNewsIndexRequests:2,senateNewsArticlesPerIndex:4,
 });
 export type CollectionSourceKind = 'catalog'|'status'|'initial_text'|'current_text'|'house_vote'|'senate_vote'|'member_evidence';
 export type CollectionSourceReceipt = {

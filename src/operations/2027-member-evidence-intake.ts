@@ -4,6 +4,7 @@ import { collectionSourceFetch,getArchivedCollectionResponse,require2027Collecti
 import { fetchPublicPage,publicPageMentionsPerson,type PublicPage } from '@/evidence/public-http';
 import { houseMemberNewsUrl,parseHouseMemberNewsArchiveEntries,findSenateMemberProfileUrl,memberPrimaryProfileMatches,selectMemberPrimaryArticleCandidates,memberPrimaryArticleMatches,memberPrimaryPublishedAt,
   MN_SENATE_DFL_DIRECTORY_URL,MN_SENATE_REPUBLICAN_DIRECTORY_URL,type MemberPrimaryMember,type MemberPrimaryDiscovery } from '@/evidence/member-primary';
+import { SENATE_NEWS_INDEXES,discoverSenateIndexArticles,chooseSenateIndexArticles,senateNewsKey,senateArticleDateStatus,isSenateNewsArticleUrl } from '@/evidence/2027-senate-news-discovery';
 import { extractExplicitBillStatements,type BillReference } from '@/evidence/bill-statement-extractor';
 import { extractIssuePositions } from '@/evidence/issue-position-extractor';
 import { DAILY_COLLECTION_SOURCE_RECEIPT_TYPE,storeBlob } from './2027-daily-collection';
@@ -11,6 +12,8 @@ import { DAILY_COLLECTION_SOURCE_RECEIPT_TYPE,storeBlob } from './2027-daily-col
 const sha=(value:Buffer|string)=>createHash('sha256').update(value).digest('hex');
 export const MEMBER_EVIDENCE_CANDIDATE_TYPE='application/vnd.votepredict.2027-member-evidence-candidate+json';
 export const HOUSE_NEWS_INDEXES=['https://www.house.mn.gov/members/party/news/DFL','https://www.house.mn.gov/members/party/news/NR'] as const;
+export const SENATE_NEWS_REVIEW_TYPE='application/vnd.votepredict.2027-senate-news-review+json';
+export const SENATE_NEWS_INDEX_ATTEMPT_TYPE='application/vnd.votepredict.2027-senate-news-index-attempt+json';
 export const HOUSE_NEWS_INDEX_ATTEMPT_TYPE='application/vnd.votepredict.2027-house-news-index-attempt+json';
 export const MEMBER_EVIDENCE_ATTEMPT_TYPE='application/vnd.votepredict.2027-member-evidence-attempt+json';
 export type EvidenceMember=MemberPrimaryMember&{membership_id:string;legislator_id:string;newSincePrior:boolean};
@@ -201,6 +204,59 @@ async function collectHouseIndexEvidence(db:Pool,members:EvidenceMember[],bills:
   return {indexesObserved,indexesExpected:2,discovered,membersDiscovered:membersDiscovered.size,uncollectedBeforeBatch:uncollected,attempted:attempted.size,documents,issueCandidates,billCandidates,failed,completeDailyCoverageVerified:false};
 }
 
+/** A caucus release may contain several speakers. Preserve original bytes and
+ * review lineage without auto-assigning any member or extracting whole-page stances. */
+async function collectSenateIndexEvidence(db:Pool){
+  const rows=(await db.query<{url:string;at:string;media_type:string}>(`
+    SELECT convert_from(body,'UTF8')::jsonb->>'sourceUrl' AS url,max(accepted_at)::text AS at,media_type
+    FROM evidence_content_blobs WHERE media_type IN ($1,$2)
+    GROUP BY 1,3 LIMIT 50001`,[SENATE_NEWS_REVIEW_TYPE,SENATE_NEWS_INDEX_ATTEMPT_TYPE])).rows;
+  if(rows.length>50000)throw Error('Senate index inventory requires review');
+  const observed=new Set<string>(),attempts=new Map<string,string>();
+  for(const row of rows){
+    if(!row.url||!SENATE_NEWS_INDEXES.some(index=>isSenateNewsArticleUrl(row.url,index)))continue;
+    const key=senateNewsKey(row.url);
+    if(row.media_type===SENATE_NEWS_REVIEW_TYPE)observed.add(key);
+    else attempts.set(key,new Date(row.at).toISOString());
+  }
+  let indexesObserved=0,discovered=0,uncollected=0,documents=0,currentSession=0,publicationUnverified=0,outsideSession=0,failed=0;
+  const attempted=new Set<string>();
+  for(const url of SENATE_NEWS_INDEXES){
+    try{
+      const index=await archivedPage(url);
+      if(index.page.finalUrl!==url)throw Error('Senate index URL mismatch');
+      const links=discoverSenateIndexArticles(index.page);
+      indexesObserved++;discovered+=links.length;
+      uncollected+=links.filter(x=>!observed.has(senateNewsKey(x.url))).length;
+      for(const link of chooseSenateIndexArticles(links,observed,attempts,COLLECTION_LIMITS.senateNewsArticlesPerIndex)){
+        const key=senateNewsKey(link.url);if(attempted.has(key))continue;
+        attempted.add(key);let state='failed';
+        try{
+          const article=await archivedPage(link.url);
+          if(article.page.finalUrl!==link.url||!isSenateNewsArticleUrl(article.page.finalUrl,url)||
+            index.proof.receipt.runId!==article.proof.receipt.runId||
+            Date.parse(index.proof.receipt.observedAt)>Date.parse(article.proof.receipt.observedAt))throw Error('Senate index receipt lineage mismatch');
+          await verifyProof(db,index.proof);await verifyProof(db,article.proof);
+          const dateStatus=senateArticleDateStatus(article.page.publishedAt,article.proof.receipt.observedAt);
+          const manifest={schemaVersion:'2027-senate-news-review-v1',session:'2027-2028',sourceUrl:article.page.finalUrl,
+            indexUrl:url,indexReceiptSha256:index.proof.receiptSha256,sourceReceiptSha256:article.proof.receiptSha256,
+            sourceBodySha256:article.proof.receipt.responseBodySha256,observedAt:article.proof.receipt.observedAt,
+            claimedPublicationAt:article.page.publishedAt??null,publicationStatus:dateStatus,title:article.page.title??null,
+            memberAttribution:'requires_exact_speaker_review',availableBeforeObservationProved:false,
+            reviewRequired:dateStatus!=='outside_session',servingEligible:false,canonicalWriteAllowed:false,modelWeight:0};
+          await storeBlob(db,Buffer.from(JSON.stringify(manifest)),SENATE_NEWS_REVIEW_TYPE,true);
+          observed.add(key);documents++;state=dateStatus;
+          if(dateStatus==='current_session_claimed')currentSession++;
+          else if(dateStatus==='publication_unverified')publicationUnverified++;
+          else outsideSession++;
+        }catch{failed++;}
+        await storeBlob(db,Buffer.from(JSON.stringify({schemaVersion:'2027-senate-news-index-attempt-v1',session:'2027-2028',sourceUrl:link.url,indexUrl:url,indexReceiptSha256:index.proof.receiptSha256,state,attemptedAt:new Date().toISOString()})),SENATE_NEWS_INDEX_ATTEMPT_TYPE,true);
+      }
+    }catch{failed++;}
+  }
+  return {indexesObserved,indexesExpected:2,discovered,uncollectedBeforeBatch:uncollected,attempted:attempted.size,documents,currentSession,publicationUnverified,outsideSession,failed,servingEvidenceWritten:0,completeDailyCoverageVerified:false};
+}
+
 export async function collect2027MemberEvidence(db:Pool){
   require2027CollectionScope();
   const {members,bills,attempts}=await context(db);
@@ -210,6 +266,8 @@ export async function collect2027MemberEvidence(db:Pool){
   // Discover broadly before the slower member rotation, within the same archive and global budget.
   const houseIndexes=await collectHouseIndexEvidence(db,members,bills);
   failed+=houseIndexes.failed;documents+=houseIndexes.documents;issueCandidates+=houseIndexes.issueCandidates;billCandidates+=houseIndexes.billCandidates;
+  const senateIndexes=await collectSenateIndexEvidence(db);
+  failed+=senateIndexes.failed;
   for(const party of ['DFL','R']){
     if(!selected.some(m=>m.chamber_slug==='senate'&&(party==='DFL'?m.party==='DFL':['R','GOP','REPUBLICAN'].includes(m.party))))continue;
     try{directories.set(party,await archivedPage(party==='DFL'?MN_SENATE_DFL_DIRECTORY_URL:MN_SENATE_REPUBLICAN_DIRECTORY_URL));}
@@ -272,6 +330,6 @@ export async function collect2027MemberEvidence(db:Pool){
     await storeBlob(db,Buffer.from(JSON.stringify(event)),MEMBER_EVIDENCE_ATTEMPT_TYPE,true);
   }
   return {selected:selected.length,eligibleMembers:members.length,selectedIncoming:selected.filter(m=>m.newSincePrior).length,
-    verifiedMembers,withoutRecentArticles,houseIndexes,documents,issueCandidates,billCandidates,failed,servingEvidenceWritten:0,
+    verifiedMembers,withoutRecentArticles,houseIndexes,senateIndexes,documents,issueCandidates,billCandidates,failed,servingEvidenceWritten:0,
     fullDailyMemberCoverageVerified:false,committeeAndHearingCoverageVerified:false};
 }

@@ -25,8 +25,8 @@ test('member primary archives are scoped to known official and caucus hosts, GET
     assert.equal(getArchivedCollectionResponse(result)?.receiptSha256,'a'.repeat(64));
     await assert.rejects(collectionSourceFetch(house,{method:'POST',body:'test'}),/GET only/);
     assert.equal(counters.byKind.member_evidence,1);
-    assert.equal(COLLECTION_LIMITS.memberEvidenceRequests,48);
-    assert.equal(COLLECTION_LIMITS.totalRequests,218);
+    assert.equal(COLLECTION_LIMITS.memberEvidenceRequests,58);
+    assert.equal(COLLECTION_LIMITS.totalRequests,228);
   },async()=>new Response('<html>Official member statement fixture</html>'));
 });
 test('existing extractors stage issue context and bill-specific statements without model activation',()=>{
