@@ -1,0 +1,23 @@
+name: 2027 incoming prior House vote source pilot
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/2027-incoming-historical-vote-pilot.yml'
+permissions:
+  contents: read
+jobs:
+  proof:
+    if: github.repository == 'killjoy00/votepredict' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'research/2027-incoming-historical-vote-pilot'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/2027-incoming-historical-vote-pilot.test.ts
+      - run: node --import tsx scripts/probe-2027-incoming-historical-votes.ts
