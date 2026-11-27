@@ -1,0 +1,26 @@
+name: 2027 preseason district context probe
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/2027-preseason-district-context.yml'
+      - 'scripts/probe-2027-preseason-district-context.ts'
+      - 'src/operations/2027-preseason-district-context.ts'
+      - 'tests/2027-preseason-district-context.test.ts'
+permissions:
+  contents: read
+jobs:
+  probe:
+    if: github.repository == 'killjoy00/votepredict' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/2027-preseason-district-context.test.ts
+      - run: node --import tsx scripts/probe-2027-preseason-district-context.ts
