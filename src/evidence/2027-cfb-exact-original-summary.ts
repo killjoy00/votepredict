@@ -70,3 +70,30 @@ export function recoverFinanceSummary(textWithPageBreaks:string,priorReceiptsCen
     diagnostics:{summaryPages:summaries.length,loanSummaryPages:loanPages.length,hasDisbursementHeader,openingRows:openingRows.length,receiptRows:receiptRows.length,spendingRows:spendingRows.length,cashRows:cashRows.length,loanRows:loanRows.length,openingCells:o?.length??0,receiptCells:r?.length??0,spendingCells:s?.length??0,cashCells:b?.length??0,loanCells:l?.length??0,receiptsAgree:!!receiptsAgree,spendingArithmeticVerified:spendAgree,cashArithmeticVerified:cashAgree},
   };
 }
+
+// This diagnostic is deliberately vocabulary-only: no literal amounts,
+// names, addresses, arbitrary text or schedule contents leave the worker.
+export const FINANCE_LAYOUT_MARKER='VOTEPREDICT_2027_CFB_EXACT_ORIGINAL_LAYOUT_DIAGNOSTIC_20261127';
+const layoutVocabulary=new Set(('begin beginning opening start starting initial cash balance balances on hand as of at end ending closing year period report receipts receipt expenditures expenditure spending disbursements disbursement total subtotal outstanding loans loan notes note unpaid bills bill payment payments paid in kind contributions contribution transfers transfer other from to through and or all for by sum less add plus minus net funds amount amounts schedule reported previous current same').split(' '));
+export function diagnoseFinanceLayout(text:string){
+  const pages=text.replace(/\u0000/g,'').split('\f').slice(0,6);
+  const matching=pages.filter(p=>/^\s*Committee\s+Transaction\s+Summary\s*$/im.test(p));
+  if(matching.length!==1)return {summaryPages:matching.length,lines:[]};
+  const source=matching[0].split(/\r?\n/);
+  const heading=source.findIndex(l=>/^\s*Committee\s+Transaction\s+Summary\s*$/i.test(l));
+  const lines=source.slice(heading+1,heading+121);
+  const boundary=lines.findIndex(l=>/^\s*(?:Schedule\s+[A-Z]\d|Campaign Finance Reporter|Certification\b|Affidavit\b)/i.test(l));
+  const bounded=boundary===-1?lines:lines.slice(0,boundary);
+  const interesting=new Set<number>();
+  for(let i=0;i<bounded.length;i++){
+    if(/\b(?:cash|balance|receipts?|expenditures?|disbursements?|loans?|notes?|unpaid)\b/i.test(bounded[i])){
+      for(let j=Math.max(0,i-1);j<=Math.min(bounded.length-1,i+1);j++)interesting.add(j);
+    }
+  }
+  return {summaryPages:1,lines:[...interesting].sort((a,b)=>a-b).filter(i=>bounded[i].trim()).map(i=>{
+    const line=bounded[i];
+    return {lineIndex:i,rowPrefix:/^\s*(\d{1,2}[A-Z]?)\s+/i.exec(line)?.[1]?.toUpperCase()??null,
+      labelTokens:(line.replace(amount,' ').toLowerCase().match(/[a-z]+/g)??[]).filter(t=>layoutVocabulary.has(t)).slice(0,24),
+      moneyCells:[...line.matchAll(amount)].length};
+  })};
+}
