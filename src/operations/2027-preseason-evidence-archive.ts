@@ -119,7 +119,8 @@ export async function retainPreseasonSourceInTransaction(client:Pick<PoolClient,
     receipt.publisher!==target.publisher||!/^\d{1,20}:1$/.test(receipt.runId)||!Number.isFinite(Date.parse(receipt.observedAt))||
     receipt.rawBodyRetained||receipt.reviewRequired!==true||receipt.servingEligible!==false||receipt.canonicalWriteAllowed!==false||receipt.modelWeight!==0||
     raw.length<1||raw.length>PRESEASON_LIMITS.maxPageBytes||raw.length!==receipt.bodyBytes||hash(raw)!==receipt.bodySha256)throw Error('Invalid preseason source receipt');
-  await storeBlob(client,raw,'application/octet-stream');
+  if(target.kind==='published_education_questionnaire_pdf'&&(raw.length<300||raw.subarray(0,5).toString('ascii')!=='%PDF-'||receipt.identityNameMentioned!==true))throw Error('Invalid education original');
+  await storeBlob(client,raw,target.kind==='published_education_questionnaire_pdf'?'application/pdf':'application/octet-stream',target.kind==='published_education_questionnaire_pdf');
     const digest=await storeBlob(client,Buffer.from(JSON.stringify({...receipt,rawBodyRetained:true})),PRESEASON_RECEIPT_TYPE,true);
     const accepted=(await client.query<{accepted_at:Date}>('SELECT accepted_at FROM evidence_content_blobs WHERE sha256=$1',[digest])).rows[0]?.accepted_at;
     if(!accepted||Math.abs(accepted.getTime()-Date.parse(receipt.observedAt))>300000)throw Error('Preseason archive acceptance clock mismatch');

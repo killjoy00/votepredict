@@ -1,0 +1,338 @@
+{
+  "schemaVersion": "2027-education-questionnaire-leads-v1",
+  "session": "2027-2028",
+  "reviewedOn": "2026-11-27",
+  "rosterSha256": "3b062058cbe77d2ff6caad8719a65535ad75849d48e0c627c9b460ef48df17bd",
+  "indexUrl": "https://www.edmnvotes.org/voter-guide/",
+  "publisher": "Education Minnesota",
+  "sourceStatus": "publisher_index_link_observed_original_acquisition_pending",
+  "incomingMembers": 51,
+  "matchedLinks": 32,
+  "browserTextAccessible": 28,
+  "rawBodyRetained": false,
+  "servingEligible": false,
+  "canonicalWriteAllowed": false,
+  "modelWeight": 0,
+  "sources": [
+    {
+      "lrlId": "15656",
+      "seat": "house:3B",
+      "name": "Aaron Schweiger",
+      "electionName": "Aaron Schweiger",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/03B-Aaron-Schweiger.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15657",
+      "seat": "house:4A",
+      "name": "Erika Yoney",
+      "electionName": "Erika Yoney",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/04A-Erika-Yoney.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15660",
+      "seat": "house:11A",
+      "name": "Chris Swanson",
+      "electionName": "Chris Swanson",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/11A-House-Chris-Swanson.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15663",
+      "seat": "house:14A",
+      "name": "Abdi Daisane",
+      "electionName": "Abdi Daisane",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/14A-Abdi-Daisane.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15393",
+      "seat": "house:14B",
+      "name": "Zachary Dorholt",
+      "electionName": "Zachary \"Zach\" Dorholt",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/14B-Zachary-Dorholt.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15666",
+      "seat": "house:18A",
+      "name": "Leah Hanson",
+      "electionName": "Leah Hanson",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/18A-Leah-Hanson.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15670",
+      "seat": "house:26A",
+      "name": "Dan Wilson",
+      "electionName": "Dan Wilson",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/26A-Dan-Wilson.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15673",
+      "seat": "house:34A",
+      "name": "Jason Heaser",
+      "electionName": "Jason Heaser",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/34A-Jason-Heaser.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15674",
+      "seat": "house:36A",
+      "name": "Jim DeMay",
+      "electionName": "Jim DeMay",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/36A-Jim-DeMay.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15676",
+      "seat": "house:39A",
+      "name": "Aaron Klemz",
+      "electionName": "Aaron Klemz",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/39A-Aaron-Klemz.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15677",
+      "seat": "house:39B",
+      "name": "Amáda Márquez Simula",
+      "electionName": "Amáda Márquez Simula",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/39B-Amada-Marquez-Simula.pdf",
+      "browserTextAccessible": false,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15678",
+      "seat": "house:40A",
+      "name": "Aisha Elmquist",
+      "electionName": "Aisha Elmquist",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/40A-Aisha-Elmquist.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15679",
+      "seat": "house:41A",
+      "name": "Cole Birkeland",
+      "electionName": "Cole Birkeland",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/41A-Cole-Birkeland.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15680",
+      "seat": "house:41B",
+      "name": "Jen Fox",
+      "electionName": "Jen Fox",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/41B-Jen-Fox.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15681",
+      "seat": "house:43A",
+      "name": "Kyrstin Schuette",
+      "electionName": "Kyrstin Schuette",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/09/43A-Kyrstin-Schuette.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15682",
+      "seat": "house:43B",
+      "name": "Jess Lewis",
+      "electionName": "Jess Lewis",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/09/43B-Jess-Lewis.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15683",
+      "seat": "house:52A",
+      "name": "Christos Jensen",
+      "electionName": "Christos Roy Jensen",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/52A-Christos-Jensen.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15524",
+      "seat": "house:55B",
+      "name": "Hunter Cantrell",
+      "electionName": "Hunter Cantrell",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/55B-Hunter-Cantrell.pdf",
+      "browserTextAccessible": false,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15685",
+      "seat": "house:57B",
+      "name": "Brian Cohn",
+      "electionName": "Brian Cohn",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/57B-Brian-Cohn.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15686",
+      "seat": "house:65B",
+      "name": "Sebastian Ellefson",
+      "electionName": "Sebastian Ellefson",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/65B-Sebastian-Ellefson.pdf",
+      "browserTextAccessible": false,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15702",
+      "seat": "senate:24",
+      "name": "Simon Glaser",
+      "electionName": "Simon Glaser",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/24-Simon-Glaser.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15691",
+      "seat": "senate:32",
+      "name": "Chris Ford",
+      "electionName": "Chris Ford",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/32-Chris-Ford-2.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15692",
+      "seat": "senate:35",
+      "name": "Angela Nelson",
+      "electionName": "Angela Nelson",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/35-Angela-Nelson.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15693",
+      "seat": "senate:37",
+      "name": "Kristy A. Janigo",
+      "electionName": "Kristy Janigo",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/37-Kristy-Janigo.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15694",
+      "seat": "senate:44",
+      "name": "Samuel J. Rosemark",
+      "electionName": "Sam Rosemark",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/44-Sam-Rosemark.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15695",
+      "seat": "senate:49",
+      "name": "Krishnan Subrahmanian",
+      "electionName": "Krish Subrahmanian",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/49-Krish-Subrahmanian.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15696",
+      "seat": "senate:50",
+      "name": "Karla E. Hult",
+      "electionName": "Karla Hult",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/50-Karla-Hult.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15697",
+      "seat": "senate:51",
+      "name": "Simon Trautmann Cordova",
+      "electionName": "Simon Trautmann Cordova",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/51-Simon-Trautmann-Cordova.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15698",
+      "seat": "senate:53",
+      "name": "Paul Cumings",
+      "electionName": "Paul Cumings",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/53-Paul-Cumings.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15701",
+      "seat": "senate:54",
+      "name": "Richard Olson",
+      "electionName": "Rick Olson",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/54-Rick-Olson.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15699",
+      "seat": "senate:58",
+      "name": "Mark O. Legvold",
+      "electionName": "Mark Legvold",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/58-Mark-Legvold.pdf",
+      "browserTextAccessible": true,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    },
+    {
+      "lrlId": "15700",
+      "seat": "senate:65",
+      "name": "Robyn Gulley",
+      "electionName": "Robyn Gulley",
+      "url": "https://www.edmnvotes.org/wp-content/uploads/2026/07/65-Robyn-Gulley.pdf",
+      "browserTextAccessible": false,
+      "rawBodyRetained": false,
+      "semanticReviewVerified": false
+    }
+  ]
+}

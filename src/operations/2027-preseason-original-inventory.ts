@@ -2,7 +2,8 @@ import {createHash} from 'node:crypto';
 import {canonicalPublicUrl} from '@/evidence/public-http';
 import {PRESEASON_LIMITS,type PreseasonTarget} from './2027-preseason-evidence-archive';
 import {ARCHIVE_MARKER} from './2027-preseason-existing-neon-archive';
-export const ARCHIVE_BATCHES=['initial','pilot-1','pilot-2','pilot-3'] as const;
+export const BASE_ARCHIVE_BATCHES=['initial','pilot-1','pilot-2','pilot-3'] as const;
+export const ARCHIVE_BATCHES=[...BASE_ARCHIVE_BATCHES,'education-1','education-2'] as const;
 export type ArchiveBatch=(typeof ARCHIVE_BATCHES)[number];
 type Person={lrlId:string;seat:string;name:string;electionName:string};
 type Receipt={url:string;kind:string;observedAt:string;bodySha256:string;bytes:number;rawBodyRetained:boolean;servingEligible:boolean;completeAnswers?:number};
@@ -48,7 +49,7 @@ export function buildFullPreseasonInventory(rosterRaw:string,initial:readonly Pr
     throw Error('Unexpected frozen source counts');
   extra.sort((a,b)=>a.priority-b.priority||Number(a.lrlId)-Number(b.lrlId)||a.url.localeCompare(b.url));
   const clean=extra.map(({priority:_,...target})=>target);
-  return {initial:[...initial],'pilot-1':clean.slice(0,29),'pilot-2':clean.slice(29,58),'pilot-3':clean.slice(58)} satisfies Record<ArchiveBatch,PreseasonTarget[]>;
+  return {initial:[...initial],'pilot-1':clean.slice(0,29),'pilot-2':clean.slice(29,58),'pilot-3':clean.slice(58)} satisfies Record<(typeof BASE_ARCHIVE_BATCHES)[number],PreseasonTarget[]>;
 }
 export function selectApprovedArchiveBatch(eventName:string|undefined,event:Record<string,unknown>):ArchiveBatch{
   let value:unknown;

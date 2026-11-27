@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {buildPreseasonTargets} from '../src/operations/2027-preseason-evidence-archive.js';
 import {addRonnenbergTarget,ARCHIVE_MARKER} from '../src/operations/2027-preseason-existing-neon-archive.js';
-import {buildFullPreseasonInventory,selectApprovedArchiveBatch,ARCHIVE_BATCHES} from '../src/operations/2027-preseason-original-inventory.js';
+import {buildFullPreseasonInventory,selectApprovedArchiveBatch,BASE_ARCHIVE_BATCHES} from '../src/operations/2027-preseason-original-inventory.js';
 const read=(s:string)=>readFileSync('docs/evaluation/source-proof/'+s,'utf8');
 const roster=read('2027-preseason-roster-20261126.json');
 const a=JSON.parse(read('2027-incoming-evidence-pilot-20261126-part1.json')),b=JSON.parse(read('2027-incoming-evidence-pilot-20261126-part2.json'));
@@ -11,7 +11,7 @@ const initial=addRonnenbergTarget(buildPreseasonTargets(roster,JSON.parse(read('
 test('four explicitly scoped disjoint 29-source batches preserve initial canary and prioritize questionnaires',()=>{
   const p=buildFullPreseasonInventory(roster,initial,a,b);
   assert.deepEqual(p.initial,initial);
-  assert.deepEqual(ARCHIVE_BATCHES.map(x=>p[x].length),[29,29,29,29]);
+  assert.deepEqual(BASE_ARCHIVE_BATCHES.map(x=>p[x].length),[29,29,29,29]);
   const full=Object.values(p).flat();
   assert.equal(new Set(full.map(x=>x.url)).size,116);
   assert.equal(p['pilot-1'].slice(0,18).filter(t=>t.kind==='published_candidate_questionnaire').length,18);

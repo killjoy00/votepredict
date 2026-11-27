@@ -122,7 +122,7 @@ function isPrivateAddress(address: string): boolean {
   return true;
 }
 
-async function assertPublicHost(url: URL): Promise<void> {
+export async function assertPublicHost(url: URL): Promise<void> {
   const hostname = url.hostname.toLowerCase().replace(/\.$/, '');
   if (!hostname || hostname === 'localhost' || hostname.endsWith('.localhost') || hostname.endsWith('.local')) {
     throw new Error(`Private hostname is not allowed: ${hostname || '(empty)'}`);

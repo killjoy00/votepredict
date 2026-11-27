@@ -2,6 +2,8 @@ name: 2027 protected preseason evidence archive
 on:
   pull_request:
     paths:
+      - 'docs/evaluation/source-proof/2027-education-questionnaire-leads-20261127.json'
+      - 'src/evidence/public-http.ts'
       - 'src/operations/2027-preseason*'
       - 'scripts/run-2027-preseason*'
       - 'tests/2027-preseason*'
@@ -10,6 +12,8 @@ on:
     branches: [main]
     paths:
       - 'docs/evaluation/2027-preseason-archive-batch-requests.md'
+      - 'docs/evaluation/source-proof/2027-education-questionnaire-leads-20261127.json'
+      - 'src/evidence/public-http.ts'
       - 'src/operations/2027-preseason*'
       - 'scripts/run-2027-preseason*'
       - 'tests/2027-preseason*'
@@ -26,7 +30,7 @@ on:
         type: choice
         required: true
         default: initial
-        options: [initial, pilot-1, pilot-2, pilot-3]
+        options: [initial, pilot-1, pilot-2, pilot-3, education-1, education-2]
 permissions:
   contents: read
   actions: read
@@ -88,6 +92,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - run: command -v pdftotext || (sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils)
       - name: Use existing protected Neon authentication for bounded archive-only writes
         env:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}

@@ -5,10 +5,12 @@ import {assertExistingArchiveRun,assertArchiveConnection,withRestrictedArchiveTr
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {storeBlob} from '../src/operations/2027-daily-collection.js';
 import {buildFullPreseasonInventory,selectApprovedArchiveBatch,ARCHIVE_BATCHES} from '../src/operations/2027-preseason-original-inventory.js';
+import {buildEducationTargets,fetchEducationPdf,EDUCATION_KIND} from '../src/operations/2027-preseason-education-questionnaires.js';
 const read=(s:string)=>readFileSync('docs/evaluation/source-proof/'+s,'utf8');
 const roster=read('2027-preseason-roster-20261126.json'),pilot=JSON.parse(read('2027-incoming-evidence-pilot-20261126-part1.json'));
 const initial=addRonnenbergTarget(buildPreseasonTargets(roster,JSON.parse(read('2027-incoming-evidence-manual-leads-20261126.json')),JSON.parse(read('2027-incoming-evidence-depth-review-20261126.json')),pilot),roster,pilot);
-const inventory=buildFullPreseasonInventory(roster,initial,pilot,JSON.parse(read('2027-incoming-evidence-pilot-20261126-part2.json')));
+const inventory={...buildFullPreseasonInventory(roster,initial,pilot,JSON.parse(read('2027-incoming-evidence-pilot-20261126-part2.json'))),...buildEducationTargets(roster,pilot,JSON.parse(read('2027-education-questionnaire-leads-20261127.json')))};
+if(new Set(Object.values(inventory).flat().map(t=>t.url)).size!==148)throw Error('Expanded source inventory mismatch');
 async function main(){
   if(process.argv.length!==3||!['--plan','--archive'].includes(process.argv[2]))throw Error('Invalid archive mode');
   if(process.argv[2]==='--plan'){console.log(JSON.stringify({totalTargets:Object.values(inventory).flat().length,batches:ARCHIVE_BATCHES.map(batch=>({batch,targets:inventory[batch].length,members:new Set(inventory[batch].map(t=>t.lrlId)).size})),maxBytes:PRESEASON_LIMITS.maxBytes,archiveRole:ARCHIVE_ROLE,scheduleEnabled:false}));return;}
@@ -25,7 +27,7 @@ async function main(){
   const captured:Array<{target:(typeof targets)[number];data:Awaited<ReturnType<typeof fetchPreseasonTarget>>}>=[];
   const failures:Array<{lrlId:string;seat:string;sourceUrl:string;state:string}>=[];
   for(const target of targets){
-    try{captured.push({target,data:await fetchPreseasonTarget(target,budget,runId)});}
+    try{captured.push({target,data:await (target.kind===EDUCATION_KIND?fetchEducationPdf(target,budget,runId):fetchPreseasonTarget(target,budget,runId))});}
     catch(e){const m=e instanceof Error?e.message:'';failures.push({lrlId:target.lrlId,seat:target.seat,sourceUrl:target.url,state:/^SOURCE_[A-Z0-9_]+$/.test(m)?m:/timeout|aborted/i.test(m)?'TIMEOUT':'SOURCE_UNAVAILABLE_OR_UNVERIFIED'});}
   }
   if(!captured.length)throw Error('No verified source bodies captured');
