@@ -1,0 +1,621 @@
+{
+  "schemaVersion": "2027-incoming-evidence-depth-review-v1",
+  "reviewDate": "2026-11-26",
+  "rosterSha256": "3b062058cbe77d2ff6caad8719a65535ad75849d48e0c627c9b460ef48df17bd",
+  "scope": "17 members with existing source receipts but no retained policy excerpt or verified questionnaire response",
+  "sourceStatus": "browser_reviewed_source_only",
+  "rawBodyRetained": false,
+  "servingEligible": false,
+  "canonicalWriteAllowed": false,
+  "summary": {
+    "membersReviewed": 17,
+    "membersWithReadablePolicyMaterial": 16,
+    "membersStillWithoutReadablePrimaryPolicyMaterial": 1,
+    "policySourcePages": 20,
+    "previouslyObservedPolicySourcePages": 7,
+    "newPolicySourceLeads": 13,
+    "priorStateServiceConfirmed": 2,
+    "localHistoryLeads": 7,
+    "localVoteActionsReviewed": 2
+  },
+  "members": [
+    {
+      "lrlId": "15661",
+      "name": "Tanja Goering",
+      "seat": "house:13A",
+      "sources": [
+        {
+          "url": "https://tanjagoeringformn.com/issues",
+          "kind": "candidate_campaign_page",
+          "publisher": "Candidate campaign",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "state spending",
+            "education",
+            "public safety"
+          ],
+          "reviewNote": "Previously archived source metadata; policy headings and substantive candidate-owned paragraphs now inspected.",
+          "alreadyObservedInPilot": true,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15663",
+      "name": "Abdi Daisane",
+      "seat": "house:14A",
+      "sources": [
+        {
+          "url": "https://www.daisaneformn.com/issues",
+          "kind": "candidate_campaign_page",
+          "publisher": "Candidate campaign",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "housing",
+            "child care",
+            "education",
+            "public safety"
+          ],
+          "reviewNote": "Previously attempted but unavailable to collector; rendered source now observed. Recheck exact same-host campaign registry ownership and candidate identity.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15393",
+      "name": "Zachary Dorholt",
+      "seat": "house:14B",
+      "sources": [
+        {
+          "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/zachary-dorholt",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "Scientist Network for Advancing Policy",
+          "dateClaim": "2026-09-06",
+          "dateClaimKind": "submission",
+          "topics": [
+            "science policy",
+            "environment"
+          ],
+          "reviewNote": "Original publisher reports submission date; separate from publication date. Named responses observed for exact House district.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15667",
+      "name": "Sara Bertschinger",
+      "seat": "house:20B",
+      "sources": [
+        {
+          "url": "https://ballotpedia.org/Sara_Bertschinger",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "Ballotpedia",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "government accountability",
+            "taxation",
+            "business regulation"
+          ],
+          "reviewNote": "Original Candidate Connection 2026 response section observed; retain only the actual candidate answers in protected archive.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15669",
+      "name": "Dominick Ronnenberg",
+      "seat": "house:23A",
+      "sources": []
+    },
+    {
+      "lrlId": "15671",
+      "name": "Chad Westberg",
+      "seat": "house:30B",
+      "sources": [
+        {
+          "url": "https://www.chadwestbergformn.com/about",
+          "kind": "candidate_campaign_page",
+          "publisher": "Candidate campaign",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "taxation",
+            "education",
+            "public safety",
+            "business"
+          ],
+          "reviewNote": "Candidate-owned policy list observed; same-host registry ownership must be preserved.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        },
+        {
+          "url": "https://minnesotareformer.com/2026/11/25/republican-chad-westberg-brings-ag-science-expertise-and-business-focus-to-state-house/",
+          "kind": "candidate_interview",
+          "publisher": "Minnesota Reformer",
+          "dateClaim": "2026-11-25",
+          "dateClaimKind": "publisher_date",
+          "topics": [
+            "taxation",
+            "agriculture",
+            "business regulation",
+            "state spending"
+          ],
+          "reviewNote": "Named direct interview; publisher says edited for length and clarity. Distinguish candidate responses from reporter prose.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15672",
+      "name": "Stacey Stout",
+      "seat": "house:33A",
+      "sources": [
+        {
+          "url": "https://staceystout.com/",
+          "kind": "candidate_campaign_page",
+          "publisher": "Candidate campaign",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "education",
+            "government accountability",
+            "taxation"
+          ],
+          "reviewNote": "Previously archived source metadata; candidate-owned policy headings observed.",
+          "alreadyObservedInPilot": true,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15675",
+      "name": "Tom McKee",
+      "seat": "house:37A",
+      "sources": [
+        {
+          "url": "https://tommckeemn.com/issues",
+          "kind": "candidate_campaign_page",
+          "publisher": "Candidate campaign",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "taxation",
+            "public safety",
+            "education",
+            "infrastructure"
+          ],
+          "reviewNote": "Previously archived source metadata; substantive policy bullet lists observed.",
+          "alreadyObservedInPilot": true,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15524",
+      "name": "Hunter Cantrell",
+      "seat": "house:55B",
+      "sources": [
+        {
+          "url": "https://www.huntercantrell.com/a-healthy-minnesota",
+          "kind": "candidate_campaign_page",
+          "publisher": "Candidate campaign",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "health care",
+            "prescription drug costs",
+            "insurance"
+          ],
+          "reviewNote": "Previously archived source metadata; specific policy proposals observed. Do not retain personal health details.",
+          "alreadyObservedInPilot": true,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15703",
+      "name": "Austin Peterson",
+      "seat": "senate:4",
+      "sources": [
+        {
+          "url": "https://votefmwf.org/candidate/austin-peterson/",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "VOTEFMWF",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "state priorities",
+            "economic development"
+          ],
+          "reviewNote": "Original publisher displays candidate answers and identifies the Senate district.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        },
+        {
+          "url": "https://ballotpedia.org/Austin_Peterson",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "Ballotpedia",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "business regulation",
+            "housing",
+            "health care",
+            "transportation"
+          ],
+          "reviewNote": "Original 2026 Candidate Connection responses observed.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15687",
+      "name": "Jared J. Gapinski",
+      "seat": "senate:13",
+      "sources": [
+        {
+          "url": "https://gapinskiformnsenate.com/issues/",
+          "kind": "candidate_campaign_page",
+          "publisher": "Candidate campaign",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "state spending",
+            "infrastructure",
+            "public safety"
+          ],
+          "reviewNote": "Previously archived source metadata; substantive policy paragraphs observed.",
+          "alreadyObservedInPilot": true,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15702",
+      "name": "Simon Glaser",
+      "seat": "senate:24",
+      "sources": [
+        {
+          "url": "https://www.simonglaser.com/issues",
+          "kind": "candidate_campaign_page",
+          "publisher": "Candidate campaign",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "housing",
+            "health care",
+            "labor",
+            "data centers",
+            "government accountability"
+          ],
+          "reviewNote": "Previously archived source metadata; candidate-owned policy sections observed.",
+          "alreadyObservedInPilot": true,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15690",
+      "name": "Cherie Johnson",
+      "seat": "senate:26",
+      "sources": [
+        {
+          "url": "https://fillmorecountyjournal.com/2026-candidates-part-1/",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "Fillmore County Journal",
+          "dateClaim": "2026-09-21",
+          "dateClaimKind": "publisher_date",
+          "topics": [
+            "state spending",
+            "education",
+            "agriculture",
+            "business regulation"
+          ],
+          "reviewNote": "Actual named candidate answers in a multi-candidate paid-participation feature; isolate Cherie Johnson's section.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15694",
+      "name": "Samuel J. Rosemark",
+      "seat": "senate:44",
+      "sources": [
+        {
+          "url": "https://samrosemark.com/priorities/",
+          "kind": "candidate_campaign_page",
+          "publisher": "Candidate campaign",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "education",
+            "health care",
+            "environment",
+            "public safety",
+            "taxation"
+          ],
+          "reviewNote": "Previously archived source metadata; candidate-owned policy paragraphs observed.",
+          "alreadyObservedInPilot": true,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15696",
+      "name": "Karla E. Hult",
+      "seat": "senate:50",
+      "sources": [
+        {
+          "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/karla-hult",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "Scientist Network for Advancing Policy",
+          "dateClaim": "2026-10-02",
+          "dateClaimKind": "submission",
+          "topics": [
+            "science policy",
+            "research",
+            "environment"
+          ],
+          "reviewNote": "Original publisher reports submission date; separate from publication date. Named candidate responses observed.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15698",
+      "name": "Paul Cumings",
+      "seat": "senate:53",
+      "sources": [
+        {
+          "url": "https://ballotpedia.org/Paul_Cumings",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "Ballotpedia",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "taxation",
+            "state and local government"
+          ],
+          "reviewNote": "2026 Candidate Connection responses observed.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        },
+        {
+          "url": "https://weststpaulreader.com/2026/09/18/2026-election-minnesota-senate-district-53/",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "West St. Paul Reader",
+          "dateClaim": "2026-09-18",
+          "dateClaimKind": "publisher_date",
+          "topics": [
+            "data centers",
+            "energy",
+            "water"
+          ],
+          "reviewNote": "Multi-candidate questionnaire; actual Paul Cumings answers identified by speaker label.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    },
+    {
+      "lrlId": "15699",
+      "name": "Mark O. Legvold",
+      "seat": "senate:58",
+      "sources": [
+        {
+          "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/mark-legvold",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "Scientist Network for Advancing Policy",
+          "dateClaim": "2026-09-08",
+          "dateClaimKind": "submission",
+          "topics": [
+            "science policy",
+            "environment",
+            "mining"
+          ],
+          "reviewNote": "Original publisher reports submission date; separate from publication date. Named candidate responses observed.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        },
+        {
+          "url": "https://ballotpedia.org/Mark_Legvold",
+          "kind": "published_candidate_questionnaire",
+          "publisher": "Ballotpedia",
+          "dateClaim": null,
+          "dateClaimKind": null,
+          "topics": [
+            "affordability",
+            "government accountability"
+          ],
+          "reviewNote": "Actual 2026 Candidate Connection responses observed.",
+          "alreadyObservedInPilot": false,
+          "reviewStatus": "browser_reviewed_source_only",
+          "rawBodyRetained": false,
+          "servingEligible": false
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "lrlId": "15669",
+      "seat": "house:23A",
+      "name": "Dominick Ronnenberg",
+      "officialIdentitySource": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15669",
+      "campaignUrl": "https://www.ronnenbergformn.com/",
+      "responseStatus": "Campaign website unavailable in browser follow-up; VOTE411 showed no candidate responses; third-party summary excluded.",
+      "vote411": "https://onyourballot.vote411.org/m/race-detail.do?id=26931220"
+    }
+  ],
+  "priorServiceAndLocalOffice": [
+    {
+      "lrlId": "15393",
+      "seat": "house:14B",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15393",
+      "role": "Minnesota House District 14B",
+      "session": "2013-2014",
+      "status": "official_prior_service_confirmed",
+      "next": "Match historical official votes by stable LRL identity; assess coverage before backfill."
+    },
+    {
+      "lrlId": "15524",
+      "seat": "house:55B",
+      "sourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15524",
+      "role": "Minnesota House District 56A",
+      "session": "2019-2020",
+      "status": "official_prior_service_confirmed",
+      "next": "Historical district differs from projected seat; never join by district alone."
+    },
+    {
+      "lrlId": "15675",
+      "seat": "house:37A",
+      "sourceUrl": "https://corcoranmn.granicus.com/ViewPublisher.php?view_id=1",
+      "role": "Corcoran mayor",
+      "status": "official_minutes_index_found",
+      "next": "Retain only explicitly attributed policy-relevant decisions; do not interpret consent agenda as general ideological evidence."
+    },
+    {
+      "lrlId": "15687",
+      "seat": "senate:13",
+      "sourceUrl": "https://www.bentoncountymn.gov/386/Jared-Gapinski",
+      "role": "Benton County commissioner",
+      "status": "official_role_confirmed",
+      "next": "Find dated minutes and named choices; committee membership alone is not position evidence."
+    },
+    {
+      "lrlId": "15703",
+      "seat": "senate:4",
+      "sourceUrl": "https://www.hawley.k12.mn.us/our-district/school-board/board-agenda-minutes",
+      "identitySourceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15703",
+      "role": "Hawley school board",
+      "status": "official_role_and_minutes_index_found",
+      "next": "Establish exact tenure, attendance and named votes before recording choices."
+    },
+    {
+      "lrlId": "15698",
+      "seat": "senate:53",
+      "sourceUrl": "https://www.sspps.org/about/school-board/meetings",
+      "identitySourceUrl": "https://www.sspps.org/about/school-board/members",
+      "role": "South St. Paul school board",
+      "status": "official_role_and_meeting_index_found",
+      "next": "Find approved minutes and exact named roll calls."
+    },
+    {
+      "lrlId": "15672",
+      "seat": "house:33A",
+      "sourceUrl": "https://staceystout.com/",
+      "role": "Mahtomedi school board",
+      "status": "candidate_claim_only",
+      "next": "Verify with official district roster and approved minutes."
+    },
+    {
+      "lrlId": "15694",
+      "seat": "senate:44",
+      "sourceUrl": "https://samrosemark.com/priorities/",
+      "role": "school board member",
+      "status": "candidate_claim_only",
+      "next": "Verify district, exact service dates and official minutes."
+    },
+    {
+      "lrlId": "15663",
+      "seat": "house:14A",
+      "sourceUrl": "https://ballotpedia.org/Abdi_Daisane",
+      "role": "candidate reports local appointed board service",
+      "status": "2024_candidate_claim_only",
+      "next": "Verify actual local public board appointments and records; do not treat appointments as elected office."
+    }
+  ],
+  "localVoteObservations": [
+    {
+      "lrlId": "15675",
+      "seat": "house:37A",
+      "jurisdiction": "City of Corcoran",
+      "role": "mayor",
+      "meetingDate": "2026-10-08",
+      "sourceUrl": "https://corcoranmn.granicus.com/DocumentViewer.php?file=corcoranmn_8070ebfd62eb22c1d56273b57d793683.pdf&view=1",
+      "reviewMethod": "publisher PDF page image and text checked",
+      "actions": [
+        {
+          "page": 4,
+          "actionId": "Resolution 2026-78",
+          "question": "Deny comprehensive plan amendment, rezoning and preliminary plat for 3019 Addition",
+          "choice": "abstain",
+          "tally": {
+            "aye": 4,
+            "nay": 0,
+            "abstain": 1
+          },
+          "interpretation": "No policy direction inferred."
+        },
+        {
+          "page": 5,
+          "actionId": "Ordinance 2026-563",
+          "question": "Adopt amended 2026 fee schedule and summary ordinance",
+          "choice": "aye",
+          "tally": {
+            "aye": 5,
+            "nay": 0
+          },
+          "interpretation": "Municipal action only; no general state tax position inferred."
+        }
+      ],
+      "rawBodyRetained": false,
+      "servingEligible": false,
+      "canonicalWriteAllowed": false
+    }
+  ],
+  "limitations": [
+    "Browser-visible policy sections are not privately archived source bodies or approved evidence. No additional pilot receipts counted.",
+    "No ideological ratings, candidate affiliations, private contact details, endorsements or demographic information used as directional evidence.",
+    "Do not infer support for state bills from a local vote, generic campaign position, or attendance. Abstention is not yes or no.",
+    "Prior-service dates outside the three recent biennia do not change the initial cohort definition; two additional returning members are now confirmed."
+  ]
+}
