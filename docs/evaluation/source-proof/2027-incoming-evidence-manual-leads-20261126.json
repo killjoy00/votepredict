@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "2027-incoming-evidence-manual-discovery-v1",
+  "reviewDate": "2026-11-26",
+  "rosterSha256": "3b062058cbe77d2ff6caad8719a65535ad75849d48e0c627c9b460ef48df17bd",
+  "status": "browser_reviewed_source_leads_only",
+  "rawBodyRetained": false,
+  "bodyHashesAvailable": false,
+  "servingEligible": false,
+  "canonicalWriteAllowed": false,
+  "notes": [
+    "Original publisher rendered readable material in browser review; this is not an archived collector receipt.",
+    "Dates are source claims only; the SNAP date is submission date.",
+    "Prior source receipt totals remain unchanged; no inferred positions or ideological labels.",
+    "Before extraction, re-fetch with verified identity, original bytes, observation time, digest and existing admission rules. Do not infer current bill votes from generic statements."
+  ],
+  "members": [
+    {
+      "lrlId": "15656",
+      "seat": "house:3B",
+      "name": "Aaron Schweiger",
+      "sources": [
+        {
+          "url": "https://www.pbs.org/video/meet-the-candidates-2026-minnesotas-house-district-3b-natalie-zeleznikar-and-aaron-schweiger-0ckcud/",
+          "publisher": "PBS North",
+          "kind": "candidate_interview",
+          "claimedPublicationDate": "2026-10-20",
+          "reviewNote": "Publisher identifies both candidates and district; readable attributed candidate transcript includes policy discussion. Caption transcription may contain name errors; verify speaker boundaries against the recording."
+        }
+      ]
+    },
+    {
+      "lrlId": "15658",
+      "seat": "house:5B",
+      "name": "Jonathan Claussen",
+      "sources": [
+        {
+          "url": "https://ivoterguide.com/candidate/94149",
+          "publisher": "iVoterGuide",
+          "kind": "published_candidate_questionnaire",
+          "claimedPublicationDate": null,
+          "reviewNote": "Original publisher displays candidate answers and Minnesota House 5B 2026 race. Extract only explicit legislative-policy answers, not publisher ratings, personal biography, affiliations or unresponsive items."
+        }
+      ]
+    },
+    {
+      "lrlId": "15662",
+      "seat": "house:13B",
+      "name": "Dawn Loberg",
+      "sources": [
+        {
+          "url": "https://ivoterguide.com/candidate/93733/race/34454/election/1498",
+          "publisher": "iVoterGuide",
+          "kind": "published_candidate_questionnaire",
+          "claimedPublicationDate": null,
+          "reviewNote": "Original publisher shows 2026 House 13B race and actual questionnaire answers; some unanswered. Exclude ratings and incidental personal data."
+        },
+        {
+          "url": "https://lobergformnhouse.com/",
+          "publisher": "Candidate campaign",
+          "kind": "candidate_campaign_page",
+          "claimedPublicationDate": null,
+          "reviewNote": "Official filing URL has readable policy text in browser but previous collector identity check failed. Require exact verified candidate identity via filing and page before admission."
+        }
+      ]
+    },
+    {
+      "lrlId": "15664",
+      "seat": "house:15A",
+      "name": "Bradley Hennen",
+      "sources": [
+        {
+          "url": "https://snapcoalition.org/initiatives/stance-on-science/candidates/mn/brad-hennen",
+          "publisher": "Scientist Network for Advancing Policy",
+          "kind": "published_candidate_questionnaire",
+          "claimedPublicationDate": "2026-09-18",
+          "reviewNote": "Original publisher displays six numbered submitted responses for Brad Hennen, MN House 15A. Date is labeled submission, not independently verified publication. Exact seat and alias corroborated by campaign and PBS."
+        },
+        {
+          "url": "https://www.pbs.org/video/mn-house-district-15a-orvkdz/",
+          "publisher": "Pioneer PBS",
+          "kind": "candidate_interview",
+          "claimedPublicationDate": "2026-09-10",
+          "reviewNote": "Publisher identifies District 15A candidates and contains a candidate statement transcript. Separate the two candidates' words and verify caption transcription."
+        },
+        {
+          "url": "https://hennen4house.com/",
+          "publisher": "Candidate campaign",
+          "kind": "candidate_campaign_page",
+          "claimedPublicationDate": null,
+          "reviewNote": "Official filing URL, readable campaign policy text identifies Brad Hennen and District 15A. Verify alias against exact filing and PBS; earlier exact-name check failed."
+        }
+      ]
+    },
+    {
+      "lrlId": "15697",
+      "seat": "senate:51",
+      "name": "Simon Trautmann Cordova",
+      "sources": [
+        {
+          "url": "https://ballotpedia.org/Simon_Trautmann_Cordova",
+          "publisher": "Ballotpedia",
+          "kind": "published_candidate_questionnaire",
+          "claimedPublicationDate": null,
+          "reviewNote": "Original publisher labels 2026 Candidate Connection survey, identifies Senate District 51, and presents substantive candidate answers; exclude publisher metadata and endorsements."
+        }
+      ]
+    }
+  ]
+}

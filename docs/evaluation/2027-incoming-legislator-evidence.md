@@ -44,3 +44,7 @@ First recover the five members with zero verified sources using original candida
 | Karla E. Hult | senate:50 | Source only; no retained policy excerpt or verified questionnaire response |
 | Paul Cumings | senate:53 | Source only; no retained policy excerpt or verified questionnaire response |
 | Mark O. Legvold | senate:58 | Source only; no retained policy excerpt or verified questionnaire response |
+
+### Manual gap recovery (November 26)
+
+[Browser-reviewed follow-up source leads](source-proof/2027-incoming-evidence-manual-leads-20261126.json) identify eight original publisher pages for all five previously uncovered members, including two PBS candidate appearances, three candidate questionnaire pages from iVoterGuide/Ballotpedia, one SNAP questionnaire and two campaign sites. These are **not** additional collector receipts; retain the 95-receipt count and 46/51 archived-metadata coverage until re-fetched and matched. All five have at least one readable original publisher page in browser review. The follow-up specifically records alias and transcript attribution checks; ignore third-party ideological ratings, incidental personal data and endorsements as directional evidence. Prioritize the original questionnaire publishers and local public broadcast sources for deeper coverage of the remaining source-only profiles. No production/model changes.
