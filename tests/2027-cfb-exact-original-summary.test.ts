@@ -53,7 +53,7 @@ const electronic=()=>{
  l[47]='C Loans and unpaid bills';
  l[48]='21A Total outstanding balance of all loans current year 10.00';
  l[49]='21B Total outstanding balance of all loans year to year 5.00';
- l[50]='21C Total outstanding balance of all loans Sum #21A and #21B 15.00';
+ l[50]='21C Total outstanding balance of all loans Sum #21A + #21B 15.00';
  l[51]='22A Total unpaid bills current year 0.00';
  l[52]='22B Total unpaid bills year to year 0.00';
  l[53]='22C Total unpaid bills Sum 0.00';
@@ -78,10 +78,27 @@ test('observed layout fails closed on contradictory amounts, duplicate rows, uns
  assert.equal(d(t.replace('19 Sum #11 to #18          65.00 5.00 20.00 90.00','19 Sum #11 to #18          65.00 5.00 20.00 91.00')).totalDisbursementsCents,null);
  assert.equal(d(t.replace('85.00','84.99')).endingCashBalanceCents,null);
  assert.equal(d(t.replace('21B Total outstanding balance of all loans year to year 5.00','21B Total outstanding balance of all loans year to year 6.00')).reportedOutstandingLoanBalanceCents,null);
- assert.equal(d(t.replace('21C Total outstanding balance of all loans Sum #21A and #21B 15.00','21C Total outstanding balance of all loans Sum #21A and #21B')).reportedOutstandingLoanBalanceCents,null);
+ assert.equal(d(t.replace('21C Total outstanding balance of all loans Sum #21A + #21B 15.00','21C Total outstanding balance of all loans Sum #21A + #21B')).reportedOutstandingLoanBalanceCents,null);
  assert.equal(d(t,12001).totalDisbursementsCents,null);
  assert.equal(d(t.replace('Total Expenditures and','Other text')).totalDisbursementsCents,null);
  assert.equal(d(t.replace('Schedule A1','19 Sum #11 to #18 65.00 5.00 20.00 90.00\nSchedule A1')).totalDisbursementsCents,null);
  assert.equal(d(t+'\f'+t).totalDisbursementsCents,null);
  assert.equal(d(t.replace('B Disbursements','B Unknown')).totalDisbursementsCents,null);
+});
+
+
+test('protected token projection handles unrecorded punctuation and qualifiers without relaxing arithmetic',()=>{
+ const original=electronic();
+ const t=original.replace('previous year ending cash balance',"previous year's ending cash balance")
+   .replace('Total Expenditures and','Total Expenditures and:')
+   .replace('Disbursements\nEnding cash','Disbursements (11–18)\nEnding cash:')
+   .replace('year to year 5.00','year-to-year 5.00');
+ const d=recoverFinanceSummaryV2(t,12000);
+ assert.equal(d.totalDisbursementsCents,9000);
+ assert.equal(d.endingCashBalanceCents,8500);
+ assert.equal(d.reportedOutstandingLoanBalanceCents,1500);
+ assert.equal(recoverFinanceSummaryV2(t.replace('Ending cash:', 'Ending funds:'),12000).endingCashBalanceCents,null);
+ assert.equal(recoverFinanceSummaryV2(t.replace('Ending cash:', 'Ending funds:'),12000).totalDisbursementsCents,9000);
+ assert.equal(recoverFinanceSummaryV2(t.replace('previous year', 'current year'),12000).endingCashBalanceCents,null);
+ assert.equal(recoverFinanceSummaryV2(t.replace('previous year', 'current year'),12000).reportedOutstandingLoanBalanceCents,1500);
 });
