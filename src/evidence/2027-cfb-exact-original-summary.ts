@@ -111,7 +111,14 @@ export function recoverFinanceSummaryV2(text:string,priorReceiptsCents:number){
   const after=heading<0?[]:page.slice(heading+1,heading+121);
   const boundary=after.findIndex(l=>/^\s*(?:Schedule\s+[A-Z]\d|Campaign Finance Reporter|Certification\b|Affidavit\b)/i.test(l));
   const lines=boundary<0?after:after.slice(0,boundary);
-  const label=(i:number)=>(lines[i]??'').replace(amount,' ').replace(/\s+/g,' ').trim();
+  // Use exactly the same safe label projection as the protected layout
+  // diagnostic. Full literal labels were not retained by that diagnostic:
+  // punctuation, footnotes, and words outside its vocabulary must not be
+  // guessed from synthetic text. Row positions, uniqueness, cell counts,
+  // prior receipt reproduction and arithmetic remain mandatory.
+  const tokenLabel=(i:number)=>(lines[i]??'').replace(amount,' ').toLowerCase()
+    .match(/[a-z]+/g)?.filter(t=>layoutVocabulary.has(t)).join(' ')??'';
+  const matchesLabel=(i:number,expected:string)=>tokenLabel(i)===expected;
   const money=(i:number,n:number)=>{
     const cells=[...(lines[i]??'').matchAll(amount)].map(m=>cents(m[1]));
     return cells.length===n&&cells.every(x=>x!==null)?cells as number[]:null;
@@ -121,23 +128,24 @@ export function recoverFinanceSummaryV2(text:string,priorReceiptsCents:number){
   const sumEquals=(a:readonly number[],b:number)=>{
     const s=a.reduce((x,y)=>x+y,0);return Number.isSafeInteger(s)&&s===b;
   };
-  const layout=lines.length>=55&&
-    /^Beginning cash balance\b/i.test(label(2))&&/\bsame as\b.*\bprevious year ending cash balance\b/i.test(label(4))&&
-    /\bReceipts\s+Cash\s+In[- ]kind\s+Total\b/i.test(label(6))&&
-    unique(23,'10')&&/\bTotal Receipts\b/i.test(label(23))&&
-    /\bDisbursements\s+Cash\s+Unpaid Bills\s+In[- ]kind\s+Total\b/i.test(label(25));
-  const o=layout?money(2,1):null;
+  const receiptLabel=unique(23,'10')&&matchesLabel(6,'receipts cash in kind total')&&matchesLabel(23,'total receipts sum to');
+  const openingLabel=matchesLabel(2,'beginning cash balance')&&matchesLabel(4,'same as previous year ending cash balance')&&money(4,0)!==null;
+  const headerLabel=matchesLabel(25,'disbursements cash unpaid bills in kind total');
+  const layout=lines.length>=55&&receiptLabel&&headerLabel;
+  const o=layout&&openingLabel?money(2,1):null;
   const r=layout?money(23,3):null;
-  const spendLabel=unique(41,'19')&&/^Total Expenditures and$/i.test(label(40))&&
-    /\bSum\b/i.test(label(41))&&/^Disbursements$/i.test(label(42))&&money(40,0)!==null&&money(42,0)!==null;
+  const spendLabel=unique(41,'19')&&matchesLabel(40,'total expenditures and')&&
+    matchesLabel(41,'sum to')&&matchesLabel(42,'disbursements')&&money(40,0)!==null&&money(42,0)!==null;
   const spend=layout&&spendLabel?money(41,4):null;
-  const cashLabel=unique(44,'20')&&/^Ending cash$/i.test(label(43))&&/\bBalance on\b/i.test(label(44))&&money(43,0)!==null;
+  const cashLabel=unique(44,'20')&&matchesLabel(43,'ending cash')&&matchesLabel(44,'balance on')&&money(43,0)!==null;
   const ending=layout&&cashLabel?money(44,1):null;
-  const loanLabel=(i:number,id:string,qualifier:RegExp)=>unique(i,id)&&
-    /\bTotal outstanding balance of all loans\b/i.test(label(i))&&qualifier.test(label(i));
-  const loanA=layout&&loanLabel(48,'21A',/\bcurrent year\b/i)?money(48,1):null;
-  const loanB=layout&&loanLabel(49,'21B',/\byear to year\b/i)?money(49,1):null;
-  const loanC=layout&&loanLabel(50,'21C',/\bSum\b/i)?money(50,1):null;
+  const loanLabel=(i:number,id:string,qualifier:string)=>unique(i,id)&&matchesLabel(i,'total outstanding balance of all loans '+qualifier);
+  const loanALabel=loanLabel(48,'21A','current year');
+  const loanBLabel=loanLabel(49,'21B','year to year');
+  const loanCLabel=loanLabel(50,'21C','sum');
+  const loanA=layout&&loanALabel?money(48,1):null;
+  const loanB=layout&&loanBLabel?money(49,1):null;
+  const loanC=layout&&loanCLabel?money(50,1):null;
   const receiptAgree=!!(r&&sumEquals(r.slice(0,2),r[2])&&r[2]===priorReceiptsCents&&
     legacy.totalReceiptsCents===r[2]&&legacy.cashReceiptsCents===r[0]&&legacy.inKindReceiptsCents===r[1]);
   const spendAgree=!!(receiptAgree&&spend&&sumEquals(spend.slice(0,3),spend[3]));
@@ -152,7 +160,7 @@ export function recoverFinanceSummaryV2(text:string,priorReceiptsCents:number){
     beginningCashBalanceCents:cashAgree?o![0]:null,
     endingCashBalanceCents:cashAgree?ending![0]:null,
     reportedOutstandingLoanBalanceCents:loanAgree?loanC![0]:null,
-    diagnostics:{...legacy.diagnostics,observedElectronicLayout:layout,spendingLabelVerified:spendLabel,cashLabelVerified:cashLabel,
+    diagnostics:{...legacy.diagnostics,observedElectronicLayout:layout,receiptLabelVerified:receiptLabel,openingLabelVerified:openingLabel,disbursementHeaderVerified:headerLabel,spendingLabelVerified:spendLabel,cashLabelVerified:cashLabel,loanALabelVerified:loanALabel,loanBLabelVerified:loanBLabel,loanCLabelVerified:loanCLabel,
       openingCells:o?.length??0,receiptCells:r?.length??0,spendingCells:spend?.length??0,cashCells:ending?.length??0,
       loanCells:loanC?.length??0,receiptsAgree:receiptAgree,spendingArithmeticVerified:spendAgree,
       cashArithmeticVerified:cashAgree,loanArithmeticVerified:loanAgree}
