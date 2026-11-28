@@ -5,7 +5,7 @@ import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {Pool} from 'pg';
 import {FINANCE_ROSTER_SHA,FINANCE_RECEIPT_TYPE,reviewFinanceSummary,financeRoster} from '../src/evidence/2027-current-cfb-finance.js';
-import {FINANCE_DETAIL_MARKER,FINANCE_LAYOUT_MARKER,FINANCE_DETAIL_TYPE,recoverFinanceSummary,diagnoseFinanceLayout} from '../src/evidence/2027-cfb-exact-original-summary.js';
+import {FINANCE_DETAIL_MARKER,FINANCE_LAYOUT_MARKER,FINANCE_DETAIL_TYPE,FINANCE_DETAIL_V2_MARKER,FINANCE_DETAIL_V2_TYPE,recoverFinanceSummary,recoverFinanceSummaryV2,diagnoseFinanceLayout} from '../src/evidence/2027-cfb-exact-original-summary.js';
 import type {CfbReportViewerReference} from '../src/evidence/cfb-report-pdf-proof.js';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
 import {assertArchiveConnection,withRestrictedArchiveTransaction,ARCHIVE_OWNER,ARCHIVE_ROLE,ARCHIVE_PROJECT} from '../src/operations/2027-preseason-existing-neon-archive.js';
@@ -18,7 +18,8 @@ async function main(){
   const message=event.head_commit?.message??'';
   const layoutMode=message.includes(FINANCE_LAYOUT_MARKER);
   const recoveryMode=message.includes(FINANCE_DETAIL_MARKER);
-  if(layoutMode===recoveryMode)throw Error('Exactly one finance operation marker required');
+  const v2Mode=message.includes(FINANCE_DETAIL_V2_MARKER);
+  if(Number(layoutMode)+Number(recoveryMode)+Number(v2Mode)!==1)throw Error('Exactly one finance operation marker required');
   if(env.VERCEL||env.GITHUB_REPOSITORY!=='killjoy00/votepredict'||event.repository?.full_name!==env.GITHUB_REPOSITORY||event.repository?.default_branch!=='main'||env.GITHUB_EVENT_NAME!=='push'||env.GITHUB_REF!=='refs/heads/main'||env.GITHUB_WORKFLOW_REF!=='killjoy00/votepredict/.github/workflows/2027-cfb-exact-original-summary.yml@refs/heads/main'||env.GITHUB_RUN_ATTEMPT!=='1'||env.FINANCE_DETAIL_CI_VERIFIED!=='true'||!(/^\d{1,20}$/.test(env.GITHUB_RUN_ID??''))||event.after!==env.GITHUB_SHA||event.head_commit?.id!==env.GITHUB_SHA||event.forced===true||event.deleted===true||env.VOTEPREDICT_NEON_PROJECT_ID!==ARCHIVE_PROJECT)throw Error('Finance detail approval gate failed');
   const current=await fetch('https://api.github.com/repos/killjoy00/votepredict/git/ref/heads/main',{headers:{Authorization:'Bearer '+env.GITHUB_TOKEN,Accept:'application/vnd.github+json'},redirect:'error',signal:AbortSignal.timeout(15000)});
   if(!current.ok||(await current.json()).object?.sha!==env.GITHUB_SHA)throw Error('Finance detail reviewed main changed');
@@ -33,7 +34,22 @@ async function main(){
       const rows=(await client.query<{review_sha:string;review_body:Buffer;pdf_body:Buffer;pdf_sha:string}>("WITH r AS (SELECT sha256,body,convert_from(body,'UTF8')::jsonb AS j FROM evidence_content_blobs WHERE media_type=$1 AND convert_from(body,'UTF8')::jsonb->>'runId'=$2) SELECT r.sha256 AS review_sha,r.body AS review_body,b.body AS pdf_body,b.sha256 AS pdf_sha FROM r JOIN evidence_content_blobs b ON b.sha256=r.j->'sourceReceipt'->>'bodySha256' WHERE b.media_type='application/pdf' ORDER BY r.j->>'lrlId' LIMIT 25",[FINANCE_RECEIPT_TYPE,SOURCE_RUN])).rows;
       if(rows.length!==MAX_REPORTS||rows.reduce((n,r)=>n+r.pdf_body.length,0)>MAX_TOTAL)throw Error('Finance detail source inventory mismatch');
       const previous=(await client.query<{n:number}>("SELECT count(*)::int AS n FROM evidence_content_blobs WHERE media_type=$1 AND convert_from(body,'UTF8')::jsonb->>'sourceRunId'=$2",[FINANCE_DETAIL_TYPE,SOURCE_RUN])).rows[0]?.n;
-      if(previous!==(layoutMode?MAX_REPORTS:0))throw Error('Finance prior validation inventory mismatch');
+      if(previous!==((layoutMode||v2Mode)?MAX_REPORTS:0))throw Error('Finance prior validation inventory mismatch');
+      const priorById=new Map<string,{sha:string;j:any}>();
+      if(v2Mode){
+        const prior=(await client.query<{sha256:string;body:Buffer}>("SELECT sha256,body FROM evidence_content_blobs WHERE media_type=$1 AND convert_from(body,'UTF8')::jsonb->>'sourceRunId'=$2 LIMIT 25",[FINANCE_DETAIL_TYPE,SOURCE_RUN])).rows;
+        const existingV2=(await client.query<{n:number}>("SELECT count(*)::int AS n FROM evidence_content_blobs WHERE media_type=$1 AND convert_from(body,'UTF8')::jsonb->>'sourceRunId'=$2",[FINANCE_DETAIL_V2_TYPE,SOURCE_RUN])).rows[0]?.n;
+        if(prior.length!==MAX_REPORTS||existingV2!==0)throw Error('Finance V2 inventory mismatch or already committed');
+        for(const p of prior){
+          if(hash(p.body)!==p.sha256)throw Error('Prior finance validation hash mismatch');
+          const j=JSON.parse(p.body.toString('utf8'));
+          if(typeof j.lrlId!=='string'||priorById.has(j.lrlId)||j.schemaVersion!=='2027-preseason-finance-summary-validation-v1'||
+            j.session!=='2027-2028'||j.rosterSha256!==FINANCE_ROSTER_SHA||j.rosterStatus!=='projected_not_activation_verified'||
+            j.sourceRunId!==SOURCE_RUN||j.runId!=='46044058595:1'||j.rawBodyRetained!==true||j.servingEligible!==false||
+            j.canonicalWriteAllowed!==false||j.modelWeight!==0||j.reviewRequired!==true)throw Error('Invalid prior finance validation');
+          priorById.set(j.lrlId,{sha:p.sha256,j});
+        }
+      }
       const layoutShapes=new Map<string,number>();
       const ids=new Set<string>();let incoming=0,returning=0;const summaries:Array<ReturnType<typeof recoverFinanceSummary>>=[];
       for(const row of rows){
@@ -48,7 +64,14 @@ async function main(){
           const text=execFileSync('pdftotext',['-f','1','-l','6','-layout',file,'-'],{encoding:'utf8',timeout:10000,maxBuffer:1500000,stdio:['ignore','pipe','ignore']});
           const recheck=reviewFinanceSummary(text.replace(/\f/g,'\n'),r.reference,p.observedAt);
           if(recheck.totalReceiptsCents!==r.summary.totalReceiptsCents||recheck.boardReceivedOn!==r.summary.boardReceivedOn||recheck.coverageEndOn!==r.summary.coverageEndOn||recheck.reportUrl!==r.summary.reportUrl)throw Error('Finance prior summary reproduction failed');
-          const detail=recoverFinanceSummary(text,r.summary.totalReceiptsCents);
+          const previousValidation=priorById.get(r.lrlId);
+          if(v2Mode&&(!previousValidation||previousValidation.j.priorReviewSha256!==row.review_sha||
+            previousValidation.j.sourceBodySha256!==row.pdf_sha||previousValidation.j.sourceBodyBytes!==p.bodyBytes||
+            previousValidation.j.seat!==r.seat||previousValidation.j.cohort!==r.cohort||
+            previousValidation.j.registrationNumber!==r.registrationNumber||previousValidation.j.observedAt!==p.observedAt||
+            JSON.stringify(previousValidation.j.reference)!==JSON.stringify(r.reference)||
+            previousValidation.j.detail?.totalReceiptsCents!==r.summary.totalReceiptsCents))throw Error('Finance V2 prior validation binding failed');
+          const detail=v2Mode?recoverFinanceSummaryV2(text,r.summary.totalReceiptsCents):recoverFinanceSummary(text,r.summary.totalReceiptsCents);
           if(layoutMode){
             const key=JSON.stringify(diagnoseFinanceLayout(text));
             layoutShapes.set(key,(layoutShapes.get(key)??0)+1);
@@ -57,14 +80,15 @@ async function main(){
           }
           // Append new interpretation linked to original PDF and prior
           // receipt. Never modify old review or fabricate an absent amount.
-          await storeBlob(client,Buffer.from(JSON.stringify({schemaVersion:'2027-preseason-finance-summary-validation-v1',session:'2027-2028',rosterSha256:FINANCE_ROSTER_SHA,rosterStatus:'projected_not_activation_verified',sourceRunId:SOURCE_RUN,runId:env.GITHUB_RUN_ID+':1',lrlId:r.lrlId,seat:r.seat,cohort:r.cohort,registrationNumber:r.registrationNumber,reference:r.reference,priorReviewSha256:row.review_sha,sourceBodySha256:row.pdf_sha,sourceBodyBytes:p.bodyBytes,observedAt:p.observedAt,reviewedAt:new Date().toISOString(),detail,rawBodyRetained:true,availableBeforeObservationProved:false,servingEligible:false,canonicalWriteAllowed:false,modelWeight:0,reviewRequired:true})),FINANCE_DETAIL_TYPE,true);
+          await storeBlob(client,Buffer.from(JSON.stringify({schemaVersion:v2Mode?'2027-preseason-finance-summary-validation-v2':'2027-preseason-finance-summary-validation-v1',...(v2Mode?{previousValidationSha256:previousValidation!.sha,layoutDiagnosticRun:'46060153487:1'}:{}),session:'2027-2028',rosterSha256:FINANCE_ROSTER_SHA,rosterStatus:'projected_not_activation_verified',sourceRunId:SOURCE_RUN,runId:env.GITHUB_RUN_ID+':1',lrlId:r.lrlId,seat:r.seat,cohort:r.cohort,registrationNumber:r.registrationNumber,reference:r.reference,priorReviewSha256:row.review_sha,sourceBodySha256:row.pdf_sha,sourceBodyBytes:p.bodyBytes,observedAt:p.observedAt,reviewedAt:new Date().toISOString(),detail,rawBodyRetained:true,availableBeforeObservationProved:false,servingEligible:false,canonicalWriteAllowed:false,modelWeight:0,reviewRequired:true})),v2Mode?FINANCE_DETAIL_V2_TYPE:FINANCE_DETAIL_TYPE,true);
           summaries.push(detail);
         }finally{if(dir)rmSync(dir,{recursive:true,force:true});}
       }
       if(incoming!==12||returning!==12)throw Error('Finance review cohort mismatch');
       if(layoutMode)return {mode:'layout_diagnostic',reports:summaries.length,incoming,returning,layoutShapes:[...layoutShapes].map(([shape,count])=>({shape:JSON.parse(shape),count})),newSourceDownloads:0,validationWrites:0,canonicalWrites:0,modelChanges:0};
+      if(v2Mode&&!summaries.some(s=>s.totalDisbursementsCents!==null||s.endingCashBalanceCents!==null||s.reportedOutstandingLoanBalanceCents!==null))throw Error('Finance V2 recovered no additional fields');
       const count=(fn:(d:ReturnType<typeof recoverFinanceSummary>)=>boolean)=>summaries.filter(fn).length;
-      return {reports:summaries.length,incoming,returning,receiptsVerified:count(x=>x.totalReceiptsCents!==null),disbursementsVerified:count(x=>x.totalDisbursementsCents!==null),cashBalanceVerified:count(x=>x.endingCashBalanceCents!==null),loanBalanceObserved:count(x=>x.reportedOutstandingLoanBalanceCents!==null),diagnosticShapes:summaries.reduce((a,x)=>{const k=JSON.stringify(x.diagnostics);a[k]=(a[k]??0)+1;return a;},{} as Record<string,number>),newSourceDownloads:0,canonicalWrites:0,modelChanges:0};
+      return {mode:v2Mode?'observed_layout_v2':'recovery_v1',validationWrites:summaries.length,reports:summaries.length,incoming,returning,receiptsVerified:count(x=>x.totalReceiptsCents!==null),disbursementsVerified:count(x=>x.totalDisbursementsCents!==null),cashBalanceVerified:count(x=>x.endingCashBalanceCents!==null),loanBalanceObserved:count(x=>x.reportedOutstandingLoanBalanceCents!==null),diagnosticShapes:summaries.reduce((a,x)=>{const k=JSON.stringify(x.diagnostics);a[k]=(a[k]??0)+1;return a;},{} as Record<string,number>),newSourceDownloads:0,canonicalWrites:0,modelChanges:0};
     });
     console.log('CFB_EXACT_ORIGINAL_SUMMARY '+JSON.stringify(result));
   }finally{await db.end();}

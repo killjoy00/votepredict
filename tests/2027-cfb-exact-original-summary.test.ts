@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {recoverFinanceSummary,diagnoseFinanceLayout} from '../src/evidence/2027-cfb-exact-original-summary.js';
+import {recoverFinanceSummary,recoverFinanceSummaryV2,diagnoseFinanceLayout} from '../src/evidence/2027-cfb-exact-original-summary.js';
 const fixture=['Committee Transaction Summary','1 Beginning cash balance 01/01/2026 (should be the 50.00',' same as the previous year ending cash balance)','10 Total Receipts Sum #2 to #9 100.00 20.00 120.00','B Disbursements Cash Unpaid Bills In-kind Total','19 Total Expenditures and Sum #11 to #18 65.00 5.00 20.00 90.00',' Disbursements','20 Ending cash balance on 10/19/2026 85.00','21C Total outstanding balance of all loans 15.00','Page 2','Schedule A1 donor 999.00'].join('\n');
 test('verified four-column summary and cash equation, wrapped label; no schedules in result',()=>{
  // The printed disbursement formula may appear between the wrapped label
@@ -30,4 +30,58 @@ test('layout diagnostic retains only allowlisted structure and excludes other pa
   assert.doesNotMatch(JSON.stringify(d),/Alice|Private|Vendor|Secret|999|456|85\.00|90\.00/);
   assert.equal(diagnoseFinanceLayout('Schedule A1\n50.00').lines.length,0);
   assert.equal(diagnoseFinanceLayout(text+'\fCommittee Transaction Summary').lines.length,0);
+});
+
+// Synthetic amounts, exact relative line positions proven in protected layout
+// diagnostic 46060153487; no live report, donor, or candidate text in tests.
+const electronic=()=>{
+ const l=Array<string>(55).fill('');
+ l[2]='Beginning cash balance                   50.00';
+ l[3]='1   01/01/2026';
+ l[4]='(should be the same as previous year ending cash balance)';
+ l[6]='A Receipts                 Cash In-kind Total';
+ l[7]='2 Contributions            100.00 20.00 120.00';
+ l[23]='10 Total Receipts Sum #2 to #9     100.00 20.00 120.00';
+ l[25]='B Disbursements            Cash Unpaid Bills In-kind Total';
+ l[26]='11 Expenditures            65.00 5.00 20.00 90.00';
+ l[39]='18 Other disbursements     0.00 0.00 0.00 0.00';
+ l[40]='Total Expenditures and';
+ l[41]='19 Sum #11 to #18          65.00 5.00 20.00 90.00';
+ l[42]='Disbursements';
+ l[43]='Ending cash';
+ l[44]='20 balance on 10/19/2026  85.00';
+ l[47]='C Loans and unpaid bills';
+ l[48]='21A Total outstanding balance of all loans current year 10.00';
+ l[49]='21B Total outstanding balance of all loans year to year 5.00';
+ l[50]='21C Total outstanding balance of all loans Sum #21A and #21B 15.00';
+ l[51]='22A Total unpaid bills current year 0.00';
+ l[52]='22B Total unpaid bills year to year 0.00';
+ l[53]='22C Total unpaid bills Sum 0.00';
+ l[54]='23 Total of Sum 15.00';
+ return ['Committee Transaction Summary',...l,'Schedule A1','Do Not Read 999.99'].join('\n');
+};
+test('observed electronic layout recovers all three previously missed amounts',()=>{
+ const t=electronic();
+ assert.equal(recoverFinanceSummary(t,12000).totalDisbursementsCents,null);
+ const d=recoverFinanceSummaryV2(t,12000);
+ assert.equal(d.totalReceiptsCents,12000);
+ assert.equal(d.totalDisbursementsCents,9000);
+ assert.equal(d.beginningCashBalanceCents,5000);
+ assert.equal(d.endingCashBalanceCents,8500);
+ assert.equal(d.reportedOutstandingLoanBalanceCents,1500);
+ assert.ok(d.diagnostics.spendingArithmeticVerified&&d.diagnostics.cashArithmeticVerified&&d.diagnostics.loanArithmeticVerified);
+ assert.doesNotMatch(JSON.stringify(d),/Do Not Read|999\.99/);
+});
+test('observed layout fails closed on contradictory amounts, duplicate rows, unsupported layouts and missing cells',()=>{
+ const t=electronic();
+ const d=(s:string,prior=12000)=>recoverFinanceSummaryV2(s,prior);
+ assert.equal(d(t.replace('19 Sum #11 to #18          65.00 5.00 20.00 90.00','19 Sum #11 to #18          65.00 5.00 20.00 91.00')).totalDisbursementsCents,null);
+ assert.equal(d(t.replace('85.00','84.99')).endingCashBalanceCents,null);
+ assert.equal(d(t.replace('21B Total outstanding balance of all loans year to year 5.00','21B Total outstanding balance of all loans year to year 6.00')).reportedOutstandingLoanBalanceCents,null);
+ assert.equal(d(t.replace('21C Total outstanding balance of all loans Sum #21A and #21B 15.00','21C Total outstanding balance of all loans Sum #21A and #21B')).reportedOutstandingLoanBalanceCents,null);
+ assert.equal(d(t,12001).totalDisbursementsCents,null);
+ assert.equal(d(t.replace('Total Expenditures and','Other text')).totalDisbursementsCents,null);
+ assert.equal(d(t.replace('Schedule A1','19 Sum #11 to #18 65.00 5.00 20.00 90.00\nSchedule A1')).totalDisbursementsCents,null);
+ assert.equal(d(t+'\f'+t).totalDisbursementsCents,null);
+ assert.equal(d(t.replace('B Disbursements','B Unknown')).totalDisbursementsCents,null);
 });
