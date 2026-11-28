@@ -6,6 +6,7 @@ export const FINANCE_ROSTER_SHA='3b062058cbe77d2ff6caad8719a65535ad75849d48e0c62
 export const FINANCE_RECEIPT_TYPE='application/vnd.votepredict.2027-preseason-finance-report-review+json';
 export const FINANCE_EVENT_TYPE='application/vnd.votepredict.2027-preseason-finance-collection+json';
 export const FINANCE_MARKER='VOTEPREDICT_2027_CURRENT_CFB_FINANCE_PILOT_20261126';
+export const FINANCE_EXPANSION_MARKER='VOTEPREDICT_2027_CURRENT_CFB_FINANCE_EXPANSION_20261128';
 type Member={lrlId:string;seat:string;name:string;electionName:string};
 export type FinanceMember=Member&{cohort:'incoming'|'returning'};
 export type FinanceRegistration={registrationNumber:string;seat:string;nameKey:string;registeredOn:string;terminatedOn:string|null};
@@ -83,7 +84,7 @@ export function selectCurrentFinanceReference(references:readonly CfbReportViewe
   if(!Number.isInteger(selected[0].amendment)||selected[0].amendment<0||selected[0].amendment>100||!/^[-a-zA-Z0-9]{1,12}$/.test(selected[0].period)||!/^[-a-zA-Z0-9]{1,12}$/.test(selected[0].se))return {reference:null,reason:'invalid_reference'};
   return {reference:selected[0],reason:null};
 }
-export function selectFinancePilot<T extends {member:FinanceMember;reference:CfbReportViewerReference}>(rows:readonly T[],prior:ReadonlySet<string>=new Set()){
+export function selectFinancePilot<T extends {member:FinanceMember}>(rows:readonly T[],prior:ReadonlySet<string>=new Set()){
   const fresh=rows.filter(r=>!prior.has(r.member.lrlId)).sort((a,b)=>Number(a.member.lrlId)-Number(b.member.lrlId));
   return [...fresh.filter(r=>r.member.cohort==='incoming').slice(0,FINANCE_LIMITS.incoming),...fresh.filter(r=>r.member.cohort==='returning').slice(0,FINANCE_LIMITS.returning)];
 }
@@ -109,4 +110,63 @@ export function reviewFinanceSummary(text:string,reference:CfbReportViewerRefere
   const receiptCells=cells(/\btotal\s+receipts\b/i),disbursementCells=cells(/\btotal\s+expenditures\s+and\s+disbursements\b/i),balanceCells=cells(/\bending\s+cash\s+balance\b/i),loanCells=cells(/\btotal\s+outstanding\s+balance\s+of\s+all\s+loans\b/i);
   const total=(a:number[]|null)=>a?.length===3&&a[0]+a[1]===a[2]?a[2]:null;
   return {registrationNumber:reg,reportUrl:cfbReportViewerUrl(reference),coverageStartOn:start,coverageEndOn:end,boardReceivedOn:filed,receiptCellsCents:receiptCells,disbursementCellsCents:disbursementCells,endingCashCellsCents:balanceCells,outstandingLoanCellsCents:loanCells,totalReceiptsCents:total(receiptCells),totalDisbursementsCents:total(disbursementCells),endingCashBalanceCents:balanceCells?.length===1?balanceCells[0]:null,outstandingLoanBalanceCents:loanCells?.length===1?loanCells[0]:null,aggregateScope:'printed_report_summary_not_transaction_reconciliation',exactHistoricalPublicBy:null};
+}
+
+
+type PriorReport={sha:string;value:unknown;sourceVerified:boolean};
+type PriorEvent={sha:string;value:unknown};
+type FinanceHistoryMember={lrlId:string;seat:string;cohort:'incoming'|'returning'};
+/** Validate append-only collection ledger before using it as an exclusion list.
+ *  A failed attempt is a review hold, not evidence of a missing report. */
+export function financeCollectionHistory(members:readonly FinanceHistoryMember[],reports:readonly PriorReport[],events:readonly PriorEvent[],today:string){
+  if(!day(today)||reports.length>201||events.length>201)throw Error('finance_history_scope');
+  const roster=new Map(members.map(m=>[m.lrlId,m]));
+  const attempted=new Set<string>(),archived=new Set<string>(),days=new Set<string>(),runIds=new Set<string>();
+  const verifiedHashes:string[]=[];
+  const member=(v:any)=>{
+    const m=roster.get(v?.lrlId);
+    if(!m||m.seat!==v.seat||m.cohort!==v.cohort||!/^\d{3,8}$/.test(v.registrationNumber??''))throw Error('finance_history_identity');
+    return m.lrlId;
+  };
+  const common=(r:{sha:string;value:unknown})=>{
+    const v=r.value as any;
+    if(!/^[a-f0-9]{64}$/.test(r.sha)||!v||v.session!=='2027-2028'||v.servingEligible!==false||v.canonicalWriteAllowed!==false||v.modelWeight!==0)throw Error('finance_history_provenance');
+    verifiedHashes.push(r.sha);return v;
+  };
+  const byRun=new Map<string,string[]>();
+  for(const r of reports){
+    const v=common(r),id=member(v);
+    if(!r.sourceVerified||v.schemaVersion!=='2027-preseason-finance-report-review-v1'||v.rosterSha256!==FINANCE_ROSTER_SHA||
+      v.rosterStatus!=='projected_not_activation_verified'||v.rawBodyRetained!==true||v.reviewRequired!==true||
+      !/^\d{1,20}:1$/.test(v.runId)||archived.has(id)||v.reference?.registrationNumber!==v.registrationNumber||
+      v.summary?.registrationNumber!==v.registrationNumber||v.reference?.filingYear!==2026||
+      !/^[a-f0-9]{64}$/.test(v.sourceReceipt?.bodySha256??'')||!Number.isSafeInteger(v.sourceReceipt?.bodyBytes)||
+      v.sourceReceipt.bodyBytes<300||v.sourceReceipt.bodyBytes>FINANCE_LIMITS.maxPdfBytes)throw Error('finance_history_report');
+    archived.add(id);byRun.set(v.runId,[...(byRun.get(v.runId)??[]),id]);
+  }
+  const add=(id:string)=>{if(attempted.has(id))throw Error('finance_history_duplicate_attempt');attempted.add(id);};
+  for(const r of events){
+    const v=common(r),d=day(v.day);
+    if(v.schemaVersion!=='2027-preseason-finance-collection-v1'||v.state!=='committed'||!d||d>today||
+      days.has(d)||!/^\d{1,20}:1$/.test(v.runId)||runIds.has(v.runId)||
+      v.inventory?.rosterSha256!==FINANCE_ROSTER_SHA||v.summary?.mode!=='--archive'||
+      v.summary?.canonicalWrites!==0||v.summary?.modelChanges!==0||
+      !Array.isArray(v.failures)||!Array.isArray(v.inventory?.referenceGaps))throw Error('finance_history_event');
+    days.add(d);runIds.add(v.runId);
+    const collected=byRun.get(v.runId)??[];
+    const counts=v.summary.selected;
+    if(v.summary.verifiedReports!==collected.length||v.summary.failures!==v.failures.length||
+      !Number.isInteger(counts?.incoming)||!Number.isInteger(counts?.returning)||
+      counts.incoming<0||counts.incoming>FINANCE_LIMITS.incoming||counts.returning<0||counts.returning>FINANCE_LIMITS.returning||
+      counts.incoming+counts.returning!==collected.length+v.failures.length)throw Error('finance_history_event_counts');
+    const selectedIds=[...collected,...v.failures.map(member)];
+    if(selectedIds.filter(id=>roster.get(id)?.cohort==='incoming').length!==counts.incoming)throw Error('finance_history_cohort');
+    const holds=v.inventory.referenceGaps.map(member) as string[];
+    if(v.failures.some((x:any)=>typeof x.reason!=='string'||!x.reason)||v.inventory.referenceGaps.some((x:any)=>typeof x.reason!=='string'||!x.reason)||
+      [...selectedIds,...holds].filter(id=>roster.get(id)?.cohort==='incoming').length>FINANCE_LIMITS.incoming||
+      [...selectedIds,...holds].filter(id=>roster.get(id)?.cohort==='returning').length>FINANCE_LIMITS.returning)throw Error('finance_history_holds');
+    for(const id of [...selectedIds,...holds])add(id);
+  }
+  if([...byRun.keys()].some(id=>!runIds.has(id))||new Set(verifiedHashes).size!==verifiedHashes.length)throw Error('finance_history_unbound');
+  return {attempted,archived,days,committedBatches:events.length,fingerprint:createHash('sha256').update(verifiedHashes.sort().join('\n')).digest('hex')};
 }

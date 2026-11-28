@@ -3,8 +3,8 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {Pool} from 'pg';
-import {financeRoster,parseFinanceRegistry,matchFinanceRoster,currentFinanceReference,selectFinancePilot,reviewFinanceSummary,FINANCE_LIMITS,FINANCE_ROSTER_SHA,FINANCE_RECEIPT_TYPE,FINANCE_EVENT_TYPE,FINANCE_MARKER} from '../src/evidence/2027-current-cfb-finance.js';
+import {Pool,type PoolClient} from 'pg';
+import {financeRoster,parseFinanceRegistry,matchFinanceRoster,currentFinanceReference,selectFinancePilot,reviewFinanceSummary,FINANCE_LIMITS,FINANCE_ROSTER_SHA,FINANCE_RECEIPT_TYPE,FINANCE_EVENT_TYPE,FINANCE_MARKER,FINANCE_EXPANSION_MARKER,financeCollectionHistory} from '../src/evidence/2027-current-cfb-finance.js';
 import {cfbReportViewerUrl} from '../src/evidence/cfb-current-report-acquisition.js';
 import {cfbCandidateReportsTabForm,parseCfbCandidateReportsTabResponse} from '../src/evidence/cfb-candidate-report-history.js';
 import {selectCurrentFinanceReference,type FinanceMember,type FinanceRegistration} from '../src/evidence/2027-current-cfb-finance.js';
@@ -47,18 +47,47 @@ async function bounded(url:string,limit:number,init:RequestInit={}){
   const raw=Buffer.concat(chunks);const observedAt=new Date().toISOString();
   return {raw,receipt:{url,finalUrl:final,observedAt,bodySha256:hash(raw),bodyBytes:raw.length},headers:r.headers};
 }
+const chicagoDay=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+async function financeArchiveDb(env:NodeJS.ProcessEnv){
+  const target=await discoverExistingVotePredictNeonConnection({apiKey:env.NEON_API_KEY??'',projectId:ARCHIVE_PROJECT,preferredDatabase:'votepredict',requirePrimary:true});
+  assertArchiveConnection(target);
+  return new Pool({host:target.host,port:target.port,database:target.database,user:target.role,password:target.password,ssl:{rejectUnauthorized:true},max:1,connectionTimeoutMillis:10000});
+}
+async function readHistory(client:PoolClient,today:string){
+  const reviews=(await client.query<{sha:string;body:Buffer;source_verified:boolean}>(
+    "WITH r AS (SELECT sha256,body,convert_from(body,'UTF8')::jsonb j FROM evidence_content_blobs WHERE media_type=$1 LIMIT 202) SELECT r.sha256 AS sha,r.body,COALESCE(p.media_type='application/pdf' AND octet_length(p.body)=(r.j->'sourceReceipt'->>'bodyBytes')::int AND encode(sha256(p.body),'hex')=p.sha256,false) AS source_verified FROM r LEFT JOIN evidence_content_blobs p ON p.sha256=r.j->'sourceReceipt'->>'bodySha256'",
+    [FINANCE_RECEIPT_TYPE])).rows;
+  const events=(await client.query<{sha:string;body:Buffer}>("SELECT sha256 AS sha,body FROM evidence_content_blobs WHERE media_type=$1 LIMIT 202",[FINANCE_EVENT_TYPE])).rows;
+  const decode=(r:{sha:string;body:Buffer})=>{if(hash(r.body)!==r.sha)throw Error('finance_history_hash');return {sha:r.sha,value:JSON.parse(r.body.toString('utf8')) as unknown};};
+  return financeCollectionHistory(members,reviews.map(r=>({...decode(r),sourceVerified:r.source_verified})),events.map(decode),today);
+}
 function reason(e:unknown){const s=e instanceof Error?e.message:'';return /^finance_[a-z0-9_]+$/.test(s)?s:/abort|timeout/i.test(s)?'finance_source_timeout':/coverage|identity|heading/i.test(s)?'finance_report_identity_or_date_hold':/summary/i.test(s)?'finance_summary_unverified':'finance_source_or_parser_hold';}
 async function main(){
   const mode=process.argv[2];if(process.argv.length!==3||!['--probe','--archive'].includes(mode))throw Error('Unsupported mode');
   const env=process.env,event=JSON.parse(readFileSync(env.GITHUB_EVENT_PATH!,'utf8')) as {repository?:{full_name?:string;default_branch?:string};head_commit?:{id?:string;message?:string};after?:string;forced?:boolean;deleted?:boolean;pull_request?:{head?:{repo?:{full_name?:string}}}};
   if(env.VERCEL||env.GITHUB_REPOSITORY!=='killjoy00/votepredict'||event.repository?.full_name!==env.GITHUB_REPOSITORY||event.repository.default_branch!=='main'||env.GITHUB_RUN_ATTEMPT!=='1'||!/^\d{1,20}$/.test(env.GITHUB_RUN_ID??''))throw Error('Finance runner scope rejected');
+  const markedPilot=!!event.head_commit?.message?.includes(FINANCE_MARKER),markedExpansion=!!event.head_commit?.message?.includes(FINANCE_EXPANSION_MARKER);
+  const day=chicagoDay();
   if(mode==='--probe'){
     if(env.GITHUB_EVENT_NAME!=='pull_request'||env.GITHUB_HEAD_REF!=='feat/2027-current-cfb-finance-pilot'||event.pull_request?.head?.repo?.full_name!==env.GITHUB_REPOSITORY)throw Error('Finance PR scope rejected');
   }else{
-    if(env.GITHUB_EVENT_NAME!=='push'||env.GITHUB_REF!=='refs/heads/main'||env.GITHUB_WORKFLOW_REF!=='killjoy00/votepredict/.github/workflows/2027-current-cfb-finance.yml@refs/heads/main'||env.FINANCE_CI_VERIFIED!=='true'||event.after!==env.GITHUB_SHA||event.head_commit?.id!==env.GITHUB_SHA||!event.head_commit?.message?.includes(FINANCE_MARKER)||event.forced===true||event.deleted===true||env.VOTEPREDICT_NEON_PROJECT_ID!==ARCHIVE_PROJECT)throw Error('Finance archive approval gate rejected');
+    if(env.GITHUB_EVENT_NAME!=='push'||env.GITHUB_REF!=='refs/heads/main'||env.GITHUB_WORKFLOW_REF!=='killjoy00/votepredict/.github/workflows/2027-current-cfb-finance.yml@refs/heads/main'||env.FINANCE_CI_VERIFIED!=='true'||event.after!==env.GITHUB_SHA||event.head_commit?.id!==env.GITHUB_SHA||Number(markedPilot)+Number(markedExpansion)!==1||event.forced===true||event.deleted===true||env.VOTEPREDICT_NEON_PROJECT_ID!==ARCHIVE_PROJECT)throw Error('Finance archive approval gate rejected');
     const main=await fetch('https://api.github.com/repos/killjoy00/votepredict/git/ref/heads/main',{headers:{Authorization:'Bearer '+env.GITHUB_TOKEN,Accept:'application/vnd.github+json'},redirect:'error',signal:AbortSignal.timeout(15000)});
     if(!main.ok||(await main.json()).object?.sha!==env.GITHUB_SHA)throw Error('Finance reviewed main changed');
   }
+  let history:ReturnType<typeof financeCollectionHistory>|undefined;
+  if(mode==='--archive'){
+    // Check the shared daily cap and exact existing receipts BEFORE public requests.
+    stage='archive_preflight';
+    const db=await financeArchiveDb(env);
+    try{
+      history=await withRestrictedArchiveTransaction(db,ARCHIVE_OWNER,ARCHIVE_ROLE,async client=>readHistory(client,day));
+    }finally{await db.end();}
+    if(history.days.has(day))throw Error('finance_daily_cap_reached');
+    if(markedExpansion?history.committedBatches<1||history.archived.size<24:history.committedBatches!==0)throw Error('finance_batch_precondition');
+    console.log('CFB_FINANCE_ARCHIVE_PREFLIGHT '+JSON.stringify({day,committedBatches:history.committedBatches,archived:history.archived.size,held:history.attempted.size-history.archived.size,fingerprint:history.fingerprint}));
+  }
+  const prior=history?.attempted??new Set<string>();
   stage='official_app';
   const app=await bounded(APP,FINANCE_LIMITS.maxGridBytes);
   const headers=app.headers as Headers&{getSetCookie?:()=>string[]};
@@ -78,8 +107,10 @@ async function main(){
   const referenceGaps:Array<{lrlId:string;seat:string;cohort:FinanceMember['cohort'];registrationNumber:string;reason:string}>=[];
   let gridUsable=false;let usedCandidateTabs=false;
   const candidates:Target[]=[];
+  const unattempted=crosswalk.matches.filter(x=>!prior.has(x.member.lrlId));
+  if(!unattempted.length)throw Error('finance_no_unattempted_exact_matches');
   try{
-    for(const x of crosswalk.matches){
+    for(const x of unattempted){
       const r=currentFinanceReference(reports.json,x.registration.registrationNumber);
       if(r.reference)candidates.push({...x,reference:r.reference,reportReferenceReceipt:reports.receipt});
     }
@@ -87,14 +118,13 @@ async function main(){
   }catch{candidates.length=0;}
   let selected:Target[];
   if(gridUsable&&candidates.length){
-    selected=selectFinancePilot(candidates);
+    selected=selectFinancePilot(candidates,prior);
   }else{
     usedCandidateTabs=true;
     // The current-list API no longer returns the established report grid for
     // the all-period selector. Reuse the already audited per-candidate report
     // viewer tab contract; never construct guessed report references.
-    const ordered=[...crosswalk.matches].sort((a,b)=>Number(a.member.lrlId)-Number(b.member.lrlId));
-    const tranche=[...ordered.filter(x=>x.member.cohort==='incoming').slice(0,FINANCE_LIMITS.incoming),...ordered.filter(x=>x.member.cohort==='returning').slice(0,FINANCE_LIMITS.returning)];
+    const tranche=selectFinancePilot(unattempted,prior);
     const api='https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/api';
     stage='candidate_report_tabs';
     for(const x of tranche){
@@ -113,13 +143,13 @@ async function main(){
     selected=candidates;
   }
   const counts=(arr:readonly {cohort:string}[])=>({incoming:arr.filter(x=>x.cohort==='incoming').length,returning:arr.filter(x=>x.cohort==='returning').length});
-  const inventory={rosterSha256:FINANCE_ROSTER_SHA,registry:registry.receipt,currentReportList:reports.receipt,referenceDiscovery:usedCandidateTabs?'candidate_report_tabs':'current_grid',registryColumns:parsed.columns,rawRegistryRows:parsed.rawRows,malformedLegislativeRows:parsed.malformedLegislativeRows,matched:counts(crosswalk.matches.map(x=>x.member)),currentPreGeneral:counts(candidates.map(x=>x.member)),selected:counts(selected.map(x=>x.member)),crosswalk:crosswalk.matches.map(x=>({lrlId:x.member.lrlId,seat:x.member.seat,cohort:x.member.cohort,registrationNumber:x.registration.registrationNumber,registeredOn:x.registration.registeredOn,terminatedOn:x.registration.terminatedOn,currentReportReference:candidates.find(c=>c.member.lrlId===x.member.lrlId)?.reference??null})),gaps:crosswalk.gaps,referenceGaps};
+  const inventory={rosterSha256:FINANCE_ROSTER_SHA,priorHistoryFingerprint:history?.fingerprint??null,previouslyArchived:history?.archived.size??0,previouslyHeld:history?history.attempted.size-history.archived.size:0,registry:registry.receipt,currentReportList:reports.receipt,referenceDiscovery:usedCandidateTabs?'candidate_report_tabs':'current_grid',registryColumns:parsed.columns,rawRegistryRows:parsed.rawRows,malformedLegislativeRows:parsed.malformedLegislativeRows,matched:counts(crosswalk.matches.map(x=>x.member)),currentPreGeneral:counts(candidates.map(x=>x.member)),selected:counts(selected.map(x=>x.member)),crosswalk:crosswalk.matches.map(x=>({lrlId:x.member.lrlId,seat:x.member.seat,cohort:x.member.cohort,registrationNumber:x.registration.registrationNumber,registeredOn:x.registration.registeredOn,terminatedOn:x.registration.terminatedOn,currentReportReference:candidates.find(c=>c.member.lrlId===x.member.lrlId)?.reference??null})),gaps:crosswalk.gaps,referenceGaps};
   console.log('CFB_FINANCE_REGISTRY '+JSON.stringify({rosterSha256:inventory.rosterSha256,registry:inventory.registry,rawRegistryRows:inventory.rawRegistryRows,malformedLegislativeRows:inventory.malformedLegislativeRows,matched:inventory.matched,crosswalk:inventory.crosswalk,gaps:inventory.gaps}));
   console.log('CFB_FINANCE_REFERENCE_SELECTION '+JSON.stringify({method:inventory.referenceDiscovery,selected:inventory.selected,referenceGaps}));
-  if(!selected.length)throw Error('finance_no_verified_candidates');
+  if(!selected.length&&!(mode==='--archive'&&markedExpansion&&referenceGaps.length))throw Error('finance_no_verified_candidates');
+  if(selected.some(x=>prior.has(x.member.lrlId))||referenceGaps.some(x=>prior.has(x.lrlId)))throw Error('finance_duplicate_selection');
   stage='report_pdf_collection';
   const successes:Array<{record:Record<string,unknown>;raw:Buffer}>=[];const failures:Array<Record<string,unknown>>=[];
-  const day=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   for(const {member,registration,reference,reportReferenceReceipt} of selected){
     const common={lrlId:member.lrlId,seat:member.seat,cohort:member.cohort,registrationNumber:registration.registrationNumber,reference};
     let dir:string|undefined;
@@ -135,13 +165,15 @@ async function main(){
   }
   const summary={mode,requests,bytes,selected:inventory.selected,verifiedReports:successes.length,verifiedReceiptTotals:successes.filter(x=>(x.record.summary as {totalReceiptsCents:number|null}).totalReceiptsCents!==null).length,verifiedDisbursementTotals:successes.filter(x=>(x.record.summary as {totalDisbursementsCents:number|null}).totalDisbursementsCents!==null).length,failures:failures.length,completeCoverageVerified:false,canonicalWrites:0,modelChanges:0};
   if(mode==='--archive'){
-    if(!successes.length)throw Error('No verified official candidate reports');
-    stage='protected_archive';const target=await discoverExistingVotePredictNeonConnection({apiKey:env.NEON_API_KEY??'',projectId:ARCHIVE_PROJECT,preferredDatabase:'votepredict',requirePrimary:true});assertArchiveConnection(target);
-    const db=new Pool({host:target.host,port:target.port,database:target.database,user:target.role,password:target.password,ssl:{rejectUnauthorized:true},max:1,connectionTimeoutMillis:10000});
+    if(!successes.length&&!(markedExpansion&&(failures.length||referenceGaps.length)))throw Error('finance_no_verified_official_reports');
+    if(!history||chicagoDay()!==day)throw Error('finance_preflight_day_changed');
+    stage='protected_archive';const db=await financeArchiveDb(env);
     try{
       await withRestrictedArchiveTransaction(db,ARCHIVE_OWNER,ARCHIVE_ROLE,async client=>{
-        const already=(await client.query<{n:number}>("SELECT count(*)::int AS n FROM evidence_content_blobs WHERE media_type=$1 AND convert_from(body,'UTF8')::jsonb->>'state'='committed' AND convert_from(body,'UTF8')::jsonb->>'day'=$2",[FINANCE_EVENT_TYPE,day])).rows[0]?.n;
-        if(already!==0)throw Error('Finance daily pilot already committed');
+        const current=await readHistory(client,day);
+        if(current.days.has(day)||chicagoDay()!==day||current.fingerprint!==history!.fingerprint)throw Error('finance_archive_history_changed');
+        const ids=[...successes.map(x=>String(x.record.lrlId)),...failures.map(x=>String(x.lrlId)),...referenceGaps.map(x=>x.lrlId)];
+        if(new Set(ids).size!==ids.length||ids.some(id=>current.attempted.has(id)))throw Error('finance_duplicate_attempt');
         for(const x of successes){
           const receipt=x.record.sourceReceipt as {bodySha256:string;bodyBytes:number;observedAt:string};
           if(hash(x.raw)!==receipt.bodySha256||x.raw.length!==receipt.bodyBytes||Date.now()-Date.parse(receipt.observedAt)>300000)throw Error('Finance original acceptance window or hash mismatch');
@@ -156,6 +188,6 @@ async function main(){
   for(const x of successes)console.log('CFB_CURRENT_FINANCE_REPORT '+JSON.stringify({...x.record,rawBodyRetained:mode==='--archive'}));
   for(const x of failures)console.log('CFB_CURRENT_FINANCE_GAP '+JSON.stringify(x));
   console.log('CFB_CURRENT_FINANCE_SUMMARY '+JSON.stringify(summary));
-  if(!successes.length)process.exitCode=1;
+  if(!successes.length&&!(mode==='--archive'&&markedExpansion&&(failures.length||referenceGaps.length)))process.exitCode=1;
 }
 main().catch(e=>{console.error('CFB_FINANCE_FATAL '+JSON.stringify({stage,reason:reason(e),requests,bytes}));process.exitCode=1;});
