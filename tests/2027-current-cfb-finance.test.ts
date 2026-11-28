@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {financeRoster,parseFinanceRegistry,matchFinanceRoster,currentFinanceReference,selectCurrentFinanceReference,reviewFinanceSummary,selectFinancePilot} from '../src/evidence/2027-current-cfb-finance.js';
+import {financeRoster,parseFinanceRegistry,matchFinanceRoster,currentFinanceReference,selectCurrentFinanceReference,reviewFinanceSummary,selectFinancePilot,financeCollectionHistory,FINANCE_ROSTER_SHA} from '../src/evidence/2027-current-cfb-finance.js';
 const ref={filingYear:2026,reportName:'2026 Pre-General Report',year:'26',type:'pcc',period:'PG',se:'0',registrationNumber:'12345',amendment:0};
 test('registry requires exact projected full/election name, office and seat; ambiguity is held',()=>{
   const cols=['RegisteredEntityID','CandidateFullName','OfficeSoughtFullName','District','RegistrationDate','TerminationDate'];
@@ -43,4 +43,23 @@ test('candidate viewer tab references use same exact period and version checks',
  const latest={...ref,amendment:3};
  assert.equal(selectCurrentFinanceReference([old,ref,latest],ref.registrationNumber).reference?.amendment,3);
  assert.equal(selectCurrentFinanceReference([{...ref,reportName:'2026 Year-End'},ref],ref.registrationNumber).reason,'later_or_final_report_requires_review');
+});
+
+
+test('collection history excludes verified originals and specific reviewed holds, but not unmatched registry candidates',()=>{
+ const members=Array.from({length:30},(_,i)=>({lrlId:String(i+1),seat:'house:'+String(i+1)+'A',name:'Example '+i,electionName:'Example '+i,cohort:'incoming' as const}));
+ const common={session:'2027-2028',servingEligible:false,canonicalWriteAllowed:false,modelWeight:0};
+ const identity=(i:number)=>({lrlId:members[i].lrlId,seat:members[i].seat,cohort:members[i].cohort,registrationNumber:'12345'});
+ const report={sha:'a'.repeat(64),sourceVerified:true,value:{...common,...identity(0),schemaVersion:'2027-preseason-finance-report-review-v1',rosterSha256:FINANCE_ROSTER_SHA,rosterStatus:'projected_not_activation_verified',rawBodyRetained:true,reviewRequired:true,runId:'42:1',reference:ref,summary:{registrationNumber:'12345'},sourceReceipt:{bodySha256:'c'.repeat(64),bodyBytes:500}}};
+ const failed={...identity(1),reason:'finance_http_404'},held={...identity(2),reason:'no_2026_pre_general_reference'};
+ const event={sha:'b'.repeat(64),value:{...common,schemaVersion:'2027-preseason-finance-collection-v1',state:'committed',day:'2026-11-27',runId:'42:1',inventory:{rosterSha256:FINANCE_ROSTER_SHA,referenceGaps:[held],gaps:[{...identity(3),reason:'no_exact_name_and_district'}]},summary:{mode:'--archive',canonicalWrites:0,modelChanges:0,selected:{incoming:2,returning:0},verifiedReports:1,failures:1},failures:[failed]}};
+ const h=financeCollectionHistory(members,[report],[event],'2026-11-28');
+ assert.equal(h.archived.size,1);assert.deepEqual([...h.attempted],['1','2','3']);assert.equal(h.days.has('2026-11-27'),true);assert.equal(h.days.has('2026-11-28'),false);
+ const next=selectFinancePilot(members.map(member=>({member})),h.attempted);
+ assert.equal(next.length,12);assert.equal(next[0].member.lrlId,'4');assert.ok(next.every(x=>!h.attempted.has(x.member.lrlId)));
+ assert.throws(()=>financeCollectionHistory(members,[{...report,sourceVerified:false}],[event],'2026-11-28'),/finance_history_report/);
+ assert.throws(()=>financeCollectionHistory(members,[report],[],'2026-11-28'),/finance_history_unbound/);
+ assert.throws(()=>financeCollectionHistory(members,[report],[event],'2026-11-26'),/finance_history_event/);
+ assert.throws(()=>financeCollectionHistory(members,[report],[{...event,value:{...event.value,failures:[{...identity(0),reason:'duplicate'}]}}],'2026-11-28'),/finance_history_duplicate_attempt/);
+ assert.throws(()=>financeCollectionHistory(members,[report],[{...event,value:{...event.value,summary:{...event.value.summary,verifiedReports:0}}}],'2026-11-28'),/finance_history_event_counts/);
 });
