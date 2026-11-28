@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {recoverFinanceSummary,recoverFinanceSummaryV2,diagnoseFinanceLayout} from '../src/evidence/2027-cfb-exact-original-summary.js';
+import {recoverFinanceSummary,recoverFinanceSummaryV2,diagnoseFinanceLayout,selectFinanceRecoveryMode,FINANCE_DETAIL_EXPANSION_MARKER,FINANCE_DETAIL_INITIAL_SOURCE_RUN,FINANCE_DETAIL_V2_MARKER,FINANCE_LAYOUT_MARKER} from '../src/evidence/2027-cfb-exact-original-summary.js';
 const fixture=['Committee Transaction Summary','1 Beginning cash balance 01/01/2026 (should be the 50.00',' same as the previous year ending cash balance)','10 Total Receipts Sum #2 to #9 100.00 20.00 120.00','B Disbursements Cash Unpaid Bills In-kind Total','19 Total Expenditures and Sum #11 to #18 65.00 5.00 20.00 90.00',' Disbursements','20 Ending cash balance on 10/19/2026 85.00','21C Total outstanding balance of all loans 15.00','Page 2','Schedule A1 donor 999.00'].join('\n');
 test('verified four-column summary and cash equation, wrapped label; no schedules in result',()=>{
  // The printed disbursement formula may appear between the wrapped label
@@ -101,4 +101,17 @@ test('protected token projection handles unrecorded punctuation and qualifiers w
  assert.equal(recoverFinanceSummaryV2(t.replace('Ending cash:', 'Ending funds:'),12000).totalDisbursementsCents,9000);
  assert.equal(recoverFinanceSummaryV2(t.replace('previous year', 'current year'),12000).endingCashBalanceCents,null);
  assert.equal(recoverFinanceSummaryV2(t.replace('previous year', 'current year'),12000).reportedOutstandingLoanBalanceCents,1500);
+});
+
+
+test('expanded recovery requires one explicit noninitial committed source run selector',()=>{
+ const marker=FINANCE_DETAIL_EXPANSION_MARKER;
+ const line='VOTEPREDICT_CFB_SOURCE_RUN=46120750016:1';
+ const mode=selectFinanceRecoveryMode(marker+'\n'+line);
+ assert.equal(mode.expansionMode,true);
+ assert.equal(mode.sourceRun,'46120750016:1');
+ assert.equal(mode.v2Mode,false);
+ assert.equal(selectFinanceRecoveryMode(FINANCE_DETAIL_V2_MARKER).sourceRun,FINANCE_DETAIL_INITIAL_SOURCE_RUN);
+ assert.equal(selectFinanceRecoveryMode(FINANCE_LAYOUT_MARKER).layoutMode,true);
+ for(const m of [marker,marker+'\n'+line+'\n'+line,marker+'\n'+marker+'\n'+line,marker+'\n'+line+'\n'+FINANCE_DETAIL_V2_MARKER,FINANCE_DETAIL_V2_MARKER+'\n'+line,marker+'\nVOTEPREDICT_CFB_SOURCE_RUN='+FINANCE_DETAIL_INITIAL_SOURCE_RUN,marker+'\nVOTEPREDICT_CFB_SOURCE_RUN=46120750016:2',marker+'\nVOTEPREDICT_CFB_SOURCE_RUN=latest',marker+'\nVOTEPREDICT_CFB_SOURCE_RUN=46120750016:1 extra'])assert.throws(()=>selectFinanceRecoveryMode(m));
 });

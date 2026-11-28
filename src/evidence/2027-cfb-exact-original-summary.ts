@@ -166,3 +166,25 @@ export function recoverFinanceSummaryV2(text:string,priorReceiptsCents:number){
       cashArithmeticVerified:cashAgree,loanArithmeticVerified:loanAgree}
   };
 }
+
+
+// One explicitly reviewed archive batch at a time. Never select "latest" or
+// rerun a completed batch merely because another batch is now available.
+export const FINANCE_DETAIL_EXPANSION_MARKER='VOTEPREDICT_2027_CFB_EXACT_ORIGINAL_EXPANSION_V2_20261128';
+export const FINANCE_DETAIL_INITIAL_SOURCE_RUN='46037317625:1';
+export function selectFinanceRecoveryMode(message:string){
+  const layoutMode=message.includes(FINANCE_LAYOUT_MARKER);
+  const recoveryMode=message.includes(FINANCE_DETAIL_MARKER);
+  const v2Mode=message.includes(FINANCE_DETAIL_V2_MARKER);
+  const expansionMode=message.includes(FINANCE_DETAIL_EXPANSION_MARKER);
+  if(Number(layoutMode)+Number(recoveryMode)+Number(v2Mode)+Number(expansionMode)!==1)throw Error('Exactly one finance operation marker required');
+  const selectorLines=message.split(/\r?\n/).filter(l=>l.includes('VOTEPREDICT_CFB_SOURCE_RUN'));
+  if(!expansionMode){
+    if(selectorLines.length)throw Error('Unexpected finance source run selector');
+    return {layoutMode,recoveryMode,v2Mode,expansionMode,sourceRun:FINANCE_DETAIL_INITIAL_SOURCE_RUN};
+  }
+  const markers=message.split(/\r?\n/).filter(l=>l===FINANCE_DETAIL_EXPANSION_MARKER);
+  const match=selectorLines.length===1?/^VOTEPREDICT_CFB_SOURCE_RUN=(\d{1,20}:1)$/.exec(selectorLines[0]):null;
+  if(markers.length!==1||!match||match[1]===FINANCE_DETAIL_INITIAL_SOURCE_RUN)throw Error('Invalid finance expansion source run selector');
+  return {layoutMode,recoveryMode,v2Mode,expansionMode,sourceRun:match[1]};
+}
